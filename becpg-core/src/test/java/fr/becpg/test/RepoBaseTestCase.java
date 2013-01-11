@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.alfresco.model.ContentModel;
@@ -35,6 +34,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -221,7 +221,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					// Init repo for test
 					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 	
-					Assert.assertEquals(4, entitySystemService.getSystemEntities().size());
+					org.junit.Assert.assertEquals(4, entitySystemService.getSystemEntities().size());
 	
 					initConstraints();
 					initTasks();

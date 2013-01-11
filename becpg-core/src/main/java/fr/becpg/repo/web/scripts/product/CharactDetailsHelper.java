@@ -31,6 +31,8 @@ public class CharactDetailsHelper {
 
 	
 	
+	
+	
 	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService) throws JSONException {
 
 		JSONObject obj = new JSONObject();

@@ -385,9 +385,11 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 
 	@Override
 	public String toString() {
-		return "CompoListDataItem [depthLevel=" + depthLevel + ", parent=" + parent + "]";
+		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", qtyAfterProcess=" + qtyAfterProcess + ", compoListUnit="
+				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product + ", parent=" + parent + "]";
 	}
 
+	
 	
 	
 }

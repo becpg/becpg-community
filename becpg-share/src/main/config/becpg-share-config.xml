@@ -17,8 +17,8 @@
 	<!-- Global config section -->
 	<config replace="true">
 
-		<header>
 
+		<header>
 			<app-items>
 				<!-- defaults: icon="{id}.png" label="header.{id}.label" description="header.{id}.description" -->
 				<item type="link" id="my-dashboard">{userdashboardpage}</item>
@@ -27,8 +27,9 @@
 				<item type="link" id="repository" condition="conditionRepositoryRootNode">/repository</item>
 				<item type="container" id="more">
 					<container-group id="my">
-						<item type="link" id="my-tasks">/my-tasks</item>
-						<item type="link" id="my-workflows">/my-workflows</item>
+						<item type="link" id="my-tasks">/my-tasks#filter=workflows|active</item>
+						<item type="link" id="my-workflows">/my-workflows#filter=workflows|active
+						</item>
 						<item type="link" id="my-content">/user/user-content</item>
 						<item type="link" id="my-sites">/user/user-sites</item>
 						<item type="link" id="my-profile">{userprofilepage}</item>
@@ -43,7 +44,6 @@
 						<item type="link" id="repository">/console/admin-console/repository</item>
 						<item type="link" id="trashcan">/console/admin-console/trashcan</item>
 						<item type="link" id="users">/console/admin-console/users</item>
-						<item type="link" id="model-designer">/model-designer</item>
 						<item type="link" id="becpg-admin">/console/admin-console/becpg-admin
 						</item>
 						<item type="link" id="more">/console/admin-console/</item>
@@ -69,15 +69,19 @@
 				<js src="/modules/header/sites.js" />
 			</dependencies>
 		</header>
+
 	</config>
 
 
-   <config evaluator="string-compare" condition="HelpPages" replace="true">
-      <help-pages>
-         <share-help>http://becpg.fr/google/support</share-help>
-         <share-tutorial>http://becpg.fr/documentation/starting-kit</share-tutorial>
-      </help-pages>
-   </config>
+	<config evaluator="string-compare" condition="HelpPages"
+		replace="true">
+		<help-pages>
+			<share-help>http://becpg.fr/google/support</share-help>
+			<share-tutorial>http://becpg.fr/documentation/starting-kit
+			</share-tutorial>
+		</help-pages>
+	</config>
+
 
 
 	<config evaluator="string-compare" condition="Workflow">
@@ -97,13 +101,13 @@
 			<workflow name="activiti$activitiParallelGroupReview" />
 			<workflow name="activiti$activitiParallelReview" />
 			<workflow name="activiti$activitiAdhoc" />
-			<workflow name="activiti$activitiReview" />		
-			<workflow name="activiti$projectAdhoc"/>
-			<workflow name="activiti$projectNewProduct"/>
-			<workflow name="jbpm$wf:adhoc" /> 
-			<workflow name="jbpm$wf:reviewpooled"	/> 
-			<workflow name="jbpm$wf:parallelgroupreview" /> 
-			<workflow name="jbpm$wf:review"/> 
+			<workflow name="activiti$activitiReview" />
+			<workflow name="activiti$projectAdhoc" />
+			<workflow name="activiti$projectNewProduct" />
+			<workflow name="jbpm$wf:adhoc" />
+			<workflow name="jbpm$wf:reviewpooled" />
+			<workflow name="jbpm$wf:parallelgroupreview" />
+			<workflow name="jbpm$wf:review" />
 			<workflow name="jbpm$wf:parallelreview" />
 		</hidden-workflows>
 	</config>

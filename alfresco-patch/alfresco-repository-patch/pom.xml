@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.becpg</groupId>
 		<artifactId>alfresco-patch</artifactId>
-		<version>1.4.0</version>
+		<version>1.5.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -79,30 +79,12 @@
 								<filter>
 									<artifact>org.alfresco.sdk:*</artifact>
 									<excludes>																	
-										<exclude>org/alfresco/repo/forms/processor/node/ContentModelFormProcessor**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/AbstractAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/AddAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/AddChildAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/RemoveAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/RemoveChildAssocCommand**</exclude>									
-										<exclude>org/alfresco/repo/invitation/InviteHelper**</exclude>
-										<exclude>org/alfresco/repo/jscript/ScriptNode**</exclude>
-										<exclude>org/alfresco/repo/model/Repository**</exclude>
 										<exclude>org/alfresco/repo/node/db/DbNodeServiceImpl**</exclude>
-										<exclude>org/alfresco/repo/thumbnail/ThumbnailRegistry**</exclude>
-										<exclude>org/alfresco/repo/workflow/jbpm/JBPMEngine**</exclude>
-										<exclude>org/alfresco/repo/security/authentication/AbstractChainingAuthenticationService**</exclude>
-										<exclude>org/alfresco/repo/security/authentication/RepositoryAuthenticationDao**</exclude>																				
-										<exclude>org/alfresco/repo/security/authority/AuthorityDAOImpl**</exclude>
-										<exclude>org/alfresco/repo/workflow/activiti/ActivitiWorkflowEngine**</exclude>
-										<exclude>org/alfresco/repo/workflow/activiti/ActivitiTypeConverter**</exclude>
 										<exclude>org/alfresco/repo/search/impl/lucene/index/IndexInfo**</exclude>
 										<exclude>org/alfresco/repo/search/impl/lucene/index/ReferenceCounting**</exclude>
 										<exclude>org/alfresco/repo/search/impl/lucene/index/ReferenceCountingReadOnlyIndexReaderFactory**</exclude>
 										<exclude>org/alfresco/repo/search/impl/lucene/AVMLuceneIndexerImpl**</exclude>
 										<exclude>org/alfresco/repo/search/impl/lucene/LuceneAlfrescoLuceneQueryLanguage**</exclude>
-										<exclude>org/alfresco/repo/audit/AuditMethodInterceptor**</exclude>
-										<exclude>org/alfresco/repo/management/subsystems/ChildApplicationContextFactory**</exclude>
 									</excludes>
 								</filter>
 							</filters>

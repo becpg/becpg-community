@@ -29,7 +29,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -224,7 +223,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef getEntitiesHistoryFolder() {
 		
-		return beCPGCacheService.getFromCache(BeCPGMailService.class.getName(), KEY_ENTITIES_HISTORY , new BeCPGCacheDataProviderCallBack<NodeRef>() {
+		return beCPGCacheService.getFromCache(EntityVersionServiceImpl.class.getName(), KEY_ENTITIES_HISTORY , new BeCPGCacheDataProviderCallBack<NodeRef>() {
 
 			@Override
 			public NodeRef getData() {

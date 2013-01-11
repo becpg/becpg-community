@@ -30,7 +30,7 @@ rm $SERVER/webapps/alfresco.war
 rm -rf $SERVER/webapps/alfresco
 cp $SERVER/webapps/alfresco.war.setup $SERVER/webapps/alfresco.war
 
-install_core_amp alfresco-core-patch-*.amp
+#install_core_amp alfresco-core-patch-*.amp
 install_core_amp becpg-controls-core-*.amp 
 install_core_amp becpg-designer-core-*.amp
 install_core_amp becpg-core-*.amp
@@ -48,7 +48,7 @@ rm $SERVER/webapps/share.war
 rm -rf $SERVER/webapps/share
 cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
 
-install_share_amp alfresco-share-patch-*.amp
+#install_share_amp alfresco-share-patch-*.amp
 install_share_amp becpg-controls-share-*.amp
 install_share_amp becpg-designer-share-*.amp
 install_share_amp becpg-share-*.amp

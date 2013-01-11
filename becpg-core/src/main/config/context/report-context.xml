@@ -76,11 +76,14 @@
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>	
 	
-	<!-- Policy -->
-	<bean id="EntityReportPolicy" class="fr.becpg.repo.entity.policy.EntityReportPolicy" parent="abstractBeCPGPolicy">
-		<property name="transactionService" ref="transactionService"/>
+	
+	<!-- Report Policy -->
+	<bean id="entityReportPolicy" class="fr.becpg.repo.entity.policy.EntityReportPolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="transactionService" ref="transactionService" />
 		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
 		<property name="entityReportService" ref="entityReportService" />
-	</bean>		
+	</bean>
+	
    
 </beans>

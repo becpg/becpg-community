@@ -6,7 +6,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
-import org.alfresco.web.bean.repository.Repository;
 
 import fr.becpg.repo.RepoConsts;
 
@@ -37,7 +36,7 @@ public class LuceneHelper {
 	 */
 	public static String getCondEqualValue(QName property, String value, Operator operator) {
 
-		return String.format(QUERY_COND_PROP_EQUAL_VALUE, operator != null ? operator : "", Repository.escapeQName(property), value);
+		return String.format(QUERY_COND_PROP_EQUAL_VALUE, operator != null ? operator : "", escapeQName(property), value);
 	}
 
 	/**
@@ -61,7 +60,7 @@ public class LuceneHelper {
 	 */
 	public static String getCondContainsValue(QName property, String value, Operator operator) {
 
-		return String.format(QUERY_COND_PROP_CONTAINS_VALUE, operator != null ? operator : "", Repository.escapeQName(property), value);
+		return String.format(QUERY_COND_PROP_CONTAINS_VALUE, operator != null ? operator : "", escapeQName(property), value);
 	}
 
 	/**
@@ -73,31 +72,33 @@ public class LuceneHelper {
 	 */
 	public static String getCondIsNullValue(QName property, Operator operator) {
 
-		return String.format(QUERY_COND_PROP_ISNULL_VALUE, operator != null ? operator : "", Repository.escapeQName(property));
+		return String.format(QUERY_COND_PROP_ISNULL_VALUE, operator != null ? operator : "", escapeQName(property));
 	}
-	
+
 	/**
 	 * Return a +PATH condition (encode path)
+	 * 
 	 * @param path
 	 * @param operator
 	 * @return
 	 */
-	public static String getCondPath(String path, Operator operator){
-		
+	public static String getCondPath(String path, Operator operator) {
+
 		return String.format(QUERY_COND_PATH, operator != null ? operator : "", encodePath(path));
 	}
-	
+
 	/**
 	 * Get conditions on sort
+	 * 
 	 * @param min
 	 * @param max
 	 * @return
 	 */
 	public static String getCondMinMax(QName property, String min, String max, Operator operator) {
 
-		return String.format(QUERY_COND_BY_SORT, operator != null ? operator : "", Repository.escapeQName(property), min, max);
+		return String.format(QUERY_COND_BY_SORT, operator != null ? operator : "", escapeQName(property), min, max);
 	}
-	
+
 	/**
 	 * Return a parent condition on nodeRef
 	 * 
@@ -109,7 +110,7 @@ public class LuceneHelper {
 
 		return String.format(QUERY_COND_PARENT, operator != null ? operator : "", nodeRef);
 	}
-	
+
 	/**
 	 * Return a type condition on QName
 	 * 
@@ -121,13 +122,11 @@ public class LuceneHelper {
 
 		return String.format(QUERY_COND_TYPE, operator != null ? operator : "", type);
 	}
-	
-	
+
 	public static String getCond(String cond, Operator operator) {
 
 		return String.format(QUERY_COND, operator != null ? operator : "", cond);
 	}
-	
 
 	public enum Operator {
 		AND, OR, NOT
@@ -169,6 +168,20 @@ public class LuceneHelper {
 	public static Map<String, Boolean> getSort(QName field) {
 
 		return getSort(field, true);
+	}
+
+	public static String escapeQName(QName qName) {
+		String string = qName.toString();
+		StringBuilder buf = new StringBuilder(string.length() + 4);
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			if ((c == '{') || (c == '}') || (c == ':') || (c == '-')) {
+				buf.append('\\');
+			}
+
+			buf.append(c);
+		}
+		return buf.toString();
 	}
 
 }

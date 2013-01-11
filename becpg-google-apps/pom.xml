@@ -4,13 +4,11 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.4.0</version>
+		<version>1.5.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-google-apps</artifactId>
-	<groupId>fr.becpg</groupId>
-	<version>1.4.0</version>
 	<packaging>amp</packaging>
 	<name>beCPG google apps </name>
 	<description>beCPG google apps integration</description>
@@ -18,13 +16,12 @@
 	<dependencies>
 
 		<!-- alfresco -->
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>alfresco-sdk</artifactId>
-			<version>${alfresco.version}</version>
-			<type>pom</type>
-			<scope>provided</scope>
-		</dependency>
+         <dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-web-client</artifactId>
+            <version>${alfresco.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
 		<!-- OpenID -->
 		<dependency>
@@ -64,79 +61,23 @@
 					<artifactId>spring-core</artifactId>
 					<groupId>org.springframework</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>aopalliance</artifactId>
+					<groupId>aopalliance</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.mail</artifactId>
+					<groupId>mail</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.servlet</artifactId>
+					<groupId>servlet-api</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<!-- Servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-		
-
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>native2ascii-maven-plugin</artifactId>
-				<version>1.0-alpha-1</version>
-				<inherited>true</inherited>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>native2ascii</goal>
-						</goals>
-						<configuration>
-							<encoding>8859_1</encoding>
-							<dest>target/classes/alfresco/module/${project.artifactId}</dest>
-							<src>src/main/config</src>
-							<includes>
-								**/*.properties
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<!-- Copies and filters resources in build folder so maven-amp-plugin can 
-			pick them up -->
-		<resources>
-			<resource>
-				<filtering>true</filtering>
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>**README-*</exclude>
-					<exclude>**/*.csv</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<filtering>false</filtering>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.csv</include>
-				</includes>
-			</resource>
-			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' 
-				so to enforce full module naming single sourcing from POM properties -->
-			<resource>
-				<filtering>true</filtering>
-				<directory>src/main/config</directory>
-				<targetPath>alfresco/module/${project.artifactId}</targetPath>
-				<excludes>
-					<exclude>**README-*</exclude>
-					<exclude>**/*.properties</exclude>
-				</excludes>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<filtering>true</filtering>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
-	</build>
+</dependencies>
 </project>
