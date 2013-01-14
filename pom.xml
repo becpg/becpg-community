@@ -85,7 +85,7 @@
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -XX:MaxPermSize=256m
 			-Duser.language=fr</app.testing.jvm.args>
 	</properties>
-	<dependencyManagement>
+	<!-- <dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>${alfresco.groupId}</groupId>
@@ -95,7 +95,7 @@
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
-	</dependencyManagement>
+	</dependencyManagement> -->
 
 	<distributionManagement>
       <repository>
@@ -110,7 +110,8 @@
            <id>becpg-repo</id>
            <url>https://becpg.fr/maven</url>
       </repository> -->
-		<repository>
+
+		 <repository>
 			<id>alfresco-public</id>
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
 		</repository>
@@ -119,7 +120,6 @@
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>
@@ -137,7 +137,6 @@
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
 			<snapshots>
 				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>

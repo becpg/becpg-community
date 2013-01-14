@@ -20,10 +20,11 @@
       <property name="configService" ref="web.config" />
       <property name="configs">
          <list>
-            <value>classpath:alfresco/forms/becpg-form-config.xml</value>
-            <value>classpath:alfresco/forms/becpg-share-config.xml</value>
-            <value>classpath:alfresco/forms/becpg-search-config.xml</value>
-            <value>classpath:alfresco/forms/becpg-documentlibrary-config.xml</value>
+         	<value>classpath:alfresco/form-config.xml</value> 
+            <value>classpath:alfresco/becpg-share-config.xml</value>
+            <value>classpath:alfresco/becpg-search-config.xml</value>
+            <value>classpath:alfresco/becpg-documentlibrary-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-form-config.xml</value> 
             <value>classpath:alfresco/forms/becpg-workflow-form-config.xml</value>
             <value>classpath:alfresco/forms/becpg-quality-form-config.xml</value>
             <value>classpath:alfresco/forms/becpg-security-form-config.xml</value>
@@ -44,12 +45,7 @@
 
 	<!-- Action group resolver -->
 
-   <bean id="slingshot.scriptprocessor.resolverHelper" parent="baseScriptExtension" class="fr.becpg.web.resolver.scripts.ResolverHelper">
-      <property name="extensionName" value="resolverHelper"/>
-   </bean>
-
-
-   <bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.DefaultDoclistActionGroupResolver" />
+  <bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.BeCPGDoclistActionGroupResolver" />
 
   <!-- evaluators -->
   

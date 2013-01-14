@@ -7,7 +7,7 @@
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4/mail-1.4.jar" sourcepath="M2_REPO/javax/mail/mail/1.4/mail-1.4-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar" sourcepath="M2_REPO/javax/activation/activation/1.1/activation-1.1-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar" sourcepath="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar" sourcepath="M2_REPO/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar" sourcepath="M2_REPO/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1b/jta-1.0.1b.jar"/>
@@ -237,6 +237,10 @@
   <classpathentry kind="var" path="M2_REPO/org/springframework/extensions/surf/spring-cmis-framework/1.2.0-M3/spring-cmis-framework-1.2.0-M3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/extensions/surf/spring-surf/1.2.0-M3/spring-surf-1.2.0-M3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/yahoo/platform/yui/yuicompressor/2.4.7-patched/yuicompressor-2.4.7-patched.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-share/4.2.c/alfresco-share-4.2.c.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-web-framework-commons/4.2.c/alfresco-web-framework-commons-4.2.c.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/extensions/surf/spring-surf-api/1.2.0-M3/spring-surf-api-1.2.0-M3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/tuckey/urlrewritefilter/3.1.0/urlrewritefilter-3.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-repository/4.2.c/alfresco-repository-4.2.c-config.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-data-model/4.2.c/alfresco-data-model-4.2.c-config.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/antlr/stringtemplate/3.2.1/stringtemplate-3.2.1.jar"/>

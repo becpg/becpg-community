@@ -37,14 +37,14 @@
 					
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" template="/fr/becpg/components/form/2-column-set.ftl"
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"
 						appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />					
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:ncType" set="mainInfo" />
 					<field id="qa:ncPriority" set="mainInfo" >
 						<control
-							template="/fr/becpg/components/form/controls/selectone.ftl" >
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							 <control-param name="options">,1|priority.high,2|priority.medium,3|priority.low</control-param>
 						</control>
 					</field>
@@ -55,12 +55,12 @@
 					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
 					<field id="qa:ncCost" set="mainInfo" />			
 					<field id="cm:description" set="mainInfo" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 					<field id="qa:ncComment" set="mainInfo" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>																						
@@ -70,13 +70,13 @@
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
 					<field id="bcpg:suppliers" force="true" set="batch-info" />
 					<field id="qa:batchComment" set="batch-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
@@ -130,7 +130,7 @@
 					
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" template="/fr/becpg/components/form/2-column-set.ftl"
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"
 						appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />					
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
@@ -145,12 +145,12 @@
 					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
 					<field id="qa:ncCost" set="mainInfo" />			
 					<field id="cm:description" set="mainInfo" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 					<field id="qa:ncComment" set="mainInfo" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>															
@@ -160,20 +160,20 @@
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
 					<field id="bcpg:suppliers" force="true" set="batch-info" />
 					<field id="qa:batchComment" set="batch-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 					
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl"/>					
+						template="/org/alfresco/components/form/2-column-set.ftl"/>					
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
@@ -225,7 +225,7 @@
 					
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" template="/fr/becpg/components/form/2-column-set.ftl"
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"
 						appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />					
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" set="mainInfo" />
@@ -240,12 +240,12 @@
 					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
 					<field id="qa:ncCost" set="mainInfo" />					
 					<field id="cm:description" set="mainInfo" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 					<field id="qa:ncComment" set="mainInfo" >
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
@@ -255,20 +255,20 @@
 					<field id="qa:productHierarchy1" set="product-info" />
 					<field id="qa:productHierarchy2" set="product-info" />					
 
-					<set id="batch-info" template="/fr/becpg/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
 					<field id="bcpg:suppliers" force="true" set="batch-info" />
 					<field id="qa:batchComment" set="batch-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 					
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl"/>					
+						template="/org/alfresco/components/form/2-column-set.ftl"/>					
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
@@ -298,7 +298,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>									
@@ -325,7 +325,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>									
@@ -391,7 +391,7 @@
 					<field id="bcpg:clients" set="batch-info"/>
 					<field id="bcpg:suppliers" set="batch-info" />
 					<field id="qa:batchComment" set="batch-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
@@ -464,7 +464,7 @@
 					<field id="bcpg:clients" set="batch-info"/>
 					<field id="bcpg:suppliers" set="batch-info" />
 					<field id="qa:batchComment" set="batch-info">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
@@ -502,7 +502,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="qa:cpReleaseInfo" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
@@ -626,7 +626,7 @@
 				</field-visibility>				
 				<appearance>	
 					<field id="qa:wlComment">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>				
@@ -645,7 +645,7 @@
 				</field-visibility>				
 				<appearance>			
 					<field id="qa:wlComment">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>		

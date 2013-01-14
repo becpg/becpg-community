@@ -111,6 +111,30 @@ function main()
      }
 	}	
 
+	// Widget instantiation metadata...
+   var searchConfig = config.scoped['Search']['search'],
+       defaultMinSearchTermLength = searchConfig.getChildValue('min-search-term-length'),
+       defaultMaxSearchResults = searchConfig.getChildValue('max-search-results');
+
+   var search = {
+      id : "Search", 
+      name : "Alfresco.Search",
+      options : {
+         siteId : model.siteId,
+         siteTitle : model.siteTitle,
+         initialSearchTerm : model.searchTerm,
+         initialSearchTag : model.searchTag,
+         initialSearchAllSites : model.searchAllSites,
+         initialSearchRepository : model.searchRepo,
+         initialSort : model.searchSort,
+         searchQuery : model.searchQuery,
+         searchRootNode : config.scoped['RepositoryLibrary']['root-node'].value,
+         minSearchTermLength : parseInt((args.minSearchTermLength != null) ? args.minSearchTermLength : defaultMinSearchTermLength),
+         maxSearchResults : parseInt((args.maxSearchResults != null) ? args.maxSearchResults : defaultMaxSearchResults)
+      }
+   };
+   model.widgets = [search];
+
 	// Export Search Tpls
 	model.exportSearchTpls = getExportSearchTpls(datatype);
 }
