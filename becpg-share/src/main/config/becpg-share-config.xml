@@ -44,8 +44,8 @@
 						<item type="link" id="repository">/console/admin-console/repository</item>
 						<item type="link" id="trashcan">/console/admin-console/trashcan</item>
 						<item type="link" id="users">/console/admin-console/users</item>
-						<item type="link" id="becpg-admin">/console/admin-console/becpg-admin
-						</item>
+						<item type="link" id="becpg-admin">/console/admin-console/becpg-admin</item>
+						<item type="link" id="model-designer">/model-designer</item>
 						<item type="link" id="more">/console/admin-console/</item>
 					</container-group>
 				</item>

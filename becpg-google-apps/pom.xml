@@ -16,12 +16,12 @@
 	<dependencies>
 
 		<!-- alfresco -->
-         <dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-web-client</artifactId>
-            <version>${alfresco.version}</version>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-web-client</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- OpenID -->
 		<dependency>
@@ -73,11 +73,16 @@
 					<artifactId>javax.mail</artifactId>
 					<groupId>mail</groupId>
 				</exclusion>
-				<exclusion>
-					<artifactId>javax.servlet</artifactId>
-					<groupId>servlet-api</groupId>
-				</exclusion>
+
 			</exclusions>
 		</dependency>
-</dependencies>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
 </project>

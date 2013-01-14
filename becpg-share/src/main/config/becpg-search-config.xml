@@ -76,7 +76,7 @@
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel" label-id="becpg.forms.set.product-criteria.label" />
 				<!-- 	<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" /> -->
+						template="/org/alfresco/components/form/2-column-set.ftl" /> -->
 					<set id="ings-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.ings-criteria.label" />					
 
@@ -93,7 +93,7 @@
 					</field>
 					<field id="bcpg:productState" set="product-criteria">
 						<control
-							template="/fr/becpg/components/form/controls/selectone.ftl" >
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							 <control-param name="options">,ToValidate|state.product.tovalidate,Valid|state.product.valid,Refused|state.product.refused,Archived|state.product.archived</control-param>
 						</control>
 					</field>
@@ -105,12 +105,12 @@
 
 					<field id="bcpg:suppliers"  set="product-criteria">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					
 					<field id="bcpg:clients" set="product-criteria">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 
@@ -131,15 +131,15 @@
 					<!-- ing information -->
 					<field id="bcpg:ingListIng" set="ings-criteria">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListGeoOrigin" set="ings-criteria">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListBioOrigin" set="ings-criteria">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 				</appearance>

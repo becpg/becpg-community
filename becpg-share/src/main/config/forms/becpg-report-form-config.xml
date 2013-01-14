@@ -23,7 +23,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
-						<control template="/fr/becpg/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>									

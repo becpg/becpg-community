@@ -4,21 +4,21 @@
 		<aspects>
 			<visible>
 				<aspect name="cm:generalclassifiable" />
-            <aspect name="cm:complianceable" />
-            <aspect name="cm:dublincore" />
-            <aspect name="cm:effectivity" />
-            <aspect name="cm:summarizable" />
-            <aspect name="cm:versionable" />
-            <aspect name="cm:templatable" />
-            <aspect name="cm:emailed" />
-            <aspect name="emailserver:aliasable" />
-            <aspect name="cm:taggable" />
-            <aspect name="app:inlineeditable" />
-            <aspect name="gd:googleEditable" />
-            <aspect name="cm:geographic" />
-            <aspect name="exif:exif" />
-            <aspect name="audio:audio" />
-            <aspect name="cm:indexControl" />
+				<aspect name="cm:complianceable" />
+				<aspect name="cm:dublincore" />
+				<aspect name="cm:effectivity" />
+				<aspect name="cm:summarizable" />
+				<aspect name="cm:versionable" />
+				<aspect name="cm:templatable" />
+				<aspect name="cm:emailed" />
+				<aspect name="emailserver:aliasable" />
+				<aspect name="cm:taggable" />
+				<aspect name="app:inlineeditable" />
+				<aspect name="gd:googleEditable" />
+				<aspect name="cm:geographic" />
+				<aspect name="exif:exif" />
+				<aspect name="audio:audio" />
+				<aspect name="cm:indexControl" />
 
 				<!-- beCPG -->
 				<aspect name="bcpg:permissionsTpl" />
@@ -31,7 +31,7 @@
 				<aspect name="dsg:modelAspect" />
 				<aspect name="dsg:configAspect" />
 				<aspect name="gs1:gs1Aspect" />
-				<aspect name="pack:palletAspect" />				
+				<aspect name="pack:palletAspect" />
 				<aspect name="ext1:customAspect" />
 				<aspect name="bp:cataloguable" />
 			</visible>
@@ -78,7 +78,7 @@
 				<subtype name="dsg:config" />
 				<subtype name="cm:dictionaryModel" />
 				<subtype name="bpm:workflowDefinition" />
-				
+
 				<subtype name="pjt:project" />
 				<subtype name="pjt:projectTpl" />
 			</type>
@@ -99,11 +99,11 @@
 				<subtype name="bcpg:organoList" />
 				<subtype name="bcpg:physicoChemList" />
 			</type>
-			
-			
-			 <type name="trx:transferTarget">
-               <subtype name="trx:fileTransferTarget" />
-         </type>
+
+
+			<type name="trx:transferTarget">
+				<subtype name="trx:fileTransferTarget" />
+			</type>
 		</types>
 
 
@@ -124,18 +124,14 @@
 				label.code}{erpCode label.erpCode}{eanCode label.eanCode}</line> <line index="10" 
 				id="bcpg:suppliers" /> <line index="10" id="bcpg:clients"" /> </template> -->
 		</metadata-templates>
-      <!--
-         File upload configuration
-      -->
-      <file-upload>
-         <!--
-            Adobe Flash™
-            In certain environments, an HTTP request originating from Flash cannot be authenticated using an existing session.
-            See: http://bugs.adobe.com/jira/browse/FP-4830
-            For these cases, it is useful to disable the Flash-based uploader for Share Document Libraries.
-         -->
-         <adobe-flash-enabled>true</adobe-flash-enabled>
-      </file-upload>
+		<!-- File upload configuration -->
+		<file-upload>
+			<!-- Adobe Flash™ In certain environments, an HTTP request originating 
+				from Flash cannot be authenticated using an existing session. See: http://bugs.adobe.com/jira/browse/FP-4830 
+				For these cases, it is useful to disable the Flash-based uploader for Share 
+				Document Libraries. -->
+			<adobe-flash-enabled>true</adobe-flash-enabled>
+		</file-upload>
 
 	</config>
 
@@ -143,48 +139,91 @@
 	<config evaluator="string-compare" condition="DocumentLibrary"
 		replace="true">
 		<create-content>
-			 <content id="plain-text" label="create-content.text" type="pagelink" index="10" icon="text">
-            <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain</param>
-         </content>
-         <content id="html" label="create-content.html" type="pagelink" index="20">
-            <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/html</param>
-         </content>
-         <content id="xml" label="create-content.xml" type="pagelink" index="30">
-            <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/xml</param>
-         </content>
-         
-         
-         
-         <!-- 
+			<content id="plain-text" label="create-content.text"
+				type="pagelink" index="10" icon="text-file">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain
+				</param>
+			</content>
+			<content id="html" icon="html-file" label="create-content.html"
+				type="pagelink" index="20">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/html
+				</param>
+			</content>
+			<content id="xml" icon="xml-file" label="create-content.xml"
+				type="pagelink" index="30">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/xml
+				</param>
+			</content>
 			<content id="rawMaterial" label="menu.create-content.rawMaterial"
-				formid="create" itemid="bcpg:rawMaterial" icon="generic-rawMaterial" />
+				type="pagelink" index="40" icon="generic-rawMaterial">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:rawMaterial&amp;formId=create
+				</param>
+			</content>
 			<content id="localSemiFinishedProduct" label="menu.create-content.localSemiFinishedProduct"
-				formid="create" itemid="bcpg:localSemiFinishedProduct" icon="generic-localSemiFinishedProduct"  />
+				type="pagelink" index="50" icon="generic-localSemiFinishedProduct">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:localSemiFinishedProduct&amp;formId=create
+				</param>
+			</content>
 			<content id="semiFinishedProduct" label="menu.create-content.semiFinishedProduct"
-				formid="create" itemid="bcpg:semiFinishedProduct" icon="generic-semiFinishedProduct" />
+				type="pagelink" index="50" icon="generic-semiFinishedProduct">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:semiFinishedProduct&amp;formId=create
+				</param>
+			</content>
 			<content id="finishedProduct" label="menu.create-content.finishedProduct"
-				formid="create" itemid="bcpg:finishedProduct" icon="generic-finishedProduct"  />
+				type="pagelink" index="60" icon="generic-finishedProduct">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:finishedProduct&amp;formId=create
+				</param>
+			</content>
 			<content id="packagingMaterial" label="menu.create-content.packagingMaterial"
-				formid="create" itemid="bcpg:packagingMaterial" icon="generic-packagingMaterial"  />
+				type="pagelink" index="70" icon="generic-packagingMaterial">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingMaterial&amp;formId=create
+				</param>
+			</content>
 			<content id="packagingKit" label="menu.create-content.packagingKit"
-				formid="create" itemid="bcpg:packagingKit" icon="generic-packagingKit"  />
+				type="pagelink" index="80" icon="generic-packagingKit">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingKit&amp;formId=create
+				</param>
+			</content>
 			<content id="resourceProduct" label="menu.create-content.resourceProduct"
-				formid="create" itemid="bcpg:resourceProduct" icon="generic-resourceProduct"  />
+				type="pagelink" index="90" icon="generic-resourceProduct">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:resourceProduct&amp;formId=create
+				</param>
+			</content>
 			<content id="supplier" label="menu.create-content.supplier"
-				formid="create" itemid="bcpg:supplier" icon="generic-supplier"  />
-			<content id="client" label="menu.create-content.client"
-				formid="create" itemid="bcpg:client" icon="generic-client"  />
-			<content id="nc" label="menu.create-content.nc" formid="create"
-				itemid="qa:nc" icon="generic-nc"  />
+				type="pagelink" index="100" icon="generic-supplier">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create
+				</param>
+			</content>
+			<content id="client" label="menu.create-content.client" type="pagelink"
+				index="110" icon="generic-client">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:client&amp;formId=create
+				</param>
+			</content>
+			<content id="nc" label="menu.create-content.nc" index="111" icon="generic-nc">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:nc&amp;formId=create
+				</param>
+			</content>
 			<content id="controlPlan" label="menu.create-content.controlPlan"
-				formid="create" itemid="qa:controlPlan" icon="generic-controlPlan"  />
+				type="pagelink" index="120" icon="generic-controlPlan">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:controlPlan&amp;formId=create
+				</param>
+			</content>
 			<content id="qualityControl" label="menu.create-content.qualityControl"
-				formid="create" itemid="qa:qualityControl" icon="generic-qualityControl"  />
+				type="pagelink" index="130" icon="generic-qualityControl">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:qualityControl&amp;formId=create
+				</param>
+			</content>
 			<content id="changeOrder" label="menu.create-content.eco"
-				formid="create" itemid="ecm:changeOrder" icon="generic-changeOrder"  />
+				type="pagelink" index="140" icon="generic-changeOrder">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create
+				</param>
+			</content>
 			<content id="project" label="menu.create-content.project"
-				formid="create" itemid="pjt:project" icon="generic-project"  />
-		 -->
+				type="pagelink" index="150" icon="generic-project">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create
+				</param>
+			</content>
+
 		</create-content>
 
 
@@ -204,7 +243,7 @@
 				<!-- aspect check bcpg:entityListsAspect -->
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
-			
+
 			<action id="entity-refresh-report" type="javascript"
 				label="actions.document.refreshReport">
 				<param name="function">onActionRefreshReport</param>
@@ -257,98 +296,113 @@
 
 		</actions>
 
- <!--
-         Action Group resolver - decides which action group id to use for a node
-      -->
-      <actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
+		<!-- Action Group resolver - decides which action group id to use for a 
+			node -->
+		<actionGroupResolver>becpg.resolver.doclib.actionGroup
+		</actionGroupResolver>
 
 		<actionGroups>
-		
+
 			<actionGroup id="entity-browse">
 				<action index="10" id="entity-view-datalist" />
-            <action index="110" id="document-view-content" />
-            <action index="120" id="document-locate" />
-            <action index="130" id="entity-edit-metadata" />
-            <action index="150" id="document-view-original" />
-            <action index="160" id="document-view-working-copy" />
-            <action index="170" id="document-approve" />
-            <action index="180" id="document-reject" />
-            <action index="200" id="document-edit-online" />
-            <action index="220" id="document-view-googledoc" />
-            <action index="230" id="document-checkout-to-googledocs" />
-            <action index="240" id="document-checkin-from-googledocs" />
-            <action index="250" id="document-copy-to" />
-            <action index="260" id="document-move-to" />
-            <action index="270" id="document-delete" />
-            <action index="280" id="document-assign-workflow" />
-            <action index="300" id="document-publish" />
-            <action index="310" id="document-view-googlemaps" />
-            <action index="320" id="document-view-in-source-repository" />
-         </actionGroup>
+				<action index="110" id="document-view-content" />
+				<action index="120" id="document-locate" />
+				<action index="130" id="entity-edit-metadata" />
+				<action index="150" id="document-view-original" />
+				<action index="160" id="document-view-working-copy" />
+				<action index="170" id="document-approve" />
+				<action index="180" id="document-reject" />
+				<action index="200" id="document-edit-online" />
+				<action index="220" id="document-view-googledoc" />
+				<action index="230" id="document-checkout-to-googledocs" />
+				<action index="240" id="document-checkin-from-googledocs" />
+				<action index="250" id="document-copy-to" />
+				<action index="260" id="document-move-to" />
+				<action index="270" id="document-delete" />
+				<action index="280" id="document-assign-workflow" />
+				<action index="300" id="document-publish" />
+				<action index="310" id="document-view-googlemaps" />
+				<action index="320" id="document-view-in-source-repository" />
+			</actionGroup>
 
-         <actionGroup id="entity-details">
-				<action index="10" id="entity-view-datalist" />			
+			<actionGroup id="entity-details">
+				<action index="10" id="entity-view-datalist" />
 				<action index="111" id="entity-checkin" />
 				<action index="112" id="entity-checkout" />
 				<action index="113" id="entity-cancel-editing" />
-            <action index="120" id="document-edit-metadata" />
-            <action index="140" id="document-view-original" />
-            <action index="150" id="document-view-working-copy" />
-            <action index="160" id="document-approve" />
-            <action index="170" id="document-reject" />
-            <action index="190" id="document-edit-online" />
-            <action index="210" id="document-view-googledoc" />
-            <action index="220" id="document-checkout-to-googledocs" />
-            <action index="230" id="document-checkin-from-googledocs" />
-            <action index="240" id="entity-refresh-report" />
-            <action index="250" id="document-copy-to" />
-            <action index="260" id="document-move-to" />
-            <action index="270" id="document-delete" />
-            <action index="270" id="document-assign-workflow" />
-            <action index="310" id="document-manage-aspects" />
-            <action index="330" id="document-view-in-source-repository" />
-            <action index="340" id="document-publish" />
-            <action index="350" id="document-view-googlemaps" />
-         </actionGroup>
+				<action index="120" id="document-edit-metadata" />
+				<action index="140" id="document-view-original" />
+				<action index="150" id="document-view-working-copy" />
+				<action index="160" id="document-approve" />
+				<action index="170" id="document-reject" />
+				<action index="190" id="document-edit-online" />
+				<action index="210" id="document-view-googledoc" />
+				<action index="220" id="document-checkout-to-googledocs" />
+				<action index="230" id="document-checkin-from-googledocs" />
+				<action index="240" id="entity-refresh-report" />
+				<action index="250" id="document-copy-to" />
+				<action index="260" id="document-move-to" />
+				<action index="270" id="document-delete" />
+				<action index="270" id="document-assign-workflow" />
+				<action index="310" id="document-manage-aspects" />
+				<action index="330" id="document-view-in-source-repository" />
+				<action index="340" id="document-publish" />
+				<action index="350" id="document-view-googlemaps" />
+			</actionGroup>
 
 
- 		  <actionGroup id="entityV2-browse">
- 		  	   <action index="10" id="entity-view-datalist" />
-            <action index="100" id="folder-view-details" />
-            <action index="110" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" />
-            <action index="120" id="document-approve" icon="folder-approve" />
-            <action index="130" id="document-reject" icon="folder-reject" />
-            <action index="140" id="document-locate" icon="document-locate" label="actions.folder.locate" />
-            <action index="150" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
-            <action index="160" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
-            <action index="170" id="folder-manage-rules" />
-            <action index="180" id="document-delete" icon="folder-delete" label="actions.folder.delete" />
-            <action index="190" id="document-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-            <action index="200" id="document-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-            <action index="210" id="document-manage-aspects" label="actions.folder.manage-aspects" />
-            <action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
-         </actionGroup>
+			<actionGroup id="entityV2-browse">
+				<action index="10" id="entity-view-datalist" />
+				<action index="100" id="folder-view-details" />
+				<action index="110" id="document-edit-properties" icon="folder-edit-properties"
+					label="actions.folder.edit-metadata" />
+				<action index="120" id="document-approve" icon="folder-approve" />
+				<action index="130" id="document-reject" icon="folder-reject" />
+				<action index="140" id="document-locate" icon="document-locate"
+					label="actions.folder.locate" />
+				<action index="150" id="document-copy-to" icon="folder-copy-to"
+					label="actions.folder.copy-to" />
+				<action index="160" id="document-move-to" icon="folder-move-to"
+					label="actions.folder.move-to" />
+				<action index="170" id="folder-manage-rules" />
+				<action index="180" id="document-delete" icon="folder-delete"
+					label="actions.folder.delete" />
+				<action index="190" id="document-manage-site-permissions"
+					icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+				<action index="200" id="document-manage-repo-permissions"
+					icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+				<action index="210" id="document-manage-aspects" label="actions.folder.manage-aspects" />
+				<action index="220" id="document-view-in-source-repository"
+					label="actions.folder.view-source-repository" />
+			</actionGroup>
 
-         <actionGroup id="entityV2-details">
-            <action index="10" id="entity-view-datalist" />			
+			<actionGroup id="entityV2-details">
+				<action index="10" id="entity-view-datalist" />
 				<action index="111" id="entity-checkin" />
 				<action index="112" id="entity-checkout" />
 				<action index="113" id="entity-cancel-editing" />
-            <action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
-            <action index="110" id="document-approve" icon="folder-approve" />
-            <action index="120" id="document-reject" icon="folder-reject" />
-            <action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
-            <action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
-            <action index="150" id="folder-manage-rules" />
-            <action index="240" id="entity-refresh-report" />
-            <action index="160" id="document-delete" icon="folder-delete" label="actions.folder.delete" />
-            <action index="170" id="document-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-            <action index="180" id="document-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-            <action index="190" id="document-manage-aspects" label="actions.folder.manage-aspects" />
-            <action index="200" id="document-change-type" label="actions.folder.change-type" />
-            <action index="210" id="view-in-explorer" />
-            <action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
-         </actionGroup>
+				<action index="100" id="document-edit-metadata" icon="folder-edit-metadata"
+					label="actions.folder.edit-metadata" />
+				<action index="110" id="document-approve" icon="folder-approve" />
+				<action index="120" id="document-reject" icon="folder-reject" />
+				<action index="130" id="document-copy-to" icon="folder-copy-to"
+					label="actions.folder.copy-to" />
+				<action index="140" id="document-move-to" icon="folder-move-to"
+					label="actions.folder.move-to" />
+				<action index="150" id="folder-manage-rules" />
+				<action index="240" id="entity-refresh-report" />
+				<action index="160" id="document-delete" icon="folder-delete"
+					label="actions.folder.delete" />
+				<action index="170" id="document-manage-site-permissions"
+					icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+				<action index="180" id="document-manage-repo-permissions"
+					icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+				<action index="190" id="document-manage-aspects" label="actions.folder.manage-aspects" />
+				<action index="200" id="document-change-type" label="actions.folder.change-type" />
+				<action index="210" id="view-in-explorer" />
+				<action index="220" id="document-view-in-source-repository"
+					label="actions.folder.view-source-repository" />
+			</actionGroup>
 
 		</actionGroups>
 
@@ -358,10 +412,7 @@
 
 		<dependencies>
 			<css src="/modules/entity-version/new-version-min.css" />
-			<css src="/components/documentlibrary/becpg/documentlib.css" />
 			<js src="/modules/entity-version/new-version-min.js" />
-			<js src="/components/documentlibrary/becpg/fileIcons-min.js" />
-			<js src="/components/documentlibrary/becpg/metadataRenderers-min.js" />
 			<js src="/components/documentlibrary/becpg/docLibAction-min.js" />
 		</dependencies>
 

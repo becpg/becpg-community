@@ -82,13 +82,13 @@
 				<appearance>			
 					<field id="var:pvlPartner">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 								<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entity?classNames=bcpg:client,bcpg:supplier</control-param>
 							</control>
 					</field>
 					<field id="var:pvlCharact">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>		
 				</appearance>
 			</form>			
@@ -108,13 +108,13 @@
 				<appearance>					
 					<field id="var:pvlPartner">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 								<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entity?classNames=bcpg:client,bcpg:supplier</control-param>
 							</control>
 					</field>
 					<field id="var:pvlCharact">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>

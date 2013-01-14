@@ -1,7 +1,7 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 <import resource="classpath:/alfresco/site-webscripts/org/alfresco/components/document-details/beCPG.lib.js">
 
-
+//beCPG DEPRECATED remove when entity folder
 function main()
 {
    AlfrescoUtil.param('nodeRef');
@@ -15,6 +15,17 @@ function main()
 	      model.repositoryUrl = AlfrescoUtil.getRepositoryUrl();
 	  }
    }
+   
+     // Widget instantiation metadata...
+   var documentActions = {
+      id: "DocumentLinks", 
+      name: "Alfresco.DocumentLinks",
+      options: {
+         nodeRef: model.nodeRef,
+         siteId: model.site
+      }
+   };
+   model.widgets = [documentActions];
 }
 
 main();
