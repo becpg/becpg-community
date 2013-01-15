@@ -35,12 +35,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-controls-core</artifactId>
-			<type>amp</type>
-			<version>1.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-share</artifactId>
 			<type>amp</type>
 			<version>1.5.0</version>
@@ -95,7 +89,7 @@
 	            <goal>single</goal>
 	          </goals>
 	          <configuration>
-	            <finalName>becpg-${pom.version}-${maven.build.timestamp}</finalName>
+	            <finalName>becpg-${project.version}-${maven.build.timestamp}</finalName>
 	            <descriptors>
 	              <descriptor>distribution.xml</descriptor>
 	            </descriptors>
