@@ -29,7 +29,8 @@
     * YUI Library aliases
     */
    var Dom = YAHOO.util.Dom,
-       Event = YAHOO.util.Event;
+       Event = YAHOO.util.Event,
+       Bubbling = YAHOO.Bubbling;
 
    /**
     * Alfresco Slingshot aliases
@@ -47,7 +48,8 @@
    {
       Alfresco.AdvancedSearch.superclass.constructor.call(this, "Alfresco.AdvancedSearch", htmlId, ["button", "container"]);
       
-      YAHOO.Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
+      Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
+      Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
       
       return this;
    };
@@ -293,16 +295,27 @@
                      }
                      // beCPG : clear the value, otherwise value is keeped in a hidden field and we don't understand the results
                      // TODO : assoc, now we clear saved value, but we should rendered it instead of clearing it
-                     else if(name.indexOf("assoc_") == 0)
-                     {
-                     }
-                     else
+                     else if(name.indexOf("assoc_") != 0)
                      {
                         element.value = savedValue;
+                     }
+                      // reverse value setting doesn't work with checkboxes because of the 
+                     // hidden field used to store the underlying field value
+                     if (element.type === "hidden")
+                     {
+                     	// hidden fields could be a part of a checkbox in the Forms runtime
+                     	// so look if there is a checkbox attached this hidden field and set the value
+                     	var chk = Dom.get(element.id + "-entry");
+                     	if (chk && chk.type === "checkbox")
+                     	{
+                     	   chk.checked = (savedValue === "true");
+                     	}
                      }
                   }
                }
             }
+            
+            Bubbling.fire("formContentsUpdated");
          }
       },
       
@@ -349,6 +362,18 @@
          }
       },
       
+      /**
+       * Event handler called when the "afterFormRuntimeInit" event is received
+       */
+      onAfterFormRuntimeInit: function ADVSearch_onAfterFormRuntimeInit(layer, args)
+      {
+         // extract the current form runtime - so we can reference it later
+         this.currentForm.runtime = args[1].runtime;
+         var form = (Dom.get(this.currentForm.runtime.formId));
+         Event.removeListener(form, "submit");
+         form.setAttribute("onsubmit", "return false;");
+      },
+
       /**
        * Search text box ENTER key event handler
        * 

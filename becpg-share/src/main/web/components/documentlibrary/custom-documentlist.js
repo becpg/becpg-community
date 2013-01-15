@@ -2,9 +2,19 @@
 (function()
 {
 	
+	/**
+    * YUI Library aliases
+    */
+   var Dom = YAHOO.util.Dom;
 
-	
-	
+   /**
+    * Alfresco Slingshot aliases
+    */
+   var $html = Alfresco.util.encodeHTML,
+      $combine = Alfresco.util.combinePaths,
+      $siteURL = Alfresco.util.siteURL,
+      $isValueSet = Alfresco.util.isValueSet;
+
 	
 	
   // Define constructor...
@@ -12,7 +22,7 @@
   {
     beCPG.custom.DocumentList.superclass.constructor.call(this, htmlId);
     
- 	 YAHOO.Bubbling.on("doclistMetadata", this.onDoclistMetadata);
+ 	 YAHOO.Bubbling.on("doclistMetadata", this.onDoclistMetadata,this);
     
     return this;
   };
@@ -21,14 +31,16 @@
   YAHOO.extend(beCPG.custom.DocumentList, Alfresco.DocumentList,
   {
 	  
-	  onDoclistMetadata : function (args){
+	  onDoclistMetadata : function (layer, args){
 		
-		  var metadata = args[0], me = this;
+
+		  var metadata = args[1].metadata, me = this;
 		  //beCPG 
         if (metadata!=null 
          		&& metadata.parent!=null 
          		&& metadata.parent.type == "bcpg:entityFolder")
-         {                            
+         {
+      	  
             var div = Dom.get(me.id + "-becpg-entityFolder-instructions"),
             		instructionKey,
             		entityFolderClassName = metadata.parent.properties["bcpg:entityFolderClassName"], 

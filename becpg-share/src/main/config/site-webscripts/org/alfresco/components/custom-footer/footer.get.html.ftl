@@ -3,7 +3,8 @@
 <@markup id="google-analytics"  target="js" action="after">
    <#assign fc=config.scoped["Edition"]["footer"]>
 	<#if fc.getChildValue("analytics-id")??>
-		<@inlineScript group="analitics">
+		<script type="text/javascript">
+			//<![CDATA[ 
 			  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', '${fc.getChildValue("analytics-id")}']);
 		  _gaq.push(['_trackPageview']);
@@ -14,6 +15,7 @@
 		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		  })();
 		
-		</@>
+				//]]>
+		</script>
 	</#if>
 </@>
