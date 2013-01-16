@@ -54,7 +54,7 @@
 				</field-visibility>
 				<appearance>					
 					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 						
 					<!-- NPD -->
 					<field id="npd:npdNumber" set="npd" />

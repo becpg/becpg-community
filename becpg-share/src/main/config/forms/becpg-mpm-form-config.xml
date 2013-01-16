@@ -86,15 +86,15 @@
 				<appearance>					
 					<field id="mpm:plStep">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="mpm:plProduct">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="mpm:plResource">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -129,15 +129,15 @@
 				<appearance>					
 					<field id="mpm:plStep">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="mpm:plProduct">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="mpm:plResource">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>

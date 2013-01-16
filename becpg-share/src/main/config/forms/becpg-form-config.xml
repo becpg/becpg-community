@@ -1,18 +1,6 @@
 <alfresco-config>
 
-	<config>
-		<forms>
-			<dependencies>
-				<css src="/modules/autocomplete/autocomplete-ext-min.css" />
-				<css src="/modules/spel-editor/spel-editor-min.css" />
-				<css src="/modules/spel-editor/shThemeDefault.css" />
-				<js src="/modules/spel-editor/spel-editor-min.js" />
-				<js src="/modules/spel-editor/shCore.js" />
-				<js src="/modules/spel-editor/shBrushJScript.js" />
-				<js src="/yui/editor/editor-min.js" />
-			</dependencies>
-		</forms>
-	</config>
+
 
 
 	<!--___________________________________________________ PRODUITS __________________________________________________ -->
@@ -70,7 +58,7 @@
 	<config evaluator="node-type" condition="bcpg:finishedProduct">
 		<forms>
 			<form>
-				<edit-form template="/fr/becpg/components/form/tab-edit-form.ftl" />
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
 				<field-visibility>
 
 					<!-- mainInfo -->
@@ -112,11 +100,13 @@
 					<show id="bcpg:projectedQty" force="true" />
 					<show id="bcpg:profitability" force="true" />
 
-					<!-- NPD -->
+					<!-- NPD 
 					<show id="npd:npdNumber" />
 					<show id="npd:npdType" />
 					<show id="npd:npdStatus" />
 					<show id="npd:npdInitiator" />
+					-->
+
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -164,41 +154,41 @@
 				<appearance>
 					<set id="mainTab" label-id="becpg.forms.set.characteristics.label" />
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="project" appearance="bordered-panel"
-						label-id="becpg.forms.set.project.label" template="/fr/becpg/components/form/2-column-set.ftl"
+						label-id="becpg.forms.set.project.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="formulation" appearance="bordered-panel"
-						label-id="becpg.forms.set.formulation-quality.label" template="/fr/becpg/components/form/3-column-set.ftl"
+						label-id="becpg.forms.set.formulation-quality.label" template="/org/alfresco/components/form/3-column-set.ftl"
 						parent="mainTab" />
 					<set id="profitability" appearance="bordered-panel"
-						label-id="becpg.forms.set.rentability.label" template="/fr/becpg/components/form/3-column-set.ftl"
+						label-id="becpg.forms.set.rentability.label" template="/org/alfresco/components/form/3-column-set.ftl"
 						parent="mainTab" />
 					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" parent="mainTab" />
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
 
 
 					<set id="publicationTab" label-id="becpg.forms.set.publication.label" />
 					<set appearance="bordered-panel" id="mesuresPanel"
 						label-id="becpg.forms.set.measures.label" parent="publicationTab"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set appearance="bordered-panel" id="indicateursPanel"
 						label-id="becpg.forms.set.indicators.label" parent="publicationTab"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set appearance="bordered-panel" id="datesPanel"
 						label-id="becpg.forms.set.dates.label" parent="publicationTab"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set appearance="bordered-panel" id="packagingPanel"
 						label-id="becpg.forms.set.packaging.label" parent="publicationTab"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 
 					<!-- Main info -->
@@ -215,14 +205,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -245,7 +235,7 @@
 										
 					<field id="pjt:project" set="project">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -256,13 +246,13 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productMicrobioCriteria" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
@@ -276,12 +266,12 @@
 					<field id="bcpg:projectedQty" set="profitability" />
 					<field id="bcpg:profitability" read-only="true" set="profitability" />
 
-					<!-- NPD -->
+					<!-- NPD 
 					<field id="npd:npdNumber" set="npd" />
 					<field id="npd:npdType" set="npd" />
 					<field id="npd:npdStatus" set="npd" />
 					<field id="npd:npdInitiator" set="npd" />
-
+					-->
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -402,15 +392,15 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="formulation" appearance="bordered-panel"
-						label-id="becpg.forms.set.formulation-quality.label" template="/fr/becpg/components/form/3-column-set.ftl" />
+						label-id="becpg.forms.set.formulation-quality.label" template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="profitability" appearance="bordered-panel"
-						label-id="becpg.forms.set.rentability.label" template="/fr/becpg/components/form/3-column-set.ftl" />
+						label-id="becpg.forms.set.rentability.label" template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -426,14 +416,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -457,13 +447,13 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productMicrobioCriteria" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
@@ -529,11 +519,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -549,14 +539,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -618,9 +608,9 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -636,14 +626,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -715,13 +705,13 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="pallet" appearance="bordered-panel" label-id="becpg.forms.set.pallet.label" 
-						template="/fr/becpg/components/form/2-column-set.ftl"/>
+						template="/org/alfresco/components/form/2-column-set.ftl"/>
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -737,14 +727,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -817,11 +807,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -837,14 +827,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -914,11 +904,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -934,14 +924,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1013,9 +1003,9 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -1031,14 +1021,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1112,11 +1102,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -1132,14 +1122,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1158,7 +1148,7 @@
 
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 
@@ -1220,9 +1210,9 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -1238,14 +1228,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1263,7 +1253,7 @@
 					<field id="rep:reportTpls" set="mainInfo" />
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
@@ -1328,13 +1318,13 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="formulation" appearance="bordered-panel"
-						label-id="becpg.forms.set.formulation-quality.label" template="/fr/becpg/components/form/3-column-set.ftl" />
+						label-id="becpg.forms.set.formulation-quality.label" template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -1350,14 +1340,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1376,13 +1366,13 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productMicrobioCriteria" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
@@ -1447,11 +1437,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="formulation" appearance="bordered-panel"
-						label-id="becpg.forms.set.formulation-quality.label" template="/fr/becpg/components/form/3-column-set.ftl" />
+						label-id="becpg.forms.set.formulation-quality.label" template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 
 
 					<!-- Main info -->
@@ -1468,14 +1458,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1494,13 +1484,13 @@
 					<field id="bcpg:productDensity" set="formulation" />
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productMicrobioCriteria" set="formulation">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
@@ -1560,11 +1550,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -1580,14 +1570,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1657,11 +1647,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/fr/becpg/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -1677,14 +1667,14 @@
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy1" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
@@ -1881,7 +1871,7 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
 							</control-param>
 						</control>
@@ -1889,7 +1879,7 @@
 					<field id="bcpg:allergenCode" />
 					<field id="bcpg:allergenSubset">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 				</appearance>
@@ -1917,7 +1907,7 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
 							</control-param>
 						</control>
@@ -1925,7 +1915,7 @@
 					<field id="bcpg:allergenCode" />
 					<field id="bcpg:allergenSubset">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 				</appearance>
@@ -1939,7 +1929,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:allergenType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
 							</control-param>
 						</control>
@@ -2964,20 +2954,20 @@
 				<appearance>
 					<field id="bcpg:compoListProduct">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:compoListDeclType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:parentLevel">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>	
 							<control-param name="showTooltip">false</control-param>							
@@ -2996,13 +2986,13 @@
 						
 					<field id="bcpg:compoListProduct">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:depthLevel">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all</control-param>
 						</control>
 					</field>					
@@ -3055,20 +3045,20 @@
 				<appearance>					
 					<field id="bcpg:compoListProduct">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:compoListDeclType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:parentLevel">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>
 							<control-param name="showTooltip">false</control-param>
@@ -3097,7 +3087,7 @@
 				<appearance>
 					<field id="bcpg:packagingListProduct">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>
@@ -3142,7 +3132,7 @@
 				<appearance>
 					<field id="bcpg:packagingListProduct">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>
@@ -3172,21 +3162,21 @@
 				<appearance>
 					<field id="bcpg:allergenListAllergen">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
 					<field id="bcpg:allergenListVolSources">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVolSources">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
 							</control-param>
 						</control>
@@ -3227,20 +3217,20 @@
 				<appearance>
 					<field id="bcpg:allergenListAllergen">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
 					<field id="bcpg:allergenListVolSources">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVolSources">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing
 							</control-param>
 						</control>
@@ -3267,7 +3257,7 @@
 				<appearance>
 					<field id="bcpg:costListCost">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3299,7 +3289,7 @@
 				<appearance>
 					<field id="bcpg:costListCost">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3322,13 +3312,13 @@
 				<appearance>
 					<field id="bcpg:costDetailsListCost">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 				<appearance>
 					<field id="bcpg:costDetailsListSource">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3360,13 +3350,13 @@
 				<appearance>
 					<field id="bcpg:costDetailsListCost">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 				<appearance>
 					<field id="bcpg:costDetailsListSource">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3392,7 +3382,7 @@
 				<appearance>
 					<field id="bcpg:priceListCost">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:startEffectivity">
 						<control template="/org/alfresco/components/form/controls/date.ftl" >
@@ -3441,7 +3431,7 @@
 				<appearance>
 					<field id="bcpg:priceListCost">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:startEffectivity">
 						<control template="/org/alfresco/components/form/controls/date.ftl" >
@@ -3519,19 +3509,19 @@
 				<appearance>
 					<field id="bcpg:ingListIng">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListGeoOrigin">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListBioOrigin">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListSubIng">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3569,19 +3559,19 @@
 				<appearance>
 					<field id="bcpg:ingListIng">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListGeoOrigin">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListBioOrigin">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListSubIng">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3604,7 +3594,7 @@
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -3640,7 +3630,7 @@
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -3668,7 +3658,7 @@
 				<appearance>
 					<field id="bcpg:nutListNut">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3703,7 +3693,7 @@
 				<appearance>
 					<field id="bcpg:nutListNut">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3723,7 +3713,7 @@
 				<appearance>
 					<field id="bcpg:organoListOrgano">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3750,7 +3740,7 @@
 				<appearance>
 					<field id="bcpg:organoListOrgano">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3773,7 +3763,7 @@
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3806,7 +3796,7 @@
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3831,7 +3821,7 @@
 
 				<appearance>
 					<field id="bcpg:filReqType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
 							</control-param>
 						</control>
@@ -3840,28 +3830,28 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:filIsGMO">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filIsIonized">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filIngs">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:filGeoOrigins">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:filBioOrigins">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3899,7 +3889,7 @@
 
 				<appearance>
 					<field id="bcpg:filReqType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
 							</control-param>
 						</control>
@@ -3908,28 +3898,28 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:filIsGMO">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filIsIonized">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filIngs">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:filGeoOrigins">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:filBioOrigins">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -3949,7 +3939,7 @@
 
 				<appearance>
 					<field id="bcpg:rclReqType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
 							</control-param>
 						</control>
@@ -3983,7 +3973,7 @@
 
 				<appearance>
 					<field id="bcpg:rclReqType">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
 							</control-param>
 						</control>
@@ -4149,7 +4139,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:parentLevel" >
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="urlParamsToPass">destination,itemId</control-param>
@@ -4172,7 +4162,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:parentLevel" >
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="urlParamsToPass">destination,itemId</control-param>
@@ -4200,7 +4190,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:parentLevel" >
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="urlParamsToPass">destination,itemId</control-param>

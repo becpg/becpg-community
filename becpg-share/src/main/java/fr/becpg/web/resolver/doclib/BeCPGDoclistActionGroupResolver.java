@@ -18,6 +18,7 @@
  */
 package fr.becpg.web.resolver.doclib;
 
+import org.alfresco.web.resolver.doclib.DoclistActionGroupResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONArray;
@@ -29,9 +30,9 @@ import org.json.simple.JSONObject;
  * 
  * @author matthieu
  */
-public class DefaultDoclistActionGroupResolver implements DoclistActionGroupResolver {
+public class BeCPGDoclistActionGroupResolver implements DoclistActionGroupResolver {
 
-	private static Log logger = LogFactory.getLog(DefaultDoclistActionGroupResolver.class);
+	private static Log logger = LogFactory.getLog(BeCPGDoclistActionGroupResolver.class);
 
 	/**
 	 * Will return the action group id matching action group configs in a, i.e.

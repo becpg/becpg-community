@@ -17,6 +17,14 @@
 					<targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-documentlibrary</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.document-details</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-document-details</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>

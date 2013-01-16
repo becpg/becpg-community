@@ -48,7 +48,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:projectHierarchy1">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
@@ -70,7 +70,7 @@
 						</control>
 					</field>
 					<field id="pjt:projectState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
@@ -103,7 +103,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:projectHierarchy1">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
@@ -114,7 +114,7 @@
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
 					<field id="pjt:projectState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
@@ -179,7 +179,7 @@
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
 					<field id="pjt:projectState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
@@ -205,7 +205,7 @@
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
 					<field id="pjt:projectState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
@@ -271,14 +271,14 @@
 					</field>
 					<field id="pjt:tlPrevTasks">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
@@ -311,14 +311,14 @@
 					</field>
 					<field id="pjt:tlPrevTasks">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
@@ -367,14 +367,14 @@
 				<appearance>
 					<field id="pjt:dlTask">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:dlState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.deliverablestate.planned,InProgress|data.deliverablestate.inprogress,Completed|data.deliverablestate.completed,Closed|data.deliverablestate.closed
 							</control-param>
 						</control>
@@ -403,14 +403,14 @@
 				<appearance>
 					<field id="pjt:dlTask">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:dlState">
-						<control template="/fr/becpg/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.deliverablestate.planned,InProgress|data.deliverablestate.inprogress,Completed|data.deliverablestate.completed,Closed|data.deliverablestate.closed
 							</control-param>
 						</control>
@@ -441,7 +441,7 @@
 				</field-visibility>
 				<appearance>
 					<set id="project" appearance="bordered-panel" label-id="becpg.forms.set.project.label"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="pjt:project" set="project" />
 				</appearance>
 			</form>

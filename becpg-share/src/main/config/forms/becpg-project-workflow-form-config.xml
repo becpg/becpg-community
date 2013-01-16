@@ -31,7 +31,7 @@
 					<field id="pjt:workflowTask" label="Tâche" mandatory="false"
 						read-only="false" set="items">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="packageItems" mandatory="false" read-only="false"
 						set="items" />
@@ -143,7 +143,7 @@
 					<field id="pjt:workflowTask" label="Tâche" mandatory="false"
 						read-only="false" set="items">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="packageItems" mandatory="false" read-only="false"
 						set="items" />
@@ -173,7 +173,7 @@
 				</field-visibility>
 				<appearance>
 					<set appearance="title" id="main" label-id="workflow.set.general"
-						template="/fr/becpg/components/form/2-column-set.ftl" />
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set appearance="title" id="product" label-id="becpg.forms.set.product.label" />
 					<set appearance="title" id="packagingKit" label-id="becpg.forms.set.packaging.label" />
 					<set appearance="title" id="recipe" label-id="becpg.forms.set.recipe.label" />
@@ -204,7 +204,7 @@
 					<field id="pjtwf:needDefinitionProduct" label-id="becpg.forms.set.existing-product.label"
 						mandatory="false" read-only="false" set="product">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="pjtwf:packagingDescription" label-id="becpg.forms.set.packaging-description.label"
@@ -216,7 +216,7 @@
 					<field id="pjtwf:needDefinitionPackagingKit" label-id="becpg.forms.set.existing-packaging.label"
 						mandatory="false" read-only="false" set="packagingKit">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="pjtwf:recipeDescription" label-id="becpg.forms.set.recipe-description.label"
@@ -228,7 +228,7 @@
 					<field id="pjtwf:needDefinitionRecipeProduct" label-id="becpg.forms.set.existing-recipe.label"
 						mandatory="false" read-only="false" set="recipe">
 						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<field id="bpm:comment" label-id="workflow.field.comment"

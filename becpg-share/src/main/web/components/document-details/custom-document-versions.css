@@ -1,0 +1,24 @@
+
+/* .document-versions .version-list h3
+{
+   margin-bottom: 0.5em;
+   float: left;
+   width: auto;
+}
+
+
+.document-versions .actions
+{
+   float: right;
+   width: 7em;
+   text-align: right;
+ */}
+
+
+
+.document-versions .actions a.compare
+{
+   background-image: url(images/compare-16.png);
+}
+
+
