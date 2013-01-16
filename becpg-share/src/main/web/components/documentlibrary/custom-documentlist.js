@@ -38,7 +38,9 @@
 		  //beCPG 
         if (metadata!=null 
          		&& metadata.parent!=null 
-         		&& metadata.parent.type == "bcpg:entityFolder")
+         		&& metadata.parent.type == "bcpg:entityFolder"
+        
+        			)
          {
       	  
             var div = Dom.get(me.id + "-becpg-entityFolder-instructions"),
@@ -70,6 +72,33 @@
             div.innerHTML = instructions;
             Dom.removeClass(div, "hidden");
             
+         } else if(metadata!=null 
+         		&& metadata.parent!=null 
+         		&& metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0)  {
+         	 var div = Dom.get(me.id + "-becpg-entityFolder-instructions"),
+       		entityClassName = metadata.parent.type.split(":")[1], 
+       		instructions;
+       
+	       
+	       instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityClassName + "-32.png'>";
+	       instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions.entityFolder")+"</span>";
+	       instructions += "<div class=\"entityFolder-instructions-toolbar\">";
+	       instructions += "<div class=\"entity-details\">" +
+	       		"<a id="+this.id+"-viewEntityDetails-button\" name=\"viewEntityDetails\" href=\"entity-details?nodeRef="+metadata.parent.nodeRef+"\" >"+
+	       		Alfresco.util.message("actions.folder.view-details")+"</a></div>";
+		     instructions += "<div class=\"entity-view-datalist\">" +
+		     		"<a id="+this.id+"-viewEntityLists-button\" name=\"viewEntityLists\" href=\"entity-datalist?nodeRef="+metadata.parent.nodeRef+"\" >"+
+		     		Alfresco.util.message("actions.document.viewEntityLists")+"</a></div>";
+	       instructions += "</div>";
+	       		
+	       
+	       div.innerHTML = instructions;
+	       
+	       this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(this, "viewEntityDetails-button");
+	       this.widgets.viewEntityLists = Alfresco.util.createYUIButton(this, "viewEntityLists-button");
+	       
+	       Dom.removeClass(div, "hidden");
+	         	
          } else {
              Dom.addClass(me.id + "-becpg-entityFolder-instructions", "hidden");
          }

@@ -1,0 +1,8 @@
+
+
+.node-header .node-path .folder-pjt_project{
+	background:  url(../images/filetypes/generic-project-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+	background-position:  7px bottom,left;
+	background-repeat: no-repeat;
+	background-size: 12px 12px, 16px 16px;
+}
