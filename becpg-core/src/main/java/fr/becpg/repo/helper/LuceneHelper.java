@@ -36,7 +36,12 @@ public class LuceneHelper {
 	 */
 	public static String getCondEqualValue(QName property, String value, Operator operator) {
 
-		return String.format(QUERY_COND_PROP_EQUAL_VALUE, operator != null ? operator : "", escapeQName(property), value);
+		if(value == null || value.isEmpty()){
+			return getCondIsNullValue(property, operator);
+		}
+		else{
+			return String.format(QUERY_COND_PROP_EQUAL_VALUE, operator != null ? operator : "", escapeQName(property), value);
+		}		
 	}
 
 	/**

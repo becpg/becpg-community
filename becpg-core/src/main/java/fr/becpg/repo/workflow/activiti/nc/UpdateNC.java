@@ -10,13 +10,14 @@ import java.util.Map;
 
 import org.activiti.engine.delegate.DelegateTask;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,14 +35,12 @@ public class UpdateNC extends ScriptTaskListener {
 	private static Log logger = LogFactory.getLog(UpdateNC.class);
 
 	private NodeService nodeService;
-	private FileFolderService fileFolderService;
 	private TransactionService transactionService;
 	
 	@Override
 	public void notify(final DelegateTask task) {
 		
 		nodeService = getServiceRegistry().getNodeService();
-		fileFolderService = getServiceRegistry().getFileFolderService();
 		transactionService = getServiceRegistry().getTransactionService();
 				
 		final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
@@ -53,12 +52,12 @@ public class UpdateNC extends ScriptTaskListener {
 			public List<String> execute() throws Exception
             {                
             	//update state and comments
-        		List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
-        		for(FileInfo file : files){
+        		List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+        		for(ChildAssociationRef childAssoc : childAssocs){
         			
-        			if (QualityModel.TYPE_NC.equals(nodeService.getType(file.getNodeRef()))) {
+        			if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
         				
-        				NodeRef ncNodeRef = file.getNodeRef();
+        				NodeRef ncNodeRef = childAssoc.getChildRef();
             			
             			Map<QName, Serializable> properties = new HashMap<QName, Serializable>(2);
             			properties.put(QualityModel.PROP_NC_STATE, (String) task.getVariable("ncwf_ncState"));

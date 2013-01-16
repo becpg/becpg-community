@@ -15,6 +15,7 @@ import java.util.Set;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -39,7 +40,7 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 @Service
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy,
-		NodeServicePolicies.BeforeDeleteNodePolicy{
+		NodeServicePolicies.OnDeleteNodePolicy{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
@@ -81,8 +82,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));
 		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
+				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onDeleteNode"));
 	}
 
 	@Override
@@ -180,8 +181,12 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	}
 
 	@Override
-	public void beforeDeleteNode(NodeRef nodeRef) {
-		projectService.cancel(nodeRef);
+	public void onDeleteNode(ChildAssociationRef childAssoc, boolean isNodeArchived) {
+		
+		if(!isNodeArchived){
+			logger.debug("Project policy delete");
+			projectService.cancel(childAssoc.getChildRef());
+		}		
 	}
 
 }

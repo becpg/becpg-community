@@ -326,12 +326,12 @@
 			<properties>
 			    <!-- Test -->
 				<alfresco.data.location>/opt/becpg/workspace/becpg/alf_data</alfresco.data.location>
-				<alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url>
-				<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class>
-				<alfresco.db.host>localhost</alfresco.db.host>
-				<alfresco.db.name>becpg_40d_dev</alfresco.db.name>
-				<alfresco.db.username>becpg</alfresco.db.username>
-				<alfresco.db.password>becpg</alfresco.db.password>
+<!-- 				<alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url> -->
+<!-- 				<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class> -->
+<!-- 				<alfresco.db.host>localhost</alfresco.db.host> -->
+<!-- 				<alfresco.db.name>becpg_40d_dev</alfresco.db.name> -->
+<!-- 				<alfresco.db.username>becpg</alfresco.db.username> -->
+<!-- 				<alfresco.db.password>becpg</alfresco.db.password> -->
 			</properties>
 		</profile>
 		<profile>

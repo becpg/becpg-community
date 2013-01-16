@@ -2,6 +2,8 @@ package fr.becpg.repo.project.impl;
 
 import java.util.List;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
@@ -110,7 +112,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 		logger.debug("cancel project: " + projectNodeRef);
 		AbstractProjectData abstractProjectData = alfrescoRepository.findOne(projectNodeRef);
-
+         
 		for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
 			if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
 				
@@ -125,17 +127,14 @@ public class ProjectServiceImpl implements ProjectService {
 					logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
 				}
 			}					
-		}
+		}        		        			        	
 	}
 
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws  FormulateException {
 
-		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			
-			formulationService.formulate(projectNodeRef);
-			
+		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {			
+			formulationService.formulate(projectNodeRef);			
 		}
-
 	}
 }

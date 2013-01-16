@@ -216,14 +216,16 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		assertNotNull(startEffectivity);
 		assertTrue(start.getTime()<startEffectivity.getTime());
 		
+		// entityFolder check
 		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
 		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-
-		
-		
-		// Actual entity parent is not a entity folder
 		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
-		assertTrue(((String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME)).endsWith((String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME)));
+		
+		// compare names
+		String entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
+		String productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);
+		assertEquals(entityFolderName, BeCPGTestHelper.PRODUCT_NAME);
+		assertEquals(entityFolderName, productName);
 		
 		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -236,15 +238,16 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		assertNotNull(startEffectivity2);
 		assertTrue(startEffectivity.getTime()<startEffectivity2.getTime());
 		
-
+		// entityFolder check
 		parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
-		parentEntityType = nodeService.getType(parentEntityNodeRef);
-		
+		parentEntityType = nodeService.getType(parentEntityNodeRef);		
 		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
 
-		assertNotSame(nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME), BeCPGTestHelper.PRODUCT_NAME);
-			
-		assertTrue(((String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME)).endsWith((String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME)));
+		// compare names
+		entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
+		productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);		
+		assertNotSame(parentEntityNodeRef, BeCPGTestHelper.PRODUCT_NAME);		
+		assertTrue(entityFolderName.endsWith(productName));
 	}
 	
 }

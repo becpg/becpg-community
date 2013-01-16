@@ -14,6 +14,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -23,9 +24,11 @@ import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.search.regex.RegexCapabilities;
 import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
@@ -223,11 +226,10 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 			public NodeRef execute() throws Throwable {
 				
 				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-				List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
-				for (FileInfo file : files) {
-
-					if (QualityModel.TYPE_NC.equals(nodeService.getType(file.getNodeRef()))) {
-						return file.getNodeRef();
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+				for (ChildAssociationRef childAssoc : childAssocs) {
+					if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
+						return childAssoc.getChildRef();
 					}
 				}
 				
@@ -344,11 +346,11 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 			public NodeRef execute() throws Throwable {
 				
 				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-				List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
-				for (FileInfo file : files) {
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+				for (ChildAssociationRef childAssoc : childAssocs) {
 
-					if (QualityModel.TYPE_NC.equals(nodeService.getType(file.getNodeRef()))) {
-						return file.getNodeRef();
+					if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
+						return childAssoc.getChildRef();
 					}
 				}
 				

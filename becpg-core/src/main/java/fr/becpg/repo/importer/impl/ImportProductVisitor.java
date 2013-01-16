@@ -155,13 +155,16 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				nodeColumnKeys = new ArrayList<QName>();
 				nodeColumnKeys.add(BeCPGModel.PROP_CODE);
 			}
-
+			
 			for (QName qName : nodeColumnKeys) {
 
 				Serializable value = properties.get(qName);
 				Serializable dbvalue = nodeService.getProperty(nodeRef, qName);
-				if (value != null && !((String) value).isEmpty() && dbvalue != null && !value.equals(dbvalue)) {
+				// Philippe: remove test !((String) value).isEmpty()
+				// otherwise we update an existing product that we shouldn't (value.isEmpty && dbvalue is not)
+				if (value != null && dbvalue != null && !value.equals(dbvalue)) {
 
+					logger.error(I18NUtil.getMessage(MSG_ERROR_OVERRIDE_EXISTING_ONE, value, dbvalue));
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_OVERRIDE_EXISTING_ONE, value, dbvalue));
 				}
 			}
