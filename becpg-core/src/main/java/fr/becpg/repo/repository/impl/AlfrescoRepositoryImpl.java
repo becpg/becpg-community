@@ -438,8 +438,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 		QName qname = repositoryEntityDefReader.readQName(readMethod);
 		Object prop = properties.get(qname);
-		if (prop != null && Enum.class.isAssignableFrom(pd.getPropertyType())) {
-			PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
+		if (prop != null && Enum.class.isAssignableFrom(pd.getPropertyType())) {			
+			if(((String)prop).isEmpty()){
+				PropertyUtils.setProperty(entity, pd.getName(), null);
+			}
+			else{
+				PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
+			}
 		} else if (prop != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
 			if (caches.containsKey(prop)) {
 				PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));

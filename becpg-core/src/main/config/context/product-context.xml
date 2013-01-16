@@ -36,13 +36,12 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
-	<!-- <bean id="classifyProductPolicy" class="fr.becpg.repo.product.policy.ClassifyProductPolicy"
+	<bean id="classifyProductPolicy" class="fr.becpg.repo.product.policy.ClassifyProductPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="productService" ref="productService"/>
 	</bean>
-	 -->
 	
 	
 	<!-- Product Listeners -->

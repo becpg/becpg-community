@@ -64,12 +64,12 @@ public class CreateNC extends BaseJavaDelegate {
 	public void execute(final DelegateExecution task) throws Exception {
 
 		final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
-
+		
 		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 			@Override
 			public Object doWork() throws Exception {
 				try {
-
+					
 					// product
 					NodeRef productNodeRef = null;
 					ActivitiScriptNode node = (ActivitiScriptNode) task.getVariable("ncwf_product");

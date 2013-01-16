@@ -538,7 +538,7 @@ public class ECOServiceImpl implements ECOService {
 						
 						if(replacementLinks.containsKey(c.getNodeRef())){
 
-							logger.debug("replace node " + c.getNodeRef() + " by node " + replacementLinks.get(c.getNodeRef()));
+							logger.debug("replace node " + c.getNodeRef() + " by node " + replacementLinks.get(c.getNodeRef()));							
 							c.setProduct(replacementLinks.get(c.getNodeRef()));
 						}
 					}
@@ -577,13 +577,12 @@ public class ECOServiceImpl implements ECOService {
 				//save in DB if we created a simulation node
 				if(simulationNodeRef != null){		
 					
-					productToFormulateData.setParentNodeRef(simulationNodeRef);
-					
+					productToFormulateData.setNodeRef(simulationNodeRef);					
 					alfrescoRepository.save( productToFormulateData);
 				}
 			}	
 			else{
-				productToFormulateData.setParentNodeRef(productToFormulateNodeRef);
+				productToFormulateData.setNodeRef(productToFormulateNodeRef);
 				alfrescoRepository.save( productToFormulateData);
 			}
 		}

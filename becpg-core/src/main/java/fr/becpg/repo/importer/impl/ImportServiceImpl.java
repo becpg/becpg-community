@@ -410,7 +410,7 @@ public class ImportServiceImpl implements ImportService {
 		Element mappingElt = null;
 		String[] arrStr = null;
 		
-		while(importContext.getImportIndex() <= lastIndex && (arrStr = importContext.readLine()) != null){
+		while(importContext.getImportIndex() < lastIndex && (arrStr = importContext.readLine()) != null){
 						
 			String prefix = ImportHelper.cleanValue(arrStr[COLUMN_PREFIX]);
 			

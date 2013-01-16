@@ -614,10 +614,9 @@ public class ECOTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
+	
 	public void testECOInMultiLeveCompo() throws Exception {
-
-
+	
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 		

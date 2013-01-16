@@ -200,14 +200,21 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			public NodeRef execute() throws Throwable {
 				 // As system user
                 AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
+        
+                // products
+                NodeRef productsFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
+                if(productsFolder != null && nodeService.exists(productsFolder)){
+					nodeService.deleteNode(productsFolder);
+				}
                 
                 // test folder
 				return BeCPGTestHelper.createTestFolder(repoBaseTestCase);
 			}
 		}, false, true);
-
+		
 		doInitRepo();
 		
+				
 	}
 	
 	private void doInitRepo(){
@@ -251,17 +258,6 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	@After
 	public void tearDown() throws Exception {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				if (nodeService.exists(testFolderNodeRef)) {
-					nodeService.deleteNode(testFolderNodeRef);
-				}
-				return null;
-
-			}
-		}, false, true);
-
 
 	}
 

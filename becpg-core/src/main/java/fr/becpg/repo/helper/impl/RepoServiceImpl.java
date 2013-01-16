@@ -125,13 +125,15 @@ public class RepoServiceImpl implements RepoService {
 		
 		String xPath = path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? 
 						path : String.format(XPATH, NamespaceService.CONTENT_MODEL_PREFIX, ISO9075.encode(path));
-
-		logger.debug("get folder by path: " + xPath);
 		
 		List<NodeRef> nodes = beCPGSearchService.searchByPath(parentNodeRef,xPath);
 		
 		if(!nodes.isEmpty()){
 			return nodes.get(0);			
+		}
+		else if(!path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)){
+			//try by name...
+			return nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, path);
 		}
 		
 		return null;
