@@ -17,6 +17,8 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 
 	List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname);
 	
-	public T create(NodeRef parentNodeRef, T entity);
+	T create(NodeRef parentNodeRef, T entity);
+
+	T clone(NodeRef parentNodeRef, T entity);
 
 }

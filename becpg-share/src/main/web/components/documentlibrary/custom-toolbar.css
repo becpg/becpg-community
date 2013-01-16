@@ -6,3 +6,7 @@
    padding-left: 22px; 
 }
 
+.toolbar .breadcrumb .pjt_project
+{
+   background-image: url(../images/filetypes/generic-project-16.png);
+}

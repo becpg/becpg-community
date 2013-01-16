@@ -7,6 +7,28 @@
    </properties>
    <components>
 
+      <!-- Mobile App Launch -->
+      <component>
+         <region-id>mobile-app</region-id>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if User Agent matches: iPad, iPhone, iPod -->
+                  <evaluation id="useragent">
+                     <evaluators>
+                        <evaluator type="useragent.component.evaluator">
+                           <params>
+                              <useragent>iPhone|iPod|iPad</useragent>
+                           </params>
+                        </evaluator>
+                     </evaluators>
+                     <url>/components/mobile-app-support/ios-mobile</url>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+      </component>
+
       <!-- Title -->
       <component>
          <region-id>title</region-id>
@@ -100,6 +122,9 @@
                      <url>/components/preview/web-preview</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
+                        <api>api</api>
+                        <proxy>alfresco</proxy>
+                        <dependencyGroup>document-details</dependencyGroup>
                      </properties>
                   </evaluation>
                </evaluations>
@@ -116,6 +141,20 @@
             <activityType>document</activityType>
          </properties>
       </component>
+      <component>
+         <region-id>document-attachments</region-id>
+         <url>/components/document-details/document-attachments</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>     
+      <component>
+         <region-id>repo-document-attachments</region-id>
+         <url>/components/document-details/document-attachments</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>
 
       <!-- Document Actions (incl commons) -->
       <component>
@@ -130,6 +169,7 @@
          <url>/components/documentlibrary/actions-common</url>
          <properties>
             <nodeRef>{nodeRef}</nodeRef>
+            <dependencyGroup>document-details</dependencyGroup>
          </properties>
       </component>
 
@@ -167,6 +207,15 @@
       <component>
          <region-id>document-metadata</region-id>
          <url>/components/document-details/document-metadata</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>
+
+      <!-- Document Sync -->
+      <component>
+         <region-id>document-sync</region-id>
+         <url>/components/document-details/document-sync</url>
          <properties>
             <nodeRef>{nodeRef}</nodeRef>
          </properties>
@@ -232,6 +281,10 @@
       <component>
          <region-id>file-upload</region-id>
          <url>/components/upload/file-upload</url>
+      </component>
+      <component>
+         <region-id>dnd-upload</region-id>
+         <url>/components/upload/dnd-upload</url>
       </component>
 
       <!-- Custom Code -->

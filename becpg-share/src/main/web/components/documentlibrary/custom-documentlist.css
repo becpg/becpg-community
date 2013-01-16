@@ -13,15 +13,18 @@ div.entityFolderInstructions span {
     margin-top: 10px;
 }
 
+
 div.entityFolderInstructions img {
 	padding: 0px 6px 0 10px;
    vertical-align: middle;
 }
 
-div.entityFolderInstructions span ul {
+div.entityFolderInstructions > span ul,
+.alfresco-share .sticky-wrapper div.entityFolderInstructions ul
+, .yui-overlay div.entityFolderInstructions ul {
     padding-left: 100px;
 }
 
-div.entityFolderInstructions span ul li {
+div.entityFolderInstructions > span ul li {
     list-style: square;
 }

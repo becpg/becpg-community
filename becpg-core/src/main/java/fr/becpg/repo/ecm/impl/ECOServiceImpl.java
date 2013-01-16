@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.ecm.ECOReportService;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
@@ -49,6 +50,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.thumbnail.BeCPGThumbnailService;
 
 /**
  * Engineering change order service implementation
@@ -554,6 +556,9 @@ public class ECOServiceImpl implements ECOService {
 					}
 				}
 			}
+			
+			
+			
 			
 			try {
 				productToFormulateData = productService.formulate(productToFormulateData);
