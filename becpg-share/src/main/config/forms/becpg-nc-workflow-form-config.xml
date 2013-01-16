@@ -27,15 +27,15 @@
           <field id="ncwf:batchId" set="batch"/>
           <field id="ncwf:product" set="batch" label="Produit">
 			 	<control
-					template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			 </field>
 			 <field id="ncwf:client" set="batch" label="Client">
 			 	<control
-					template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			 </field>
 			 <field id="ncwf:supplier" set="batch" label="Fournisseur">
 			 	<control
-					template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			 </field>
           
           <set appearance="title" id="items" label-id="workflow.set.items"/>         
@@ -328,15 +328,15 @@
           <field id="ncwf:batchId" set="batch"/>
           <field id="ncwf:product" set="batch" label="Produit">
 			 	<control
-					template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			 </field>
 			 <field id="ncwf:client" set="batch" label="Client">
 			 	<control
-					template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			 </field>
 			 <field id="ncwf:supplier" set="batch" label="Fournisseur">
 			 	<control
-					template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			 </field>
           
           <set appearance="title" id="items" label-id="workflow.set.items"/>         

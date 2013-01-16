@@ -39,7 +39,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="sec:propName">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">components/security/autocomplete</control-param>
 							<control-param name="local">true</control-param>
 							<control-param name="showTooltip">false</control-param>
@@ -62,7 +62,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="sec:propName">
-						<control template="/fr/becpg/components/form/controls/autocomplete.ftl">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">components/security/autocomplete</control-param>
 							<control-param name="local">true</control-param>
 							<control-param name="showTooltip">false</control-param>
