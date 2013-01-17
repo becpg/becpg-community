@@ -101,21 +101,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return save(entity);
 	}
 
-	@Override
-	public T clone(NodeRef parentNodeRef, T entity) {
-		entity.setParentNodeRef(parentNodeRef);
-		return save(entity,true);
-	}
 	
 	@Override
 	public T save(T entity) {
-		return save(entity,false);
-	}
-	
-	private T save(T entity, boolean clone) {
 
 		
-		if (entity.getNodeRef() == null || clone) {
+		if (entity.getNodeRef() == null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Create instanceOf :" + entity.getClass().getName());
 			}
@@ -141,8 +132,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 		saveAssociations(entity);
-		saveDataLists(entity,clone);
-		saveDataListViews(entity,clone);
+		saveDataLists(entity);
+		saveDataListViews(entity);
 
 		return entity;
 	}
@@ -189,7 +180,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
-	private void saveDataLists(T entity, boolean clone) {
+	private void saveDataLists(T entity) {
 
 		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
 		if (datalists != null) {
@@ -197,13 +188,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
 			for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
-				saveDataList(listContainerNodeRef, dataListEntry.getKey(), dataListEntry.getKey(), dataListEntry.getValue(),clone);
+				saveDataList(listContainerNodeRef, dataListEntry.getKey(), dataListEntry.getKey(), dataListEntry.getValue());
 			}
 		}
 
 	}
 
-	private void saveDataListViews(T entity, boolean clone) {
+	private void saveDataListViews(T entity) {
 		Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entity);
 		for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
 
@@ -212,7 +203,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
 				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
-					saveDataList(listContainerNodeRef, dataListViewEntry.getKey(), dataListEntry.getKey(), dataListEntry.getValue(),clone);
+					saveDataList(listContainerNodeRef, dataListViewEntry.getKey(), dataListEntry.getKey(), dataListEntry.getValue());
 				}
 
 			}
@@ -230,7 +221,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	@SuppressWarnings("unchecked")
-	private void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList, boolean clone) {
+	private void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList) {
 		if (dataList != null && listContainerNodeRef != null) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListContainerType);
 
@@ -251,7 +242,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 				for (RepositoryEntity dataListItem : dataList) {
 					dataListItem.setParentNodeRef(dataListNodeRef);
-					save((T) dataListItem,clone);
+					save((T) dataListItem);
 				}
 
 				if (logger.isDebugEnabled()) {
@@ -270,7 +261,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				for (RepositoryEntity dataListItem : dataList) {
 					
 					dataListItem.setParentNodeRef(dataListNodeRef);
-					save((T) dataListItem,clone);
+					save((T) dataListItem);
 
 					if (logger.isDebugEnabled()) {
 						logger.debug("Save dataList item: " + dataListItem.toString());

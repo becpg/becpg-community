@@ -19,6 +19,4 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	
 	T create(NodeRef parentNodeRef, T entity);
 
-	T clone(NodeRef parentNodeRef, T entity);
-
 }
