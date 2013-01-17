@@ -13,5 +13,16 @@
 
 <@markup id="entityFolderInstructions" target="documentListContainer" action="before">
  	   <#assign el = args.htmlid?html>
-	   <div id="${el}-becpg-entityFolder-instructions" class="hidden entityFolderInstructions"></div>
+	   <div id="${el}-becpg-entityFolder-instructions" class="hidden entityFolderInstructions">
+	   	<div   id="${el}-becpg-entityFolder-message" class="entityFolderToolbar-message"> 
+	   	</div>
+	   	<div class="entityFolderToolbar-buttons flat-button">
+		   	<div class="entity-view-details" >
+		   		<a id="${el}-viewEntityDetails-button" name="viewEntityDetails" href="entity-details?nodeRef={nodeRef}" >${msg("actions.folder.view-details")}</a>
+		   	</div>
+		   	<div class="entity-view-datalist">
+		   		<a id="${el}-viewEntityLists-button" name="viewEntityLists" href="entity-data-lists?nodeRef={nodeRef}" >${msg("actions.document.viewEntityLists")}</a>
+		   	</div>
+	   	</div>
+	   </div>
  </@>

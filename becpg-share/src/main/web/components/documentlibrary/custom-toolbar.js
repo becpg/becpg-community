@@ -256,7 +256,7 @@
        
        if (anchor && anchor.nodeName == "A")
        {
-          anchor.href = YAHOO.lang.substitute(anchor.href,
+          anchor.href =YAHOO.lang.substitute(anchor.href,
           {
              nodeRef: this.doclistMetadata.parent.nodeRef
           });
@@ -266,6 +266,7 @@
           {
              anchor.href = anchor.href.replace("%7BnodeRef%7D", encodeURIComponent(this.doclistMetadata.parent.nodeRef));
           }
+          
        }
     },
     /**
@@ -280,13 +281,14 @@
     onDoclistMetadata: function DLTB_onDoclistMetadata(layer, args)
     {
        var obj = args[1];
+       this.entityLinkCustomClass = null;
        this.folderDetailsUrl = null;
        if (obj && obj.metadata)
        {
           this.doclistMetadata = Alfresco.util.deepCopy(obj.metadata);
           if (obj.metadata.parent && obj.metadata.parent.nodeRef)
           {
-         	 if(obj.metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0){
+         	 if(obj.metadata.parent.aspects!=null && obj.metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0){
          		 this.entityLinkCustomClass = obj.metadata.parent.type.replace(":","_");
          		 this.folderDetailsUrl = $siteURL("entity-details?nodeRef=" + obj.metadata.parent.nodeRef); 
          	 } else {

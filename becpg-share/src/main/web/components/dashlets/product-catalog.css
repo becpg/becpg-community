@@ -92,10 +92,9 @@
 {
    border-color: white;
    display: inline-block;
-   margin-right: 6px;
    padding: 0;
    position: relative;
-   top: -2px;
+   top: -1px;
 }
 
 .product-catalog  div.search-box input.faded

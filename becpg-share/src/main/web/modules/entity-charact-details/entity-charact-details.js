@@ -10,7 +10,7 @@
 	/**
 	 * YUI Chart SWF
 	 */
-	YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "/res/yui/charts/assets/charts.swf";
+	YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "res/yui/charts/assets/charts.swf";
 
 	/**
 	 * Preferences
