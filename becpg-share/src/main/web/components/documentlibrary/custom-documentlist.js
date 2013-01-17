@@ -74,36 +74,51 @@
             
          } else if(metadata!=null 
          		&& metadata.parent!=null 
+         		&& metadata.parent.aspects!=null
          		&& metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0)  {
-         	 var div = Dom.get(me.id + "-becpg-entityFolder-instructions"),
+         	 var div = Dom.get(me.id + "-becpg-entityFolder-message"),
        		entityClassName = metadata.parent.type.split(":")[1], 
        		instructions;
-       
-	       
+
 	       instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityClassName + "-32.png'>";
-	       instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions.entityFolder")+"</span>";
-	       instructions += "<div class=\"entityFolder-instructions-toolbar\">";
-	       instructions += "<div class=\"entity-details\">" +
-	       		"<a id="+this.id+"-viewEntityDetails-button\" name=\"viewEntityDetails\" href=\"entity-details?nodeRef="+metadata.parent.nodeRef+"\" >"+
-	       		Alfresco.util.message("actions.folder.view-details")+"</a></div>";
-		     instructions += "<div class=\"entity-view-datalist\">" +
-		     		"<a id="+this.id+"-viewEntityLists-button\" name=\"viewEntityLists\" href=\"entity-datalist?nodeRef="+metadata.parent.nodeRef+"\" >"+
-		     		Alfresco.util.message("actions.document.viewEntityLists")+"</a></div>";
-	       instructions += "</div>";
-	       		
+	       instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions."+entityClassName)+"</span>";
+	     
 	       
 	       div.innerHTML = instructions;
 	       
-	       this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(this, "viewEntityDetails-button");
-	       this.widgets.viewEntityLists = Alfresco.util.createYUIButton(this, "viewEntityLists-button");
+	      
+	       this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(me, "viewEntityDetails-button",this.onEntityHelperButton);
+	 	    this.widgets.viewEntityLists = Alfresco.util.createYUIButton(me, "viewEntityLists-button",this.onEntityHelperButton);
+	 	    
+
+	       Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
 	       
-	       Dom.removeClass(div, "hidden");
-	         	
+	 	    
          } else {
              Dom.addClass(me.id + "-becpg-entityFolder-instructions", "hidden");
          }
         //End beCPG
-	  }
+	  },
+	  
+	  onEntityHelperButton: function CustomDL_onEntityHelperButton(sType, aArgs, p_obj){
+		  var eventTarget = aArgs,
+        anchor = eventTarget.getElementsByTagName("a")[0];
+     
+	     if (anchor && anchor.nodeName == "A")
+	     {
+	        anchor.href = YAHOO.lang.substitute(anchor.href,
+	        {
+	           nodeRef: this.doclistMetadata.parent.nodeRef
+	        });
+	        
+	        // Portlet fix: parameter might be encoded
+	        if (anchor.href.indexOf("%7BnodeRef%7D") !== -1)
+	        {
+	           anchor.href = anchor.href.replace("%7BnodeRef%7D", encodeURIComponent(this.doclistMetadata.parent.nodeRef));
+	        }
+	        
+	     }
+		 }
 	  
 	
   });
@@ -231,6 +246,45 @@
      var dnd = new Alfresco.DnD(imgId, scope);
   };
 
+  
+  /**
+   * Render the thumbnail cell
+   *
+   * @method renderCellThumbnail
+   * @param scope {object} The DocumentList object
+   * @param elCell {object}
+   * @param oRecord {object}
+   * @param oColumn {object}
+   * @param oData {object|string}
+   */
+  Alfresco.DocumentListViewRenderer.prototype.renderCellThumbnail =  function DL_VR_renderCellThumbnail(scope, elCell, oRecord, oColumn, oData)
+  {
+     var record = oRecord.getData(),
+        node = record.jsNode,
+        properties = node.properties,
+        name = record.displayName,
+        isContainer = node.isContainer,
+        isLink = node.isLink,
+        extn = name.substring(name.lastIndexOf(".")),
+        imgId = node.nodeRef.nodeRef; // DD added
+     
+     var containerTarget; // This will only get set if thumbnail represents a container
+     
+     oColumn.width = this.thumbnailColumnWidth;
+     Dom.setStyle(elCell, "width", oColumn.width + "px");
+     Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+  
+     if (isContainer || (isLink && node.linkedNode.isContainer))
+     {
+        elCell.innerHTML = '<span class="folder">' + (isLink ? '<span class="link"></span>' : '') + (scope.dragAndDropEnabled ? '<span class="droppable"></span>' : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' +   beCPG.util.getFileIcon(name,record,isContainer,false) +'" /></a>';
+        containerTarget = new YAHOO.util.DDTarget(imgId); // Make the folder a target
+     }
+     else
+     {
+        elCell.innerHTML = '<span class="thumbnail">' + (isLink ? '<span class="link"></span>' : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.DocumentList.generateThumbnailUrl(record) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
+     }
+     var dnd = new Alfresco.DnD(imgId, scope);
+  };
 	  
 	
   

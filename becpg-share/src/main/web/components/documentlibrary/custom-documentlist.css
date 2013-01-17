@@ -1,3 +1,5 @@
+
+
 div.entityFolderInstructions {
 	 
 	 background-color: #F4FAFF;
@@ -19,6 +21,21 @@ div.entityFolderInstructions img {
    vertical-align: middle;
 }
 
+
+
+div.entityFolderToolbar-message  span {
+    display: block;
+    font-size: 123%;
+    margin-top: 10px;
+}
+
+
+div.entityFolderToolbar-message img {
+	float: left;
+   padding: 0 10px;
+   vertical-align: middle;
+}
+
 div.entityFolderInstructions > span ul,
 .alfresco-share .sticky-wrapper div.entityFolderInstructions ul
 , .yui-overlay div.entityFolderInstructions ul {
@@ -27,4 +44,36 @@ div.entityFolderInstructions > span ul,
 
 div.entityFolderInstructions > span ul li {
     list-style: square;
+}
+
+
+
+.entityFolderInstructions .entityFolderToolbar-buttons {
+    min-height: 1.7em;
+    padding: 4px 0.5em 9px;
+	
+}
+
+.entityFolderInstructions .entityFolderToolbar-buttons div {
+	 float: left;
+	
+}
+
+.entityFolderToolbar-buttons .entity-view-details span.first-child {
+    background-image: url(./actions/entity-edit-metadata-16.png);
+ 
+ }
+    
+.entityFolderToolbar-buttons .entity-view-datalist span.first-child {
+    background-image: url(./actions/entity-view-datalist-16.png);
+ 
+ }
+    
+.entityFolderToolbar-buttons .entity-view-datalist span.first-child ,
+.entityFolderToolbar-buttons .entity-view-details span.first-child
+ {
+    background-color: transparent;
+    background-position: 6px 4px;
+    background-repeat: no-repeat;
+    padding-left: 16px;
 }
