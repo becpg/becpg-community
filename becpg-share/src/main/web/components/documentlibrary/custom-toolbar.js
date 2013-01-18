@@ -13,16 +13,7 @@
     * Alfresco Slingshot aliases
     */
    var $html = Alfresco.util.encodeHTML,
-      $combine = Alfresco.util.combinePaths,
       $siteURL = Alfresco.util.siteURL;
-
-   /**
-    * Preferences
-    */
-   var PREFERENCES_ROOT = "org.alfresco.share.documentList",
-      PREF_HIDE_NAVBAR = PREFERENCES_ROOT + ".hideNavBar";
-
-
 	
   // Define constructor...
   beCPG.custom.DocListToolbar = function CustomDocListToolbar_constructor(htmlId)

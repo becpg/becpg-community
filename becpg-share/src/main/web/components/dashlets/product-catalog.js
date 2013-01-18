@@ -314,8 +314,7 @@
               desc += '<div class="detail detail-social">';
               desc +=    '<span class="item item-social">' + Alfresco.component.SimpleDocList.generateFavourite(this, oRecord) + '</span>';
               desc +=    '<span class="item item-social item-separator"><a class="document-download" href="' + contentUrl + '"  title="' + this.msg( "actions.document.download") + '" tabindex="0">' +  this.msg("actions.document.download") + '</a></span>';
-              desc +=    '<span class="item item-social item-separator"><a class="document-characts ' + CHARACT_EVENTCLASS + '" title="' + this.msg( "actions.document.viewEntityLists") + '" tabindex="0">' + this.msg("actions.document.viewEntityLists") + '</a></span>';
-
+              desc +=    '<span class="item item-social item-separator"><a class="document-characts ' + CHARACT_EVENTCLASS + '" title="' + this.msg( "actions.entity.view-datalist") + '" tabindex="0">' + this.msg("actions.entity.view-datalist") + '</a></span>';
               desc += '</div>';
            }
            

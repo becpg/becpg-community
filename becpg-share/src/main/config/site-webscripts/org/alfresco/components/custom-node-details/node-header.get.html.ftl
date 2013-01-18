@@ -10,7 +10,7 @@
             <#include "../../include/alfresco-macros.lib.ftl" />
            	<#assign isEntity = node.aspects?seq_contains("bcpg:entityListsAspect") >
             
-            <#assign id = args.htmlid?html>
+            <#assign el = args.htmlid?html>
             <#if !isContainer>
                <#assign fileExtIndex = item.fileName?last_index_of(".")>
                         <#assign fileExt = (fileExtIndex > -1)?string(item.fileName?substring(fileExtIndex + 1)?lower_case, "generic")>
@@ -62,12 +62,10 @@
                </#if>
                <div class="node-info">
                <#if showPath == "true">
-                  <!-- Path-->
                   <div class="node-path">
                      <@renderPaths paths />
                   </div>
                </#if>
-               <!-- Icon -->
                <#if isEntity>
                	<#assign idx=node.type?index_of(":")+1 />
                	<img src="${url.context}/components/images/filetypes/generic-${node.type?substring(idx)}-48.png"
@@ -80,29 +78,27 @@
                        onerror="this.src='${url.context}/res/components/images/filetypes/generic-file-48.png'"
                        title="${displayName}" class="node-thumbnail" width="48" />
                </#if>
-                  <!-- Title and Version -->
                   <h1 class="thin dark">
                      ${displayName}<#if !isContainer><span id="document-version" class="document-version">${item.version}</span></#if>
                   </h1>
-                  <!-- Modified & Social -->
                   <div>
                      <#assign modifyUser = node.properties["cm:modifier"]>
                      <#assign modifyDate = node.properties["cm:modified"]>
                      <#assign modifierLink = userProfileLink(modifyUser.userName, modifyUser.displayName, 'class="theme-color-1"') >
-                     ${msg(modifyLabel, modifierLink, "<span id='${id}-modifyDate'>${modifyDate.iso8601}</span>")}
+                     ${msg(modifyLabel, modifierLink, "<span id='${el}-modifyDate'>${modifyDate.iso8601}</span>")}
                      <#if showFavourite == "true">
-                     <span id="${id}-favourite" class="item item-separator"></span>
+                     <span id="${el}-favourite" class="item item-separator"></span>
                      </#if>
                      <#if showLikes == "true">
-                     <span id="${id}-like" class="item item-separator"></span>
+                     <span id="${el}-like" class="item item-separator"></span>
                      </#if>
                      <#if showComments == "true">
                      <span class="item item-separator item-social">
-                        <a href="#" name="@commentNode" rel="${nodeRef?js_string}" class="theme-color-1 comment ${id}" title="${msg("comment.${itemType}.tip")}" tabindex="0">${msg("comment.${itemType}.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
+                        <a href="#" name="@commentNode" rel="${nodeRef?js_string}" class="theme-color-1 comment ${el}" title="${msg("comment.${itemType}.tip")}" tabindex="0">${msg("comment.${itemType}.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
                      </span>
                      </#if>
                      <#if showQuickShare == "true">
-                     <span id="${id}-quickshare" class="item item-separator"></span>
+                     <span id="${el}-quickshare" class="item item-separator"></span>
                      </#if>
                   </div>
                </div>

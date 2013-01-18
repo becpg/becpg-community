@@ -238,7 +238,7 @@
 		<actions>
 
 			<action id="entity-view-datalist" type="javascript"
-				label="actions.document.viewEntityLists">
+				label="actions.entity.view-datalist">
 				<param name="function">onActionShowCharact</param>
 				<!-- aspect check bcpg:entityListsAspect -->
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
@@ -291,13 +291,6 @@
 				<permissions>
 					<permission allow="true">Write</permission>
 				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
-			</action>
-			
-			<action id="entity-view-datalist" type="javascript"
-				label="actions.document.viewEntityLists">
-				<param name="function">onActionShowCharact</param>
-				<!-- aspect check bcpg:entityListsAspect -->
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
 			

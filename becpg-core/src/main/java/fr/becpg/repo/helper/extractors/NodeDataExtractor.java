@@ -1,4 +1,4 @@
-package fr.becpg.repo.web.scripts.search.data;
+package fr.becpg.repo.helper.extractors;
 
 import java.util.Map;
 

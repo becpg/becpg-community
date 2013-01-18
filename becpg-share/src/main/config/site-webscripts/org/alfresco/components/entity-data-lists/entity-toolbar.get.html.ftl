@@ -26,32 +26,21 @@
 		   <div id="${args.htmlid}-headerBar" class="header-bar flat-button theme-bg-2">
 		      <div class="left">
 		         <div id="toolbar-contribs" ></div>
-		         <div id="${el}-toolbar-buttons" >
-					    <div id="${el}-toolBar-template-button" class="hidden" >
-						     <span class="yui-button yui-push-button">
-						        <span class="first-child">
-						              <button type="button" ></button>
-						       </span>
-						     </span>
-						 </div>
-					 </div>
+		         <div id="${el}-toolbar-buttons-left" ></div>
 		      </div>
 		
-		      <div class="right" style="display: none;">
-		      <#--
-		         <span id="${el}-printButton" class="yui-button yui-push-button print">
-		             <span class="first-child">
-		                 <button type="button">${msg('button.print')}</button>
-		             </span>
-		         </span>
-		         <span id="${el}-rssFeedButton" class="yui-button yui-push-button rss-feed">
-		             <span class="first-child">
-		                 <button type="button">${msg('button.rss-feed')}</button>
-		             </span>
-		         </span>
-		         -->
+		      <div class="right">
+		   	 	<div id="${el}-toolbar-buttons-right" ></div>
 		      </div>
 		   </div>
+		</div>
+		<#-- template -->
+		<div id="${el}-toolBar-template-button" class="hidden" >
+			    <span class="yui-button yui-push-button">
+			       <span class="first-child">
+			             <button type="button" ></button>
+			       </span>
+			    </span>
 		</div>
 		</@>
 </@>

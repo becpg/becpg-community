@@ -3,14 +3,14 @@
 {
 	
   // Define constructor...
-  beCPG.custom.DocListTree = function CustomDocListTree_constructor(htmlId)
+  beCPG.custom.RepositoryDocListTree = function CustomRepositoryDocListTree_constructor(htmlId)
   {
-    beCPG.custom.DocListTree.superclass.constructor.call(this, htmlId);
+    beCPG.custom.RepositoryDocListTree.superclass.constructor.call(this, htmlId);
     return this;
   };
 
-  // Extend default DocListTree...
-  YAHOO.extend(beCPG.custom.DocListTree, Alfresco.DocListTree,
+  // Extend default RepositoryDocListTree...
+  YAHOO.extend(beCPG.custom.RepositoryDocListTree, Alfresco.RepositoryDocListTree,
   {
 	    /**
       * Build a tree node using passed-in data

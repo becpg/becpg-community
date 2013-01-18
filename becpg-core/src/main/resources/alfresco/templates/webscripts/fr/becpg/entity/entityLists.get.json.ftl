@@ -52,6 +52,24 @@
 	   }
 	}
 	</#if>
-   ]
+   ],
+   "entity" : {
+         "nodeRef": "${entity.nodeRef}",
+         "name": "${entity.name}",
+         "userAccess":
+         {
+            "create": ${entity.hasPermission("CreateChildren")?string},
+            "edit": ${entity.hasPermission("Write")?string},
+            "delete": ${entity.hasPermission("Delete")?string}
+         },
+         "aspects": 
+         [
+         <#list entity.aspects as aspect>
+            "${shortQName(aspect)}"<#if aspect_has_next>,</#if>
+         </#list>
+         ],
+         "type": "${shortQName(entity.type)}",
+         "path": "${entity.displayPath}"
+    }
 }
 </#escape>
