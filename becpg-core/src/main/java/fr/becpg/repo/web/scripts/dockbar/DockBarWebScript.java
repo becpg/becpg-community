@@ -25,8 +25,8 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.extractors.ContentDataExtractor;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
-import fr.becpg.repo.web.scripts.search.data.ContentDataExtractor;
 
 /**
  * return product history
@@ -121,7 +121,10 @@ public class DockBarWebScript extends AbstractWebScript {
 			}
 			
 			
-			if (addNodeRef && serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT)) {
+			if (addNodeRef && 
+					(serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT) ||
+					 serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_ENTITY_V2)	)
+					) {
 				if (elements.size() > 4) {
 					elements.remove(4);
 				}

@@ -307,8 +307,8 @@
 							 '" tabindex="0">'
 		                + this.msg("actions.document.download") + '</a></span>';
 		               desc += '<span class="item-separator"><a class="document-characts" href="' + charactUrl
-		                     + '" title="' + this.msg("actions.document.viewEntityLists") + '" tabindex="0">'
-		                     + this.msg("actions.document.viewEntityLists") + '</a></span>';
+		                     + '" title="' + this.msg("actions.entity.view-datalist") + '" tabindex="0">'
+		                     + this.msg("actions.entity.view-datalist") + '</a></span>';
 		               desc += '</div>';
 
 		               elCell.innerHTML = desc;
@@ -355,7 +355,11 @@
 	               _getBrowseUrlForRecord : function DockBar__getBrowseUrlForRecord(record) {
 		               var url = null, site = record.getData("site");
 
-		               url = "document-details?nodeRef=" + record.getData("nodeRef");
+		               if(record.getData("type")=="document"){  
+		               	url = "document-details?nodeRef=" + record.getData("nodeRef");
+		               } else {
+		               	url = "entity-details?nodeRef=" + record.getData("nodeRef");
+		               }
 
 		               if (url !== null) {
 			               // browse urls always go to a page. We assume that the

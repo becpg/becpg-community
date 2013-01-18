@@ -1,4 +1,4 @@
-package fr.becpg.repo.web.scripts.search.data;
+package fr.becpg.repo.helper.extractors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 	protected static final String PROP_SHORTNAME = "shortName";
 	protected static final String PROP_CONTAINER = "container";
 	protected static final String PROP_SITE = "site";
-	
+	protected static final String PROP_ASPECTS = "aspects";
 
 	public AbstractNodeDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
 		super();

@@ -54,7 +54,12 @@
 	 * enabled
 	 */
 	YAHOO.lang.augmentObject(beCPG.component.EntityDataListToolbar.prototype, {
-	   /**
+	   
+		/**
+		 *  Current entity
+		 */
+		entity : null,
+		/**
 		 * Object container for initialization options
 		 * 
 		 * @property options
@@ -98,10 +103,12 @@
 	      var obj = args[1];
          if ((obj !== null) && (obj.dataList !== null)) {
             this.datalistMeta = obj.dataList;
+            this.entity = obj.entity;
 
             if (obj.list != null && (this.options.list == null || this.options.list.length < 1)) {
                this.options.list = obj.list;
             }
+            
 
             // Could happen more than once, so check return value of
             // fulfil()
@@ -118,18 +125,24 @@
 	   	if (!YAHOO.lang.isObject(this.datalistMeta)) {
             return;
          }
-        var container =   Dom.get(this.id +"-toolbar-buttons"),
+        var containerRight =   Dom.get(this.id +"-toolbar-buttons-right"),
+        		containerLeft =  Dom.get(this.id +"-toolbar-buttons-left"),
         		template  =   Dom.get(this.id + "-toolBar-template-button");
          
          for(actionName in this.toolbarButtonActions){
          	var action = this.toolbarButtonActions[actionName];
-         	if(action.evaluate == null || action.evaluate(this.datalistMeta)){
+         	if(action.evaluate == null || action.evaluate(this.datalistMeta, this.entity)){
          		
                var templateInstance = template.cloneNode(true);
   
                 Dom.addClass(templateInstance, actionName);
   
-               container.appendChild(templateInstance);
+                if(action.right!=null && action.right == true){
+               	 containerRight.appendChild(templateInstance);
+                } else {
+               	 containerLeft.appendChild(templateInstance);
+                }
+               
                
                var spanEl = Dom.getFirstChild(templateInstance);
                Dom.setAttribute(spanEl,"id", this.id+"-"+actionName+"Button");
@@ -152,12 +165,6 @@
 		 */
 	   onReady : function EntityDataListToolbar_onReady() {
 
-		   this.widgets.printButton = Alfresco.util.createYUIButton(this, "printButton", {
-			   disabled : true
-		   });
-		   this.widgets.rssFeedButton = Alfresco.util.createYUIButton(this, "rssFeedButton", {
-			   disabled : true
-		   });
 		   
          this.deferredToolbarPopulation.fulfil("onReady");
 

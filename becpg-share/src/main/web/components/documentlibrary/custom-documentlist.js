@@ -36,14 +36,38 @@
 
 		  var metadata = args[1].metadata, me = this;
 		  //beCPG 
-        if (metadata!=null 
+		  
+		  if(metadata!=null 
+        		&& metadata.parent!=null 
+        		&& metadata.parent.aspects!=null
+        		&& metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0)  {
+        	 var div = Dom.get(me.id + "-becpg-entityFolder-message"),
+      		entityClassName = metadata.parent.type.split(":")[1], 
+      		instructions;
+
+	       instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityClassName + "-32.png'>";
+	       instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions."+entityClassName)+"</span>";
+	     
+	       
+	       div.innerHTML = instructions;
+	       
+	      
+	       this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(me, "viewEntityDetails-button",this.onEntityHelperButton);
+	 	    this.widgets.viewEntityLists = Alfresco.util.createYUIButton(me, "viewEntityLists-button",this.onEntityHelperButton);
+	 	    
+	 	    Dom.removeClass(me.id + "-becpg-entityFolder-buttons", "hidden");
+	 	    
+	       Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
+	       
+	 	    
+        } else if (metadata!=null 
          		&& metadata.parent!=null 
          		&& metadata.parent.type == "bcpg:entityFolder"
         
         			)
          {
       	  
-            var div = Dom.get(me.id + "-becpg-entityFolder-instructions"),
+            var div = Dom.get(me.id + "-becpg-entityFolder-message"),
             		instructionKey,
             		entityFolderClassName = metadata.parent.properties["bcpg:entityFolderClassName"], 
             		instructions;
@@ -70,30 +94,10 @@
 
             
             div.innerHTML = instructions;
-            Dom.removeClass(div, "hidden");
             
-         } else if(metadata!=null 
-         		&& metadata.parent!=null 
-         		&& metadata.parent.aspects!=null
-         		&& metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0)  {
-         	 var div = Dom.get(me.id + "-becpg-entityFolder-message"),
-       		entityClassName = metadata.parent.type.split(":")[1], 
-       		instructions;
-
-	       instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityClassName + "-32.png'>";
-	       instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions."+entityClassName)+"</span>";
-	     
-	       
-	       div.innerHTML = instructions;
-	       
-	      
-	       this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(me, "viewEntityDetails-button",this.onEntityHelperButton);
-	 	    this.widgets.viewEntityLists = Alfresco.util.createYUIButton(me, "viewEntityLists-button",this.onEntityHelperButton);
-	 	    
-
-	       Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
-	       
-	 	    
+            Dom.addClass(me.id + "-becpg-entityFolder-buttons", "hidden");
+            Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
+            
          } else {
              Dom.addClass(me.id + "-becpg-entityFolder-instructions", "hidden");
          }

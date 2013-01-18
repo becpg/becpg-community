@@ -19,8 +19,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.search.AdvSearchService;
-import fr.becpg.repo.web.scripts.search.data.AbstractNodeDataExtractor;
 
 public abstract class AbstractDataListExtractor implements DataListExtractor {
 

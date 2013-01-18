@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -36,6 +37,8 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
+import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.extractors.ContentDataExtractor;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
@@ -101,7 +104,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	private DataListExtractorFactory dataListExtractorFactory;
 	
 	private DataListSortService dataListSortService;
-	
+
 	
 
 	public void setNodeService(NodeService nodeService) {
@@ -273,7 +276,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			JSONObject parent = new JSONObject();
 
 			parent.put("nodeRef", dataListFilter.getDataListNodeRef());
-
+	
 			
 			JSONObject permissions = new JSONObject();
 			JSONObject userAccess = new JSONObject();
@@ -288,6 +291,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			parent.put("permissions", permissions);
 			
 			metadata.put("parent", parent);
+				
 
 			ret.put("metadata", metadata);
 			if(dataListFilter.isSimpleItem()){
@@ -312,6 +316,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		}
 
 	}
+
 
 	private JSONArray processResults(PaginatedExtractedItems extractedItems) throws InvalidNodeRefException, JSONException {
 

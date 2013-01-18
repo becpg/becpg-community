@@ -1,6 +1,17 @@
-.datalist-toolbar .finish span.first-child
+
+.datalist-toolbar .right div {
+	float:left;
+}
+
+.datalist-toolbar .view-details span.first-child
 {
-   background: url(images/finish-16.png) no-repeat 12px 4px;
+   background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .view-documents span.first-child
+{
+   background: url(../documentlibrary/actions/entity-view-documents-16.png) no-repeat 12px 4px;
    padding-left: 24px;
 }
 

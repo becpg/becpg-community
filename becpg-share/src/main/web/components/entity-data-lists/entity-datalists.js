@@ -38,6 +38,10 @@
 	            beCPG.component.EntityDataLists,
 	            Alfresco.component.DataLists,
 	            {
+	            	/**
+	            	 * Current entity
+	            	 */
+	            	entity : null,
 	               /**
 						 * Object container for initialization options
 						 * 
@@ -109,6 +113,7 @@
 				                  YAHOO.Bubbling.fire("activeDataListChanged", {
 				                     list : this.options.listId,
 				                     dataList : this.dataLists[this.options.listId],
+				                     entity : this.entity,
 				                     scrollTo : true
 				                  });
 			                  } else {
@@ -159,6 +164,7 @@
 
 			               this.dataLists = {};
 			               this.containerNodeRef = new Alfresco.util.NodeRef(response.json.container);
+			               this.entity = response.json.entity;
 			               this.widgets.newList.set("disabled", !response.json.permissions.create);
 
 			               for ( var i = 0, ii = lists.length; i < ii; i++) {

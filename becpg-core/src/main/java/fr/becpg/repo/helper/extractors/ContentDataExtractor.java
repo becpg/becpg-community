@@ -1,4 +1,4 @@
-package fr.becpg.repo.web.scripts.search.data;
+package fr.becpg.repo.helper.extractors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,9 +21,15 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 
 	
+	
 	private List<String> metadataFields = new ArrayList<String>();
 	
 
+	
+	public ContentDataExtractor(ServiceRegistry serviceRegistry,AttributeExtractorService attributeExtractorService){
+		super(serviceRegistry,attributeExtractorService);
+	}
+	
 	public ContentDataExtractor(List<String> metadataFields,ServiceRegistry serviceRegistry,AttributeExtractorService attributeExtractorService) {
 		super(serviceRegistry,attributeExtractorService);
 		this.metadataFields = metadataFields;
@@ -71,6 +77,14 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	         ret.put(PROP_SIZE, getSize((ContentData)props.get(ContentModel.PROP_CONTENT)));
 	      }           
 	      
+		 List<String> aspects = new ArrayList<String>();
+		 for(QName aspect : nodeService.getAspects(nodeRef)){
+			 aspects.add(aspect.toPrefixString(services.getNamespaceService()));
+		 }
+		 
+		 ret.put(PROP_ASPECTS, aspects);
+		 
+		 
 	      return ret;
 	
 	}
