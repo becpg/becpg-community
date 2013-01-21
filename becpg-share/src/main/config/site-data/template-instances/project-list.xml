@@ -13,7 +13,7 @@
       <!-- All Filter -->
       <component>
          <region-id>all-filter</region-id>
-         <url>/components/workflow/filter/all</url>
+         <url>/components/project/filter/all</url>
          <properties>
             <mode>projects</mode>
          </properties>

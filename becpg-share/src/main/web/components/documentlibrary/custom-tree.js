@@ -32,7 +32,7 @@
         }, p_oParent, p_expanded);
         
         if(p_oData.aspects!=null && p_oData.aspects.indexOf("bcpg:entityListsAspect") > 0){
-      	  treeNode.labelStyle = p_oData.type.replace(":", "-");
+      	  treeNode.labelStyle = p_oData.type.replace(":", "-")+" ygtvlabel";
         }
         
         return treeNode;

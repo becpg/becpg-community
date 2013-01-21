@@ -734,7 +734,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 	 * @default 1
 	 * @private
 	 */
-	var vShowRes = 1;
+	var vShowRes = 0;
 	/**
 	 * Show duration column
 	 * 
@@ -761,7 +761,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 	 * @default 1
 	 * @private
 	 */
-	var vShowStartDate = 1;
+	var vShowStartDate = 0;
 	/**
 	 * Show end date column
 	 * 
@@ -770,7 +770,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 	 * @default 1
 	 * @private
 	 */
-	var vShowEndDate = 1;
+	var vShowEndDate = 0;
 	/**
 	 * Date input format
 	 * 
@@ -1285,12 +1285,68 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 			vChartWidth = vNumUnits * vColWidth + 1;
 			vDayWidth = (vColWidth / vColUnit) + (1 / vColUnit);
 
-			vMainTable = '<div class="yui-g yui-dt">';
+			vMainTable = '<div class="yui-gd yui-dt">';
 
 			// DRAW the Left-side of the chart (names, resources, comp%)
 			vLeftTable = '<DIV class="yui-u first" id="leftside"><TABLE cellSpacing="0" cellPadding="0" border="0"><THEAD>';
+			
+			vLeftTable += '<TR class="gheader"><TH  colspan="3">Format:&nbsp;';
 
-			vLeftTable += '<TR class="gheader" ></TR>' + '<TR class="gheader">' + '  <TH ><NOBR></NOBR></TH>';
+			if (vFormatArr.join().indexOf("minute") != -1) {
+				if (vFormat == 'minute')
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="minute" checked>Minute';
+				else
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("minute",' + vGanttVar
+					      + '); VALUE="minute">Minute';
+			}
+
+			if (vFormatArr.join().indexOf("hour") != -1) {
+				if (vFormat == 'hour')
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="hour" checked>Hour';
+				else
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("hour",' + vGanttVar
+					      + '); VALUE="hour">Heure';
+			}
+
+			if (vFormatArr.join().indexOf("day") != -1) {
+				if (vFormat == 'day')
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="day" checked>Jour';
+				else
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("day",' + vGanttVar
+					      + '); VALUE="day">Jour';
+			}
+
+			if (vFormatArr.join().indexOf("week") != -1) {
+				if (vFormat == 'week')
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="week" checked>Semaine';
+				else
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("week",' + vGanttVar
+					      + ') VALUE="week">Semaine';
+			}
+
+			if (vFormatArr.join().indexOf("month") != -1) {
+				if (vFormat == 'month')
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="month" checked>Mois';
+				else
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("month",' + vGanttVar
+					      + ') VALUE="month">Mois';
+			}
+
+			if (vFormatArr.join().indexOf("quarter") != -1) {
+				if (vFormat == 'quarter')
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="quarter" checked>Trimestre';
+				else
+					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("quarter",' + vGanttVar
+					      + ') VALUE="quarter">Trimestre';
+			}
+
+			// vLeftTable += '<INPUT TYPE=RADIO NAME="other" VALUE="other"
+			// style="display:none"> .';
+
+			vLeftTable += '</TH></TR>';
+			
+
+			vLeftTable +=  '<TR class="gheader">' + '  <TH ><NOBR></NOBR></TH>';
 
 			if (vShowRes == 1)
 				vLeftTable += '  <TH   nowrap >Resource</TH>';
@@ -1373,60 +1429,9 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 
 			// DRAW the date format selector at bottom left. Another potential
 			// GanttChart parameter to hide/show this selector
-			vLeftTable += '</TD></TR>' + '<TR><TD class="gfoot">Format:&nbsp;';
-
-			if (vFormatArr.join().indexOf("minute") != -1) {
-				if (vFormat == 'minute')
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="minute" checked>Minute';
-				else
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("minute",' + vGanttVar
-					      + '); VALUE="minute">Minute';
-			}
-
-			if (vFormatArr.join().indexOf("hour") != -1) {
-				if (vFormat == 'hour')
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="hour" checked>Hour';
-				else
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("hour",' + vGanttVar
-					      + '); VALUE="hour">Heure';
-			}
-
-			if (vFormatArr.join().indexOf("day") != -1) {
-				if (vFormat == 'day')
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="day" checked>Jour';
-				else
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("day",' + vGanttVar
-					      + '); VALUE="day">Jour';
-			}
-
-			if (vFormatArr.join().indexOf("week") != -1) {
-				if (vFormat == 'week')
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="week" checked>Semaine';
-				else
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("week",' + vGanttVar
-					      + ') VALUE="week">Semaine';
-			}
-
-			if (vFormatArr.join().indexOf("month") != -1) {
-				if (vFormat == 'month')
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="month" checked>Mois';
-				else
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("month",' + vGanttVar
-					      + ') VALUE="month">Mois';
-			}
-
-			if (vFormatArr.join().indexOf("quarter") != -1) {
-				if (vFormat == 'quarter')
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="quarter" checked>Trimestre';
-				else
-					vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("quarter",' + vGanttVar
-					      + ') VALUE="quarter">Trimestre';
-			}
-
-			// vLeftTable += '<INPUT TYPE=RADIO NAME="other" VALUE="other"
-			// style="display:none"> .';
-
-			vLeftTable += '</TD></TR></TBODY></TABLE></TD>';
+			vLeftTable += '</TD></TR>';
+	
+			vLeftTable += '</TBODY></TABLE></TD>';
 
 			vMainTable += vLeftTable + "</div>";
 
@@ -1723,7 +1728,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 					vRightTable += '<div id="bardiv_' + vID + '" style="position:absolute; top:5px; left:'
 					      + (Math.ceil((vTaskLeft * (vDayWidth) + 1))+vDayWidth-4) + 'px; height: 18px; width:6px; overflow:hidden;">'
 					      + '  <div id="taskbar_' + vID + '" title="' + vDateRowStr
-					      + '" style="height: 16px; width:6px; overflow:hidden; cursor: pointer;" >';
+					      + '" style="height: 16px; width:6px; overflow:hidden; " >';
 
 					if (vTaskList[i].getCompVal() < 100) {
 						vRightTable += '&loz;</div>';
@@ -1863,7 +1868,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 						      + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vID + '" title="'
 						      + vDateRowStr + '" class="gtask" style="background-color:#' + vTaskList[i].getColor()
 						      + '; height: 13px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1)
-						      + 'px; cursor: pointer;opacity:0.9;"  >' + '<div class="gcomplete" style="width:'
+						      + 'px;opacity:0.9;"  >' + '<div class="gcomplete" style="width:'
 						      + vTaskList[i].getCompStr() + ';">' + '</div>' + '</div>';
 
 						if (g.getCaptionType()) {

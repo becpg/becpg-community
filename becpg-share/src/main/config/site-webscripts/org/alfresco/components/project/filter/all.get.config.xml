@@ -1,0 +1,9 @@
+<config>
+   <filters>
+      <filter id="projects" data="Planned"    label="link.projects.planned"/>
+      <filter id="projects" data="InProgress" label="link.projects.inprogress"/>
+      <filter id="projects" data="OnHold"     label="link.projects.onhold"/>
+      <filter id="projects" data="Cancelled"  label="link.projects.cancelled"/>
+      <filter id="projects" data="Completed"  label="link.projects.completed"/>
+   </filters>
+</config>

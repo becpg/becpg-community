@@ -130,6 +130,15 @@
 			      usePagination: true,
 			      useFilter: true,
 			      itemType : "pjt:project",
+			      filterParameters : 
+						 [<#list filterParameters as filterParameter>
+						   {
+						      id: "${filterParameter.id?js_string}",
+						      "data": "${filterParameter.data?js_string}",
+						      "parameters": "${filterParameter.parameters?js_string}"
+						   }<#if filterParameter_has_next>,</#if>
+						</#list>]
+					,
 				   list: "projectList",
 				   sortable : false,
 					sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",

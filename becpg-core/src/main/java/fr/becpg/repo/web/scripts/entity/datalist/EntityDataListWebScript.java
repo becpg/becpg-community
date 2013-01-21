@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -37,8 +36,6 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
-import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.extractors.ContentDataExtractor;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
@@ -54,9 +51,14 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	private static Log logger = LogFactory.getLog(EntityDataListWebScript.class);
 
 	/** The Constant PARAM_FILTER. */
+	
+	protected static final String PARAM_FILTER_ID = "filterId";
+	
 	protected static final String PARAM_FILTER = "filter";
 
 	protected static final String PARAM_FILTER_DATA = "filterData";
+	
+	protected static final String PARAM_FILTER_PARAMS = "filterParams";
 
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 	
@@ -69,8 +71,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** The Constant PARAM_ID. */
 	protected static final String PARAM_ID = "id";
-
-	protected static final String PARAM_DAYS = "days";
 
 	protected static final String PARAM_FIELDS = "fields";
 
@@ -159,7 +159,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
 		String dataListName = req.getParameter(PARAM_DATA_LIST_NAME);
-		String argDays = req.getParameter(PARAM_DAYS);
+		//String argDays = req.getParameter(PARAM_DAYS);
 		QName dataType = QName.createQName(itemType, namespaceService);
 		dataListFilter.setDataType(dataType);
 
@@ -192,18 +192,22 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		
 		String filterId = req.getParameter(PARAM_FILTER);
 		String filterData = req.getParameter(PARAM_FILTER_DATA);
+		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);
 
 		try {
 
 			JSONObject json = (JSONObject) req.parseContent();
 
 			if (filterId == null) {
-				if (json != null && json.has("filter")) {
-					JSONObject filterJSON = (JSONObject) json.get("filter");
+				if (json != null && json.has(PARAM_FILTER)) {
+					JSONObject filterJSON = (JSONObject) json.get(PARAM_FILTER);
 					if (filterJSON != null) {
-						filterId = (String) filterJSON.get("filterId");
-						if(filterJSON.has("filterData")){
-							filterData = (String) filterJSON.get("filterData");
+						filterId = (String) filterJSON.get(PARAM_FILTER_ID);
+						if(filterJSON.has(PARAM_FILTER_DATA)){
+							filterData = (String) filterJSON.get(PARAM_FILTER_DATA);
+						}
+						if(filterJSON.has(PARAM_FILTER_PARAMS) && !filterJSON.isNull(PARAM_FILTER_PARAMS)){
+							filterParams = (String) filterJSON.get(PARAM_FILTER_PARAMS);
 						}
 					}
 				} else {
@@ -247,7 +251,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				hasWriteAccess = false;
 			}
 			
-			dataListFilter.buildQueryFilter(filterId, filterData, argDays);
+			dataListFilter.buildQueryFilter(filterId, filterData, filterParams);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());
