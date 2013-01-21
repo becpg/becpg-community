@@ -39,12 +39,15 @@ var g; // gantt var
 
 		return this;
 	};
-
+	
+	 
 	/**
 	 * Extend from Alfresco.component.Base
 	 */
 	YAHOO.extend(beCPG.component.ProjectList, beCPG.module.EntityDataGrid);
 
+	
+	
 	/**
 	 * Augment prototype with main class implementation, ensuring overwrite is
 	 * enabled
@@ -60,7 +63,7 @@ var g; // gantt var
 	               taskLegends : [],
 
 	               cache : [],
-
+	               
 	               /**
 						 * Fired by YUI when parent element is available for
 						 * scripting. Initial History Manager event registration
@@ -137,7 +140,8 @@ var g; // gantt var
 
 		               // Intercept before dialog show
 		               var doBeforeDialogShow = function PL_onActionShowTask_doBeforeDialogShow(p_form, p_dialog) {
-			               Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle", me.msg("label.edit-row.title") ]);
+			             
+		               	Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle", me.msg("label.edit-row.title") ]);
 
 		               };
 
@@ -146,7 +150,7 @@ var g; // gantt var
 		               var templateUrl = YAHOO.lang
 		                     .substitute(
 		                           Alfresco.constants.URL_SERVICECONTEXT
-		                                 + "components/form?entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true",
+		                                 + "components/form?entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&popup=true",
 		                           {
 		                              itemKind : "node",
 		                              itemId : nodes[0],
@@ -157,7 +161,7 @@ var g; // gantt var
 
 		               // Using Forms Service, so always create new instance
 
-		               var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editCharacts");
+		               var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editCharacts-" + Alfresco.util.generateDomId());
 
 		               editDetails.setOptions({
 		                  width : "34em",
@@ -306,6 +310,7 @@ var g; // gantt var
 			               Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId));
 		               }
 
+		               
 	               },
 
 	               getAdvancementClass : function PL_getAdvancementClass(oRecord, task, size, start) {
@@ -539,6 +544,8 @@ var g; // gantt var
 		                     + '" >&nbsp;</a><a class="theme-color-1" href="' + url + '">' + code + "&nbsp;-&nbsp;"
 		                     + $html(title) + '</a></span>' + version;
 	               }
-	            }, true);
+	            }
+	            
+	            , true);
 
 })();
