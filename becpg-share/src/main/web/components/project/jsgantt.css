@@ -1,6 +1,10 @@
-.projects  .yui-gd .yui-u {
+#rightside {
 	width:68%;
-   margin:none;
+	margin:auto;
+}
+
+.projects .yui-gd .yui-u {
+    margin:none;
 }
 
 .gdatehead {
