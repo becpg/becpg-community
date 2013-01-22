@@ -36,7 +36,6 @@
        */
       onReady: function PTL_onReady()
       {
-         this.widgets.startWorkflowButton = Alfresco.util.createYUIButton(this, "startProject-button", this.onStartWorkflowButtonClick, {});
          
          this.widgets.showGanttButton = Alfresco.util.createYUIButton(this, "show-gantt-button", this.onGanttButtonClick);
          this.widgets.showPlanningButton =  Alfresco.util.createYUIButton(this, "show-planning-button", this.onPlanningButtonClick);
@@ -50,24 +49,14 @@
          Dom.removeClass(Selector.query(".hidden", this.id + "-body", true), "hidden");
       },
 
-      /**
-       * Start workflow button click handler
-       *
-       * @method onNewFolder
-       * @param e {object} DomEvent
-       * @param p_obj {object} Object passed back from addListener method
-       */
-      onStartWorkflowButtonClick: function PTL_onNewFolder(e, p_obj)
-      {
-         document.location.href = Alfresco.util.siteURL("start-workflow?referrer=workflows&myWorkflowsLinkBack=true");
-      },
+   
       onGanttButtonClick: function PTL_onGanttButtonClick(e, p_obj)
       {
-         document.location.href = Alfresco.util.siteURL("project-list?view=gantt");
+         document.location.href = Alfresco.util.siteURL("project-list?view=gantt#filter=projects|InProgress");
       },
       onPlanningButtonClick: function PTL_onPlanningButtonClick(e, p_obj)
       {
-         document.location.href = Alfresco.util.siteURL("project-list");
+         document.location.href = Alfresco.util.siteURL("project-list#filter=projects|InProgress");
       }
       
 

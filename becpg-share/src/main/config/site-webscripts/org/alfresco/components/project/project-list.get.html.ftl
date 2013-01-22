@@ -49,7 +49,7 @@
 		</div>
 		
 		<div id="${el}-body" class="project-list datagrid">
-		   <div class="yui-gd project-list-bar datagrid-bar  flat-button">
+		   <div class="yui-gf project-list-bar datagrid-bar  flat-button">
 		      <div class="yui-u first">
 		         <h2 id="${el}-filterTitle" class="thin">
 		            &nbsp;
@@ -94,11 +94,13 @@
 						
 			   <div id="${el}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>
 			
-			   <div id="${el}-datagridBarBottom" class="yui-ge datagrid-bar datagrid-bar-bottom project-list-bar-bottom flat-button">
-			      <div class="yui-u first align-center">
-			         <div class="item-select">&nbsp;</div>
-			         
-			         <div id="${el}-paginatorBottom" class="paginator"></div>
+			   <div id="${el}-datagridBarBottom" class="yui-gf datagrid-bar datagrid-bar-bottom project-list-bar-bottom flat-button">
+			      <div class="yui-u first ">&nbsp;</div>
+			      <div  class="yui-u">
+			        	<div class="item-select">&nbsp;</div>
+			      	 <div class="right">
+			         	<div id="${el}-paginatorBottom" class="paginator"></div>
+			         </div>
 			      </div>
 			   </div>
 			
@@ -130,13 +132,22 @@
 			      usePagination: true,
 			      useFilter: true,
 			      itemType : "pjt:project",
+			      filterParameters : 
+						 [<#list filterParameters as filterParameter>
+						   {
+						      id: "${filterParameter.id?js_string}",
+						      "data": "${filterParameter.data?js_string}",
+						      "parameters": "${filterParameter.parameters?js_string}"
+						   }<#if filterParameter_has_next>,</#if>
+						</#list>]
+					,
 				   list: "projectList",
 				   sortable : false,
 					sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
 				   dataUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node",
 				   itemUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/item/node/",
 				   groupBy : "prop_pjt_projectHierarchy1",
-				   hiddenColumns : ["prop_bcpg_code","prop_pjt_completionPercent", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate"]
+				   hiddenColumns : ["prop_bcpg_code","prop_pjt_completionPercent", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"]
 			   }).setMessages(${messages});
 		
 			

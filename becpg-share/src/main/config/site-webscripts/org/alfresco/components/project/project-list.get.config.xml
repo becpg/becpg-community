@@ -1,5 +1,4 @@
 <config>
-   <max-items>50</max-items>
    <actionSetToolbar>
       <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
       <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
@@ -11,4 +10,29 @@
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
    </actionSetDataGrid>
+    <filters-parameters>
+      <!--
+         Turns the filters form the filter's config files into url parameters by matching the filter id and data against
+         the filter patterns below. A wildcard ("*") matches any value as long as it exists and isn't empty.
+         The parameters will later be added to the end of the base repo webscript url used to retrieve the values.
+
+         Note that it is possible to create dynamic values by using the following keys inside "{}":
+          * {id} - resolves to the filter id value
+          * {data} - resolveds to the filter data value
+          * {0dt} - resolves to a iso08601 datetime representation of the current date and time
+          * {0d} -  resolves to a iso8601 date respresentation of the current day
+          * {-7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days back
+          * {+7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days forward
+      -->
+      <filter id="projects"      data="*"      		  parameters="fts(+@pjt\:projectState:&quot;{data}&quot;)"/>
+      <filter id="due"           data="today"        parameters="fts(+@pjt\:projectDueDate:[{-1d} TO {0d}])"/>
+      <filter id="due"           data="tomorrow"     parameters="fts(+@pjt\:projectDueDate:[{0d} TO {1d}])"/>
+      <filter id="due"           data="next7Days"    parameters="fts(+@pjt\:projectDueDate:[{0d} TO {8d}])"/>
+      <filter id="due"           data="overdue"      parameters="fts(+@pjt\:projectDueDate:[MIN TO {0d}])"/>
+      <filter id="due"           data="noDate"       parameters="fts(+@pjt\:projectDueDate:ISNULL)"/>
+      <filter id="started"       data="last7Days"    parameters="fts(+@pjt\:projectStartDate:[{-7d} TO MAX])"/>
+      <filter id="started"       data="last14Days"   parameters="fts(+@pjt\:projectStartDate:[{-14d} TO MAX])"/>
+      <filter id="started"       data="last28Days"   parameters="fts(+@pjt\:projectStartDate:[{-28d} TO MAX])"/>
+      <filter id="priority"      data="*"            parameters="fts(+@pjt\:projectPriority:{data})"/>
+   </filters-parameters>
 </config>
