@@ -72,6 +72,16 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="pjt:manualDate" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Start</value>
+					<value>End</value>					
+				</list>
+			</parameter>
+		</constraint>
+		
 		<constraint name="pjt:projectStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -149,6 +159,10 @@
 						<constraint ref="pjt:projectStates" />
 					</constraints>
 				</property>
+				<property name="pjt:projectLegends">
+					<type>d:noderef</type>		
+					<multiple>true</multiple>			
+				</property>
 			</properties>
 			<associations>
 				<association name="pjt:projectProjectTpl">
@@ -223,6 +237,12 @@
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="pjt:taskStates" />
+					</constraints>
+				</property>
+				<property name="pjt:tlManualDate">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:manualDate" />
 					</constraints>
 				</property>
 			</properties>

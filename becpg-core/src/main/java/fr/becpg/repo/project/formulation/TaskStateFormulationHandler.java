@@ -74,8 +74,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 					// start task
 					if (TaskState.Planned.equals(nextTask.getState())) {
-						ProjectHelper.setTaskStartDate(nextTask, new Date(), false);
-						nextTask.setState(TaskState.InProgress);
+						ProjectHelper.setTaskStartDate(nextTask, new Date());
+						setTaskState(projectData, nextTask, TaskState.InProgress);											
 
 						// deliverable list
 						String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName());
@@ -87,7 +87,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 							// set Planned dl InProgress
 							if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
-								nextDeliverable.setState(DeliverableState.InProgress);
+								nextDeliverable.setState(DeliverableState.InProgress);								
 							}
 
 							if (DeliverableState.InProgress.equals(nextDeliverable.getState())) {
@@ -126,7 +126,13 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (nextDeliverables.size() == finishedDL) {
 							logger.debug("set completion percent to 100%");
 							nextTask.setCompletionPercent(COMPLETED);
-							nextTask.setState(TaskState.Completed);							
+							setTaskState(projectData, nextTask, TaskState.Completed);
+							
+							//legend
+							if(projectData.getLegends().contains(nextTask.getTaskLegend())){
+								projectData.getLegends().remove(nextTask.getTaskLegend());
+							}
+							
 						} else {							
 							logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
 									+ nextTask.getNodeRef());
@@ -214,5 +220,21 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		return null;
 	}
 
-	
+	private void setTaskState(ProjectData projectData, TaskListDataItem task, TaskState taskState){
+		
+		if(TaskState.InProgress.equals(taskState)){
+			
+			if(!projectData.getLegends().contains(task.getTaskLegend())){
+				projectData.getLegends().add(task.getTaskLegend());
+			}
+		}
+		else if(TaskState.Completed.equals(taskState)){
+			
+			if(projectData.getLegends().contains(task.getTaskLegend())){
+				projectData.getLegends().remove(task.getTaskLegend());
+			}
+		}
+		
+		task.setState(taskState);
+	}
 }

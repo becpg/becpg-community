@@ -145,7 +145,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	protected ServiceRegistry serviceRegistry;
 	
 	@Resource
-	private InitVisitor initRepoVisitor;
+	protected InitVisitor initRepoVisitor;
 
 	@Resource
 	private HierarchyService hierarchyService;

@@ -82,7 +82,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		visitChildren(formulatedProduct, simpleListDataList, retainNodes);
 		
 		logger.debug("###simpleListDataList size: " + simpleListDataList.size() + " retainNodes: " + retainNodes.size());
-		simpleListDataList.retainAll(retainNodes);	
+		simpleListDataList.retainAll(retainNodes);			
+		logger.debug("simpleListDataList size: " + simpleListDataList.size());
 		
 		//sort
 		sort(simpleListDataList);

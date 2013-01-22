@@ -334,7 +334,7 @@ public class ECOTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
+	
 	public void testECOService() throws Exception {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -475,7 +475,7 @@ public class ECOTest extends RepoBaseTestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
+	
 	public void testECOPolicy() throws Exception {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

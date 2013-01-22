@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -23,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
@@ -89,17 +93,20 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 
+		NodeRef projectTplNodeRef = assocRef.getTargetRef();
+		NodeRef projectNodeRef = assocRef.getSourceRef();
+		
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_TPL)) {
 			// copy datalist from Tpl to project
 			logger.debug("copy datalists");
 			Collection<QName> dataLists = new ArrayList<QName>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
-			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-			entityListDAO.copyDataLists(assocRef.getTargetRef(), assocRef.getSourceRef(), dataLists, true);
+			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);			
+			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, true);
 
 			// refresh reference to prevTasks
 			// TODO : do it in a generic way
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(assocRef.getSourceRef());
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
 			if (listContainerNodeRef != null) {
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
 				if (listNodeRef != null) {
@@ -114,22 +121,31 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 					updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
 
 				}
+				
+				//Deliverables
+				listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+				if (listNodeRef != null) {
+					List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+					for (NodeRef listItem : listItems) {
+						updateDelieverableDocument(projectNodeRef, listItem);
+					}
+				}
 			}
 
 			// initialize
-			queueNode(assocRef.getSourceRef());
+			queueNode(projectNodeRef);
 
 			// //We want to be able to plan project in advance and start it
 			// later so we start it when state is InProgress
-			// if(TaskState.InProgress.toString().equals(nodeService.getProperty(assocRef.getSourceRef(),
+			// if(TaskState.InProgress.toString().equals(nodeService.getProperty(projectNodeRef,
 			// ProjectModel.PROP_PROJECT_STATE))){
 			// // start workflow when product is associated to project
-			// queueNode(KEY_PROJECTS_TO_START, assocRef.getSourceRef());
+			// queueNode(KEY_PROJECTS_TO_START, projectNodeRef);
 			// }
 		} else if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {
 			// add project aspect on entity
 			nodeService.addAspect(assocRef.getTargetRef(), ProjectModel.ASPECT_PROJECT_ASPECT, null);
-			associationService.update(assocRef.getTargetRef(), ProjectModel.ASSOC_PROJECT, assocRef.getSourceRef());
+			associationService.update(projectTplNodeRef, ProjectModel.ASSOC_PROJECT, projectNodeRef);
 		}
 	}
 
@@ -147,6 +163,38 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			associationService.update(listItem, propertyQName, tasks);
 		}
 	}
+	
+	private void updateDelieverableDocument(NodeRef projectNodeRef, NodeRef listItem){
+		
+		Stack<String> stack = new Stack<String>();
+		NodeRef documentNodeRef = associationService.getTargetAssoc(listItem, ProjectModel.ASSOC_DL_CONTENT);
+		
+		if(documentNodeRef != null){
+			NodeRef folderNodeRef = nodeService.getPrimaryParent(documentNodeRef).getParentRef();
+			
+			while(folderNodeRef!=null && !nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+				String name = (String)nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME);
+				logger.debug("folderNodeRef: " + folderNodeRef + " name: " + name);
+				stack.push(name);
+				folderNodeRef = nodeService.getPrimaryParent(folderNodeRef).getParentRef();
+			}
+			
+			logger.debug("stack: " + stack);
+			
+			folderNodeRef = projectNodeRef;
+			Iterator<String>iterator = stack.iterator();
+			while(iterator.hasNext() && folderNodeRef !=null){
+				folderNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, iterator.next());				
+			}
+			 
+			if(folderNodeRef != null){
+				NodeRef newDocumentNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, 
+						(String)nodeService.getProperty(documentNodeRef, ContentModel.PROP_NAME));
+				associationService.update(listItem, ProjectModel.ASSOC_DL_CONTENT, newDocumentNodeRef);
+			}
+			
+		}
+	}
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
@@ -154,6 +202,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
 		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
 
+		// change state
 		if (afterState != null && !afterState.equals(beforeState)) {
 			if (afterState.equals(TaskState.InProgress.toString())) {
 				logger.debug("onUpdateProperties:start project");
@@ -165,6 +214,20 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				projectService.cancel(nodeRef);
 			}
 		}
+		
+		// change startdate
+		Date beforeStartDate = (Date) before.get(ProjectModel.PROP_PROJECT_START_DATE);
+		Date afterStartDate = (Date) after.get(ProjectModel.PROP_PROJECT_START_DATE);
+		if(afterStartDate != null && afterStartDate.equals(beforeStartDate)){
+			queueNode(nodeRef);
+		}
+		
+		// change duedate
+		Date beforeDueDate = (Date) before.get(ProjectModel.PROP_PROJECT_DUE_DATE);
+		Date afterDueDate = (Date) after.get(ProjectModel.PROP_PROJECT_DUE_DATE);
+		if(afterDueDate != null && afterDueDate.equals(beforeDueDate)){
+			queueNode(nodeRef);
+		}		
 	}
 
 	@Override

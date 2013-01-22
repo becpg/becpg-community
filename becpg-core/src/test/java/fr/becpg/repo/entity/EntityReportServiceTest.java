@@ -1,26 +1,21 @@
 /*
  *  Copyright (C) 2010-2011 beCPG. All rights reserved.
  */
-package fr.becpg.repo.product;
+package fr.becpg.repo.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -44,10 +39,12 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	private ReportTplService reportTplService;
 
 	@Resource
-	private BehaviourFilter policyBehaviourFilter;
-
+	private EntityService entityService;
+	
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -72,61 +69,13 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	}
 
 	/**
-	 * Reset the property report modified.
-	 */
-	private void resetReportModified() {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				policyBehaviourFilter.disableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
-				nodeService.setProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, new Date());
-				policyBehaviourFilter.enableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
-				return null;
-
-			}
-		});
-
-	}
-
-	/**
-	 * Check if node has changed, so the report is out of date.
-	 * 
-	 * @param nodeRef
-	 *            the node ref
-	 * @return true, if is report up to date
-	 */
-	private boolean isReportUpToDate(NodeRef nodeRef) {
-
-		Date reportModified = (Date) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
-
-		// report not generated
-		if (reportModified == null) {
-			logger.debug("report not generated");
-			return false;
-		}
-
-		// check modified date (modified is always bigger than reportModified so
-		// a delta is defined)
-		Date modified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
-		logger.debug("modified: " + ISO8601DateFormat.format(modified) + " - reportModified: " + ISO8601DateFormat.format(reportModified));
-		if (modified.after(reportModified)) {
-			logger.debug("node has been modified");
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Test is report up to date.
+	 * Test report on product
 	 * 
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
 	@Test
-	public void testIsReportUpToDate() throws InterruptedException {
+	public void testProductReport() throws InterruptedException {
 
 		logger.debug("testIsReportUpToDate()");
 
@@ -168,71 +117,12 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				sfData.setAllergenList(allergenList);
 
 				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
-
+				
 				assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
 
 				return null;
-
 			}
 		});
-
-		// load SF and test it
-		final SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
-
-		// wait since it is done in a threadpool
-		Thread.sleep(6000);
-
-		// product report should be update to date due to policy
-		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
-
-		// change product property, should be still up to date due to policy
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF");
-				return null;
-
-			}
-		});
-
-		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
-
-		// change product property, should be out of date (policy disabled)
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				policyBehaviourFilter.disableBehaviour(sfNodeRef, BeCPGModel.TYPE_PRODUCT);
-				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF1");
-				policyBehaviourFilter.enableBehaviour(sfNodeRef, BeCPGModel.TYPE_PRODUCT);
-				return null;
-
-			}
-		});
-
-		assertEquals("check if report is up to date", false, isReportUpToDate(sfNodeRef));
-
-		// reset
-		resetReportModified();
-		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
-
-		// change product property, should be out of date (policy enabled)
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF1");
-				return null;
-
-			}
-		});
-
-		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
-
-		// reset
-		resetReportModified();
-		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
 
 		// setProperty of allergen without changing anything => should be up to
 		// date
@@ -240,14 +130,17 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
+				// load SF and test it
+				SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 				NodeRef nodeRef = sfData.getAllergenList().get(0).getAllergen();
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);
+				
+				assertTrue(entityService.hasDataListModified(sfNodeRef));
 				return null;
 
 			}
 		});
 
-		assertEquals("check if report is up to date", true, isReportUpToDate(sfNodeRef));
 	}
 
 	/**

@@ -26,8 +26,6 @@ import fr.becpg.test.RepoBaseTestCase;
  */
 public class CopyEntityServiceTest extends RepoBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(CopyEntityServiceTest.class);
-	
 	@Resource
 	private EntityService entityService;
 

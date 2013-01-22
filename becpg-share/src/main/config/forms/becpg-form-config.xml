@@ -100,14 +100,6 @@
 					<show id="bcpg:projectedQty" force="true" />
 					<show id="bcpg:profitability" force="true" />
 
-					<!-- NPD 
-					<show id="npd:npdNumber" />
-					<show id="npd:npdType" />
-					<show id="npd:npdStatus" />
-					<show id="npd:npdInitiator" />
-					-->
-
-
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -266,12 +258,6 @@
 					<field id="bcpg:projectedQty" set="profitability" />
 					<field id="bcpg:profitability" read-only="true" set="profitability" />
 
-					<!-- NPD 
-					<field id="npd:npdNumber" set="npd" />
-					<field id="npd:npdType" set="npd" />
-					<field id="npd:npdStatus" set="npd" />
-					<field id="npd:npdInitiator" set="npd" />
-					-->
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>

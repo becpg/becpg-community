@@ -40,8 +40,7 @@
 		<property name="fileFolderService" ref="fileFolderService"/>		
 		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
 		<property name="reportTplService" ref="reportTplService" />		
-		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>		
+		<property name="mimetypeService" ref="mimetypeService"/>		
 	</bean>
 	
 	<bean id="defaultExtractorPlugin" class="fr.becpg.repo.report.entity.ExtractorPlugin" init-method="init">

@@ -5,12 +5,16 @@ package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,8 +25,11 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * The Class SubmitTaskPolicy.
@@ -30,7 +37,9 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  * @author querephi
  */
 @Service
-public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy,
+	NodeServicePolicies.OnCreateAssociationPolicy,
+	NodeServicePolicies.OnDeleteAssociationPolicy{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProjectListPolicy.class);
@@ -38,13 +47,25 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	private ProjectService projectService;
 
 	private WUsedListService wUsedListService;
-
+	
+	private PermissionService permissionService;
+	
+	private AlfrescoRepository<ProjectData> alfrescoRepository;
+	
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
 	public void setwUsedListService(WUsedListService wUsedListService) {
 		this.wUsedListService = wUsedListService;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
@@ -56,6 +77,12 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this,
+						"onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this,
+						"onDeleteAssociation"));
 	}
 
 	@Override
@@ -105,24 +132,32 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			}
 		}
 
-		// duration has priority on endDate
+//		// duration has priority on endDate
+//		if (isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION)
+//				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)){
+//			
+//			logger.debug("### update task list start or duration: " + nodeRef);
+//			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+//			Integer duration = (Integer)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_DURATION);			
+//			Date endDate = ProjectHelper.calculateEndDate(startDate, duration);
+//			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
+//			formulateProject = true;
+//			
+//		}else if(isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)) {
+//
+//			logger.debug("### update task list end: " + nodeRef);
+//			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+//			Date endDate = ProjectHelper.removeTime(new Date());
+//			Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
+//			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
+//			formulateProject = true;
+//		}
+		
 		if (isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION)
-				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)){
+				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)
+				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)){
 			
-			logger.debug("### update task list start or duration: " + nodeRef);
-			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
-			Integer duration = (Integer)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_DURATION);			
-			Date endDate = ProjectHelper.calculateEndDate(startDate, duration);
-			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
-			formulateProject = true;
-			
-		}else if(isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)) {
-
-			logger.debug("### update task list end: " + nodeRef);
-			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
-			Date endDate = ProjectHelper.removeTime(new Date());
-			Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
-			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
+			logger.debug("### update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
 		}
 				
@@ -166,5 +201,33 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				queueNode(projectNodeRef);
 			}
 		}
+	}
+
+	@Override
+	public void onDeleteAssociation(AssociationRef assocRef) {
+		setPermission(assocRef, false);
+	}
+
+	@Override
+	public void onCreateAssociation(AssociationRef assocRef) {
+		setPermission(assocRef, true);						
+	}
+	
+	private void setPermission(AssociationRef assocRef, boolean allow){
+		NodeRef taskListNodeRef = assocRef.getSourceRef();
+		NodeRef resourceNodeRef = assocRef.getTargetRef();	
+		
+		NodeRef projectNodeRef = wUsedListService.getRoot(taskListNodeRef);
+		
+		if(ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))){
+			String userName = (String)nodeService.getProperty(resourceNodeRef, ContentModel.PROP_USERNAME);
+			permissionService.setPermission(taskListNodeRef, userName, PermissionService.EDITOR, allow);
+					
+			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+			List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
+			for(DeliverableListDataItem dl : deliverableList){
+				permissionService.setPermission(dl.getNodeRef(), userName, PermissionService.EDITOR, allow);
+			}
+		}		
 	}
 }
