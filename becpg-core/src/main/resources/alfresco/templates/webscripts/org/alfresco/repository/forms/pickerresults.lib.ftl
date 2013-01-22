@@ -54,13 +54,15 @@
 				<#if row.item.siteShortName??>"site": "${row.item.siteShortName}",</#if>
 				"displayPath": "${row.item.displayPath!""}",
 				"nodeRef": "${row.item.nodeRef}"<#if row.selectable?exists>,
-				"selectable" : ${row.selectable?string}</#if>,
-				"aspects": 
+				"selectable" : ${row.selectable?string}</#if>
+				<#if row.item.aspect??>
+				,"aspects": 
 		         [
 		         <#list row.item.aspects as aspect>
 		            "${shortQName(aspect)}"<#if aspect_has_next>,</#if>
 		         </#list>
 		         ]
+		       </#if>
 			}<#if row_has_next>,</#if>
 		</#list>
 		]

@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -38,8 +40,6 @@ public class DataListFilter {
 	
 	private boolean allFilter = false;
 	
-	
-	
 	public DataListFilter() {
 		super();
 		sortMap.put("@bcpg:sort", true);
@@ -54,8 +54,7 @@ public class DataListFilter {
 			
 			sortProps.add(new Pair<QName, Boolean>(QName.createQName(entry.getKey().replace("@",""), namespaceService),entry.getValue()));
 		}
-		
-		
+
 		return sortProps;
 	}
 	
@@ -150,9 +149,9 @@ public class DataListFilter {
 		return allFilter && dataListNodeRef!=null;
 	}
 
-	public void buildQueryFilter( String filterId, String filterData, String argDays ) throws JSONException {
+	public void buildQueryFilter( String filterId, String filterData, String params ) throws JSONException {
 		
-		
+		Pattern ftsQueryPattern = Pattern.compile("fts\\((.*)\\)");
 
 		filterQuery = " +TYPE:\"" + dataType.toString() + "\"";
 
@@ -168,9 +167,10 @@ public class DataListFilter {
 
 				// Default to 7 days - can be overridden using "days" argument
 				int dayCount = 7;
-				if (argDays != null) {
+				
+				if (params != null && params.startsWith("day=")) {
 					try {
-						dayCount = Integer.parseInt(argDays);
+						dayCount = Integer.parseInt(params.replace("day=", ""));
 					} catch (NumberFormatException e) {
 
 					}
@@ -201,43 +201,18 @@ public class DataListFilter {
 				filterQuery += "+PATH:\"/cm:taggable/cm:" + ISO9075.encode(filterData) + "/member\"";
 			}  else if (filterId.equals(ALL_FILTER)) {
 				allFilter = true;
+			}  else if(params!=null) {
+				Matcher ma = ftsQueryPattern.matcher(params);
+				if(ma.matches()){
+					filterQuery += " "+ma.group(1);
+				}
+				
 			}
 		}
 
 		 filterQuery += searchQueryDefaults;
 
 	}
-	
-//TODO	
-//	        "Alfresco.component.PrioriryFilter"
-//			"Alfresco.component.DueFilter"
-//			"Alfresco.component.AllFilter"
-//			"Alfresco.component.StartedFilter"
-//	   <filters-parameters>
-//	      <!--
-//	         Turns the filters form the filter's config files into url parameters by matching the filter id and data against
-//	         the filter patterns below. A wildcard ("*") matches any value as long as it exists and isn't empty.
-//	         The parameters will later be added to the end of the base repo webscript url used to retrieve the values.
-//
-//	         Note that it is possible to create dynamic values by using the following keys inside "{}":
-//	          * {id} - resolves to the filter id value
-//	          * {data} - resolveds to the filter data value
-//	          * {0dt} - resolves to a iso08601 datetime representation of the current date and time
-//	          * {0d} -  resolves to a iso8601 date respresentation of the current day
-//	          * {-7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days back
-//	          * {+7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days forward
-//	      -->
-//	      <filter id="due"           data="today"        parameters="dueAfter={-1d}&amp;dueBefore={0d}"/>
-//	      <filter id="due"           data="tomorrow"     parameters="dueAfter={0d}&amp;dueBefore={1d}"/>
-//	      <filter id="due"           data="next7Days"    parameters="dueAfter={0d}&amp;dueBefore={8d}"/>
-//	      <filter id="due"           data="overdue"      parameters="dueBefore={-1d}"/>
-//	      <filter id="due"           data="noDate"       parameters="dueBefore=null"/>
-//	      <filter id="started"       data="last7Days"    parameters="startedAfter={-7d}"/>
-//	      <filter id="started"       data="last14Days"   parameters="startedAfter={-14d}"/>
-//	      <filter id="started"       data="last28Days"   parameters="startedAfter={-28d}"/>
-//	      <filter id="priority"      data="*"            parameters="priority={data}"/>
-//	      <filter id="workflowType"  data="*"            parameters="definitionName={data}"/>
-//	   </filters-parameters>
 	
 	
 
