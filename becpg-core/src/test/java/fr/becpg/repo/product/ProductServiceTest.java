@@ -311,6 +311,15 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		String imageName = I18NUtil.getMessage(RepoConsts.PATH_PRODUCT_IMAGE) + ".jpg";
 		NodeRef imageProductNodeRef = nodeService.getChildByName(imagesFolder, ContentModel.ASSOC_CONTAINS, imageName);
 		assertNotNull("Image product must be not null", imageProductNodeRef);
+		
+		/*-- init repo --*/
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
+				return null;
+			}
+		}, false, true);
 	}
 
 	/**
@@ -461,7 +470,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
 				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
 				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
-				assertEquals("8th Path should be 'Raw material (1)'", "Raw material (1)", nodeService.getProperty(rawMaterial2NodeRef, ContentModel.PROP_NAME));
+				assertEquals("8th Path should be 'Raw material (1)'", "Raw material (1)", arrDisplayPaths[7]);
 
 				return null;
 
