@@ -2,10 +2,9 @@ package fr.becpg.repo.project.impl;
 
 import java.util.List;
 
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.apache.commons.logging.Log;
@@ -43,6 +42,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private NodeService nodeService;
 	private BeCPGSearchService beCPGSearchService;
 	private RepoService repoService;
+	private SiteService siteService;
+	
 	private FormulationService<ProjectData> formulationService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<AbstractProjectData> alfrescoRepository) {
@@ -71,6 +72,10 @@ public class ProjectServiceImpl implements ProjectService {
 
 	public void setFormulationService(FormulationService<ProjectData> formulationService) {
 		this.formulationService = formulationService;
+	}
+	
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
 	}
 
 	@Override
@@ -104,6 +109,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
+		if(siteId!=null && siteId.length()>0){
+			return siteService.getContainer(siteId,SiteService.DOCUMENT_LIBRARY);
+		}
 		return repoService.getFolderByPath(RepoConsts.PATH_PROJECTS);
 	}
 

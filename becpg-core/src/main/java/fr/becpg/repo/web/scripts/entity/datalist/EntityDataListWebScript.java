@@ -62,6 +62,15 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 	
+	/**
+	 * Sites search params
+	 */
+	protected static final String PARAM_CONTAINER = "container";
+
+	protected static final String PARAM_SITE = "site";
+
+	protected static final String PARAM_REPOSITORY = "repo";
+	
 	// request parameter names
 	/** The Constant PARAM_STORE_TYPE. */
 	protected static final String PARAM_STORE_TYPE = "store_type";
@@ -168,6 +177,17 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		
 		dataListFilter.setSortMap(sortMap);
 		
+		//Site filter 
+		dataListFilter.setSiteId(req.getParameter(PARAM_SITE));
+		dataListFilter.setContainerId(req.getParameter(PARAM_CONTAINER));		
+		String repo = req.getParameter(PARAM_REPOSITORY);
+
+		boolean isRepo = true;
+		if (repo != null && repo.equals("false")) {
+			isRepo = false;
+		}
+		dataListFilter.setRepo(isRepo);
+		
 		
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if(templateArgs!=null){
@@ -178,9 +198,9 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 				if(req.getServiceMatch().getPath().contains("/item/node")){
 					dataListFilter.setNodeRef(nodeRef);
-					dataListFilter.setDataListNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
+					dataListFilter.setParentNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
 				} else {
-					dataListFilter.setDataListNodeRef(nodeRef);
+					dataListFilter.setParentNodeRef(nodeRef);
 				}
 			}
 		}
@@ -257,6 +277,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				logger.debug("Filter:" + dataListFilter.toString());
 				logger.debug("Pagination:" + pagination.toString());
 				logger.debug("MetadataFields:" + metadataFields.toString());
+				logger.debug("SearchQuery:"+dataListFilter.getSearchQuery());
 			}
 
 
@@ -279,7 +300,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			JSONObject parent = new JSONObject();
 
-			parent.put("nodeRef", dataListFilter.getDataListNodeRef());
+			parent.put("nodeRef", dataListFilter.getParentNodeRef());
 	
 			
 			JSONObject permissions = new JSONObject();
@@ -287,7 +308,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			
 			
 			userAccess.put("create", (hasWriteAccess 
-					&& permissionService.hasPermission(dataListFilter.getDataListNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+					&& permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
 			
 			
 			permissions.put("userAccess",userAccess);

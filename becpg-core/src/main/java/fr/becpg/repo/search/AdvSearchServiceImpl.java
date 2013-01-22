@@ -35,8 +35,6 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 @Service
 public class AdvSearchServiceImpl implements AdvSearchService {
 
-	/** The Constant SITES_SPACE_QNAME_PATH. */
-	private static final String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
 
 	/** The Constant PRODUCTS_TO_EXCLUDE. */
 	private static final String PRODUCTS_TO_EXCLUDE = " AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
@@ -116,25 +114,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 
 		// we processed the search terms, so suffix the PATH query
-		String path = null;
+	
 		if (!isRepo) {
-
-			path = SITES_SPACE_QNAME_PATH;
-			if (siteId != null && siteId.length() > 0) {
-				path += "cm:" + ISO9075.encode(siteId) + "/";
-			} else {
-				path += "*/";
-			}
-			if (containerId != null && containerId.length() > 0) {
-				path += "cm:" + ISO9075.encode(containerId) + "/";
-			} else {
-				path += "*/";
-			}
-
-			if (path != null) {
-				ftsQuery = "PATH:\"" + path + "/*\"" + (ftsQuery.length() != 0 ? " AND " + ftsQuery : "");
-			}
-
+			ftsQuery = 	LuceneHelper.getSiteSearchPath( siteId, containerId)+ (ftsQuery.length() != 0 ? " AND " + ftsQuery : "");
 		}
 
 		String typeQuery = "";

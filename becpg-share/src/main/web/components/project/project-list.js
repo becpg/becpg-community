@@ -73,7 +73,7 @@ var g; // gantt var
 	               onReady : function PL_onReady() {
 
 		               var url = Alfresco.constants.PROXY_URI + "becpg/project/info"
-		                     + (this.options.siteId != null ? "?site=" + this.options.siteId : "");
+		                     + (this.options.siteId != null && this.options.siteId.length >0 ? "?site=" + this.options.siteId : "");
 
 		               Alfresco.util.Ajax.request({
 		                  url : url,
@@ -307,11 +307,13 @@ var g; // gantt var
 						 */
 	               onFilterChanged : function PL_onFilterChanged(layer, args) {
 		               var filter = Alfresco.util.cleanBubblingObject(args[1]);
-		               if (filter.filterId != "filterform") {
-			               Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId
-			                     + (filter.filterData ? "." + filter.filterData : ""), filter.filterData));
+		               if (filter.filterId == "filterform") {
+		               	  Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId));			               
+		               } else  if (filter.filterId == "tag") { 
+		               	 Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId , filter.filterData));
 		               } else {
-			               Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId));
+		               	Dom.get(this.id + "-filterTitle").innerHTML = $html(this.msg("filter." + filter.filterId
+			                     + (filter.filterData ? "." + filter.filterData : ""), filter.filterData));
 		               }
 
 		               

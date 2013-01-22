@@ -9,8 +9,9 @@
 
 <@templateBody>
    <div id="alf-hd">
-   <@region id="header" scope="global"/>
-   <@region id="task-title" scope="template" />
+	   <@region id="header" scope="global"/>
+	   <@region id="title" scope="template" />
+	   <@region id="navigation" scope="template" />
    </div>
    <div id="bd">
       <div class="yui-t1" id="alfresco-project-list">

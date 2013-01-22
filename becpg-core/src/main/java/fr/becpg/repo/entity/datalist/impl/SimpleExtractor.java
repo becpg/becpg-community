@@ -112,7 +112,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 			FileFilterMode.setClient(Client.script);
 			try {
 
-				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getDataListNodeRef(), true, false, null, ignoreTypeQNames, dataListFilter.getSortProps(namespaceService), pageRequest);
+				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getParentNodeRef(), true, false, null, ignoreTypeQNames, dataListFilter.getSortProps(namespaceService), pageRequest);
 			} finally {
 				FileFilterMode.clearClient();
 			}

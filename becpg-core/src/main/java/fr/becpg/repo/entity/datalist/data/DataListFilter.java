@@ -10,11 +10,14 @@ import java.util.regex.Pattern;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
 import org.json.JSONException;
+
+import fr.becpg.repo.helper.LuceneHelper;
 
 public class DataListFilter {
 
@@ -28,7 +31,7 @@ public class DataListFilter {
 	
 	private NodeRef entityNodeRef= null;
 	
-	private NodeRef dataListNodeRef= null;
+	private NodeRef parentNodeRef= null;
 	
 	private NodeRef nodeRef= null;
 	
@@ -37,6 +40,12 @@ public class DataListFilter {
 	private Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
 	
 	private QName dataType = null;
+	
+	private boolean isRepo = true;
+	
+	private String siteId = null;
+	
+	private String containerId = SiteService.DOCUMENT_LIBRARY;
 	
 	private boolean allFilter = false;
 	
@@ -67,9 +76,7 @@ public class DataListFilter {
 		return entityNodeRef;
 	}
 
-	public NodeRef getDataListNodeRef() {
-		return dataListNodeRef;
-	}
+	
 
 	public Map<String, String> getCriteriaMap() {
 		return criteriaMap;
@@ -85,6 +92,38 @@ public class DataListFilter {
 	}
 	
 	
+	public NodeRef getParentNodeRef() {
+		return parentNodeRef;
+	}
+
+	public void setParentNodeRef(NodeRef parentNodeRef) {
+		this.parentNodeRef = parentNodeRef;
+	}
+
+	public boolean isRepo() {
+		return isRepo;
+	}
+
+	public void setRepo(boolean isRepo) {
+		this.isRepo = isRepo;
+	}
+
+	public String getSiteId() {
+		return siteId;
+	}
+
+	public void setSiteId(String siteId) {
+		this.siteId = siteId;
+	}
+
+	public String getContainerId() {
+		return containerId;
+	}
+
+	public void setContainerId(String containerId) {
+		this.containerId = containerId;
+	}
+
 	public int getMaxDepth() {
 		int maxLevel = 1;
 		if(isDepthDefined()){
@@ -103,10 +142,6 @@ public class DataListFilter {
 
 	public void setEntityNodeRef(NodeRef entityNodeRef) {
 		this.entityNodeRef = entityNodeRef;
-	}
-
-	public void setDataListNodeRef(NodeRef dataListNodeRef) {
-		this.dataListNodeRef = dataListNodeRef;
 	}
 
 	public void setCriteriaMap(Map<String, String> criteriaMap) {
@@ -128,7 +163,7 @@ public class DataListFilter {
 	}
 	
 	public String getSearchQuery (){
-		return getSearchQuery(this.dataListNodeRef);
+		return getSearchQuery(this.parentNodeRef);
 	}
 	
 	
@@ -136,8 +171,14 @@ public class DataListFilter {
 		this.nodeRef = nodeRef;
 	}
 
-	public String getSearchQuery(NodeRef dataListNodeRef) {
-		return filterQuery + (dataListNodeRef!=null ? " +PARENT:\"" + dataListNodeRef + "\" ":"");
+	public String getSearchQuery(NodeRef parentNodeRef) {
+		String searchQuery = filterQuery + (parentNodeRef!=null ? " +PARENT:\"" + parentNodeRef + "\" ":"");
+		
+		
+		if (!isRepo && parentNodeRef==null) {
+			searchQuery = 	LuceneHelper.getSiteSearchPath( siteId, containerId)+ " AND ("+searchQuery+")";
+		}
+		return searchQuery;
 	}
 	
 	public boolean isSimpleItem() {
@@ -146,7 +187,7 @@ public class DataListFilter {
 
 
 	public boolean isAllFilter() {
-		return allFilter && dataListNodeRef!=null;
+		return allFilter && parentNodeRef!=null;
 	}
 
 	public void buildQueryFilter( String filterId, String filterData, String params ) throws JSONException {
@@ -222,9 +263,13 @@ public class DataListFilter {
 
 	@Override
 	public String toString() {
-		return "DataListFilter [filterQuery=" + filterQuery + ", entityNodeRef=" + entityNodeRef + ", dataListNodeRef=" + dataListNodeRef + ", criteriaMap=" + criteriaMap
-				+ ", sortMap=" + sortMap + ", dataType=" + dataType + "]";
+		return "DataListFilter [filterQuery=" + filterQuery + ", entityNodeRef=" + entityNodeRef + ", parentNodeRef=" + parentNodeRef + ", nodeRef=" + nodeRef + ", criteriaMap="
+				+ criteriaMap + ", sortMap=" + sortMap + ", dataType=" + dataType + ", isRepo=" + isRepo + ", siteId=" + siteId + ", containerId=" + containerId + ", allFilter="
+				+ allFilter + "]";
 	}
+
+
+	
 
 	
 
