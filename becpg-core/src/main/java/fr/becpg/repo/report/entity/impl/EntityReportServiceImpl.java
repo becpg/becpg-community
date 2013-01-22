@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -58,9 +57,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	private BeCPGReportEngine beCPGReportEngine;
 	
 	private MimetypeService mimetypeService;
-	
-	private BehaviourFilter policyBehaviourFilter;
-	
+		
 	private Map<String, EntityReportExtractor>  entityExtractors = new HashMap<String, EntityReportExtractor>();
 	
 
@@ -112,58 +109,35 @@ public class EntityReportServiceImpl implements EntityReportService{
 		this.reportTplService = reportTplService;
 	}
 
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
-		
-		try{
-    		// Ensure that the policy doesn't refire for this node
-			// on this thread
-			// This won't prevent background processes from
-			// refiring, though
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-     
-            /*
-             *  generate reports
-             */
-            
-            List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);			
-    		//TODO here plug a template filter base on entityNodeRef
-    		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);		
-    	
-    		if(!tplsNodeRef.isEmpty()){
-    			StopWatch watch = null;
-    			if (logger.isDebugEnabled()) {
-    				watch = new StopWatch();
-    				watch.start();
-    			}
-    	
-    			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
-    			
-    			generateReports(entityNodeRef, tplsNodeRef, reportData.getXmlDataSource() , reportData.getDataObjects());	
-    			if (logger.isDebugEnabled()) {
-    				watch.stop();
-    				logger.debug( "Reports generated in  "
-    						+ watch.getTotalTimeSeconds() + " seconds");
-    			}
-        	}
-    		else{
-    			logger.debug("No report tpls found");
-    		}
-            
-        	// set reportNodeGenerated property to now
-	        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());
-        }
-        finally{
-        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
-        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);
-        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-        }		
+	
+        List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);			
+		//TODO here plug a template filter base on entityNodeRef
+		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);		
+	
+		if(!tplsNodeRef.isEmpty()){
+			StopWatch watch = null;
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+	
+			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
+			
+			generateReports(entityNodeRef, tplsNodeRef, reportData.getXmlDataSource() , reportData.getDataObjects());	
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug( "Reports generated in  "
+						+ watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
+			}
+    	}
+		else{
+			logger.debug("No report tpls found");
+		}
+        
+    	// set reportNodeGenerated property to now
+        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());        	
 	}
 	
 	@Override

@@ -146,10 +146,11 @@ public class LazyLoadingDataList<E> implements List<E>  {
 		boolean modified = false;
 		Iterator<E> e = iterator();
 		while (e.hasNext()) {
-		    if (!c.contains(e.next())) {
-		    deletedNodes.remove(e);
-			e.remove();
-			modified = true;
+			E elt = e.next();
+		    if (!c.contains(elt)) {
+			    deletedNodes.add(elt);
+				e.remove();
+				modified = true;
 		    }
 		}
 		return modified;

@@ -38,6 +38,8 @@
 		parent="abstractBeCPGPolicy">
 		<property name="projectService" ref="projectService" />
 		<property name="wUsedListService" ref="wUsedListService" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />		
 	</bean>
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy"
 		parent="abstractBeCPGPolicy">

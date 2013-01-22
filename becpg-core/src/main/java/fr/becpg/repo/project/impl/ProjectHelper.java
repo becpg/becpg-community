@@ -13,6 +13,7 @@ import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 
@@ -58,6 +59,19 @@ public class ProjectHelper {
 				if (taskListDataItem.getPrevTasks().contains(p.getNodeRef())) {
 					taskList.add(p);
 				}
+			}
+		}
+		return taskList;
+	}
+	
+	public static List<TaskListDataItem> getLastTasks(AbstractProjectData projectData) {
+
+		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		if (projectData.getTaskList() != null) {
+			for (TaskListDataItem t : projectData.getTaskList()) {
+				if(getNextTasks(projectData, t.getNodeRef()).size() == 0){
+					taskList.add(t);
+				}				
 			}
 		}
 		return taskList;
@@ -131,16 +145,18 @@ public class ProjectHelper {
 		return endDate;
 	}
 
-	public static void setTaskStartDate(TaskListDataItem t, Date startDate, boolean force) {
+	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " start: " + startDate);
-		if (TaskState.Planned.equals(t.getState()) || force) {
+		if (TaskState.Planned.equals(t.getState()) && !TaskManualDate.Start.equals(t.getManualDate())) {			
 			t.setStart(removeTime(startDate));
 		}
 	}
 
-	public static void setTaskEndDate(TaskListDataItem t, Date endDate, boolean force) {
+	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " end: " + endDate);
-		if (TaskState.Planned.equals(t.getState()) || TaskState.InProgress.equals(t.getState()) || force) {
+		logger.debug("###TaskManualDate.End.equals(t.getManualDate()): " + TaskManualDate.End.equals(t.getManualDate()) +  " - t.getManualDate(): " + t.getManualDate());
+		if ((TaskState.Planned.equals(t.getState()) || TaskState.InProgress.equals(t.getState())) && 
+				!TaskManualDate.End.equals(t.getManualDate())) {
 			t.setEnd(removeTime(endDate));
 		}
 	}
@@ -159,7 +175,7 @@ public class ProjectHelper {
 		}
 	}
 
-	public static Date calculateNextDate(Date startDate, Integer duration) {
+	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned) {
 
 		logger.debug("startDate: " + startDate);
 		logger.debug("duration: " + duration);
@@ -176,7 +192,12 @@ public class ProjectHelper {
 		calendar.setTime(startDate);
 		int i = 1;
 		while (i < duration) {
-			calendar.add(Calendar.DATE, 1);
+			if(isPlanned){
+				calendar.add(Calendar.DATE, 1);
+			}
+			else{
+				calendar.add(Calendar.DATE, -1);
+			}			
 			if (isWorkingDate(calendar)) {
 				i++;
 			}
@@ -221,10 +242,18 @@ public class ProjectHelper {
 	}
 
 	public static Date calculateEndDate(Date startDate, Integer duration) {
-		return calculateNextDate(startDate, duration);
+		return calculateNextDate(startDate, duration, true);
 	}
 
 	public static Date calculateNextStartDate(Date endDate) {
-		return calculateNextDate(endDate, DURATION_NEXT_DAY);
+		return calculateNextDate(endDate, DURATION_NEXT_DAY, true);
+	}
+	
+	public static Date calculateStartDate(Date endDate, Integer duration) {
+		return calculateNextDate(endDate, duration, false);
+	}
+	
+	public static Date calculatePrevEndDate(Date startDate) {
+		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
 	}
 }

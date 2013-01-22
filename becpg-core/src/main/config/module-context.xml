@@ -37,6 +37,7 @@
    <import resource="classpath:alfresco/module/${artifactId}/context/gs1-context.xml" />
   	<import resource="classpath:alfresco/module/${artifactId}/context/publication-context.xml" />
   	<import resource="classpath:alfresco/module/${artifactId}/context/project-context.xml" />
+  	<import resource="classpath:alfresco/module/${artifactId}/deprecated/deprecated-context.xml" />
  
   
 <!--   	

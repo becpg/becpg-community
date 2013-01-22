@@ -2,6 +2,7 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
+@Deprecated
 public interface NPDModel {
 
 	//

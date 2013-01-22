@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model name="npdwf:npdModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+	</imports>
+
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/npd-workflow/1.0"
+			prefix="npdwf" />
+	</namespaces>
+
+	<constraints>
+		<constraint name="npdwf:npdType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Pré étude (diffusion restreinte)</value>
+					<value>Etude</value>
+					<value>Arrêt</value>
+					<value>Modification</value>
+					<value>Lancement</value>
+					<value>Substitution</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="npdwf:npdStatus" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Démarré</value>
+					<value>Etude du besoin</value>
+					<value>Faisabilité en cours</value>
+					<value>Commercialisé</value>
+					<value>Réservé</value>
+					<value>Offre client</value>
+					<value>Stop</value>
+					<value>Standby</value>
+					<value>Prototypage</value>
+					<value>Mise en production</value>
+				</list>
+			</parameter>
+		</constraint>
+	</constraints>
+
+
+	<types>
+
+		<!-- -->
+		<!-- New product development workflow -->
+		<!-- -->
+
+		<type name="npdwf:initiate-npd">
+			<parent>bpm:startTask</parent>
+			<overrides>
+				<property name="bpm:packageActionGroup">
+					<default>add_package_item_actions</default>
+				</property>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="npdwf:needDefinition">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+            <property name="bpm:packageActionGroup">
+               <default>add_package_item_actions</default>
+            </property>
+            <property name="bpm:packageItemActionGroup">
+               <default>edit_package_item_actions</default>
+            </property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
+				<aspect>npdwf:needDefinitionProductAspect</aspect>
+				<aspect>npdwf:packagingDescriptionAspect</aspect>
+				<aspect>npdwf:recipeDescriptionAspect</aspect>
+				<aspect>bpm:groupAssignees</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="npdwf:needDefinition-validation">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
+				<aspect>npdwf:needDefinitionProductAspect</aspect>
+				<aspect>npdwf:packagingDescriptionAspect</aspect>
+				<aspect>npdwf:recipeDescriptionAspect</aspect>				
+				<aspect>bpm:groupAssignees</aspect>	
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="npdwf:feasibility-analysis-assignement">
+			<parent>bpm:workflowTask</parent>			
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>				
+			</overrides>			  
+			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
+				<aspect>npdwf:assigneesAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="npdwf:feasibility-analysis">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+				<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>		
+				<aspect>npdwf:assigneesAspect</aspect>		
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="npdwf:validate-analysis">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>npdwf:npdAspect</aspect>	
+				<aspect>npdwf:cftAspect</aspect>
+				<aspect>npdwf:priceInformations</aspect>
+				<aspect>npdwf:volumeForeCastAspect</aspect>
+				<aspect>bpm:groupAssignees</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="npdwf:send-client-offer">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+
+
+		<type name="npdwf:work-on-prototype">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+
+		<type name="npdwf:validate-prototype">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>				
+				<aspect>bpm:groupAssignees</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<type name="npdwf:start-production">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+
+
+	</types>
+
+	<aspects>
+		<!-- Call for tender -->
+		<aspect name="npdwf:cftAspect">
+			<properties>
+				<property name="npdwf:cftTransmitter">
+					<type>d:text</type>
+				</property>
+				<property name="npdwf:cftRequirements">
+					<type>d:text</type>
+				</property>
+				<property name="npdwf:cftOpeningDate">
+					<type>d:date</type>
+				</property>
+				<property name="npdwf:cftNotify">
+					<type>d:boolean</type>
+				</property>
+				<property name="npdwf:cftSamplingDate">
+					<type>d:date</type>
+				</property>
+				<property name="npdwf:cftLaunchDateDesired">
+					<type>d:date</type>
+				</property>
+				<property name="npdwf:cftResponseDateDesired">
+					<type>d:date</type>
+				</property>
+				<property name="npdwf:cftResponseDateRealized">
+					<type>d:date</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="npdwf:cftSubsidiary">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:subsidiary</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="npdwf:cftClient">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:client</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		<!-- Volume Forecast -->
+		<aspect name="npdwf:volumeForeCastAspect">
+			<properties>
+				<property name="npdwf:volumeForecast">
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+		<!-- Price information -->
+		<aspect name="npdwf:priceInformations">
+			<properties>
+				<property name="npdwf:unitPrice">
+					<type>d:double</type>
+				</property>
+				<property name="npdwf:priceCurrency">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:currency" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- NPD -->
+		<aspect name="npdwf:npdAspect">
+			<properties>
+				<property name="npdwf:npdProductName">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="cm:filename" />
+					</constraints>
+				</property>
+				<property name="npdwf:npdNumber">
+					<type>d:text</type>
+				</property>
+				<property name="npdwf:npdType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="npdwf:npdType" />
+					</constraints>
+				</property>
+				<property name="npdwf:npdStatus">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="npdwf:npdStatus" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="npdwf:npdFolder">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:folder</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		<!-- Product description -->
+		<aspect name="npdwf:packagingDescriptionAspect">
+			<properties>
+				<property name="npdwf:packagingDescription">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="npdwf:needDefinitionPackagingKit">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:finishedProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		<aspect name="npdwf:recipeDescriptionAspect">
+			<properties>
+				<property name="npdwf:recipeDescription">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="npdwf:needDefinitionRecipeProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:finishedProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+
+			</associations>
+		</aspect>
+		<aspect name="npdwf:needDefinitionProductAspect">
+			<properties>
+				<property name="npdwf:productDescription">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="npdwf:needDefinitionProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:finishedProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		<aspect name="npdwf:assigneesAspect">
+			<associations>
+               <association name="npdwf:feasibilityAssignees">
+                   <source>
+                       <mandatory>false</mandatory>
+                       <many>false</many>
+                   </source>
+                   <target>
+                       <class>cm:person</class>
+                       <mandatory>false</mandatory>
+                       <many>true</many>
+                   </target>
+               </association>
+           </associations> 
+		</aspect>
+		
+	</aspects>
+
+
+
+</model>
