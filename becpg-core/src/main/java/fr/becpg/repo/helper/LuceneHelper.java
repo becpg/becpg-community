@@ -189,4 +189,21 @@ public class LuceneHelper {
 		return buf.toString();
 	}
 
+	public static String getSiteSearchPath(String siteId, String containerId) {
+
+		String path = SiteHelper.SITES_SPACE_QNAME_PATH;
+		if (siteId != null && siteId.length() > 0) {
+			path += "cm:" + ISO9075.encode(siteId) + "/";
+		} else {
+			path += "*/";
+		}
+		if (containerId != null && containerId.length() > 0) {
+			path += "cm:" + ISO9075.encode(containerId) + "/";
+		} else {
+			path += "*/";
+		}
+		
+		return "+PATH:\"" + path + "/*\"" ;
+	}
+
 }

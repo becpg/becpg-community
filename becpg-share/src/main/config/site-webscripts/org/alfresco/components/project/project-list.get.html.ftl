@@ -129,6 +129,9 @@
 			new beCPG.component.ProjectList("${el}", "${view}").setOptions(
 			   {
 			      siteId: "${page.url.templateArgs.site!""}",
+			      <#if page.url.templateArgs.site??>
+			      	extraDataParams: "&repo=false&container=documentLibrary",
+			      </#if>
 			      usePagination: true,
 			      useFilter: true,
 			      itemType : "pjt:project",

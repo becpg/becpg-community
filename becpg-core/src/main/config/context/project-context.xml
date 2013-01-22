@@ -13,6 +13,7 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="repoService" ref="repoService" />
 		<property name="formulationService" ref="formulationService" />
+		<property name="siteService" ref="siteService"/>
 	</bean>
 
 	<!-- Formulation -->

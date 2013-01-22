@@ -175,19 +175,18 @@
 					<show id="pjt:projectState" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" mandatory="false" />
-					<field id="pjt:projectHierarchy1" mandatory="false">
+					<field id="pjt:projectHierarchy1">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectPriority" mandatory="false">
+					<field id="pjt:projectPriority" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectState" mandatory="false">
+					<field id="pjt:projectState" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
@@ -210,19 +209,18 @@
 					<show id="pjt:projectEntity" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" mandatory="false" />
-					<field id="pjt:projectHierarchy1" mandatory="false">
+					<field id="pjt:projectHierarchy1" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectPriority" mandatory="false">
+					<field id="pjt:projectPriority">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectState" mandatory="false">
+					<field id="pjt:projectState" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>

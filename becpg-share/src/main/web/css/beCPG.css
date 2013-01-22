@@ -85,10 +85,11 @@
 	display: none;
 }
 
-
 /** view details **/
 
 .alfresco-twister .alfresco-twister-actions {
     right: 1em;
     float: right;
+    position: inherit;
 }
+
