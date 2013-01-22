@@ -6,6 +6,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.formulation.FormulateException;
@@ -76,6 +77,9 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 			
 			if(e instanceof FormulateException){
 				throw (FormulateException)e;
+			} 
+			else if(e instanceof ConcurrencyFailureException){
+				throw (ConcurrencyFailureException)e;
 			} 
 			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure"),e);
 			

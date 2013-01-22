@@ -438,6 +438,8 @@
 				</property>
 				<property name="bcpg:costFixed">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
 				</property>
 			</properties>
 		</type>
@@ -723,6 +725,8 @@
 				</property>
 				<property name="bcpg:packagingListIsMaster">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
 					<index enabled="false"/>					
 				</property>
 			</properties>
@@ -1978,6 +1982,8 @@
 			<properties>
 				<property name="bcpg:isDeleted">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
 				</property>
 			</properties>
 		</aspect>

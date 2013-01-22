@@ -26,9 +26,6 @@ import fr.becpg.test.RepoBaseTestCase;
 public class ProductPoliciesTest extends RepoBaseTestCase {
 
 	@Resource
-	private ProductDictionaryService productDictionaryService;
-
-	@Resource
 	private AutoNumService autoNumService;
 
 	private String productCode1 = null;

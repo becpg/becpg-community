@@ -1,6 +1,8 @@
 package fr.becpg.repo.project.data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -29,6 +31,7 @@ public class ProjectData extends AbstractProjectData {
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
 	private NodeRef entity;
+	private List<NodeRef> legends = new ArrayList<NodeRef>();
 
 	public ProjectData() {
 		super();
@@ -136,6 +139,16 @@ public class ProjectData extends AbstractProjectData {
 
 	public void setEntity(NodeRef entity) {
 		this.entity = entity;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectLegends")
+	public List<NodeRef> getLegends() {
+		return legends;
+	}
+
+	public void setLegends(List<NodeRef> legends) {
+		this.legends = legends;
 	}
 
 	@Override

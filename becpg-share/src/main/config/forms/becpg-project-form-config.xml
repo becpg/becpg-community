@@ -34,12 +34,13 @@
 					<show id="bcpg:code" for-mode="view" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectProjectTpl" />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectState" />					
+										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectCompletionDate" for-mode="view" />
-					<show id="pjt:projectPriority" />
-					<show id="pjt:projectState" />
-					<show id="pjt:projectEntity" />
+					<show id="pjt:projectCompletionDate" for-mode="view" />					
 					<show id="pjt:completionPercent" />
 
 					<!-- tags and categories -->
@@ -47,19 +48,44 @@
 					<show id="cm:categories" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:projectHierarchy1">
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<field id="cm:name" set="mainInfo" />						
+					<field id="bcpg:code" set="mainInfo" />
+					<field id="pjt:projectHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectPriority">
+					<field id="pjt:projectProjectTpl" set="mainInfo" />				
+					<field id="pjt:projectEntity" set="mainInfo" />	
+					<field id="pjt:projectPriority" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
+					<field id="pjt:projectState" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>						
+					
+					<field id="pjt:projectStartDate" set="planning" />
+					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectCompletionDate" set="planning" />
+					<field id="pjt:completionPercent" set="planning" />
+						
 					<!-- categories -->
-					<field id="cm:taggable">
+					<field id="cm:taggable" set="categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
 							<control-param name="params">aspect=cm:taggable
@@ -68,14 +94,8 @@
 							</control-param>
 							<control-param name="createNewItemIcon">tag</control-param>
 						</control>
-					</field>
-					<field id="pjt:projectState">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
-							</control-param>
-						</control>
-					</field>
-					<field id="cm:categories">
+					</field>					
+					<field id="cm:categories" set="categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
 						</control>
@@ -88,39 +108,56 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+				   <show id="cm:name" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectProjectTpl" />
-					<show id="pjt:projectStartDate" />
-					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectPriority" />
-					<show id="pjt:projectState" />
 					<show id="pjt:projectEntity" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectState" />					
+										
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectDueDate" />					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:projectHierarchy1">
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<field id="cm:name" set="mainInfo" />						
+					<field id="pjt:projectHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectPriority">
+					<field id="pjt:projectProjectTpl" set="mainInfo" />				
+					<field id="pjt:projectEntity" set="mainInfo" />	
+					<field id="pjt:projectPriority" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
-					<field id="pjt:projectState">
+					<field id="pjt:projectState" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
-					</field>
+					</field>						
+					
+					<field id="pjt:projectStartDate" set="planning" />
+					<field id="pjt:projectDueDate" set="planning" />
+						
 					<!-- categories -->
-					<field id="cm:taggable">
+					<field id="cm:taggable" set="categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
 							<control-param name="params">aspect=cm:taggable
@@ -129,8 +166,8 @@
 							</control-param>
 							<control-param name="createNewItemIcon">tag</control-param>
 						</control>
-					</field>
-					<field id="cm:categories">
+					</field>					
+					<field id="cm:categories" set="categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
 						</control>
@@ -159,7 +196,7 @@
 					<field id="dataList_pjt:taskList" label="Tâches en cours" />
 					<field id="pjt:projectHierarchy1" />
 					<field id="pjt:projectPriority" label="" />
-					<field id="pjt:projectStartDate" label="Dates" />
+					<field id="pjt:projectStartDate" label="planning" />
 				</appearance>
 
 			</form>
@@ -269,37 +306,59 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
-					<show id="pjt:tlIsMilestone" />
-					<show id="pjt:tlDuration" />
-					<show id="pjt:tlWorkflowName" />
 					<show force="true" id="pjt:tlPrevTasks" />
 					<show force="true" id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlWorkflowName" />
+					
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlDuration" />									
 					<show id="pjt:tlState" />
+					<show id="pjt:tlManualDate" />					
 					<show id="pjt:tlStart" read-only="true" />
 					<show id="pjt:tlEnd"   read-only="true" />
 					<show id="pjt:completionPercent" read-only="true" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:tlWorkflowName">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
-						</control>
-					</field>
-					<field id="pjt:tlPrevTasks">
+				
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
+						
+					<field id="pjt:tlTaskName" set="mainInfo"/>
+					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
+					</field>		
+					<field id="pjt:tlResources" set="mainInfo"/>
+					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
+					<field id="pjt:tlWorkflowName">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
+						</control>
 					</field>
-					<field id="pjt:tlState">
+					
+					<field id="pjt:tlIsMilestone" set="planning"/>
+					<field id="pjt:tlDuration" set="planning"/>
+					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
 					</field>
+					<field id="pjt:tlManualDate" set="planning">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,Start|data.manualdate.start,End|data.manualdate.end</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlStart" set="planning"/>
+					<field id="pjt:tlEnd" set="planning"/>
+					<field id="pjt:completionPercent" set="planning"/>
 				</appearance>
 			</form>
 		</forms>
@@ -309,37 +368,60 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
-					<show id="pjt:tlIsMilestone" />
-					<show id="pjt:tlDuration" />
-					<show id="pjt:tlWorkflowName" />
 					<show force="true" id="pjt:tlPrevTasks" />
 					<show force="true" id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlWorkflowName" />
+					
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlDuration" />									
 					<show id="pjt:tlState" />
+					<show id="pjt:tlManualDate" />					
 					<show id="pjt:tlStart" read-only="true" />
 					<show id="pjt:tlEnd"   read-only="true" />
 					<show id="pjt:completionPercent" read-only="true" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:tlWorkflowName">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
-						</control>
-					</field>
-					<field id="pjt:tlPrevTasks">
+					
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
+						
+					<field id="pjt:tlTaskName" set="mainInfo"/>
+					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
+					</field>		
+					<field id="pjt:tlResources" set="mainInfo"/>
+					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
+					<field id="pjt:tlWorkflowName">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
+						</control>
 					</field>
-					<field id="pjt:tlState">
+					
+					<field id="pjt:tlIsMilestone" set="planning"/>
+					<field id="pjt:tlDuration" set="planning"/>
+					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
 					</field>
+					<field id="pjt:tlManualDate" set="planning">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,Start|data.manualdate.start,End|data.manualdate.end</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlStart" set="planning"/>
+					<field id="pjt:tlEnd" set="planning"/>
+					<field id="pjt:completionPercent" set="planning"/>
+					
 				</appearance>
 			</form>
 			<form id="datagrid">
@@ -352,6 +434,8 @@
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlState" />
 					<show id="pjt:completionPercent" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd" />
 				</field-visibility>
 			</form>
 			<form id="sub-datagrid">

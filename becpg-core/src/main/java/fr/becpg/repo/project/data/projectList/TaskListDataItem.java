@@ -35,6 +35,7 @@ public class TaskListDataItem extends BeCPGDataObject {
 	private NodeRef taskLegend;
 	private String workflowName;
 	private String workflowInstance;
+	private TaskManualDate manualDate;
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskName")
@@ -156,6 +157,16 @@ public class TaskListDataItem extends BeCPGDataObject {
 	
 	public void setWorkflowInstance(String workflowInstance) {
 		this.workflowInstance = workflowInstance;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlManualDate")
+	public TaskManualDate getManualDate() {
+		return manualDate;
+	}
+
+	public void setManualDate(TaskManualDate manualDate) {
+		this.manualDate = manualDate;
 	}
 
 	public TaskListDataItem() {
