@@ -34,7 +34,7 @@ cp $SERVER/webapps/alfresco.war.setup $SERVER/webapps/alfresco.war
 install_core_amp becpg-controls-core-*.amp 
 install_core_amp becpg-designer-core-*.amp
 install_core_amp becpg-core-*.amp
-
+install_core_amp alfresco-googledocs-repo-*.amp
 
 if [ "$ansopenid" = "y" ]; then
 install_core_amp becpg-google-apps-*.amp
@@ -52,6 +52,7 @@ cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
 install_share_amp becpg-controls-share-*.amp
 install_share_amp becpg-designer-share-*.amp
 install_share_amp becpg-share-*.amp
+install_core_amp alfresco-googledocs-share-*.amp
 
 #clean dir
 rm -rf $SERVER/webapps/*.bak

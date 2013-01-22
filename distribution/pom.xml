@@ -70,6 +70,18 @@
 			<version>1.5.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.alfresco.integration</groupId>
+			<artifactId>alfresco-googledocs-repo</artifactId>
+			<type>amp</type>
+			<version>2.0.1-14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.alfresco.integration</groupId>
+			<artifactId>alfresco-googledocs-share</artifactId>
+			<type>amp</type>
+			<version>2.0.1-14</version>
+		</dependency>
+		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
 			<type>war</type>
