@@ -128,9 +128,26 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   propertyName : [ "bcpg:cost", "bcpg:allergen", "bcpg:nut", 
 	                    "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin",
 	                    "bcpg:geo", "bcpg:microbio", "bcpg:physicoChem",
-	                    "bcpg:organo", "pjt:taskList"],
+	                    "bcpg:organo"],
 	   renderer : function(oRecord, data, label, scope) {
 		   return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+	   }
+
+	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : [ "pjt:tlTaskName"],
+	   renderer : function(oRecord, data, label, scope) {
+		   var className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone":"task";
+		   return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+	   }
+
+	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	   propertyName : [ "pjt:tlState", "pjt:dlState"],
+	   renderer : function(oRecord, data, label, scope) {
+		   return '<span class="' + "task-" + data.displayValue.toLowerCase() + '" title="' + data.displayValue + '" />';
 	   }
 
 	});

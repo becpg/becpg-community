@@ -129,13 +129,16 @@ public class ProjectServiceImpl implements ProjectService {
 					if(workflowInstance.isActive()){
 						logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
 						workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
+						taskListDataItem.setWorkflowInstance(null);
 					}
 				}
 				else{
 					logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
 				}
 			}					
-		}        		        			        	
+		}    
+		
+		alfrescoRepository.save(abstractProjectData);
 	}
 
 	@Override

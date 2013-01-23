@@ -4,6 +4,7 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -214,19 +215,33 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	}
 	
 	private void setPermission(AssociationRef assocRef, boolean allow){
+		
 		NodeRef taskListNodeRef = assocRef.getSourceRef();
 		NodeRef resourceNodeRef = assocRef.getTargetRef();	
+		
+		List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
+		nodeRefs.add(taskListNodeRef);
 		
 		NodeRef projectNodeRef = wUsedListService.getRoot(taskListNodeRef);
 		
 		if(ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))){
 			String userName = (String)nodeService.getProperty(resourceNodeRef, ContentModel.PROP_USERNAME);
-			permissionService.setPermission(taskListNodeRef, userName, PermissionService.EDITOR, allow);
 					
 			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 			List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
 			for(DeliverableListDataItem dl : deliverableList){
-				permissionService.setPermission(dl.getNodeRef(), userName, PermissionService.EDITOR, allow);
+				nodeRefs.add(dl.getNodeRef());				
+			}
+			
+			for(NodeRef n : nodeRefs){
+				if(allow){
+					permissionService.setPermission(n, userName, PermissionService.EDITOR, allow);
+				}
+				else{					
+					//permissionService.deletePermission(n, userName, PermissionService.EDITOR);
+					permissionService.clearPermission(n, userName);
+				}
+				
 			}
 		}		
 	}

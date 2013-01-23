@@ -160,6 +160,7 @@ public class ProjectData extends AbstractProjectData {
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
 		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = prime * result + ((legends == null) ? 0 : legends.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result + ((projectState == null) ? 0 : projectState.hashCode());
 		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
@@ -201,6 +202,11 @@ public class ProjectData extends AbstractProjectData {
 				return false;
 		} else if (!hierarchy1.equals(other.hierarchy1))
 			return false;
+		if (legends == null) {
+			if (other.legends != null)
+				return false;
+		} else if (!legends.equals(other.legends))
+			return false;
 		if (priority == null) {
 			if (other.priority != null)
 				return false;
@@ -223,8 +229,10 @@ public class ProjectData extends AbstractProjectData {
 
 	@Override
 	public String toString() {
-		return "ProjectData [hierarchy1=" + hierarchy1 + ", startDate=" + startDate + ", dueDate=" + dueDate + ", completionDate=" + completionDate + ", priority=" + priority
-				+ ", projectState=" + projectState + ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entity=" + entity + "]";
+		return "ProjectData [hierarchy1=" + hierarchy1 + ", startDate=" + startDate + ", dueDate=" + dueDate
+				+ ", completionDate=" + completionDate + ", priority=" + priority + ", projectState=" + projectState
+				+ ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entity=" + entity
+				+ ", legends=" + legends + "]";
 	}
 
 	

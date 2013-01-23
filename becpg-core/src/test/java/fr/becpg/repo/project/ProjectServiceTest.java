@@ -139,13 +139,13 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 						"activiti$projectAdhoc"));
 				taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0),
 						"activiti$projectAdhoc"));
-				taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(0),
+				taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1),
 						"activiti$projectAdhoc"));
 				taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1),
 						"activiti$projectAdhoc"));
 				taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1),
 						"activiti$projectAdhoc"));
-				taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(2),
+				taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2),
 						"activiti$projectAdhoc"));
 				projectTplData.setTaskList(taskList);
 
@@ -155,8 +155,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				projectTplNodeRef = projectTplData.getNodeRef();
 
 //				Project:
-//					Task1	-> Task2	-> Task3	->	Task5
-//										-> Task4	->
+//					Task1	-> Task2	-> Task3	->	Task5	-> Task6
+//													-> 	Task4	
 						
 				// update a second time to manage prevTask
 				// TODO : should avoid to save twice
@@ -200,7 +200,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 	}
-	
+		
 	private NodeRef createUser(String userName) {
 		if (this.authenticationService.authenticationExists(userName) == false) {
 			this.authenticationService.createAuthentication(userName, "PWD".toCharArray());
@@ -375,6 +375,9 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				assertNotNull(projectData);
+				assertNotNull(projectData.getLegends());
+				assertEquals(1, projectData.getLegends().size());
+				assertTrue(projectData.getLegends().contains(taskLegends.get(0)));
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
@@ -403,6 +406,9 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				assertNotNull(projectData);
+				assertNotNull(projectData.getLegends());
+				assertEquals(1, projectData.getLegends().size());
+				assertTrue(projectData.getLegends().contains(taskLegends.get(0)));
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
 				assertEquals(TaskState.Completed, projectData.getTaskList().get(0).getState());
@@ -444,13 +450,13 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				taskQuery.setProcessId(workflowInstanceId);
 				taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-				List<WorkflowTask> tasks = workflowService.queryTasks(taskQuery);
+				List<WorkflowTask> tasks = workflowService.queryTasks(taskQuery, false);
 				logger.debug("tasks in progress size: " + tasks.size());
 				for (WorkflowTask task : tasks) {
 					workflowService.endTask(task.getId(), null);
 				}
 
-				tasks = workflowService.queryTasks(taskQuery);
+				tasks = workflowService.queryTasks(taskQuery, false);
 				logger.debug("tasks 2 in progress: " + tasks.size());
 				for (WorkflowTask task : tasks) {
 					workflowService.endTask(task.getId(), null);
@@ -465,6 +471,11 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
+				// legend
+				assertNotNull(projectData.getLegends());
+				assertEquals(1, projectData.getLegends().size());
+				assertTrue(projectData.getLegends().contains(taskLegends.get(1)));
 
 				// check task 2 is Completed
 				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getState());
@@ -488,13 +499,19 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
+				// legend
+				assertNotNull(projectData.getLegends());
+				assertEquals(2, projectData.getLegends().size());
+				assertTrue(projectData.getLegends().contains(taskLegends.get(0)));
+				assertTrue(projectData.getLegends().contains(taskLegends.get(1)));
 
 				// check task 2
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
 
-				// check task 3,4 is InProgress
+				// check task 3 is InProgress
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
@@ -793,7 +810,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 
 	}
 	
-	@Test	
+	@Test
 	public void testCalculatePrevDate() throws ParseException {
 
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -844,8 +861,8 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				logger.info("Load : " + projectData.toString());
 				
 //				Project:
-//				Task1	-> Task2	-> Task3	->	Task5
-//									-> Task4	->
+//				Task1	-> Task2	-> Task3	->	Task5	-> Task6
+//												-> 	Task4
 
 				// check initialization
 				assertNotNull(projectData);

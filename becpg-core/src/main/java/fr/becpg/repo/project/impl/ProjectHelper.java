@@ -154,7 +154,6 @@ public class ProjectHelper {
 
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " end: " + endDate);
-		logger.debug("###TaskManualDate.End.equals(t.getManualDate()): " + TaskManualDate.End.equals(t.getManualDate()) +  " - t.getManualDate(): " + t.getManualDate());
 		if ((TaskState.Planned.equals(t.getState()) || TaskState.InProgress.equals(t.getState())) && 
 				!TaskManualDate.End.equals(t.getManualDate())) {
 			t.setEnd(removeTime(endDate));

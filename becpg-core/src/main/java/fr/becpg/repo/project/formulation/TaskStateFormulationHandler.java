@@ -1,6 +1,7 @@
 package fr.becpg.repo.project.formulation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,7 +52,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		visitTask(projectData, null);
+		visitTask(projectData, null);		
+		calculateProjectLegends(projectData);		
 		return true;
 	}
 	
@@ -75,7 +77,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					// start task
 					if (TaskState.Planned.equals(nextTask.getState())) {
 						ProjectHelper.setTaskStartDate(nextTask, new Date());
-						setTaskState(projectData, nextTask, TaskState.InProgress);											
+						nextTask.setState(TaskState.InProgress);
 
 						// deliverable list
 						String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName());
@@ -126,13 +128,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (nextDeliverables.size() == finishedDL) {
 							logger.debug("set completion percent to 100%");
 							nextTask.setCompletionPercent(COMPLETED);
-							setTaskState(projectData, nextTask, TaskState.Completed);
-							
-							//legend
-							if(projectData.getLegends().contains(nextTask.getTaskLegend())){
-								projectData.getLegends().remove(nextTask.getTaskLegend());
-							}
-							
+							nextTask.setState(TaskState.Completed);														
 						} else {							
 							logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
 									+ nextTask.getNodeRef());
@@ -220,21 +216,26 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		return null;
 	}
 
-	private void setTaskState(ProjectData projectData, TaskListDataItem task, TaskState taskState){
+	private void calculateProjectLegends(ProjectData projectData){
 		
-		if(TaskState.InProgress.equals(taskState)){
-			
-			if(!projectData.getLegends().contains(task.getTaskLegend())){
-				projectData.getLegends().add(task.getTaskLegend());
-			}
-		}
-		else if(TaskState.Completed.equals(taskState)){
-			
-			if(projectData.getLegends().contains(task.getTaskLegend())){
-				projectData.getLegends().remove(task.getTaskLegend());
-			}
+		if(projectData.getLegends() == null){
+			logger.debug("projectData.setLegends(new ArrayList<NodeRef>());");
+			projectData.setLegends(new ArrayList<NodeRef>());
 		}
 		
-		task.setState(taskState);
+		for(TaskListDataItem tl : projectData.getTaskList()){
+			
+			if(TaskState.InProgress.equals(tl.getState())){
+				if(!projectData.getLegends().contains(tl.getTaskLegend())){
+					projectData.getLegends().add(tl.getTaskLegend());
+				}
+			}
+			else if(TaskState.Completed.equals(tl.getState())){
+				if(projectData.getLegends().contains(tl.getTaskLegend())){
+					projectData.getLegends().remove(tl.getTaskLegend());
+				}
+			}
+					
+		}		
 	}
 }

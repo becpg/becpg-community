@@ -31,6 +31,8 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
 					<show id="bcpg:code" for-mode="view" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectProjectTpl" />
@@ -49,15 +51,17 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.planning.label" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 						
-					<field id="cm:name" set="mainInfo" />						
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />	
+					<field id="cm:description" set="mainInfo" />						
 					<field id="bcpg:code" set="mainInfo" />
 					<field id="pjt:projectHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -102,6 +106,46 @@
 					</field>
 				</appearance>
 			</form>
+			<!-- Document Library pop-up Edit Metadata form -->
+         <form id="doclib-simple-metadata">
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+               <!-- tags and categories -->
+               <show id="cm:taggable" for-mode="edit" force="true" />
+               <show id="cm:categories" />
+            </field-visibility>
+            <edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+            <appearance>
+               <field id="cm:name">
+                 <control>
+                    <control-param name="maxLength">255</control-param>
+                 </control>
+               </field>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="cm:description">
+                  <control>
+                     <control-param name="activateLinks">true</control-param>
+                  </control>
+               </field>
+               <field id="cm:taggable">
+                  <control>
+                     <control-param name="compactMode">true</control-param>
+                     <control-param name="params">aspect=cm:taggable</control-param>
+                     <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore</control-param>
+                     <control-param name="createNewItemIcon">tag</control-param>
+                  </control>
+               </field>
+               <field id="cm:categories">
+                  <control>
+                     <control-param name="compactMode">true</control-param>
+                  </control>
+               </field>
+            </appearance>
+          </form>
 		</forms>
 	</config>
 	<config condition="pjt:project" evaluator="model-type">
@@ -109,11 +153,13 @@
 			<form>
 				<field-visibility>
 				   <show id="cm:name" />
+				   <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectProjectTpl" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
-					<show id="pjt:projectState" />					
+					<show id="pjt:projectState" />										
 										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />					
@@ -124,15 +170,17 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.planning.label" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.category.label" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 						
-					<field id="cm:name" set="mainInfo" />						
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />		
+					<field id="cm:description" set="mainInfo" />				
 					<field id="pjt:projectHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
@@ -151,7 +199,7 @@
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
-					</field>						
+					</field>										
 					
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
@@ -322,9 +370,9 @@
 				<appearance>
 				
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
+						label-id="becpg.forms.set.planning.label" />					
 						
 					<field id="pjt:tlTaskName" set="mainInfo"/>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
@@ -337,7 +385,7 @@
 					</field>		
 					<field id="pjt:tlResources" set="mainInfo"/>
 					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
-					<field id="pjt:tlWorkflowName">
+					<field id="pjt:tlWorkflowName" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
 						</control>
@@ -384,9 +432,9 @@
 				<appearance>
 					
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
+						label-id="becpg.forms.set.planning.label" />					
 						
 					<field id="pjt:tlTaskName" set="mainInfo"/>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
@@ -399,7 +447,7 @@
 					</field>		
 					<field id="pjt:tlResources" set="mainInfo"/>
 					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
-					<field id="pjt:tlWorkflowName">
+					<field id="pjt:tlWorkflowName" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
 						</control>
