@@ -107,13 +107,31 @@
 		</types>
 
 
-		<indicators>
-			<!-- <indicator id="entity-tovalidate" index="10"> <evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate</evaluator> 
-				</indicator> <indicator id="entity-valid" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.valid</evaluator> 
-				</indicator> <indicator id="entity-refused" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.refused</evaluator> 
-				</indicator> <indicator id="entity-archived" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.archived</evaluator> 
-				</indicator> -->
-		</indicators>
+	<indicators>
+		<!-- <indicator id="entity-tovalidate" index="10"> <evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate</evaluator> 
+			</indicator> <indicator id="entity-valid" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.valid</evaluator> 
+			</indicator> <indicator id="entity-refused" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.refused</evaluator> 
+			</indicator> <indicator id="entity-archived" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.archived</evaluator> 
+			</indicator> -->
+
+		<indicator id="project-planned" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.project.planned</evaluator>
+		</indicator>
+		<indicator id="project-inprogress" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.project.inprogress</evaluator>
+		</indicator>
+		<indicator id="project-onhold" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.project.onhold</evaluator>
+		</indicator>
+		<indicator id="project-cancelled" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.project.cancelled
+			</evaluator>
+		</indicator>
+		<indicator id="project-completed" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.project.completed
+			</evaluator>
+		</indicator>
+	</indicators>
 
 		<metadata-templates>
 			<!-- <template id="producTemplate"> <evaluator>evaluator.becpg.doclib.action.product</evaluator> 
@@ -361,9 +379,9 @@
  			<actionGroup id="entityV2-browse">
  				<action index="10" id="entity-view-datalist" />
  				<action index="100" id="entity-view-documents" />
-            <action index="101" id="folder-download"/>
-          <!--<action index="105" id="folder-view-details" />
-              <action index="110" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" /> -->
+ 				<action index="101" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" /> 				           
+          	<!--<action index="105" id="folder-view-details" />-->
+            <action index="110" id="folder-download"/>
             <action index="120" id="document-approve" icon="folder-approve" />
             <action index="130" id="document-reject" icon="folder-reject" />
             <action index="140" id="document-locate" icon="document-locate" label="actions.folder.locate" />

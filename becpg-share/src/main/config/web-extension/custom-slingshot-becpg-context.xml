@@ -92,29 +92,86 @@
    <!--  
  	  bcpg:productState
    -->
-   <bean id=" evaluator.becpg.doclib.indicator.product.valid" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="properties.becpg_productState" />
+   <bean id=" evaluator.becpg.doclib.indicator.product.tovalidate" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="node.properties.bcpg:productState" />
       <property name="comparator">
          <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="valid" />
+            <property name="value" value="ToValide" />
+         </bean>
+      </property>
+   </bean>
+   
+   <bean id=" evaluator.becpg.doclib.indicator.product.valid" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="node.properties.bcpg:productState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="Valid" />
          </bean>
       </property>
    </bean>
 
 	 <bean id=" evaluator.becpg.doclib.indicator.product.refused" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="properties.becpg_productState" />
+      <property name="accessor" value="node.properties.bcpg:productState" />
       <property name="comparator">
          <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="refused" />
+            <property name="value" value="Refused" />
          </bean>
       </property>
    </bean>
    
     <bean id=" evaluator.becpg.doclib.indicator.product.archived" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="properties.becpg_productState" />
+      <property name="accessor" value="node.properties.bcpg:productState" />
       <property name="comparator">
          <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="archived" />
+            <property name="value" value="Archived" />
+         </bean>
+      </property>
+   </bean>
+   
+   <!--  
+ 	  pjt:projectState
+   -->
+   <bean id=" evaluator.becpg.doclib.indicator.project.planned" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="node.properties.pjt:projectState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="Planned" />
+         </bean>
+      </property>
+   </bean>
+
+	<bean id=" evaluator.becpg.doclib.indicator.project.inprogress" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="node.properties.pjt:projectState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="InProgress" />
+         </bean>
+      </property>
+   </bean>
+   
+   <bean id=" evaluator.becpg.doclib.indicator.project.onhold" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="node.properties.pjt:projectState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="OnHold" />
+         </bean>
+      </property>
+   </bean>
+   
+   <bean id=" evaluator.becpg.doclib.indicator.project.cancelled" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="node.properties.pjt:projectState" />
+      <property name="comparator">
+         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="Cancelled" />
+         </bean>
+      </property>
+   </bean>
+   
+   <bean id=" evaluator.becpg.doclib.indicator.project.completed" parent="evaluator.doclib.action.value">
+      <property name="accessor" value="node.properties.pjt:projectState" />
+      <property name="comparator">
+      	<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+            <property name="value" value="Completed" />
          </bean>
       </property>
    </bean>
