@@ -15,13 +15,13 @@
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
 	<dependencies>
-		<!-- <dependency>
+		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>alfresco-core-patch</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
-		<dependency>
+		<!--  <dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>alfresco-share-patch</artifactId>
 			<type>amp</type>
@@ -60,12 +60,6 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-share</artifactId>
-			<type>amp</type>
-			<version>1.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-google-apps</artifactId>
 			<type>amp</type>
 			<version>1.5.0</version>
 		</dependency>

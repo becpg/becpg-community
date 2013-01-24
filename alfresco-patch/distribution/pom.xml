@@ -3,16 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>fr.becpg</groupId>
-		<version>1.4.0</version>
+		<version>1.5.0</version>
 		<relativePath>../</relativePath>
 		<artifactId>alfresco-patch</artifactId>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>fr.becpg</groupId>
 	<artifactId>alfresco-patch-distribution</artifactId>
 	<packaging>pom</packaging>
 	<name>alfresco patch distribution</name>
-	<version>1.4.0</version>
 	<properties>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
@@ -21,13 +19,7 @@
 			<groupId>fr.becpg</groupId>
 			<artifactId>alfresco-core-patch</artifactId>
 			<type>amp</type>
-			<version>1.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>alfresco-share-patch</artifactId>
-			<type>amp</type>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 		</dependency>
 	</dependencies>
 	<build>
