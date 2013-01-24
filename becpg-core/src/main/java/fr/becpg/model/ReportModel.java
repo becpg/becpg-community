@@ -29,6 +29,8 @@ public class ReportModel {
 			"reportEntityAspect");
 	public static final QName PROP_REPORT_ENTITY_GENERATED = QName.createQName(REPORT_URI,
 			"reportEntityGenerated");
+	public static final QName ASSOC_REPORTS = QName.createQName(REPORT_URI,
+			"reports");
 	
 	// reportTpls
 	public static final QName ASPECT_REPORT_TEMPLATES = QName.createQName(REPORT_URI,

@@ -29,6 +29,10 @@
 					<targetPackageRoot>org.alfresco.components.node-details</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-node-details</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.data-lists</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-data-lists</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>

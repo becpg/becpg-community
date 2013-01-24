@@ -88,6 +88,19 @@
 					<type>d:datetime</type>					
 				</property>
 			</properties>
+			<associations>
+				<association name="rep:reports">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 		
 		<!-- applied to a node when a user can select reports to generate -->
