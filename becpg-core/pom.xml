@@ -73,22 +73,7 @@
             <scope>provided</scope>
         </dependency>
 
-
-		<!-- patch 
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>alfresco-repository</artifactId>
-			<version>${alfresco.version}</version>
-			<type>jar</type>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.alfresco.sdk</groupId>
-					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		-->
+		
 
 		<dependency>
 			<groupId>org.springframework.extensions.surf</groupId>
