@@ -24,6 +24,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -40,6 +41,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 	
 	private static final String DEFAULT_EXTRACTOR = "default";
+	private static final String REPORT_NAME = "%s - %s";
 
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 	
@@ -57,6 +59,8 @@ public class EntityReportServiceImpl implements EntityReportService{
 	private BeCPGReportEngine beCPGReportEngine;
 	
 	private MimetypeService mimetypeService;
+	
+	private AssociationService associationService;
 		
 	private Map<String, EntityReportExtractor>  entityExtractors = new HashMap<String, EntityReportExtractor>();
 	
@@ -83,10 +87,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
-	}
-	
-	
-	
+	}	
 	
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
@@ -107,6 +108,10 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@Override
@@ -168,7 +173,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	 * @param tplNodeRef the tpl node ref
 	 * @return the document content writer
 	 */
-	public ContentWriter getDocumentContentWriter(NodeRef nodeRef, NodeRef tplNodeRef){
+	public ContentWriter getDocumentContentWriter(NodeRef nodeRef, NodeRef tplNodeRef, List<NodeRef> newReports){
 		
 		ContentWriter contentWriter = null;
 		
@@ -188,13 +193,14 @@ public class EntityReportServiceImpl implements EntityReportService{
 					documentsFolderNodeRef = fileFolderService.create(parentNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 				}
 				
-				String documentName = (String)nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME);
+				String documentName = String.format(REPORT_NAME, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME), (String)nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
 				NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 				if(documentNodeRef == null){
 					
 					documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ContentModel.TYPE_CONTENT).getNodeRef();
 				}
 				
+				newReports.add(documentNodeRef);							
 				contentWriter = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 			}
 			else{
@@ -228,11 +234,9 @@ public class EntityReportServiceImpl implements EntityReportService{
 		if(nodeElt == null){
 			throw new IllegalArgumentException("nodeElt is null");
 		}		
-		
-		// calculate the visible datalists
-	//	NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-	//	List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);		
-		
+				
+		List<NodeRef> newReports = new ArrayList<NodeRef>(); 
+				
 		// generate reports
 		for(NodeRef tplNodeRef : tplsNodeRef){        			
 
@@ -240,7 +244,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 			try{	
 				
 				//Run report		
-				ContentWriter writer = getDocumentContentWriter(nodeRef, tplNodeRef);
+				ContentWriter writer = getDocumentContentWriter(nodeRef, tplNodeRef, newReports);
 						
 				if(writer != null){
 					String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
@@ -249,29 +253,24 @@ public class EntityReportServiceImpl implements EntityReportService{
 
 					params.put(ReportParams.PARAM_IMAGES,images);
 					params.put(ReportParams.PARAM_FORMAT,ReportFormat.PDF);
-					
-					
-//					// hide all datalists and display visible ones
-//					for(Object key : paramTask.getDefaultValues().keySet()){
-//						if(((String)key).endsWith(PARAM_VALUE_HIDE_CHAPTER_SUFFIX)){
-//							params.put((String)key, Boolean.TRUE);
-//						}
-//					}							
-////					
-//					for(QName existingList : existingLists){
-//						params.put(existingList.getLocalName() + PARAM_VALUE_HIDE_CHAPTER_SUFFIX, Boolean.FALSE);
-//					}
-					
-					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params );
-				 
-					
-					
+								
+					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params );				
 				}  				
 			}
 			catch(ReportException e){
 				logger.error("Failed to execute report for template : "+ tplNodeRef,  e);
 			} 
 		}
+		
+		// refresh reports assoc
+		List<NodeRef> dbReports = associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS);		
+		for(NodeRef dbReport : dbReports){
+			if(!newReports.contains(dbReport)){
+				logger.debug("delete old report: " + dbReport);
+				nodeService.deleteNode(dbReport);
+			}
+		}
+		associationService.update(nodeRef, ReportModel.ASSOC_REPORTS, newReports);
 	}
 	
 	

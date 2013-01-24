@@ -4,10 +4,12 @@
 package fr.becpg.repo.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -16,10 +18,13 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
@@ -37,13 +42,16 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 
 	@Resource
 	private ReportTplService reportTplService;
-
 	@Resource
 	private EntityService entityService;
+	@Resource
+	private AssociationService associationService;
+	@Resource 
+	private EntityReportService entityReportService;
 	
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
-	
+	private Date createdDate;	
 	
 
 	/*
@@ -93,13 +101,15 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 
 				reportTplService.createTplRptDesign(productReportTplFolder, "report SF", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
 						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, true);
+				reportTplService.createTplRptDesign(productReportTplFolder, "report SF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
+						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false, true);
 
 				return null;
 
 			}
 		});
 
-		assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
+		assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
 
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -116,9 +126,9 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 
-				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
-				
-				assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
+				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();				
+				createdDate = new Date();				
+				entityReportService.generateReport(sfNodeRef);
 
 				return null;
 			}
@@ -129,12 +139,72 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-
-				// load SF and test it
-				SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
-				NodeRef nodeRef = sfData.getAllergenList().get(0).getAllergen();
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);
 				
+				// check report Tpl
+				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
+				assertEquals("check system templates", 2, reportTplNodeRefs.size());
+				
+				NodeRef defaultReportTplNodeRef = null;
+				NodeRef otherReportTplNodeRef = null;
+				for(NodeRef reportTplNodeRef : reportTplNodeRefs){
+					if(Boolean.TRUE.equals(nodeService.getProperty(reportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT))){
+						defaultReportTplNodeRef = reportTplNodeRef;
+					}
+					else{
+						otherReportTplNodeRef = reportTplNodeRef;
+					}
+				}
+				assertNotNull(defaultReportTplNodeRef);
+				assertNotNull(otherReportTplNodeRef);						
+				
+				// check reports in generated, its name
+				Date generatedDate = (Date)nodeService.getProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+				createdDate.before(generatedDate);
+				List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(sfNodeRef, ReportModel.ASSOC_REPORTS);
+				assertEquals(1, reportNodeRefs.size());
+				NodeRef reportNodeRef = reportNodeRefs.get(0);
+				
+				String reportName = String.format("%s - %s", 
+								nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
+								nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
+				assertEquals(reportName , nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME));
+
+				// rename SF
+				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF renamed");
+				entityReportService.generateReport(sfNodeRef);
+				
+				// check reports in generated, its name
+				Date generatedDate2 = (Date)nodeService.getProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+				generatedDate.before(generatedDate2);
+				List<NodeRef> reportNodeRefs2 = associationService.getTargetAssocs(sfNodeRef, ReportModel.ASSOC_REPORTS);
+				assertEquals(1, reportNodeRefs2.size());
+				NodeRef reportNodeRef2 = reportNodeRefs2.get(0);
+				assertNotSame(reportNodeRef, reportNodeRef2);
+				
+				String reportName2 = String.format("%s - %s", 
+								nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
+								nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
+				assertEquals(reportName2 , nodeService.getProperty(reportNodeRef2, ContentModel.PROP_NAME));
+				assertNotSame(reportName2, reportName);
+
+				return null;
+			}
+		});
+				
+		// Test datalist modified
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				
+				SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
+				NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
+				
+				// change nothing
+				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);				
+				assertFalse(entityService.hasDataListModified(sfNodeRef));
+				
+				// change something
+				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);				
 				assertTrue(entityService.hasDataListModified(sfNodeRef));
 				return null;
 
