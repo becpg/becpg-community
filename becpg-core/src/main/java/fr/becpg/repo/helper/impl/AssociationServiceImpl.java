@@ -1,5 +1,6 @@
 package fr.becpg.repo.helper.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -30,7 +31,10 @@ public class AssociationServiceImpl implements AssociationService {
 		if(dbAssocNodeRefs != null){
 			//remove from db
     		for(AssociationRef assocRef : dbAssocNodeRefs){
-    			if(!assocNodeRefs.contains(assocRef.getTargetRef()))
+    			if(assocNodeRefs == null){
+    				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
+    			}
+    			else if(!assocNodeRefs.contains(assocRef.getTargetRef()))
     				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
     			else
     				assocNodeRefs.remove(assocRef.getTargetRef());//already in db
@@ -40,7 +44,9 @@ public class AssociationServiceImpl implements AssociationService {
 		//add nodes that are not in db
 		if(assocNodeRefs != null){
 			for(NodeRef n : assocNodeRefs){
-				nodeService.createAssociation(nodeRef, n, qName);
+				if(nodeService.exists(n)){
+					nodeService.createAssociation(nodeRef, n, qName);
+				}
 			}
 		}		
 	}
@@ -52,19 +58,37 @@ public class AssociationServiceImpl implements AssociationService {
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
 		
 		boolean createAssoc = true;
-		if(!assocRefs.isEmpty()){
-			if(assocRefs.get(0).equals(assocNodeRef)){
+		if(!assocRefs.isEmpty() && assocRefs.get(0).getTargetRef() != null){
+			if(assocRefs.get(0).getTargetRef().equals(assocNodeRef)){
 				createAssoc = false;
 			}
 			else{
-				nodeService.removeAssociation(nodeRef, assocNodeRef, qName);
+				nodeService.removeAssociation(nodeRef, assocRefs.get(0).getTargetRef(), qName);
 			}
 		}
 		
 		if(createAssoc && assocNodeRef != null){
-			logger.debug("###createAssoc: " + qName + "nodeRef: " + nodeRef);
 			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
 		}
+	}
+
+	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+	@Override
+	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName) {
+		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
+		return assocRefs!=null && !assocRefs.isEmpty() ? assocRefs.get(0).getTargetRef() : null;
+	}
+
+	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+	@Override
+	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
+		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
+		List<NodeRef> listItems = new ArrayList<NodeRef>(assocRefs.size());
+		for (AssociationRef assocRef : assocRefs) {
+			listItems.add(assocRef.getTargetRef());
+		}
+		
+		return listItems;
 	}
 
 }

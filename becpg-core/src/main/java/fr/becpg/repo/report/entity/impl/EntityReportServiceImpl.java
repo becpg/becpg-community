@@ -37,6 +37,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
@@ -52,6 +53,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	private static final String PARAM_VALUE_HIDE_CHAPTER_SUFFIX = "HideChapter";
 		
 	private static final String DEFAULT_EXTRACTOR = "default";
+	private static final String REPORT_NAME = "%s - %s";
 	
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 	
@@ -75,6 +77,8 @@ public class EntityReportServiceImpl implements EntityReportService{
 	private ReportTplService reportTplService;
 	
 	private BehaviourFilter policyBehaviourFilter;
+	
+	private AssociationService associationService;
 	
 	private Map<String, EntityReportExtractor>  entityExtractors = new HashMap<String, EntityReportExtractor>();
 	
@@ -150,6 +154,10 @@ public class EntityReportServiceImpl implements EntityReportService{
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
 		
@@ -221,7 +229,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 	 * @param tplNodeRef the tpl node ref
 	 * @return the document content writer
 	 */
-	public ContentWriter getDocumentContentWriter(NodeRef nodeRef, NodeRef tplNodeRef){
+	public ContentWriter getDocumentContentWriter(NodeRef nodeRef, NodeRef tplNodeRef, List<NodeRef> newReports){
 		
 		ContentWriter contentWriter = null;
 		
@@ -241,13 +249,14 @@ public class EntityReportServiceImpl implements EntityReportService{
 					documentsFolderNodeRef = fileFolderService.create(parentNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 				}
 				
-				String documentName = (String)nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME);
+				String documentName = String.format(REPORT_NAME, (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME), (String)nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
 				NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 				if(documentNodeRef == null){
 					
 					documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ContentModel.TYPE_CONTENT).getNodeRef();
 				}
 				
+				newReports.add(documentNodeRef);
 				contentWriter = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 			}
 			else{
@@ -284,7 +293,8 @@ public class EntityReportServiceImpl implements EntityReportService{
 		
 		// calculate the visible datalists
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-		List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);		
+		List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);	
+		List<NodeRef> newReports = new ArrayList<NodeRef>();
 		
 		// generate reports
 		for(NodeRef tplNodeRef : tplsNodeRef){        			
@@ -299,7 +309,7 @@ public class EntityReportServiceImpl implements EntityReportService{
 				IReportRunnable design = reportEngine.openReportDesign(in);							
 				
 				//Run report		
-				ContentWriter writer = getDocumentContentWriter(nodeRef, tplNodeRef);
+				ContentWriter writer = getDocumentContentWriter(nodeRef, tplNodeRef, newReports);
 			
 				if(writer != null){
 				
@@ -353,6 +363,16 @@ public class EntityReportServiceImpl implements EntityReportService{
 				}
 			}
 		}
+		
+		// refresh reports assoc
+		List<NodeRef> dbReports = associationService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORTS);		
+		for(NodeRef dbReport : dbReports){
+			if(!newReports.contains(dbReport)){
+				logger.debug("delete old report: " + dbReport);
+				nodeService.deleteNode(dbReport);
+			}
+		}
+		associationService.update(nodeRef, ReportModel.ASSOC_REPORTS, newReports);
 	}
 	
 	
