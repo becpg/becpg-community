@@ -168,8 +168,10 @@
 		<property name="templateService" ref="templateService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="mailFrom" value="${mail.from.default}" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="repository" ref="repositoryHelper" />
+		<property name="searchService" ref="searchService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 
 	<!-- EntityVersion -->
