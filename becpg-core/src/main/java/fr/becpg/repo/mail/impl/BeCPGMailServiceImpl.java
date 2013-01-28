@@ -9,11 +9,14 @@ import java.util.Map;
 import javax.mail.internet.MimeMessage;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.template.TemplateNode;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.TemplateService;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.lang.StringUtils;
@@ -25,10 +28,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.mail.BeCPGMailService;
-import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * 
@@ -40,19 +40,17 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	private static Log _logger = LogFactory.getLog(BeCPGMailServiceImpl.class);
 
-	private static final String EMAIL_TEMPLATES_PATH_QUERY = "PATH:\"/app:company_home/app:dictionary/app:email_templates/.\"";
 	private static final String PATH_WORKFLOW = "workflow";
-	private static final String EMAIL_WORKFLOW_TEMPLATES_PATH_QUERY = "PATH:\"/app:company_home/app:dictionary/app:email_templates/app:workflow/.\"";
-
-	private static final String KEY_EMAIL_TEMPLATES = "EmailTemplates";
-	private static final String KEY_WORKFLOW_EMAIL_TEMPLATES = "WorkflowEmailTemplates";
-
+	
 	private NodeService nodeService;
 	private TemplateService templateService;
 	private JavaMailSender mailService;
 	private ServiceRegistry serviceRegistry;
-	private BeCPGSearchService beCPGSearchService;
-	private BeCPGCacheService beCPGCacheService;
+	
+	private SearchService searchService;
+	private Repository repository;
+	private FileFolderService fileFolderService;
+	private NamespaceService namespaceService;
 
 	private String mailFrom;
 
@@ -72,16 +70,25 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		this.serviceRegistry = serviceRegistry;
 	}
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
-	}
-
 	public void setMailFrom(String mailFrom) {
 		this.mailFrom = mailFrom;
+	}
+
+
+	public void setSearchService(SearchService searchService) {
+		this.searchService = searchService;
+	}
+
+	public void setRepository(Repository repository) {
+		this.repository = repository;
+	}
+
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
 	}
 
 	@Override
@@ -100,6 +107,19 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		}
 
 	}
+	
+	//TODO
+	
+//	 Action mail = actionService.createAction(MailActionExecuter.NAME);
+//     mail.setParameterValue(MailActionExecuter.PARAM_FROM, getEmail(inviter));
+//     mail.setParameterValue(MailActionExecuter.PARAM_TO, getEmail(invitee));
+//     mail.setParameterValue(MailActionExecuter.PARAM_SUBJECT, buildSubject(properties));
+//     mail.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, getEmailTemplateNodeRef());
+//     mail.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, 
+//             (Serializable)buildMailTextModel(properties, inviter, invitee));
+//     mail.setParameterValue(MailActionExecuter.PARAM_IGNORE_SEND_FAILURE, true);
+//     actionService.executeAction(mail, getWorkflowPackage(properties));
+//	
 
 	@Override
 	public void sendMail(List<String> emails, String subjet, String templateName, Map<String, Object> templateModel) {
@@ -140,43 +160,39 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	@Override
 	public NodeRef getEmailTemplatesFolder() {
+		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), "app:company_home/app:dictionary/app:email_templates/.", null, this.namespaceService, false);
 
-		return beCPGCacheService.getFromCache(BeCPGMailService.class.getName(), KEY_EMAIL_TEMPLATES, new BeCPGCacheDataProviderCallBack<NodeRef>() {
-
-			@Override
-			public NodeRef getData() {
-
-				List<NodeRef> listItems = beCPGSearchService.luceneSearch(EMAIL_TEMPLATES_PATH_QUERY);
-				return listItems!=null && !listItems.isEmpty() ? listItems.get(0) : null;
-			}
-		});
+		if (nodeRefs.size() == 1) {
+			// Now localise this
+			NodeRef base = nodeRefs.get(0);
+			NodeRef local = fileFolderService.getLocalizedSibling(base);
+			return local;
+		} else {
+			throw new RuntimeException("Cannot find the email template folder !");
+		}
 	}
 
 	@Override
 	public NodeRef getEmailWorkflowTemplatesFolder() {
+		NodeRef folderNodeRef = null;
+		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), "app:company_home/app:dictionary/app:email_templates/app:workflow/.", null,
+				this.namespaceService, false);
 
-		return beCPGCacheService.getFromCache(BeCPGMailService.class.getName(), KEY_WORKFLOW_EMAIL_TEMPLATES, new BeCPGCacheDataProviderCallBack<NodeRef>() {
+		if (nodeRefs.size() == 1) {
+			// Now localise this
+			NodeRef base = nodeRefs.get(0);
+			folderNodeRef = fileFolderService.getLocalizedSibling(base);
+		} else {
+			// create folder
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, I18NUtil.getMessage("path.email.workflow"));
 
-			@Override
-			public NodeRef getData() {
+			folderNodeRef = nodeService.createNode(getEmailTemplatesFolder(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.APP_MODEL_1_0_URI, PATH_WORKFLOW),
+					ContentModel.TYPE_FOLDER, properties).getChildRef();
+		}
 
-				NodeRef folderNodeRef = null;
-				List<NodeRef> listItems = beCPGSearchService.luceneSearch(EMAIL_WORKFLOW_TEMPLATES_PATH_QUERY);
+		return folderNodeRef;
 
-				if (!listItems.isEmpty()) {
-					folderNodeRef = listItems.get(0);
-				} else {
-					// create folder
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-					properties.put(ContentModel.PROP_NAME, I18NUtil.getMessage("path.email.workflow"));
-
-					folderNodeRef = nodeService.createNode(getEmailTemplatesFolder(), ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.APP_MODEL_1_0_URI, PATH_WORKFLOW), ContentModel.TYPE_FOLDER, properties).getChildRef();
-				}
-
-				return folderNodeRef;
-			}
-		});
 	}
 
 }
