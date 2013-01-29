@@ -34,21 +34,6 @@
 			</parameter>
 		</constraint>
 
-		<constraint name="pjt:projectHierarchy1"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
-				<list>
-					<value>/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1</value>
-				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>Hierarchy1
-			<parameter name="constraintProp">
-				<value>cm:name</value>
-			</parameter>
-		</constraint>
-
 		<constraint name="pjt:deliverableStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -117,23 +102,12 @@
 
 	<types>
 
-		<type name="pjt:projectTpl">
-			<parent>bcpg:entity</parent>
-			<mandatory-aspects>
-				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
-			</mandatory-aspects>
-		</type>
-
 		<type name="pjt:project">
 			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="pjt:projectHierarchy1">
-					<type>d:text</type>
+					<type>d:noderef</type>
 					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="pjt:projectHierarchy1" />
-					</constraints>
 				</property>
 				<property name="pjt:projectStartDate">
 					<type>d:date</type>
@@ -164,18 +138,7 @@
 					<multiple>true</multiple>			
 				</property>
 			</properties>
-			<associations>
-				<association name="pjt:projectProjectTpl">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>pjt:projectTpl</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
+			<associations>			
 				<association name="pjt:projectEntity">
 					<source>
 						<mandatory>false</mandatory>
@@ -192,6 +155,7 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
 

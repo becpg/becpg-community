@@ -22,7 +22,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 public class ProjectData extends AbstractProjectData {
 
 	
-	private String hierarchy1;
+	private NodeRef hierarchy1;
 	private Date startDate;
 	private Date dueDate;
 	private Date completionDate;
@@ -37,7 +37,7 @@ public class ProjectData extends AbstractProjectData {
 		super();
 	}
 
-	public ProjectData(NodeRef nodeRef, String name, String hierarchy1, Date startDate, Date dueDate, Date completionDate, Integer priority,ProjectState projectState,
+	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, Date startDate, Date dueDate, Date completionDate, Integer priority,ProjectState projectState,
 			NodeRef projectTpl, Integer completionPercent, NodeRef entity) {
 		super(nodeRef, name);
 		this.hierarchy1 = hierarchy1;
@@ -53,11 +53,11 @@ public class ProjectData extends AbstractProjectData {
 
 	@AlfProp
 	@AlfQname(qname = "pjt:projectHierarchy1")
-	public String getHierarchy1() {
+	public NodeRef getHierarchy1() {
 		return hierarchy1;
 	}
 
-	public void setHierarchy1(String hierarchy1) {
+	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
 	}
 
@@ -112,7 +112,7 @@ public class ProjectData extends AbstractProjectData {
 	}
 
 	@AlfSingleAssoc
-	@AlfQname(qname = "pjt:projectProjectTpl")
+	@AlfQname(qname = "bcpg:entityTplRef")
 	public NodeRef getProjectTpl() {
 		return projectTpl;
 	}

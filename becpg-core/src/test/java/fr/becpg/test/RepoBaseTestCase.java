@@ -104,7 +104,9 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	protected NodeRef HIERARCHY2_PIZZA_REF;
 
 	protected NodeRef HIERARCHY2_QUICHE_REF;
-
+	
+	protected NodeRef PROJECT_HIERARCHY1_PAIN_REF;
+	
 	protected NodeRef testFolderNodeRef;
 	
 	protected boolean forceInit = false;
@@ -358,16 +360,6 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();			
 		}
-
-		// projectHierarchy1
-		NodeRef projectHierarchy1Folder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PROJECT_HIERARCHY1);
-		String[] projectHierarchy1Names = { "Eclair", "Sandwich", PROJECT_HIERARCHY1_PAIN, "Pâtisserie", "Viennoiserie" };
-		for (String projectHierarchy1Name : projectHierarchy1Names) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, projectHierarchy1Name);
-			nodeService.createNode(projectHierarchy1Folder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
-		}
 	}
 	
 	/**
@@ -581,6 +573,12 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		HIERARCHY1_FROZEN_REF = hierarchyService.createHierarchy1(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
 		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
 		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy2(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
+		
+		// Project		
+		NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemNodeRef, RepoConsts.PATH_PROJECT_LISTS);
+		NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef,
+				HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));		
+		HIERARCHY1_SEA_FOOD_REF = hierarchyService.createHierarchy1(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);		
 	}
 
 	

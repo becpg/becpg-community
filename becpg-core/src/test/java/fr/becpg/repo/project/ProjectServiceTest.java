@@ -41,7 +41,6 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
-import fr.becpg.repo.project.data.ProjectTplData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -97,16 +96,22 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				assigneesOne.add(userOne);
 				assigneesTwo = new ArrayList<NodeRef>();
 				assigneesTwo.add(userTwo);
-
+								
+				// create project Tpl
+				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_PAIN_REF, null,
+								null, null, null, null, null, 0, null);
+				projectTplData.setParentNodeRef(testFolderNodeRef);
+				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
+				projectTplNodeRef = projectTplData.getNodeRef();
+				
 				// create documents in tpl folder
-				NodeRef folderTplNodeRef = entityTplService.getFolderTpl(ProjectModel.TYPE_PROJECT);
-				assertNotNull(folderTplNodeRef);
-				NodeRef subFolder = nodeService.getChildByName(folderTplNodeRef, ContentModel.ASSOC_CONTAINS,
+				assertNotNull(projectTplData.getNodeRef());
+				NodeRef subFolder = nodeService.getChildByName(projectTplNodeRef, ContentModel.ASSOC_CONTAINS,
 						"SubFolder");
 				if(subFolder == null){
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "SubFolder");
-					subFolder = nodeService.createNode(folderTplNodeRef, ContentModel.ASSOC_CONTAINS,
+					subFolder = nodeService.createNode(projectTplNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "SubFolder"),
 							ContentModel.TYPE_FOLDER, properties).getChildRef();
 				}
@@ -129,10 +134,9 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					doc2NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc2"), ContentModel.TYPE_CONTENT, properties)
 							.getChildRef();
-				}				
-
-				ProjectTplData projectTplData = new ProjectTplData(null, "Pjt Tpl");
-
+				}
+				
+				// create datalists
 				List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
 
 				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
@@ -148,11 +152,9 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 				taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2),
 						"activiti$projectAdhoc"));
 				projectTplData.setTaskList(taskList);
+				
+				alfrescoRepository.save(projectTplData);
 
-				projectTplData.setParentNodeRef(testFolderNodeRef);
-				projectTplData = (ProjectTplData) alfrescoRepository.save(projectTplData);
-
-				projectTplNodeRef = projectTplData.getNodeRef();
 
 //				Project:
 //					Task1	-> Task2	-> Task3	->	Task5	-> Task6
@@ -160,7 +162,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 						
 				// update a second time to manage prevTask
 				// TODO : should avoid to save twice
-				projectTplData = (ProjectTplData) alfrescoRepository.findOne(projectTplData.getNodeRef());
+				projectTplData = (ProjectData) alfrescoRepository.findOne(projectTplNodeRef);
 				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
 
 				prevTasks.add(projectTplData.getTaskList().get(0).getNodeRef());
@@ -229,7 +231,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
 								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
@@ -257,7 +259,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
 								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
@@ -304,7 +306,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
 								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
@@ -348,7 +350,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(),
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
 								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
@@ -364,7 +366,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				ProjectTplData projectTplData = (ProjectTplData) alfrescoRepository.findOne(projectTplNodeRef);
+				ProjectData projectTplData = (ProjectData) alfrescoRepository.findOne(projectTplNodeRef);
 
 				assertNotNull(projectTplData);
 				assertNotNull(projectTplData.getTaskList());
@@ -561,7 +563,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 						Date startDate = dateFormat.parse("15/11/2012");
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, startDate,
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, startDate,
 								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
 						projectData.setParentNodeRef(testFolderNodeRef);
 
@@ -757,7 +759,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, new Date(), null,
+				ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(), null,
 						null, 2, ProjectState.Planned, projectTplNodeRef, 0, null);
 
 				projectData.setParentNodeRef(testFolderNodeRef);
@@ -839,7 +841,7 @@ public class ProjectServiceTest extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 						Date startDate = dateFormat.parse("15/11/2012");
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN, null,
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, null,
 								startDate, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
 						projectData.setParentNodeRef(testFolderNodeRef);
 

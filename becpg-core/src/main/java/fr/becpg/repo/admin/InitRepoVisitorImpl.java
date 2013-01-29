@@ -52,6 +52,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.designer.DesignerInitService;
+import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -496,10 +497,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		} else if (folderName == RepoConsts.PATH_NC) {
 			specialiseType = QualityModel.TYPE_NC;
 		} else if (folderName == RepoConsts.PATH_PROJECT_TEMPLATES) {
-			specialiseType = ProjectModel.TYPE_PROJECT_TPL;
-		} else if(folderName != RepoConsts.PATH_SUPPLIERS 
-				&& (folderName != RepoConsts.PATH_CLIENTS)){
-			return;
+			createRuleAspect(nodeRef, true, ProjectModel.TYPE_PROJECT, BeCPGModel.ASPECT_ENTITY_TPL);
 		}
 
 		// specialise type
@@ -590,20 +588,10 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitQuality(folderTplsNodeRef, entityTplsNodeRef);
 		
 		// visit project and project Tpl
-		subFolders = new HashSet<String>();		
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
-		entityTplService.createFolderTpl(folderTplsNodeRef, ProjectModel.TYPE_PROJECT, true, subFolders);
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists);
-		
-		subFolders = new HashSet<String>();		
-		entityTplService.createFolderTpl(folderTplsNodeRef, ProjectModel.TYPE_PROJECT_TPL, true, subFolders);
-		dataLists = new LinkedHashSet<QName>();
-		dataLists.add(ProjectModel.TYPE_TASK_LIST);
-		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT_TPL, true, dataLists);
 	}
 
 	
@@ -687,7 +675,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		entityLists.put(RepoConsts.PATH_PROJECT_STATUS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_TASK_LEGENDS,ProjectModel.TYPE_TASK_LEGEND);
-		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY1, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}

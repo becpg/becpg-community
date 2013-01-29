@@ -134,8 +134,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			}
 		});
 
-		// setProperty of allergen without changing anything => should be up to
-		// date
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {

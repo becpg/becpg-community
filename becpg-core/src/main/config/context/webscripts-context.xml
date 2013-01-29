@@ -150,6 +150,8 @@
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="beCPGVersionMigrator" ref="beCPGVersionMigrator" />
 		<property name="beCPGSystemFolderMigrator" ref="beCPGSystemFolderMigrator"/>
+		<property name="personService" ref="personService" />
+		<property name="nodeService" ref="nodeService" />
 	</bean>
 
 
