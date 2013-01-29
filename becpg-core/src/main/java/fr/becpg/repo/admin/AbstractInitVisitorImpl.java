@@ -7,7 +7,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.alfresco.repo.action.evaluator.HasAspectEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
+import org.alfresco.repo.action.executer.AddFeaturesActionExecuter;
 import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
@@ -193,5 +195,38 @@ public abstract class AbstractInitVisitorImpl {
 	    rule.setRuleType(RuleType.INBOUND);
 	    rule.setAction(compositeAction);	    	       	    
 	    ruleService.saveRule(nodeRef, rule);
+	}
+	
+	protected void createRuleAspect(NodeRef nodeRef, boolean applyToChildren, QName type , QName aspect) {
+
+		// action
+		CompositeAction compositeAction = actionService.createCompositeAction();
+		Map<String, Serializable> params = new HashMap<String, Serializable>();
+		params.put(AddFeaturesActionExecuter.PARAM_ASPECT_NAME, aspect);
+		Action action = actionService.createAction(AddFeaturesActionExecuter.NAME, params);
+		compositeAction.addAction(action);
+
+		// Conditions for the Rule : type must be equals
+	    ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+	    typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, type);
+	    typeCondition.setInvertCondition(false);
+		compositeAction.addActionCondition(typeCondition);
+		
+		ActionCondition aspectCondition = actionService.createActionCondition(HasAspectEvaluator.NAME);
+		aspectCondition.setParameterValue(HasAspectEvaluator.PARAM_ASPECT, aspect);
+		aspectCondition.setInvertCondition(true);
+		compositeAction.addActionCondition(aspectCondition);
+
+		// rule
+		Rule rule = new Rule();
+		rule.setTitle("Add entityTpl aspect");
+		rule.setDescription("Add entityTpl aspect to the created node");
+		rule.applyToChildren(applyToChildren);
+	    rule.setExecuteAsynchronously(false);
+	    rule.setRuleDisabled(false);
+		rule.setRuleType(RuleType.INBOUND);
+		rule.setAction(compositeAction);		
+		ruleService.saveRule(nodeRef, rule);
+
 	}
 }

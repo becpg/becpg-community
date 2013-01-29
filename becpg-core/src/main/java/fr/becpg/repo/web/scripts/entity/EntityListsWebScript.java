@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -197,7 +198,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			skipFilter = true;
 		}
 		// We get datalist for entityTpl
-		else if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeService.getType(nodeRef))) {
+		else if ((BeCPGModel.TYPE_ENTITY.equals(nodeType) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) || 
+				BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeService.getType(nodeRef))) {
 
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 			if (listContainerNodeRef == null) {

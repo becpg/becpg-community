@@ -25,6 +25,7 @@ public class LuceneHelper {
 	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
 	private static final String QUERY_COND_PARENT = " %s +PARENT:\"%s\"";
 	private static final String QUERY_COND_TYPE = " %s +TYPE:\"%s\"";
+	private static final String QUERY_COND_ASPECT = " %s +ASPECT:\"%s\"";
 	private static final String QUERY_COND = " %s %s";
 
 	/**
@@ -126,6 +127,18 @@ public class LuceneHelper {
 	public static String getCondType(QName type, Operator operator) {
 
 		return String.format(QUERY_COND_TYPE, operator != null ? operator : "", type);
+	}
+	
+	/**
+	 * Return an aspect condition on QName
+	 * 
+	 * @param type
+	 * @param operator
+	 * @return
+	 */
+	public static String getCondAspect(QName aspect, Operator operator) {
+
+		return String.format(QUERY_COND_ASPECT, operator != null ? operator : "", aspect);
 	}
 
 	public static String getCond(String cond, Operator operator) {

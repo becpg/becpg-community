@@ -100,7 +100,7 @@ public class RepoConsts {
 	public static final String PATH_TASKS = "Tasks";
 	public static final String PATH_TASK_LEGENDS = "TaskLegends";
 	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
-	public static final String PATH_PROJECT_HIERARCHY1 = "ProjectHierarchy1";
+	public static final String PATH_PROJECT_HIERARCHY = "project_Hierarchy";
 	
 	//Security
 	public static final String PATH_SECURITY = "Security";

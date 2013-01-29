@@ -29,7 +29,7 @@
       <filter id="due"           data="tomorrow"     parameters="fts(+@pjt\:projectDueDate:[{0d} TO {1d}])"/>
       <filter id="due"           data="next7Days"    parameters="fts(+@pjt\:projectDueDate:[{0d} TO {8d}])"/>
       <filter id="due"           data="overdue"      parameters="fts(+@pjt\:projectDueDate:[MIN TO {0d}])"/>
-      <filter id="due"           data="noDate"       parameters="fts(+@pjt\:projectDueDate:ISNULL)"/>
+      <filter id="due"           data="noDate"       parameters="fts(+TYPE:'pjt:project' AND +ISNULL:'pjt:projectDueDate')"/>
       <filter id="started"       data="last7Days"    parameters="fts(+@pjt\:projectStartDate:[{-7d} TO MAX])"/>
       <filter id="started"       data="last14Days"   parameters="fts(+@pjt\:projectStartDate:[{-14d} TO MAX])"/>
       <filter id="started"       data="last28Days"   parameters="fts(+@pjt\:projectStartDate:[{-28d} TO MAX])"/>

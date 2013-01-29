@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -58,8 +60,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	/** The Constant SUFFIX_SIMPLE_QUOTE. */
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
-
-	private static final String QUERY_TYPE = " TYPE:\"%s\"";
 
 	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 
@@ -406,7 +406,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				QName filteredType = QName.createQName(arrClassNames[i], namespaceService);
 				ret = ret
 						|| Pattern.matches(autoNumService.getAutoNumMatchPattern(filteredType, BeCPGModel.PROP_CODE),
-								query);
+								query);			
 			}
 		} else {
 			ret = ret || Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE), query);
@@ -532,14 +532,21 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		if (arrClassNames != null) {
 
 			String queryClassNames = "";
+			boolean isFirst = true;
 
-			for (String className : arrClassNames) {
+			for (String className : arrClassNames) {				
+				
+				QName classQName = QName.createQName(className, namespaceService);
+				ClassDefinition classDef = dictionaryService.getClass(classQName);
+				LuceneHelper.Operator op = isFirst ? null : LuceneHelper.Operator.OR;
+				isFirst = false;
 
-				if (queryClassNames.isEmpty()) {
-					queryClassNames += String.format(QUERY_TYPE, className);
-				} else {
-					queryClassNames += " OR " + String.format(QUERY_TYPE, className);
+				if(classDef.isAspect()){
+					queryClassNames += LuceneHelper.getCondAspect(classQName, op);
 				}
+				else{
+					queryClassNames += LuceneHelper.getCondType(classQName, op);
+				}				
 			}
 
 			query += " AND (" + queryClassNames + ")";

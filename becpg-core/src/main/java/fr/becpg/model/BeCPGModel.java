@@ -434,6 +434,10 @@ public interface BeCPGModel {
 	QName PROP_ENTITY_TPL_CLASS_NAME = QName.createQName(BECPG_URI, "entityTplClassName");
 	QName PROP_ENTITY_TPL_ENABLED = QName.createQName(BECPG_URI, "entityTplEnabled");
 
+	// entityTplRef aspect
+	QName ASPECT_ENTITY_TPL_REF = QName.createQName(BECPG_URI, "entityTplRefAspect");
+	QName ASSOC_ENTITY_TPL_REF = QName.createQName(BECPG_URI, "entityTplRef");
+	
 	// supplier
 	/** The Constant ASPECT_SUPPLIERS. */
 	QName ASPECT_SUPPLIERS = QName.createQName(BECPG_URI, "suppliersAspect");

@@ -14,8 +14,7 @@ public interface ProjectModel {
 	/** Security Model Prefix */
 	public static final String PROJECT_PREFIX = "pjt";
 		
-	public static final QName TYPE_TASK_LEGEND = QName.createQName(PROJECT_URI, "taskLegend");
-	public static final QName TYPE_PROJECT_TPL = QName.createQName(PROJECT_URI, "projectTpl");	
+	public static final QName TYPE_TASK_LEGEND = QName.createQName(PROJECT_URI, "taskLegend");	
 	
 	public static final QName TYPE_PROJECT = QName.createQName(PROJECT_URI, "project");		
 	public static final QName PROP_PROJECT_HIERARCHY1 = QName.createQName(PROJECT_URI, "projectHierarchy1");
@@ -25,7 +24,6 @@ public interface ProjectModel {
 	public static final QName PROP_PROJECT_PRIORITY = QName.createQName(PROJECT_URI, "projectPriority");
 	public static final QName PROP_PROJECT_STATE = QName.createQName(PROJECT_URI, "projectState");
 	public static final QName PROP_PROJECT_LEGENDS = QName.createQName(PROJECT_URI, "projectLegends");
-	public static final QName ASSOC_PROJECT_TPL = QName.createQName(PROJECT_URI, "projectProjectTpl");
 	public static final QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");	
 	
 	public static final QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");

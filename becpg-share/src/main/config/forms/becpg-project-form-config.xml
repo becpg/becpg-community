@@ -1,31 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<alfresco-config>
-	<config condition="pjt:projectTpl" evaluator="node-type">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="bcpg:code" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:code" read-only="true" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	<config condition="pjt:projectTpl" evaluator="model-type">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="bcpg:code" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:code" read-only="true" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
+<alfresco-config>	
 	<config condition="pjt:project" evaluator="node-type">
 		<forms>
 			<form>
@@ -35,7 +9,7 @@
                <show id="cm:description" force="true" />
 					<show id="bcpg:code" for-mode="view" />
 					<show id="pjt:projectHierarchy1" />
-					<show id="pjt:projectProjectTpl" />
+					<show id="bcpg:entityTplRef" for-mode="view" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />					
@@ -65,12 +39,18 @@
 					<field id="bcpg:code" set="mainInfo" />
 					<field id="pjt:projectHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectProjectTpl" set="mainInfo" />				
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>	
 					<field id="pjt:projectEntity" set="mainInfo" />	
 					<field id="pjt:projectPriority" set="mainInfo" >
 						<control
@@ -156,7 +136,7 @@
 				   <show id="cm:title" force="true" />
                <show id="cm:description" force="true" />
 					<show id="pjt:projectHierarchy1" />
-					<show id="pjt:projectProjectTpl" />
+					<show id="bcpg:entityTplRef" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />										
@@ -183,12 +163,18 @@
 					<field id="cm:description" set="mainInfo" />				
 					<field id="pjt:projectHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/listvalue/values/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectProjectTpl" set="mainInfo" />				
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>				
 					<field id="pjt:projectEntity" set="mainInfo" />	
 					<field id="pjt:projectPriority" set="mainInfo" >
 						<control
@@ -261,8 +247,10 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:projectHierarchy1">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectPriority" >
@@ -295,8 +283,10 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:projectHierarchy1" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectPriority">
@@ -531,7 +521,7 @@
 					<field id="pjt:dlContent" mandatory="false" read-only="false">
 		            <control template="/org/alfresco/components/form/controls/association.ftl">
 		              <control-param name="startLocation">{ancestor}</control-param>
-		              <control-param name="startLocationParams">type=pjt:project</control-param>
+		              <control-param name="startLocationParams">aspect=bcpg:entityListsAspect</control-param>
 		            </control>
 		          </field>
 					
@@ -567,7 +557,7 @@
 					<field id="pjt:dlContent" mandatory="false" read-only="false">
 		            <control template="/org/alfresco/components/form/controls/association.ftl">
 		              <control-param name="startLocation">{ancestor}</control-param>
-		              <control-param name="startLocationParams">type=pjt:project</control-param>
+		              <control-param name="startLocationParams">aspect=bcpg:entityListsAspect</control-param>
 		            </control>
 		          </field>
 				</appearance>

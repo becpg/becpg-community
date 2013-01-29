@@ -248,56 +248,7 @@ public class EntityServiceImpl implements EntityService {
 			return;
 		}
 		
-		// copy subfolders
-		if(entityFolderNodeRef != null && folderTplNodeRef != null){			
-			for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
-				
-				logger.debug("copy subFolder: " + folder.getName() + " entityFolderNodeRef: " + entityFolderNodeRef);				
-				//copyService.copy(folder.getNodeRef(), entityFolderNodeRef);
-				NodeRef subFolderNodeRef = copyService.copy(folder.getNodeRef(), entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, folder.getName());
-				
-				// initialize permissions according to template
-				NodeRef subFolderTplNodeRef = folder.getNodeRef();
-
-				if (subFolderNodeRef != null) {
-
-					if (nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
-
-						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
-								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
-						String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
-								RepoConsts.PERMISSION_COLLABORATOR };
-
-						for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
-
-							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
-							String permissionName = permissionNames[cnt];
-							List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
-
-							if (groups!=null && !groups.isEmpty()) {
-								for (AssociationRef assocRef : groups) {
-									NodeRef groupNodeRef = assocRef.getTargetRef();
-									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
-									logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
-									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
-
-									// remove association
-									nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
-								}
-							}
-						}
-
-						// TODO
-						// remove aspect when every association has been
-						// removed
-						// nodeService.removeAspect(subFolderNodeRef,
-						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
-					}
-				}
-			}
-		}
-		
+		copyEntityFolders(folderTplNodeRef, entityFolderNodeRef);		
 	}
 
 	/**
@@ -544,6 +495,61 @@ public class EntityServiceImpl implements EntityService {
 			return parentEntityNodeRef;
 		}
 		return null;
+	}
+
+	@Override
+	public void copyEntityFolders(NodeRef folderTplNodeRef, NodeRef entityFolderNodeRef) {
+		
+		// copy subfolders
+		if(entityFolderNodeRef != null && folderTplNodeRef != null){			
+			for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
+				
+				logger.debug("copy subFolder: " + folder.getName() + " entityFolderNodeRef: " + entityFolderNodeRef);				
+				//copyService.copy(folder.getNodeRef(), entityFolderNodeRef);
+				NodeRef subFolderNodeRef = copyService.copy(folder.getNodeRef(), entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, folder.getName());
+				
+				// initialize permissions according to template
+				NodeRef subFolderTplNodeRef = folder.getNodeRef();
+
+				if (subFolderNodeRef != null) {
+
+					if (nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
+
+						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
+								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
+						String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
+								RepoConsts.PERMISSION_COLLABORATOR };
+
+						for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
+
+							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
+							String permissionName = permissionNames[cnt];
+							List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
+
+							if (groups!=null && !groups.isEmpty()) {
+								for (AssociationRef assocRef : groups) {
+									NodeRef groupNodeRef = assocRef.getTargetRef();
+									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+									logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
+									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
+
+									// remove association
+									nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
+								}
+							}
+						}
+
+						// TODO
+						// remove aspect when every association has been
+						// removed
+						// nodeService.removeAspect(subFolderNodeRef,
+						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
+					}
+				}
+			}
+		}
+		
 	}
 
 }

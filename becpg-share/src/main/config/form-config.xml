@@ -75,7 +75,6 @@
 				<type name="association:qa:controlMethod" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:qa:controlPlan" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:rep:reportTpl" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:pjt:projectTpl" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:pjt:project" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:pjt:taskList" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:pjt:taskLegend" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />

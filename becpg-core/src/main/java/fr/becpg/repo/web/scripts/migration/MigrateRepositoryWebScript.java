@@ -7,9 +7,14 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.person.PersonServiceImpl;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.NoSuchPersonException;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +41,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private static final String ACTION_MIGRATE_PROPERTY = "property";
 	private static final String ACTION_MIGRATE_VERSION = "version";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
+	private static final String ACTION_RENAME_USER = "renameUser";
 	private static final String PARAM_NODEREF = "nodeRef";
+	private static final String PARAM_OLD_USERNAME = "oldUserName";
+	private static final String PARAM_NEW_USERNAME = "newUserName";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
@@ -55,7 +63,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private BeCPGVersionMigrator beCPGVersionMigrator;
 	
 	private BeCPGSystemFolderMigrator beCPGSystemFolderMigrator;
-
+	
+	private PersonService personService;
+	
+	private NodeService nodeService;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -73,9 +84,16 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 		this.beCPGVersionMigrator = beCPGVersionMigrator;
 	}
 	
-
 	public void setBeCPGSystemFolderMigrator(BeCPGSystemFolderMigrator beCPGSystemFolderMigrator) {
 		this.beCPGSystemFolderMigrator = beCPGSystemFolderMigrator;
+	}
+
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
+	}
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	@Override
@@ -104,6 +122,12 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		beCPGSystemFolderMigrator.migrate();
     	} else if(ACTION_MIGRATE_FIX_PRODUCT_HIERARCHY.equals(action)){
     		beCPGSystemFolderMigrator.fixDeletedHierarchies();
+    	} else if(ACTION_RENAME_USER.equals(action)){
+    		String oldUserName = req.getParameter(PARAM_OLD_USERNAME);
+    		String newUserName = req.getParameter(PARAM_NEW_USERNAME);
+    		if(oldUserName!=null && !oldUserName.isEmpty() && newUserName!=null && !newUserName.isEmpty()){
+    			renameUser(oldUserName, newUserName);
+    		}    		
     	}
     	else{
     		logger.error("Unknown action" + action);
@@ -160,4 +184,24 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		policyBehaviourFilter.enableBehaviour(modelNodeRef);
     	}
 	}
+	
+	private void renameUser(String oldUsername, String newUsername)
+    {
+		logger.info("\""+oldUsername+"\" --> \""+newUsername+"\""); 
+        try
+        {
+            NodeRef person = personService.getPerson(oldUsername, false);
+            
+            // Allow us to update the username just like the LDAP process
+            AlfrescoTransactionSupport.bindResource(PersonServiceImpl.KEY_ALLOW_UID_UPDATE, Boolean.TRUE);
+
+            // Update the username property which will result in a PersonServiceImpl.onUpdateProperties call
+            // on commit.
+            nodeService.setProperty(person, ContentModel.PROP_USERNAME, newUsername);
+        }
+        catch (NoSuchPersonException e)
+        {
+            logger.error("User does not exist: "+oldUsername);
+        }
+    }
 }

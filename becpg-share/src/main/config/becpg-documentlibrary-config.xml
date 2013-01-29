@@ -34,6 +34,7 @@
 				<aspect name="pack:palletAspect" />
 				<aspect name="ext1:customAspect" />
 				<aspect name="bp:cataloguable" />
+				<aspect name="bcpg:entityTplAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -80,7 +81,6 @@
 				<subtype name="bpm:workflowDefinition" />
 
 				<subtype name="pjt:project" />
-				<subtype name="pjt:projectTpl" />
 			</type>
 
 			<type name="cm:folder">

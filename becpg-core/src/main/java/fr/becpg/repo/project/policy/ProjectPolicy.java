@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -53,6 +54,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	private ProjectService projectService;
 	private AssociationService associationService;
 	private CopyService copyService;
+	private EntityService entityService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -70,13 +72,17 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		this.copyService = copyService;
 	}
 
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
+
 	/**
 	 * Inits the.
 	 */
 	public void doInit() {
 		logger.debug("Init ProjectPolicy...");
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, ProjectModel.ASSOC_PROJECT_TPL, new JavaBehaviour(this,
+				ProjectModel.TYPE_PROJECT, BeCPGModel.ASSOC_ENTITY_TPL_REF, new JavaBehaviour(this,
 						"onCreateAssociation"));
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
@@ -92,11 +98,16 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-
-		NodeRef projectTplNodeRef = assocRef.getTargetRef();
+		
 		NodeRef projectNodeRef = assocRef.getSourceRef();
 		
-		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_TPL)) {
+		if (assocRef.getTypeQName().equals(BeCPGModel.ASSOC_ENTITY_TPL_REF)) {
+			
+			NodeRef projectTplNodeRef = assocRef.getTargetRef();
+			
+			// copy folders
+			entityService.copyEntityFolders(projectTplNodeRef, projectNodeRef);
+			
 			// copy datalist from Tpl to project
 			logger.debug("copy datalists");
 			Collection<QName> dataLists = new ArrayList<QName>();
@@ -104,48 +115,50 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);			
 			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, true);
 
-			// refresh reference to prevTasks
-			// TODO : do it in a generic way
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
-			if (listContainerNodeRef != null) {
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
-				if (listNodeRef != null) {
-					List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
-					Map<NodeRef, NodeRef> originalMaps = new HashMap<NodeRef, NodeRef>(listItems.size());
-					for (NodeRef listItem : listItems) {
-						originalMaps.put(copyService.getOriginal(listItem), listItem);
-					}
-
-					listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-					listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-					updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
-
-				}
-				
-				//Deliverables
-				listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-				if (listNodeRef != null) {
-					List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-					for (NodeRef listItem : listItems) {
-						updateDelieverableDocument(projectNodeRef, listItem);
-					}
-				}
-			}
+			initializeNodeRefsAfterCopy(projectNodeRef);
 
 			// initialize
 			queueNode(projectNodeRef);
 
-			// //We want to be able to plan project in advance and start it
-			// later so we start it when state is InProgress
-			// if(TaskState.InProgress.toString().equals(nodeService.getProperty(projectNodeRef,
-			// ProjectModel.PROP_PROJECT_STATE))){
-			// // start workflow when product is associated to project
-			// queueNode(KEY_PROJECTS_TO_START, projectNodeRef);
-			// }
 		} else if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {
+			
+			NodeRef entityNodeRef = assocRef.getTargetRef();
+			
 			// add project aspect on entity
-			nodeService.addAspect(assocRef.getTargetRef(), ProjectModel.ASPECT_PROJECT_ASPECT, null);
-			associationService.update(projectTplNodeRef, ProjectModel.ASSOC_PROJECT, projectNodeRef);
+			nodeService.addAspect(entityNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT, null);
+			associationService.update(entityNodeRef, ProjectModel.ASSOC_PROJECT, projectNodeRef);
+		}
+	}
+	
+	// TODO : do it in a generic way
+	private void initializeNodeRefsAfterCopy(NodeRef projectNodeRef){
+					
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
+		if (listContainerNodeRef != null) {
+			
+			// refresh reference to prevTasks
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
+			if (listNodeRef != null) {
+				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
+				Map<NodeRef, NodeRef> originalMaps = new HashMap<NodeRef, NodeRef>(listItems.size());
+				for (NodeRef listItem : listItems) {
+					originalMaps.put(copyService.getOriginal(listItem), listItem);
+				}
+
+				listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+				listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+				updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
+
+			}
+			
+			//Deliverables
+			listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+			if (listNodeRef != null) {
+				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+				for (NodeRef listItem : listItems) {
+					updateDelieverableDocument(projectNodeRef, listItem);
+				}
+			}
 		}
 	}
 
@@ -172,7 +185,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		if(documentNodeRef != null){
 			NodeRef folderNodeRef = nodeService.getPrimaryParent(documentNodeRef).getParentRef();
 			
-			while(folderNodeRef!=null && !nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+			while(folderNodeRef!=null && !nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_ENTITYLISTS)){
 				String name = (String)nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME);
 				logger.debug("folderNodeRef: " + folderNodeRef + " name: " + name);
 				stack.push(name);

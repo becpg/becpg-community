@@ -102,6 +102,11 @@ public interface EntityService {
 	 */
 	 NodeRef getEntityFolder(NodeRef entityNodeRef);
 
-	
+	 /**
+	  * Copy the sub-folders of the Tpl under the nodeRef
+	  * @param tplNodeRef
+	  * @param nodeRef
+	  */
+	 void copyEntityFolders(NodeRef tplNodeRef, NodeRef nodeRef); 
     
 }
