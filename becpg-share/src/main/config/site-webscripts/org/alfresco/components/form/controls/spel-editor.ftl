@@ -16,6 +16,9 @@
     <#if args.entityNodeRef??>
       entityNodeRef : "${args.entityNodeRef}",
     </#if>
+    <#if args.dataListsName??>
+      currentList : "${args.dataListsName}",
+    </#if>
       currentValue: "${field.value?js_string}",
    }).setMessages(
       ${messages}
