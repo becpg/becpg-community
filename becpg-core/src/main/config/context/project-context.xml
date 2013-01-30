@@ -63,7 +63,6 @@
 	<bean id="CreateProduct" parent="baseJavaDelegate"
 		class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
 		<property name="nodeService" ref="nodeService" />
-		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityService" ref="entityService" />
 		<property name="productService" ref="productService" />

@@ -18,10 +18,12 @@ import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -128,13 +130,13 @@ public class CreateNC extends BaseJavaDelegate {
 					}
 
 					// Move documents from pkgNodeRef
-					List<FileInfo> files = fileFolderService.listFiles(pkgNodeRef);
 					NodeRef briefNodeRef = getDocumentsFolder(ncNodeRef);
-					for (FileInfo file : files) {
-						String name = (String) nodeService.getProperty(file.getNodeRef(), ContentModel.PROP_NAME);
-						if (briefNodeRef != null && nodeService.getType(file.getNodeRef()).equals(ContentModel.TYPE_CONTENT)) {
-							fileFolderService.move(file.getNodeRef(), briefNodeRef, name);
-							nodeService.removeChild(pkgNodeRef, file.getNodeRef());
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);										
+					for (ChildAssociationRef childAssoc : childAssocs) {
+						String name = (String) nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME);
+						if (briefNodeRef != null && nodeService.getType(childAssoc.getChildRef()).equals(ContentModel.TYPE_CONTENT)) {
+							fileFolderService.move(childAssoc.getChildRef(), briefNodeRef, name);
+							nodeService.removeChild(pkgNodeRef, childAssoc.getChildRef());
 						}
 					}
 

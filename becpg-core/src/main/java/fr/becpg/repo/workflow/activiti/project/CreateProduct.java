@@ -9,13 +9,15 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
 import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,9 +46,6 @@ public class CreateProduct extends BaseJavaDelegate {
 	/** The node service. */
 	private NodeService nodeService;
 
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	/** The product DAO */
@@ -61,10 +60,6 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
 	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
@@ -96,17 +91,13 @@ public class CreateProduct extends BaseJavaDelegate {
 			@Override
 			public Object doWork() throws Exception {
 				try {
-
-					QName entityType = BeCPGModel.TYPE_FINISHEDPRODUCT;
 				
 					NodeRef projectNodeRef = null;
 					
-					List<FileInfo> files = fileFolderService.listFolders(pkgNodeRef);
-					for (FileInfo file : files) {
-						logger.error("List : "+file.getName());
-						if ( nodeService.getType(file.getNodeRef()).equals(ProjectModel.TYPE_PROJECT)) {
-							logger.error("Found project : "+file.getName());
-							projectNodeRef = file.getNodeRef();
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+					for (ChildAssociationRef childAssoc : childAssocs) {
+						if ( nodeService.getType(childAssoc.getChildRef()).equals(ProjectModel.TYPE_PROJECT)) {
+							projectNodeRef = childAssoc.getChildRef();
 							break;
 						}
 					}
@@ -149,7 +140,7 @@ public class CreateProduct extends BaseJavaDelegate {
 						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
 						
 						
-						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, entityType,
+						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, nodeService.getType(sourceNodeRef),
 								repoService.getAvailableName(projectNodeRef, entityName));
 						
 						// change state: ToValidate

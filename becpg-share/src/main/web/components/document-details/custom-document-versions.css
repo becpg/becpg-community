@@ -5,16 +5,14 @@
    float: left;
    width: auto;
 }
+*/
 
 
-.document-versions .actions
-{
-   float: right;
-   width: 7em;
-   text-align: right;
- */}
-
-
+.document-versions .actions {
+    float: right;
+    text-align: right;
+    width: 7em;
+}
 
 .document-versions .actions a.compare
 {
