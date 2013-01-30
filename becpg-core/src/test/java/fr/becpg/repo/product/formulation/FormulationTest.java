@@ -121,6 +121,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  1","costList.?[value == 4.0][0].unit" ));
 				dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  2","costList.?[value < 5.0][0].value" ));
 				dynamicCharactListItems.add(new DynamicCharactListItem("Collection Projection  1","costList.![value]" ));
+				//Variables
+				dynamicCharactListItems.add(new DynamicCharactListItem("Variable  1","compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value" ));
 				//Template need Template Context
 				//dynamicCharactListItems.add(new DynamicCharactListItem("Template  1","Cost1/Cost2 : #{costList[1].value / costList[2].value}% Profitability : #{profitability}" ));
 				//Elvis 
@@ -172,6 +174,16 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					}
 				}
 				assertEquals(3, checks);
+				
+				//dynamicCharact
+
+				assertNotNull("DynamicCharact is null", formulatedProduct.getCompoListView().getDynamicCharactList());
+				for(DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()){
+					String trace = "Dyn charact :"+dynamicCharactListItem.getName()+" value "+dynamicCharactListItem.getValue();
+					logger.info(trace);
+					assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
+				}
+				
 				
 				// profitability
 				DecimalFormat df = new DecimalFormat("0.00");
