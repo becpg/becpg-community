@@ -125,6 +125,11 @@
 							 * Current entityNodeRef
 							 */
 	                  entityNodeRef : null,
+	                  
+	                  /**
+	                   * Current dataList
+	                   */
+	                  currentList : "compoList",
 
 	                  /**
 							 * Datasource
@@ -703,23 +708,23 @@
 		                  name : "compoList",
 		                  type : "bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct",
 		                  subType : "fr.becpg.repo.product.data.productList.CompoListDataItem",
-		                  template : "compoList.?[product.toString() == '{item1}' ][0].{item2}"
+		                  template : "compoListView.compoList.?[product.toString() == '{item1}' ][0].{item2}"
 		               },
 		               {
 		                  name : "processList",
 		                  type : "bcpg:resourceProduct",
 		                  subType : "fr.becpg.repo.product.data.productList.ProcessListDataItem",
-		                  template : "processList.?[plResource.toString() == '{item1}' ][0].{item2}"
+		                  template : "processListView.processList.?[plResource.toString() == '{item1}' ][0].{item2}"
 		               }, {
 		                  name : "packagingList",
 		                  type : "bcpg:packagingMaterial,bcpg:packagingKit",
 		                  subType : "fr.becpg.repo.product.data.productList.PackagingListDataItem",
-		                  template : "packagingList.?[product.toString() == '{item1}' ][0].{item2}"
+		                  template : "packagingListView.packagingList.?[product.toString() == '{item1}' ][0].{item2}"
 		               }, 
 		               {
 		                  name : "variables",
 		                  type : "bcpg:dynamicCharactList",
-		                  template : "dynamicCharactList.?[name == '{name1}' ][0].value"
+		                  template : "{currentList}View.dynamicCharactList.?[title == '{name1}' ][0].value"
 		               } ];
 
 		               var menuItem, item, label;
@@ -774,7 +779,7 @@
 			                  formatter : function(elCell, oRecord, oColumn, oData) {
 				                  var data = oRecord.getData();
 
-				                  elCell.innerHTML = "<span class='" + data.cssClass + "' >" + me._formatLabel(data.name)
+				                  elCell.innerHTML = "<span class='defaultIcon " + data.cssClass + "' >" + me._formatLabel(data.name)
 				                        + "</span>";
 
 			                  }
@@ -822,7 +827,8 @@
 
 					               var text = Lang.substitute(me.options.selectedParentType.template, {
 					               	name1 : data.name,
-						               item1 : data.value
+						               item1 : data.value,
+						               currentList : me.options.currentList
 					               });
 
 					               me.widgets.editor.execCommand('inserthtml', " " + me._createHtml(text, [ {
@@ -843,7 +849,8 @@
 
 				               var text = Lang.substitute(me.options.selectedParentType.template, {
 				                  item1 : me.options.currentItem.value,
-				                  item2 : data.value
+				                  item2 : data.value,
+				                  currentList : me.options.currentList
 				               });
 
 				               me.widgets.editor.execCommand('inserthtml', " " + me._createHtml(text, [ {
