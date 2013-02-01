@@ -96,7 +96,6 @@ public class RepoConsts {
 	//Project
 	public static final String PATH_PROJECTS = "Projects";
 	public static final String PATH_PROJECT_LISTS = "ProjectLists";
-	public static final String PATH_PROJECT_STATUS = "ProjectStatus";
 	public static final String PATH_TASKS = "Tasks";
 	public static final String PATH_TASK_LEGENDS = "TaskLegends";
 	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
