@@ -24,8 +24,8 @@ public class LuceneHelper {
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
 	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
 	private static final String QUERY_COND_PARENT = " %s +PARENT:\"%s\"";
-	private static final String QUERY_COND_TYPE = " %s +TYPE:\"%s\"";
-	private static final String QUERY_COND_ASPECT = " %s +ASPECT:\"%s\"";
+	private static final String QUERY_COND_TYPE = " TYPE:\"%s\"";
+	private static final String QUERY_COND_ASPECT = " ASPECT:\"%s\"";
 	private static final String QUERY_COND = " %s %s";
 
 	/**
@@ -124,9 +124,9 @@ public class LuceneHelper {
 	 * @param operator
 	 * @return
 	 */
-	public static String getCondType(QName type, Operator operator) {
+	public static String getCondType(QName type) {
 
-		return String.format(QUERY_COND_TYPE, operator != null ? operator : "", type);
+		return String.format(QUERY_COND_TYPE, type);
 	}
 	
 	/**
@@ -136,9 +136,9 @@ public class LuceneHelper {
 	 * @param operator
 	 * @return
 	 */
-	public static String getCondAspect(QName aspect, Operator operator) {
+	public static String getCondAspect(QName aspect) {
 
-		return String.format(QUERY_COND_ASPECT, operator != null ? operator : "", aspect);
+		return String.format(QUERY_COND_ASPECT, aspect);
 	}
 
 	public static String getCond(String cond, Operator operator) {
@@ -217,6 +217,11 @@ public class LuceneHelper {
 		}
 		
 		return "+PATH:\"" + path + "/*\"" ;
+	}
+
+	public static String mandatory(String condType) {
+		
+		return "+"+condType;
 	}
 
 }

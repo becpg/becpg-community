@@ -58,8 +58,11 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 		String remoteUrl = remoteServer+"/service/"+templateArgs.get(REMOTE_URL_PARAM);
 		boolean first = true;
 		for(String name : req.getParameterNames()){
-			remoteUrl+=(first?"?":"&")+name+"="+URLEncoder.encode(req.getParameter(name),"UTF-8");
-			first = false;
+			//ISSUE do not forward alf_ticket
+			if(!"alf_ticket".equals(name)){
+				remoteUrl+=(first?"?":"&")+name+"="+URLEncoder.encode(req.getParameter(name),"UTF-8");
+				first = false;
+			}
 		}
 		
 		logger.debug("Forward request to :"+remoteUrl);

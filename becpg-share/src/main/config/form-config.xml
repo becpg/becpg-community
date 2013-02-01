@@ -4,7 +4,7 @@
 	<config>
 		<forms>
 			<dependencies>
-				<css src="/modules/autocomplete/autocomplete-ext-min.css" />
+				<css src="/modules/custom-autocomplete/autocomplete-ext-min.css" />
 				<css src="/modules/spel-editor/spel-editor-min.css" />
 				<css src="/modules/spel-editor/shThemeDefault.css" />
 				<js src="/modules/spel-editor/spel-editor-min.js" />

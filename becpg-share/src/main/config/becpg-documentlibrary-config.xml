@@ -238,7 +238,7 @@
 			</content>
 			<content id="project" label="menu.create-content.project"
 				type="pagelink" index="150" icon="generic-project">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 

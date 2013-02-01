@@ -472,7 +472,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 	private List<NodeRef> luceneSearchByType(QName dataType, String query, Map<String, Boolean> sort, int maxResult){
 		
 		//We need dataType since some lists can have several types in the same container like composition
-		query += dataType != null ? LuceneHelper.getCondType(dataType, Operator.AND) : "";
+		query += dataType != null ? LuceneHelper.getCond(LuceneHelper.getCondType(dataType), Operator.AND) : "";
 		return beCPGSearchService.luceneSearch(query, sort,	maxResult);
 	}
 
