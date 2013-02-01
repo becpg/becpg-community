@@ -45,7 +45,7 @@ public class EntityFolderMigrator {
 	public void migrate(){
 		
 		// search for entities to migrate
-		List<NodeRef> entitiesNodeRef = beCPGSearchService.search(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY, null), null, RepoConsts.MAX_RESULTS_UNLIMITED, SearchService.LANGUAGE_LUCENE);
+		List<NodeRef> entitiesNodeRef = beCPGSearchService.search(LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY)), null, RepoConsts.MAX_RESULTS_UNLIMITED, SearchService.LANGUAGE_LUCENE);
 		
 		// check parent is entityFolder and has the same name
 		for(NodeRef entityNodeRef : entitiesNodeRef){

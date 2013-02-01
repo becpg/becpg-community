@@ -6,4 +6,8 @@
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>
 	<lifecycle>public_api</lifecycle>
+	 <cache>
+	    <never>true</never>
+	    <public>false</public>
+	  </cache>
 </webscript>

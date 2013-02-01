@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
-import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -542,10 +541,10 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				isFirst = false;
 
 				if(classDef.isAspect()){
-					queryClassNames += LuceneHelper.getCondAspect(classQName, op);
+					queryClassNames += LuceneHelper.getCond(LuceneHelper.getCondAspect(classQName),op);
 				}
 				else{
-					queryClassNames += LuceneHelper.getCondType(classQName, op);
+					queryClassNames += LuceneHelper.getCond(LuceneHelper.getCondType(classQName),op);
 				}				
 			}
 
@@ -644,7 +643,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		query = prepareQuery(query);
 		
-		queryPath += LuceneHelper.getCondType(datalistType, null);
+		queryPath += LuceneHelper.mandatory(LuceneHelper.getCondType(datalistType));
 		queryPath += LuceneHelper.getCondContainsValue(propertyQName, query, Operator.AND);
 		queryPath += LuceneHelper.getCond(String.format(" +PATH:\"%s/*/*/*\"", nodeService.getPath(entityNodeRef).toPrefixString(namespaceService)), Operator.AND);		
 		

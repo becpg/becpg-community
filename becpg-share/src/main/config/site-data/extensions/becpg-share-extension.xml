@@ -33,6 +33,10 @@
 					<targetPackageRoot>org.alfresco.components.data-lists</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-data-lists</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.create-content</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-create-content</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>

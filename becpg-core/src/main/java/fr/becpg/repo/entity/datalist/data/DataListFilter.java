@@ -197,7 +197,7 @@ public class DataListFilter {
 		filterQuery = " +TYPE:\"" + dataType.toString() + "\"";
 
 		// Common types and aspects to filter from the UI
-		String searchQueryDefaults = " -TYPE:\"systemfolder\""  + " -@cm\\:lockType:READ_ONLY_LOCK";
+		String searchQueryDefaults = " -TYPE:\"systemfolder\" -ASPECT:\"bcpg:entityTplAspect\" "  + " -@cm\\:lockType:READ_ONLY_LOCK";
 
 		if (filterId != null) {
 
