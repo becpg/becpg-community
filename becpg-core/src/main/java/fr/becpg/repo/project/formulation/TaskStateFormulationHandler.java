@@ -125,7 +125,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							}
 						}
 
-						if (nextDeliverables.size() == finishedDL) {
+						if (nextDeliverables.size() > 0 && nextDeliverables.size() == finishedDL) {
 							logger.debug("set completion percent to 100%");
 							nextTask.setCompletionPercent(COMPLETED);
 							nextTask.setState(TaskState.Completed);														
