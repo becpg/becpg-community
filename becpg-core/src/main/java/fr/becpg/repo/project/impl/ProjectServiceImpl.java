@@ -119,26 +119,28 @@ public class ProjectServiceImpl implements ProjectService {
 	public void cancel(NodeRef projectNodeRef) {
 
 		logger.debug("cancel project: " + projectNodeRef);
-		AbstractProjectData abstractProjectData = alfrescoRepository.findOne(projectNodeRef);
-         
-		for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
-			if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
-				
-				WorkflowInstance workflowInstance = workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance());
-				if(workflowInstance != null){
-					if(workflowInstance.isActive()){
-						logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
-						workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
-						taskListDataItem.setWorkflowInstance(null);
+		if(nodeService.exists(projectNodeRef)){
+			AbstractProjectData abstractProjectData = alfrescoRepository.findOne(projectNodeRef);
+	         
+			for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
+				if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
+					
+					WorkflowInstance workflowInstance = workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance());
+					if(workflowInstance != null){
+						if(workflowInstance.isActive()){
+							logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
+							workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
+							taskListDataItem.setWorkflowInstance(null);
+						}
 					}
-				}
-				else{
-					logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
-				}
-			}					
-		}    
-		
-		alfrescoRepository.save(abstractProjectData);
+					else{
+						logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
+					}
+				}					
+			}    
+			
+			alfrescoRepository.save(abstractProjectData);
+		}		
 	}
 
 	@Override

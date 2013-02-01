@@ -83,6 +83,11 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCheckOut"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "beforeCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCheckIn"));
+		
+		
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onCheckOut"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforeCheckIn"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onCheckIn"));
 	}
 
 
@@ -158,11 +163,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	}
 		
 	@Override
-	public void onCheckIn(NodeRef nodeRef) {
-		
-		// reset state to ToValidate
-		nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
-		
+	public void onCheckIn(NodeRef nodeRef) {		
 		
 		nodeService.setProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
 		

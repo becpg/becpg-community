@@ -211,6 +211,12 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
+	
+	<bean id="entityFolderMigrator" class="fr.becpg.repo.migration.EntityFolderMigrator">
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="nodeService" ref="nodeService" />		
+	</bean>
 
 	<!-- CompareEntityService -->
 	<bean id="compareEntityService"

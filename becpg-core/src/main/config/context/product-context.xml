@@ -50,6 +50,7 @@
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="namespaceService" ref="namespaceService" />
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 
 	<bean id="hierarchyService"
