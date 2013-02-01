@@ -26,6 +26,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
 import fr.becpg.repo.migration.BeCPGSystemFolderMigrator;
+import fr.becpg.repo.migration.EntityFolderMigrator;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -35,6 +36,11 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class MigrateRepositoryWebScript extends AbstractWebScript
 {	
+	private static final String PARAM_ACTION = "action";
+	private static final String PARAM_NODEREF = "nodeRef";
+	private static final String PARAM_OLD_USERNAME = "oldUserName";
+	private static final String PARAM_NEW_USERNAME = "newUserName";
+	private static final String PARAM_PAGINATION = "pagination";
 	
 	private static final String ACTION_MIGRATE_SYSTEM_FOLDER = "systemFolder";
 	private static final String ACTION_MIGRATE_FIX_PRODUCT_HIERARCHY = "fixProductHierarchy";
@@ -42,15 +48,12 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private static final String ACTION_MIGRATE_VERSION = "version";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	private static final String ACTION_RENAME_USER = "renameUser";
-	private static final String PARAM_NODEREF = "nodeRef";
-	private static final String PARAM_OLD_USERNAME = "oldUserName";
-	private static final String PARAM_NEW_USERNAME = "newUserName";
+	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";	
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 				
-	private static final String PARAM_PAGINATION = "pagination";
-	private static final String PARAM_ACTION = "action";
+	
 
 	/** The search service. */
 	private BeCPGSearchService beCPGSearchService;
@@ -67,6 +70,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private PersonService personService;
 	
 	private NodeService nodeService;
+	
+	private EntityFolderMigrator entityFolderMigrator;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -96,14 +101,18 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 		this.nodeService = nodeService;
 	}
 
+	public void setEntityFolderMigrator(EntityFolderMigrator entityFolderMigrator) {
+		this.entityFolderMigrator = entityFolderMigrator;
+	}
+
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException
     {
     	logger.debug("start migration");
     	Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	    	
-
-    	String pagination = templateArgs.get(PARAM_PAGINATION);
+    	
     	String action = templateArgs.get(PARAM_ACTION);
+    	String pagination = req.getParameter(PARAM_PAGINATION);
     	Integer iPagination = (pagination != null && !pagination.isEmpty()) ? Integer.parseInt(pagination) : null;
 		
     	if(ACTION_MIGRATE_PROPERTY.equals(action)){
@@ -128,6 +137,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		if(oldUserName!=null && !oldUserName.isEmpty() && newUserName!=null && !newUserName.isEmpty()){
     			renameUser(oldUserName, newUserName);
     		}    		
+    	} else if(ACTION_RENAME_USER.equals(action)){
+    		entityFolderMigrator.migrate();
     	}
     	else{
     		logger.error("Unknown action" + action);

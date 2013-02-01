@@ -248,8 +248,10 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 		for (NodeRef nodeRef : pendingNodes) {
 			try {
-				logger.debug("Project policy formulate");
-				projectService.formulate(nodeRef);
+				if(nodeService.exists(nodeRef)){
+					logger.debug("Project policy formulate");
+					projectService.formulate(nodeRef);
+				}				
 			} catch (FormulateException e) {
 				logger.error(e,e);
 			}

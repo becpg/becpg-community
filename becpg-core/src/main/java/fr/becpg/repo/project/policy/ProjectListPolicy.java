@@ -90,16 +90,18 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
 		for (NodeRef projectNodeRef : pendingNodes) {
-			try {
-				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-				projectService.formulate(projectNodeRef);
-			} catch (FormulateException e) {
-				logger.error(e,e);
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-			}
+			if(nodeService.exists(projectNodeRef)){
+				try {
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+					projectService.formulate(projectNodeRef);
+				} catch (FormulateException e) {
+					logger.error(e,e);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				}
+			}			
 		}
 	}
 
@@ -132,27 +134,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				formulateProject = true;
 			}
 		}
-
-//		// duration has priority on endDate
-//		if (isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION)
-//				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)){
-//			
-//			logger.debug("### update task list start or duration: " + nodeRef);
-//			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
-//			Integer duration = (Integer)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_DURATION);			
-//			Date endDate = ProjectHelper.calculateEndDate(startDate, duration);
-//			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
-//			formulateProject = true;
-//			
-//		}else if(isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)) {
-//
-//			logger.debug("### update task list end: " + nodeRef);
-//			Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
-//			Date endDate = ProjectHelper.removeTime(new Date());
-//			Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
-//			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
-//			formulateProject = true;
-//		}
 		
 		if (isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION)
 				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)

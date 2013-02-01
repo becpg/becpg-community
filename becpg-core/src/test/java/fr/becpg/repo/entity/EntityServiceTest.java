@@ -54,6 +54,8 @@ public class EntityServiceTest extends RepoBaseTestCase {
 	@Resource
 	private CopyService copyService;
 	
+	//force init repo (otherwise failed depending of previous tests)
+	protected boolean forceInit = true;
 
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
@@ -246,8 +248,8 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		// compare names
 		entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
 		productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);		
-		assertNotSame(parentEntityNodeRef, BeCPGTestHelper.PRODUCT_NAME);		
-		assertTrue(entityFolderName.endsWith(productName));
+		assertNotSame(parentEntityNodeRef, BeCPGTestHelper.PRODUCT_NAME);
+		assertTrue(entityFolderName.contains(productName));
 	}
 	
 }

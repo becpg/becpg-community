@@ -152,6 +152,7 @@
 		<property name="beCPGSystemFolderMigrator" ref="beCPGSystemFolderMigrator"/>
 		<property name="personService" ref="personService" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="entityFolderMigrator" ref="entityFolderMigrator"/>
 	</bean>
 
 

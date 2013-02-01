@@ -251,7 +251,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								return nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN,
 										QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
 							}
-						}, AuthenticationUtil.getSystemUserName());	
+						}, AuthenticationUtil.getAdminUserName());	
 					}
 				} catch (Exception e) {
 					logger.error("Failed to get entitysHistory", e);
