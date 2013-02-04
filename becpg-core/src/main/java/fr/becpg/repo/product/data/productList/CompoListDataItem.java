@@ -234,6 +234,12 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 		this.lossPerc=lossPerc;
 		this.declType=declType;
 		this.product=product;
+		if(parent == null){
+			depthLevel = 0;
+		} else {
+			depthLevel = parent.getDepthLevel() + 1;
+		}
+		
 	}
 	
 	/**

@@ -24,8 +24,8 @@ public class LuceneHelper {
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
 	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
 	private static final String QUERY_COND_PARENT = " %s +PARENT:\"%s\"";
-	private static final String QUERY_COND_TYPE = " TYPE:\"%s\"";
-	private static final String QUERY_COND_ASPECT = " ASPECT:\"%s\"";
+	private static final String QUERY_COND_TYPE = "TYPE:\"%s\"";
+	private static final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
 	private static final String QUERY_COND = " %s %s";
 
 	/**
@@ -221,7 +221,7 @@ public class LuceneHelper {
 
 	public static String mandatory(String condType) {
 		
-		return "+"+condType;
+		return " +"+condType;
 	}
 
 }

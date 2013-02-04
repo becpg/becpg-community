@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,11 +21,13 @@ import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
@@ -55,7 +58,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 		logger.info("testFormulateCharactDetails");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create finished product --*/
@@ -84,7 +87,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef =  alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate details --*/");
@@ -94,7 +97,24 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				Assert.assertNotNull(ret);
 
 				System.out.println(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				return finishedProductNodeRef;
+				
 
+			}
+		}, false, true);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				productService.formulate(finishedProductNodeRef);
+				
+				FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+				
+				Assert.assertNotNull(finishedProduct.getNutList());
+				for (NutListDataItem nutItem : finishedProduct.getNutList()){
+					Assert.assertTrue(nodeService.hasAspect(nutItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
+				}
 				return null;
 
 			}

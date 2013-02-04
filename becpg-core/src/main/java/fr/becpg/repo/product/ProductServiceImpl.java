@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -23,6 +25,9 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
@@ -82,15 +87,42 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
     public void formulate(NodeRef productNodeRef) throws FormulateException {
-    	formulationService.formulate(productNodeRef);
+		markDetaillable(formulationService.formulate(productNodeRef));
     }       
     
    
     @Override
     public ProductData formulate(ProductData productData) throws FormulateException {
-    	return formulationService.formulate(productData);
+    	return markDetaillable(formulationService.formulate(productData));
+    	
+    	
     }    
     
+    
+    /**
+     * Instead a list of aspect should be on RepositoryEntity
+     * this aspect are added by dao on created and by formulation
+     * @param productData
+     * @return
+     */
+    @Deprecated
+	private ProductData markDetaillable(ProductData productData) {
+
+    	for(CostListDataItem costListDataItem : productData.getCostList()){
+    		nodeService.addAspect(costListDataItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
+    	}
+    	
+    	for(IngListDataItem ingListDataItem : productData.getIngList()){
+    		nodeService.addAspect(ingListDataItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
+    	}
+    	
+    	for(NutListDataItem nutListDataItem : productData.getNutList()){
+    		nodeService.addAspect(nutListDataItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
+    	}
+    	
+    	return productData;
+	}
+
 	@Override
 	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements) throws FormulateException {
 

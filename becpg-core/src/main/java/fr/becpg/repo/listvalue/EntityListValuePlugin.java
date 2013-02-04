@@ -541,7 +541,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				isFirst = false;
 
 				if(classDef.isAspect()){
-					queryClassNames += LuceneHelper.getCond(LuceneHelper.getCondAspect(classQName),op);
+					queryClassNames += LuceneHelper.mandatory(LuceneHelper.getCondAspect(classQName));
 				}
 				else{
 					queryClassNames += LuceneHelper.getCond(LuceneHelper.getCondType(classQName),op);
