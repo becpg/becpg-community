@@ -94,6 +94,9 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
 				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onDeleteNode"));
+		
+		// disable otherwise, impossible to copy project that has a template
+		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);
 	}
 
 	@Override

@@ -42,7 +42,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">components/security/autocomplete</control-param>
 							<control-param name="local">true</control-param>
-							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
@@ -65,7 +64,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">components/security/autocomplete</control-param>
 							<control-param name="local">true</control-param>
-							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
