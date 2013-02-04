@@ -12,8 +12,6 @@
 			prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
-		<import uri="http://www.alfresco.org/model/datalist/1.0"
-			prefix="dl" />
 		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
