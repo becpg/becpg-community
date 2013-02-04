@@ -35,7 +35,12 @@ public class DataListDataExtractor extends AbstractNodeDataExtractor  {
 		 } else  { //"{http://www.alfresco.org/model/datalist/1.0}dataListItem"
 			 ret.put(PROP_NAME, attributeExtractorService.getProperty(getParent(nodeRef),ContentModel.PROP_NAME) );// used to generate link to parent datalist - not ideal
 			 ret.put(PROP_TYPE, "datalistitem");
-			 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME)); 
+			 
+			 if(nodeService.hasAspect(nodeRef, ContentModel.ASPECT_TITLED)){
+				 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_TITLE)); 
+			 } else {
+				 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME)); 
+			 }
 		 }
 		 
 		 ret.put(PROP_MODIFIER,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
