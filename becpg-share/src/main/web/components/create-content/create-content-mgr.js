@@ -135,7 +135,8 @@
             nodeRef = new Alfresco.util.NodeRef(response.json.persistedObject);
             
             // Activity post - documents only
-            if (!this.options.isContainer)
+            if (!this.options.isContainer
+            		|| this.options.isEntity)
             {
               Alfresco.Share.postActivity(this.options.siteId, "org.alfresco.documentlibrary.file-created", "{cm:name}", this._getDetailsUrl(nodeRef),
               {
