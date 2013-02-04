@@ -150,11 +150,11 @@ public class RepoServiceImpl implements RepoService {
 
 		logger.debug("start moveNode");
 		
-		// check the product is not already classified !
+		// check the nodeRefToMove is not already moved !
 		NodeRef parentOfNodeRefToMove = nodeService.getPrimaryParent(nodeRefToMove).getParentRef();
 		if (destionationNodeRef.equals(parentOfNodeRefToMove)) {
 			// nothing to do...
-			logger.debug("product already classified, nothing to do...");
+			logger.debug("nodeRefToMove is not already moved, nothing to do...");
 			return;
 		}
 
@@ -168,7 +168,7 @@ public class RepoServiceImpl implements RepoService {
 		try {
 			fileFolderService.move(nodeRefToMove, destionationNodeRef, name);
 		} catch (Exception e) {
-			logger.error("classifyProduct : Failed to move product", e);
+			logger.error("Failed to move node", e);
 		}
 	}
 

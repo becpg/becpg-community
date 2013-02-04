@@ -200,7 +200,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -209,7 +208,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -405,7 +403,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -414,7 +411,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -528,7 +524,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -537,7 +532,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -615,7 +609,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -624,7 +617,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -716,7 +708,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -725,7 +716,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -815,8 +805,7 @@
 					<field id="bcpg:productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
-							</control-param>
-							<control-param name="showTooltip">false</control-param>
+							</control-param>						
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -825,7 +814,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -913,7 +901,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -922,7 +909,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -1010,7 +996,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1019,7 +1004,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -1111,7 +1095,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1120,7 +1103,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
@@ -1217,7 +1199,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1226,7 +1207,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
@@ -1329,7 +1309,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1338,7 +1317,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -1446,8 +1424,7 @@
 					<field id="bcpg:productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
-							</control-param>
-							<control-param name="showTooltip">false</control-param>
+							</control-param>							
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1456,7 +1433,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -1559,7 +1535,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1568,7 +1543,6 @@
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -1656,7 +1630,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" set="mainInfo">
@@ -1664,8 +1637,7 @@
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
-							</control-param>
-							<control-param name="showTooltip">false</control-param>
+							</control-param>							
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
@@ -2956,7 +2928,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>	
-							<control-param name="showTooltip">false</control-param>							
 						</control>
  					</field> 
 				</appearance>
@@ -3047,7 +3018,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
  							<control-param name="ds">becpg/autocomplete/compoListParentLevel
  							</control-param>
-							<control-param name="showTooltip">false</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
  					</field> 					
@@ -4127,7 +4097,6 @@
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>
-							<control-param name="showTooltip">false</control-param>
 							<control-param name="urlParamsToPass">destination,itemId</control-param>
 						</control>
 					</field>
@@ -4149,8 +4118,7 @@
 				<appearance>
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>
-							<control-param name="showTooltip">false</control-param>
+							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>							
 							<control-param name="urlParamsToPass">destination,itemId</control-param>
 						</control>
 					</field>
@@ -4178,7 +4146,6 @@
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>
-							<control-param name="showTooltip">false</control-param>
 							<control-param name="urlParamsToPass">destination,itemId</control-param>
 						</control>
 					</field>

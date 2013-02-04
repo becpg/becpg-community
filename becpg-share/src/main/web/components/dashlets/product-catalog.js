@@ -205,7 +205,7 @@
                extn = name.substring(name.lastIndexOf(".")),
                locn = record.location,
                nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
-               docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + "site/" + locn.site + "/document-details?nodeRef=" + nodeRef.toString();
+               docDetailsUrl = (locn.site != null && locn.site != "") ? Alfresco.constants.URL_PAGECONTEXT + "site/" + locn.site + "/document-details?nodeRef=" + nodeRef.toString() : Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef=" + nodeRef.toString();
 
             if (this.options.simpleView)
             {
@@ -262,7 +262,7 @@
               dateLine = "",
               locn = record.location,
               nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
-              docDetailsUrl = Alfresco.constants.URL_PAGECONTEXT + "site/" + locn.site + "/document-details?nodeRef=" + nodeRef.toString(),
+              docDetailsUrl = (locn.site != null && locn.site != "") ? Alfresco.constants.URL_PAGECONTEXT + "site/" + locn.site + "/document-details?nodeRef=" + nodeRef.toString() : Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef=" + nodeRef.toString(),
               contentUrl = Alfresco.constants.PROXY_URI + record.contentUrl;
 
            // Version display

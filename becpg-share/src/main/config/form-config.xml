@@ -54,15 +54,22 @@
             <type name="association:packageItems" template="/org/alfresco/components/form/controls/workflow/packageitems.ftl" />
 			<!--beCPG -->            
 				<type name="association:bcpg:product" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-						<control-param name="ds">becpg/autocomplete/product</control-param>
+					<control-param name="ds">becpg/autocomplete/product</control-param>
+					<control-param name="showTooltip">true</control-param>
 				</type>
-				<type name="association:bcpg:entity" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:bcpg:entity" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showTooltip">true</control-param>
+				</type>
 				<type name="association:bcpg:charact" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />				
 				<type name="association:bcpg:subsidiary" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:plant" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:trademark" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />								
-				<type name="association:bcpg:client" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:bcpg:supplier" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:bcpg:client" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showTooltip">true</control-param>
+				</type>
+				<type name="association:bcpg:supplier" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showTooltip">true</control-param>
+				</type>
 				<type name="association:bcpg:plant" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:trademark" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:subsidiary" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />			

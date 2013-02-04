@@ -41,7 +41,7 @@
 	   * @method onLikes
 	   * @param row {HTMLElement} DOM reference to a TR element (or child thereof)
 	   */
-	  onLikes: function SimpleDocList_onLikes(row)
+	  onLikes: function CustomDataGrid_onLikes(row)
 	  {
 	     var file = this.widgets.dataTable.getRecord(row).getData(),
 	        nodeRef = new Alfresco.util.NodeRef(file.nodeRef),
@@ -54,7 +54,7 @@
 	     {
 	        successCallback:
 	        {
-	           fn: function SimpleDocList_onLikes_success(event, p_nodeRef)
+	           fn: function CustomDataGrid_onLikes_success(event, p_nodeRef)
 	           {
 	              var data = event.json.data;
 	              if (data)
@@ -66,6 +66,19 @@
 	
 	                 likes.totalLikes = data.ratingsCount;
 	                 this.widgets.dataTable.updateRow(record, file);
+	                 
+//	                 // Post to the Activities Service on the "Like" action
+//                     if (likes.isLiked)
+//                     {
+//                        var activityData =
+//                        {
+//                           fileName: record.fileName,
+//                           nodeRef: file.nodeRef
+//                        },
+//                        fileName = (file.itemData.prop_dl_todoTitle != null && file.itemData.prop_dl_todoTitle.displayValue) ? file.itemData.prop_dl_todoTitle.displayValue : "";
+//                        
+//                        Alfresco.Share.postActivity(this.options.siteId, "file-liked", fileName, "document-details", activityData);
+//                     }
 	              }
 	           },
 	           scope: this,
@@ -73,7 +86,7 @@
 	        },
 	        failureCallback:
 	        {
-	           fn: function SimpleDocList_onLikes_failure(event, p_nodeRef)
+	           fn: function CustomDataGrid_onLikes_failure(event, p_nodeRef)
 	           {
 	              // Reset the flag to it's previous state
 	              var record = this._findRecordByParameter(p_nodeRef, "nodeRef"),
@@ -116,7 +129,7 @@
          beCPG.component.DataGrid.superclass.onReady.call(this);
 
          // Hook like/unlike events
-         var fnLikesHandler = function SimpleDocList_fnLikesHandler(layer, args)
+         var fnLikesHandler = function CustomDataGrid_fnLikesHandler(layer, args)
          {
             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
             if (owner !== null)
@@ -134,7 +147,7 @@
        * @method getCellFormatter
        * @return {function} Function to render read-only value
        */
-      getCellFormatter: function DataGrid_getCellFormatter()
+      getCellFormatter: function CustomDataGrid_getCellFormatter()
       {
          var scope = this;
          
@@ -147,7 +160,7 @@
           * @param oColumn {object}
           * @param oData {object|string}
           */
-         return function DataGrid_renderCellDataType(elCell, oRecord, oColumn, oData)
+         return function CustomDataGrid_renderCellDataType(elCell, oRecord, oColumn, oData)
          {
             var html = "";
 

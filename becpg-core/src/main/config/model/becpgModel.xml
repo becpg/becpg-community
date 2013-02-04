@@ -1465,20 +1465,9 @@
 			<parent>cm:folder</parent>			
 			<mandatory-aspects>
 				<aspect>bcpg:effectivityAspect</aspect>
-<!-- 				<aspect>bcpg:entityVersionable</aspect> -->
+				<aspect>bcpg:entityVersionable</aspect>
 			</mandatory-aspects>
 		</type>
-
-		<!-- ALF-8143 -->
-<!-- 		<aspect name="bcpg:entityVersionable"> -->
-<!-- 			<title>Entity Versionable</title> -->
-<!-- 			<parent>cm:versionable</parent> -->
-<!-- 			<overrides> -->
-<!-- 				<property name="cm:autoVersion"> -->
-<!-- 					<default>false</default> -->
-<!-- 				</property> -->
-<!-- 			</overrides> -->
-<!-- 		</aspect> -->
 
 		<type name="bcpg:systemEntity">
 			<parent>cm:content</parent>
@@ -2022,6 +2011,17 @@
 					<default>000000</default>
 				</property>
 			</properties>
+		</aspect>
+		
+		<!-- ALF-8143 -->
+		<aspect name="bcpg:entityVersionable">
+			<title>Entity Versionable</title>
+			<parent>cm:versionable</parent>
+			<overrides>
+				<property name="cm:autoVersion">
+					<default>false</default>
+				</property>
+			</overrides>
 		</aspect>
 
 	</aspects>

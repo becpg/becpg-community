@@ -9,7 +9,7 @@
                <show id="cm:description" force="true" />
 					<show id="bcpg:code" for-mode="view" />
 					<show id="pjt:projectHierarchy1" />
-					<show id="bcpg:entityTplRef" for-mode="view" />
+					<show id="bcpg:entityTplRef" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />					
@@ -41,7 +41,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo" >
@@ -165,7 +164,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo" >
@@ -250,7 +248,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectPriority" >
@@ -286,7 +283,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectPriority">
@@ -370,7 +366,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>		
 					<field id="pjt:tlResources" set="mainInfo"/>
@@ -432,7 +427,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>		
 					<field id="pjt:tlResources" set="mainInfo"/>
@@ -509,7 +503,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:dlState">
@@ -545,7 +538,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
-							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="pjt:dlState">
