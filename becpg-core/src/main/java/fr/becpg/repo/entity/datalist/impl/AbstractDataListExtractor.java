@@ -122,7 +122,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
 			userAccess.put("edit", accessRight && (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED));
 			userAccess.put("sort", accessRight && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
-			userAccess.put("details", accessRight && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
+			userAccess.put("details", accessRight && isDetaillable(nodeRef));
 
 			ret.put(PROP_PERMISSIONS, permissions);
 
@@ -154,6 +154,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 				logger.debug(getClass().getSimpleName() + " extract metadata in  " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
+	}
+
+	private boolean isDetaillable(NodeRef nodeRef) {
+		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}
 
 	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<String, Object> props);

@@ -52,9 +52,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		List<AllergenListDataItem> retainNodes = new ArrayList<AllergenListDataItem>();
 		
 		//manuel
-		for(AllergenListDataItem a : formulatedProduct.getAllergenList()){
-			if(a.getIsManual()!= null && a.getIsManual()){
-				retainNodes.add(a);
+		if(formulatedProduct.getAllergenList()!=null){
+			for(AllergenListDataItem a : formulatedProduct.getAllergenList()){
+				if(a.getIsManual()!= null && a.getIsManual()){
+					retainNodes.add(a);
+				}
 			}
 		}
 		
@@ -169,7 +171,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	}
 	
 	private AllergenListDataItem findAllergenListDataItem(List<AllergenListDataItem> allergenList, NodeRef allergenNodeRef){
-		if(allergenNodeRef != null){
+		if(allergenNodeRef != null && allergenList!=null){
 			for(AllergenListDataItem a : allergenList){
 				if(allergenNodeRef.equals(a.getAllergen())){
 					return a;
