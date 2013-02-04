@@ -3,8 +3,8 @@
 	<config evaluator="string-compare" condition="Edition" replace="true">
 		<!-- footer logo and copyright text -->
 		<footer>
-			<logo>alfresco-share-logo.png</logo>
-			<alt-text>Alfresco Share</alt-text>
+			<logo>becpg-footer-logo.png</logo>
+			<alt-text>beCPG for Alfresco Share</alt-text>
 			<css-class>footer-becpg</css-class>
 			<label>beCPG @2010-2012</label>
 			<analytics-id>UA-33644643-1</analytics-id>
