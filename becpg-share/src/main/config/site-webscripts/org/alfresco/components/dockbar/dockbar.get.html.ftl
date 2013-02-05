@@ -1,13 +1,13 @@
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
-  <@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/dockbar/dockbar.css" group="dockbar"/>
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dockbar/dockbar.css" group="dockbar"/>
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
-	<@script type="text/javascript" src="${page.url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="dockbar"></@script>
-	<@script type="text/javascript" src="${page.url.context}/res/components/dockbar/dockbar.js"  group="dockbar"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="dockbar"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/dockbar/dockbar.js"  group="dockbar"></@script>
 </@>
 
 

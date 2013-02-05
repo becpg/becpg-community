@@ -1,15 +1,15 @@
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
-   <@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/data-lists/toolbar.css" group="project-toolbar" />
-	<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/entity-data-lists/entity-toolbar.css"  group="project-toolbar"/>
-	<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/project/project-list-toolbar.css" group="project-toolbar" />
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="project-toolbar" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-toolbar.css"  group="project-toolbar"/>
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-list-toolbar.css" group="project-toolbar" />
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
-	<@script type="text/javascript" src="${page.url.context}/res/components/entity-data-lists/entity-toolbar.js" group="project-toolbar"></@script>
-	<@script type="text/javascript" src="${page.url.context}/res/components/project/project-list-toolbar.js" group="project-toolbar"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="project-toolbar"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/project/project-list-toolbar.js" group="project-toolbar"></@script>
 
 </@>
 
