@@ -14,6 +14,7 @@
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0" prefix="dl" />
 	</imports>
 
 	<!-- Introduction of new namespaces defined by this model -->
@@ -294,6 +295,58 @@
 			</mandatory-aspects>
 		</type>
 
+		<!-- Data List - Request List -->
+      <type name="pjt:requestList">
+         <title>Request List</title>
+         <parent>dl:dataListItem</parent>
+         <properties>            
+            <property name="pjt:rlState">
+               <title>Status</title>
+               <type>d:text</type>
+               <default>Not Started</default>
+               <constraints>
+                  <constraint ref="dl:task_status" />
+               </constraints>
+            </property>
+            <property name="pjt:rlPriority">
+               <title>Priority</title>
+               <type>d:text</type>
+               <default>Normal</default>
+               <constraints>
+                  <constraint ref="dl:priority_value" />
+               </constraints>
+            </property>
+            <property name="pjt:rlDueDate">
+               <title>Due Date</title>
+               <type>d:date</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="pjt:rlComments">
+               <title>Comments</title>
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+         </properties>
+         <associations>
+            <association name="pjt:rlAssignedTo">
+               <title>Assigned To</title>
+               <source>
+                  <mandatory>false</mandatory>
+                  <many>true</many>
+               </source>
+               <target>
+                  <class>cm:person</class>
+                  <mandatory>false</mandatory>
+                  <many>true</many>
+               </target>
+            </association>
+         </associations>
+         <mandatory-aspects>
+            <aspect>cm:titled</aspect>
+            <aspect>cm:attachable</aspect>
+            <aspect>cm:likesRatingSchemeRollups</aspect>
+         </mandatory-aspects>
+      </type>
 	</types>
 
 	<aspects>

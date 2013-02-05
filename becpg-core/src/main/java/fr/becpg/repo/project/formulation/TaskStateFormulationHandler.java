@@ -128,7 +128,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (nextDeliverables.size() > 0 && nextDeliverables.size() == finishedDL) {
 							logger.debug("set completion percent to 100%");
 							nextTask.setCompletionPercent(COMPLETED);
-							nextTask.setState(TaskState.Completed);														
+							nextTask.setState(TaskState.Completed);	
+							nextTask.setEnd(ProjectHelper.removeTime(new Date()));
 						} else {							
 							logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
 									+ nextTask.getNodeRef());
@@ -153,6 +154,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		} else {
 			projectData.setCompletionDate(new Date());
 			projectData.setCompletionPercent(COMPLETED);
+			projectData.setProjectState(ProjectState.Completed);
 		}
 
 	}

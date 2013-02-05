@@ -37,6 +37,10 @@
 					<targetPackageRoot>org.alfresco.components.create-content</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-create-content</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.dashlets</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-dashlets</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>

@@ -579,45 +579,84 @@
 		</forms>
 	</config>
 	
-	<!-- dl:todoList type -->
-   <config evaluator="model-type" condition="dl:todoList" replace="true">
+   <!-- pjt:requestList type create form config-->
+   <config evaluator="model-type" condition="pjt:requestList">
       <forms>
          <!-- Create item form -->
          <form>
             <field-visibility>
-               <show id="dl:todoTitle" />
-               <show id="dl:todoDueDate" />
-               <show id="dl:todoPriority" />
-               <show id="dl:todoStatus" />
-               <show id="dl:todoNotes" />
-               <show id="dl:assignee" />
-               <show id="dl:attachments" />
-            </field-visibility>
+               <show id="cm:title" />
+               <show id="cm:description" />
+               <show id="pjt:rlAssignedTo" />
+               <show id="pjt:rlStatus" />
+               <show id="pjt:rlPriority" />               
+               <show id="pjt:rlDueDate" />
+               <show id="pjt:rlComments" />
+               <show id="cm:attachments" />
+             </field-visibility>
             <create-form template="../data-lists/forms/dataitem.ftl" />
             <appearance>
-               <field id="dl:todoNotes">
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="pjt:rlComments">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl" />
                </field>
-               <field id="dl:attachments">
+               <field id="cm:attachments">
                   <control>
                     <control-param name="startLocation">{doclib}</control-param>
                   </control>
                </field>
             </appearance>
          </form>
-
          <!-- Data Grid view -->
          <form id="datagrid">
             <field-visibility>
-               <show id="dl:todoTitle" />
-               <show id="cm:likesRatingSchemeCount" force="true" />
-               <show id="dl:todoDueDate" />
-               <show id="dl:todoPriority" />
-               <show id="dl:todoStatus" />
-               <show id="dl:assignee" />
-               <show id="dl:attachments" />
+            	<show id="cm:title" />
+            	<show id="cm:likesRatingSchemeCount"/>
+               <show id="cm:description" />
+               <show id="pjt:rlAssignedTo" />
+               <show id="pjt:rlStatus" />
+               <show id="pjt:rlPriority" />               
+               <show id="pjt:rlDueDate" />
+               <show id="pjt:rlComments" />
+               <show id="cm:attachments" />
             </field-visibility>
          </form>
       </forms>
    </config>
+   
+   <!-- pjt:requestList type edit form config-->
+   <config evaluator="node-type" condition="pjt:requestList">
+      <forms>
+         <!-- Create item form -->
+         <form>
+            <field-visibility>
+               <show id="cm:title" />
+               <show id="cm:description" />
+               <show id="pjt:rlAssignedTo" />
+               <show id="pjt:rlStatus" />
+               <show id="pjt:rlPriority" />               
+               <show id="pjt:rlDueDate" />
+               <show id="pjt:rlComments" />
+               <show id="cm:attachments" />
+             </field-visibility>
+            <create-form template="../data-lists/forms/dataitem.ftl" />
+            <appearance>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="pjt:rlComments">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>
+               <field id="cm:attachments">
+                  <control>
+                    <control-param name="startLocation">{doclib}</control-param>
+                  </control>
+               </field>
+            </appearance>
+         </form>
+      </forms>
+   </config>
+
 </alfresco-config>

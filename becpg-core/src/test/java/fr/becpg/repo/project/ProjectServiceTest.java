@@ -257,15 +257,17 @@ public class ProjectServiceTest extends AbstractProjectTest {
 			}
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		
+		final Date task2EndDate = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Date>() {
 			@Override
-			public NodeRef execute() throws Throwable {
+			public Date execute() throws Throwable {
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				// check completion percent of task 2 is 30%
 				assertEquals(30, projectData.getTaskList().get(1).getCompletionPercent().intValue());
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
+				Date date = projectData.getTaskList().get(1).getEnd();
 
 				// submit by workflow
 				String workflowInstanceId = projectData.getTaskList().get(1).getWorkflowInstance();
@@ -287,7 +289,7 @@ public class ProjectServiceTest extends AbstractProjectTest {
 					workflowService.endTask(task.getId(), null);
 				}
 
-				return null;
+				return date;
 			}
 		}, false, true);
 
@@ -306,6 +308,8 @@ public class ProjectServiceTest extends AbstractProjectTest {
 				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
+				// check real end date is before estimated end date
+				assertTrue(projectData.getTaskList().get(1).getEnd().before(task2EndDate));				
 
 				// check task 3 is InProgress
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
