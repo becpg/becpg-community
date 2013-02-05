@@ -2,15 +2,15 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
    <#include "../form/form.css.ftl"/>
-	<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/entity-data-lists/entity-datalists.css" group="entity-datalist" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-datalists.css" group="entity-datalist" />
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${page.url.context}/res/modules/simple-dialog.js" group="entity-datalist"></@script>
-	<@script type="text/javascript" src="${page.url.context}/res/components/data-lists/datalists.js" group="entity-datalist"></@script>
-	<@script type="text/javascript" src="${page.url.context}/res/components/entity-data-lists/entity-datalists.js" group="entity-datalist"></@script>
+	<@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="entity-datalist"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/data-lists/datalists.js" group="entity-datalist"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-datalists.js" group="entity-datalist"></@script>
 </@>
 
 

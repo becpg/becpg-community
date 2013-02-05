@@ -1,7 +1,7 @@
 
 <@markup id="customSearch-css" target="css"  action="after">
    <#-- CSS Dependencies -->
-  <@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/search/custom-search.css" group="search"/>
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/search/custom-search.css" group="search"/>
 </@>
 
 <#-- BUG HERE Why should I use replace ? -->

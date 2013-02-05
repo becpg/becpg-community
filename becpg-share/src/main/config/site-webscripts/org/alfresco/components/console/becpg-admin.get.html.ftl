@@ -17,7 +17,7 @@
 		      <div class="section">
 		      <#list systemEntities as item>
 			     		 <div class="action">				
-			     		 	${msg("label.characts.edit")}<a href="${page.url.context}/page/entity-data-lists?nodeRef=${item.nodeRef}"><span class="systemEntity">${item.name}</span></a>
+			     		 	${msg("label.characts.edit")}<a href="${url.context}/page/entity-data-lists?nodeRef=${item.nodeRef}"><span class="systemEntity">${item.name}</span></a>
 				    	</div>
 				</#list>
 				</div>

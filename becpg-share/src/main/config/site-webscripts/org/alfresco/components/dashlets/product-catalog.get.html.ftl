@@ -1,13 +1,13 @@
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
-  <@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/dashlets/product-catalog.css" group="product-catalog" />
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dashlets/product-catalog.css" group="product-catalog" />
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
-	<@script type="text/javascript" src="${page.url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="product-catalog"></@script>
-	<@script type="text/javascript" src="${page.url.context}/res/components/dashlets/product-catalog.js"  group="product-catalog"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="product-catalog"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/dashlets/product-catalog.js"  group="product-catalog"></@script>
 </@>
 
 

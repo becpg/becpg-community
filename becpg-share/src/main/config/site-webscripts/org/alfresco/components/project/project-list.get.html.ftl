@@ -3,29 +3,29 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
 	<#include "../form/form.css.ftl"/>
-	<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="project-list" />
-	<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="project-list" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="project-list" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="project-list" />
 
-	<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/project/jsgantt.css" group="project-list" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
 	
-	<@link rel="stylesheet" type="text/css" href="${page.url.context}/res/components/project/project-list.css" group="project-list" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-list.css" group="project-list" />
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${page.url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="project-list" />
-	<@script type="text/javascript" src="${page.url.context}/res/components/project/columnRenderers.js" group="project-list" />
-	<@script type="text/javascript" src="${page.url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/components/project/columnRenderers.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
 	
-	<@script type="text/javascript" src="${page.url.context}/res/modules/entity-datagrid/groupeddatatable.js" group="project-list" />
-	<@script type="text/javascript" src="${page.url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/groupeddatatable.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="project-list" />
 	
-	<@script type="text/javascript" src="${page.url.context}/res/components/workflow/workflow-actions.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/components/workflow/workflow-actions.js" group="project-list" />
 	
-	<@script type="text/javascript" src="${page.url.context}/res/components/project/jsgantt.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/components/project/jsgantt.js" group="project-list" />
 	
-	<@script type="text/javascript" src="${page.url.context}/res/components/project/project-list.js" group="project-list" />
+	<@script type="text/javascript" src="${url.context}/res/components/project/project-list.js" group="project-list" />
 
 </@>
 
