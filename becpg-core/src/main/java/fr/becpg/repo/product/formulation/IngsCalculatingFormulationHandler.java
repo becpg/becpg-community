@@ -93,6 +93,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		
 		//IngLabelling
 		logger.debug("Calculate Ingredient Labeling");
+		List<IngLabelingListDataItem> retainNodes = new ArrayList<IngLabelingListDataItem>();
 		List<CompositeIng> compositeIngs = calculateILL(formulatedProduct);
 		Collections.sort(compositeIngs);
 		
@@ -106,12 +107,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 			IngLabelingListDataItem ill = findIngLabelingListDataItem(formulatedProduct.getIngLabelingList(), compositeIng.getIng());
 			if(ill == null){
-				formulatedProduct.getIngLabelingList().add(new IngLabelingListDataItem(null, compositeIng.getIng(), mlTextILL, Boolean.FALSE));
+				ill = new IngLabelingListDataItem(null, compositeIng.getIng(), mlTextILL, Boolean.FALSE);
+				formulatedProduct.getIngLabelingList().add(ill);
 			}
 			else if(ill.getIsManual()==null || !ill.getIsManual()){
 				ill.setValue(mlTextILL);
 			}			
+			retainNodes.add(ill);
 		}
+		
+		formulatedProduct.getIngLabelingList().retainAll(retainNodes);
 		
 		return true;
 	}
@@ -568,11 +573,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 	
 	private IngLabelingListDataItem findIngLabelingListDataItem(List<IngLabelingListDataItem> ill, NodeRef ingNodeRef){
-		if(ingNodeRef != null){
-			for(IngLabelingListDataItem i : ill){
-				if(ingNodeRef.equals(i.getGrp())){
-					return i;
-				}
+		for(IngLabelingListDataItem i : ill){
+			if((ingNodeRef == null && i.getGrp() == null) || (ingNodeRef != null && ingNodeRef.equals(i.getGrp()))){
+				return i;
 			}
 		}
 		return null;		

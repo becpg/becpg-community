@@ -96,7 +96,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onDeleteNode"));
 		
 		// disable otherwise, impossible to copy project that has a template
-		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);
+		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);		
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			Collection<QName> dataLists = new ArrayList<QName>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);			
-			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, true);
+			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, false);
 
 			initializeNodeRefsAfterCopy(projectNodeRef);
 
@@ -251,7 +251,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 		for (NodeRef nodeRef : pendingNodes) {
 			try {
-				if(nodeService.exists(nodeRef)){
+				if(nodeService.exists(nodeRef) && isNotLocked(nodeRef)){
 					logger.debug("Project policy formulate");
 					projectService.formulate(nodeRef);
 				}				
