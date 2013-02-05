@@ -259,7 +259,7 @@ function getColumns(itemType, list){
    	   		
    	   	  var name = fieldId.replace("dataList_",""), 
    	   	  		column = {type:"dataList", name: name, formsName : "dt_"+name.replace(":","_")
-     		  			, label : formConfig.fields[fieldId].label, "dataType":"nested"};
+     		  			, label : (formConfig.fields[fieldId].labelId!=null ? formConfig.fields[fieldId].labelId : formConfig.fields[fieldId].label) , "dataType":"nested"};
    	   	  column.columns = getColumns(name+"", "sub-datagrid");
    	   	  
    	   	  ret.push(column);
@@ -268,8 +268,8 @@ function getColumns(itemType, list){
         
    	     for(var j in columns){
    	   	  if(columns[j].name == fieldId){
-   	   		  if(formConfig.fields[fieldId].label!=null){
-   	   			  columns[j].label = formConfig.fields[fieldId].label;
+   	   		  if(formConfig.fields[fieldId].label!=null || formConfig.fields[fieldId].labelId!=null){
+   	   			  columns[j].label = formConfig.fields[fieldId].labelId!=null ? formConfig.fields[fieldId].labelId : formConfig.fields[fieldId].label;
    	   		  }
    	   		  
    	   		  ret.push(columns[j]);

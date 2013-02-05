@@ -142,3 +142,15 @@ div.scroll {
     background-image: url("./images/dt-group-arrow-up.png");
     background-repeat: no-repeat;
 }
+
+.projects div.milestone {
+	height: 16px; width:16px; overflow:hidden;
+	background: url(../images/filetypes/generic-task-milestone-16.png) no-repeat;
+}
+
+.projects div.completed.milestone {
+	height: 16px; width:16px; overflow:hidden;
+	background: url(../images/filetypes/generic-task-milestone-completed-16.png) no-repeat;
+}
+
+

@@ -6,7 +6,11 @@
          "type": "${col.type}",
          "name": "${col.name}",
          "formsName": "<#if col.type == "association">assoc<#else>prop</#if>_${col.name?replace(":", "_")}",
-         "label": "${col.label!""}",
+         <#if col.label??>
+         "label": "${msg(col.label)}",
+         <#else>
+         "label": "",
+         </#if>
       <#if col.dataType??>
          "dataType": "${col.dataType}"
       <#else>
