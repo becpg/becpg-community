@@ -19,7 +19,6 @@ install_share_amp(){
 	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force -nobackup
 }
 
-read -p "Deploy OpenID? (y/n)" ansopenid 
 read -p "Deploy report server? (y/n)" ansreport
 
 echo "**********************************************************"
