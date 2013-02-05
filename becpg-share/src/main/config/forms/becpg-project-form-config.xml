@@ -209,8 +209,8 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="pjt:projectHierarchy1" label="" />
-					<show id="pjt:projectPriority" label="" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectPriority" />
 					<show id="pjt:completionPercent" />
 					<show id="bcpg:code" />
 					<show id="cm:name" />
@@ -224,11 +224,11 @@
 					<show id="pjt:projectState" />
 				</field-visibility>
 				<appearance>
-					<field id="dataList_pjt:deliverableList" label="Livrables" />
-					<field id="dataList_pjt:taskList" label="Tâches en cours" />
-					<field id="pjt:projectHierarchy1" />
-					<field id="pjt:projectPriority" label="" />
-					<field id="pjt:projectStartDate" label="planning" />
+					<field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" />
+					<field id="dataList_pjt:taskList" label-id="becpg.forms.field.projects.datagrid.taskList.label" />
+					<field id="pjt:projectHierarchy1" label-id="becpg.forms.label.empty"  />
+					<field id="pjt:projectPriority" label-id="becpg.forms.label.empty"  />
+					<field id="pjt:projectStartDate" label-id="becpg.forms.field.projects.datagrid.projectStartDate.label"   />
 				</appearance>
 
 			</form>
