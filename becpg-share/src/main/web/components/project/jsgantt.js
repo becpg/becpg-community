@@ -1725,17 +1725,19 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 					
 					vTaskRight = 1;
 
-					vRightTable += '<div id="bardiv_' + vID + '" style="position:absolute; top:5px; left:'
-					      + (Math.ceil((vTaskLeft * (vDayWidth) + 1))+vDayWidth-4) + 'px; height: 18px; width:6px; overflow:hidden;">'
+					vRightTable += '<div id="bardiv_' + vID + '" style="position:absolute; top:3px; left:'
+					      + (Math.ceil((vTaskLeft * (vDayWidth) + 1))+vDayWidth-20) + 'px; height: 16px; width:16px; overflow:hidden;">'
 					      + '  <div id="taskbar_' + vID + '" title="' + vDateRowStr
-					      + '" style="height: 16px; width:6px; overflow:hidden; " >';
+					      + '"  class="milestone '+(vTaskList[i].getCompVal() < 100 ?"completed":"" )+'" >';
 
-					if (vTaskList[i].getCompVal() < 100) {
-						vRightTable += '&loz;</div>';
-					} else {
-						vRightTable += '&diams;</div>';
-					}
+//					if (vTaskList[i].getCompVal() < 100) {
+//						vRightTable += '&loz;</div>';
+//					} else {
+//						vRightTable += '&diams;</div>';
+//					}
 
+					vRightTable += '&nbsp;</div>';
+					
 					if (g.getCaptionType()) {
 						vCaptionStr = '';
 						switch (g.getCaptionType()) {
