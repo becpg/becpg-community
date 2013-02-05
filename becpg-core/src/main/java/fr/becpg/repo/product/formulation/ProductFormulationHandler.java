@@ -19,10 +19,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				productData.getCompoListView().getReqCtrlList().clear();
 			}
 			
-			if(productData.getIngLabelingList()!=null){
-				productData.getIngLabelingList().clear();
-			}
-			
 			// Continue
 			return true;
 		}
