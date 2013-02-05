@@ -67,18 +67,19 @@
 	                 likes.totalLikes = data.ratingsCount;
 	                 this.widgets.dataTable.updateRow(record, file);
 	                 
-//	                 // Post to the Activities Service on the "Like" action
-//                     if (likes.isLiked)
-//                     {
-//                        var activityData =
-//                        {
-//                           fileName: record.fileName,
-//                           nodeRef: file.nodeRef
-//                        },
-//                        fileName = (file.itemData.prop_dl_todoTitle != null && file.itemData.prop_dl_todoTitle.displayValue) ? file.itemData.prop_dl_todoTitle.displayValue : "";
-//                        
-//                        Alfresco.Share.postActivity(this.options.siteId, "file-liked", fileName, "document-details", activityData);
-//                     }
+	                 // Post to the Activities Service on the "Like" action
+                     if (likes.isLiked)
+                     {
+                        var activityData =
+                        {
+                           fileName: record.fileName,
+                           nodeRef: file.nodeRef
+                        },
+                        fileName = (file.itemData.prop_cm_title != null && file.itemData.prop_cm_title.displayValue) ? file.itemData.prop_cm_title.displayValue : "";
+                                                
+                        //Alfresco.Share.postActivity(this.options.siteId, "org.alfresco.datalists.list-item-liked", fileName, "data-lists?list=" + this.datalistMeta.name, activityData);
+                        Alfresco.Share.postActivity(this.options.siteId, "org.alfresco.documentlibrary.file-liked", fileName, "data-lists?list=" + this.datalistMeta.name, activityData);                        
+                     }
 	              }
 	           },
 	           scope: this,

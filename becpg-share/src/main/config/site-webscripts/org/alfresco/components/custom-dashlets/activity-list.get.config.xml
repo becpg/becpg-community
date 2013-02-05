@@ -1,0 +1,4 @@
+<styles>
+   <!-- CSS Classes used for rendering Activities List. -->
+   <style type="org.alfresco.datalists.list-item-liked" css="like" />
+</styles>
