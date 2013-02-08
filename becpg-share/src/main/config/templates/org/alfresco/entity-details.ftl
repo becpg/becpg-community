@@ -21,11 +21,8 @@
       <@region id="node-header" scope="template"/>
       <div class="yui-gc">
          <div class="yui-u first">
-            <#--
-            <#if (config.scoped['DocumentDetails']['document-details'].getChildValue('display-web-preview') == "true")>
-               <@region id="web-preview" scope="template"/>
-            </#if> --> 
-            <@region id="document-metadata" scope="template"/>
+				<div id="properties-tab" class="hidden"><@region id="document-metadata" scope="template"/></div>
+				<div id="preview-tab" class="hidden"><@region id="web-preview" scope="template"/></div>
             <@region id="comments" scope="template"/>
          </div>
          <div class="yui-u">

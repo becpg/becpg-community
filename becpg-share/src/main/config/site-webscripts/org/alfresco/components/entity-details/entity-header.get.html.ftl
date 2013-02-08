@@ -1,23 +1,30 @@
-<@markup id="customDocumentlist-css" target="css"  action="after">
-   <#-- CSS Dependencies -->
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/node-details/custom-node-headers.css" group="node-header"/>
-</@>
+<@standalone>
+   <@markup id="css" >
+      <#-- CSS Dependencies -->
+      <@link href="${url.context}/res/components/node-details/node-header.css" group="node-header"/>
+  	   <@link href="${url.context}/res/components/entity-details/entity-header.css" group="node-header"/>
+   </@>
 
+   <@markup id="js">
+      <#-- JavaScript Dependencies -->
+      <@script src="${url.context}/res/components/node-details/node-header.js" group="node-header"/>
+      <@script src="${url.context}/res/components/entity-details/entity-header.js" group="node-header"/>
+   </@>
 
-   <@markup id="custom-html" target="html" action="replace">
+   <@markup id="widgets">
+      <#if item??>
+      <@createWidgets group="node-header"/>
+      </#if>
+   </@>
+
+   <@markup id="html">
       <@uniqueIdDiv>
          <#if item??>
             <#include "../../include/alfresco-macros.lib.ftl" />
-           	<#assign isEntity = node.aspects?seq_contains("bcpg:entityListsAspect") >
             
             <#assign el = args.htmlid?html>
-            <#if !isContainer>
-               <#assign fileExtIndex = item.fileName?last_index_of(".")>
-                        <#assign fileExt = (fileExtIndex > -1)?string(item.fileName?substring(fileExtIndex + 1)?lower_case, "generic")>
-            </#if>
             <#assign displayName = (item.displayName!item.fileName)?html>
             <#assign modifyLabel = "label.modified-by-user-on-date">
-            <#assign itemType = isContainer?string("folder", "document")>
             <div class="node-header">
                <!-- Message banner -->
                <#if item.workingCopy??>
@@ -66,20 +73,11 @@
                      <@renderPaths paths />
                   </div>
                </#if>
-               <#if isEntity>
-               	<#assign idx=node.type?index_of(":")+1 />
+                	<#assign idx=node.type?index_of(":")+1 />
                	<img src="${url.context}/components/images/filetypes/generic-${node.type?substring(idx)}-48.png"
                        title="${displayName}" class="node-thumbnail" width="48" />
-               <#elseif isContainer>
-                  <img src="${url.context}/components/images/filetypes/generic-folder-48.png"
-                       title="${displayName}" class="node-thumbnail" width="48" />
-               <#else>
-                  <img src="${url.context}/components/images/filetypes/${fileExt}-file-48.png"
-                       onerror="this.src='${url.context}/res/components/images/filetypes/generic-file-48.png'"
-                       title="${displayName}" class="node-thumbnail" width="48" />
-               </#if>
                   <h1 class="thin dark">
-                     ${displayName}<#if !isContainer><span id="document-version" class="document-version">${item.version}</span></#if>
+                     ${displayName}<span id="document-version" class="document-version">${item.version}</span>
                   </h1>
                   <div>
                      <#assign modifyUser = node.properties["cm:modifier"]>
@@ -94,7 +92,7 @@
                      </#if>
                      <#if showComments == "true">
                      <span class="item item-separator item-social">
-                        <a href="#" name="@commentNode" rel="${nodeRef?js_string}" class="theme-color-1 comment ${el}" title="${msg("comment.${itemType}.tip")}" tabindex="0">${msg("comment.${itemType}.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
+                        <a href="#" name="@commentNode" rel="${nodeRef?js_string}" class="theme-color-1 comment ${el}" title="${msg("comment.document.tip")}" tabindex="0">${msg("comment.document.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
                      </span>
                      </#if>
                      <#if showQuickShare == "true">
@@ -103,14 +101,29 @@
                   </div>
                </div>
                <div class="node-action">
-               <#if showDownload == "true" && node.contentURL??>
-                  <!-- Download Button -->
-                  <span class="yui-button yui-link-button onDownloadDocumentClick">
-                     <span class="first-child">
-                        <a href="${url.context}/proxy/alfresco/${node.contentURL?js_string}?a=true" tabindex="0">${msg("button.download")}</a>
-                     </span>
-                  </span>
-               </#if>
+              
+               	<#if reports?? && reports?size &gt; 0 >
+	                  <input id="${el}-entityReportPicker-button" type="button" name="${el}-entityReportPicker-button" value="${msg("picker.report.choose")}" ></input>
+					      <select id="${el}-entityReportPicker-select"  name="${el}-entityReportPicker-select">      
+					      	<option value="properties">${msg("picker.report.properties")}</option>
+					      	<#list reports as report>
+					      		<option value="${report.nodeRef}">${report.templateName}</option>
+					      	</#list>
+					      </select>
+		               
+		               <div class="entity-download-report">
+					   		<a id="${el}-downloadEntityReport-button" title="${msg("actions.entity.download-report")}"  href="#" >&nbsp;</a>
+					   	</div>
+				   	</#if>
+				   	
+	               
+	               <div class="entity-view-datalist" >
+			   			<a id="${el}-viewEntityDatalist-button" title="${msg("actions.entity.view-datalists")}"  href="#" >${msg("actions.entity.view-datalists.short")}</a>
+				   	</div>
+				   	<div class="entity-view-documents">
+				   		<a id="${el}-viewEntityDocuments-button" title="${msg("actions.entity.view-documents")}"  href="#" >${msg("actions.entity.view-documents.short")}</a>
+				   	</div>
+	               
                </div>
                <div class="clear"></div>
             </div>
@@ -123,4 +136,4 @@
          </#if>
       </@>
    </@>
-
+</@>

@@ -42,6 +42,7 @@ public class EntityFolderMigrator {
 		this.nodeService = nodeService;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void migrate(){
 		
 		// search for entities to migrate

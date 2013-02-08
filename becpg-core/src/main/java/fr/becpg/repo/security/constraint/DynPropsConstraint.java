@@ -154,7 +154,7 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 
 		List<String> ret = new ArrayList<String>();
 		Collection<QName> types = serviceRegistry.getDictionaryService().getSubTypes(
-				BeCPGModel.TYPE_ENTITY, true);
+				BeCPGModel.TYPE_ENTITY_V2, true);
 		if (types != null) {
 			for (QName type : types) {
 				TypeDefinition typeDef = serviceRegistry.getDictionaryService().getType(type);

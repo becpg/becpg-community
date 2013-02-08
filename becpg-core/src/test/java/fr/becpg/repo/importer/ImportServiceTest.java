@@ -661,12 +661,12 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	/*
  		    	 * Disable product policy to avoid productCode policy
  		    	 */
- 		    	policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY);
+ 		    	policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY_V2);
  		    		
 	    		logger.debug("Start import");
  				importService.importText(nodeRef, true, false);
  	 			
- 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY);
+ 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY_V2);
  				
  				return null;
 

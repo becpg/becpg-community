@@ -100,7 +100,7 @@ public interface EntityService {
 	 * @param entityNodeRef
 	 * @return entityFolderNodeRef
 	 */
-	 NodeRef getEntityFolder(NodeRef entityNodeRef);
+	// NodeRef getEntityFolder(NodeRef entityNodeRef);
 
 	 /**
 	  * Copy the sub-folders of the Tpl under the nodeRef

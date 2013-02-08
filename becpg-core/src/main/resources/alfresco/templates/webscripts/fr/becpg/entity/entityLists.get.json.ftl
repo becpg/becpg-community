@@ -69,7 +69,7 @@
          </#list>
          ],
          "type": "${shortQName(entity.type)}",
-         "path": "${entity.displayPath}"
+         "path": "${entityPath}"
     }
 }
 </#escape>

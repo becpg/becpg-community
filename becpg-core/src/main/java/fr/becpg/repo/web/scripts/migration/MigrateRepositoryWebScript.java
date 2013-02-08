@@ -137,7 +137,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		if(oldUserName!=null && !oldUserName.isEmpty() && newUserName!=null && !newUserName.isEmpty()){
     			renameUser(oldUserName, newUserName);
     		}    		
-    	} else if(ACTION_RENAME_USER.equals(action)){
+    	} else if(ACTION_MIGRATE_ENTITY_FOLDER.equals(action)){
     		entityFolderMigrator.migrate();
     	}
     	else{

@@ -17,6 +17,7 @@
 		<property name="contentService" ref="contentService" />		
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="mimetypeService" ref="mimetypeService"/>		
+		<property name="associationService" ref="associationService"/>
 	</bean>
 	
 	<!-- Extractor -->
@@ -84,6 +85,14 @@
 		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>
+	
+	<!-- Report property decorator -->
+	 <bean id="reportAssociationDecorator" parent="baseAssocDecorator" class="fr.becpg.repo.report.jscript.ReportAssociationDecorator">    
+        <property name="associationName" value="rep:reports" />    
+        <property name="reportTplService" ref="reportTplService"/>
+        <property name="preferenceService" ref="preferenceService"/>
+    </bean>
+	
 	
    
 </beans>

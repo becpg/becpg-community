@@ -43,6 +43,8 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  * @author querephi
  */
 @Service
+//Fusionner avec EntityPolicy
+@Deprecated 
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy,
 		NodeServicePolicies.OnDeleteNodePolicy{

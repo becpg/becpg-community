@@ -402,12 +402,16 @@ public interface BeCPGModel {
 	QName TYPE_LIST_VALUE = QName.createQName(BECPG_URI, "listValue");
 
 	/** entityFolder */
+	@Deprecated
+	QName TYPE_ENTITY = QName.createQName(BECPG_URI, "entity");
+	
+	@Deprecated
 	QName TYPE_ENTITY_FOLDER = QName.createQName(BECPG_URI, "entityFolder");
 
+	@Deprecated
 	QName PROP_ENTITY_FOLDER_CLASS_NAME = QName.createQName(BECPG_URI, "entityFolderClassName");
 
 	/** entity */
-	QName TYPE_ENTITY = QName.createQName(BECPG_URI, "entity");
 	
 	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");
 

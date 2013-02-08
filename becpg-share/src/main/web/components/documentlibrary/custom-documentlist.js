@@ -44,9 +44,24 @@
         	 var div = Dom.get(me.id + "-becpg-entityFolder-message"),
       		entityClassName = metadata.parent.type.split(":")[1], 
       		instructions;
+        	 
+        	 	var instructionKey = "product";
+        	 
+       	   //same message for every product
+       	   if(entityClassName == "rawMaterial" || entityClassName == "finishedProduct" || 
+       	   		entityClassName == "semiFinishedProduct" || entityClassName == "localSemiFinishedProduct" ||
+       	   		entityClassName == "packagingKit" || entityClassName == "packagingMaterial" ||
+       	   		entityClassName == "resourceProduct"){
+       		   instructionKey = "product";
+       	   }
+       	   else{
+       		   instructionKey = entityClassName;
+       	   }
+        	 
+        	 
 
 	       instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityClassName + "-32.png'>";
-	       instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions."+entityClassName)+"</span>";
+	       instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions."+instructionKey)+"</span>";
 	     
 	       
 	       div.innerHTML = instructions;
@@ -60,45 +75,7 @@
 	       Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
 	       
 	 	    
-        } else if (metadata!=null 
-         		&& metadata.parent!=null 
-         		&& metadata.parent.type == "bcpg:entityFolder"
-        
-        			)
-         {
-      	  
-            var div = Dom.get(me.id + "-becpg-entityFolder-message"),
-            		instructionKey,
-            		entityFolderClassName = metadata.parent.properties["bcpg:entityFolderClassName"], 
-            		instructions;
-            
-                if(entityFolderClassName!=null){
-                	entityFolderType = entityFolderClassName.split("}")[1];
-                } else {
-                	entityFolderType = "finishedProduct";
-                }
-  	        	   //same message for every product
-  	        	   if(entityFolderType == "rawMaterial" || entityFolderType == "finishedProduct" || 
-  	        			   entityFolderType == "semiFinishedProduct" || entityFolderType == "localSemiFinishedProduct" ||
-  	        			   entityFolderType == "packagingKit" || entityFolderType == "packagingMaterial" ||
-  	        			   entityFolderType == "resourceProduct"){
-  	        		   instructionKey = "product";
-  	        	   }
-  	        	   else{
-  	        		   instructionKey = entityFolderType;
-  	        	   }
-           
-            
-            instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityFolderType + "-32.png'>";
-            instructions += "<span >" + Alfresco.util.message("page.documentlibrary.instructions." + instructionKey) + "</span>";
-
-            
-            div.innerHTML = instructions;
-            
-            Dom.addClass(me.id + "-becpg-entityFolder-buttons", "hidden");
-            Dom.removeClass(me.id + "-becpg-entityFolder-instructions", "hidden");
-            
-         } else {
+        }  else {
              Dom.addClass(me.id + "-becpg-entityFolder-instructions", "hidden");
          }
         //End beCPG

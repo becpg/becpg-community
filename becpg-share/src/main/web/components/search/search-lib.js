@@ -87,7 +87,11 @@
                url = "document-details?nodeRef=" + nodeRef;
                break;
             }
-
+            case "entity":
+           {
+            	url = "entity-details?nodeRef=" + nodeRef;
+               break;
+           }
             case "folder":
             {
                if (path !== null)
@@ -190,6 +194,7 @@
          switch (type)
          {
             case "document":
+            case "entity":
             case "folder":
             case "blogpost":
             case "forumpost":
@@ -211,7 +216,7 @@
       buildPath: function(type, path, site)
       {
          var result = '';
-         if (type === "document" || type === "folder")
+         if (type === "document" || type === "folder" || type==="entity")
          {
             if (site)
             {
@@ -240,6 +245,7 @@
          switch (type)
          {
             case "document":
+            case "entity":
                imageUrl = Alfresco.constants.PROXY_URI_RELATIVE + "api/node/" + nodeRef.replace(":/", "");
                imageUrl += "/content/thumbnails/doclib?c=queue&ph=true&lastModified=" + Alfresco.util.encodeHTML(modifiedOn);
                break;

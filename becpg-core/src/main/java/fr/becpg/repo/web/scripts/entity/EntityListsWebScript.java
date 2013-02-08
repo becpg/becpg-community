@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -22,6 +21,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -40,6 +40,7 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.policy.BeCPGPolicyHelper;
 import fr.becpg.repo.security.SecurityService;
 
@@ -86,6 +87,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
 
+	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
+
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
@@ -109,6 +112,13 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	
 	private AuthorityService authorityService;
 	
+	private PermissionService permissionService;
+	
+	
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -198,7 +208,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			skipFilter = true;
 		}
 		// We get datalist for entityTpl
-		else if ((BeCPGModel.TYPE_ENTITY.equals(nodeType) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) || 
+		else if ((BeCPGModel.TYPE_ENTITY_V2.equals(nodeType) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) || 
 				BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeService.getType(nodeRef))) {
 
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
@@ -311,7 +321,13 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				}
 			}
 		}
+		
+		String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+		String displayPath = this.nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService);
 
+		String retPath = SiteHelper.extractDisplayPath(path,displayPath);
+
+		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);

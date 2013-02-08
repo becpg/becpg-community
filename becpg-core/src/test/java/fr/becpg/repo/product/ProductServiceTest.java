@@ -182,7 +182,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Product Tpl");
 				nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ENTITY, properties)
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ENTITY_V2, properties)
 						.getChildRef();
 
 				entityReportService.generateReport(rawMaterialNodeRef);

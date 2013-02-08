@@ -11,9 +11,10 @@ import org.springframework.context.ApplicationListener;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
-import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.product.ProductService;
 
+//TODO remove if unused
+@Deprecated
 public class ProductCheckInListener implements ApplicationListener<CheckInEntityEvent> {
 
 	private static Log logger = LogFactory.getLog(ProductCheckInListener.class);

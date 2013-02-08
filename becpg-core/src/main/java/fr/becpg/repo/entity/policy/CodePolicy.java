@@ -4,9 +4,7 @@
 package fr.becpg.repo.entity.policy;
 
 import java.util.List;
-import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;

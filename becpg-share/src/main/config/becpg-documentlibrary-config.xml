@@ -174,37 +174,37 @@
 			</content> -->			
 			<content id="finishedProduct" label="menu.create-content.finishedProduct"
 				type="pagelink" index="40" icon="generic-finishedProduct">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:finishedProduct&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:finishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="rawMaterial" label="menu.create-content.rawMaterial"
 				type="pagelink" index="50" icon="generic-rawMaterial">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:rawMaterial&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:rawMaterial&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="localSemiFinishedProduct" label="menu.create-content.localSemiFinishedProduct"
 				type="pagelink" index="60" icon="generic-localSemiFinishedProduct">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:localSemiFinishedProduct&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:localSemiFinishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="semiFinishedProduct" label="menu.create-content.semiFinishedProduct"
 				type="pagelink" index="70" icon="generic-semiFinishedProduct">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:semiFinishedProduct&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:semiFinishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>			
 			<content id="packagingMaterial" label="menu.create-content.packagingMaterial"
 				type="pagelink" index="80" icon="generic-packagingMaterial">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingMaterial&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingMaterial&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="packagingKit" label="menu.create-content.packagingKit"
 				type="pagelink" index="90" icon="generic-packagingKit">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingKit&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingKit&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="resourceProduct" label="menu.create-content.resourceProduct"
 				type="pagelink" index="100" icon="generic-resourceProduct">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:resourceProduct&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:resourceProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="project" label="menu.create-content.project"
@@ -214,31 +214,31 @@
 			</content>
 			<content id="supplier" label="menu.create-content.supplier"
 				type="pagelink" index="120" icon="generic-supplier">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="client" label="menu.create-content.client" type="pagelink"
 				index="130" icon="generic-client">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:client&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:client&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="nc" label="menu.create-content.nc" index="140" icon="generic-nc">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:nc&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:nc&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="controlPlan" label="menu.create-content.controlPlan"
 				type="pagelink" index="150" icon="generic-controlPlan">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:controlPlan&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:controlPlan&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="qualityControl" label="menu.create-content.qualityControl"
 				type="pagelink" index="160" icon="generic-qualityControl">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:qualityControl&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:qualityControl&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
 			<content id="changeOrder" label="menu.create-content.eco"
 				type="pagelink" index="170" icon="generic-changeOrder">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>			
 
@@ -255,8 +255,8 @@
 		<!-- Action definitions -->
 		<actions>
 
-			<action id="entity-view-datalist" type="javascript"
-				label="actions.entity.view-datalist">
+			<action id="entity-view-datalists" type="javascript"
+				label="actions.entity.view-datalists">
 				<param name="function">onActionShowCharact</param>
 				<!-- aspect check bcpg:entityListsAspect -->
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
@@ -303,15 +303,6 @@
 			</action>
 
 
-			<action id="entity-edit-metadata" type="pagelink"
-				label="actions.document.edit-metadata">
-				<param name="page">edit-metadata?nodeRef={node.nodeRef}</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
-			</action>
-			
 			
 			<action id="entity-view-documents" type="pagelink"
 				label="actions.entity.view-documents" >
@@ -323,61 +314,13 @@
 
 		<!-- Action Group resolver - decides which action group id to use for a 
 			node -->
-		<actionGroupResolver>becpg.resolver.doclib.actionGroup
-		</actionGroupResolver>
+		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
 
 		<actionGroups>
 
-			<actionGroup id="entity-browse">
-				<action index="10" id="entity-view-datalist" />
-				<action index="110" id="document-view-content" />
-				<action index="120" id="document-locate" />
-				<action index="130" id="entity-edit-metadata" />
-				<action index="150" id="document-view-original" />
-				<action index="160" id="document-view-working-copy" />
-				<action index="170" id="document-approve" />
-				<action index="180" id="document-reject" />
-				<action index="200" id="document-edit-online" />
-				<action index="220" id="document-view-googledoc" />
-				<action index="230" id="document-checkout-to-googledocs" />
-				<action index="240" id="document-checkin-from-googledocs" />
-				<action index="250" id="document-copy-to" />
-				<action index="260" id="document-move-to" />
-				<action index="270" id="document-delete" />
-				<action index="280" id="document-assign-workflow" />
-				<action index="300" id="document-publish" />
-				<action index="310" id="document-view-googlemaps" />
-				<action index="320" id="document-view-in-source-repository" />
-			</actionGroup>
 
-			<actionGroup id="entity-details">
-				<action index="10" id="entity-view-datalist" />
-				<action index="111" id="entity-checkin" />
-				<action index="112" id="entity-checkout" />
-				<action index="113" id="entity-cancel-editing" />
-				<action index="120" id="document-edit-metadata" />
-				<action index="140" id="document-view-original" />
-				<action index="150" id="document-view-working-copy" />
-				<action index="160" id="document-approve" />
-				<action index="170" id="document-reject" />
-				<action index="190" id="document-edit-online" />
-				<action index="210" id="document-view-googledoc" />
-				<action index="220" id="document-checkout-to-googledocs" />
-				<action index="230" id="document-checkin-from-googledocs" />
-				<action index="240" id="entity-refresh-report" />
-				<action index="250" id="document-copy-to" />
-				<action index="260" id="document-move-to" />
-				<action index="270" id="document-delete" />
-				<action index="270" id="document-assign-workflow" />
-				<action index="310" id="document-manage-aspects" />
-				<action index="330" id="document-view-in-source-repository" />
-				<action index="340" id="document-publish" />
-				<action index="350" id="document-view-googlemaps" />
-			</actionGroup>
-
-
- 			<actionGroup id="entityV2-browse">
- 				<action index="10" id="entity-view-datalist" />
+ 			<actionGroup id="entity-browse">
+ 				<action index="10"  id="entity-view-datalists" />
  				<action index="100" id="entity-view-documents" />
  				<action index="101" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" /> 				           
           	<!--<action index="105" id="folder-view-details" />-->
@@ -404,10 +347,8 @@
             <action index="390" id="document-request-sync"/>
          </actionGroup>
 
-         <actionGroup id="entityV2-details">
-       	   <action index="10" id="entity-view-datalist" />
+         <actionGroup id="entity-details">
             <action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
-          	<action index="101" id="entity-view-documents" />
 				<action index="102" id="entity-checkin" />
 				<action index="103" id="entity-checkout" />
 				<action index="104" id="entity-cancel-editing" />
@@ -426,6 +367,8 @@
             <action index="200" id="document-change-type" label="actions.folder.change-type" />
             <action index="210" id="view-in-explorer" />
             <action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
+            <action index="270" id="document-assign-workflow" />
+            <action index="340" id="document-publish" />
             <action index="360" id="document-cloud-sync" />
             <action index="370" id="document-cloud-unsync" />
             <action index="380" id="document-view-in-cloud" />

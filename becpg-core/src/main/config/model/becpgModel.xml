@@ -298,7 +298,7 @@
 		<!-- _________________________________________________ PRODUCTS________________________________________________ -->
 
 		<type name="bcpg:productSpecification">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
@@ -306,7 +306,7 @@
 		</type>
 
 		<type name="bcpg:productMicrobioCriteria">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:pmcRegulation">
 					<type>d:text</type>
@@ -322,7 +322,7 @@
 		</type>
 
 		<type name="bcpg:product">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:legalNameAspect</aspect>
@@ -541,7 +541,7 @@
 		</type>
 		<!-- ______________________________________ FOURNISSEUR ______________________________________ -->
 		<type name="bcpg:supplier">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:supplierTel">
 					<type>d:text</type>
@@ -561,7 +561,7 @@
 		</type>
 		<!-- ______________________________________ CLIENT ______________________________________ -->
 		<type name="bcpg:client">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:clientTel">
 					<type>d:text</type>
@@ -1468,7 +1468,7 @@
 		</type>
 
 		<type name="bcpg:systemEntity">
-			<parent>cm:content</parent>
+			<parent>cm:folder</parent>
 		</type>
 
 		<type name="bcpg:autoNum">

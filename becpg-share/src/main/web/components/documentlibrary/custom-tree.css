@@ -1,7 +1,56 @@
+/* Treeview icons */
 
 
- .treeview  .pjt-project{
-	background:  url(../images/filetypes/generic-project-16.png)  ;
+ .treeview  span.ygtvlabel.pjt-project {
+	background-image:  url(../images/filetypes/generic-project-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-finishedProduct {
+	background-image: url(../images/filetypes/generic-finishedProduct-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-localSemiFinishedProduct {
+	background-image: url(../images/filetypes/generic-localSemiFinishedProduct-16.png);
+}
+
+ .treeview  span.ygtvlabel.bcpg-packagingKit {
+	background-image: url(../images/filetypes/generic-packagingKit-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-packagingMaterial {
+	background-image: url(../images/filetypes/generic-packagingMaterial-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-rawMaterial {
+	background-image: url(../images/filetypes/generic-rawMaterial-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-semiFinishedProduct {
+	background-image: url(../images/filetypes/generic-semiFinishedProduct-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-resourceProduct {
+	background-image: url(../images/filetypes/generic-resourceProduct-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-client {
+	background-image: url(../images/filetypes/generic-client-16.png) ;
+}
+
+ .treeview  span.ygtvlabel.bcpg-supplier {
+	background-image: url(../images/filetypes/generic-supplier-16.png) ;
+}
+
+
+ .treeview  span.ygtvlabel.pjt-project,
+ .treeview  span.ygtvlabel.bcpg-finishedProduct,
+ .treeview  span.ygtvlabel.bcpg-packagingKit,
+ .treeview  span.ygtvlabel.bcpg-packagingMaterial,
+ .treeview  span.ygtvlabel.bcpg-rawMaterial,
+ .treeview  span.ygtvlabel.bcpg-semiFinishedProduct,
+ .treeview  span.ygtvlabel.bcpg-resourceProduct,
+ .treeview  span.ygtvlabel.bcpg-client,
+ .treeview  span.ygtvlabel.bcpg-supplier {
 	background-position:  left bottom;
 	background-repeat: no-repeat;
 	background-size: 12px 12px;

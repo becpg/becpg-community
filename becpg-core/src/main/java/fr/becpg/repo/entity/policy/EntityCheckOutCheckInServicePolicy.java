@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
-import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -80,10 +79,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	 */
 	public void doInit(){
 		logger.debug("Init EntityCheckOutCheckInServicePolicy...");
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCheckOut"));
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "beforeCheckIn"));
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.TYPE_ENTITY, new JavaBehaviour(this, "onCheckIn"));
-		
 		
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onCheckOut"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforeCheckIn"));
