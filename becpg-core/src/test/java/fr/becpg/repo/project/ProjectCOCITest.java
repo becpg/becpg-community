@@ -23,7 +23,7 @@ import fr.becpg.test.RepoBaseTestCase;
  * @author quere
  *
  */
-public class ProjectCOCITest extends AbstractProjectTest {
+public class ProjectCOCITest extends AbstractProjectTestCase {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProjectCOCITest.class);

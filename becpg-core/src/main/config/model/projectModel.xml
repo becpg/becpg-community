@@ -147,7 +147,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>

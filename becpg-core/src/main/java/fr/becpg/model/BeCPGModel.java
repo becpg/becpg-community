@@ -179,9 +179,6 @@ public interface BeCPGModel {
 	/** The Constant ASSOC_COSTDETAILSLIST_COST. */
 	QName ASSOC_COSTDETAILSLIST_COST = QName.createQName(BECPG_URI, "costDetailsListCost");
 
-	/** The Constant ASSOC_COSTDETAILSLIST_SOURCE. */
-	QName ASSOC_COSTDETAILSLIST_SOURCE = QName.createQName(BECPG_URI, "costDetailsListSource");
-
 	// priceList
 	QName TYPE_PRICELIST = QName.createQName(BECPG_URI, "priceList");
 

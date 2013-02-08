@@ -202,29 +202,27 @@ public class EntityServiceImpl implements EntityService {
 	 *            the entity node ref
 	 */
 	@Override
-	public void initializeEntityFolder(NodeRef entityNodeRef) {
+	public NodeRef getEntityTplNodeRef(NodeRef entityNodeRef) {
 
 		logger.debug("initializeEntityFolder");
 		QName entityType = nodeService.getType(entityNodeRef);
 
 		// entity => exit
 		if (entityType.isMatch(BeCPGModel.TYPE_ENTITY_V2)) {
-			return;
+			return null;
 		}		
 		
-		NodeRef entityFolderNodeRef = null;
-		NodeRef folderTplNodeRef = null;
+		NodeRef entityTplNodeRef = null;
 		
-		 if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY_V2)){
-			entityFolderNodeRef = entityNodeRef;		
-			folderTplNodeRef = entityTplService.getFolderTpl(entityType);
+		 if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY_V2)){		
+			 entityTplNodeRef = entityTplService.getFolderTpl(entityType);
 		}
 		else{
 			logger.debug("entityNodeRef doesn't inherit from  entityV2");
-			return;
+			return null;
 		}
 		
-		copyEntityFolders(folderTplNodeRef, entityFolderNodeRef);		
+		return entityTplNodeRef;
 	}
 
 	/**
@@ -348,7 +346,7 @@ public class EntityServiceImpl implements EntityService {
 						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
 
-						initializeEntityFolder(ret);
+						//Done by copy initializeEntityFolder(ret);
 
 						return ret;
 
@@ -460,20 +458,9 @@ public class EntityServiceImpl implements EntityService {
 		return workingCopyName;
 	}
 
-//	@Override
-//	public NodeRef getEntityFolder(NodeRef entityNodeRef) {
-//		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-//		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-//
-//		// Actual entity parent is not a entity folder
-//		if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-//			return parentEntityNodeRef;
-//		}
-//		return null;
-//	}
 
 	@Override
-	public void copyEntityFolders(NodeRef folderTplNodeRef, NodeRef entityFolderNodeRef) {
+	public void copyEntityTpl(NodeRef folderTplNodeRef, NodeRef entityFolderNodeRef) {
 		
 		// copy subfolders
 		if(entityFolderNodeRef != null && folderTplNodeRef != null){			
@@ -520,6 +507,8 @@ public class EntityServiceImpl implements EntityService {
 						// removed
 						// nodeService.removeAspect(subFolderNodeRef,
 						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
+						
+						//TODO also copy datalist
 					}
 				}
 			}

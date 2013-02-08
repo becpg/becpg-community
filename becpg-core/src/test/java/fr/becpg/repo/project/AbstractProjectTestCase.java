@@ -30,12 +30,12 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.RepoBaseTestCase;
 
-public class AbstractProjectTest extends RepoBaseTestCase {
+public class AbstractProjectTestCase extends RepoBaseTestCase {
 
 	protected static final String USER_ONE = "matthieuWF";
 	protected static final String USER_TWO = "philippeWF";
 	
-	private static Log logger = LogFactory.getLog(AbstractProjectTest.class);
+	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 
 	@Resource
 	protected AlfrescoRepository<AbstractProjectData> alfrescoRepository;
