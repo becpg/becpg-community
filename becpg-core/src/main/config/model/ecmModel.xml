@@ -60,7 +60,7 @@
 		
 		<!-- type change order -->
 		<type name="ecm:changeOrder">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>										
 				<property name="ecm:ecoState">
 					<type>d:text</type>
@@ -121,7 +121,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -132,7 +132,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -172,7 +172,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -221,7 +221,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -232,7 +232,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -243,7 +243,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -271,7 +271,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -325,7 +325,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>

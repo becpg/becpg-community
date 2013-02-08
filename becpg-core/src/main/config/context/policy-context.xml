@@ -20,9 +20,10 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 
-	<bean id="entityPolicy" class="fr.becpg.repo.entity.policy.EntityPolicy"
+	<bean id="entityTplRefAspectPolicy" class="fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy"
 		init-method="init" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
+		<property name="associationService" ref="associationService"/>
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy"

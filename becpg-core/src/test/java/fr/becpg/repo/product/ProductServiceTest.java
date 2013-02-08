@@ -162,6 +162,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Check report --*/
 				logger.debug("/*-- Check report --*/");
+				//TODO now report is into document
 				ContentReader reader = contentService.getReader(rawMaterialNodeRef, ContentModel.PROP_CONTENT);
 				assertNotNull("Reader should not be null", reader);
 				InputStream in = reader.getContentInputStream();
@@ -303,10 +304,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 		// Check
 		logger.debug("//Check finished product");
-		NodeRef parentFinishedProductNodeRef = nodeService.getPrimaryParent(finishedProductNodeRef).getParentRef();
-		assertNotSame("Parent of finished product should not be the testFolderNodeRef", testFolderNodeRef, parentRawMaterialNodeRef);
-		assertEquals("Parent of finished product must have the type PRODUCT_FOLDER", BeCPGModel.TYPE_ENTITY_FOLDER, nodeService.getType(parentFinishedProductNodeRef));
-		NodeRef imagesFolder = nodeService.getChildByName(parentFinishedProductNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		NodeRef imagesFolder = nodeService.getChildByName(finishedProductNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		assertNotNull("Images folder must be not null", imagesFolder);
 		String imageName = I18NUtil.getMessage(RepoConsts.PATH_PRODUCT_IMAGE) + ".jpg";
 		NodeRef imageProductNodeRef = nodeService.getChildByName(imagesFolder, ContentModel.ASSOC_CONTAINS, imageName);
@@ -470,7 +468,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
 				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
 				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
-				assertEquals("8th Path should be 'Raw material (1)'", "Raw material (1)", arrDisplayPaths[7]);
 
 				return null;
 

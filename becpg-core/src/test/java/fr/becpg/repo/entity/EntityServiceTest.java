@@ -6,7 +6,6 @@ package fr.becpg.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.junit.Test;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
-import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -202,54 +200,54 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 	}
 	
-	@Test
-	public void testEntityFolder(){
-		 Date start = new Date();
-		
-		// Create a product
-		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
-			}
-		}, false, true);
-		
-		Date startEffectivity = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
-		assertNotNull(startEffectivity);
-		assertTrue(start.getTime()<startEffectivity.getTime());
-		
-		// entityFolder check
-		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
-		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
-		
-		// compare names
-		String entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
-		String productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);
-		assertEquals(entityFolderName, BeCPGTestHelper.PRODUCT_NAME);
-		assertEquals(entityFolderName, productName);
-		
-		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				return copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-			}
-		}, false, true);
-		
-		Date startEffectivity2 = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
-		assertNotNull(startEffectivity2);
-		assertTrue(startEffectivity.getTime()<startEffectivity2.getTime());
-		
-		// entityFolder check
-		parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
-		parentEntityType = nodeService.getType(parentEntityNodeRef);		
-		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
-
-		// compare names
-		entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
-		productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);		
-		assertNotSame(parentEntityNodeRef, BeCPGTestHelper.PRODUCT_NAME);
-		assertTrue(entityFolderName.contains(productName));
-	}
+//	@Test
+//	public void testEntityFolder(){
+//		 Date start = new Date();
+//		
+//		// Create a product
+//		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+//			public NodeRef execute() throws Throwable {
+//
+//				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+//			}
+//		}, false, true);
+//		
+//		Date startEffectivity = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
+//		assertNotNull(startEffectivity);
+//		assertTrue(start.getTime()<startEffectivity.getTime());
+//		
+//		// entityFolder check
+//		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
+//		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
+//		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
+//		
+//		// compare names
+//		String entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
+//		String productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);
+//		assertEquals(entityFolderName, BeCPGTestHelper.PRODUCT_NAME);
+//		assertEquals(entityFolderName, productName);
+//		
+//		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+//			public NodeRef execute() throws Throwable {
+//
+//				return copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+//			}
+//		}, false, true);
+//		
+//		Date startEffectivity2 = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
+//		assertNotNull(startEffectivity2);
+//		assertTrue(startEffectivity.getTime()<startEffectivity2.getTime());
+//		
+//		// entityFolder check
+//		parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
+//		parentEntityType = nodeService.getType(parentEntityNodeRef);		
+//		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
+//
+//		// compare names
+//		entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
+//		productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);		
+//		assertNotSame(parentEntityNodeRef, BeCPGTestHelper.PRODUCT_NAME);
+//		assertTrue(entityFolderName.contains(productName));
+//	}
 	
 }

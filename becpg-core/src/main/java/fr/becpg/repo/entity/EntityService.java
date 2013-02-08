@@ -22,13 +22,6 @@ public interface EntityService {
 	 */
 	 boolean hasDataListModified(NodeRef nodeRef);
 	
-	/**
-     * Initialize entity folder.
-     *
-     * @param entityNodeRef the entity node ref
-     */
-     void initializeEntityFolder(NodeRef entityNodeRef);
-    
     
 	/**
 	 * Gets the image defined in the image folder of the entity
@@ -95,18 +88,11 @@ public interface EntityService {
 	  */
 	 boolean hasAssociatedImages(QName type);
 
-	/**
-	 * 
-	 * @param entityNodeRef
-	 * @return entityFolderNodeRef
-	 */
-	// NodeRef getEntityFolder(NodeRef entityNodeRef);
 
-	 /**
-	  * Copy the sub-folders of the Tpl under the nodeRef
-	  * @param tplNodeRef
-	  * @param nodeRef
-	  */
-	 void copyEntityFolders(NodeRef tplNodeRef, NodeRef nodeRef); 
+	 
+	 NodeRef getEntityTplNodeRef(NodeRef entityNodeRef);
+
+
+	 void copyEntityTpl(NodeRef entityTplNodeRef, NodeRef entityNodeRef); 
     
 }

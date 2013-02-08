@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -43,8 +42,6 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  * @author querephi
  */
 @Service
-//Fusionner avec EntityPolicy
-@Deprecated 
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy,
 		NodeServicePolicies.OnDeleteNodePolicy{
@@ -56,7 +53,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	private ProjectService projectService;
 	private AssociationService associationService;
 	private CopyService copyService;
-	private EntityService entityService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -74,9 +70,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		this.copyService = copyService;
 	}
 
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
 
 	/**
 	 * Inits the.
@@ -111,7 +104,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			NodeRef projectTplNodeRef = assocRef.getTargetRef();
 			
 			// copy folders
-			entityService.copyEntityFolders(projectTplNodeRef, projectNodeRef);
+			// already done by entity policy
 			
 			// copy datalist from Tpl to project
 			logger.debug("copy datalists");

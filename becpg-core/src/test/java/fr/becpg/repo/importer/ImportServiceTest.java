@@ -383,9 +383,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		String productName = "Saumon surgelé 80x20x4";
 		NodeRef product1NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, productName); 				
 		// productFolder => look for product
-		if(product1NodeRef != null && nodeService.getType(product1NodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			product1NodeRef = nodeService.getChildByName(product1NodeRef, ContentModel.ASSOC_CONTAINS, productName);
-		}
+	
 		assertNotNull("product 1 should exist", product1NodeRef);
 		
 		ProductData productData = alfrescoRepository.findOne(product1NodeRef);
@@ -414,9 +412,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		productName = "Saumon 80x20x3";
 		NodeRef product2NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, productName);
 		// productFolder => look for product
-		if(product2NodeRef != null && nodeService.getType(product2NodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			product2NodeRef = nodeService.getChildByName(product2NodeRef, ContentModel.ASSOC_CONTAINS, productName);
-		}
+
 		assertNotNull("product 2 should exist", product2NodeRef);
 		supplierAssocRefs = nodeService.getTargetAssocs(product2NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
 		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
@@ -467,9 +463,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		}
 		assertEquals("3 nuts have been checked", (int)3, nutChecked);
 		
-		// check that file Images/produit.jpg has been imported and check title
-		NodeRef parentNodeRef = nodeService.getPrimaryParent(product2NodeRef).getParentRef(); 				
-		NodeRef imagesNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, "Images");
+		// check that file Images/produit.jpg has been imported and check title		
+		NodeRef imagesNodeRef = nodeService.getChildByName(product2NodeRef, ContentModel.ASSOC_CONTAINS, "Images");
 		assertNotNull("check Images exits", imagesNodeRef);
 		
 		NodeRef imgNodeRef = nodeService.getChildByName(imagesNodeRef, ContentModel.ASSOC_CONTAINS, "produit.jpg");
@@ -547,10 +542,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		
 		productName = "Saumon surgelé 80x20x4";
 		product1NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, productName); 				
-		// productFolder => look for product
-		if(product1NodeRef != null && nodeService.getType(product1NodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			product1NodeRef = nodeService.getChildByName(product1NodeRef, ContentModel.ASSOC_CONTAINS, productName);
-		}
+
 		assertNotNull("product 1 should exist", product1NodeRef);		
 		
 	}
@@ -704,9 +696,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				 */
  				
  				NodeRef product1NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
- 				if(product1NodeRef != null && nodeService.getType(product1NodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
- 					product1NodeRef = nodeService.getChildByName(product1NodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
- 				}
+ 				
  				assertNotNull("product 1 should exist", product1NodeRef);
  				ProductData productData = alfrescoRepository.findOne(product1NodeRef); 				 			
  				

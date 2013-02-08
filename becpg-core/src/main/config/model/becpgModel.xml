@@ -327,6 +327,7 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:productAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>rep:reportEntityAspect</aspect>
 			</mandatory-aspects>			
@@ -789,7 +790,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:content</class>
+						<class>bcpg:product</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -800,7 +801,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:content</class>
+						<class>bcpg:product</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -882,17 +883,6 @@
 					</source>
 					<target>
 						<class>bcpg:cost</class>
-						<mandatory>true</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="bcpg:costDetailsListSource">
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>cm:content</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
@@ -1443,8 +1433,9 @@
 			</mandatory-aspects>
 		</type>
 
+		<!-- Deprecated -->
 		<type name="bcpg:entityFolder">
-			<parent>cm:folder</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:entityFolderClassName">
 					<type>d:qname</type>

@@ -37,7 +37,7 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  * 
  * @author quere
  */
-public class ProjectServiceTest extends AbstractProjectTest {	
+public class ProjectServiceTest extends AbstractProjectTestCase {	
 
 	private static Log logger = LogFactory.getLog(ProjectServiceTest.class);
 
