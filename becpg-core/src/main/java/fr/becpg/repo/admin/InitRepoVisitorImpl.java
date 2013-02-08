@@ -52,7 +52,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.designer.DesignerInitService;
-import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -367,7 +366,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		boolean applyToChildren = false;
 
 		if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
-			specialiseType = BeCPGModel.TYPE_ENTITY;
+			specialiseType = BeCPGModel.TYPE_ENTITY_V2;
 		} else if (folderName == RepoConsts.PATH_REPORTS) {
 
 			// Action : apply type

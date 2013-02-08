@@ -26,10 +26,13 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
-					</field>									
+					</field>	
+					<field id="rep:reportTplType" sorted="true"/>
+					<field id="rep:reportTplFormat" sorted="true"/>								
 				</appearance>
 			</form>
 		</forms>
 	</config>
+	
 	
 </alfresco-config>

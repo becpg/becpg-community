@@ -21,7 +21,7 @@
 		   		<a id="${el}-viewEntityDetails-button" name="viewEntityDetails" href="entity-details?nodeRef={nodeRef}" >${msg("actions.entity.view-details")}</a>
 		   	</div>
 		   	<div class="entity-view-datalist">
-		   		<a id="${el}-viewEntityLists-button" name="viewEntityLists" href="entity-data-lists?nodeRef={nodeRef}" >${msg("actions.entity.view-datalist")}</a>
+		   		<a id="${el}-viewEntityLists-button" name="viewEntityLists" href="entity-data-lists?nodeRef={nodeRef}" >${msg("actions.entity.view-datalists")}</a>
 		   	</div>
 	   	</div>
 	   </div>

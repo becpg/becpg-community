@@ -51,16 +51,15 @@ public class BeCPGDoclistActionGroupResolver implements DoclistActionGroupResolv
 		JSONArray nodeAspects = getNodeAspects(jsonObject);
 		boolean isContainer = (Boolean) node.get("isContainer");
 
-		if (isContainer) {
-			if (nodeAspects != null && nodeAspects.contains("bcpg:entityListsAspect")) {
-				actionGroupId = "entityV2-";
-			} else {
-				actionGroupId = "folder-";
-			}
-		} else if (nodeAspects != null && nodeAspects.contains("bcpg:entityListsAspect")) {
+		if (nodeAspects != null && nodeAspects.contains("bcpg:entityListsAspect")) {
 			actionGroupId = "entity-";
 		} else {
-			actionGroupId = "document-";
+		
+			if (isContainer) {
+				actionGroupId = "folder-";
+			} else {
+				actionGroupId = "document-";
+			}
 		}
 
 		boolean isLink = (Boolean) node.get("isLink");

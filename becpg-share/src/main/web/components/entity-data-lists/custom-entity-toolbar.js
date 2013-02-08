@@ -275,23 +275,13 @@
 		    },
 		   fn : function(instance) {
 
-	         var pageLink = "document-details", url = "";
-	         //TODO remove when V2
-	         if (this.options.list == "taskList" || this.options.list == "deliverableList") {
-		         pageLink = "entity-details";
-	         }
-
-	         if (this.options.siteId != "") {
-		         url = Alfresco.constants.URL_PAGECONTEXT + "site/" + this.options.siteId + "/" + pageLink
-		               + "?nodeRef=" + this.options.entityNodeRef;
-	         } else {
-		         url = Alfresco.constants.URL_PAGECONTEXT + pageLink + "?nodeRef=" + this.options.entityNodeRef;
-	         }
+		   	var url = beCPG.util.entityDetailsURL(this.options.siteId,this.options.entityNodeRef,this.entity.type)
+		   	
 	         
 	         if(this.entity.aspects.indexOf("rep:reportEntityAspect") > 0){
 	         	refreshReports(this,url);
 	         } else {
-	         	 window.location = url;
+	         	window.location.href = url;
 	         }
 		   }
 
@@ -305,29 +295,14 @@
 		    },
 		   fn : function(instance) {
 		   	var me = this;
-			   buildSpaceNamePath = function(pathParts, name) {
-			   	 //TODO remove when V2
-			    if (me.options.list == "taskList" || me.options.list == "deliverableList") {
-			   	 return (pathParts.length !== 0 ? ("/" + pathParts.join("/")) : "") + "/" + name;
-			       }
-			   	
-				   return (pathParts.length !== 0 ? ("/" + pathParts.join("/")) : "");
-			   };
+		   	
+		   	var url = beCPG.util.entityDocumentsURL(this.options.siteId,this.entity.path,this.entity.name)
 
-			   // rep:reportEntityAspect
-			   if (this.options.siteId) {
-				   url = Alfresco.constants.URL_PAGECONTEXT + "site/" + this.options.siteId + "/" + "documentlibrary?path="
-				         + encodeURIComponent(buildSpaceNamePath( this.entity.path.split("/").slice(5), this.entity.name));
-			   } else {
-				   url = Alfresco.constants.URL_PAGECONTEXT + "repository?path="
-				         + encodeURIComponent(buildSpaceNamePath(this.entity.path.split("/").slice(2),  this.entity.name));
-			   }
-			  
 			   
 	         if(this.entity.aspects.indexOf("rep:reportEntityAspect") > 0){
 	         	refreshReports(this,url);
 	         } else {
-	         	 window.location = url;
+	         	 window.location.href = url;
 	         }
 			   
 		   }

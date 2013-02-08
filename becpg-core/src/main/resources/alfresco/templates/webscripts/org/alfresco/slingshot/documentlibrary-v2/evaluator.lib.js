@@ -7,9 +7,9 @@ var Evaluator =
    getNodeType: function Evaluator_getNodeType(node)
    {
       var nodeType = "document";
-      if (node.isContainer && node.hasAspect("bcpg:entityListsAspect"))
+      if (node.hasAspect("bcpg:entityListsAspect"))
       {
-         nodeType = "entityV2";
+         nodeType = "entity";
       }
       else if (node.isContainer)
       {

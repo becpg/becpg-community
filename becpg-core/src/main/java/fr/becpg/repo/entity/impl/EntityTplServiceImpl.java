@@ -62,6 +62,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	 * @param entityType
 	 */
 	@Override
+	@Deprecated
 	public NodeRef createFolderTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<String> subFolders){
 		
 		TypeDefinition typeDef = dictionaryService.getType(entityType);
@@ -125,7 +126,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 														ContentModel.ASSOC_CONTAINS, 
 														QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 																			entityType.getLocalName()), 
-														BeCPGModel.TYPE_ENTITY, properties).getChildRef();
+														BeCPGModel.TYPE_ENTITY_V2, properties).getChildRef();
 		}
 		
 		

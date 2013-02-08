@@ -589,20 +589,10 @@ var g; // gantt var
 		               var code = oRecord.getData("itemData")["prop_bcpg_code"].displayValue;
 
 		               var oData = oRecord.getData();
-
-		               if (oData.siteId) {
-			               url = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
-			                     + 'entity-data-lists?nodeRef=' + oData.nodeRef;
-			               urlFolder = Alfresco.constants.URL_PAGECONTEXT + "site/" + oData.siteId + "/"
-			                     + 'documentlibrary#filter=path|' + encodeURIComponent('/' + oData.path + '/' + title);
-		               } else {
-			               url = Alfresco.constants.URL_PAGECONTEXT + 'entity-data-lists?nodeRef=' + oData.nodeRef;
-			               if (oData.path) {
-				               urlFolder = Alfresco.constants.URL_PAGECONTEXT + 'repository#filter=path|'
-				                     + encodeURIComponent('/' + oData.path.split('/').slice(2).join('/') + '/' + title);
-			               }
-		               }
-
+		               url = beCPG.util.entityCharactURL( oData.siteId , oData.nodeRef );
+		               urlFolder = beCPG.util.entityDocumentsURL( oData.siteId , oData.path ,title );
+		               
+		              
 		               if (oData.version && oData.version !== "") {
 			               version = '<span class="document-version">' + oData.version + '</span>';
 		               }

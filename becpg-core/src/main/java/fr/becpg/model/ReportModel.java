@@ -13,6 +13,9 @@ public class ReportModel {
 	// reportType
 	public static final QName TYPE_REPORT_TPL = QName.createQName(REPORT_URI,
 	"reportTpl");
+	public static final QName TYPE_REPORT = QName.createQName(REPORT_URI,
+	"report");
+	
 	public static final QName PROP_REPORT_TPL_TYPE = QName.createQName(REPORT_URI,
 	"reportTplType");
 	public static final QName PROP_REPORT_TPL_CLASS_NAME = QName.createQName(REPORT_URI,
@@ -31,6 +34,10 @@ public class ReportModel {
 			"reportEntityGenerated");
 	public static final QName ASSOC_REPORTS = QName.createQName(REPORT_URI,
 			"reports");
+	
+	public static final QName ASSOC_REPORT_TPL = QName.createQName(REPORT_URI,
+			"reportTplAssoc");
+	
 	
 	// reportTpls
 	public static final QName ASPECT_REPORT_TEMPLATES = QName.createQName(REPORT_URI,

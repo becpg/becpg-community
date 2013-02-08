@@ -16,7 +16,6 @@
    * Alfresco Slingshot aliases
    */
    var $html = Alfresco.util.encodeHTML,
-   		$siteURL = Alfresco.util.siteURL,
          $userProfile = Alfresco.util.userProfileLink,
          $siteDashboard = Alfresco.util.siteDashboardLink,
          $relTime = Alfresco.util.relativeTime,
@@ -29,7 +28,6 @@
       PREFERENCES_PRODUCTCATALOG_DASHLET_FILTER = PREFERENCES_PRODUCTCATALOG_DASHLET + ".filter",
       PREFERENCES_PRODUCTCATALOG_DASHLET_VIEW = PREFERENCES_PRODUCTCATALOG_DASHLET + ".simpleView";
    
-   var CHARACT_EVENTCLASS = Alfresco.util.generateDomId(null, "charact");
 
    /**
     * Dashboard ProductCatalog constructor.
@@ -54,7 +52,6 @@
        */
       onReady: function ProductCatalog_onReady()
       {
-      	var me = this;
          // Create Dropdown filter
          this.widgets.filter = Alfresco.util.createYUIButton(this, "filters", this.onFilterChange,
          {
@@ -81,17 +78,6 @@
          
          // Display the toolbar now that we have selected the filter
          Dom.removeClass(Selector.query(".toolbar div", this.id, true), "hidden");
-         
-         var fnOnShowCharactHandler = function ProductCatalog__fnOnShowCharactHandler(layer, args)
-         {
-            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "div");
-            if (owner !== null)
-            {
-               me.onActionShowCharact.call(me, args[1].target.offsetParent, owner);
-            }
-            return true;
-         };
-         YAHOO.Bubbling.addDefaultAction(CHARACT_EVENTCLASS, fnOnShowCharactHandler);
          
 
          // DataTable can now be rendered
@@ -202,10 +188,10 @@
          else
          {
             var name = record.fileName,
+            	recordSiteName = $isValueSet(record.location.site) ? record.location.site : null,
                extn = name.substring(name.lastIndexOf(".")),
-               locn = record.location,
                nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
-               docDetailsUrl = (locn.site != null && locn.site != "") ? Alfresco.constants.URL_PAGECONTEXT + "site/" + locn.site + "/document-details?nodeRef=" + nodeRef.toString() : Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef=" + nodeRef.toString();
+               docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName, record.nodeRef, record.itemType);
 
             if (this.options.simpleView)
             {
@@ -258,12 +244,11 @@
         else
         {
            var id = this.id + '-metadata-' + oRecord.getId(),
+    	   	 recordSiteName = $isValueSet(record.location.site) ? record.location.site : null,
               version = "",
               dateLine = "",
               locn = record.location,
-              nodeRef = new Alfresco.util.NodeRef(record.nodeRef),
-              docDetailsUrl = (locn.site != null && locn.site != "") ? Alfresco.constants.URL_PAGECONTEXT + "site/" + locn.site + "/document-details?nodeRef=" + nodeRef.toString() : Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef=" + nodeRef.toString(),
-              contentUrl = Alfresco.constants.PROXY_URI + record.contentUrl;
+              docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName, record.nodeRef, record.itemType);
 
            // Version display
            if (record.version && record.version !== "")
@@ -309,12 +294,17 @@
               desc += '<div class="detail">';
               desc +=    '<span class="item">' + dateLine + '</span>';
               desc += '</div>';
+              
+     	   	
+     	   	var charactsUrl = beCPG.util.entityCharactURL(recordSiteName, record.nodeRef , record.nodeType),
+     	   		documentsUrl =	beCPG.util.entityDocumentsURL(recordSiteName,  record.location.path ,  record.location.file);
+              
 
               /* Favourite / Charact / Download */
               desc += '<div class="detail detail-social">';
               desc +=    '<span class="item item-social">' + Alfresco.component.SimpleDocList.generateFavourite(this, oRecord) + '</span>';
-              desc +=    '<span class="item item-social item-separator"><a class="document-download" href="' + contentUrl + '"  title="' + this.msg( "actions.document.download") + '" tabindex="0">' +  this.msg("actions.document.download") + '</a></span>';
-              desc +=    '<span class="item item-social item-separator"><a class="document-characts ' + CHARACT_EVENTCLASS + '" title="' + this.msg( "actions.entity.view-datalist") + '" tabindex="0">' + this.msg("actions.entity.view-datalist") + '</a></span>';
+              desc +=    '<span class="item item-social item-separator"><a class="view-documents" href="' + documentsUrl + '"  title="' + this.msg( "actions.entity.view-documents") + '" tabindex="0">' +  this.msg("actions.entity.view-documents.short") + '</a></span>';
+              desc +=    '<span class="item item-social item-separator"><a class="view-characts" href="' + charactsUrl + '" title="' + this.msg( "actions.entity.view-datalists") + '" tabindex="0">' + this.msg("actions.entity.view-datalists.short") + '</a></span>';
               desc += '</div>';
            }
            
@@ -443,24 +433,12 @@
       },
       
       onActionShowCharact: function ProductCatalog_onActionShowCharact(row) {
-	   	
-      	var p_record = this.widgets.alfrescoDataTable.getData(row),
-         nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef);
-      	
+	   	   	
+	   	var p_record = this.widgets.alfrescoDataTable.getData(row);   	
+	   	   	
 	   	var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site : null;
-	   	var redirect  = $siteURL("entity-data-lists?nodeRef="+nodeRef,
-         {
-            site: recordSiteName
-         });
 	   	
-	   	if(p_record.nodeType == "bcpg:finishedProduct" || p_record.nodeType == "bcpg:semiFinishedProduct"){
-	   		redirect+="&list=compoList";
-	   	}
-			else if(p_record.nodeType == "bcpg:packagingKit"){
-				redirect+="&list=packagingList";
-			}
-	   	
-	   	window.location.href = redirect;
+	   	window.location.href = beCPG.util.entityCharactURL(recordSiteName, p_record.nodeRef , p_record.nodeType);
       }
 
       

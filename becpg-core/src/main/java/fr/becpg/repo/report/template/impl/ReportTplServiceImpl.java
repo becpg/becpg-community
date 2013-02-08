@@ -27,6 +27,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -50,7 +51,17 @@ public class ReportTplServiceImpl implements ReportTplService{
 	
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
+	
+	
+	private AssociationService associationService;
 			
+	
+	
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	/**
 	 * Sets the node service.
 	 *
@@ -369,5 +380,11 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
 		return query;
+	}
+
+	@Override
+	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef) {
+		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL);
+		
 	}	
 }

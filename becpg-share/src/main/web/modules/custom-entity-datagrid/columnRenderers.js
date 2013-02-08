@@ -9,12 +9,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 		   var url = null,
 		   	 version = "";			   
 		   if(label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct"
-		   	 || label == "mpm:plResource"){			   
-		       if (data.siteId) {
-		           url = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + 'entity-data-lists?nodeRef=' + data.value;
-		       } else {
-		           url = Alfresco.constants.URL_PAGECONTEXT + 'entity-data-lists?nodeRef=' + data.value;
-		       }				       
+		   	 || label == "mpm:plResource"){	
+		   	
+		   	 url = beCPG.util.entityCharactURL( data.siteId  , data.value );
+		   		       
 		       //datalist
 		       if(data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1){
 		    	   url += "&list=compoList";

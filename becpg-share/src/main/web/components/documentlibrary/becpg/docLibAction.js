@@ -6,8 +6,7 @@
  */
 (function() {
 	
-	  var $siteURL = Alfresco.util.siteURL,
-     		$isValueSet = Alfresco.util.isValueSet;
+	  var	$isValueSet = Alfresco.util.isValueSet;
 
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionCheckOutEntity",
@@ -25,7 +24,7 @@
 			      callback : {
 			         fn : function DocumentActions_oAEO_success(data) {
 				         this.recordData.jsNode.setNodeRef(data.json.results[0].nodeRef);
-				         window.location = this.getActionUrls(this.recordData).documentDetailsUrl;
+				         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
 			         },
 			         scope : this
 			      }
@@ -67,7 +66,7 @@
 		                  onNewEntityVersionComplete : {
 		                     fn : function EntityActions_oACI_success(data) {
 			                     this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
-			                     window.location = this.getActionUrls(this.recordData).documentDetailsUrl;
+			                     window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
 		                     },
 		                     scope : this
 		                  }
@@ -91,7 +90,7 @@
 		      successCallback : {
 		         fn : function EntityDataListToolbar_onFinish_success(response) {
 			         this.recordData.jsNode.setNodeRef(asset.nodeRef);
-			         window.location = this.getActionUrls(this.recordData).documentDetailsUrl;
+			         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
 
 		         },
 		         scope : this
@@ -111,21 +110,13 @@
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionShowCharact",
 	   fn : function onActionShowCharact(p_record) {
-	   	
+
 	   	var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
-	   	var redirect  = $siteURL("entity-data-lists?nodeRef="+p_record.nodeRef,
-         {
-            site: recordSiteName
-         });
+	   
 	   	
-	   	if(p_record.node.type == "bcpg:finishedProduct" || p_record.node.type == "bcpg:semiFinishedProduct"){
-	   		redirect+="&list=compoList";
-	   	}
-			else if(p_record.node.type == "bcpg:packagingKit"){
-				redirect+="&list=packagingList";
-			}
+	   	window.location.href = beCPG.util.entityCharactURL(recordSiteName, p_record.nodeRef, p_record.node.type);
 	   	
-	   	window.location.href = redirect;
+	   	
 	   }
 	});
 

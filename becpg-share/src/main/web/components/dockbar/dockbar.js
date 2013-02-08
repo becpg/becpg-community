@@ -12,7 +12,7 @@
 	/**
 	 * Alfresco Slingshot aliases
 	 */
-	var $html = Alfresco.util.encodeHTML, $siteURL = Alfresco.util.siteURL, $isValueSet = Alfresco.util.isValueSet;
+	var $html = Alfresco.util.encodeHTML, $isValueSet = Alfresco.util.isValueSet;
 
 	/**
 	 * Dashboard DockBar constructor.
@@ -230,13 +230,8 @@
 			                     me.dataSource = new YAHOO.util.DataSource(data.items);
 			                     me.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 
-			                     me.widgets.dockBarDataTable = new YAHOO.widget.DataTable(me.id + "-products", [ /*{
-					                  key : "image",
-					                  sortable : false,
-					                  formatter : me.bind(me.renderCellThumbnail),
-					                  width : 40
-					               },*/
-					               {
+			                     me.widgets.dockBarDataTable = new YAHOO.widget.DataTable(me.id + "-products", [ 
+			                     {
 			                        key : "detail",
 			                        sortable : false,
 			                        formatter : me.bind(me.renderCellDetail)
@@ -290,88 +285,68 @@
 						 *           {object|string}
 						 */
 	               renderCellDetail : function DockBar_renderCellDetail(elCell, oRecord, oColumn, oData) {
-		               var record = oRecord.getData(), desc = "", url = this._getBrowseUrlForRecord(oRecord), charactUrl = this
-		                     ._getCharactUrlForRecord(oRecord);
-		               var contentUrl = Alfresco.constants.PROXY_URI_RELATIVE + "api/node/content/"
-                     + oRecord.getData("nodeRef").replace(":/", "") + "/" + oRecord.getData("name");
+		               var record = oRecord.getData(), desc = "";
 		               /**
 							 * Simple View
 							 */
-		               desc += '<h3 class="filename"><a class="theme-color-1" href="' + url + '">'
+		               desc += '<h3 class="filename"><a title="' + this.msg("actions.entity.view-details")
+		                     + '" class="theme-color-1" href="' + this._getBrowseUrlForRecord(oRecord) + '">'
 		                     + $html(record.displayName) + '</a></h3>';
 
 		               /* Favourite / Charact / Download */
 		               desc += '<div class="dockbar-detail">';
-		               desc += '<span class="item-separator"><a class="document-download" href="' + contentUrl
-		                + '" title="' + this.msg("actions.document.download") +
-							 '" tabindex="0">'
-		                + this.msg("actions.document.download") + '</a></span>';
-		               desc += '<span class="item-separator"><a class="document-characts" href="' + charactUrl
-		                     + '" title="' + this.msg("actions.entity.view-datalist") + '" tabindex="0">'
-		                     + this.msg("actions.entity.view-datalist") + '</a></span>';
+		               desc += '<span class="item-separator"><a class="view-documents" href="'
+		                     + this._getDocumentsUrlForRecord(oRecord) + '" title="'
+		                     + this.msg("actions.entity.view-documents") + '" tabindex="0">'
+		                     + this.msg("actions.entity.view-documents.short") + '</a></span>';
+		               desc += '<span class="item-separator"><a class="view-characts" href="'
+		                     + this._getCharactUrlForRecord(oRecord) + '" title="'
+		                     + this.msg("actions.entity.view-datalists") + '" tabindex="0">'
+		                     + this.msg("actions.entity.view-datalists.short") + '</a></span>';
 		               desc += '</div>';
 
 		               elCell.innerHTML = desc;
 	               },
-	               
+
 	               renderCellThumbnail : function DockBar_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
 		               var me = this;
-		               
-		               var record = oRecord.getData(),name = record.displayName;
-		               
+
+		               var record = oRecord.getData(), name = record.displayName;
+
 		               record.jsNode = {};
 		               record.jsNode.type = record.itemType;
-	               	
-	               	oColumn.width = 40;
-		               var url = me._getBrowseUrlForRecord(oRecord);
-		               var imageUrl = beCPG.util.getFileIcon(name,record,false,true);
 
+		               oColumn.width = 40;
+		               var url = me._getBrowseUrlForRecord(oRecord);
+		               var imageUrl = beCPG.util.getFileIcon(name, record, false, true);
 
 		               // Render the cell
 		               var name = oRecord.getData("displayName");
 		               var htmlName = $html(name);
 		               var html = '<span><a href="' + url + '"><img src="' + imageUrl + '" alt="' + htmlName
 		                     + '" title="' + htmlName + '" /></a></span>';
-			               
+
 		               elCell.innerHTML = html;
 	               },
+	               _getDocumentsUrlForRecord : function DockBar_getCharactUrlForRecord(record) {
+		               var site = record.getData("site"), recordSiteName = site != null && $isValueSet(site.shortName) ? site.shortName
+		                     : null, url = beCPG.util.entityDocumentsURL(recordSiteName, record.getData("path"), record
+		                     .getData("name"));
 
+		               return (url !== null ? url : '#');
+	               },
 	               _getCharactUrlForRecord : function DockBar_getCharactUrlForRecord(record) {
 
-		               var nodeRef = new Alfresco.util.NodeRef(record.getData("nodeRef")), site = record.getData("site"), itemType = record
-		                     .getData("itemType"), recordSiteName = site!=null && $isValueSet(site.shortName) ? site.shortName : null, url = $siteURL(
-		                     "entity-data-lists?nodeRef=" + nodeRef, {
-			                     site : recordSiteName
-		                     });
-
-		               if (itemType == "bcpg:finishedProduct" || itemType == "bcpg:semiFinishedProduct") {
-			               url += "&list=compoList";
-		               } else if (itemType == "bcpg:packagingKit") {
-			               url += "&list=packagingList";
-		               }
+		               var site = record.getData("site"), recordSiteName = site != null && $isValueSet(site.shortName) ? site.shortName
+		                     : null, url = beCPG.util.entityCharactURL(recordSiteName, record.getData("nodeRef"), record
+		                     .getData("itemType"));
 
 		               return (url !== null ? url : '#');
 	               },
 	               _getBrowseUrlForRecord : function DockBar__getBrowseUrlForRecord(record) {
-		               var url = null, site = record.getData("site");
-
-		               if(record.getData("type")=="document"){  
-		               	url = "document-details?nodeRef=" + record.getData("nodeRef");
-		               } else {
-		               	url = "entity-details?nodeRef=" + record.getData("nodeRef");
-		               }
-
-		               if (url !== null) {
-			               // browse urls always go to a page. We assume that the
-			               // url contains the page name and all
-			               // parameters. Add the absolute path and the optional
-			               // site param
-			               if (site) {
-				               url = Alfresco.constants.URL_PAGECONTEXT + "site/" + site.shortName + "/" + url;
-			               } else {
-				               url = Alfresco.constants.URL_PAGECONTEXT + url;
-			               }
-		               }
+		               var site = record.getData("site"), recordSiteName = site != null && $isValueSet(site.shortName) ? site.shortName
+		                     : null, url = beCPG.util.entityDetailsURL(recordSiteName, record.getData("nodeRef"), record
+		                     .getData("itemType"));
 
 		               return (url !== null ? url : '#');
 	               }

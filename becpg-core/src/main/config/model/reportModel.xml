@@ -77,6 +77,25 @@
 				</property>
 			</properties>
 		</type>
+		
+		
+		<type name="rep:report">
+			<parent>cm:content</parent>
+			<associations>
+				<association name="rep:reportTplAssoc">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>rep:reportTpl</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+		
 	</types>
 	
 	<aspects>
@@ -95,7 +114,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:content</class>
+						<class>rep:report</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -119,6 +138,9 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		
+		
 		
 	</aspects>
 </model>

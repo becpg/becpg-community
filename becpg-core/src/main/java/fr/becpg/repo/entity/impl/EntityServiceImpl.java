@@ -35,7 +35,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.GUID;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -209,42 +208,19 @@ public class EntityServiceImpl implements EntityService {
 		QName entityType = nodeService.getType(entityNodeRef);
 
 		// entity => exit
-		if (entityType.isMatch(BeCPGModel.TYPE_ENTITY)) {
+		if (entityType.isMatch(BeCPGModel.TYPE_ENTITY_V2)) {
 			return;
 		}		
 		
 		NodeRef entityFolderNodeRef = null;
 		NodeRef folderTplNodeRef = null;
 		
-		if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY)){
-			
-			NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-			QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-			// Actual entity parent is already a entity folder
-			if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-				return;
-			}
-						
-			folderTplNodeRef = entityTplService.getFolderTpl(entityType);
-			
-			if (folderTplNodeRef != null && nodeService.exists(folderTplNodeRef)) {
-
-				logger.debug("folderTplNodeRef found");
-			
-				entityFolderNodeRef = fileFolderService.create(parentEntityNodeRef, GUID.generate(), BeCPGModel.TYPE_ENTITY_FOLDER).getNodeRef();
-
-				// move entity in entityfolder and rename entityfolder
-				nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
-				nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-				nodeService.setProperty(entityFolderNodeRef, BeCPGModel.PROP_ENTITY_FOLDER_CLASS_NAME, entityType);
-			}
-		}
-		else if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY_V2)){
+		 if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY_V2)){
 			entityFolderNodeRef = entityNodeRef;		
 			folderTplNodeRef = entityTplService.getFolderTpl(entityType);
 		}
 		else{
-			logger.debug("entityNodeRef doesn't inherit from entity nor entityV2");
+			logger.debug("entityNodeRef doesn't inherit from  entityV2");
 			return;
 		}
 		
@@ -304,9 +280,8 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	private NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
-		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef == null) {
 			throw new BeCPGException("Folder 'Images' doesn't exist.");
 		}
@@ -485,17 +460,17 @@ public class EntityServiceImpl implements EntityService {
 		return workingCopyName;
 	}
 
-	@Override
-	public NodeRef getEntityFolder(NodeRef entityNodeRef) {
-		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-
-		// Actual entity parent is not a entity folder
-		if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-			return parentEntityNodeRef;
-		}
-		return null;
-	}
+//	@Override
+//	public NodeRef getEntityFolder(NodeRef entityNodeRef) {
+//		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+//		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
+//
+//		// Actual entity parent is not a entity folder
+//		if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
+//			return parentEntityNodeRef;
+//		}
+//		return null;
+//	}
 
 	@Override
 	public void copyEntityFolders(NodeRef folderTplNodeRef, NodeRef entityFolderNodeRef) {

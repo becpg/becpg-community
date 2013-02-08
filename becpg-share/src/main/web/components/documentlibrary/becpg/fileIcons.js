@@ -61,8 +61,6 @@ if (!beCPG.util.getFileIcon) {
 	   "qa:controlPoint" : "controlPoint",
 	   "{http://www.bcpg.fr/model/quality/1.0}qualityControl" : "qualityControl",
 	   "qa:qualityControl" : "qualityControl",
-	   "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" : "entityFolder",
-	   "bcpg:entityFolder" : "entityFolder",
 	   "{http://www.bcpg.fr/model/becpg/1.0}systemEntity" : "systemEntity",
 	   "bcpg:systemEntity" : "systemEntity",
 	   "{http://www.bcpg.fr/model/becpg/1.0}finishedProduct" : "finishedProduct",
@@ -93,15 +91,13 @@ if (!beCPG.util.getFileIcon) {
 
 		var iconSize = p_isSimpleView ? 32 : 48;
 
-		if (p_isContainer && !(type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder")  && !Alfresco.util.getFileIcon.types[type]) {
+		if (p_isContainer  && (!Alfresco.util.getFileIcon.types[type] 
+				|| type == "{http://www.alfresco.org/model/content/1.0}folder" 
+				|| type=="cm:folder" )) {
 			return Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-' + iconSize + '.png';
 		}
 
-		if (type == "{http://www.bcpg.fr/model/becpg/1.0}entityFolder" || type == "bcpg:entityFolder") {
-			var entityFolderClassName = node.properties["bcpg:entityFolderClassName"];
-			return Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'
-			      + Alfresco.util.getFileIcon(p_fileName, entityFolderClassName, iconSize);
-		} else if (p_isSimpleView || p_isContainer) {
+		if (p_isSimpleView) {
 			return Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'
 			      + Alfresco.util.getFileIcon(p_fileName, type, iconSize);
 		}
