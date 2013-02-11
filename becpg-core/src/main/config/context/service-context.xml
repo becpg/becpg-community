@@ -216,6 +216,7 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="nodeService" ref="nodeService" />		
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 
 	<!-- CompareEntityService -->

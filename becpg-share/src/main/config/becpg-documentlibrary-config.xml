@@ -108,20 +108,33 @@
 
 
 	<indicators>
-		<!-- <indicator id="entity-tovalidate" index="10"> <evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate</evaluator> 
-			</indicator> <indicator id="entity-valid" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.valid</evaluator> 
-			</indicator> <indicator id="entity-refused" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.refused</evaluator> 
-			</indicator> <indicator id="entity-archived" index="10"> <evaluator>evaluator.becpg.doclib.indicator.product.archived</evaluator> 
-			</indicator> -->
+		<indicator id="entity-tovalidate" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate
+			</evaluator>
+		</indicator>
+		<indicator id="entity-valid" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.entity.valid</evaluator>
+		</indicator>
+		<indicator id="entity-refused" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.entity.refused
+			</evaluator>
+		</indicator>
+		<indicator id="entity-archived" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.entity.archived
+			</evaluator>
+		</indicator>
 
 		<indicator id="project-planned" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.planned</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.planned
+			</evaluator>
 		</indicator>
 		<indicator id="project-inprogress" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.inprogress</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.inprogress
+			</evaluator>
 		</indicator>
 		<indicator id="project-onhold" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.onhold</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.onhold
+			</evaluator>
 		</indicator>
 		<indicator id="project-cancelled" index="10">
 			<evaluator>evaluator.becpg.doclib.indicator.project.cancelled

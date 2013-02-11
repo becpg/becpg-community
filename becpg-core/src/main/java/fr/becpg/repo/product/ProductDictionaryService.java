@@ -26,15 +26,7 @@ public interface ProductDictionaryService {
 	 */
 	@Deprecated
 	public Collection<QName> getDataLists();
-	
-	/**
-	 * Gets the display name.
-	 *
-	 * @param systemState the system state
-	 * @return the display name
-	 */
-	public String getDisplayName(SystemState systemState);
-	
+
 	/**
 	 * Gets the display name.
 	 *
@@ -46,26 +38,11 @@ public interface ProductDictionaryService {
 	/**
 	 * Gets the folder name.
 	 *
-	 * @param systemState the system state
-	 * @return the folder name
-	 */
-	public String getFolderName(SystemState systemState);
-	
-	/**
-	 * Gets the folder name.
-	 *
 	 * @param systemProductType the system product type
 	 * @return the folder name
 	 */
 	public String getFolderName(SystemProductType systemProductType);	
-//	
-//	/**
-//	 * Initialize repo hierarchy.
-//	 *
-//	 * @param containerNodeRef the container node ref
-//	 */
-//	public void initializeRepoHierarchy(NodeRef containerNodeRef);
-	
+
 	public QName getWUsedList(NodeRef childNodeRef);
 	
 

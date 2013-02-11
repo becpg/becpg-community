@@ -35,12 +35,11 @@ import fr.becpg.repo.product.hierarchy.HierarchyService;
 public class ImportProductVisitor extends ImportEntityListAspectVisitor implements ImportVisitor {
 
 	/** The PAT h_ produc t_ folder. */
-	private static String PATH_PRODUCT_FOLDER = "./cm:Products/cm:%s/cm:%s/cm:%s/cm:%s";
+	private static String PATH_PRODUCT_FOLDER = "./cm:Products/cm:%s/cm:%s/cm:%s";
 
 	protected static final String MSG_ERROR_PRODUCTHIERARCHY1_EMPTY = "import_service.error.err_producthierarchy1_empty";
 	protected static final String MSG_ERROR_PRODUCTHIERARCHY2_EMPTY = "import_service.error.err_producthierarchy2_empty";
 	protected static final String MSG_ERROR_UNKNOWN_PRODUCTTYPE = "import_service.error.err_unknown_producttype";
-	protected static final String MSG_ERROR_PRODUCTSTATE_EMPTY = "import_service.error.err_productstate_empty";
 	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 
 	/** The repository helper. */
@@ -85,47 +84,38 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				// import in a site
 				if (nodeRef == null && !importContext.isSiteDocLib()) {
 
-					// state
-					String state = (String) properties.get(BeCPGModel.PROP_PRODUCT_STATE);
-					if (state != null) {
-						if (!state.isEmpty()) {
+					// SystemProductType
+					SystemProductType systemProductType = SystemProductType.valueOf(type);
+					if (!systemProductType.equals(SystemProductType.Unknown)) {
 
-							// SystemProductType
-							SystemProductType systemProductType = SystemProductType.valueOf(type);
-							if (!systemProductType.equals(SystemProductType.Unknown)) {
+						// hierarchy 1
+						NodeRef hierarchy1 = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+						if (hierarchy1 != null ) {
 
-								// hierarchy 1
-								NodeRef hierarchy1 = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-								if (hierarchy1 != null ) {
+							// hierarchy 2
+							NodeRef hierarchy2 = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+							if (hierarchy2 != null ) {
 
-									// hierarchy 2
-									NodeRef hierarchy2 = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-									if (hierarchy2 != null ) {
+								// look for path where product should be
+								// stored
+								String path = String.format(PATH_PRODUCT_FOLDER, systemProductType, ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy1,nodeService)), ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy2,nodeService)));
 
-										// look for path where product should be
-										// stored
-										String path = String.format(PATH_PRODUCT_FOLDER, state, systemProductType, ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy1,nodeService)), ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy2,nodeService)));
+								List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
 
-										List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
-
-										if (!nodes.isEmpty()) {
-											nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);
-										}
-
-									} else {
-										throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
-									}
-
-								} else {
-									throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
+								if (!nodes.isEmpty()) {
+									nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);
 								}
+
 							} else {
-								throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_PRODUCTTYPE, nodeService.getType(nodeRef)));
+								throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
 							}
+
 						} else {
-							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTSTATE_EMPTY, properties));
+							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
 						}
-					}
+					} else {
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_PRODUCTTYPE, nodeService.getType(nodeRef)));
+					}					
 				}
 
 				// Check if product exists in Import folder

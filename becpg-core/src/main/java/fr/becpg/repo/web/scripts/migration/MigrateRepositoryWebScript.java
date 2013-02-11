@@ -138,7 +138,13 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     			renameUser(oldUserName, newUserName);
     		}    		
     	} else if(ACTION_MIGRATE_ENTITY_FOLDER.equals(action)){
-    		entityFolderMigrator.migrate();
+    		try{
+    			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+    			entityFolderMigrator.migrate();
+    		}
+    		finally{
+    			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+    		}    		
     	}
     	else{
     		logger.error("Unknown action" + action);

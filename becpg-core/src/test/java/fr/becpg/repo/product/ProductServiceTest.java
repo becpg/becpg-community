@@ -162,8 +162,10 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Check report --*/
 				logger.debug("/*-- Check report --*/");
-				//TODO now report is into document
-				ContentReader reader = contentService.getReader(rawMaterialNodeRef, ContentModel.PROP_CONTENT);
+				NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNotNull(documentsNodeRef);				
+				NodeRef documentNodeRef = nodeService.getChildByName(documentsNodeRef, ContentModel.ASSOC_CONTAINS, "MP test report - " + classDef.getTitle());
+				ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
 				assertNotNull("Reader should not be null", reader);
 				InputStream in = reader.getContentInputStream();
 				assertNotNull("Input stream should not be null", in);
@@ -408,10 +410,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
+				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- classify twice --*/
@@ -428,10 +429,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
+				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- Create raw material 2 --*/
@@ -464,10 +464,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
+				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 
 				return null;
 
