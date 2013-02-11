@@ -61,9 +61,9 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	private static String PATH_PRODUCTS = "Products";
 	
 	/** The PAT h_ classi f_ folder. */
-	private static String PATH_CLASSIF_FOLDER_RM = "./cm:Products/cm:ToValidate/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish";
+	private static String PATH_CLASSIF_FOLDER_RM = "./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish";
 	
-	private static String PATH_CLASSIF_FOLDER_FP = "./cm:Products/cm:ToValidate/cm:FinishedProduct/cm:Frozen/cm:Pizza";
+	private static String PATH_CLASSIF_FOLDER_FP = "./cm:Products/cm:FinishedProduct/cm:Frozen/cm:Pizza";
 	
 	private static String PATH_SITE_FOLDER = "./st:sites/cm:folder";
 	
@@ -368,7 +368,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertNotNull("import folder should exist", importFolderNodeRef);
 		assertEquals("import folder has one the productTpl", (int)1 , fileFolderService.listFiles(importFolderNodeRef).size());
 		
-		// load folder where products have been moved in ./cm:Products/cm:ToValidate/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
+		// load folder where products have been moved in ./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
 		List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 													PATH_CLASSIF_FOLDER_RM, 
 													null, namespaceService, false);

@@ -462,21 +462,18 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public void copyEntityTpl(NodeRef folderTplNodeRef, NodeRef entityFolderNodeRef) {
 		
-		// copy subfolders
+		// copy files
 		if(entityFolderNodeRef != null && folderTplNodeRef != null){			
-			for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
+			for (FileInfo file : fileFolderService.list(folderTplNodeRef)) {
 				
-				logger.debug("copy subFolder: " + folder.getName() + " entityFolderNodeRef: " + entityFolderNodeRef);				
-				//copyService.copy(folder.getNodeRef(), entityFolderNodeRef);
-				NodeRef subFolderNodeRef = copyService.copy(folder.getNodeRef(), entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, folder.getName());
-				
-				// initialize permissions according to template
-				NodeRef subFolderTplNodeRef = folder.getNodeRef();
-
-				if (subFolderNodeRef != null) {
-
-					if (nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
+				if(nodeService.getChildByName(entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, file.getName()) == null){
+					
+					logger.debug("copy file: " + file.getName() + " entityFolderNodeRef: " + entityFolderNodeRef);
+					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+					
+					// initialize permissions according to template
+					if (file.isFolder() && nodeService.hasAspect(file.getNodeRef(), BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
 
 						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
 								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
@@ -487,13 +484,13 @@ public class EntityServiceImpl implements EntityService {
 
 							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
 							String permissionName = permissionNames[cnt];
-							List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
+							List<AssociationRef> groups = nodeService.getTargetAssocs(file.getNodeRef(), permissionGroupAssociation);
 
 							if (groups!=null && !groups.isEmpty()) {
 								for (AssociationRef assocRef : groups) {
 									NodeRef groupNodeRef = assocRef.getTargetRef();
 									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
-									logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
+									logger.debug("add permission, folder: " + file.getName() + " authority: " + authorityName + " perm: " + permissionName);
 									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
 
 									// remove association
@@ -510,7 +507,7 @@ public class EntityServiceImpl implements EntityService {
 						
 						//TODO also copy datalist
 					}
-				}
+				}				
 			}
 		}
 		

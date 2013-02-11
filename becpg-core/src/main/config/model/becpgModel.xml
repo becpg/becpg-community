@@ -755,7 +755,7 @@
 		</type>
 
 		<type name="bcpg:productListItem">
-			<parent>bcpg:entityListItem</parent>bcpg:effectivityAspect
+			<parent>bcpg:entityListItem</parent>
 		</type>
 
 		<type name="bcpg:allergenList">

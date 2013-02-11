@@ -651,5 +651,5 @@ public interface BeCPGModel {
 	
 	QName PROP_COLOR = QName.createQName(BECPG_URI, "color");
 	
-
+	QName ASPECT_ENTITY_VERSIONABLE = QName.createQName(BECPG_URI, "entityVersionable");
 }

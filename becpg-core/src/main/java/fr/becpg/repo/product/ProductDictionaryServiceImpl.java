@@ -20,7 +20,6 @@ import fr.becpg.model.SystemProductType;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.TranslateHelper;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductDictionaryServiceImpl.
  *
@@ -28,10 +27,6 @@ import fr.becpg.repo.helper.TranslateHelper;
  */
 @Service
 public class ProductDictionaryServiceImpl implements ProductDictionaryService {
-
-	
-	/** The Constant LOCALIZATION_PFX_STATE. */
-	private static final String LOCALIZATION_PFX_STATE	= "state";
 	
 	/** The Constant LOCALIZATION_PFX_PRODUCT. */
 	private static final String LOCALIZATION_PFX_PRODUCT	= "product";
@@ -159,22 +154,7 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	public static SystemState getSystemState(String systemState) {
 		
 		return (systemState != null && systemState != "") ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductDictionaryService#getDisplayName(fr.becpg.model.SystemState)
-	 */
-	@Override
-	public String getDisplayName(SystemState systemState) {
-		
-		String messageId = String.format("%s.%s.%s", LOCALIZATION_PFX_STATE, LOCALIZATION_PFX_PRODUCT, systemState).toLowerCase();
-		String folderName = I18NUtil.getMessage(messageId, Locale.getDefault());
-		
-		if(folderName == null)
-			logger.error("Failed to get the display name of the system state: " + systemState + " - messageId: " + messageId);
-		
-		return folderName;
-	}
+	}	
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.product.ProductDictionaryService#getDisplayName(fr.becpg.model.SystemProductType)
@@ -189,16 +169,7 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 			logger.error("Failed to get the display name of the system product type: " + systemProductType + " - messageId: " + messageId);
 		
 		return folderName;
-	}	
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.product.ProductDictionaryService#getFolderName(fr.becpg.model.SystemState)
-	 */
-	@Override
-	public String getFolderName(SystemState systemState) {
-		
-		return TranslateHelper.getTranslatedPath(String.format("%s.%s", LOCALIZATION_PFX_PRODUCT, systemState));				
-	}
+	}		
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.product.ProductDictionaryService#getFolderName(fr.becpg.model.SystemProductType)

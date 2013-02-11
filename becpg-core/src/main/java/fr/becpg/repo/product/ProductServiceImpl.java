@@ -149,15 +149,15 @@ public class ProductServiceImpl implements ProductService {
     	// products
 		NodeRef productsNodeRef = repoService.createFolderByPath(containerNodeRef, RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
 		
-		// state
-		SystemState systemState = productData.getState();
-		String stateFolderName = productDictionaryService.getFolderName(systemState);
-		NodeRef stateNodeRef = repoService.createFolderByPath(productsNodeRef, systemState.toString(), stateFolderName);
+//		// state
+//		SystemState systemState = productData.getState();
+//		String stateFolderName = productDictionaryService.getFolderName(systemState);
+//		NodeRef stateNodeRef = repoService.createFolderByPath(productsNodeRef, systemState.toString(), stateFolderName);
 		
 		// product type		
 		SystemProductType systemProductType = SystemProductType.valueOf(nodeService.getType(productNodeRef));
 		String productTypeFolderName = productDictionaryService.getFolderName(systemProductType);
-		NodeRef productTypeNodeRef = repoService.createFolderByPath(stateNodeRef, systemProductType.toString(), productTypeFolderName);
+		NodeRef productTypeNodeRef = repoService.createFolderByPath(productsNodeRef, systemProductType.toString(), productTypeFolderName);
 		
 		// hierarchy 1
 		if(productData.getHierarchy1() != null){
