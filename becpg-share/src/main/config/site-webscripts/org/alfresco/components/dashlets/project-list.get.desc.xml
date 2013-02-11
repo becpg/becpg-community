@@ -1,0 +1,6 @@
+<webscript>
+   <shortname>Project list</shortname>
+   <description>Dashlet to show project list</description>
+   <family>dashlet</family>
+   <url>/components/dashlets/project-list</url>
+</webscript>

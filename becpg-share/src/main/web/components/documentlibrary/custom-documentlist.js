@@ -99,7 +99,104 @@
 	        }
 	        
 	     }
-		 }
+		 },
+		 
+		 /**
+	       * Like/Unlike event handler
+	       *
+	       * @method onLikes
+	       * @param row {HTMLElement} DOM reference to a TR element (or child thereof)
+	       */
+	      onLikes: function DL_onLikes(row)
+	      {
+	         var elIdentifier = row;
+	         if (typeof this.viewRenderers[this.options.viewRendererName] === "object")
+	         {
+	            elIdentifier = this.viewRenderers[this.options.viewRendererName].getDataTableRecordIdFromRowElement(this, row);
+	         }
+	         var oRecord = this.widgets.dataTable.getRecord(elIdentifier),
+	            record = oRecord.getData(),
+	            nodeRef = record.jsNode.nodeRef,
+	            likes = record.likes;
+
+	         likes.isLiked = !likes.isLiked;
+	         likes.totalLikes += (likes.isLiked ? 1 : -1);
+
+	         var responseConfig =
+	         {
+	            successCallback:
+	            {
+	               fn: function DL_onLikes_success(event, p_nodeRef)
+	               {
+	                  var data = event.json.data;
+	                  if (data)
+	                  {
+	                     // Update the record with the server's value
+	                     var oRecord = this._findRecordByParameter(p_nodeRef, "nodeRef"),
+	                        record = oRecord.getData(),
+	                        node = record.node,
+	                        likes = record.likes;
+
+	                     likes.totalLikes = data.ratingsCount;
+	                     this.widgets.dataTable.updateRow(oRecord, record);
+
+	                     // Post to the Activities Service on the "Like" action
+	                     if (likes.isLiked)
+	                     {
+	                        var activityData =
+	                        {
+	                           fileName: record.fileName,
+	                           nodeRef: node.nodeRef
+	                        };
+	                        if(beCPG.util.isEntity(record)){
+	                        	this.modules.actions.postActivity(this.options.siteId, "entity-liked", "entity-details", activityData);
+	                        } else  if (node.isContainer)
+	                        {
+	                           this.modules.actions.postActivity(this.options.siteId, "folder-liked", "folder-details", activityData);
+	                        }
+	                        else
+	                        {
+	                           this.modules.actions.postActivity(this.options.siteId, "file-liked", "document-details", activityData);
+	                        }
+	                     }
+	                  }
+	               },
+	               scope: this,
+	               obj: nodeRef.toString()
+	            },
+	            failureCallback:
+	            {
+	               fn: function DL_onLikes_failure(event, p_nodeRef)
+	               {
+	                  // Reset the flag to it's previous state
+	                  var oRecord = this._findRecordByParameter(p_nodeRef, "nodeRef"),
+	                     record = oRecord.getData(),
+	                     likes = record.likes;
+
+	                  likes.isLiked = !likes.isLiked;
+	                  likes.totalLikes += (likes.isLiked ? 1 : -1);
+	                  this.widgets.dataTable.updateRow(oRecord, record);
+	                  Alfresco.util.PopupManager.displayPrompt(
+	                  {
+	                     text: this.msg("message.save.failure", record.displayName)
+	                  });
+	               },
+	               scope: this,
+	               obj: nodeRef.toString()
+	            }
+	         };
+
+	         if (likes.isLiked)
+	         {
+	            this.services.likes.set(nodeRef, 1, responseConfig);
+	         }
+	         else
+	         {
+	            this.services.likes.remove(nodeRef, responseConfig);
+	         }
+	         this.widgets.dataTable.updateRow(oRecord, record);
+	      }
+
 	  
 	
   });
@@ -148,7 +245,7 @@
         {
         	
         	
-        	if(jsNode.aspects.indexOf("bcpg:entityListsAspect") > 0){
+        	if(beCPG.util.isEntity(record)){
         		html = scope.getActionUrls(record).documentDetailsUrl.replace("document-details","entity-details");
   	     	} else {
   	         if (record.parent.isContainer)
@@ -267,7 +364,68 @@
      var dnd = new Alfresco.DnD(imgId, scope);
   };
 	  
-	
+  
+  
+  /**
+   * Generate "Likes" UI
+   *
+   * @method generateLikes
+   * @param scope {object} DocumentLibrary instance
+   * @param record {object} File record
+   * @return {string} HTML mark-up for Likes UI
+   */
+  Alfresco.DocumentList.generateLikes = function DL_generateLikes(scope, record)
+  {
+     var node = record.node,
+        likes = record.likes,
+        i18n = "like." + (node.isContainer && !beCPG.util.isEntity(record) ? "folder." : "document."),
+        html = "";
+     
+     if (likes.isLiked)
+     {
+        html = '<a class="like-action enabled" title="' + scope.msg(i18n + "remove.tip") + '" tabindex="0"></a>';
+     }
+     else
+     {
+        html = '<a class="like-action" title="' + scope.msg(i18n + "add.tip") + '" tabindex="0">' + scope.msg(i18n + "add.label") + '</a>';
+     }
+
+     html += '<span class="likes-count">' + $html(likes.totalLikes) + '</span>';
+
+     return html;
+  };
+
+  /**
+   * Generate "Comments" UI
+   *
+   * @method generateComments
+   * @param scope {object} DocumentLibrary instance
+   * @param record {object} File record
+   * @return {string} HTML mark-up for Comments UI
+   */
+  Alfresco.DocumentList.generateComments = function DL_generateComments(scope, record)
+  {
+	  
+	  
+	  
+     var node = record.node,
+        actionUrls = scope.getActionUrls(record),
+        url = actionUrls[node.isContainer ? "folderDetailsUrl" : "documentDetailsUrl"] + "#comment",
+        i18n = "comment." + (node.isContainer && !beCPG.util.isEntity(record) ? "folder." : "document.");
+
+      //beCPG
+	  	if(beCPG.util.isEntity(record)){
+	  		url = url.replace("folder-details", "entity-details");
+	  	}
+     
+     
+     var html = '<a href="' + url + '" class="comment" title="' + scope.msg(i18n + "tip") + '" tabindex="0">' + scope.msg(i18n + "label") + '</a>';
+     if (node.properties["fm:commentCount"] !== undefined)
+     {
+        html += '<span class="comment-count">' + $html(node.properties["fm:commentCount"]) + '</span>';
+     }
+     return html;
+  };
   
 })();
 

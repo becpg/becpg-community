@@ -61,25 +61,15 @@
    	
    };
    
-//   buildSpaceNamePath = function(pathParts, name) {
-//
-//   	
-//  	 //TODO remove when V2
-//   if (me.options.list == "taskList" || me.options.list == "deliverableList") {
-//  	 return (pathParts.length !== 0 ? ("/" + pathParts.join("/")) : "") + "/" + name;
-//      }
-//  	
-//	   return (pathParts.length !== 0 ? ("/" + pathParts.join("/")) : "");
-//  };
-//
-//  // rep:reportEntityAspect
-//  if (this.options.siteId) {
-//	   url = Alfresco.constants.URL_PAGECONTEXT + "site/" + this.options.siteId + "/" + "documentlibrary?path="
-//	         + encodeURIComponent(buildSpaceNamePath( this.entity.path.split("/").slice(5), this.entity.name));
-//  } else {
-//	   url = Alfresco.constants.URL_PAGECONTEXT + "repository?path="
-//	         + encodeURIComponent(buildSpaceNamePath(this.entity.path.split("/").slice(2),  this.entity.name));
-//  }
+   beCPG.util.isEntity = function (record){
+   	if(record && record.jsNode && record.jsNode.aspects.indexOf("bcpg:entityListsAspect") > 0){
+   		return true;
+   	}
+   	return false;
+   	
+   };
+   
+   
    
    
 })();

@@ -49,7 +49,7 @@
 			                  displayName : this.options.displayName,
 			                  activity : {
 				                  "entity" : {
-				                     type : "org.alfresco.documentlibrary.entity-liked",
+				                     type : "org.alfresco.documentlibrary.file-liked",
 				                     page : "entity-details?nodeRef={nodeRef}"
 				                  }
 			                  }
@@ -60,7 +60,7 @@
 			               // Create favourite widget
 			               new Alfresco.Favourite(this.id + '-favourite').setOptions({
 			                  nodeRef : this.options.nodeRef,
-			                  type : "folder"// this.nodeType
+			                  type : "folder"
 			               }).display(this.options.isFavourite);
 		               }
 

@@ -21,7 +21,6 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
