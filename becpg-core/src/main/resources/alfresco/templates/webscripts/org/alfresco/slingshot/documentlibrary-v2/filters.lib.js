@@ -8,7 +8,9 @@ var Filters =
    {
       "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder")',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
-      "images": '+@cm\\:content.mimetype:image/*'
+      "images": '+@cm\\:content.mimetype:image/*',
+      "product": '+(TYPE:"bcpg:product")',
+      "project": '+(TYPE:"pjt:project")'
    },
    
    /**
@@ -113,7 +115,7 @@ var Filters =
       {
          case "all":
             filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += " +TYPE:\"cm:content\"";
+            filterQuery += " +(TYPE:\"cm:content\" OR  TYPE:\"bcpg:entityV2\")";
             filterParams.query = filterQuery + filterQueryDefaults;
             break;
 
@@ -150,7 +152,7 @@ var Filters =
             {
                filterQuery += " +@cm\\:" + ownerField + ":\"" + person.properties.userName + '"';
             }
-            filterQuery += " +TYPE:\"cm:content\"";
+            filterQuery += " +(TYPE:\"cm:content\" OR  TYPE:\"bcpg:entityV2\")";
 
             filterParams.sort = [
             {
@@ -177,7 +179,21 @@ var Filters =
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
             break;
-
+ 			case "Valid":
+         case "ToValidate":
+         	filterQuery += this.constructPathQuery(parsedArgs);
+         	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
+            filterParams.query = filterQuery + filterQueryDefaults;
+         	break;
+         case "Planned":
+         case "InProgress":
+         case "OnHold":
+         case "Cancelled":
+         case "Completed":
+         	filterQuery += this.constructPathQuery(parsedArgs);
+         	filterQuery += " +@pjt\\:projectState:\""+filter+"\"";
+            filterParams.query = filterQuery + filterQueryDefaults;
+         	break; 	
          case "favourites":
             var foundOne = false;
 

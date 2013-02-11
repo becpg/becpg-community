@@ -303,9 +303,14 @@ public class ImportEntityXmlVisitor {
 
 	private NodeRef createAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name) {
 		logger.debug("Creating child assoc: " + assocName + " add type :" + type);
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, name);
-		return nodeService.createNode(parentNodeRef, assocName, assocName, type, properties).getChildRef();
+		NodeRef ret = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
+		if(ret == null){
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, name);
+			return nodeService.createNode(parentNodeRef, assocName, assocName, type, properties).getChildRef();
+		} else {
+			return ret;
+		}
 	}
 
 	private NodeRef findNodeByPath(String parentPath) {

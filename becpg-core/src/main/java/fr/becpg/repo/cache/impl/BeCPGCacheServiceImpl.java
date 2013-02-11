@@ -48,7 +48,7 @@ public class BeCPGCacheServiceImpl implements  BeCPGCacheService {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getFromCache(String cacheName, String cacheKey,
-			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack) {
+			BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack) {
 		
 		
 		cacheKey = computeCacheKey(cacheKey);
@@ -63,7 +63,7 @@ public class BeCPGCacheServiceImpl implements  BeCPGCacheService {
 		}
 
 		if (ret == null) {
-			ret = sigedCacheDataProviderCallBack.getData();
+			ret = cacheDataProviderCallBack.getData();
 			if(ret!=null){
 				logger.debug("Store values to " + cacheKey);
 				cache.put(cacheKey, ret);
@@ -97,7 +97,7 @@ public class BeCPGCacheServiceImpl implements  BeCPGCacheService {
 		return cacheKey+"@"+tenantService.getCurrentUserDomain();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private SimpleCache<Serializable, ?> getCache(String cacheName) {
 		if(!caches.containsKey(cacheName)){
 			caches.put(cacheName, new DefaultSimpleCache(maxCacheItems, cacheName));

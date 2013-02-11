@@ -378,11 +378,9 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		/*
 	 	 * import files
 	 	 * 
-	 	 * 		- get the parent of the node (folder, productFolder, supplierFolder), folder may have been initialized by a policy
 	 	 * 		- get the targetFolder where files will be stored
 	 	 */
-	 	NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-	 	NodeRef targetFolderNodeRef = parentNodeRef; 
+	 	NodeRef targetFolderNodeRef = nodeRef; 
 	 	String fileName = "";
 	 	List<String> path = new ArrayList<String>();
 		for(int z_idx=0; z_idx<values.size() && z_idx < importContext.getColumns().size(); z_idx++){
@@ -411,7 +409,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 						 }
 						 
 						 logger.debug("creates folders" + pathFolders);
-						 targetFolderNodeRef = repoService.createFolderByPaths(parentNodeRef, pathFolders);
+						 targetFolderNodeRef = repoService.createFolderByPaths(nodeRef, pathFolders);
 					 }
 					 else{
 						 targetFolderNodeRef = nodeRef;
