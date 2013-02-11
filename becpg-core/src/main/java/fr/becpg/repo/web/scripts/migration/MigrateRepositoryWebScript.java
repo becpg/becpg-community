@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
@@ -24,9 +26,12 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.migration.BeCPGSystemFolderMigrator;
 import fr.becpg.repo.migration.EntityFolderMigrator;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -48,7 +53,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private static final String ACTION_MIGRATE_VERSION = "version";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	private static final String ACTION_RENAME_USER = "renameUser";
-	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";	
+	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";
+	private static final String ACTION_MIGRATE_CLASSIFY_PRODUCT = "classifyProduct";	
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
@@ -72,6 +78,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private NodeService nodeService;
 	
 	private EntityFolderMigrator entityFolderMigrator;
+	
+	private ProductService productService;
+	
+	private Repository repository;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -103,6 +113,14 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 
 	public void setEntityFolderMigrator(EntityFolderMigrator entityFolderMigrator) {
 		this.entityFolderMigrator = entityFolderMigrator;
+	}
+	
+	public void setProductService(ProductService productService) {
+		this.productService = productService;
+	}
+
+	public void setRepository(Repository repository) {
+		this.repository = repository;
 	}
 
 	@Override
@@ -141,6 +159,21 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		try{
     			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
     			entityFolderMigrator.migrate();
+    		}
+    		finally{
+    			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+    		}    		
+    	}
+    	else if(ACTION_MIGRATE_CLASSIFY_PRODUCT.equals(action)){
+    		try{
+    			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+    			
+    			// search for entities to migrate
+    			List<NodeRef> productsNodeRef = beCPGSearchService.search("+TYPE:\"bcpg:product\" -ASPECT:\"bcpg:compositeVersionable\" ", null, RepoConsts.MAX_RESULTS_UNLIMITED, SearchService.LANGUAGE_LUCENE);
+    			
+    			for (NodeRef productNodeRef : productsNodeRef){
+    				productService.classifyProduct(repository.getCompanyHome(), productNodeRef);
+    			}    			
     		}
     		finally{
     			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
