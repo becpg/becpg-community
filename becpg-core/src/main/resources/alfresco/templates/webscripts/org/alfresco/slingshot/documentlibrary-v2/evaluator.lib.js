@@ -59,7 +59,7 @@ var Evaluator =
             /**
              * SPECIFIC TO: DOCUMENTS
              */
-    	    case "entityV2":               
+    	    case "entity":               
             case "document":
                // Working Copy?
                if (node.hasAspect("cm:workingcopy"))
