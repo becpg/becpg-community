@@ -154,6 +154,8 @@
 		<property name="personService" ref="personService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityFolderMigrator" ref="entityFolderMigrator"/>
+		<property name="productService" ref="productService"/>		
+		<property name="repository" ref="repositoryHelper"/>
 	</bean>
 
 
