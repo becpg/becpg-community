@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -29,6 +30,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
@@ -578,7 +580,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	}
 	
 	@Test
-	public void testInitDeliverables() {
+	public void testInitDeliverables() throws InterruptedException {
 
 		initTest();
 
@@ -595,6 +597,8 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				return projectData.getNodeRef();
 			}
 		}, false, true);
+		
+		Thread.sleep(6000);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -714,5 +718,48 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				return null;
 			}
 		}, false, true);
+	}
+	
+	@Test
+	public void testProjectOneTask() {
+
+		
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+						
+						// create project Tpl
+						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_PAIN_REF, null,
+										null, null, null, null, null, 0, null);
+						
+						// create datalists
+						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+						taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
+								"activiti$projectAdhoc"));
+						projectData.setTaskList(taskList);
+						
+						projectData.setParentNodeRef(testFolderNodeRef);
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						
+						// start
+						projectData.setProjectState(ProjectState.InProgress);
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						
+						return projectData.getNodeRef();
+					}
+				}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+						
+						ProjectData projectData = (ProjectData)alfrescoRepository.findOne(projectNodeRef);
+						assertEquals(ProjectState.InProgress, projectData.getProjectState());
+						return null;
+					}
+				}, false, true);
+
 	}
 }
