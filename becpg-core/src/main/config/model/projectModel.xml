@@ -184,6 +184,7 @@
 				</property>
 				<property name="pjt:tlWorkflowName">
 					<type>d:text</type>
+					<default>activiti$projectAdhoc</default>
 					<constraints>
 						<constraint ref="pjt:allowedWorkflows" />
 					</constraints>
