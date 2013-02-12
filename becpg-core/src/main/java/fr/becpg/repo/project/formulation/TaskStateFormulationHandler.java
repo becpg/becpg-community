@@ -58,11 +58,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	}
 	
 
-	private void visitTask(ProjectData projectData, NodeRef taskListNodeRef) {
+	private void visitTask(ProjectData projectData, TaskListDataItem taskListDataItem) {		
 
+		NodeRef taskListNodeRef = taskListDataItem != null ? taskListDataItem.getNodeRef() : null;
 		logger.debug("visitTask taskListNodeRef: " + taskListNodeRef);
-
-		// add next tasks
+		
+		// add next tasks		
 		List<TaskListDataItem> nextTasks = ProjectHelper.getNextTasks(projectData, taskListNodeRef);
 		logger.debug("nextTasks size: " + nextTasks.size());
 		if (!nextTasks.isEmpty()) {
@@ -147,11 +148,11 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						nextTask.setCompletionPercent(COMPLETED);
 					}
 
-					visitTask(projectData, nextTask.getNodeRef());
+					visitTask(projectData, nextTask);
 				}
 				projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 			}
-		} else {
+		} else if(taskListDataItem !=null && TaskState.Completed.equals(taskListDataItem.getState())) {
 			projectData.setCompletionDate(new Date());
 			projectData.setCompletionPercent(COMPLETED);
 			projectData.setProjectState(ProjectState.Completed);
