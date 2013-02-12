@@ -30,6 +30,6 @@ function getMaxItems()
    return parseInt(maxItems && maxItems.length > 0 ? maxItems : 50, 10);
 }
 
-model.preferences = AlfrescoUtil.getPreferences("org.alfresco.share.productcatalog.dashlet");
+model.preferences = AlfrescoUtil.getPreferences("org.alfresco.share.product.catalog.dashlet");
 model.filters = getFilters();
 model.maxItems = getMaxItems();
