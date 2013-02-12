@@ -7,7 +7,7 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
 	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="product-catalog"></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/dashlets/product-catalog.js"  group="product-catalog"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/dashlets/becpg-catalog.js"  group="product-catalog"></@script>
 </@>
 
 
@@ -20,8 +20,9 @@
 		<script type="text/javascript">//<![CDATA[
 		(function()
 		{
-		   new beCPG.dashlet.ProductCatalog("${el}").setOptions(
+		    new beCPG.dashlet.BeCPGCatalog("${el}").setOptions(
 		   {
+		   	catalogType : "product",
 		      filter: "${prefFilter?js_string}",
 		      validFilters: [<#list filters as filter>"${filter.type?js_string}"<#if filter_has_next>,</#if></#list>],
 		      simpleView: ${prefSimpleView?string?js_string},
