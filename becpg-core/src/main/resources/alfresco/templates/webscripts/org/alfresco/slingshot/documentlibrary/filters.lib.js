@@ -267,7 +267,7 @@ var Filters =
       {
          filterParams.query += " " + (Filters.TYPE_MAP[parsedArgs.type] || "");
          if(args.searchTerm!=null &&  args.searchTerm != "" ){
-         	filterParams.query += " AND ("+args.searchTerm+")";
+         	filterParams.query += " AND ALL:\""+args.searchTerm+"\"";
          }
          
       }
