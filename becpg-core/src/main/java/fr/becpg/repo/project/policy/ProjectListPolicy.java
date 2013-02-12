@@ -27,8 +27,10 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
+import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
@@ -123,8 +125,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
 		if (beforeState != null && afterState != null) {
-			if (beforeState.equals(DeliverableState.InProgress.toString())
-					&& afterState.equals(DeliverableState.Completed.toString())) {
+			if (beforeState.equals(TaskState.InProgress.toString())
+					&& afterState.equals(TaskState.Completed.toString())) {
 				logger.debug("### update task list: " + nodeRef + " - afterState: " + afterState);
 				Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
 				Date endDate = ProjectHelper.removeTime(new Date());
@@ -132,6 +134,16 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
 				formulateProject = true;
+			}
+			
+			//start project by task list if project has state InProgress -> InProgress
+			if(!afterState.equals(beforeState) && afterState.equals(TaskState.InProgress)){
+				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
+				ProjectData projectData = (ProjectData)alfrescoRepository.findOne(projectNodeRef);
+				if(ProjectState.Planned.equals(projectData.getProjectState())){
+					projectData.setProjectState(ProjectState.InProgress);
+					formulateProject = true;
+				}
 			}
 		}
 		
