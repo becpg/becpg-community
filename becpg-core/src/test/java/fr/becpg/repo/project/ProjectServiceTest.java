@@ -446,7 +446,6 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(dateFormat.parse("28/11/2012"), projectData.getTaskList().get(2).getEnd());
 
 				// start project
-				logger.debug("###start project");
 				projectData.setProjectState(ProjectState.InProgress);
 				alfrescoRepository.save(projectData);
 
@@ -467,7 +466,6 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(ProjectHelper.removeTime(new Date()), projectData.getTaskList().get(0).getStart());
 
 				// submit 1st task
-				logger.debug("###submit 1st task. current state: " + projectData.getTaskList().get(0).getState());
 				projectData.getTaskList().get(0).setState(TaskState.Completed);
 				alfrescoRepository.save(projectData);
 

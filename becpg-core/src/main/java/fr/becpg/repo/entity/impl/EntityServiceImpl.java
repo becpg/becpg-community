@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -437,7 +438,7 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public boolean hasAssociatedImages(QName type) {
 
-		return BeCPGModel.TYPE_CLIENT.isMatch(type) || BeCPGModel.TYPE_SUPPLIER.isMatch(type) || dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT);
+		return BeCPGModel.TYPE_CLIENT.isMatch(type) || BeCPGModel.TYPE_SUPPLIER.isMatch(type) || dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT) || ProjectModel.TYPE_PROJECT.isMatch(type);
 	}
 
 	/**
@@ -460,16 +461,16 @@ public class EntityServiceImpl implements EntityService {
 
 
 	@Override
-	public void copyEntityTpl(NodeRef folderTplNodeRef, NodeRef entityFolderNodeRef) {
+	public void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		
 		// copy files
-		if(entityFolderNodeRef != null && folderTplNodeRef != null){			
-			for (FileInfo file : fileFolderService.list(folderTplNodeRef)) {
+		if(targetNodeRef != null && sourceNodeRef != null){			
+			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
 				
-				if(nodeService.getChildByName(entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, file.getName()) == null){
+				if(nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, file.getName()) == null){
 					
-					logger.debug("copy file: " + file.getName() + " entityFolderNodeRef: " + entityFolderNodeRef);
-					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					logger.debug("copy file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);
+					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
 					
 					// initialize permissions according to template
@@ -508,6 +509,19 @@ public class EntityServiceImpl implements EntityService {
 						//TODO also copy datalist
 					}
 				}				
+			}
+		}
+		
+	}
+
+	@Override
+	public void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+		
+		if(targetNodeRef != null && sourceNodeRef != null){			
+			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
+				
+				logger.debug("move file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);				
+				nodeService.moveNode(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
 			}
 		}
 		

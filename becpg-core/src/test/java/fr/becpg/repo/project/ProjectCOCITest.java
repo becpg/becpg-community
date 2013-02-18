@@ -16,7 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.test.RepoBaseTestCase;
+import fr.becpg.repo.project.data.ProjectData;
 
 /**
  * Test for checkout checkin
@@ -47,13 +47,18 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 				// Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(projectTplNodeRef);
 				
+				ProjectData workingCopyData = (ProjectData)alfrescoRepository.findOne(workingCopyNodeRef);								
+				assertTrue(workingCopyData.getDeliverableList().get(0).getTask().equals(workingCopyData.getTaskList().get(0).getNodeRef()));
+				assertTrue(workingCopyData.getDeliverableList().get(1).getTask().equals(workingCopyData.getTaskList().get(1).getNodeRef()));
+				assertTrue(workingCopyData.getDeliverableList().get(2).getTask().equals(workingCopyData.getTaskList().get(1).getNodeRef()));
+				assertTrue(workingCopyData.getDeliverableList().get(3).getTask().equals(workingCopyData.getTaskList().get(2).getNodeRef()));
+				
 				// Check in
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				NodeRef newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				
 				assertNotNull(newRawMaterialNodeRef);
-				logger.info("### versionLabel: " + nodeService.getProperty(newRawMaterialNodeRef,ContentModel.PROP_VERSION_LABEL));
 				
 				return null;
 			}

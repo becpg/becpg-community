@@ -47,8 +47,7 @@
     	<property name="entityListDAO" ref="entityListDAO"/>
     </bean>
     <bean id="nonConformityService" class="fr.becpg.repo.quality.impl.NonConformityServiceImpl">
-		<property name="repoService" ref="repoService" />		
-		<property name="nodeService" ref="nodeService" />		
+		<property name="repoService" ref="repoService" />				
 		<property name="repositoryHelper" ref="repositoryHelper" />				
 	</bean>
     <bean id="nonConformityPolicies" class="fr.becpg.repo.quality.policy.NonConformityPolicies" init-method="init">

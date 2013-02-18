@@ -261,36 +261,42 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 			if (sourceListContainerNodeRef != null) {
 
-				List<NodeRef> sourceListsNodeRef = getExistingListsNodeRef(sourceListContainerNodeRef);
-				for (NodeRef sourceListNodeRef : sourceListsNodeRef) {
+				if (targetListContainerNodeRef == null) {
 
 					// create container if needed
-					if (targetListContainerNodeRef == null) {
-
-						targetListContainerNodeRef = createListContainer(targetNodeRef);
-					}
-
-					String dataListType = (String) nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-					QName listQName = QName.createQName(dataListType, namespaceService);
+					// targetListContainerNodeRef = createListContainer(targetNodeRef);
 					
-					if(listQNames == null || listQNames.contains(listQName)){
+					// copy all datalist in order to have assoc references updated (ie: taskList is referenced in deliverableList, so when doing checkout assoc must be updated)
+					targetListContainerNodeRef = copyService.copy(sourceListContainerNodeRef, targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, true);
+					nodeService.setProperty(targetListContainerNodeRef, ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);						
+				}
+				else{
 					
-						NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
-						boolean copy = true;
-						if (existingListNodeRef != null) {
-							if (override) {
-								nodeService.deleteNode(existingListNodeRef);
-							} else {
-								copy = false;
+					List<NodeRef> sourceListsNodeRef = getExistingListsNodeRef(sourceListContainerNodeRef);
+					for (NodeRef sourceListNodeRef : sourceListsNodeRef) {
+						
+						String dataListType = (String) nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+						QName listQName = QName.createQName(dataListType, namespaceService);
+						
+						if(listQNames == null || listQNames.contains(listQName)){
+						
+							NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
+							boolean copy = true;
+							if (existingListNodeRef != null) {
+								if (override) {
+									nodeService.deleteNode(existingListNodeRef);
+								} else {
+									copy = false;
+								}
+							}
+
+							if (copy) {
+								NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);
+								nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
 							}
 						}
-
-						if (copy) {
-							NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);
-							nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
-						}
 					}
-				}
+				}									
 			}
 		}
 		

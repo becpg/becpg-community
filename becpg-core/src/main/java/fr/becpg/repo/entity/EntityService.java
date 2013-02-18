@@ -93,6 +93,7 @@ public interface EntityService {
 	 NodeRef getEntityTplNodeRef(NodeRef entityNodeRef);
 
 
-	 void copyEntityTpl(NodeRef entityTplNodeRef, NodeRef entityNodeRef); 
+	 void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef); 
     
+	 void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef);
 }

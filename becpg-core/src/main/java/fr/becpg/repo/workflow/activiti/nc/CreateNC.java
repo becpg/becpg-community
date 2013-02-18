@@ -105,10 +105,6 @@ public class CreateNC extends BaseJavaDelegate {
 					ncName = Calendar.getInstance().get(Calendar.YEAR) + "-"
 							+ nodeService.getProperty(ncNodeRef, BeCPGModel.PROP_CODE);
 					nodeService.setProperty(ncNodeRef, ContentModel.PROP_NAME, ncName);
-					NodeRef entityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-					if (nodeService.getType(entityFolderNodeRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-						nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, ncName);
-					}
 
 					// product
 					if (productNodeRef != null) {
@@ -155,9 +151,7 @@ public class CreateNC extends BaseJavaDelegate {
 
 			private NodeRef getDocumentsFolder(NodeRef productNodeRef) {
 
-				NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
-
-				for (FileInfo file : fileFolderService.listFolders(parentEntityNodeRef)) {
+				for (FileInfo file : fileFolderService.listFolders(productNodeRef)) {
 					if (file.getName().equals(TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS))) {
 						return file.getNodeRef();
 					}

@@ -327,8 +327,9 @@ public class ImportServiceTest extends RepoBaseTestCase {
  			}},false,true);
 		
 		/*
-		 * Create file to import
+		 * Create file
 		 */
+				
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
  			@Override

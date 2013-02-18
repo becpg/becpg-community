@@ -134,23 +134,23 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
 		if (listContainerNodeRef != null) {
 			
-			// refresh reference to prevTasks
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
-			if (listNodeRef != null) {
-				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
-				Map<NodeRef, NodeRef> originalMaps = new HashMap<NodeRef, NodeRef>(listItems.size());
-				for (NodeRef listItem : listItems) {
-					originalMaps.put(copyService.getOriginal(listItem), listItem);
-				}
-
-				listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-				listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-				updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
-
-			}
+//			// refresh reference to prevTasks
+//			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
+//			if (listNodeRef != null) {
+//				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
+//				Map<NodeRef, NodeRef> originalMaps = new HashMap<NodeRef, NodeRef>(listItems.size());
+//				for (NodeRef listItem : listItems) {
+//					originalMaps.put(copyService.getOriginal(listItem), listItem);
+//				}
+//
+//				listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+//				listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+//				updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
+//
+//			}
 			
 			//Deliverables
-			listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 			if (listNodeRef != null) {
 				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 				for (NodeRef listItem : listItems) {
@@ -160,20 +160,20 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		}
 	}
 
-	private void updateOriginalNodes(Map<NodeRef, NodeRef> originalMaps, List<NodeRef> listItems, QName propertyQName) {
-
-		for (NodeRef listItem : listItems) {
-			List<NodeRef> originalTasks = associationService.getTargetAssocs(listItem, propertyQName);
-			List<NodeRef> tasks = new ArrayList<NodeRef>(originalTasks.size());
-
-			for (NodeRef originalTask : originalTasks) {
-				if (originalMaps.containsKey(originalTask)) {
-					tasks.add(originalMaps.get(originalTask));
-				}
-			}
-			associationService.update(listItem, propertyQName, tasks);
-		}
-	}
+//	private void updateOriginalNodes(Map<NodeRef, NodeRef> originalMaps, List<NodeRef> listItems, QName propertyQName) {
+//
+//		for (NodeRef listItem : listItems) {
+//			List<NodeRef> originalTasks = associationService.getTargetAssocs(listItem, propertyQName);
+//			List<NodeRef> tasks = new ArrayList<NodeRef>(originalTasks.size());
+//
+//			for (NodeRef originalTask : originalTasks) {
+//				if (originalMaps.containsKey(originalTask)) {
+//					tasks.add(originalMaps.get(originalTask));
+//				}
+//			}
+//			associationService.update(listItem, propertyQName, tasks);
+//		}
+//	}
 	
 	private void updateDelieverableDocument(NodeRef projectNodeRef, NodeRef listItem){
 		

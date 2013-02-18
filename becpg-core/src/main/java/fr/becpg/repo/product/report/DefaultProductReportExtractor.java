@@ -155,8 +155,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		// create a dataset for images and load images
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
 		int cnt = 1;
-		NodeRef parentNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {

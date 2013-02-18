@@ -127,6 +127,7 @@
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="autoNumService" ref="autoNumService" />
 	</bean>
 
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor"
@@ -181,6 +182,7 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="entityService" ref="entityService" />
 	</bean>
 
 	<!-- Migrator -->

@@ -41,13 +41,10 @@ public class CopyEntityServiceTest extends RepoBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Void>() {
 			public Void execute() throws Throwable {				
-				
-				Date start = new Date();
 			
 				Date startEffectivity = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
 				assertNotNull(startEffectivity);
-				assertTrue(start.getTime() < startEffectivity.getTime());
-
+				assertTrue(startEffectivity.before(new Date()));
 				
 				// First copy
 				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy", "Test Copy");
@@ -56,7 +53,6 @@ public class CopyEntityServiceTest extends RepoBaseTestCase {
 				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy", "Test Copy (1)");
 				
 				return null;
-
 			}
 		}, false, true);
 	}
@@ -74,8 +70,6 @@ public class CopyEntityServiceTest extends RepoBaseTestCase {
 		Date startEffectivity2 = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
 		assertNotNull(startEffectivity2);
 		assertTrue(startEffectivity.getTime() < startEffectivity2.getTime());
-
-	
 	}
 
 }

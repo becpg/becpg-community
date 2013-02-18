@@ -223,12 +223,7 @@
 					<!-- Product Catalog -->
 					<field id="bp:productCatalogs" set="mainInfo" />
 										
-					<field id="pjt:project" set="project">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-						</control>
-					</field>
+					<field id="pjt:project" set="project"/>
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />

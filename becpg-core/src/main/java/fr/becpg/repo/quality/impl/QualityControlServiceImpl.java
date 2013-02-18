@@ -270,10 +270,8 @@ public class QualityControlServiceImpl implements QualityControlService {
 	
 	private void createWorkItemAnalysis(NodeRef qualityControlNodeRef, Map<NodeRef, WorkItemAnalysisData> wiaMap){
 		
-		NodeRef parentQCNodeRef = nodeService.getPrimaryParent(qualityControlNodeRef).getParentRef();
-		
 		//TODO multilangue
-		NodeRef workItemsNodeRef = repoService.createFolderByPath(parentQCNodeRef, "WorkItemAnalysis", "Analyses");
+		NodeRef workItemsNodeRef = repoService.createFolderByPath(qualityControlNodeRef, "WorkItemAnalysis", "Analyses");
 		
 		for(NodeRef authorityNodeRef : wiaMap.keySet()){
 			

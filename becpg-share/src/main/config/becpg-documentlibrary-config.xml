@@ -308,7 +308,7 @@
 			<!-- Cancel editing (cancel checkout) -->
 			<action id="entity-cancel-editing" type="javascript"
 				label="actions.document.cancel-checkout-entity">
-				<param name="function">onActionCancelEditing</param>
+				<param name="function">onActionCancelCheckOutEntity</param>
 				<permissions>
 					<permission allow="true">CancelCheckOut</permission>
 				</permissions>
@@ -322,6 +322,19 @@
 				<param name="page">documentlibrary?path={location.path}/{displayName}</param>	
 			</action>
 			
+			<!-- View original (of a Working Copy pair) -->
+         <action id="entity-view-original" type="pagelink" label="actions.document.view-original">
+            <param name="page">entity-details?nodeRef={workingCopy.sourceNodeRef}</param>
+            <!-- cm:workingcopy aspect -->
+            <evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
+         </action>
+
+         <!-- View working copy (of a Working Copy pair) -->
+         <action id="entity-view-working-copy" type="pagelink" label="actions.document.view-working-copy">
+            <param name="page">entity-details?nodeRef={workingCopy.workingCopyNodeRef}</param>
+            <!-- cm:workingcopy aspect -->
+            <evaluator>evaluator.doclib.action.hasWorkingCopy</evaluator>
+         </action>
 
 		</actions>
 
@@ -338,11 +351,11 @@
  				<action index="101" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" /> 				           
           	<!--<action index="105" id="folder-view-details" />-->
             <action index="110" id="folder-download"/>
-            <action index="111" id="entity-checkin" />
-				<action index="112" id="entity-checkout" />
-				<action index="113" id="entity-cancel-editing" />
-            <action index="114" id="document-view-original" />
-				<action index="115" id="document-view-working-copy" />
+<!--             <action index="111" id="entity-checkin" /> -->
+<!-- 				<action index="112" id="entity-checkout" /> -->
+<!-- 				<action index="113" id="entity-cancel-editing" /> -->
+            <action index="114" id="entity-view-original" />
+				<action index="115" id="entity-view-working-copy" />
             <action index="120" id="document-approve" icon="folder-approve" />
             <action index="130" id="document-reject" icon="folder-reject" />
             <action index="140" id="document-locate" icon="document-locate" label="actions.folder.locate" />
@@ -365,8 +378,8 @@
 				<action index="102" id="entity-checkin" />
 				<action index="103" id="entity-checkout" />
 				<action index="104" id="entity-cancel-editing" />
-				<action index="105" id="document-view-original" />
-				<action index="106" id="document-view-working-copy" />
+				<action index="105" id="entity-view-original" />
+				<action index="106" id="entity-view-working-copy" />
 				<action index="107" id="entity-refresh-report" />
             <action index="110" id="document-approve" icon="folder-approve" />
             <action index="120" id="document-reject" icon="folder-reject" />

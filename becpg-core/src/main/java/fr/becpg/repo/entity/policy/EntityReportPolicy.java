@@ -238,6 +238,9 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
                                         policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
                                         policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
                             		
+                                        if(logger.isDebugEnabled()){
+                                        	logger.info("generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+                                        }                                        
                                         entityReportService.generateReport(entityNodeRef);
                                         
                             		}

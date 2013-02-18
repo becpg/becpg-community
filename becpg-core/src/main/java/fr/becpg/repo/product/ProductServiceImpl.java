@@ -149,11 +149,6 @@ public class ProductServiceImpl implements ProductService {
     	// products
 		NodeRef productsNodeRef = repoService.createFolderByPath(containerNodeRef, RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
 		
-//		// state
-//		SystemState systemState = productData.getState();
-//		String stateFolderName = productDictionaryService.getFolderName(systemState);
-//		NodeRef stateNodeRef = repoService.createFolderByPath(productsNodeRef, systemState.toString(), stateFolderName);
-		
 		// product type		
 		SystemProductType systemProductType = SystemProductType.valueOf(nodeService.getType(productNodeRef));
 		String productTypeFolderName = productDictionaryService.getFolderName(systemProductType);
@@ -189,18 +184,9 @@ public class ProductServiceImpl implements ProductService {
 		}
 		
 		if(destinationNodeRef != null){
-			
-			//Product has a product folder ? yes, we move the product folder - no, we move the product
-			NodeRef nodeRefToMove = productNodeRef;
-			NodeRef parentProductNodeRef = nodeService.getPrimaryParent(productNodeRef).getParentRef();
-			QName parentProductType = nodeService.getType(parentProductNodeRef);
-			
-			if(parentProductType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
-				nodeRefToMove = parentProductNodeRef;							
-			}				    	
-			
+
 			// classify product
-			repoService.moveNode(nodeRefToMove, destinationNodeRef);
+			repoService.moveNode(productNodeRef, destinationNodeRef);
 			
 			// productNodeRef : remove all owner related rights 
             ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);    			

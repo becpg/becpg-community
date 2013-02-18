@@ -55,7 +55,7 @@
 				"displayPath": "${row.item.displayPath!""}",
 				"nodeRef": "${row.item.nodeRef}"<#if row.selectable?exists>,
 				"selectable" : ${row.selectable?string}</#if>
-				<#if row.item.aspect??>
+				<#if row.item.aspects??>
 				,"aspects": 
 		         [
 		         <#list row.item.aspects as aspect>

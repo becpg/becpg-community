@@ -62,7 +62,6 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	
 	@Resource
 	private EntityVersionService entityVersionService;
-	
 
 	private NodeRef rawMaterialNodeRef;
 	private NodeRef finishedProductNodeRef;
@@ -162,12 +161,20 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 		
+		
+		
 		final ProductData rawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ProductData>() {
 			@Override
 			public ProductData execute() throws Throwable {
 
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
-
+				
+				// Documents is moved on working copy
+				NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNull(documentsNodeRef);
+				documentsNodeRef = nodeService.getChildByName(workingCopyNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNotNull(documentsNodeRef);
+				
 				// Check productCode
 				assertEquals("productCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE),
 						nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
@@ -208,8 +215,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				NodeRef newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);				
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
-				assertEquals("Check version", "0.2", getVersionLabel(newRawMaterial));
+				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);				
+				assertEquals("Check version", "1.1", getVersionLabel(newRawMaterial));
 				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 
 				// Check productCode
@@ -246,7 +253,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
-				assertEquals("Check version", "1.0",  getVersionLabel(newRawMaterial));
+				assertEquals("Check version", "2.0",  getVersionLabel(newRawMaterial));
 
 				// Check cost Unit has changed after transaction
 				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
@@ -256,6 +263,10 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 						assertTrue("Check cost unit", vCostListDataItem.getUnit().endsWith("/L"));
 					}					
 				}
+				
+				// documents are restored under orig node
+				NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNotNull(documentsNodeRef);
 				
 				return null;
 
@@ -282,11 +293,19 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				/*-- Create raw material --*/
 				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNotNull(documentsNodeRef);
 
 				// Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
-
+				
+				// Documents is moved on working copy
+				documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNull(documentsNodeRef);
+				documentsNodeRef = nodeService.getChildByName(workingCopyNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNotNull(documentsNodeRef);
+				
 				// modify
 				ProductUnit productUnit2 = ProductUnit.m;
 				ProductData workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
@@ -301,6 +320,10 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				// cancel check out
 				checkOutCheckInService.cancelCheckout(workingCopyNodeRef);
 
+				// documents are restored under orig node
+				documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNotNull(documentsNodeRef);
+				
 				// Check
 				rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
 				assertEquals("Check unit", ProductUnit.kg, rawMaterial.getUnit());
@@ -360,7 +383,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				productService.classifyProduct(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				String expected = "/app:company_home/cm:Products/cm:Valid/cm:RawMaterial/cm:Frozen/cm:Fish/";
+				String expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Frozen/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				// Check out
@@ -377,7 +400,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				assertEquals("Check state new version", SystemState.ToValidate.toString(), nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE));
 
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				expected = "/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Frozen/cm:Fish/";
+				expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Frozen/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				return null;

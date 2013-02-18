@@ -159,13 +159,9 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				Date generatedDate = (Date)nodeService.getProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 				createdDate.before(generatedDate);
 				List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(sfNodeRef, ReportModel.ASSOC_REPORTS);
-				assertEquals(1, reportNodeRefs.size());
-				NodeRef reportNodeRef = reportNodeRefs.get(0);
+				assertEquals(2, reportNodeRefs.size());
 				
-				String reportName = String.format("%s - %s", 
-								nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
-								nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
-				assertEquals(reportName , nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME));
+				checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs);
 
 				// rename SF
 				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF renamed");
@@ -175,16 +171,9 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				Date generatedDate2 = (Date)nodeService.getProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 				generatedDate.before(generatedDate2);
 				List<NodeRef> reportNodeRefs2 = associationService.getTargetAssocs(sfNodeRef, ReportModel.ASSOC_REPORTS);
-				assertEquals(1, reportNodeRefs2.size());
-				NodeRef reportNodeRef2 = reportNodeRefs2.get(0);
-				assertNotSame(reportNodeRef, reportNodeRef2);
+				assertEquals(2, reportNodeRefs2.size());
 				
-				String reportName2 = String.format("%s - %s", 
-								nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
-								nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
-				assertEquals(reportName2 , nodeService.getProperty(reportNodeRef2, ContentModel.PROP_NAME));
-				assertNotSame(reportName2, reportName);
-
+				checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs2);							
 				return null;
 			}
 		});
@@ -209,6 +198,24 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			}
 		});
 
+	}
+	
+	private void checkReportNames(NodeRef defaultReportTplNodeRef, NodeRef otherReportTplNodeRef, List<NodeRef>reportNodeRefs){
+		
+		boolean isDefault = !((String)nodeService.getProperty(reportNodeRefs.get(0), ContentModel.PROP_NAME)).contains("report SF 2");
+		NodeRef defaultReportNodeRef = isDefault ? reportNodeRefs.get(0) : reportNodeRefs.get(1);
+		NodeRef otherReportNodeRef = isDefault ? reportNodeRefs.get(1) : reportNodeRefs.get(0);
+		
+		String defaultReportName = String.format("%s - %s", 
+				nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
+				nodeService.getProperty(defaultReportTplNodeRef, ContentModel.PROP_NAME));
+		
+		String otherReportName = String.format("%s - %s", 
+						nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
+						nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
+		
+		assertEquals(defaultReportName , nodeService.getProperty(defaultReportNodeRef, ContentModel.PROP_NAME));
+		assertEquals(otherReportName , nodeService.getProperty(otherReportNodeRef, ContentModel.PROP_NAME));
 	}
 
 	/**

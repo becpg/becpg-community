@@ -319,7 +319,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
     	// export file
 		for(FileMapping fileMapping : exportSearchCtx.getFileColumns()){
 						   
-    		NodeRef tempNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+    		NodeRef tempNodeRef = nodeRef;
 			for(String p : fileMapping.getPath()){
 				
 				if(tempNodeRef != null)

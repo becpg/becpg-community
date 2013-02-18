@@ -10,6 +10,9 @@ import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
+import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.lock.LockType;
+import org.alfresco.service.cmr.lock.UnableToReleaseLockException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
@@ -26,6 +29,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -40,10 +44,12 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 												CheckOutCheckInServicePolicies.OnCheckOut,
 												CheckOutCheckInServicePolicies.BeforeCheckIn,
 												CheckOutCheckInServicePolicies.OnCheckIn,
+												CheckOutCheckInServicePolicies.BeforeCancelCheckOut,
 												ApplicationContextAware{
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
-	
+    private static final String MSG_ERR_NOT_OWNER = "coci_service.err_not_owner"; 
+    
 	private static Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 	    
     private AuthenticationService authenticationService;
@@ -51,7 +57,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
     private PermissionService permissionService;
     private ApplicationContext applicationContext;
     private EntityVersionService entityVersionService;
-    
+    private EntityService entityService;
+    private LockService lockService;
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
@@ -74,6 +81,14 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		this.entityVersionService = entityVersionService;
 	}
 
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
+
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
+	}
+
 	/**
 	 * Inits the.
 	 */
@@ -83,6 +98,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onCheckOut"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforeCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onCheckIn"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforeCancelCheckOut"));
 	}
 
 
@@ -106,6 +122,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 
 					NodeRef nodeRef = getCheckedOut(workingCopy);
 					entityListDAO.copyDataLists(nodeRef, workingCopy, true);
+					
+					entityService.moveFiles(nodeRef, workingCopy);
 					return null;
 					
 				} finally {
@@ -144,7 +162,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
 			policyBehaviourFilter.disableBehaviour(type);
 			try {
-					entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
+				entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
@@ -153,6 +171,30 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
 				policyBehaviourFilter.enableBehaviour(type);
 			}
+			
+			//Move workingCopyNodeRef DataList to origNodeRef
+//			entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
+			
+//			// do it in order to move files (otherwise, we get NodeLocked)
+//			try
+//	        {
+//	            if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE))
+//	            {
+//	                // Release the lock on the original node
+//	                lockService.unlock(origNodeRef);
+//	            }
+//	        }
+//	        catch (UnableToReleaseLockException exception)
+//	        {
+//	            throw new CheckOutCheckInServiceException(MSG_ERR_NOT_OWNER, exception);
+//	        }
+//						
+//			
+//			// move files
+//			entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+//			
+//			// Re-lock the original node since aspect lockable is not tested in 4.2.c
+//            lockService.lock(origNodeRef, LockType.READ_ONLY_LOCK);
 			
 			//frozeVersionSensitiveLists(origNodeRef, entityVersionRef);
 	}
@@ -206,6 +248,44 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
         
         return original;
     }
+
+	@Override
+	public void beforeCancelCheckOut(final NodeRef workingCopyNodeRef) {
+		
+		final NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);		
+		
+//		// do it in order to move files (otherwise, we get NodeLocked)
+//		try
+//        {
+//            if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE))
+//            {
+//                // Release the lock on the original node
+//                lockService.unlock(origNodeRef);
+//            }
+//        }
+//        catch (UnableToReleaseLockException exception)
+//        {
+//            throw new CheckOutCheckInServiceException(MSG_ERR_NOT_OWNER, exception);
+//        }
+//		
+//		// move files
+//		entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+//		
+//		// Re-lock the original node since aspect lockable is not tested in 4.2.c
+//        lockService.lock(origNodeRef, LockType.READ_ONLY_LOCK);
+		
+		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+			@Override
+		public NodeRef doWork() throws Exception {
+		    
+			// move files
+			entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+			return null;
+
+		}
+	 }, AuthenticationUtil.getSystemUserName());
+		
+	}
 
 //    private void frozeVersionSensitiveLists(NodeRef origNodeRef, NodeRef entityVersionRef){
 //    	

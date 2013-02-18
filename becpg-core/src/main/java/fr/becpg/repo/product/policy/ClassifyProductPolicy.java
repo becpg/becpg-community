@@ -73,34 +73,23 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 		NodeRef afterHierarchy2 = (NodeRef) after.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
 
 		boolean classify = false;
-		boolean checkPath = false;
 
 		//state
 		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
 			classify = true;
-			//create node with default state, we let it in the site
-			if(beforeState == null){
-				checkPath = true;
-			}
-			
 		} 
 		//hierarchy1 and hierarchy2
 		else if ((afterHierarchy1 != null  && !afterHierarchy1.equals(beforeHierarchy1)) || 
 					(afterHierarchy2 != null  && !afterHierarchy2.equals(beforeHierarchy2))) {
-			classify = true;
-			checkPath = true;					
+			classify = true;					
 		}
 		
-		//check path
-		if(checkPath && classify){
+		//don't classify product that are in a site, force to use wf
+		if(classify){
 			String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-			if (SiteHelper.isSitePath(path)) {
-				classify = false;
+			if (!SiteHelper.isSitePath(path)) {
+				queueNode(nodeRef);
 			}
-		}
-
-		if (classify) {			
-			queueNode(nodeRef);
 		}
 	}
 	

@@ -79,11 +79,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			}
 		}
 		
-		visitChildren(formulatedProduct, simpleListDataList, retainNodes);
-		
-		logger.debug("###simpleListDataList size: " + simpleListDataList.size() + " retainNodes: " + retainNodes.size());
+		visitChildren(formulatedProduct, simpleListDataList, retainNodes);		
 		simpleListDataList.retainAll(retainNodes);			
-		logger.debug("simpleListDataList size: " + simpleListDataList.size());
 		
 		//sort
 		sort(simpleListDataList);
@@ -117,8 +114,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			logger.debug("simpleListDataList is null");
 			return;
 		}	
-		
-		logger.debug("###componentSimpleListDataList nodeRef: " + componentNodeRef + " name: " + (String)nodeService.getProperty(componentNodeRef, ContentModel.PROP_NAME) + "  size :" + componentSimpleListDataList.size());
 		
 		for(SimpleListDataItem slDataItem : componentSimpleListDataList){			
 			
