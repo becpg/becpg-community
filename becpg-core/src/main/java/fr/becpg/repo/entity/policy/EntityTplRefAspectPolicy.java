@@ -80,11 +80,8 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements No
 			
 			NodeRef entityTplNodeRef = assocRef.getTargetRef();
 			
-			// copy folders datalists and properties
-			entityService.copyEntityTpl(entityTplNodeRef, entityNodeRef);
-			
-			
-
+			// copy files
+			entityService.copyFiles(entityTplNodeRef, entityNodeRef);			
 		}
 	}
 	

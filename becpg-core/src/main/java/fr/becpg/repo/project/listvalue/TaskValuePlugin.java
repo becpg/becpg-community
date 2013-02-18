@@ -42,10 +42,6 @@ public class TaskValuePlugin extends EntityListValuePlugin {
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 		QName type = QName.createQName(className, namespaceService);
 		
-		if(logger.isDebugEnabled()){
-			logger.debug("###props: " + props);
-		}
-		
 		NodeRef itemId = null;
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);

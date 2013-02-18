@@ -29,6 +29,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -67,22 +68,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	private EntityListDAO entityListDAO;
 	
-	/**
-	 * Sets the node service.
-	 * 
-	 * @param nodeService
-	 *            the new node service
-	 */
+	private EntityService entityService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	/**
-	 * Sets the copy service.
-	 * 
-	 * @param copyService
-	 *            the new copy service
-	 */
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
 	}
@@ -94,13 +85,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
-
-	
-	
-	
 	
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
 
 	@Override
@@ -124,6 +115,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				entityListDAO.moveDataLists(origNodeRef, nodeRef);
 				//Move workingCopyNodeRef DataList to origNodeRef
 				entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
+				//Move files to version
+				entityService.moveFiles(origNodeRef, nodeRef);
+				//Move files to origNodeRef
+				entityService.moveFiles(workingCopyNodeRef, origNodeRef);
 				return nodeRef;
 
 			}

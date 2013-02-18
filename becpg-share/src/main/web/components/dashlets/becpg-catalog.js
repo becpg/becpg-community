@@ -204,7 +204,7 @@
        */
       getWebscriptUrl: function BeCPGCatalog_getWebscriptUrl()
       {
-         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/"+this.options.catalogType+"/node/alfresco/company/home?max=50";
+         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/"+this.options.catalogType+"/node/alfresco/company/home?max=" + this.options.maxItems;
       },
 
       /**

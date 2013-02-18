@@ -122,11 +122,6 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				if (nodeRef == null) {
 					nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
 				}
-
-				// productFolder => look for product
-				if (nodeRef != null && nodeService.getType(nodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-					nodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, name);
-				}
 			} else {
 
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));

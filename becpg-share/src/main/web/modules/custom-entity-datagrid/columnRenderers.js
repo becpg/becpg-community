@@ -6,12 +6,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 	                   "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct" ],
 	   renderer : function(oRecord, data, label, scope) {
 		   
-		   var url = null,
-		   	 version = "";			   
+		   var url = beCPG.util.entityCharactURL( data.siteId  , data.value ),
+		   	 version = "";	
+		   
 		   if(label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct"
-		   	 || label == "mpm:plResource"){	
-		   	
-		   	 url = beCPG.util.entityCharactURL( data.siteId  , data.value );
+		   	 || label == "mpm:plResource"){			   	
 		   		       
 		       //datalist
 		       if(data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1){
@@ -25,13 +24,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 		       }
 		       if (data.version && data.version !== "") {
 		         version = '<span class="document-version">' + data.version + '</span>';
-		       }
-		       
+		       }		       
 		   }
-		   else{
-			   url = scope._buildCellUrl(data);
-		   }
-		   
 		   
 		   if(label == "bcpg:compoListProduct"){
 			   

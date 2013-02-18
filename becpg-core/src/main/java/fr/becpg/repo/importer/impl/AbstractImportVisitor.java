@@ -51,6 +51,7 @@ import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.LuceneHelper;
@@ -154,6 +155,8 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 	
 	protected EntityListDAO entityListDAO;	
 	
+	protected AutoNumService autoNumService;
+	
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -223,9 +226,11 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		this.namespaceService = namespaceService;
 	}	
 	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.importer.ImportVisitor#importNode(fr.becpg.repo.importer.ImportContext, java.util.List)
-	 */
+	public void setAutoNumService(AutoNumService autoNumService) {
+		this.autoNumService = autoNumService;
+	}
+
+
 	@Override
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
 		
@@ -245,6 +250,14 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			if(name != null && name.length()>0){
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 			}
+			
+			// work around since CodePolicy is asynchronous, so we need to generate code if empty
+			String code = (String)properties.get(BeCPGModel.PROP_CODE);
+			if(code !=null && code.isEmpty()){
+				code = autoNumService.getAutoNumValue(importContext.getType(), BeCPGModel.PROP_CODE);
+				properties.put(BeCPGModel.PROP_CODE, code);
+			}
+			
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
 					assocName, importContext.getType(), properties).getChildRef();			 			
 		}
@@ -746,12 +759,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			if(name != null && name != ""){
 			
 				// look in import folder
-				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
-				
-				// entityFolder => look for node
-				if(nodeRef != null && nodeService.getType(nodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
-					nodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, name);
-				}
+				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);				
 			} else if(!type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
 			
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));

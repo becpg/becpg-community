@@ -30,7 +30,7 @@
 
 	<mapping name="bcpg:client">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
 		<columns>
@@ -44,7 +44,7 @@
 
 	<mapping name="bcpg:supplier">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
 		<columns>

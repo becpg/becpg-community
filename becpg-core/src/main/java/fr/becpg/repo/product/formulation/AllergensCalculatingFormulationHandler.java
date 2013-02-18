@@ -83,8 +83,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				}
 			}
 		}
-
-		logger.debug("###allergen size: " + formulatedProduct.getAllergenList().size() + " retainNodes: " + retainNodes.size());		
+		
 		formulatedProduct.getAllergenList().retainAll(retainNodes);
 		return true;
 	}

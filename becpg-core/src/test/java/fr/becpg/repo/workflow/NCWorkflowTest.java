@@ -28,7 +28,6 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.search.regex.RegexCapabilities;
 import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
@@ -465,18 +464,15 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				 * We should have: Folder Product Folder NonConformities Folder
 				 * NonConformity NC1 Node NC1
 				 */
-				NodeRef nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-				NodeRef nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+				NodeRef nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
 				NodeRef productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-				NodeRef rawMaterial1FolderNodeRef = nodeService.getPrimaryParent(rawMaterial1NodeRef).getParentRef();
 								
-				assertEquals("Check NC moved in product", rawMaterial1FolderNodeRef, productFolderNodeRef);
+				assertEquals("Check NC moved in product", rawMaterial1NodeRef, productFolderNodeRef);
 
 				// remove assoc
 				nodeService.removeAssociation(ncNodeRef, rawMaterial1NodeRef, QualityModel.ASSOC_PRODUCT);
 
-				nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
 				assertEquals(
 						"/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/content/1.0}Quality/{http://www.alfresco.org/model/content/1.0}NonConformities",
 						nodeService.getPath(nonConformitiesFolderNodeRef).toString());
@@ -484,11 +480,9 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				// create assoc rawMaterial 2
 				nodeService.createAssociation(ncNodeRef, rawMaterial2NodeRef, QualityModel.ASSOC_PRODUCT);
 
-				nonConformityFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(nonConformityFolderNodeRef).getParentRef();
+				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
 				productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-				NodeRef rawMaterial2FolderNodeRef = nodeService.getPrimaryParent(rawMaterial2NodeRef).getParentRef();
-				assertEquals("Check NC moved in product", rawMaterial2FolderNodeRef, productFolderNodeRef);
+				assertEquals("Check NC moved in product", rawMaterial2NodeRef, productFolderNodeRef);
 				
 				return null;
 			}

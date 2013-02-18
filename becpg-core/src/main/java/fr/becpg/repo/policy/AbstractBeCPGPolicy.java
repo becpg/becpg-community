@@ -83,12 +83,17 @@ public abstract class AbstractBeCPGPolicy {
 		return workingCopy || isVersionNode(nodeRef);
 	}
 
+	protected boolean isBeCPGVersion(NodeRef nodeRef) {
+		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+	}
+	
+	protected boolean isVersionStoreNode(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
+	}
+	
 	protected boolean isVersionNode(NodeRef nodeRef) {
-		boolean isBeCPGVersion = nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
-		boolean isVersionNode = nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
-
 		// Ignore if the node is a working copy or version node
-		return isBeCPGVersion || isVersionNode;
+		return isBeCPGVersion(nodeRef) || isVersionStoreNode(nodeRef);
 	}
 
 	protected boolean isNotLocked(NodeRef nodeRef) {
@@ -123,7 +128,6 @@ public abstract class AbstractBeCPGPolicy {
 		}
 		pendingNodes.add(nodeRef);
 		
-
 		AlfrescoTransactionSupport.bindListener(this.transactionListener);
 
 	}

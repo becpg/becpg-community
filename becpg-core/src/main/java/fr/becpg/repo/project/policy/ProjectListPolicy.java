@@ -127,7 +127,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (beforeState != null && afterState != null) {
 			if (beforeState.equals(TaskState.InProgress.toString())
 					&& afterState.equals(TaskState.Completed.toString())) {
-				logger.debug("### update task list: " + nodeRef + " - afterState: " + afterState);
+				logger.debug("update task list: " + nodeRef + " - afterState: " + afterState);
 				Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
 				Date endDate = ProjectHelper.removeTime(new Date());
 				Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
@@ -151,7 +151,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)
 				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)){
 			
-			logger.debug("### update task list start, duration or end: " + nodeRef);
+			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
 		}
 				
@@ -181,14 +181,14 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (beforeState != null && afterState != null) {
 			if (beforeState.equals(DeliverableState.InProgress.toString())
 					&& afterState.equals(DeliverableState.Completed.toString())) {
-				logger.debug("### submit deliverable: " + nodeRef);
+				logger.debug("submit deliverable: " + nodeRef);
 				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
 				queueNode(projectNodeRef);
 			} else if (beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
 
 				// re-open deliverable
-				logger.debug("### re-open deliverable: " + nodeRef);
+				logger.debug("re-open deliverable: " + nodeRef);
 				projectService.openDeliverable(nodeRef);
 
 				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);

@@ -149,7 +149,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 		}		
 		
-		logger.debug("###ingList size: " + formulatedProduct.getIngList().size() + " retainNodes: " + retainNodes.size());
 		formulatedProduct.getIngList().retainAll(retainNodes);
 				
 		Double totalQty = 0d;

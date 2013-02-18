@@ -75,6 +75,48 @@
 	               }
 	            });
 
+	YAHOO.Bubbling.fire("registerAction", {
+		   actionName : "onActionCancelCheckOutEntity",
+		   fn : function onActionCancelCheckOutEntity(asset) {
+			   var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef);
+
+			   this.modules.actions.genericAction(
+		         {
+		            success:
+		            {
+		               callback:
+		               {
+		                  fn: function DocumentActions_oACE_success(data)
+		                  {
+		                      var oldNodeRef = this.recordData.jsNode.nodeRef.nodeRef,
+		                      newNodeRef = data.json.results[0].nodeRef;
+		                      this.recordData.jsNode.setNodeRef(newNodeRef);
+		                      window.location = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details") + "#editCancelled";
+		                      // ALF-16598 fix, page is not refreshed if only hash was changed, force page reload for cancel online editing
+		                      if (oldNodeRef == newNodeRef)
+		                      {
+		                          window.location.reload();
+		                      }
+		                  },
+		                  scope: this
+		               }
+		            },
+		            failure:
+		            {
+		               message: this.msg("message.edit-cancel.failure", displayName)
+		            },
+		            webscript:
+		            {
+		               method: Alfresco.util.Ajax.POST,
+		               name: "cancel-checkout/node/{nodeRef}",
+		               params:
+		               {
+		                  nodeRef: nodeRef.uri
+		               }
+		            }
+		         });			   
+		   }
+		});	
 
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionRefreshReport",

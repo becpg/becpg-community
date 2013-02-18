@@ -177,7 +177,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if (propertyDef.getName().equals(BeCPGModel.PROP_PRODUCT_STATE)) {
 
-				value = TranslateHelper.getTranslatedProductState(SystemState.getSystemState((String) v));
+				value = TranslateHelper.getTranslatedSystemState(SystemState.getSystemState((String) v));
 			}
 			// translate constraints (not cm:name)
 			else if (!propertyDef.getName().isMatch(ContentModel.PROP_NAME) && !propertyDef.getConstraints().isEmpty()) {

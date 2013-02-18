@@ -12,7 +12,7 @@ import fr.becpg.model.SystemState;
 public class TranslateHelper {
 
 	private static final String PATH_MSG_PFX= "path.";
-	private static final String PRODUCT_STATE_MSG_PFX = "state.product.";
+	private static final String SYSTEM_STATE_MSG_PFX = "listconstraint.bcpg_systemState.";
 	private static final String CONSTRAINT_MSG_PFX = "constraint.%s.%s";
 	
 	private static final String MESSAGE_TRUE = "data.boolean.true";
@@ -37,9 +37,9 @@ public class TranslateHelper {
 		return translation;
 	}
 	
-	public static String getTranslatedProductState(SystemState state) {
+	public static String getTranslatedSystemState(SystemState state) {
 		
-		String translation = I18NUtil.getMessage(PRODUCT_STATE_MSG_PFX + state.toString().toLowerCase(), Locale.getDefault());
+		String translation = I18NUtil.getMessage(SYSTEM_STATE_MSG_PFX + state, Locale.getDefault());
 		if(translation == null){
 			logger.error("Failed to translate path. path: " + state);
 		}
