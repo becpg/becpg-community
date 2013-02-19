@@ -558,7 +558,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query != null && query.trim().equals(SUFFIX_ALL);
 	}
 
-	boolean isQueryMath(String query, String entityName) {
+	boolean isQueryMatch(String query, String entityName) {
 
 		if (query != null) {
 

@@ -31,6 +31,17 @@
             <version>${alfresco.version}</version>
             <scope>provided</scope>
         </dependency>
+        	
+		<!-- Addons -->
+		
+		<dependency>
+		  <groupId>de.fme</groupId>
+		  <artifactId>jsconsole</artifactId>
+		  <version>0.5.1</version>
+		  <scope>runtime</scope>
+		  <classifier>share</classifier>
+		</dependency>
+        
 	</dependencies>
 	<properties>
         <alfresco.amp.config.dir>alfresco/module/${project.artifactId}/config</alfresco.amp.config.dir>

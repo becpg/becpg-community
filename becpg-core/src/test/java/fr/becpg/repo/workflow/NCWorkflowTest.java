@@ -16,8 +16,6 @@ import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AuthorityType;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
@@ -25,22 +23,20 @@ import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
-import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.quality.NonConformityService;
 import fr.becpg.repo.quality.data.NonConformityData;
+import fr.becpg.test.BeCPGTestHelper;
 
 public class NCWorkflowTest extends AbstractWorkflowTest {
 
-	private static final String USER_ONE = "matthieuWF";
-	private static final String USER_TWO = "philippeWF";
+	
 	private static String PATH_NCFOLDER = "TestFolder";
 
 	private static final String NC_URI = "http://www.bcpg.fr/model/nc-workflow/1.0";
@@ -50,8 +46,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	private static final QName ASSOC_CORR_ACTION_ACTOR = QName.createQName(NC_URI, "corrActionActor");
 	private static final QName ASSOC_CHECK_ACTOR = QName.createQName(NC_URI, "checkActor");
 	private static final QName ASSOC_PRODUCT = QName.createQName(NC_URI, "product");
-
-	protected static String[] groups = { SystemGroup.QualityUser.toString(), SystemGroup.QualityMgr.toString() };
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NCWorkflowTest.class);
@@ -69,64 +63,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	private NonConformityService nonConformityService;
 
 
-	private void createUsers() {
-
-		/*
-		 * Matthieu : user Philippe : validators
-		 */
-
-		for (String group : groups) {
-
-			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
-				logger.debug("create group: " + group);
-				authorityService.createAuthority(AuthorityType.GROUP, group);
-			}
-		}
-
-		// USER_ONE
-		NodeRef userOne = this.personService.getPerson(USER_ONE);
-		if (userOne != null) {
-			this.personService.deletePerson(userOne);
-		}
-
-		if (!authenticationDAO.userExists(USER_ONE)) {
-			createUser(USER_ONE);
-		}
-
-		// USER_TWO
-		NodeRef userTwo = this.personService.getPerson(USER_TWO);
-		if (userTwo != null) {
-			this.personService.deletePerson(userTwo);
-		}
-
-		if (!authenticationDAO.userExists(USER_TWO)) {
-			createUser(USER_TWO);
-
-			authorityService
-					.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString(), USER_TWO);
-		}
-
-		for (String s : authorityService.getAuthoritiesForUser(USER_ONE)) {
-			logger.debug("user in group: " + s);
-		}
-
-	}
-
-	private void createUser(String userName) {
-		if (this.authenticationService.authenticationExists(userName) == false) {
-			this.authenticationService.createAuthentication(userName, "PWD".toCharArray());
-
-			PropertyMap ppOne = new PropertyMap(4);
-			ppOne.put(ContentModel.PROP_USERNAME, userName);
-			ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName");
-			ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
-			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
-			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
-
-			this.personService.createPerson(ppOne);
-		}
-	}
-
+	
 	@Test
 	public void testWorkFlow() {
 
@@ -134,7 +71,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				createUsers();
+				BeCPGTestHelper.createUsers(repoBaseTestCase);
 
 				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
 						ContentModel.ASSOC_CONTAINS, PATH_NCFOLDER);
@@ -164,7 +101,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 			}
 		}, false, true);
 
-		authenticationComponent.setCurrentUser(USER_ONE);
+		authenticationComponent.setCurrentUser(BeCPGTestHelper.USER_ONE);
 		
 		executeNonConformityWF(false);
 
@@ -253,10 +190,10 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 
 				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
 				List<NodeRef> assignees = new ArrayList<NodeRef>();
-				assignees.add(personService.getPerson(USER_ONE));
+				assignees.add(personService.getPerson(BeCPGTestHelper.USER_ONE));
 				assocs.put(ASSOC_CORR_ACTION_ACTOR, assignees);
 				assignees = new ArrayList<NodeRef>();
-				assignees.add(personService.getPerson(USER_TWO));
+				assignees.add(personService.getPerson(BeCPGTestHelper.USER_TWO));
 				assocs.put(ASSOC_CHECK_ACTOR, assignees);
 
 				workflowService.updateTask(task1.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
@@ -365,7 +302,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		 * Update workTask (analysis)
 		 */
 
-		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(USER_ONE), "En cours",
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_ONE), "En cours",
 				"commentaire émetteur");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
@@ -373,7 +310,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		/*
 		 * do corrActionTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(USER_ONE), "À déclasser",
+		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_ONE), "À déclasser",
 				"commentaire émetteur 2");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
@@ -382,7 +319,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		/*
 		 * do checkTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(USER_TWO), "Résolu",
+		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_TWO), "Résolu",
 				"commentaire émetteur 3");
 		assertEquals("workTask", task.getPath().getNode().getName());
 

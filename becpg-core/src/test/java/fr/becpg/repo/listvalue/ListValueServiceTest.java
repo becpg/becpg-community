@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.test.RepoBaseTestCase;
+import fr.becpg.test.BeCPGTestHelper;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,14 +28,13 @@ import fr.becpg.test.RepoBaseTestCase;
  * 
  * @author querephi
  */
-public class ListValueServiceTest extends RepoBaseTestCase {
+public class ListValueServiceTest extends AbstractListValuePluginTest {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ListValueServiceTest.class);
 
 	@Resource
 	private EntityListValuePlugin entityListValuePlugin;
 
-	
 
 	/**
 	 * Test suggest supplier.
@@ -46,6 +45,8 @@ public class ListValueServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
+				authenticationComponent.setSystemUserAsCurrentUser();
+				
 				// Create supplier 1 with allowed constraint
 				logger.debug("create temp supplier 1");
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -72,6 +73,25 @@ public class ListValueServiceTest extends RepoBaseTestCase {
 				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames2,null).getResults();
 
 				assertEquals("0 suggestion", 0, suggestions.size());
+				
+				//test permissions
+
+				authenticationComponent.setSystemUserAsCurrentUser();
+				
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null ,null).getResults();
+
+				assertEquals("2 suggestion", 2, suggestions.size());
+				
+				
+				authenticationComponent.setCurrentUser(BeCPGTestHelper.USER_ONE);
+				
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null ,null).getResults();
+
+				
+				assertEquals("1 suggestion", 1, suggestions.size());
+				
+
+				
 				
 				return null;
 			}

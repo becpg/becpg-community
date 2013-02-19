@@ -18,6 +18,7 @@ import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
@@ -28,6 +29,9 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.MutableAuthenticationService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -150,7 +154,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	protected InitVisitor initRepoVisitor;
 
 	@Resource
-	private HierarchyService hierarchyService;
+	protected HierarchyService hierarchyService;
 
 
 
@@ -165,6 +169,19 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	@Resource
 	protected RetryingTransactionHelper retryingTransactionHelper;
+	
+	
+	@Resource
+	protected AuthorityService authorityService;
+	
+	@Resource
+	protected MutableAuthenticationDao authenticationDAO;
+	
+	@Resource
+	protected MutableAuthenticationService authenticationService;
+	
+	@Resource
+	protected PersonService personService;
 
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();

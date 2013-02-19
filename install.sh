@@ -66,9 +66,10 @@ fct_test() {
 # $2 : groupId
 # $3 : artifactId
 # $4 : version
+# $5 : file 
 
 fct_mvn_install(){
-	mvn install:install-file -Dclassifier=$1  -DgroupId=$2 -DartifactId=$3 -Dversion=$4 -Dpackaging=jar -Dfile=$3.jar  >>$FICHIER_LOG 2>1 &
+	mvn install:install-file -Dclassifier=$1  -DgroupId=$2 -DartifactId=$3 -Dversion=$4 -Dpackaging=jar -Dfile=$5  >>$FICHIER_LOG 2>1 &
 	spanner "$!" '/\-'
 }
 
@@ -101,17 +102,14 @@ fct_echo "# Installing development environment."
 fct_echo "# ==================================================================="
 date >>$FICHIER_LOG 2>&1
 
-read -p  "Do you want to install Birt libs ? (y/n)" ans
+
+read -p  "Do you want to install addons libs ? (y/n)" ans
 if [ "$ans" = "y" ]; then
 
-cd $BOOTSTRAP_HOME/birt-sdk/lib
+cd $BOOTSTRAP_HOME/addons
 echo -ne "Installing ... "
-sh mavenize.sh  >>$FICHIER_LOG 2>&1 &
-spanner "$!" '/\-'
-cd ..
-mvn install >>$FICHIER_LOG 2>&1 &
-spanner "$!" '/\-'
-echo ""
+fct_mvn_install repo de.fme jsconsole 0.5.1 javascript-console-repo-0.5.1.jar
+fct_mvn_install share de.fme jsconsole 0.5.1 javascript-console-share-0.5.1.jar
 fi
 
 #read -p "Do you want to install locally Alfresco Patch ? (y/n)" ans 

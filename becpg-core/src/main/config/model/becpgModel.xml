@@ -1450,6 +1450,8 @@
 			</mandatory-aspects>
 		</type>
 		
+		<!-- end deprecated -->
+		
 		<type name="bcpg:entityV2">
 			<parent>cm:folder</parent>			
 			<mandatory-aspects>
@@ -1459,7 +1461,7 @@
 		</type>
 
 		<type name="bcpg:systemEntity">
-			<parent>cm:folder</parent>
+			<parent>bcpg:entityV2</parent>
 		</type>
 
 		<type name="bcpg:autoNum">

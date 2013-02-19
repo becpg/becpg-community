@@ -42,6 +42,10 @@
 }
 
 
+.node-header .node-path .folder-bcpg_systemEntity {
+	background-image: url(../images/filetypes/generic-systemEntity-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
 .node-header .node-path .folder-pjt_project,
 .node-header .node-path .folder-bcpg_finishedProduct,
 .node-header .node-path .folder-bcpg_packagingKit,
@@ -50,7 +54,8 @@
 .node-header .node-path .folder-bcpg_semiFinishedProduct,
 .node-header .node-path .folder-bcpg_resourceProduct,
 .node-header .node-path .folder-bcpg_client,
-.node-header .node-path .folder-bcpg_supplier {
+.node-header .node-path .folder-bcpg_supplier,
+.node-header .node-path .folder-bcpg_systemEntity {
 	background-position:  7px bottom,left;
 	background-repeat: not-repeat ;
 	background-size: 12px 12px, 16px 16px;

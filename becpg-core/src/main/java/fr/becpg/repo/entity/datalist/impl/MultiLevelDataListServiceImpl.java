@@ -6,6 +6,8 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	private NodeService nodeService;
 
 	private AdvSearchService advSearchService;
+	
+	private PermissionService permissionService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -45,6 +49,10 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
 	}
 
 	@Override
@@ -77,6 +85,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					List<NodeRef> childRefs = advSearchService.queryAdvSearch(dataListFilter.getSearchQuery(dataListNodeRef), SearchService.LANGUAGE_LUCENE,
 							dataListFilter.getDataType(), dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
 
+					//Adv search already filter by perm 
+					
 					for (NodeRef childRef : childRefs) {
 						entityNodeRef = getEntityNodeRef(childRef);
 						if (entityNodeRef != null) {
@@ -98,10 +108,14 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	}
 
 	// TODO more generic
+	// Use alfresco repository to make it more generic 
 	private NodeRef getEntityNodeRef(NodeRef listItemNodeRef) {
 		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 		NodeRef part = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
-		return part;
+		if( part!=null && permissionService.hasPermission( part,PermissionService.READ) == AccessStatus.ALLOWED){
+			return part;
+		}
+		return null;
 	}
 
 }
