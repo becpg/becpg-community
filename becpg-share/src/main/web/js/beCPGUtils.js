@@ -69,7 +69,45 @@
    	
    };
    
-   
+
+   beCPG.util.postActivity = function(siteId, activityType, title, page, data, callback)
+   {
+      // Mandatory parameter check
+      if (!YAHOO.lang.isString(siteId) || siteId.length === 0 ||
+         !YAHOO.lang.isString(activityType) || activityType.length === 0 ||
+         !YAHOO.lang.isString(title) || title.length === 0 ||
+         !YAHOO.lang.isObject(data) === null ||
+         !(YAHOO.lang.isString(data.nodeRef) || YAHOO.lang.isString(data.parentNodeRef)))
+      {
+         return;
+      }
+
+      var config =
+      {
+         method: "POST",
+         url: Alfresco.constants.PROXY_URI + "slingshot/activity/create",
+         successCallback:
+         {
+            fn: callback,
+            scope: this
+         },
+         failureCallback:
+         {
+            fn: callback,
+            scope: this
+         },
+         dataObj: YAHOO.lang.merge(
+         {
+            site: siteId,
+            type: activityType,
+            title: title,
+            page: page
+         }, data)
+      };
+
+       Alfresco.util.Ajax.jsonRequest(config);
+    
+   };
    
    
 })();

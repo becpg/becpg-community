@@ -2,6 +2,8 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 <beans>
 
+
+
 	<bean id="mailingListChannelType" class="fr.becpg.repo.publishing.MailingListChannelType"
 		parent="baseChannelType">
 		<property name="beCPGMailService" ref="beCPGMailService" />
@@ -10,5 +12,15 @@
 
 	<bean id="productCatalogChannelType" class="fr.becpg.repo.publishing.ProductCatalogChannelType"
 		parent="baseChannelType" />
+		
+	<!-- Override  Alfresco to work with entityV2 -->
+	 <bean id="channelHelper" class="fr.becpg.repo.publishing.ChannelHelper">
+      <property name="nodeService" ref="NodeService" />
+      <property name="dictionaryService" ref="DictionaryService" />
+      <property name="fileFolderService" ref="FileFolderService" />
+      <property name="permissionService" ref="PermissionService" />
+      <property name="eventHelper" ref="publishingEventHelper" />
+      <property name="serviceRegistry" ref="ServiceRegistry" />
+   </bean>
 
 </beans>
