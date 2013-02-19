@@ -49,7 +49,7 @@
 			                  displayName : this.options.displayName,
 			                  activity : {
 				                  "entity" : {
-				                     type : "org.alfresco.documentlibrary.file-liked",
+				                     type : "org.alfresco.documentlibrary.entity-liked",
 				                     page : "entity-details?nodeRef={nodeRef}"
 				                  }
 			                  }
