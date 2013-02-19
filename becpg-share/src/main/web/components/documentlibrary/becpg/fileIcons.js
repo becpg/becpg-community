@@ -85,6 +85,16 @@ if (!beCPG.util.getFileIcon) {
 	   "pjt:project" : "project"
 	};
 
+	Alfresco.util.getFileIcon.folders = {
+			"{http://www.alfresco.org/model/content/1.0}folder" : "folder",
+		   "cm:folder" : "folder",
+		   "{http://www.alfresco.org/model/site/1.0}sites" : "site",
+		   "st:sites" : "site",
+		   "{http://www.alfresco.org/model/site/1.0}site" : "site",
+		   "st:site" : "site"
+	};
+	
+	
 	beCPG.util.getFileIcon = function(p_fileName, p_record, p_isContainer, p_isSimpleView) {
 
 		var node = p_record.jsNode, type = node.type;
@@ -92,8 +102,7 @@ if (!beCPG.util.getFileIcon) {
 		var iconSize = p_isSimpleView ? 32 : 48;
 
 		if (p_isContainer  && (!Alfresco.util.getFileIcon.types[type] 
-				|| type == "{http://www.alfresco.org/model/content/1.0}folder" 
-				|| type=="cm:folder" )) {
+				|| Alfresco.util.getFileIcon.folders[type]) ) {
 			return Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-' + iconSize + '.png';
 		}
 

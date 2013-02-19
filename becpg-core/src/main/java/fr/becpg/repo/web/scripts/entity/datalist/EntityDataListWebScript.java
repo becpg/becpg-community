@@ -329,8 +329,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
-			logger.info("###ret: " + ret);
-			logger.info("###ret.toString(3): " + ret.toString(3));
 			res.getWriter().write(ret.toString(3));
 
 		} catch (JSONException e) {

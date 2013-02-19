@@ -43,8 +43,8 @@
 			<type>jar</type>
 			<exclusions>
 				<exclusion>
-					<groupId>fr.becpg</groupId>
-					<artifactId>birt-sdk</artifactId>
+					<groupId>org.eclipse.birt.runtime</groupId>
+					<artifactId>org.eclipse.birt.runtime</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>log4j</groupId>
@@ -87,6 +87,16 @@
 					<groupId>org.springframework.extensions.surf</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<!-- Addons -->
+		
+		<dependency>
+		  <groupId>de.fme</groupId>
+		  <artifactId>jsconsole</artifactId>
+		  <classifier>repo</classifier>
+		  <version>0.5.1</version>
+		  <scope>runtime</scope>
 		</dependency>
 		
 <!-- 

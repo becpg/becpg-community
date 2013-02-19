@@ -5,9 +5,13 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -17,6 +21,14 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 
 public class BeCPGTestHelper {
 
+	public static final String USER_ONE = "matthieuWF";
+	public static final String USER_TWO = "philippeWF";
+	
+
+	protected static String[] groups = { SystemGroup.QualityUser.toString(), SystemGroup.QualityMgr.toString() };
+
+	
+	
 	private static Log logger = LogFactory.getLog(BeCPGTestHelper.class);
 	
 	/** The PAT h_ testfolder. */
@@ -86,12 +98,75 @@ public class BeCPGTestHelper {
 		compoList.add(child21);
 		compoList.add(parent3);
 		
-		
-		
+
 		finishedProduct.getCompoListView().setCompoList(compoList);
 		return repoBaseTestCase.alfrescoRepository.create(testFolder, finishedProduct).getNodeRef();
 		
 	}
+	
+	
+	
+	public static void createUsers(RepoBaseTestCase repoBaseTestCase) {
+
+		/*
+		 * Matthieu : user Philippe : validators
+		 */
+
+		for (String group : groups) {
+
+			if (!repoBaseTestCase.authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
+				logger.debug("create group: " + group);
+				repoBaseTestCase.authorityService.createAuthority(AuthorityType.GROUP, group);
+			}
+		}
+
+		// USER_ONE
+		NodeRef userOne = repoBaseTestCase.personService.getPerson(USER_ONE);
+		if (userOne != null) {
+			repoBaseTestCase.personService.deletePerson(userOne);
+		}
+
+		if (!repoBaseTestCase.authenticationDAO.userExists(USER_ONE)) {
+			createUser(USER_ONE,repoBaseTestCase);
+		}
+
+		// USER_TWO
+		NodeRef userTwo = repoBaseTestCase.personService.getPerson(USER_TWO);
+		if (userTwo != null) {
+			repoBaseTestCase.personService.deletePerson(userTwo);
+		}
+
+		if (!repoBaseTestCase.authenticationDAO.userExists(USER_TWO)) {
+			createUser(USER_TWO,repoBaseTestCase);
+
+			repoBaseTestCase.authorityService
+					.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString(), USER_TWO);
+		}
+
+		for (String s : repoBaseTestCase.authorityService.getAuthoritiesForUser(USER_ONE)) {
+			logger.debug("user in group: " + s);
+		}
+
+	}
+
+	public static void createUser(String userName,RepoBaseTestCase repoBaseTestCase) {
+		if (repoBaseTestCase.authenticationService.authenticationExists(userName) == false) {
+			repoBaseTestCase.authenticationService.createAuthentication(userName, "PWD".toCharArray());
+
+			PropertyMap ppOne = new PropertyMap(4);
+			ppOne.put(ContentModel.PROP_USERNAME, userName);
+			ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName");
+			ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
+			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
+			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
+
+			repoBaseTestCase.personService.createPerson(ppOne);
+		}
+	}
+	
+
+
+
 	
 	
 }

@@ -93,7 +93,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 					if (!query.isEmpty()) {
 
 						if (productName != null) {
-							if (isQueryMath(query, productName)) {
+							if (isQueryMatch(query, productName)) {
 								addNode = true;
 							}
 						}

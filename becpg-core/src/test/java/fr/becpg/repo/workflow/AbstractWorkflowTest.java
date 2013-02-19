@@ -2,33 +2,24 @@ package fr.becpg.repo.workflow;
 
 import javax.annotation.Resource;
 
-import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.MutableAuthenticationService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.subethamail.wiser.Wiser;
 
 import fr.becpg.test.RepoBaseTestCase;
 
+@Ignore
 public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 
 	private static Log logger = LogFactory.getLog(AbstractWorkflowTest.class);
 	
 	protected Wiser wiser = new Wiser(2500);
 
-	@Resource
-	protected AuthorityService authorityService;
-	@Resource
-	protected MutableAuthenticationDao authenticationDAO;
-	@Resource
-	protected MutableAuthenticationService authenticationService;
-	@Resource
-	protected PersonService personService;
+	
 	@Resource(name="WorkflowService")
 	protected WorkflowService workflowService;
 

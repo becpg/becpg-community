@@ -21,7 +21,6 @@
 			<list>
 				<value>alfresco/module/${pom.artifactId}/model/becpgModel</value>
 				<value>alfresco/module/${pom.artifactId}/messages/paths</value>
-				<value>alfresco/module/${pom.artifactId}/messages/states</value>
 				<value>alfresco/module/${pom.artifactId}/messages/becpg-messages</value>
 				<value>alfresco/module/${pom.artifactId}/messages/groups</value>
 				<value>alfresco/module/${pom.artifactId}/messages/demo</value>
@@ -73,31 +72,25 @@
 
 	<!-- List values plugins -->
 
+
 	<bean id="entityListValuePlugin" parent="baseListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.EntityListValuePlugin">
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<!-- Todo better handle custom perm filter with BecpgPermFilter than maj here -->
+		<property name="beCPGSearchService" ref="BeCPGSearchService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="reportTplService" ref="reportTplService" />
 	</bean>
-	<bean id="spelEditorListValuePlugin" parent="baseListValuePlugin"
+	<bean id="spelEditorListValuePlugin" parent="entityListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.SpelEditorListValuePlugin">
-		<property name="autoNumService" ref="autoNumService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="dictionaryDAO" ref="dictionaryDAO" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="reportTplService" ref="reportTplService" />
 	</bean>
-	<bean id="compoListValuePlugin" parent="baseListValuePlugin"
+	
+	<bean id="compoListValuePlugin" parent="entityListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.CompoListValuePlugin">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryDAO" ref="dictionaryDAO" />
 	</bean>
 
 	<!-- Importer -->
@@ -219,6 +212,7 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="nodeService" ref="nodeService" />		
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="transactionService" ref="transactionService" />
 	</bean>
 
 	<!-- CompareEntityService -->
@@ -276,15 +270,21 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
+	
+	<!-- Public API -->
+
+	<alias name="remoteEntityService" alias="RemoteEntityService"/>
 
 	<!-- DataLists -->
-
+	
 	<bean id="multiLevelDataListService"
 		class="fr.becpg.repo.entity.datalist.impl.MultiLevelDataListServiceImpl">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="advSearchService" ref="advSearchService" />
+		<property name="permissionService" ref="permissionService"/>
 	</bean>
+
 
    <bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor">
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
@@ -350,10 +350,22 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="permissionService" ref="permissionService" />
 	</bean>
+	
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="searchService" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
+	
+	<!-- Public API -->
+	
+	<alias name="advSearchService" alias="AdvSearchService"/>
+	
+	<bean id="BeCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
+		<property name="searchService" ref="SearchService" />
+		<property name="namespaceService" ref="NamespaceService" />
+	</bean>
+	
+	
 
 
 	<!-- Override Thumbnail service implementation bean -->

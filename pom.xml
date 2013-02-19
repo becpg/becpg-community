@@ -77,6 +77,9 @@
 		<!-- build -->
 		<alfresco.groupId>org.alfresco</alfresco.groupId>
 		<alfresco.version>4.2.c</alfresco.version>
+		<!-- Old Version 3.7.2.v20120214-1408 -->
+		<birt.version>4.2.1a</birt.version>
+		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<app.log.dir>${project.build.directory}/</app.log.dir>

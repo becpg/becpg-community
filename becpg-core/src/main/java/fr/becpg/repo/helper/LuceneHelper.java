@@ -224,4 +224,8 @@ public class LuceneHelper {
 		return " +"+condType;
 	}
 
+	public static String exclude(String condType) {
+		return " -"+condType;
+	}
+
 }

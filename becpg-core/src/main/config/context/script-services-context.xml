@@ -11,7 +11,7 @@
             <ref bean="ServiceRegistry"/>
         </property>
         <property name="advSearchService">
-            <ref bean="advSearchService"/>
+            <ref bean="AdvSearchService"/>
         </property>
     </bean>
     
