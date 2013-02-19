@@ -149,7 +149,7 @@ public class BeCPGTestHelper {
 
 	}
 
-	public static void createUser(String userName,RepoBaseTestCase repoBaseTestCase) {
+	public static NodeRef createUser(String userName,RepoBaseTestCase repoBaseTestCase) {
 		if (repoBaseTestCase.authenticationService.authenticationExists(userName) == false) {
 			repoBaseTestCase.authenticationService.createAuthentication(userName, "PWD".toCharArray());
 
@@ -160,7 +160,9 @@ public class BeCPGTestHelper {
 			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
 			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
 
-			repoBaseTestCase.personService.createPerson(ppOne);
+			return repoBaseTestCase.personService.createPerson(ppOne);
+		} else {
+			return repoBaseTestCase.personService.getPerson(userName);
 		}
 	}
 	
