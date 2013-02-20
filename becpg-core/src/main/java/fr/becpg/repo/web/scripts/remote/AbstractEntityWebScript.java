@@ -20,9 +20,12 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -92,9 +95,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		String path = req.getParameter(PARAM_PATH);
 		String query = req.getParameter(PARAM_QUERY);
-		String runnedQuery = "+TYPE:\"bcpg:entity\" -TYPE:\"cm:systemfolder\""
-				+ " -@cm\\:lockType:READ_ONLY_LOCK"
-				+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\"";
+		String runnedQuery = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_V2))
+				+ LuceneHelper.DEFAULT_IGNORE_QUERY;
 		
 		
 		if (path != null && path.length() > 0) {
@@ -107,8 +109,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		}
 		
-		List<NodeRef> refs = beCPGSearchService.luceneSearch(runnedQuery,250);
-		if (refs!=null && refs.isEmpty()) {
+		List<NodeRef> refs = beCPGSearchService.luceneSearch(runnedQuery,RepoConsts.MAX_RESULTS_256);
+		if (refs!=null && !refs.isEmpty()) {
 			return refs;
 		}
 		throw new WebScriptException("No entities found for query " + query);

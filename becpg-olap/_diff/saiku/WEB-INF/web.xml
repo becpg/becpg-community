@@ -36,12 +36,12 @@
 		</filter-class>
 	</filter>
 
-	
+
 	<filter-mapping>
 		<filter-name>encodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>org.springframework.security.filterChainProxy
 		</filter-name>
@@ -52,10 +52,10 @@
 		<filter-name>http-request-context</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
-	
-	
-	
+
+
+
+
 
 	<listener>
 		<listener-class>
@@ -125,7 +125,7 @@
 		<url-pattern>/rest/saiku/session</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>	
+	<servlet-mapping>
 		<servlet-name>jersey</servlet-name>
 		<url-pattern>/xml/saiku/*</url-pattern>
 	</servlet-mapping>

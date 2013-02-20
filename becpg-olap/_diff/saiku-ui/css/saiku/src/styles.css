@@ -1,8 +1,18 @@
-/**
- * @fileOverview Saiku User Inteface (UI) Default Styles
- * @author Prashant Raju and Mark Cahill
- * @version 2.0.0
-*/
+/*  
+ *   Copyright 2012 OSBI Ltd
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 
 /** Globals */
 
@@ -33,7 +43,7 @@ html, body {
 .used {
     font-weight: bold;
 }
-.sprite, .ui-dialog-titlebar-close, .ui-dialog-titlebar-close:hover {
+.sprite, .ui-dialog-titlebar-close, .ui-dialog-titlebar-close:hover, .dialog_icon {
 	background-image: url(../../../images/sprite.png);
 	background-repeat: no-repeat;
 }
@@ -321,29 +331,6 @@ html, body {
 
 /** Tree */
 
-#queries {
-    margin: 0;
-    padding: 0;
-}
-#queries li {
-    cursor: pointer;
-    line-height: 17px;
-    list-style-type: none;
-    margin: 0;
-    padding-bottom: 5px;
-}
-#queries li span {
-	background-position: -1855px 0;
-	padding: 4px 8px;
-	margin-right: 4px;
-}
-#queries li a {
-    color: #222;
-    text-decoration: none;
-}
-#queries li:hover {
-    background: #f0f0f0;
-}
 #query_info {
     list-style-type: none;
     padding-left: 0;
@@ -632,6 +619,34 @@ html, body {
     color: #983030;
     text-decoration: none;
 }
+.d_measure span.sort.BASC,
+.d_dimension span.sort.BASC {
+background: url("../../../images/src/sort_up.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+.d_measure span.sort.BDESC,
+.d_dimension span.sort.BDESC {
+background: url("../../../images/src/sort_down.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+.d_measure span.sort.none,
+.d_dimension span.sort.none {
+background: url("../../../images/src/sort_none.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+
 .empty_placeholder,
 .placeholder {
     border: 1px dashed #999;
@@ -820,25 +835,37 @@ html, body {
 }
 .dialog_selections .dialog_body .used_selections {
     padding-right: 5px;
+    padding-top: 36px;
     float: right;
 }
 .dialog_selections .dialog_body select {
     height: 270px;
-    width: 200px;
+    width: 350px;
     font-size: 11px;
-    overflow-x: scroll;
+    overflow: scroll;
 }
 .dialog_selections .options {
     float: left;
-    width: 150px;
+    width: 250px;
     text-align: left;
 }
+.dialog_selections .available_selections input[type="text"] {
+    width: 200px;
+}
 
-.dialog_drillthroughview .dialog_icon {
+.dialog_permissions .dialog_body {
+    width: 370px;
+    height: 300px;
+}
+.dialog_permissions .dialog_icon {
     display: none;
 }
-.dialog_drillthroughview .dialog_footer {
-    text-align: center;
+.dialog_permissions .dialog_icon {
+    display: none;
+}
+.dialog_permissions .select_roles {
+    width: 350px;
+    height: 130px;
 }
 
 
@@ -852,6 +879,33 @@ html, body {
 
 .dialog_drillthrough .dialog_body .row_limit {
     text-align: center;
+}
+
+.ui-menu {
+    list-style:none;
+    padding: 2px;
+    margin: 0;
+    display:block;
+    float: left;
+}
+.ui-menu .ui-menu {
+    margin-top: -3px;
+}
+.ui-menu .ui-menu-item {
+    margin:0;
+    padding: 0px;
+    zoom: 1;
+    float: left;
+    clear: left;
+    width: 100%;
+}
+.ui-menu .ui-menu-item a {
+    text-decoration:none;
+}
+.ui-menu .ui-menu-item a.description {
+    font-size: 8px;
+    color: #999;
+    padding: 0;
 }
 
 .dialog_footer {
@@ -871,6 +925,10 @@ html, body {
 }
 
 /** Workspace Results */
+.workspace_results_info {
+    color: #999999;
+    padding-right: 20px;
+}
 
 .workspace_results {
     margin-right: 10px;
@@ -888,7 +946,7 @@ html, body {
 .workspace_results table th {
     border-left: 1px solid #d5d5d5;
     margin-bottom: 0;
-    white-space: nowrap;
+    white-space: normal;
 }
 .workspace_results table th.all_null {
     text-align: center;
@@ -898,6 +956,9 @@ html, body {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
     text-align: left;
+}
+.workspace_results table th.col_null {
+    background: #f9f9f9;
 }
 .workspace_results table th.row {
     border-top: 1px solid #d5d5d5;
@@ -930,6 +991,16 @@ html, body {
   cursor: pointer;
 }
 
+.workspace_results .headerhighlight:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results .headerhighlight {
+  cursor: pointer;
+}
+
+.workspace_results table td.selected {
+  background: #c2d5e2 !important;
+}
 
 /** Save Dialog */
 .error_msg {
@@ -1002,6 +1073,9 @@ html, body {
     float: left;
     padding-left: 5px;
 }
+.workspace_toolbar ul li.hide {
+    display: none;
+}
 .workspace_toolbar ul li.seperator {
     border-left: 1px solid #D5D5D5;
     margin-left: 5px;
@@ -1026,6 +1100,18 @@ html, body {
 .workspace_toolbar .open {
     background-position: -1040px 7px;
 }
+
+.workspace_toolbar .edit_folder {
+    background-image: url('../../../images/src/folder_edit.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+.workspace_toolbar .edit_permissions {
+    background-image: url('../../../images/src/group_edit.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+
 .workspace_toolbar .delete {
      background-position: -521px 7px;
 }
@@ -1041,12 +1127,24 @@ html, body {
 .workspace_toolbar .non_empty {
     background-position: -1914px 7px;
 }
+.workspace_toolbar .group_parents {
+    background-image: url('../../../images/src/hide_parents.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
 .workspace_toolbar .swap_axis {
     background-position: -551px -90px;
 }
 .workspace_toolbar .mdx {
     background-position: -1848px 7px;
 }
+
+.workspace_toolbar .explain_query {
+    background-image: url('../../../images/src/information.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+
 .workspace_toolbar .export_csv {
     background-position: -455px 7px;
 }
@@ -1073,7 +1171,9 @@ html, body {
 }
 
 .workspace_toolbar .switch_to_mdx {
-  /* this isn't in the sprite */
+  background-image: url('../../../images/src/switch_to_mdx.png');
+  background-position: 7px 7px;
+  background-repeat:no-repeat;
 }
 
 .form_button {
@@ -1102,6 +1202,73 @@ html, body {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
 }
 
+.bucket_items {
+    background: #FCFCFC;
+    border: 1px solid #CCC;
+    height: 32px;
+    margin: 0 0 10px 0;
+    padding: 3px 10px 3px 5px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.bucket_items ul {
+    margin: 0;
+    padding: 0;
+}
+.bucket_items ul li {
+    display: inline;
+    float: left;
+    padding-left: 5px;
+}
+.bucket_items ul li.seperator {
+    border-left: 1px solid #D5D5D5;
+    margin-left: 5px;
+}
+.bucket_items a.button {
+    text-decoration: none;
+    font-weight: bold;
+    color:black;
+    display: block;
+    height: 16px;
+    padding: 8px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.bucket_items a.add_bucket {
+        background-image: url('../../../js/saiku/plugins/Buckets/tag_blue_add.png');
+        background-repeat:no-repeat;
+        width: 16px;
+        background-position: 50% 50%;
+}
+
+.bucket_items a.button:hover {
+    border: 1px solid #CCC;
+    padding: 7px;
+}
+
+.bucket_items a.delete {
+    text-decoration:none;
+    color:black;
+}
+.bucket_items a.on {
+    border: 1px solid #CCC;
+    background-color: #E0E0E0;
+    padding: 7px !important;
+}
+
+.bucket_items .save {
+    background-position: -485px -90px;
+    width: 16px;
+}
+
+.bucket_items .export {
+    background-image: url('../../../images/src/export_drillthrough.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+    width: 16px;
+}
+
+
 /* CCC styles */
 .tipsy { pointer-events: none; padding: 5px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; position: absolute; z-index: 100000; }
   .tipsy-inner { padding: 5px 8px 4px 8px; background-color: black; color: white; max-width: 200px; text-align: center; }
@@ -1124,6 +1291,95 @@ html, body {
 	opacity: 0.85;
   }
   #tooltip h3, #tooltip div { margin: 0; }
+
+
+/* OOCSS - reusable classes */
+
+.RepositoryObjects {
+    margin: 0;
+    padding: 0;
+}
+
+.RepositoryObjects li {
+    cursor: pointer;
+    line-height: 17px;
+    list-style-type: none;
+    margin: 0;
+    padding-bottom: 1px;
+    padding-top: 1px;
+}
+.RepositoryObjects li.query {
+    margin-left: 3px;
+}
+
+
+.RepositoryObjects li a {
+    color: #222;
+    text-decoration: none;
+}
+
+.RepositoryObjects li a:hover {
+    background: #f0f0f0;
+}
+
+.RepositoryObjects ul.folder_content {
+    margin-top: 5px;
+}
+
+.RepositoryObjects .folder_row.selected {
+    background: #f0f0f0;
+}
+
+.RepositoryObjects li.selected.query {
+    background: #f0f0f0;
+}
+
+.RepositoryObjects li.query .icon {
+    background-image: url('../../../images/src/saiku_16.png');
+	padding: 1px 8px 1px;
+	margin-right: 4px;
+}
+
+.RepositoryObjects li .sprite.folder {
+    background-position: -1538px -95px;
+    cursor: pointer;
+    padding: 5px 17px;
+}
+
+.RepositoryObjects li .sprite.folder.collapsed {
+    background-position: -1406px -95px;
+    cursor: pointer;
+    padding: 5px 17px;
+}
+
+/* custom */
+
+#save_query_form .RepositoryObjects {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #cccccc;
+    width: 411px;
+    height: 200px;
+    overflow: auto;
+}
+
+#save_query_form [name="name"] {
+    width: 423px;
+}
+
+.queries h3 {
+    position: relative;
+}
+
+.queries .add_folder {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: block;
+    height: 16px;
+    width: 16px;
+	background-image: url(../../../images/src/folder_add.png);
+}
 
 /* Print styles */
 @media print {
