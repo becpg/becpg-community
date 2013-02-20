@@ -16,6 +16,7 @@ import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
@@ -115,9 +116,8 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 		if(nodeRef!=null && !nodeRef.isEmpty()){
-			searchQuery += " -TYPE:\"cm:systemfolder\""
-					+ " -@cm\\:lockType:READ_ONLY_LOCK"
-					+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" -TYPE:\"bcpg:entityListItem\"";
+			searchQuery += LuceneHelper.DEFAULT_IGNORE_QUERY
+					+ " -TYPE:\"bcpg:entityListItem\"";
 			searchQuery += " +PATH:\"" + getPath(nodeRef) + "//*\"";
 			if (itemType != null && !itemType.isEmpty()) {
 				searchQuery += " +TYPE:\"" + itemType + "\"";

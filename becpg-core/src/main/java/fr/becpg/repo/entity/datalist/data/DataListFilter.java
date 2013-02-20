@@ -194,13 +194,10 @@ public class DataListFilter {
 		
 		Pattern ftsQueryPattern = Pattern.compile("fts\\((.*)\\)");
 
-		filterQuery = " +TYPE:\"" + dataType.toString() + "\"";
+		filterQuery = LuceneHelper.mandatory(LuceneHelper.getCondType(dataType));
 
 		// Common types and aspects to filter from the UI
-		String searchQueryDefaults = " -TYPE:\"systemfolder\" -ASPECT:\"bcpg:entityTplAspect\" "  
-				+ " -@cm\\:lockType:READ_ONLY_LOCK"
-				+ " -ASPECT:\"bcpg:compositeVersion\""
-				+ " -ASPECT:\"bcpg:hiddenFolder\"";
+		String searchQueryDefaults = LuceneHelper.DEFAULT_IGNORE_QUERY; 
 
 		
 		
