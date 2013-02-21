@@ -12,14 +12,9 @@ import javax.annotation.Resource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.MutableAuthenticationService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.PropertyMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
@@ -28,21 +23,15 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
-public class AbstractProjectTestCase extends RepoBaseTestCase {
+public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 
-	protected static final String USER_ONE = "matthieuWF";
-	protected static final String USER_TWO = "philippeWF";
-	
-	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 
 	@Resource
 	protected AlfrescoRepository<AbstractProjectData> alfrescoRepository;
-	@Resource
-	protected MutableAuthenticationService authenticationService;
-	@Resource
-	protected PersonService personService;
+
 	@Resource(name = "WorkflowService")
 	protected WorkflowService workflowService;
 	@Resource
@@ -64,8 +53,9 @@ public class AbstractProjectTestCase extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				userOne = createUser(USER_ONE);
-				userTwo = createUser(USER_TWO);
+				
+				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE,repoBaseTestCase);
+				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO,repoBaseTestCase);
 
 				assigneesOne = new ArrayList<NodeRef>();
 				assigneesOne.add(userOne);
@@ -176,22 +166,5 @@ public class AbstractProjectTestCase extends RepoBaseTestCase {
 				return null;
 			}
 		}, false, true);
-	}
-		
-	private NodeRef createUser(String userName) {
-		if (this.authenticationService.authenticationExists(userName) == false) {
-			this.authenticationService.createAuthentication(userName, "PWD".toCharArray());
-
-			PropertyMap ppOne = new PropertyMap(4);
-			ppOne.put(ContentModel.PROP_USERNAME, userName);
-			ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName");
-			ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
-			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
-			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
-
-			return this.personService.createPerson(ppOne);
-		} else {
-			return personService.getPerson(userName);
-		}
 	}
 }

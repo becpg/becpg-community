@@ -25,10 +25,6 @@
  */
 (function()
 {
-   /**
-    * YUI Library aliases
-    */
-   var Dom = YAHOO.util.Dom;
 
    /**
     * Alfresco Slingshot aliases
@@ -128,24 +124,29 @@
        */
       onCreateContentSuccess: function CreateContentMgr_onCreateContentSuccess(response)
       {
-         var nodeRef = null;
+         var nodeRef = null, scope=this;
          if (response.json && response.json.persistedObject)
          {
             // Grab the new nodeRef and pass it on to _navigateForward() to optionally use
             nodeRef = new Alfresco.util.NodeRef(response.json.persistedObject);
             
             // Activity post - documents only
-            if (!this.options.isContainer
-            		|| this.options.isEntity)
+            if (!this.options.isContainer || this.options.isEntity)
             {
-              Alfresco.Share.postActivity(this.options.siteId, "org.alfresco.documentlibrary.file-created", "{cm:name}", this._getDetailsUrl(nodeRef),
+            	beCPG.util.postActivity(this.options.siteId, "org.alfresco.documentlibrary."+(this.options.isEntity?"entity":"file")+"-created"
+            		  , "{cm:name}", this._getDetailsUrl(nodeRef),
               {
                  appTool: "documentlibrary",
                  nodeRef: nodeRef.toString()
+              }, function (){
+            	  scope._navigateForward(nodeRef);
               });
+            } else {
+            	this._navigateForward(nodeRef);
             }
+         } else {
+         	this._navigateForward(nodeRef);
          }
-         this._navigateForward(nodeRef);
       },
       
       /**

@@ -27,6 +27,10 @@ public class LuceneHelper {
 	private static final String QUERY_COND_TYPE = "TYPE:\"%s\"";
 	private static final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
 	private static final String QUERY_COND = " %s %s";
+	public static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" -ASPECT:\"bcpg:entityTplAspect\" "  
+				+ " -@cm\\:lockType:READ_ONLY_LOCK"
+				+ " -ASPECT:\"bcpg:compositeVersion\""
+				+ " -ASPECT:\"bcpg:hiddenFolder\"";
 
 	/**
 	 * Return an equal condition on a property
