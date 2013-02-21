@@ -327,34 +327,6 @@
 			<properties>
 			    <!-- Test -->
 				<alfresco.data.location>/opt/becpg/workspace/becpg/alf_data</alfresco.data.location>
-<!-- 				<alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url> -->
-<!-- 				<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class> -->
-<!-- 				<alfresco.db.host>localhost</alfresco.db.host> -->
-<!-- 				<alfresco.db.name>becpg_40d_dev</alfresco.db.name> -->
-<!-- 				<alfresco.db.username>becpg</alfresco.db.username> -->
-<!-- 				<alfresco.db.password>becpg</alfresco.db.password> -->
-			</properties>
-		</profile>
-		<profile>
-			<id>sva-int</id>
-			<properties>
-				<alfresco.data.location>/opt/alfresco-4.0.d-sva/becpg_data</alfresco.data.location>
-				<alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url>
-				<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class>
-				<alfresco.db.name>becpg_34d_sva_int</alfresco.db.name>
-				<alfresco.db.username>becpg</alfresco.db.username>
-				<alfresco.db.password>becpg</alfresco.db.password>
-			</properties>
-		</profile>
-		<profile>
-			<id>sva-prod</id>
-			<properties>				
-				<alfresco.data.location>/mnt/data/becpg/alf_data</alfresco.data.location>
-				<alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url>
-				<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class>
-				<alfresco.db.name>beCPG</alfresco.db.name>
-				<alfresco.db.username>beCPG</alfresco.db.username>
-				<alfresco.db.password>becpgSVA</alfresco.db.password>
 			</properties>
 		</profile>
 		<profile>
