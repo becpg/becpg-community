@@ -136,7 +136,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					// Define voluntary, add it when : not present and vol
 					if (allergenListDataItem.getVoluntary()) {
 						// is it raw material ?
-						if (allergenListDataItem.getVoluntarySources().size() == 0) {
+						if (allergenListDataItem.getVoluntarySources().isEmpty()) {
 							if (!newAllergenListDataItem.getVoluntarySources().contains(part)) {
 								newAllergenListDataItem.getVoluntarySources().add(part);
 							}
@@ -152,7 +152,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					// Define invol, add it when : not present and inVol
 					if (allergenListDataItem.getInVoluntary()) {
 						// is it raw material ?
-						if (allergenListDataItem.getInVoluntarySources().size() == 0) {
+						if (allergenListDataItem.getInVoluntarySources().isEmpty()) {
 							if (!newAllergenListDataItem.getInVoluntarySources().contains(part)) {
 								newAllergenListDataItem.getInVoluntarySources().add(part);
 							}

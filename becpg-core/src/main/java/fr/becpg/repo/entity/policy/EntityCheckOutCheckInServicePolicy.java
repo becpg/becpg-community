@@ -10,9 +10,8 @@ import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
-import org.alfresco.service.cmr.lock.LockService;
-import org.alfresco.service.cmr.lock.LockType;
-import org.alfresco.service.cmr.lock.UnableToReleaseLockException;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
@@ -28,10 +27,12 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -48,7 +49,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 												ApplicationContextAware{
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
-    private static final String MSG_ERR_NOT_OWNER = "coci_service.err_not_owner"; 
     
 	private static Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 	    
@@ -57,8 +57,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
     private PermissionService permissionService;
     private ApplicationContext applicationContext;
     private EntityVersionService entityVersionService;
-    private EntityService entityService;
-    private LockService lockService;
+    private FileFolderService fileFolderService;
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
@@ -81,12 +80,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		this.entityVersionService = entityVersionService;
 	}
 
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-
-	public void setLockService(LockService lockService) {
-		this.lockService = lockService;
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
 	}
 
 	/**
@@ -123,7 +118,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 					NodeRef nodeRef = getCheckedOut(workingCopy);
 					entityListDAO.copyDataLists(nodeRef, workingCopy, true);
 					
-					entityService.moveFiles(nodeRef, workingCopy);
+					moveFiles(nodeRef, workingCopy);
 					return null;
 					
 				} finally {
@@ -156,7 +151,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 
 
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_CODE);
-			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
@@ -165,36 +159,11 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 				entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
-				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
 				policyBehaviourFilter.enableBehaviour(type);
-			}
-			
-			//Move workingCopyNodeRef DataList to origNodeRef
-//			entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
-			
-//			// do it in order to move files (otherwise, we get NodeLocked)
-//			try
-//	        {
-//	            if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE))
-//	            {
-//	                // Release the lock on the original node
-//	                lockService.unlock(origNodeRef);
-//	            }
-//	        }
-//	        catch (UnableToReleaseLockException exception)
-//	        {
-//	            throw new CheckOutCheckInServiceException(MSG_ERR_NOT_OWNER, exception);
-//	        }
-//						
-//			
-//			// move files
-//			entityService.moveFiles(workingCopyNodeRef, origNodeRef);
-//			
-//			// Re-lock the original node since aspect lockable is not tested in 4.2.c
-//            lockService.lock(origNodeRef, LockType.READ_ONLY_LOCK);
+			}			
 			
 			//frozeVersionSensitiveLists(origNodeRef, entityVersionRef);
 	}
@@ -254,37 +223,54 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		
 		final NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);		
 		
-//		// do it in order to move files (otherwise, we get NodeLocked)
-//		try
-//        {
-//            if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE))
-//            {
-//                // Release the lock on the original node
-//                lockService.unlock(origNodeRef);
-//            }
-//        }
-//        catch (UnableToReleaseLockException exception)
-//        {
-//            throw new CheckOutCheckInServiceException(MSG_ERR_NOT_OWNER, exception);
-//        }
-//		
-//		// move files
-//		entityService.moveFiles(workingCopyNodeRef, origNodeRef);
-//		
-//		// Re-lock the original node since aspect lockable is not tested in 4.2.c
-//        lockService.lock(origNodeRef, LockType.READ_ONLY_LOCK);
-		
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 			@Override
 		public NodeRef doWork() throws Exception {
 		    
 			// move files
-			entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+			moveFiles(workingCopyNodeRef, origNodeRef);
 			return null;
 
 		}
 	 }, AuthenticationUtil.getSystemUserName());
 		
+	}
+	
+	private void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+		
+		if(targetNodeRef != null && sourceNodeRef != null){	
+
+			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
+				
+				if(file.getName().equals(TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS))){
+					
+					// create Documents folder if needed
+					String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
+					NodeRef documentsFolderNodeRef = nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
+					if(documentsFolderNodeRef == null){
+						documentsFolderNodeRef = fileFolderService.create(targetNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+					}
+					
+					for (FileInfo file2 : fileFolderService.list(file.getNodeRef())){
+						
+						// move files that are not report
+						if(!ReportModel.TYPE_REPORT.equals(file2.getType())){
+							
+							NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, file2.getName());
+							if (documentNodeRef != null) {
+								nodeService.deleteNode(documentNodeRef);
+							}				
+							logger.debug("move file in Documents: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);
+							nodeService.moveNode(file2.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+						}						
+					}
+				}	
+				else{
+					logger.debug("move file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);				
+					nodeService.moveNode(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+				}
+			}
+		}		
 	}
 
 //    private void frozeVersionSensitiveLists(NodeRef origNodeRef, NodeRef entityVersionRef){

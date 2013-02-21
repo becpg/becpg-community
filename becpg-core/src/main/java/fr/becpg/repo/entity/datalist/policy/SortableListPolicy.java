@@ -66,7 +66,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 		logger.debug("SortableListPolicy.onUpdateProperties");
 		//createNode
-		if(before.size()== 0){
+		if(before.isEmpty()){
 			// nothing to do, work is done in addAspect, otherwise it duplicates nodeRef in lucene index !!!
 			return;
 		}

@@ -98,6 +98,13 @@
 		<property name="versionService" ref="versionService" />
 		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.entityVersion.get" class="fr.becpg.repo.web.scripts.entity.EntityVersionWebScript"
+		parent="webscript">
+		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="personService" ref="personService" />
+	</bean>
 
 	<!-- Export search -->
 	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript"

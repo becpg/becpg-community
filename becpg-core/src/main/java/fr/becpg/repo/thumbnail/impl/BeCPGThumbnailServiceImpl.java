@@ -115,7 +115,7 @@ public class BeCPGThumbnailServiceImpl extends ThumbnailServiceImpl implements
 							+ " results");
 				}
 
-				if (listItems.size() == 0) {
+				if (listItems.isEmpty()) {
 					logger.debug("image not found. imgName: " + imgName);
 					return null;
 				}

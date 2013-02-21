@@ -176,6 +176,7 @@
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="entityService" ref="entityService" />
+		<property name="versionService" ref="versionService" />
 	</bean>
 
 	<!-- Migrator -->

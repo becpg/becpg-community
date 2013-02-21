@@ -596,8 +596,6 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			}
 		}, false, true);
 		
-		Thread.sleep(6000);
-		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
