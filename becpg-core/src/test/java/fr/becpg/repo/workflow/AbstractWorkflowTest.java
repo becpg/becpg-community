@@ -7,12 +7,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.subethamail.wiser.Wiser;
 
 import fr.becpg.test.RepoBaseTestCase;
 
-@Ignore
 public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 
 	private static Log logger = LogFactory.getLog(AbstractWorkflowTest.class);

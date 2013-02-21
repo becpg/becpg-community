@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.junit.Ignore;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -19,7 +18,6 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
-@Ignore
 public abstract class AbstractListValuePluginTest extends RepoBaseTestCase {
 
 

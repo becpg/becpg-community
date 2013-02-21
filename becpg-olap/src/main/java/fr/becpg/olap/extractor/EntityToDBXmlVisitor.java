@@ -1,0 +1,422 @@
+package fr.becpg.olap.extractor;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.exception.PlatformRuntimeException;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import fr.becpg.olap.jdbc.JdbcConnectionManager;
+
+/**
+ * 
+ * @author matthieu
+ * 
+ */
+public class EntityToDBXmlVisitor {
+
+	private static final String ATTR_TYPE = "type";
+	private static final String ATTR_NAME = "name";
+	private static final String ATTR_NODEREF = "nodeRef";
+	
+	private JdbcConnectionManager jdbcConnectionManager;
+
+	public EntityToDBXmlVisitor(JdbcConnectionManager jdbcConnectionManager) {
+		super();
+		this.jdbcConnectionManager = jdbcConnectionManager;
+	}
+
+	class Pair {
+		String key;
+		Serializable value;
+
+		public Pair(String key, Serializable value) {
+			super();
+			this.key = key;
+			this.value = value;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((key == null) ? 0 : key.hashCode());
+			result = prime * result + ((value == null) ? 0 : value.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Pair other = (Pair) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (key == null) {
+				if (other.key != null)
+					return false;
+			} else if (!key.equals(other.key))
+				return false;
+			if (value == null) {
+				if (other.value != null)
+					return false;
+			} else if (!value.equals(other.value))
+				return false;
+			return true;
+		}
+
+		private EntityToDBXmlVisitor getOuterType() {
+			return EntityToDBXmlVisitor.this;
+		}
+
+		@Override
+		public String toString() {
+			return "Pair [key=" + key + ", value=" + value + "]";
+		}
+
+	}
+
+	private static Log logger = LogFactory.getLog(EntityToDBXmlVisitor.class);
+
+	private static List<String> ignoredProperties = new ArrayList<String>();
+
+	static {
+		ignoredProperties.add("cm:name");
+		ignoredProperties.add("cm:autoVersionOnUpdateProps");
+		ignoredProperties.add("cm:description");
+		ignoredProperties.add("cm:autoVersion");
+		ignoredProperties.add("cm:title");
+		ignoredProperties.add("cm:initialVersion");
+		ignoredProperties.add("bcpg:entityLists");
+		ignoredProperties.add("cm:contains");
+		ignoredProperties.add("bcpg:sort");
+		ignoredProperties.add("rep:reports");
+		ignoredProperties.add("rep:reports");
+	};
+
+	public void visit(InputStream in) throws IOException, SAXException, ParserConfigurationException, DOMException, ParseException, SQLException {
+
+		try {
+			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+			domFactory.setNamespaceAware(true); // never forget this!
+			DocumentBuilder builder = domFactory.newDocumentBuilder();
+			Document doc = builder.parse(in);
+
+			Element entity = (Element) doc.getFirstChild();
+
+			String nodeRef = entity.getAttribute(ATTR_NODEREF);
+			String name = entity.getAttribute(ATTR_NAME);
+			String type = entity.getNodeName();
+
+			int dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
+
+			NodeList dataLists = (NodeList) entity.getElementsByTagName("dl:dataList");
+			for (int i = 0; i < dataLists.getLength(); i++) {
+				Element dataList = ((Element) dataLists.item(i));
+				String dataListname = dataList.getAttribute(ATTR_NAME);
+
+				NodeList contains = (NodeList) dataList.getElementsByTagName("cm:contains");
+				Element container = (Element) contains.item(0);
+
+				NodeList dataListItems = container.getChildNodes();
+				for (int j = 0; j < dataListItems.getLength(); j++) {
+					Element dataListItem = ((Element) dataListItems.item(j));
+					String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
+
+					createDBDataListItem(dbId, dataListItemNodeRef, dataListname, readProperties(dataListItem));
+
+				}
+
+			}
+
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
+
+	}
+
+
+	private int createDBDataListItem(int entityId, String dataListItemNodeRef, String dataListname, List<Pair> properties) throws SQLException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Create or update datalist item : ");
+			logger.debug(" - NodeRef : " + dataListItemNodeRef);
+			logger.debug(" - Entity : " + entityId);
+			logger.debug(" - DataList name : " + dataListname);
+		}
+
+		
+		//TODO look if already exist aka same nodeRef same date modification or creation
+		
+		int columnId  = 	jdbcConnectionManager.update("insert into `becpg_datalist` " +
+				"(`datalist_id`,`entity_fact_id`,`datalist_name`) " +
+				" values (?,?,?)",new Object[] {dataListItemNodeRef, entityId, dataListname});
+	
+		
+		for (Pair column : properties) {
+			logger.debug(" --  Property :" + column.toString());
+			if(column.value!=null ){
+
+				jdbcConnectionManager.update("insert into `becpg_property` " +
+						"(`fact_id`,`prop_name`,`"+column.value.getClass().getSimpleName().toLowerCase()+"_value`) " +
+						" values (?,?,?)",new Object[] {columnId,column.key, column.value});
+			}
+		}
+		return columnId;
+
+	}
+
+	
+	private int createDBEntity(String nodeRef, String type, String name, List<Pair> properties) throws SQLException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Create or update entity : ");
+			logger.debug(" - NodeRef : " + nodeRef);
+			logger.debug(" - Type : " + type);
+			logger.debug(" - Name : " + name);
+		}
+		
+		//TODO look if already exist aka same nodeRef same date modification or creation
+		
+		int columnId  = 	jdbcConnectionManager.update("insert into `becpg_entity` " +
+				"(`entity_id`,`entity_type`,`entity_name`) " +
+				" values (?,?,?)",new Object[] {nodeRef, type, name});
+	
+		
+		for (Pair column : properties) {
+			logger.debug(" --  Property :" + column.toString());
+			if(column.value!=null ){
+				jdbcConnectionManager.update("insert into `becpg_property` " +
+						"(`fact_id`,`prop_name`,`"+column.value.getClass().getSimpleName().toLowerCase()+"_value`) " +
+						" values (?,?,?)",new Object[] { columnId,column.key, column.value});
+			}
+		}
+		return columnId;
+	}
+
+	private List<Pair> readProperties(Element entity) throws DOMException, ParseException {
+		List<Pair> ret = new ArrayList<Pair>();
+
+		NodeList properties = entity.getChildNodes();
+		for (int j = 0; j < properties.getLength(); j++) {
+			Element property = ((Element) properties.item(j));
+			if (!ignoredProperties.contains(property.getNodeName())) {
+				String type = property.getAttribute(ATTR_TYPE);
+				switch (type) {
+				case "d:text":
+				case "d:mltext":
+				case "d:qname":
+					if (property.getTextContent() != null) {
+						ret.add(new Pair(property.getNodeName(), property.getTextContent()));
+					}
+					break;
+				case "d:datetime":
+				case "d:date":
+					if (property.getTextContent() != null) {
+						ret.add(new Pair(property.getNodeName(), parse(property.getTextContent()).getTime()));
+					}
+					break;
+				case "d:double":
+					if (property.getTextContent() != null) {
+						ret.add(new Pair(property.getNodeName(), Double.parseDouble(property.getTextContent())));
+					}
+					break;
+				case "d:float":
+					if (property.getTextContent() != null) {
+						ret.add(new Pair(property.getNodeName(), Float.parseFloat(property.getTextContent())));
+					}
+					break;
+				case "d:int":
+				case "d:long":
+					if (property.getTextContent() != null) {
+						ret.add(new Pair(property.getNodeName(), Long.parseLong(property.getTextContent())));
+					}
+					break;
+				case "d:noderef":
+				case "assoc":
+					NodeList propertiesAssoc = property.getChildNodes();
+					for (int i = 0; i < propertiesAssoc.getLength(); i++) {
+						if (propertiesAssoc.item(i) instanceof Element) {
+							Element assoc = ((Element) propertiesAssoc.item(i));
+							if (!assoc.getAttribute(ATTR_NODEREF).isEmpty()) {
+								ret.add(new Pair(property.getNodeName() + "_id", assoc.getAttribute(ATTR_NODEREF)));
+							}
+							if (!assoc.getAttribute(ATTR_NAME).isEmpty()) {
+								ret.add(new Pair(property.getNodeName() + "_name", assoc.getAttribute(ATTR_NAME)));
+							}
+						}
+					}
+					break;
+				case "d:boolean":
+					if (property.getTextContent() != null) {
+						ret.add(new Pair(property.getNodeName(), Boolean.parseBoolean(property.getTextContent())));
+					}
+
+					break;
+
+				default:
+					break;
+				}
+
+			}
+		}
+
+		return ret;
+	}
+
+	
+	private static final ThreadLocal<Map<String, TimeZone>> timezones;
+    static
+    {
+        timezones = new ThreadLocal<Map<String,TimeZone>>();
+    }
+	
+	/**
+     * Parse date from ISO formatted string
+     * 
+     * @param isoDate  ISO string to parse
+     * @return  the date
+     * @throws PlatformRuntimeException         if the parse failed
+     */
+    public static Date parse(String isoDate)
+    {
+        Date parsed = null;
+        
+        try
+        {
+            int offset = 0;
+        
+            // extract year
+            int year = Integer.parseInt(isoDate.substring(offset, offset += 4));
+            if (isoDate.charAt(offset) != '-')
+            {
+                throw new IndexOutOfBoundsException("Expected - character but found " + isoDate.charAt(offset));
+            }
+            
+            // extract month
+            int month = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+            if (isoDate.charAt(offset) != '-')
+            {
+                throw new IndexOutOfBoundsException("Expected - character but found " + isoDate.charAt(offset));
+            }
+
+            // extract day
+            int day = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+            if (isoDate.charAt(offset) != 'T')
+            {
+                throw new IndexOutOfBoundsException("Expected T character but found " + isoDate.charAt(offset));
+            }
+
+            // extract hours, minutes, seconds and milliseconds
+            int hour = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+            if (isoDate.charAt(offset) != ':')
+            {
+                throw new IndexOutOfBoundsException("Expected : character but found " + isoDate.charAt(offset));
+            }
+            int minutes = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+            if (isoDate.charAt(offset) != ':')
+            {
+                throw new IndexOutOfBoundsException("Expected : character but found " + isoDate.charAt(offset));
+            }
+            int seconds = Integer.parseInt(isoDate.substring(offset += 1 , offset += 2));
+            if (isoDate.charAt(offset) != '.')
+            {
+                throw new IndexOutOfBoundsException("Expected . character but found " + isoDate.charAt(offset));
+            }
+            int milliseconds = Integer.parseInt(isoDate.substring(offset += 1, offset += 3));
+
+            // extract timezone
+            String timezoneId;
+            char timezoneIndicator = isoDate.charAt(offset);
+            if (timezoneIndicator == '+' || timezoneIndicator == '-')
+            {
+                timezoneId = "GMT" + isoDate.substring(offset);
+            }
+            else if (timezoneIndicator == 'Z')
+            {
+                timezoneId = "GMT";
+            }
+            else
+            {
+                throw new IndexOutOfBoundsException("Invalid time zone indicator " + timezoneIndicator);
+            }
+            
+            // Get the timezone
+            Map<String, TimeZone> timezoneMap = timezones.get();
+            if (timezoneMap == null)
+            {
+                timezoneMap = new HashMap<String, TimeZone>(4);
+                timezones.set(timezoneMap);
+            }
+            TimeZone timezone = timezoneMap.get(timezoneId);
+            if (timezone == null)
+            {
+                timezone = TimeZone.getTimeZone(timezoneId);
+                timezoneMap.put(timezoneId, timezone);
+            }
+            if (!timezone.getID().equals(timezoneId))
+            {
+                throw new IndexOutOfBoundsException();
+            }
+            if (!timezone.getID().equals(timezoneId))
+            {
+                throw new IndexOutOfBoundsException();
+            }
+
+            // initialize Calendar object#
+            // Note: always de-serialise from Gregorian Calendar
+            Calendar calendar = new GregorianCalendar(timezone);
+            calendar.setLenient(false);
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minutes);
+            calendar.set(Calendar.SECOND, seconds);
+            calendar.set(Calendar.MILLISECOND, milliseconds);
+
+            // extract the date
+            parsed = calendar.getTime();
+        }
+        catch(IndexOutOfBoundsException e)
+        {
+            throw new PlatformRuntimeException("Failed to parse date " + isoDate, e);
+        }
+        catch(NumberFormatException e)
+        {
+            throw new PlatformRuntimeException("Failed to parse date " + isoDate, e);
+        }
+        catch(IllegalArgumentException e)
+        {
+            throw new PlatformRuntimeException("Failed to parse date " + isoDate, e);
+        }
+        
+        return parsed;
+    }
+	
+}
