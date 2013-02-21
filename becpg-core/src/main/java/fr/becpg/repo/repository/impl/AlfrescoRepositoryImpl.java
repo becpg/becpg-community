@@ -183,7 +183,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private void saveDataLists(T entity) {
 
 		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-		if (datalists != null) {
+		if (datalists != null && !datalists.isEmpty()) {
 			// Container
 			NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
@@ -199,7 +199,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
 
 			Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
-			if (datalists != null) {
+			if (datalists != null && !datalists.isEmpty()) {
 				NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
 				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {

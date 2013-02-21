@@ -54,27 +54,27 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	private Date createdDate;	
 	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-	 */
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				deleteReportTpls();
-
-				return null;
-
-			}
-		}, false, true);
-
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
+//	 */
+//	@Override
+//	public void setUp() throws Exception {
+//		super.setUp();
+//
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+//			@Override
+//			public NodeRef execute() throws Throwable {
+//
+//				deleteReportTpls();
+//
+//				return null;
+//
+//			}
+//		}, false, true);
+//
+//	}
 
 	/**
 	 * Test report on product
@@ -99,11 +99,11 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
-				reportTplService.createTplRptDesign(productReportTplFolder, "report SF", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, true);
+//				reportTplService.createTplRptDesign(productReportTplFolder, "report SF", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
+//						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, true);
 				reportTplService.createTplRptDesign(productReportTplFolder, "report SF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
 						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false, true);
-
+				
 				return null;
 
 			}
@@ -250,18 +250,18 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
 
 				QName typeQName = nodeService.getType(sfNodeRef);
-				assertEquals("check system templates", 0, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
+				assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
 				// add a system template
 				reportTplService.createTplRptDesign(productReportTplFolder, "report MP", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
 						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, true);
 
-				assertEquals("check system templates", 1, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
+				assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
 				// add a system template
 				reportTplService.createTplRptDesign(productReportTplFolder, "report MP 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
 						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false, true);
-				assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
+				assertEquals("check system templates", 4, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
 				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user").size());
 

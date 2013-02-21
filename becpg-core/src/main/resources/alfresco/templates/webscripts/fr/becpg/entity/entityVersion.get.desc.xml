@@ -1,0 +1,8 @@
+<webscript>
+  <shortname>Entity Version Info</shortname>
+  <description>Entity Version Info</description>
+  <url>/becpg/api/entity-version</url>
+  <format default="json" />
+  <authentication>user</authentication>
+  <transaction allow="readonly">required</transaction>
+</webscript>

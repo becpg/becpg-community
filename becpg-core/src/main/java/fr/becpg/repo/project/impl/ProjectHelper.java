@@ -69,7 +69,7 @@ public class ProjectHelper {
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
-				if(getNextTasks(projectData, t.getNodeRef()).size() == 0){
+				if(getNextTasks(projectData, t.getNodeRef()).isEmpty()){
 					taskList.add(t);
 				}				
 			}
@@ -100,7 +100,7 @@ public class ProjectHelper {
 		List<NodeRef> inProgressTasks = new ArrayList<NodeRef>();
 		inProgressTasks.addAll(taskNodeRefs);
 
-		if (projectData.getTaskList() != null && projectData.getTaskList().size() > 0) {
+		if (projectData.getTaskList() != null && projectData.getTaskList().isEmpty() == false) {
 			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
 				TaskListDataItem t = projectData.getTaskList().get(i);
 

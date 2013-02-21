@@ -382,7 +382,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){										
 					
 					// Ings
-					if(fil.getIngs().size() > 0){
+					if(!fil.getIngs().isEmpty()){
 						if(fil.getIngs().contains(ingListDataItem.getIng())){							
 							if(fil.getQtyPercMaxi() != null && fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc()){
 							

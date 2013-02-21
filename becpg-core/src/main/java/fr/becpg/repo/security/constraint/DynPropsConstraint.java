@@ -115,7 +115,7 @@ public class DynPropsConstraint extends ListOfValuesConstraint {
 								}
 							}, false, true);
 
-			if (allowedValues.size() == 0) {
+			if (allowedValues.isEmpty()) {
 				allowedValues.add(UNDIFINED_CONSTRAINT_VALUE);
 			}
 

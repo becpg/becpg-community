@@ -97,10 +97,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		policyComponent.bindClassBehaviour(
 				NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this,
-						"onUpdateProperties"));
-		
-		disableOnCopyBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-		
+						"onUpdateProperties"));		
 	}
 	
 	@Override
@@ -155,37 +152,14 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 			}
 		}				
 	}
-	
-    /**
-	 * Check if the system should generate the report for this product
-	 * @param entityNodeRef
-	 * @return
-	 */
-	public boolean IsReportable(NodeRef entityNodeRef) {
-		
-    	if(nodeService.exists(entityNodeRef) ){
-    		
-    		// do not generate report for product version
-    		if(!isVersionNode(entityNodeRef)){
-    			return true;
-    		}
-    	}
-		return false;			
-	}
-
 
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-			for (NodeRef nodeRef : pendingNodes) {					
-				if(IsReportable(nodeRef)){
-					Runnable runnable = new ProductReportGenerator(nodeRef, AuthenticationUtil.getAdminUserName());
-					threadExecuter.execute(runnable);
-				}
-				
-			}
+		for (NodeRef nodeRef : pendingNodes) {					
+			Runnable runnable = new ProductReportGenerator(nodeRef, AuthenticationUtil.getSystemUserName());
+			threadExecuter.execute(runnable);			
+		}
 	}
-	
-	
 
 	/**
 	 * The Class ProductReportGenerator.
@@ -225,9 +199,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
                         {
                             @Override
 							public Object execute()
-                            {                                   
-
-                            	if(nodeService.exists(entityNodeRef) && isNotLocked(entityNodeRef) ){
+                            {
+                            	if(nodeService.exists(entityNodeRef) && isNotLocked(entityNodeRef) && !isVersionStoreNode(entityNodeRef)){
                             		
                             		try{
                                 		// Ensure that the policy doesn't refire for this node
