@@ -190,15 +190,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 		if (documentNodeRef == null) {
 
-			try{
-				documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
-				associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);
-			}
-			catch(FileExistsException e){
-				
-				documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
-				logger.debug("FileExistsException, we try to get it documentNodeRef again: " + documentNodeRef);
-			}						
+			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
+			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);						
 		}
 
 		newReports.add(documentNodeRef);
@@ -252,6 +245,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					params.put(ReportParams.PARAM_IMAGES, images);
 					params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
 
+					logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
 					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
 				}
 			} catch (ReportException e) {
@@ -259,14 +253,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 
-		// refresh reports assoc
-		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-		for (NodeRef dbReport : dbReports) {
-			if (!newReports.contains(dbReport)) {
-				logger.debug("delete old report: " + dbReport);
-				nodeService.deleteNode(dbReport);
-			}
-		}
+//		// refresh reports assoc
+//		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+//		for (NodeRef dbReport : dbReports) {
+//			if (!newReports.contains(dbReport)) {
+//				logger.debug("delete old report: " + dbReport);
+//				nodeService.deleteNode(dbReport);
+//			}
+//		}
 		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
 	}
 

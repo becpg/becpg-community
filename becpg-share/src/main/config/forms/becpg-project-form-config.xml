@@ -309,6 +309,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:color" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:color">
@@ -325,6 +326,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:color" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:color">

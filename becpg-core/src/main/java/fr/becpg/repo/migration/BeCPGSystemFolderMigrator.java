@@ -219,7 +219,7 @@ public class BeCPGSystemFolderMigrator {
 		logger.debug("search products, queryPath: " + queryPath);
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(ContentModel.PROP_NAME));
 		
-		if(ret.size()>0){
+		if(!ret.isEmpty()){
 			logger.info("Found "+ret.size()+" product to migrate");
 			for (NodeRef nodeRef : ret) {
 				

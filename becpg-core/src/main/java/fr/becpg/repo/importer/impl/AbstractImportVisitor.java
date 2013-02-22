@@ -818,7 +818,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath.toString(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				
 		        logger.debug("resultSet.length() : " + resultSet.size());
-		        if (resultSet.size() != 0){
+		        if (!resultSet.isEmpty()){
 		        	nodeRef = resultSet.get(0);
 		        	
 		        	// check node exist
@@ -999,7 +999,7 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 
 					
 			        logger.debug("resultSet.length() : " + resultSet.size());
-			        if (resultSet.size() == 0){
+			        if (resultSet.isEmpty()){
 			        	
 			        	String typeTitle = type.toString();
 			        	TypeDefinition typeDef = dictionaryService.getType(type);

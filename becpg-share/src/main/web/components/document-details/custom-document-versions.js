@@ -75,11 +75,80 @@
         /**
          * Tells if the user may compare the version and the document.
          *
-         * @property allowComparison
+         * @property isEntity
          * @type string
          */
-        allowComparison: false
+        isEntity: false
+     },     
+     
+     /**
+      * Fired by YUI when parent element is available for scripting
+      *
+      * @method onReady
+      */
+     onReady: function DocumentVersions_onReady()
+     {
+        this.widgets.alfrescoDataTable = new Alfresco.util.DataTable(
+        {
+           dataSource:
+           {
+              url: this.options.isEntity ? Alfresco.constants.PROXY_URI + "becpg/api/entity-version?nodeRef=" + this.options.nodeRef : Alfresco.constants.PROXY_URI + "api/version?nodeRef=" + this.options.nodeRef,
+              doBeforeParseData: this.bind(function(oRequest, oFullResponse)
+              {
+                 // Versions are returned in an array but must be placed in an object to be able to be parse by yui
+                 // Also skip the first version since that is the current version
+                 this.latestVersion = oFullResponse.splice(0, 1)[0];
+                 Dom.get(this.id + "-latestVersion").innerHTML = this.getDocumentVersionMarkup(this.latestVersion);
+
+                 // Cache the version data for other components (e.g. HistoricPropertiesViewer)
+                 this.versionCache = oFullResponse;
+                 
+                 return (
+                 {
+                    "data" : oFullResponse
+                 });
+              })
+           },
+           dataTable:
+           {
+              container: this.id + "-olderVersions",
+              columnDefinitions:
+              [
+                 { key: "version", sortable: false, formatter: this.bind(this.renderCellVersion) }
+              ],
+              config:
+              {
+                 MSG_EMPTY: this.msg("message.noVersions")
+              }
+           }
+        });
+        
+        // Resize event handler - adjusts the filename container DIV to a size relative to the container width
+        Event.addListener(window, "resize", function() 
+        { 
+           var width = (Dom.getViewportWidth() * 0.25) + "px",
+               nodes = YAHOO.util.Selector.query('h3.thin', this.id + "-body");
+           for (var i=0; i<nodes.length; i++)
+           {
+              nodes[i].style.width = width;
+           }
+        }, this, true);
      },
+     
+     /**
+      * Triggers the archiving and download of a single folders contents
+      *
+      * @method onActionFolderDownload
+      * @param record {object} Object literal representing the folder to be actioned
+      */
+     onActionEntityDownload: function DocumentVersions_onActionEntityDownload(nodeRef) {
+        
+        var downloadDialog = Alfresco.getArchiveAndDownloadInstance(),
+            config = { nodesToArchive: [{"nodeRef": nodeRef}],
+                       archiveName: this.latestVersion.name };
+        downloadDialog.show(config);
+     },
+     
      /**
       * Builds and returns the markup for a version.
       *
@@ -102,9 +171,16 @@
         {
            html += '   <a href="#" name=".onRevertVersionClick" rel="' + doc.label + '" class="' + this.id + ' revert" title="' + this.msg("label.revert") + '">&nbsp;</a>';
         }
-        html += '      <a href="' + downloadURL + '" class="download" title="' + this.msg("label.download") + '">&nbsp;</a>';
+        if (this.options.isEntity == true)
+    	{
+        	html += '   <a href="#" name=".onActionEntityDownload" rel="' + doc.nodeRef + '" class="' + this.id + ' download" title="' + this.msg("label.download") + '">&nbsp;</a>';
+    	}
+        else
+    	{
+        	html += '      <a href="' + downloadURL + '" class="download" title="' + this.msg("label.download") + '">&nbsp;</a>';
+    	}        
         html += '		<a href="#" name=".onViewHistoricPropertiesClick" rel="' + doc.nodeRef + '" class="' + this.id + ' historicProperties" title="' + this.msg("label.historicProperties") + '">&nbsp;</a>';
-        if (this.options.allowComparison == true)
+        if (this.options.isEntity == true)
         {
            html += '      <a href="' + compareURL + '" class="compare" title="' + this.msg("label.compare") + '">&nbsp;</a>';
         }
