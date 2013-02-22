@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.entity.version;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,13 @@ public interface EntityVersionService {
 	 * @return
 	 */
 	public NodeRef getEntitiesHistoryFolder();
-
+	
+	/**
+	 * Gets the version history with properties.
+	 *
+	 * @param entityNodeRef the entity node ref
+	 * @return the version history with properties
+	 */
+	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef);
 	
 }

@@ -221,7 +221,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 				structCompareResults.put(comparison, scr);
 				
 				// display struct comparison if there is smth to show
-				if(hideStructComparison && scr.size() > 0){
+				if(hideStructComparison && !scr.isEmpty()){
 					hideStructComparison = false;
 				}
 			}

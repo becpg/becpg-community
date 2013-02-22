@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.web.scripts.document;
+package fr.becpg.repo.web.scripts.entity;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
@@ -27,10 +27,10 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  *
  * @author querephi
  */
-public class VersionHistoryWebScriptTest extends BaseWebScriptTest{
+public class EntityVersionWebScriptTest extends BaseWebScriptTest{
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(VersionHistoryWebScriptTest.class);
+	private static Log logger = LogFactory.getLog(EntityVersionWebScriptTest.class);
 	
 	/** The Constant PATH_TEMPFOLDER. */
 	private static final String PATH_TEMPFOLDER = "TempFolder";

@@ -652,7 +652,7 @@ public class ImportServiceImpl implements ImportService {
 		logger.debug(queryPath);
 		
 		List<NodeRef> rets = beCPGSearchService.luceneSearch(queryPath,RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		if (rets.size() != 0){
+		if (!rets.isEmpty()){
 	        mappingNodeRef = rets.get(0); 
 	     }	        
                 				

@@ -263,7 +263,7 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	public static Composite<CompoListDataItem> getHierarchicalCompoList(List<CompoListDataItem> items){
 		
 		Composite<CompoListDataItem> composite = new Composite<CompoListDataItem>();
-		if(items.size()>0){
+		if(!items.isEmpty()){
 			loadChildren(composite, 1, 0, items);
 		}
 		return composite;

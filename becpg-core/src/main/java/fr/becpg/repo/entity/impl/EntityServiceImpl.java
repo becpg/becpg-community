@@ -523,8 +523,7 @@ public class EntityServiceImpl implements EntityService {
 				logger.debug("move file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);				
 				nodeService.moveNode(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
 			}
-		}
-		
+		}		
 	}
 
 }

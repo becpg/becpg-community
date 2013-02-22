@@ -77,7 +77,7 @@ public class EntityFolderMigrator {
 
 		logger.info("Found " + entitiesNodeRef.size() + " nodes to migrate");
 
-		if (entitiesNodeRef.size() > 0) {
+		if (!entitiesNodeRef.isEmpty()) {
 
 			for (final List<NodeRef> batchList : Lists.partition(entitiesNodeRef, 100)) {
 				transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
@@ -89,8 +89,33 @@ public class EntityFolderMigrator {
 				}, false, true);
 
 			}
-
 		}
+		
+		// bug fix bcpg:entityListsAspect on bcpg:entityListItem
+		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITYLIST_ITEM)) + 
+				LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS));
+				
+		List<NodeRef> entityListItems = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+
+		logger.info("Found " + entityListItems.size() + " entityListItems to fix");
+		
+		if (!entityListItems.isEmpty()) {
+
+			for (final List<NodeRef> batchList : Lists.partition(entityListItems, 100)) {
+				transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+					public Boolean execute() throws Exception {
+
+						for(NodeRef n : batchList){
+							if(nodeService.exists(n)){
+								nodeService.removeAspect(n, BeCPGModel.ASPECT_ENTITYLISTS);
+							}							
+						}
+						return true;
+					}
+				}, false, true);
+			}
+		}
+		
 	}
 
 	@SuppressWarnings("deprecation")

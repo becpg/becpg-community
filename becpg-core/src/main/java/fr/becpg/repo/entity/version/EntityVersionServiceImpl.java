@@ -4,6 +4,7 @@
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,12 +12,15 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
@@ -70,6 +74,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	private EntityService entityService;
 	
+	private VersionService versionService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -92,6 +98,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
+	}
+
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
 	}
 
 	@Override
@@ -168,13 +178,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 *            the node ref
 	 * @return the version history node reference
 	 */
-	private NodeRef createVersionHistory(NodeRef nodeRef) {
+	private NodeRef createVersionHistory(NodeRef entitiesHistoryFolder, NodeRef nodeRef) {
 		long start = System.currentTimeMillis();
 
 		HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
 		props.put(ContentModel.PROP_NAME, nodeRef.getId());
 
-		ChildAssociationRef childAssocRef = nodeService.createNode(getEntitiesHistoryFolder(),
+		ChildAssociationRef childAssocRef = nodeService.createNode(entitiesHistoryFolder,
 				ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER,
 				props);
@@ -196,15 +206,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 */
 	private NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
 		NodeRef vhNodeRef = null;
-
-		if (getEntitiesHistoryFolder() != null) {
-			vhNodeRef = nodeService.getChildByName(getEntitiesHistoryFolder(), ContentModel.ASSOC_CONTAINS,
+		NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
+		if (entitiesHistoryFolder != null) {
+			vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
 					nodeRef.getId());
-		}
-
-		if (vhNodeRef == null) {
-			logger.debug("createVersionHistory");
-			vhNodeRef = createVersionHistory(nodeRef);
+			
+			if (vhNodeRef == null) {
+				logger.debug("createVersionHistory");
+				vhNodeRef = createVersionHistory(entitiesHistoryFolder, nodeRef);
+			}
 		}
 
 		return vhNodeRef;
@@ -239,14 +249,17 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 						return AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 							@Override
-							public NodeRef doWork() throws Exception {								
-								logger.debug("create folder 'EntitysHistory'");
+							public NodeRef doWork() throws Exception {																
 								HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
 								props.put(ContentModel.PROP_NAME, ENTITIES_HISTORY_NAME);
-								return nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN,
+								NodeRef n = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN,
 										QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props).getChildRef();
+								
+								logger.debug("create folder 'EntitysHistory' " + n + " - " + nodeService.exists(n));
+								
+								return n;
 							}
-						}, AuthenticationUtil.getAdminUserName());	
+						}, AuthenticationUtil.getSystemUserName());	
 					}
 				} catch (Exception e) {
 					logger.error("Failed to get entitysHistory", e);
@@ -268,9 +281,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Override
 	public NodeRef getEntityVersion(Version version) {
-		
-		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(version.getVersionedNodeRef());
-		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryNodeRef, false);
+
+		return getEntityVersion(getVersionAssocs(version.getVersionedNodeRef()), version);
+	}
+	
+	private List<ChildAssociationRef> getVersionAssocs(NodeRef entityNodeRef){
+		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef);
+		return getVersionAssocs(versionHistoryNodeRef, false);
+	}
+	
+	private NodeRef getEntityVersion(List<ChildAssociationRef> versionAssocs, Version version) {
 
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
 
@@ -287,6 +307,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 
-
-
+	@Override
+	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
+				
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		List<EntityVersion> entityVersionHistory = new ArrayList<EntityVersion>(versionHistory.getAllVersions().size());		
+		List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
+		
+		for(Version version : versionHistory.getAllVersions()){
+			NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+			if(entityVersionNodeRef != null){
+				entityVersionHistory.add(new EntityVersion(version, entityVersionNodeRef));
+			}
+		}
+		return entityVersionHistory;
+	}
 }

@@ -81,6 +81,7 @@ public class AlfrescoRepositoryTest extends RepoBaseTestCase {
 				// load SF and test it
 				sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 				assertNotNull("check allergenList", sfData.getAllergenList());
+				assertFalse(nodeService.hasAspect(sfData.getAllergenList().get(0).getNodeRef(), BeCPGModel.ASPECT_ENTITYLISTS));
 
 				for (AllergenListDataItem d : sfData.getAllergenList()) {
 
