@@ -113,7 +113,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		if (refs!=null && !refs.isEmpty()) {
 			return refs;
 		}
-		throw new WebScriptException("No entities found for query " + query);
+		throw new WebScriptException("No entities found for query " + runnedQuery);
 		
 	}
 	

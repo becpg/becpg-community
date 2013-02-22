@@ -1,6 +1,10 @@
 package fr.becpg.olap;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -8,16 +12,26 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
+import fr.becpg.olap.InstanceManager.Instance;
 import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
 import fr.becpg.olap.http.GetEntityCommand;
 import fr.becpg.olap.http.ListEntitiesCommand;
 import fr.becpg.olap.jdbc.JdbcConnectionManager;
 
+/**
+ * 
+ * @author matthieu
+ * 
+ */
 public class RemoteETLClient {
 
 	private static Log logger = LogFactory.getLog(RemoteETLClient.class);
@@ -90,53 +104,48 @@ public class RemoteETLClient {
 
 	}
 
+	public static void main(String[] args) throws Exception {
 
-	public static void main(String[] args) {
+		Options options = new Options();
 
-		// Option help = new Option( "help", "print this message" );
-		// Option projecthelp = new Option( "projecthelp",
-		// "print project help information" );
-		// Option version = new Option( "version",
-		// "print the version information and exit" );
-		// Option quiet = new Option( "quiet", "be extra quiet" );
-		// Option verbose = new Option( "verbose", "be extra verbose" );
-		// Option debug = new Option( "debug", "print debugging information" );
-		// Option emacs = new Option( "emacs",
-		// "produce logging information without adornments" );
-		//
-		// Option logfile = OptionBuilder.withArgName( "file" )
-		// .hasArg()
-		// .withDescription( "use given file for log" )
-		// .create( "logfile" );
-		//
-		// Options options = new Options();
-		//
-		// options.addOption( help );
-		// options.addOption( projecthelp );
-		// options.addOption( version );
-		// options.addOption( quiet );
-		// options.addOption( verbose );
-		// options.addOption( debug );
-		// options.addOption( emacs );
-		// options.addOption( logfile );
-		//
-		// // create the parser
-		// CommandLineParser parser = new GnuParser();
-		// try {
-		// // parse the command line arguments
-		// CommandLine line = parser.parse( options, args );
-		// }
-		// catch( ParseException exp ) {
-		// // oops, something went wrong
-		// System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
-		// }
+		options.addOption("file", true, "Load properties file");
 
-		JdbcConnectionManager jdbcConnectionManager = new JdbcConnectionManager("becpg","becpg", "jdbc:mysql://localhost:3306/becpg_dev");
-		
-		RemoteETLClient remoteETLClient = new RemoteETLClient("http://localhost:8080/alfresco/service", "admin@agrostis.biz", "becpg".toCharArray());
-		remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(jdbcConnectionManager));
+		CommandLineParser parser = new GnuParser();
+		CommandLine cmd = parser.parse(options, args);
+		Properties props = new Properties();
+		if (cmd.hasOption("file")) {
+			props.load(new FileInputStream(cmd.getOptionValue("file")));
+		} else {
+			props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("jdbc.properties"));
+		}
 
-		remoteETLClient.loadEntities("+TYPE:bcpg\\:finishedProduct");
+		final JdbcConnectionManager jdbcConnectionManager = new JdbcConnectionManager((String) props.get("jdbc.user"), (String) props.get("jdbc.password"),
+				(String) props.get("jdbc.url"));
+		InstanceManager instanceManager = new InstanceManager(jdbcConnectionManager);
+		for (final Instance instance : instanceManager.getAllInstances()) {
+			logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+			if (logger.isDebugEnabled()) {
+				logger.debug(" - Login: " + instance.getTenantUser());
+				logger.debug(" - Password: " + instance.getTenantPassword());
+			}
+
+			String query = " AND (@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX])";
+
+			RemoteETLClient remoteETLClient = new RemoteETLClient(instance.getInstanceUrl(), instance.getTenantUser(), instance.getTenantPassword().toCharArray());
+			remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(jdbcConnectionManager, instance));
+
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+			String dateRange = "MIN";
+			if (instance.getLastImport() != null) {
+				dateRange = dateFormat.format(instance.getLastImport());
+			}
+
+			remoteETLClient.loadEntities(String.format(query, dateRange, dateRange));
+
+			instanceManager.updateLastImportDate(instance);
+			
+		}
 
 	}
 

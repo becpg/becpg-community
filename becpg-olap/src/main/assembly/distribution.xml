@@ -11,11 +11,6 @@
       <outputDirectory>/dist</outputDirectory>
     </fileSet>
      <fileSet>
-      <directory>${basedir}/src/main/resources</directory>
-      <outputDirectory>/dist/saiku/WEB-INF/classes</outputDirectory>
-       <filtered>true</filtered>
-     </fileSet>
-     <fileSet>
       <directory>${basedir}/src/main/bin</directory>
       <outputDirectory>/</outputDirectory>
       <fileMode>0755</fileMode>
