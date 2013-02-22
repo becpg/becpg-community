@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import fr.becpg.olap.InstanceManager.Instance;
 import fr.becpg.olap.jdbc.JdbcConnectionManager;
 
 /**
@@ -42,20 +43,33 @@ public class EntityToDBXmlVisitor {
 	private static final String ATTR_NODEREF = "nodeRef";
 	
 	private JdbcConnectionManager jdbcConnectionManager;
+	
+	private Instance instance;
 
-	public EntityToDBXmlVisitor(JdbcConnectionManager jdbcConnectionManager) {
+	public EntityToDBXmlVisitor(JdbcConnectionManager jdbcConnectionManager, Instance instance) {
 		super();
 		this.jdbcConnectionManager = jdbcConnectionManager;
+		this.instance = instance;
+				
 	}
 
-	class Pair {
+	class Column {
 		String key;
+		String nodeRef = null ;
 		Serializable value;
+		
 
-		public Pair(String key, Serializable value) {
+		public Column(String key, Serializable value) {
 			super();
 			this.key = key;
 			this.value = value;
+		}
+
+		public Column(String key, String nodeRef ,Serializable value) {
+			this.key = key;
+			this.value = value;
+			this.nodeRef = nodeRef;
+			
 		}
 
 		@Override
@@ -64,6 +78,7 @@ public class EntityToDBXmlVisitor {
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result + ((key == null) ? 0 : key.hashCode());
+			result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 			result = prime * result + ((value == null) ? 0 : value.hashCode());
 			return result;
 		}
@@ -76,13 +91,18 @@ public class EntityToDBXmlVisitor {
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			Pair other = (Pair) obj;
+			Column other = (Column) obj;
 			if (!getOuterType().equals(other.getOuterType()))
 				return false;
 			if (key == null) {
 				if (other.key != null)
 					return false;
 			} else if (!key.equals(other.key))
+				return false;
+			if (nodeRef == null) {
+				if (other.nodeRef != null)
+					return false;
+			} else if (!nodeRef.equals(other.nodeRef))
 				return false;
 			if (value == null) {
 				if (other.value != null)
@@ -98,8 +118,9 @@ public class EntityToDBXmlVisitor {
 
 		@Override
 		public String toString() {
-			return "Pair [key=" + key + ", value=" + value + "]";
+			return "Column [key=" + key + ", nodeRef=" + nodeRef + ", value=" + value + "]";
 		}
+
 
 	}
 
@@ -135,7 +156,7 @@ public class EntityToDBXmlVisitor {
 			String name = entity.getAttribute(ATTR_NAME);
 			String type = entity.getNodeName();
 
-			int dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
+			Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
 
 			NodeList dataLists = (NodeList) entity.getElementsByTagName("dl:dataList");
 			for (int i = 0; i < dataLists.getLength(); i++) {
@@ -150,7 +171,7 @@ public class EntityToDBXmlVisitor {
 					Element dataListItem = ((Element) dataListItems.item(j));
 					String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
 
-					createDBDataListItem(dbId, dataListItemNodeRef, dataListname, readProperties(dataListItem));
+					createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName() ,  readProperties(dataListItem));
 
 				}
 
@@ -163,7 +184,7 @@ public class EntityToDBXmlVisitor {
 	}
 
 
-	private int createDBDataListItem(int entityId, String dataListItemNodeRef, String dataListname, List<Pair> properties) throws SQLException {
+	private Long createDBDataListItem(Long entityId, String dataListItemNodeRef, String dataListname,String itemType, List<Column> properties) throws SQLException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Create or update datalist item : ");
 			logger.debug(" - NodeRef : " + dataListItemNodeRef);
@@ -174,18 +195,18 @@ public class EntityToDBXmlVisitor {
 		
 		//TODO look if already exist aka same nodeRef same date modification or creation
 		
-		int columnId  = 	jdbcConnectionManager.update("insert into `becpg_datalist` " +
-				"(`datalist_id`,`entity_fact_id`,`datalist_name`) " +
-				" values (?,?,?)",new Object[] {dataListItemNodeRef, entityId, dataListname});
+		Long columnId  = 	jdbcConnectionManager.update("insert into `becpg_datalist` " +
+				"(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`) " +
+				" values (?,?,?,?,?,?)",new Object[] {dataListItemNodeRef, entityId, dataListname , itemType  ,instance.getId(),instance.getBatchId()});
 	
 		
-		for (Pair column : properties) {
+		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
 			if(column.value!=null ){
 
 				jdbcConnectionManager.update("insert into `becpg_property` " +
-						"(`fact_id`,`prop_name`,`"+column.value.getClass().getSimpleName().toLowerCase()+"_value`) " +
-						" values (?,?,?)",new Object[] {columnId,column.key, column.value});
+						"(`datalist_id`,`prop_name`,`prop_id`,`"+getColumnTypeName(column.value)+"`,`batch_id`) " +
+						" values (?,?,?,?,?)",new Object[] {columnId,column.key, column.nodeRef, extract(column.value),instance.getBatchId()});
 			}
 		}
 		return columnId;
@@ -193,7 +214,21 @@ public class EntityToDBXmlVisitor {
 	}
 
 	
-	private int createDBEntity(String nodeRef, String type, String name, List<Pair> properties) throws SQLException {
+	private Object extract(Serializable value) {
+		if(value instanceof Date){
+			Calendar cal = Calendar.getInstance();
+			cal.setTime((Date) value);
+			return cal.get(Calendar.YEAR)*10000+cal.get(Calendar.MONTH)*100+cal.get(Calendar.DAY_OF_MONTH);
+		}
+		return value;
+	}
+
+    private String getColumnTypeName(Serializable value){
+    	return value.getClass().getSimpleName().toLowerCase()+"_value";
+    }
+	
+
+	private Long createDBEntity(String nodeRef, String type, String name, List<Column> properties) throws SQLException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Create or update entity : ");
 			logger.debug(" - NodeRef : " + nodeRef);
@@ -203,24 +238,24 @@ public class EntityToDBXmlVisitor {
 		
 		//TODO look if already exist aka same nodeRef same date modification or creation
 		
-		int columnId  = 	jdbcConnectionManager.update("insert into `becpg_entity` " +
-				"(`entity_id`,`entity_type`,`entity_name`) " +
-				" values (?,?,?)",new Object[] {nodeRef, type, name});
+		Long columnId  = 	jdbcConnectionManager.update("insert into `becpg_entity` " +
+				"(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`) " +
+				" values (?,?,?,?,?)",new Object[] {nodeRef, type, name, instance.getId(),instance.getBatchId()});
 	
 		
-		for (Pair column : properties) {
+		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
 			if(column.value!=null ){
 				jdbcConnectionManager.update("insert into `becpg_property` " +
-						"(`fact_id`,`prop_name`,`"+column.value.getClass().getSimpleName().toLowerCase()+"_value`) " +
-						" values (?,?,?)",new Object[] { columnId,column.key, column.value});
+						"(`entity_id`,`prop_name`,`prop_id`,`"+getColumnTypeName(column.value)+"`,`batch_id`) " +
+						" values (?,?,?,?,?)",new Object[] { columnId,column.key , column.nodeRef, extract(column.value),instance.getId()});
 			}
 		}
 		return columnId;
 	}
 
-	private List<Pair> readProperties(Element entity) throws DOMException, ParseException {
-		List<Pair> ret = new ArrayList<Pair>();
+	private List<Column> readProperties(Element entity) throws DOMException, ParseException {
+		List<Column> ret = new ArrayList<Column>();
 
 		NodeList properties = entity.getChildNodes();
 		for (int j = 0; j < properties.getLength(); j++) {
@@ -232,29 +267,29 @@ public class EntityToDBXmlVisitor {
 				case "d:mltext":
 				case "d:qname":
 					if (property.getTextContent() != null) {
-						ret.add(new Pair(property.getNodeName(), property.getTextContent()));
+						ret.add(new Column(property.getNodeName(), property.getTextContent()));
 					}
 					break;
 				case "d:datetime":
 				case "d:date":
 					if (property.getTextContent() != null) {
-						ret.add(new Pair(property.getNodeName(), parse(property.getTextContent()).getTime()));
+						ret.add(new Column(property.getNodeName(), parse(property.getTextContent())));
 					}
 					break;
 				case "d:double":
 					if (property.getTextContent() != null) {
-						ret.add(new Pair(property.getNodeName(), Double.parseDouble(property.getTextContent())));
+						ret.add(new Column(property.getNodeName(), Double.parseDouble(property.getTextContent())));
 					}
 					break;
 				case "d:float":
 					if (property.getTextContent() != null) {
-						ret.add(new Pair(property.getNodeName(), Float.parseFloat(property.getTextContent())));
+						ret.add(new Column(property.getNodeName(), Float.parseFloat(property.getTextContent())));
 					}
 					break;
 				case "d:int":
 				case "d:long":
 					if (property.getTextContent() != null) {
-						ret.add(new Pair(property.getNodeName(), Long.parseLong(property.getTextContent())));
+						ret.add(new Column(property.getNodeName(), Long.parseLong(property.getTextContent())));
 					}
 					break;
 				case "d:noderef":
@@ -263,18 +298,15 @@ public class EntityToDBXmlVisitor {
 					for (int i = 0; i < propertiesAssoc.getLength(); i++) {
 						if (propertiesAssoc.item(i) instanceof Element) {
 							Element assoc = ((Element) propertiesAssoc.item(i));
-							if (!assoc.getAttribute(ATTR_NODEREF).isEmpty()) {
-								ret.add(new Pair(property.getNodeName() + "_id", assoc.getAttribute(ATTR_NODEREF)));
-							}
-							if (!assoc.getAttribute(ATTR_NAME).isEmpty()) {
-								ret.add(new Pair(property.getNodeName() + "_name", assoc.getAttribute(ATTR_NAME)));
+							if (!assoc.getAttribute(ATTR_NODEREF).isEmpty() || !assoc.getAttribute(ATTR_NAME).isEmpty()) {
+								ret.add(new Column(property.getNodeName(), assoc.getAttribute(ATTR_NODEREF) ,  assoc.getAttribute(ATTR_NAME)));
 							}
 						}
 					}
 					break;
 				case "d:boolean":
 					if (property.getTextContent() != null) {
-						ret.add(new Pair(property.getNodeName(), Boolean.parseBoolean(property.getTextContent())));
+						ret.add(new Column(property.getNodeName(), Boolean.parseBoolean(property.getTextContent())));
 					}
 
 					break;
