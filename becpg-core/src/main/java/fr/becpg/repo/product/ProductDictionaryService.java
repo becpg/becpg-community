@@ -9,7 +9,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.SystemProductType;
-import fr.becpg.model.SystemState;
 
 // TODO: Auto-generated Javadoc
 /**

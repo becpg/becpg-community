@@ -83,11 +83,12 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 					(afterHierarchy2 != null  && !afterHierarchy2.equals(beforeHierarchy2))) {
 			classify = true;					
 		}
-		
-		//don't classify product that are in a site, force to use wf
+			
+		//don't classify product that are in a site, force to use wf && don't classify templates
 		if(classify){
+			
 			String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-			if (!SiteHelper.isSitePath(path)) {
+			if (!SiteHelper.isSitePath(path) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
 				queueNode(nodeRef);
 			}
 		}

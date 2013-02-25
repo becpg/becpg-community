@@ -88,11 +88,6 @@ public interface EntityService {
 	  */
 	 boolean hasAssociatedImages(QName type);
 
-
-	 
-	 NodeRef getEntityTplNodeRef(NodeRef entityNodeRef);
-
-
 	 void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef); 
     
 	 void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef);

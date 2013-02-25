@@ -47,7 +47,6 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -84,8 +83,6 @@ public class EntityServiceImpl implements EntityService {
 
 	private PermissionService permissionService;
 
-	private EntityTplService entityTplService;
-
 	private EntityVersionService entityVersionService;
 
 	private CopyService copyService;
@@ -118,10 +115,6 @@ public class EntityServiceImpl implements EntityService {
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
-	}
-
-	public void setEntityTplService(EntityTplService entityTplService) {
-		this.entityTplService = entityTplService;
 	}
 
 	public void setCopyService(CopyService copyService) {
@@ -194,36 +187,6 @@ public class EntityServiceImpl implements EntityService {
 		}
 
 		return false;
-	}
-
-	/**
-	 * get the entity folder of the template and copy it for the entity.
-	 * 
-	 * @param entityNodeRef
-	 *            the entity node ref
-	 */
-	@Override
-	public NodeRef getEntityTplNodeRef(NodeRef entityNodeRef) {
-
-		logger.debug("initializeEntityFolder");
-		QName entityType = nodeService.getType(entityNodeRef);
-
-		// entity => exit
-		if (entityType.isMatch(BeCPGModel.TYPE_ENTITY_V2)) {
-			return null;
-		}		
-		
-		NodeRef entityTplNodeRef = null;
-		
-		 if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY_V2)){		
-			 entityTplNodeRef = entityTplService.getFolderTpl(entityType);
-		}
-		else{
-			logger.debug("entityNodeRef doesn't inherit from  entityV2");
-			return null;
-		}
-		
-		return entityTplNodeRef;
 	}
 
 	/**

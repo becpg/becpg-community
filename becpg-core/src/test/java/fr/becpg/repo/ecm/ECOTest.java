@@ -293,8 +293,6 @@ public class ECOTest extends RepoBaseTestCase {
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
 
-					logger.error(costListDataItem.toString());
-
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);

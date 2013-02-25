@@ -24,6 +24,7 @@
 		init-method="init" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
 		<property name="associationService" ref="associationService"/>
+		<property name="entityTplService" ref="entityTplService" />
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy"

@@ -46,8 +46,6 @@
 	
 	<!-- Product Listeners -->
 	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">
-		<property name="productService" ref="productService" />
-		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />

@@ -1463,7 +1463,7 @@
 		<type name="bcpg:systemEntity">
 			<parent>bcpg:entityV2</parent>
 		</type>
-
+		
 		<type name="bcpg:autoNum">
 			<parent>cm:content</parent>
 			<properties>
@@ -1768,6 +1768,10 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
+				</property>
+				<property name="bcpg:entityTplIsDefault">
+					<type>d:boolean</type>
+					<default>false</default>
 				</property>
 			</properties>
 		</aspect>

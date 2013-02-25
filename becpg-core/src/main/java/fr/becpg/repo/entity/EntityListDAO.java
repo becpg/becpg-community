@@ -141,9 +141,9 @@ public interface EntityListDAO {
 
 	/**
 	 * Move datalists
-	 * @param origNodeRef
-	 * @param nodeRef
+	 * @param sourceNodeRef
+	 * @param targetNodeRef
 	 */
-	public void moveDataLists(NodeRef origNodeRef, NodeRef nodeRef);
+	public void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
 
 }

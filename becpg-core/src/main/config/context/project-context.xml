@@ -47,7 +47,6 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="projectService" ref="projectService" />
 		<property name="associationService" ref="associationService" />
-		<property name="copyService" ref="copyService" />
 	</bean>
 
 	<bean id="taskValuePlugin" parent="baseListValuePlugin"

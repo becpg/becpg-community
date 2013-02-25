@@ -215,15 +215,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
-				// clear folderTpls
-				NodeRef folderTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
-				if (folderTplsFolder != null) {
-					nodeService.deleteNode(folderTplsFolder);
-				}
-				folderTplsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_FOLDER_TEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
-
 				// clear entityTpls
 				NodeRef entityTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_ENTITY_TEMPLATES));
@@ -235,16 +226,13 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Create raw material Tpl --*/
 				logger.debug("/*-- Create raw material Tpl --*/");
-				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_RAWMATERIAL, true,null);
+				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_RAWMATERIAL, true, null, null);
 
 				/*-- Create finished product Tpl with product folder and product image --*/
 				logger.debug("/*-- Create finished product Tpl --*/");
+				NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true, null, null);
 
-				NodeRef folderTplFolder = entityTplService.createFolderTpl(folderTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true,null);
-
-				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true,null);
-
-				NodeRef imagesFolder = fileFolderService.create(folderTplFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
+				NodeRef imagesFolder = fileFolderService.create(entityTplNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 				addProductImage(imagesFolder);
 
 				// add permissions on image folder Tpl

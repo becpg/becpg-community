@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.listener;
 
-import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -11,7 +10,6 @@ import org.springframework.context.ApplicationListener;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
-import fr.becpg.repo.product.ProductService;
 
 //TODO remove if unused
 @Deprecated
@@ -19,20 +17,10 @@ public class ProductCheckInListener implements ApplicationListener<CheckInEntity
 
 	private static Log logger = LogFactory.getLog(ProductCheckInListener.class);
 	
-	private ProductService productService;
-	private Repository repositoryHelper;
 	private NodeService nodeService;
 	private NamespaceService namespaceService;
 	private DictionaryService dictionaryService;
-	
-	public void setProductService(ProductService productService) {
-		this.productService = productService;
-	}
-	
-	public void setRepositoryHelper(Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
-	}
-	
+		
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}

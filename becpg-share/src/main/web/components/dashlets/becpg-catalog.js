@@ -542,22 +542,23 @@
        */
       onSearchChange: function BeCPGCatalog_onSearchChange()
       {
-      	
+       	this.searchTerm = this.getSearchText();     	
+     	this.reloadDataTable();
       
-         var searchText = this.getSearchText();
-         if (searchText.replace(/\*/g, "").length < 3 || searchText.replace(/\*/g, "").length == 0)
-         {
-            Alfresco.util.PopupManager.displayMessage(
-            {
-               text: this.msg("message.minimum-length", 3)
-            });
-         }
-         else
-         {
-         	this.searchTerm = searchText;
-         	
-         	this.reloadDataTable();
-         }
+//         var searchText = this.getSearchText();
+//         if (searchText.replace(/\*/g, "").length < 3 || searchText.replace(/\*/g, "").length == 0)
+//         {
+//            Alfresco.util.PopupManager.displayMessage(
+//            {
+//               text: this.msg("message.minimum-length", 3)
+//            });
+//         }
+//         else
+//         {
+//         	this.searchTerm = searchText;
+//         	
+//         	this.reloadDataTable();
+//         }
       },
       
       onActionShowCharact: function BeCPGCatalog_onActionShowCharact(row) {

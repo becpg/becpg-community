@@ -69,7 +69,6 @@ public class RepoConsts {
 	public static final String PATH_PROCESSSTEPS = "ProcessSteps";
 	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
-	public static final String PATH_FOLDER_TEMPLATES = "FolderTemplates";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
 	public static final String PATH_QUALITY_TEMPLATES = "QualityTemplates";
 	public static final String PATH_PRODUCTS = "Products";
