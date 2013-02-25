@@ -1,7 +1,4 @@
-<@markup id="css" >
-   <#-- CSS Dependencies -->
-	<@link rel="stylesheet" type="text/css" href="${url.context}/components/dashlets/my-olapchart.css" group="my-olapchart"/>
-</@>
+
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
@@ -13,11 +10,19 @@
 	<@script type="text/javascript" src="${url.context}/components/dashlets/my-olapchart.js" group="my-olapchart"></@script>
 </@>
 
+<@markup id="css" >
+   <#-- CSS Dependencies -->
+	<@link rel="stylesheet" type="text/css" href="${url.context}/components/dashlets/my-olapchart.css" group="my-olapchart"/>
+</@>
+
 
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
 		<script type="text/javascript">//<![CDATA[
+		
+		(function()
+		{
 		   var olapChart = new beCPG.dashlet.OlapChart("${el}").setOptions(
 		   {
 		      siteId: "${page.url.templateArgs.site!""}",
@@ -48,6 +53,7 @@
 		         }
 		      ]
 		   });
+		   })();
 		   
 		//]]></script>
 		<div class="dashlet my-olapchart">

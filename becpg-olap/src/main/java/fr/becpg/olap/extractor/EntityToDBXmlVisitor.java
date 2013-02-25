@@ -18,10 +18,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.exception.PlatformRuntimeException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,23 +39,22 @@ public class EntityToDBXmlVisitor {
 	private static final String ATTR_TYPE = "type";
 	private static final String ATTR_NAME = "name";
 	private static final String ATTR_NODEREF = "nodeRef";
-	
+
 	private JdbcConnectionManager jdbcConnectionManager;
-	
+
 	private Instance instance;
 
 	public EntityToDBXmlVisitor(JdbcConnectionManager jdbcConnectionManager, Instance instance) {
 		super();
 		this.jdbcConnectionManager = jdbcConnectionManager;
 		this.instance = instance;
-				
+
 	}
 
 	class Column {
 		String key;
-		String nodeRef = null ;
+		String nodeRef = null;
 		Serializable value;
-		
 
 		public Column(String key, Serializable value) {
 			super();
@@ -65,11 +62,11 @@ public class EntityToDBXmlVisitor {
 			this.value = value;
 		}
 
-		public Column(String key, String nodeRef ,Serializable value) {
+		public Column(String key, String nodeRef, Serializable value) {
 			this.key = key;
 			this.value = value;
 			this.nodeRef = nodeRef;
-			
+
 		}
 
 		@Override
@@ -121,7 +118,6 @@ public class EntityToDBXmlVisitor {
 			return "Column [key=" + key + ", nodeRef=" + nodeRef + ", value=" + value + "]";
 		}
 
-
 	}
 
 	private static Log logger = LogFactory.getLog(EntityToDBXmlVisitor.class);
@@ -144,47 +140,41 @@ public class EntityToDBXmlVisitor {
 
 	public void visit(InputStream in) throws IOException, SAXException, ParserConfigurationException, DOMException, ParseException, SQLException {
 
-		try {
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			domFactory.setNamespaceAware(true); // never forget this!
-			DocumentBuilder builder = domFactory.newDocumentBuilder();
-			Document doc = builder.parse(in);
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+		domFactory.setNamespaceAware(true); // never forget this!
+		DocumentBuilder builder = domFactory.newDocumentBuilder();
+		Document doc = builder.parse(in);
 
-			Element entity = (Element) doc.getFirstChild();
+		Element entity = (Element) doc.getFirstChild();
 
-			String nodeRef = entity.getAttribute(ATTR_NODEREF);
-			String name = entity.getAttribute(ATTR_NAME);
-			String type = entity.getNodeName();
+		String nodeRef = entity.getAttribute(ATTR_NODEREF);
+		String name = entity.getAttribute(ATTR_NAME);
+		String type = entity.getNodeName();
 
-			Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
+		Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
 
-			NodeList dataLists = (NodeList) entity.getElementsByTagName("dl:dataList");
-			for (int i = 0; i < dataLists.getLength(); i++) {
-				Element dataList = ((Element) dataLists.item(i));
-				String dataListname = dataList.getAttribute(ATTR_NAME);
+		NodeList dataLists = (NodeList) entity.getElementsByTagName("dl:dataList");
+		for (int i = 0; i < dataLists.getLength(); i++) {
+			Element dataList = ((Element) dataLists.item(i));
+			String dataListname = dataList.getAttribute(ATTR_NAME);
 
-				NodeList contains = (NodeList) dataList.getElementsByTagName("cm:contains");
-				Element container = (Element) contains.item(0);
+			NodeList contains = (NodeList) dataList.getElementsByTagName("cm:contains");
+			Element container = (Element) contains.item(0);
 
-				NodeList dataListItems = container.getChildNodes();
-				for (int j = 0; j < dataListItems.getLength(); j++) {
-					Element dataListItem = ((Element) dataListItems.item(j));
-					String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
+			NodeList dataListItems = container.getChildNodes();
+			for (int j = 0; j < dataListItems.getLength(); j++) {
+				Element dataListItem = ((Element) dataListItems.item(j));
+				String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
 
-					createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName() ,  readProperties(dataListItem));
-
-				}
+				createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
 
 			}
 
-		} finally {
-			IOUtils.closeQuietly(in);
 		}
 
 	}
 
-
-	private Long createDBDataListItem(Long entityId, String dataListItemNodeRef, String dataListname,String itemType, List<Column> properties) throws SQLException {
+	private Long createDBDataListItem(Long entityId, String dataListItemNodeRef, String dataListname, String itemType, List<Column> properties) throws SQLException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Create or update datalist item : ");
 			logger.debug(" - NodeRef : " + dataListItemNodeRef);
@@ -192,41 +182,36 @@ public class EntityToDBXmlVisitor {
 			logger.debug(" - DataList name : " + dataListname);
 		}
 
-		
-		//TODO look if already exist aka same nodeRef same date modification or creation
-		
-		Long columnId  = 	jdbcConnectionManager.update("insert into `becpg_datalist` " +
-				"(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`) " +
-				" values (?,?,?,?,?,?)",new Object[] {dataListItemNodeRef, entityId, dataListname , itemType  ,instance.getId(),instance.getBatchId()});
-	
-		
+		// TODO look if already exist aka same nodeRef same date modification or
+		// creation
+
+		Long columnId = jdbcConnectionManager.update("insert into `becpg_datalist` " + "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`) "
+				+ " values (?,?,?,?,?,?)", new Object[] { dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId() });
+
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
-			if(column.value!=null ){
+			if (column.value != null) {
 
-				jdbcConnectionManager.update("insert into `becpg_property` " +
-						"(`datalist_id`,`prop_name`,`prop_id`,`"+getColumnTypeName(column.value)+"`,`batch_id`) " +
-						" values (?,?,?,?,?)",new Object[] {columnId,column.key, column.nodeRef, extract(column.value),instance.getBatchId()});
+				jdbcConnectionManager.update("insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
+						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
 			}
 		}
 		return columnId;
 
 	}
 
-	
 	private Object extract(Serializable value) {
-		if(value instanceof Date){
+		if (value instanceof Date) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime((Date) value);
-			return cal.get(Calendar.YEAR)*10000+cal.get(Calendar.MONTH)*100+cal.get(Calendar.DAY_OF_MONTH);
+			return cal.get(Calendar.YEAR) * 10000 + (cal.get(Calendar.MONTH) + 1) * 100 + cal.get(Calendar.DAY_OF_MONTH);
 		}
 		return value;
 	}
 
-    private String getColumnTypeName(Serializable value){
-    	return value.getClass().getSimpleName().toLowerCase()+"_value";
-    }
-	
+	private String getColumnTypeName(Serializable value) {
+		return value.getClass().getSimpleName().toLowerCase() + "_value";
+	}
 
 	private Long createDBEntity(String nodeRef, String type, String name, List<Column> properties) throws SQLException {
 		if (logger.isDebugEnabled()) {
@@ -235,20 +220,18 @@ public class EntityToDBXmlVisitor {
 			logger.debug(" - Type : " + type);
 			logger.debug(" - Name : " + name);
 		}
-		
-		//TODO look if already exist aka same nodeRef same date modification or creation
-		
-		Long columnId  = 	jdbcConnectionManager.update("insert into `becpg_entity` " +
-				"(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`) " +
-				" values (?,?,?,?,?)",new Object[] {nodeRef, type, name, instance.getId(),instance.getBatchId()});
-	
-		
+
+		// TODO look if already exist aka same nodeRef same date modification or
+		// creation
+
+		Long columnId = jdbcConnectionManager.update("insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`) " + " values (?,?,?,?,?)",
+				new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId() });
+
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
-			if(column.value!=null ){
-				jdbcConnectionManager.update("insert into `becpg_property` " +
-						"(`entity_id`,`prop_name`,`prop_id`,`"+getColumnTypeName(column.value)+"`,`batch_id`) " +
-						" values (?,?,?,?,?)",new Object[] { columnId,column.key , column.nodeRef, extract(column.value),instance.getId()});
+			if (column.value != null) {
+				jdbcConnectionManager.update("insert into `becpg_property` " + "(`entity_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
+						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getId() });
 			}
 		}
 		return columnId;
@@ -299,7 +282,7 @@ public class EntityToDBXmlVisitor {
 						if (propertiesAssoc.item(i) instanceof Element) {
 							Element assoc = ((Element) propertiesAssoc.item(i));
 							if (!assoc.getAttribute(ATTR_NODEREF).isEmpty() || !assoc.getAttribute(ATTR_NAME).isEmpty()) {
-								ret.add(new Column(property.getNodeName(), assoc.getAttribute(ATTR_NODEREF) ,  assoc.getAttribute(ATTR_NAME)));
+								ret.add(new Column(property.getNodeName(), assoc.getAttribute(ATTR_NODEREF), assoc.getAttribute(ATTR_NAME)));
 							}
 						}
 					}
@@ -321,134 +304,103 @@ public class EntityToDBXmlVisitor {
 		return ret;
 	}
 
-	
 	private static final ThreadLocal<Map<String, TimeZone>> timezones;
-    static
-    {
-        timezones = new ThreadLocal<Map<String,TimeZone>>();
-    }
-	
+	static {
+		timezones = new ThreadLocal<Map<String, TimeZone>>();
+	}
+
 	/**
-     * Parse date from ISO formatted string
-     * 
-     * @param isoDate  ISO string to parse
-     * @return  the date
-     * @throws PlatformRuntimeException         if the parse failed
-     */
-    public static Date parse(String isoDate)
-    {
-        Date parsed = null;
-        
-        try
-        {
-            int offset = 0;
-        
-            // extract year
-            int year = Integer.parseInt(isoDate.substring(offset, offset += 4));
-            if (isoDate.charAt(offset) != '-')
-            {
-                throw new IndexOutOfBoundsException("Expected - character but found " + isoDate.charAt(offset));
-            }
-            
-            // extract month
-            int month = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
-            if (isoDate.charAt(offset) != '-')
-            {
-                throw new IndexOutOfBoundsException("Expected - character but found " + isoDate.charAt(offset));
-            }
+	 * Parse date from ISO formatted string
+	 * 
+	 * @param isoDate
+	 *            ISO string to parse
+	 * @return the date
+	 * @throws PlatformRuntimeException
+	 *             if the parse failed
+	 */
+	public static Date parse(String isoDate) {
+		Date parsed = null;
 
-            // extract day
-            int day = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
-            if (isoDate.charAt(offset) != 'T')
-            {
-                throw new IndexOutOfBoundsException("Expected T character but found " + isoDate.charAt(offset));
-            }
+		int offset = 0;
 
-            // extract hours, minutes, seconds and milliseconds
-            int hour = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
-            if (isoDate.charAt(offset) != ':')
-            {
-                throw new IndexOutOfBoundsException("Expected : character but found " + isoDate.charAt(offset));
-            }
-            int minutes = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
-            if (isoDate.charAt(offset) != ':')
-            {
-                throw new IndexOutOfBoundsException("Expected : character but found " + isoDate.charAt(offset));
-            }
-            int seconds = Integer.parseInt(isoDate.substring(offset += 1 , offset += 2));
-            if (isoDate.charAt(offset) != '.')
-            {
-                throw new IndexOutOfBoundsException("Expected . character but found " + isoDate.charAt(offset));
-            }
-            int milliseconds = Integer.parseInt(isoDate.substring(offset += 1, offset += 3));
+		// extract year
+		int year = Integer.parseInt(isoDate.substring(offset, offset += 4));
+		if (isoDate.charAt(offset) != '-') {
+			throw new IndexOutOfBoundsException("Expected - character but found " + isoDate.charAt(offset));
+		}
 
-            // extract timezone
-            String timezoneId;
-            char timezoneIndicator = isoDate.charAt(offset);
-            if (timezoneIndicator == '+' || timezoneIndicator == '-')
-            {
-                timezoneId = "GMT" + isoDate.substring(offset);
-            }
-            else if (timezoneIndicator == 'Z')
-            {
-                timezoneId = "GMT";
-            }
-            else
-            {
-                throw new IndexOutOfBoundsException("Invalid time zone indicator " + timezoneIndicator);
-            }
-            
-            // Get the timezone
-            Map<String, TimeZone> timezoneMap = timezones.get();
-            if (timezoneMap == null)
-            {
-                timezoneMap = new HashMap<String, TimeZone>(4);
-                timezones.set(timezoneMap);
-            }
-            TimeZone timezone = timezoneMap.get(timezoneId);
-            if (timezone == null)
-            {
-                timezone = TimeZone.getTimeZone(timezoneId);
-                timezoneMap.put(timezoneId, timezone);
-            }
-            if (!timezone.getID().equals(timezoneId))
-            {
-                throw new IndexOutOfBoundsException();
-            }
-            if (!timezone.getID().equals(timezoneId))
-            {
-                throw new IndexOutOfBoundsException();
-            }
+		// extract month
+		int month = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+		if (isoDate.charAt(offset) != '-') {
+			throw new IndexOutOfBoundsException("Expected - character but found " + isoDate.charAt(offset));
+		}
 
-            // initialize Calendar object#
-            // Note: always de-serialise from Gregorian Calendar
-            Calendar calendar = new GregorianCalendar(timezone);
-            calendar.setLenient(false);
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month - 1);
-            calendar.set(Calendar.DAY_OF_MONTH, day);
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minutes);
-            calendar.set(Calendar.SECOND, seconds);
-            calendar.set(Calendar.MILLISECOND, milliseconds);
+		// extract day
+		int day = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+		if (isoDate.charAt(offset) != 'T') {
+			throw new IndexOutOfBoundsException("Expected T character but found " + isoDate.charAt(offset));
+		}
 
-            // extract the date
-            parsed = calendar.getTime();
-        }
-        catch(IndexOutOfBoundsException e)
-        {
-            throw new PlatformRuntimeException("Failed to parse date " + isoDate, e);
-        }
-        catch(NumberFormatException e)
-        {
-            throw new PlatformRuntimeException("Failed to parse date " + isoDate, e);
-        }
-        catch(IllegalArgumentException e)
-        {
-            throw new PlatformRuntimeException("Failed to parse date " + isoDate, e);
-        }
-        
-        return parsed;
-    }
-	
+		// extract hours, minutes, seconds and milliseconds
+		int hour = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+		if (isoDate.charAt(offset) != ':') {
+			throw new IndexOutOfBoundsException("Expected : character but found " + isoDate.charAt(offset));
+		}
+		int minutes = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+		if (isoDate.charAt(offset) != ':') {
+			throw new IndexOutOfBoundsException("Expected : character but found " + isoDate.charAt(offset));
+		}
+		int seconds = Integer.parseInt(isoDate.substring(offset += 1, offset += 2));
+		if (isoDate.charAt(offset) != '.') {
+			throw new IndexOutOfBoundsException("Expected . character but found " + isoDate.charAt(offset));
+		}
+		int milliseconds = Integer.parseInt(isoDate.substring(offset += 1, offset += 3));
+
+		// extract timezone
+		String timezoneId;
+		char timezoneIndicator = isoDate.charAt(offset);
+		if (timezoneIndicator == '+' || timezoneIndicator == '-') {
+			timezoneId = "GMT" + isoDate.substring(offset);
+		} else if (timezoneIndicator == 'Z') {
+			timezoneId = "GMT";
+		} else {
+			throw new IndexOutOfBoundsException("Invalid time zone indicator " + timezoneIndicator);
+		}
+
+		// Get the timezone
+		Map<String, TimeZone> timezoneMap = timezones.get();
+		if (timezoneMap == null) {
+			timezoneMap = new HashMap<String, TimeZone>(4);
+			timezones.set(timezoneMap);
+		}
+		TimeZone timezone = timezoneMap.get(timezoneId);
+		if (timezone == null) {
+			timezone = TimeZone.getTimeZone(timezoneId);
+			timezoneMap.put(timezoneId, timezone);
+		}
+		if (!timezone.getID().equals(timezoneId)) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (!timezone.getID().equals(timezoneId)) {
+			throw new IndexOutOfBoundsException();
+		}
+
+		// initialize Calendar object#
+		// Note: always de-serialise from Gregorian Calendar
+		Calendar calendar = new GregorianCalendar(timezone);
+		calendar.setLenient(false);
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month - 1);
+		calendar.set(Calendar.DAY_OF_MONTH, day);
+		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		calendar.set(Calendar.MINUTE, minutes);
+		calendar.set(Calendar.SECOND, seconds);
+		calendar.set(Calendar.MILLISECOND, milliseconds);
+
+		// extract the date
+		parsed = calendar.getTime();
+
+		return parsed;
+	}
+
 }
