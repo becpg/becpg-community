@@ -231,6 +231,7 @@ insert into becpg_product_state(product_state,product_label) values ("ToValidate
 insert into becpg_product_state(product_state,product_label) values ("Valid","Validé");
 insert into becpg_product_state(product_state,product_label) values ("Refused","Refusé");
 insert into becpg_product_state(product_state,product_label) values ("Archived","Archivé");
-  
+
+
 
 ANALYZE TABLE becpg_property,becpg_datalist,becpg_entity;

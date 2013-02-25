@@ -21,7 +21,7 @@
    <!-- A time/date based rolling appender -->
    <appender name="SAIKUFILE" class="org.apache.log4j.DailyRollingFileAppender">
 
-      <param name="File" value="saiku.log"/>
+      <param name="File" value="${catalina.base}/logs/saiku.log"/>
       <param name="Append" value="false"/>
 
       <!-- Rollover at midnight each day -->
@@ -63,12 +63,6 @@
      <priority value="DEBUG"/>
    </category>
    
-   
-   <category name="mondrian.sql">
-      <priority value="DEBUG"/>
-      <appender-ref ref="SAIKUCONSOLE"/>
-   </category>
-   
    <!-- ======================= -->
    <!-- Setup the Root category -->
    <!-- ======================= -->
@@ -89,7 +83,7 @@
 
    <!-- 
    <appender name="MONDRIAN" class="org.apache.log4j.RollingFileAppender">
-     <param name="File" value="mondrian.log"/>
+     <param name="File" value="${catalina.base}/logs/mondrian.log"/>
      <param name="Append" value="false"/>
      <param name="MaxFileSize" value="500KB"/>
      <param name="MaxBackupIndex" value="1"/>
@@ -112,7 +106,7 @@
 
    <!-- 
    <appender name="MDXLOG" class="org.apache.log4j.RollingFileAppender">
-     <param name="File" value="mondrian_mdx.log"/>
+     <param name="File" value="${catalina.base}/logs/mondrian_mdx.log"/>
      <param name="Append" value="false"/>
      <param name="MaxFileSize" value="500KB"/>
      <param name="MaxBackupIndex" value="1"/>
@@ -131,9 +125,9 @@
    <!-- Special Log File specifically for Mondrian SQL Statements -->
    <!-- ========================================================= -->
 
-   <!-- 
+  <!-- 
    <appender name="SQLLOG" class="org.apache.log4j.RollingFileAppender">
-     <param name="File" value="mondrian_sql.log"/>
+     <param name="File" value="${catalina.base}/logs/mondrian_sql.log"/>
      <param name="Append" value="false"/>
      <param name="MaxFileSize" value="500KB"/>
      <param name="MaxBackupIndex" value="1"/>
@@ -145,7 +139,6 @@
    <category name="mondrian.sql">
       <priority value="DEBUG"/>
       <appender-ref ref="SQLLOG"/>
-   </category>
-   -->
+   </category> -->
    
 </log4j:configuration>

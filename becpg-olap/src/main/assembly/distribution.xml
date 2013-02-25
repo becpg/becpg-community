@@ -10,6 +10,10 @@
       <directory>${basedir}/_diff</directory>
       <outputDirectory>/dist</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>${basedir}/src/main/sql</directory>
+      <outputDirectory>/sql</outputDirectory>
+    </fileSet>
      <fileSet>
       <directory>${basedir}/src/main/bin</directory>
       <outputDirectory>/</outputDirectory>
@@ -22,5 +26,9 @@
       <source>README.txt</source>
       <outputDirectory>/</outputDirectory>
     </file>
+    <file>
+	   <source>target/${project.artifactId}-${project.version}-jar-with-dependencies.jar</source>
+	   <outputDirectory>/lib</outputDirectory>
+	  </file>
   </files>
 </assembly>

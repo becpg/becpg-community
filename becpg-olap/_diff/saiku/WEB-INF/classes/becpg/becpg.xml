@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Schema name="beCPG OLAP Schema">
+
+
+	<Dimension highCardinality="false" name="Tenant dimension" >
+		<Hierarchy name="Tenants" hasAll="true" allMemberCaption="Tous les tenants" primaryKey="id">
+		   <Table name="becpg_instance" ></Table>
+		   <Level name="Instance" column="instance_name"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
+			<Level name="Tenant" column="tenant_name"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
+		</Hierarchy>
+	</Dimension>
+
 	<Dimension type="TimeDimension" highCardinality="false" name="Time dimension">
 		<Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes" primaryKey="id" caption="Date">
 			<Table name="becpg_dimdate" alias="olapDate" />
@@ -35,6 +45,7 @@
 	<Cube name="Projets" cache="true" enabled="true" defaultMeasure="Nombre de projets">
 		<View alias="projet">
 			<SQL dialect="generic">
+			<![CDATA[
 				select
 					entity.id as id,
 					entity.entity_id as noderef,
@@ -44,24 +55,96 @@
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
 					MAX(IF(prop.prop_name = "pjt:projectState",prop.string_value,NULL)) as projectState,
+					MAX(IF(prop.prop_name = "pjt:projectDueDate",prop.date_value,NULL)) as projectDueDate,
+					MAX(IF(prop.prop_name = "pjt:projectCompletionDate",prop.date_value,NULL)) as completionDate,
+					MAX(IF(prop.prop_name = "pjt:projectPriority",prop.long_value,NULL)) as projectPriority, 
+					MAX(IF(prop.prop_name = "pjt:completionPercent",prop.long_value,NULL)) as completionPercent, 
 					entity.instance_id as instance_id
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
 					entity.entity_type IN ("pjt:project")
-				group by id
+				group by 
+					id
+				]]>
 			</SQL>
 		</View>
-		<Dimension highCardinality="false" name="D&#233;signation">
-			<Hierarchy name="Projet par famille" hasAll="true" allMemberCaption="Tous les produits">
+		
+		 <!-- <Dimension highCardinality="true" name="Noeuds" visible="false"  >
+			<Hierarchy name="Noeuds" hasAll="true">
+				<Level name="Noeuds" column="noderef"  type="String"  levelType="Regular" hideMemberIf="Never"  />
+			</Hierarchy>
+		</Dimension> -->
+		
+		<Dimension highCardinality="true" name="D&#233;signation" >
+			<Hierarchy name="Projet par famille" hasAll="true" allMemberCaption="Tous les projets">
 				<Level name="Famille" column="projectHierarchy1"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
 				<Level name="Nom projet" column="name"  type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" />
 				<Level name="Code projet" column="code"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
 			</Hierarchy>
 		</Dimension>
+		<Dimension highCardinality="false" name="Priorit&#233;">
+			<Hierarchy name="Priorit&#233;" hasAll="true" allMemberCaption="Toutes les priorit&#233;s">
+				<Level name="Priorit&#233;" column="projectPriority"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
+			</Hierarchy>
+		</Dimension>
+		<Dimension highCardinality="false" name="&#201;tat" >
+			<Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats" >
+				<Level approxRowCount="5" name="&#201;tat"  column="projectState"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifi&#233;'
+	                            WHEN projectState='InProgress' THEN 'En cours'
+	                            WHEN projectState='OnHold' THEN 'Arr&#251;t&#233;'
+	                            WHEN projectState='Cancelled' THEN 'Annul&#233;'
+	                            WHEN projectState='Completed' THEN 'Termin&#233;'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+              </NameExpression>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Entit&#233;s">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les entit&#233;s li&#233;es" primaryKey="entity_id">
+				<View alias="compoList">
+						<SQL dialect="generic">
+							<![CDATA[
+							select
+								entity.id as id,
+								entity.entity_id as entity_noderef,
+								entity.entity_name as name,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
+								prop_entity.batch_id as batch_id,
+								prop_entity.entity_id as entity_id
+							from
+									 becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
+																			  LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+							where
+									   prop_entity.prop_name="pjt:projectEntity"
+										and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2")
+							group by id
+									having MAX(entity.batch_id) <= batch_id 
+							]]>
+						</SQL>
+					</View>		
+				<Level name="Famille" column="productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
+				</Level>
+				<Level name="Sous famille" column="productHierarchy2" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+				</Level>
+				<Level name="Entit&#233;" column="entity_noderef" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
 	   <DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
-		<Measure name="Nombre de projets" column="id" datatype="Integer" aggregator="count" visible="true" />
+		<DimensionUsage name="Date due" caption="Date due" source="Time dimension" foreignKey="projectDueDate" />
+		<DimensionUsage name="Date de fin" caption="Date de fin" source="Time dimension" foreignKey="completionDate" />
+		<DimensionUsage name="Tenants" caption="Tenants" source="Tenant dimension" foreignKey="instance_id" />
+		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
+		<Measure name="Avancement" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
 	</Cube>
 
 	<Cube name="Produits" cache="true" enabled="true" defaultMeasure="Nombre de produits">
@@ -90,26 +173,19 @@
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
 					entity.entity_type IN ("bcpg:finishedProduct","bcpg:semiFinishedProduct","bcpg:localSemiFinishedProduct","bcpg:rawMaterial","bcpg:packagingKit","bcpg:packagingMaterial")
-				group by id
+				group by 
+					id
 			</SQL>
 		</View>
-
-
-		<DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
-		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
-		<DimensionUsage name="Debut d&#39;effectivit&#233;" caption="Debut d&#39;effectivit&#233;" source="Time dimension" foreignKey="startEffectivity" />
-		<DimensionUsage name="Fin d&#39;effectivit&#233;" caption="Fin d&#39;effectivit&#233;" source="Time dimension" foreignKey="endEffectivity" />
-
-		
-		<Dimension highCardinality="false" name="Tenant" foreignKey="instance_id">
-			<Hierarchy name="Tenant" hasAll="true" allMemberCaption="Tous les tenants" primaryKey="id">
-			   <Table name="becpg_instance" ></Table>
-			   <Level name="Instance" column="instance_name"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
-				<Level name="Tenant" column="tenant_name"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
+		<!-- 
+     <Dimension highCardinality="true" name="Noeuds" visible="false"  >
+			<Hierarchy name="Noeuds" hasAll="true">
+				<Level name="Noeuds" column="noderef"  type="String"  levelType="Regular" hideMemberIf="Never"  />
 			</Hierarchy>
 		</Dimension>
+ 		-->
 
-		<Dimension highCardinality="false" name="D&#233;signation">
+		<Dimension highCardinality="true" name="D&#233;signation" >
 			<Hierarchy name="Produit par famille" hasAll="true" allMemberCaption="Tous les produits">
 				<Level name="Famille" column="productHierarchy1"  type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never" />
 				<Level name="Sous famille" column="productHierarchy2"  type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" />
@@ -201,7 +277,7 @@
 							from
 									becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
 							where datalist.datalist_name = "nutList" and datalist.item_type = "bcpg:nutList"
-							group by datalist.id
+								group by datalist.id
 					</SQL>
 				</View>
 				<Level approxRowCount="3" name="Groupe de nutriment" column="nutGroup" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
@@ -253,12 +329,13 @@
 		<Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Composition">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les composants" primaryKey="entity_fact_id">
 				<View alias="compoList">
-						<!-- TODO batch -->
 						<SQL dialect="generic">
+							<![CDATA[
 							select
 								entity.id as id,
 								entity.entity_id as entity_noderef,
 								entity.entity_name as name,
+								prop_datalist.batch_id as batch_id,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
 								datalist.entity_fact_id
@@ -272,6 +349,8 @@
 										and prop_datalist.prop_name="bcpg:compoListProduct"
 										and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2")
 							group by id
+									having MAX(entity.batch_id) <= batch_id 
+							]]>
 						</SQL>
 					</View>		
 				<Level name="Famille" column="productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
@@ -286,12 +365,13 @@
 		<Dimension type="StandardDimension" foreignKey="id" highCardinality="false" name="Emballage">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les emballages" primaryKey="entity_fact_id">
 				<View alias="packagingList">
-						<!-- TODO batch -->
 						<SQL dialect="generic">
+						<![CDATA[
 						   select
 								entity.id as id,
 								entity.entity_id as entity_noderef,
 								entity.entity_name as name,
+								prop_datalist.batch_id as batch_id,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
 								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
 								datalist.entity_fact_id
@@ -305,6 +385,8 @@
 										and prop_datalist.prop_name="bcpg:packagingListProduct"
 										and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2")
 							group by id
+									having MAX(entity.batch_id) <= batch_id
+							]]>
 						</SQL>
 					</View>	
 				<Level name="Famille" column="productHierarchy1" type="String" uniqueMembers="true" levelType="Regular" hideMemberIf="Never">
@@ -315,11 +397,16 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
-		<Measure name="Nombre de produits" column="id" datatype="Integer" aggregator="count" visible="true" />
-
+		<DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
+		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
+		<DimensionUsage name="Debut d&#39;effectivit&#233;" caption="Debut d&#39;effectivit&#233;" source="Time dimension" foreignKey="startEffectivity" />
+		<DimensionUsage name="Fin d&#39;effectivit&#233;" caption="Fin d&#39;effectivit&#233;" source="Time dimension" foreignKey="endEffectivity" />
+		<DimensionUsage name="Tenants" caption="Tenants" source="Tenant dimension" foreignKey="instance_id" />
+		
+		<Measure name="Nombre de produits" column="id" datatype="String" aggregator="count" visible="true" />
 		<Measure name="Quantit&#233; previsionnelle" column="projectedQty" datatype="Integer" aggregator="sum" visible="true">
 		</Measure>
-		<Measure name="Co&#251;ts" column="unitTotalCost" datatype="Numeric" aggregator="sum" visible="true">
+		<Measure name="Co&#251;ts" column="unitTotalCost" datatype="Numeric" aggregator="sum" visible="true" >
 		</Measure>
 		<Measure name="Rentabilite unitaire" column="profitability" datatype="Numeric" aggregator="sum" visible="true">
 		</Measure>
@@ -333,4 +420,31 @@
 			<Formula>([Measures].[Prix unitaire] - [Measures].[Co&#251;ts])/[Measures].[Co&#251;ts]</Formula>
 		</CalculatedMember>
 	</Cube>
+	
+	
+	
+	<!-- Sample roles -->
+	<Role name="ROLE_DEMO">
+		<SchemaGrant access="none">
+			<CubeGrant cube="Projets" access="all">
+				<HierarchyGrant hierarchy="[Tenants]" access="custom" rollupPolicy="partial" topLevel="[Tenants].[Tenant]">
+					<MemberGrant member="[Tenants].[philippe].[default]" access="all" />
+				</HierarchyGrant>
+			</CubeGrant>
+			<CubeGrant cube="Produits" access="all">
+				<HierarchyGrant hierarchy="[Tenants]" access="custom" rollupPolicy="partial" topLevel="[Tenants].[Tenant]" >
+					<MemberGrant member="[Tenants].[philippe].[default]" access="all" />
+				</HierarchyGrant>
+			</CubeGrant>
+		</SchemaGrant>
+	</Role>
+	
+	<Role name="ROLE_USER">
+		<SchemaGrant access="none"/>
+	</Role>
+	
+	<Role name="ROLE_ADMIN">
+		<SchemaGrant access="all"/>
+	</Role>
+	
 </Schema>

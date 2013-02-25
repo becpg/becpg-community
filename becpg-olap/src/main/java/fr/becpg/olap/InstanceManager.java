@@ -70,6 +70,16 @@ public class InstanceManager {
 			return batchId;
 		}
 
+		public void setBatchId(Long batchId) {
+			this.batchId = batchId;
+		}
+
+		public void setLastImport(Date lastImport) {
+			this.lastImport = lastImport;
+		}
+		
+		
+
 	}
 
 	public InstanceManager(JdbcConnectionManager jdbcConnectionManager) {
@@ -77,24 +87,29 @@ public class InstanceManager {
 	}
 
 	List<Instance> getAllInstances() throws SQLException {
-		
-		final Long batchId  = jdbcConnectionManager.update("INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[]{});
-		
-
-		return jdbcConnectionManager.list("SELECT `id`,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`  FROM `becpg_instance`",
+		return jdbcConnectionManager.list("SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`  FROM `becpg_instance`",
 				new JdbcConnectionManager.RowMapper<Instance>() {
 					public Instance mapRow(ResultSet rs, int line) throws SQLException {
-						return new Instance(rs.getLong(1), batchId, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getDate(7));
+						return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8));
 
 					}
 				});
 
 	}
 
-	public void updateLastImportDate(Instance instance) throws SQLException {
-		jdbcConnectionManager.update("UPDATE `becpg_instance` SET `last_imported`=?  AND `batch_id`=? WHERE `id`=? ", new Object[] { new Date(), instance.getBatchId() ,instance.getId() });
-	}
+	public void createBatch(Instance instance) throws SQLException {
+		
 	
+		
+		final Long batchId  = jdbcConnectionManager.update("INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[]{});
+		
+		instance.setLastImport(new Date());
+		instance.setBatchId(batchId);
+		
+		jdbcConnectionManager.update("UPDATE `becpg_instance` SET `last_imported`=?, `batch_id`=? WHERE `id`=? ", new Object[] {instance.getLastImport() , instance.getBatchId() ,instance.getId() });
+		
+	}
+
 	
 	
 

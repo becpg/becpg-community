@@ -15,7 +15,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * 
  * @author matthieu
- * 
+ * Warning not thread safe transaction (use single thread or modify)
  */
 public class JdbcConnectionManager {
 
@@ -24,6 +24,34 @@ public class JdbcConnectionManager {
 	private String dbPassword;
 
 	private String dbConnectionUrl;
+	
+
+	public interface JdbcConnectionManagerCallBack {
+
+		public void execute(JdbcConnectionManager jdbcConnectionManager) throws Exception;
+
+	}
+
+	private Connection connection;
+	
+
+	public static void doInTransaction(JdbcConnectionManager  jdbcConnectionManager, JdbcConnectionManagerCallBack callback ) throws Exception{
+		jdbcConnectionManager.initConnection();
+		
+		try(Connection connection = jdbcConnectionManager.connection){
+			connection.setAutoCommit(false);
+			try {
+				callback.execute(jdbcConnectionManager);
+			} catch(Exception e){
+				logger.error("Rollback transaction caused by: "+e.getMessage(),e);
+				connection.rollback();
+			}
+			connection.commit();
+		}
+		
+		
+	};
+	
 
 	public interface RowMapper<T> {
 		public T mapRow(ResultSet rs, int line) throws SQLException;
@@ -34,6 +62,11 @@ public class JdbcConnectionManager {
 		this.dbUser = dbUser;
 		this.dbPassword = dbPassword;
 		this.dbConnectionUrl = dbConnectionUrl;
+		
+	}
+	
+	public void initConnection() throws SQLException{
+		this.connection = DriverManager.getConnection(dbConnectionUrl, dbUser, dbPassword);
 	}
 
 	private static Log logger = LogFactory.getLog(JdbcConnectionManager.class);
@@ -48,8 +81,10 @@ public class JdbcConnectionManager {
 	}
 
 	public Long update(String sql, Object[] objects) throws SQLException {
-		try (Connection connection = DriverManager.getConnection(dbConnectionUrl, dbUser, dbPassword);
-				PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+		
+	
+		
+		try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
 
 			for (int i = 0; i < objects.length; i++) {
 				pst.setObject(i + 1, objects[i]);
@@ -61,7 +96,8 @@ public class JdbcConnectionManager {
 				}
 			}
 		}
-		throw new IllegalStateException();
+		
+		return -1L;
 	}
 
 	public <T> List<T> list(String sql, RowMapper<T> rowMapper) throws SQLException {

@@ -139,7 +139,7 @@
 		   this.chartPicker = new YAHOO.widget.Button(me.id + "-charPicker-button", {
 		      type : "split",
 		      menu : me.id + "-charPicker-select",
-		      lazyloadmenu : false
+		      lazyloadmenu : true
 		   });
 
 		   this.chartTypePicker = new YAHOO.widget.Button(me.id + "-chartTypePicker-button", {
@@ -167,6 +167,7 @@
 			   }
 		   });
 
+		   
 		   Alfresco.util.Ajax.request({
 		      url : Alfresco.constants.PROXY_URI + "becpg/olap/chart",
 		      successCallback : {

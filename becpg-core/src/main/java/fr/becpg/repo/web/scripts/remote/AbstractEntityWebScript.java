@@ -6,6 +6,7 @@ import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -113,7 +114,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		if (refs!=null && !refs.isEmpty()) {
 			return refs;
 		}
-		throw new WebScriptException("No entities found for query " + runnedQuery);
+		
+		logger.info("No entities found for query " + runnedQuery);
+		return new ArrayList<NodeRef>();
 		
 	}
 	

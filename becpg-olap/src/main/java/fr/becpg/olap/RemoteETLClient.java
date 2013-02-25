@@ -1,31 +1,38 @@
 package fr.becpg.olap;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import fr.becpg.olap.InstanceManager.Instance;
 import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
 import fr.becpg.olap.http.GetEntityCommand;
 import fr.becpg.olap.http.ListEntitiesCommand;
 import fr.becpg.olap.jdbc.JdbcConnectionManager;
+import fr.becpg.olap.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
 
 /**
  * 
@@ -55,14 +62,12 @@ public class RemoteETLClient {
 		this.entityToDBXmlVisitor = entityToDBXmlVisitor;
 	}
 
-	public void loadEntities(String query) {
+	public void loadEntities(String query) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException, DOMException, ParseException, SQLException {
 
 		ListEntitiesCommand listEntitiesCommand = new ListEntitiesCommand(serverUrl, remoteUser, remotePwd);
 
-		InputStream entitiesStream = null;
-		try {
-			entitiesStream = listEntitiesCommand.runCommand(query);
-
+		try(InputStream entitiesStream = listEntitiesCommand.runCommand(query)) {
+			
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			domFactory.setNamespaceAware(true); // never forget this!
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -78,29 +83,19 @@ public class RemoteETLClient {
 				loadEntity(nodeRef);
 			}
 
-		} catch (Exception e) {
-			logger.error(e, e);
-		} finally {
-			IOUtils.closeQuietly(entitiesStream);
 		}
 
 	}
 
-	private void loadEntity(String nodeRef) {
-		logger.info("Read nodeRef:" + nodeRef);
+	private void loadEntity(String nodeRef) throws IOException, DOMException, SAXException, ParserConfigurationException, ParseException, SQLException {
+		logger.info("Import nodeRef:" + nodeRef);
 
 		GetEntityCommand getEntityCommand = new GetEntityCommand(serverUrl, remoteUser, remotePwd);
 
-		InputStream entityStream = null;
-		try {
-			entityStream = getEntityCommand.runCommand(nodeRef);
+		try(InputStream entityStream = getEntityCommand.runCommand(nodeRef)) {
 			entityToDBXmlVisitor.visit(entityStream);
 
-		} catch (Exception e) {
-			logger.error(e, e);
-		} finally {
-			IOUtils.closeQuietly(entityStream);
-		}
+		} 
 
 	}
 
@@ -121,29 +116,41 @@ public class RemoteETLClient {
 
 		final JdbcConnectionManager jdbcConnectionManager = new JdbcConnectionManager((String) props.get("jdbc.user"), (String) props.get("jdbc.password"),
 				(String) props.get("jdbc.url"));
-		InstanceManager instanceManager = new InstanceManager(jdbcConnectionManager);
+	   final InstanceManager instanceManager = new InstanceManager(jdbcConnectionManager);
 		for (final Instance instance : instanceManager.getAllInstances()) {
 			logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
 			if (logger.isDebugEnabled()) {
 				logger.debug(" - Login: " + instance.getTenantUser());
 				logger.debug(" - Password: " + instance.getTenantPassword());
 			}
+			JdbcConnectionManager.doInTransaction(jdbcConnectionManager, new JdbcConnectionManagerCallBack() {
+						
+						@Override
+						public void execute(JdbcConnectionManager jdbcConnectionManager) throws Exception {
+							DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-			String query = " AND (@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX])";
+							String dateRange = "MIN";
+							if (instance.getLastImport() != null) {
+								dateRange = dateFormat.format(instance.getLastImport());
+							}
+							
+							logger.info("Import from :[ "+ dateRange +" TO MAX ]");
+							
+							instanceManager.createBatch(instance);
+							
+							String query = " AND (@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX])";
 
-			RemoteETLClient remoteETLClient = new RemoteETLClient(instance.getInstanceUrl(), instance.getTenantUser(), instance.getTenantPassword().toCharArray());
-			remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(jdbcConnectionManager, instance));
+							RemoteETLClient remoteETLClient = new RemoteETLClient(instance.getInstanceUrl(), instance.getTenantUser(), instance.getTenantPassword().toCharArray());
+							
+							remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(jdbcConnectionManager, instance));
 
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+							
+							remoteETLClient.loadEntities(String.format(query, dateRange, dateRange));
 
-			String dateRange = "MIN";
-			if (instance.getLastImport() != null) {
-				dateRange = dateFormat.format(instance.getLastImport());
-			}
-
-			remoteETLClient.loadEntities(String.format(query, dateRange, dateRange));
-
-			instanceManager.updateLastImportDate(instance);
+							
+							
+						}
+					});
 			
 		}
 
