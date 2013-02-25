@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -33,6 +35,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.project.policy.ProjectPolicy;
 
 /**
  * The Class ProjectServiceTest.
@@ -44,6 +47,9 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	private static Log logger = LogFactory.getLog(ProjectServiceTest.class);
 
 	private NodeRef rawMaterialNodeRef;
+	
+	@Resource
+	private ProjectPolicy projectPolicy;
 
 	@Test
 	public void testProjectAspectOnEntity() {
@@ -592,9 +598,13 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				projectData.setParentNodeRef(testFolderNodeRef);
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
 
+				projectPolicy.initializeNodeRefsAfterCopy(projectData.getNodeRef());
+				
 				return projectData.getNodeRef();
 			}
 		}, false, true);
+		
+		//Thread.sleep(6000);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

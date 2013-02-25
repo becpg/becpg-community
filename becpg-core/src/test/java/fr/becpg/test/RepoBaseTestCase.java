@@ -52,6 +52,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.entity.EntitySystemService;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -65,6 +66,7 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.hierarchy.HierarchyService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -156,8 +158,6 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	@Resource
 	protected HierarchyService hierarchyService;
 
-
-
 	@Resource
 	protected AuthenticationComponent authenticationComponent;
 
@@ -182,6 +182,9 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	
 	@Resource
 	protected PersonService personService;
+	
+	@Resource
+	protected BeCPGSearchService beCPGSearchService;
 
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
@@ -224,6 +227,15 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
                 NodeRef productsFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
                 if(productsFolder != null && nodeService.exists(productsFolder)){
 					nodeService.deleteNode(productsFolder);
+				}
+                
+                List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT)) +
+						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)));
+                
+				for(NodeRef productNodeRef : productNodeRefs){
+					if(nodeService.exists(productNodeRef)){
+						nodeService.deleteNode(productNodeRef);
+					}
 				}
                 
                 // test folder

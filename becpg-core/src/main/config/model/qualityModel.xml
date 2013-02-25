@@ -193,14 +193,13 @@
 		
 		<!-- Control Plan -->				
 		<type name="qa:controlPlan">
-			<parent>cm:content</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 							
 			</properties>						
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
-				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>				
+				<aspect>bcpg:codeAspect</aspect>			
 			</mandatory-aspects>
 		</type>
 		
@@ -236,14 +235,13 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>qa:batchAspect</aspect>					
 			</mandatory-aspects>
 		</type>
 		
 		<!-- control point -->
 		<type name="qa:controlPoint">
-			<parent>cm:content</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>	
 				<property name="qa:cpIsExtLabo">
 					<type>d:boolean</type>
@@ -265,7 +263,6 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		
@@ -287,10 +284,9 @@
 		
 		<!-- Work item analysis -->
 		<type name="qa:workItemAnalysis">
-			<parent>cm:content</parent>				
+			<parent>bcpg:entityV2</parent>				
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>	
 		

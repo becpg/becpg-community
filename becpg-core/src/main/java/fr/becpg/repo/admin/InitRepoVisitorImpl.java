@@ -259,7 +259,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
 
 		// EntityTemplates
-		visitFolderAndEntityTpls(systemNodeRef);
+		visitEntityTpls(systemNodeRef);
 
 		// MailTemplates
 		addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath:beCPG/mails/*.ftl");
@@ -541,56 +541,52 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	}
 
 	/**
-	 * Create the folder and entity templates
+	 * Create the entity templates
 	 * 
 	 * @param productTplsNodeRef
 	 */
-	private void visitFolderAndEntityTpls(NodeRef systemNodeRef) {
+	private void visitEntityTpls(NodeRef systemNodeRef) {
 
-		NodeRef folderTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_FOLDER_TEMPLATES);
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
 		// create product tpls
-		visitProductTpls(folderTplsNodeRef, entityTplsNodeRef);
+		visitProductTpls(entityTplsNodeRef);
 
 		Set<String> subFolders = new HashSet<String>();		
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		subFolders.add(RepoConsts.PATH_IMAGES);
 
 		// visit supplier
-		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, subFolders);
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, dataLists, subFolders);
 
 		// visit client
-		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, subFolders);
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, dataLists, subFolders);
 
 		// visit acls
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
-		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists, null);
 		
 		// visit ECO
-		entityTplService.createFolderTpl(folderTplsNodeRef, ECMModel.TYPE_ECO, true, null);
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ECMModel.TYPE_REPLACEMENTLIST);
 		dataLists.add(ECMModel.TYPE_WUSEDLIST);
 		dataLists.add(ECMModel.TYPE_CALCULATEDCHARACTLIST);
 		dataLists.add(ECMModel.TYPE_CHANGEUNITLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, true, dataLists, null);
 
 		// visit quality
-		visitQuality(folderTplsNodeRef, entityTplsNodeRef);
+		visitQuality(entityTplsNodeRef);
 		
 		// visit project and project Tpl
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
 	}
 
 	
@@ -684,9 +680,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 * 
 	 * @param entityTplsNodeRef
 	 */
-	private void visitProductTpls(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef) {
+	private void visitProductTpls(NodeRef entityTplsNodeRef) {
 
-		NodeRef productFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
 		NodeRef productTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
 
 		Set<QName> productTypes = new HashSet<QName>();
@@ -764,69 +759,53 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 			}
 
-			entityTplService.createFolderTpl(productFolderTplsNodeRef, productType, true, subFolders);
-			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists);
+			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists, subFolders);
 		}
-
-		// create product tpls that don't have a product folder
-		entityTplService.createFolderTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false,
-				subFolders);
-		entityTplService
-				.createEntityTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);
 	}
 
-	private void visitQuality(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef) {
+	private void visitQuality(NodeRef entityTplsNodeRef) {
 
-		NodeRef qualityFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
 		NodeRef qualityTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
 
 		// visit productMicrobioCriteria
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, false,
-				null);
 		entityTplService
-				.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists);
+				.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists, null);
 
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, false, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists, null);
 
 		// visit controlPlan
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, subFolders);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists, subFolders);
 
 		// visit qualityControl
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, dataLists, null);
 
 		// visit controlPoint
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, dataLists,null);
 
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, false, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists, null);
 		
 		// visit NC
 		subFolders = new HashSet<String>();		
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_WORK_LOG);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_NC, true, subFolders);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, true, dataLists, subFolders);
 	}
 
 	/**

@@ -413,7 +413,7 @@ public interface BeCPGModel {
 	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");
 
 	QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI, "systemEntity");
-
+	
 	// autoNum
 	/** The Constant TYPE_AUTO_NUM. */
 	QName TYPE_AUTO_NUM = QName.createQName(BECPG_URI, "autoNum");
@@ -432,8 +432,10 @@ public interface BeCPGModel {
 
 	// entityTpl aspect
 	QName ASPECT_ENTITY_TPL = QName.createQName(BECPG_URI, "entityTplAspect");
+	@Deprecated
 	QName PROP_ENTITY_TPL_CLASS_NAME = QName.createQName(BECPG_URI, "entityTplClassName");
 	QName PROP_ENTITY_TPL_ENABLED = QName.createQName(BECPG_URI, "entityTplEnabled");
+	QName PROP_ENTITY_TPL_IS_DEFAULT = QName.createQName(BECPG_URI, "entityTplIsDefault");
 
 	// entityTplRef aspect
 	QName ASPECT_ENTITY_TPL_REF = QName.createQName(BECPG_URI, "entityTplRefAspect");

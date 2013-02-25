@@ -247,6 +247,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, Collection<QName> listQNames, boolean override) {
 		
+		logger.debug("/*-- copyDataLists --*/");
+		
 		// do not initialize entity version
 		if (nodeService.hasAspect(targetNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			return;
@@ -255,7 +257,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		if (sourceNodeRef != null) {
 
 			/*-- copy source datalists--*/
-			logger.debug("/*-- copy source datalists--*/");
+			logger.debug("copy source datalists");
 			NodeRef sourceListContainerNodeRef = getListContainer(sourceNodeRef);
 			NodeRef targetListContainerNodeRef = getListContainer(targetNodeRef);
 
@@ -263,8 +265,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 				if (targetListContainerNodeRef == null) {
 
-					// create container if needed
-					// targetListContainerNodeRef = createListContainer(targetNodeRef);
+					logger.debug("copy datalist container");
 					
 					// copy all datalist in order to have assoc references updated (ie: taskList is referenced in deliverableList, so when doing checkout assoc must be updated)
 					targetListContainerNodeRef = copyService.copy(sourceListContainerNodeRef, targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, true);
@@ -291,6 +292,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 							}
 
 							if (copy) {
+								logger.debug("copy datalist " + listQName);
 								NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, true);
 								nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
 							}

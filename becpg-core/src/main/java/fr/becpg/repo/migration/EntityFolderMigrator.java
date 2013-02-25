@@ -8,6 +8,7 @@ import java.util.Map;
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.RenditionModel;
+import org.alfresco.repo.search.impl.lucene.LuceneFunction;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileExistsException;
@@ -29,6 +30,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -45,6 +49,12 @@ public class EntityFolderMigrator {
 	private DictionaryService dictionaryService;
 
 	private TransactionService transactionService;
+	
+	private EntityTplService entityTplService;
+	
+	private EntityService entityService;
+	
+	private EntityListDAO entityListDAO;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -66,10 +76,61 @@ public class EntityFolderMigrator {
 		this.transactionService = transactionService;
 	}
 	
+	public void setEntityTplService(EntityTplService entityTplService) {
+		this.entityTplService = entityTplService;
+	}
+
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
 	@SuppressWarnings("deprecation")
 	public void migrate() {
 
-		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_V2))
+		// search for entity and entityTplAspect
+		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY)) + 
+				LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL));
+		
+		List<NodeRef> entityTplNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+
+		logger.info("Found " + entityTplNodeRefs.size() + " entity templates to migrate");
+		
+		if (!entityTplNodeRefs.isEmpty()) {
+			
+			for(NodeRef entityTplNodeRef : entityTplNodeRefs){
+				if(nodeService.exists(entityTplNodeRef)){
+					
+					nodeService.setProperty(entityTplNodeRef, ContentModel.PROP_NAME, GUID.generate());
+					QName type = (QName)nodeService.getProperty(entityTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_CLASS_NAME);
+			        
+					NodeRef newEntityTplNodeRef = entityTplService.createEntityTpl(nodeService.getPrimaryParent(entityTplNodeRef).getParentRef(), 
+							type, true, null, null);
+					
+					entityListDAO.moveDataLists(entityTplNodeRef, newEntityTplNodeRef);					
+					nodeService.deleteNode(entityTplNodeRef);
+					
+					// folder tpl to migrate
+					List<NodeRef> entityFolderTplNodeRefs = beCPGSearchService.luceneSearch(String.format(" +TYPE:\"bcpg:entityFolder\" +@bcpg\\:entityTplClassName:\"%s\" +@bcpg\\:entityTplEnabled:true", type));
+					NodeRef entityFolderTplNodeRef = entityFolderTplNodeRefs!=null && !entityFolderTplNodeRefs.isEmpty() ? entityFolderTplNodeRefs.get(0) : null;
+					if(entityFolderTplNodeRef != null){
+						entityService.moveFiles(entityFolderTplNodeRef, newEntityTplNodeRef);						
+						nodeService.deleteNode(entityFolderTplNodeRef);
+					}					
+				}							
+			}
+		}
+		
+		// remove system folders
+		List<NodeRef> folderNodeRefs = beCPGSearchService.luceneSearch("+PATH:\"/app:company_home/cm:System/cm:FolderTemplates\"", RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		if (!folderNodeRefs.isEmpty()) {
+			nodeService.deleteNode(folderNodeRefs.get(0));
+		}		
+				
+		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_V2))
 				 	  +LuceneHelper.exclude(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_FOLDER));
 
 		// search for entities to migrate

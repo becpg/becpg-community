@@ -75,6 +75,33 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 //		}, false, true);
 //
 //	}
+	
+	private void initReports(){
+		
+		// Add report tpl
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				
+				for(NodeRef n : reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "*")){
+					nodeService.deleteNode(n);
+				}
+
+				/*-- Add report tpl --*/
+				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+				NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+
+				reportTplService.createTplRptDesign(productReportTplFolder, "report SF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
+						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false, true);
+				
+				return null;
+
+			}
+		});			
+	}
 
 	/**
 	 * Test report on product
@@ -86,28 +113,8 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	public void testProductReport() throws InterruptedException {
 
 		logger.debug("testIsReportUpToDate()");
-
-		// Add report tpl
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				/*-- Add report tpl --*/
-				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
-
-//				reportTplService.createTplRptDesign(productReportTplFolder, "report SF", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-//						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, true);
-				reportTplService.createTplRptDesign(productReportTplFolder, "report SF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false, true);
-				
-				return null;
-
-			}
-		});
+		
+		initReports();
 
 		assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
 
@@ -227,6 +234,8 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	@Test
 	public void testGetProductSystemReportTemplates() throws InterruptedException {
 
+		initReports();
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
@@ -251,17 +260,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 
 				QName typeQName = nodeService.getType(sfNodeRef);
 				assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
-
-				// add a system template
-				reportTplService.createTplRptDesign(productReportTplFolder, "report MP", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, true);
-
-				assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
-
-				// add a system template
-				reportTplService.createTplRptDesign(productReportTplFolder, "report MP 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false, true);
-				assertEquals("check system templates", 4, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
 				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user").size());
 

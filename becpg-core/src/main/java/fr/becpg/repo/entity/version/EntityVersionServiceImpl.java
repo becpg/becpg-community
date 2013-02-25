@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -287,7 +286,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	private List<ChildAssociationRef> getVersionAssocs(NodeRef entityNodeRef){
 		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef);
-		return getVersionAssocs(versionHistoryNodeRef, false);
+		return versionHistoryNodeRef != null ? getVersionAssocs(versionHistoryNodeRef, false) : new ArrayList<ChildAssociationRef>();
 	}
 	
 	private NodeRef getEntityVersion(List<ChildAssociationRef> versionAssocs, Version version) {
@@ -309,17 +308,21 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Override
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
-				
-		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-		List<EntityVersion> entityVersionHistory = new ArrayList<EntityVersion>(versionHistory.getAllVersions().size());		
-		List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
 		
-		for(Version version : versionHistory.getAllVersions()){
-			NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-			if(entityVersionNodeRef != null){
-				entityVersionHistory.add(new EntityVersion(version, entityVersionNodeRef));
+		List<EntityVersion> entityVersions = new ArrayList<EntityVersion>();
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+				
+		if(versionHistory != null){
+			List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
+			
+			for(Version version : versionHistory.getAllVersions()){
+				NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+				if(entityVersionNodeRef != null){
+					entityVersions.add(new EntityVersion(version, entityVersionNodeRef));
+				}
 			}
 		}
-		return entityVersionHistory;
+		
+		return entityVersions;
 	}
 }

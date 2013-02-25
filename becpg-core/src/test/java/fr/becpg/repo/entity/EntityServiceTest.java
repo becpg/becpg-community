@@ -16,7 +16,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -47,10 +46,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 	private EntityListDAO entityListDAO;
 
 	@Resource
-	private EntityService entityService;
-	
-	@Resource
-	private CopyService copyService;
+	private EntityService entityService;	
 	
 	//force init repo (otherwise failed depending of previous tests)
 	protected boolean forceInit = true;

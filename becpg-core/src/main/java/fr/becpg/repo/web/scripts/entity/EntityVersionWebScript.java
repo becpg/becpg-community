@@ -5,13 +5,14 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.service.cmr.version.Version;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,27 +80,34 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 		try {
 			JSONArray jsonVersions = new JSONArray();
 			
-			for(EntityVersion version : versions){
-				
-				logger.info("###props: " + version.getVersionProperties());
-				
+			if(versions.isEmpty()){
+
 				JSONObject jsonVersion = new JSONObject();
-				jsonVersion.put("nodeRef", version.getEntityVersionNodeRef());
-				jsonVersion.put("name", nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME));
-				jsonVersion.put("label", version.getVersionLabel());
-				jsonVersion.put("description", version.getDescription());
-				jsonVersion.put("createdDate", displayFormat.format(version.getFrozenModifiedDate()));
-				jsonVersion.put("createdDateISO", ISO8601DateFormat.format(version.getFrozenModifiedDate()));
+				jsonVersion.put("nodeRef", nodeRef);
+				jsonVersion.put("name", nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+				jsonVersion.put("label", "1.0");
+				jsonVersion.put("description", "");
+				jsonVersion.put("createdDate", displayFormat.format((Date)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
+				jsonVersion.put("createdDateISO", ISO8601DateFormat.format((Date)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
 				jsonVersions.put(jsonVersion);
 				
-				NodeRef creatorNodeRef = personService.getPerson(version.getFrozenModifier());
-				JSONObject jsonCreator = new JSONObject();
-				jsonCreator.put("userName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_USERNAME));
-				jsonCreator.put("firstName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
-				jsonCreator.put("lastName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_LASTNAME));
-				jsonVersion.put("creator", jsonCreator);
-				
-			}		
+				jsonVersion.put("creator", getPerson((String)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR)));
+			}
+			else{
+				for(EntityVersion version : versions){
+					
+					JSONObject jsonVersion = new JSONObject();
+					jsonVersion.put("nodeRef", version.getEntityVersionNodeRef());
+					jsonVersion.put("name", nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME));
+					jsonVersion.put("label", version.getVersionLabel());
+					jsonVersion.put("description", version.getDescription());
+					jsonVersion.put("createdDate", displayFormat.format(version.getFrozenModifiedDate()));
+					jsonVersion.put("createdDateISO", ISO8601DateFormat.format(version.getFrozenModifiedDate()));
+					jsonVersions.put(jsonVersion);
+					
+					jsonVersion.put("creator", getPerson(version.getFrozenModifier()));					
+				}
+			}				
 			
 			res.setContentType("application/json");
 	        res.setContentEncoding("UTF-8");		
@@ -109,6 +117,14 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 			throw new WebScriptException("Unable to serialize JSON");
 		}
 		
-	}	
+	}
 	
+	private JSONObject getPerson(String frozenModifier) throws InvalidNodeRefException, JSONException{
+		NodeRef creatorNodeRef = personService.getPerson(frozenModifier);
+		JSONObject jsonCreator = new JSONObject();
+		jsonCreator.put("userName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_USERNAME));
+		jsonCreator.put("firstName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
+		jsonCreator.put("lastName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_LASTNAME));
+		return jsonCreator;
+	}	
 }

@@ -214,6 +214,9 @@
 		<property name="nodeService" ref="nodeService" />		
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="transactionService" ref="transactionService" />
+		<property name="entityTplService" ref="entityTplService" />
+		<property name="entityService" ref="entityService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 	<!-- CompareEntityService -->
@@ -247,8 +250,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="permissionService" ref="permissionService" />
-		<property name="entityTplService" ref="entityTplService" />
+		<property name="permissionService" ref="permissionService" />		
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="copyService" ref="copyService" />
 		<property name="contentService" ref="contentService" />

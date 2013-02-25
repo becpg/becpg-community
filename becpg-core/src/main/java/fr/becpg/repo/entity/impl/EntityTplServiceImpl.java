@@ -28,8 +28,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
 @Service
 public class EntityTplServiceImpl implements EntityTplService {
 
-	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"bcpg:entityV2\" +@bcpg\\:entityTplClassName:\"%s\" +@bcpg\\:entityTplEnabled:true";
-	private static final String QUERY_ENTITY_FOLDER_TEMPLATE = " +TYPE:\"bcpg:entityFolder\" +@bcpg\\:entityTplClassName:\"%s\" +@bcpg\\:entityTplEnabled:true";
+	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"%s\" +@bcpg\\:entityTplEnabled:true +@bcpg\\:entityTplIsDefault:true";
 	private static final String QUERY_LOAD_CHARACTS = " +TYPE:\"%s\"";
 	
 	private NodeService nodeService;
@@ -57,59 +56,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 	}
 
 	/**
-	 * Create the entity folderTpl
-	 * @param entityTplsNodeRef
-	 * @param entityType
-	 */
-	@Override
-	@Deprecated
-	public NodeRef createFolderTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<String> subFolders){
-		
-		TypeDefinition typeDef = dictionaryService.getType(entityType);
-		String entityTplName = typeDef.getTitle();
-		
-		// ProductFolder
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, entityTplName);
-		properties.put(BeCPGModel.PROP_ENTITY_TPL_CLASS_NAME, entityType);
-		properties.put(BeCPGModel.PROP_ENTITY_TPL_ENABLED, enabled);
-					
-		NodeRef entityTplFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityTplName);
-		if(entityTplFolderNodeRef == null){				
-			entityTplFolderNodeRef = nodeService.createNode(parentNodeRef, 
-															ContentModel.ASSOC_CONTAINS, 
-															QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
-																	entityType.getLocalName()), 
-															BeCPGModel.TYPE_ENTITY_FOLDER, properties).getChildRef();			
-			
-			// subFolders
-			if(subFolders != null){				
-				for(String subFolder : subFolders){
-					
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(subFolder));
-					NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityTplFolderNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
-					if(documentsFolderNodeRef == null){			
-						nodeService.createNode(entityTplFolderNodeRef, 
-												ContentModel.ASSOC_CONTAINS, 
-												QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(subFolder)), 
-												ContentModel.TYPE_FOLDER, 
-												properties).getChildRef();
-					}								
-				}
-			}			
-		}			
-		
-		return entityTplFolderNodeRef;
-	}
-
-	/**
 	 * Create the entityTpl
 	 * @param entityTplsNodeRef
 	 * @param entityType
 	 */
 	@Override
-	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists){
+	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders){
 		
 		TypeDefinition typeDef = dictionaryService.getType(entityType);
 		String entityTplName = typeDef.getTitle();
@@ -117,8 +69,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 		// entityTpl
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, entityTplName);
-		properties.put(BeCPGModel.PROP_ENTITY_TPL_CLASS_NAME, entityType);
 		properties.put(BeCPGModel.PROP_ENTITY_TPL_ENABLED, enabled);
+		properties.put(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, true);
 		
 		NodeRef entityTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityTplName);
 		if(entityTplNodeRef == null){
@@ -126,7 +78,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 														ContentModel.ASSOC_CONTAINS, 
 														QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 																			entityType.getLocalName()), 
-														BeCPGModel.TYPE_ENTITY_V2, properties).getChildRef();
+																			entityType, properties).getChildRef();
 		}
 		
 		
@@ -145,18 +97,26 @@ public class EntityTplServiceImpl implements EntityTplService {
 					initializeList(listNodeRef, entityList);
 				}
 			}
-		}			
+		}	
+		
+		// subFolders
+		if(subFolders != null){				
+			for(String subFolder : subFolders){
+				
+				properties.clear();
+				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(subFolder));
+				NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));
+				if(documentsFolderNodeRef == null){			
+					nodeService.createNode(entityTplNodeRef, 
+											ContentModel.ASSOC_CONTAINS, 
+											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(subFolder)), 
+											ContentModel.TYPE_FOLDER, 
+											properties).getChildRef();
+				}								
+			}
+		}
 		
 		return entityTplNodeRef;
-	}
-	
-	/**
-	 * Get the entity folderTpl
-	 */
-	@Override
-	public NodeRef getFolderTpl(QName nodeType) {
-
-		return getTpl(true, nodeType);
 	}
 
 	/**
@@ -165,32 +125,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Override
 	public NodeRef getEntityTpl(QName nodeType) {
 		
-		return getTpl(false, nodeType);
-	}
-	
-	/**
-	 * Look for the template
-	 * @param isContainer
-	 * @param nodeType
-	 * @return
-	 */
-	private NodeRef getTpl(boolean isContainer, QName nodeType){
-		
 		if(nodeType == null){
 			return null;
-		}		
-    	
-    	String query;
-    	
-    	if(isContainer){    		
-    		query = String.format(QUERY_ENTITY_FOLDER_TEMPLATE, nodeType);
-    	}
-    	else{
-    		query = String.format(QUERY_ENTITY_TEMPLATE, nodeType);
-    	}
+		}
 		
-		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query);
-        
+		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(String.format(QUERY_ENTITY_TEMPLATE, nodeType));        
         return tplsNodeRef!=null && !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;
 	}
 	

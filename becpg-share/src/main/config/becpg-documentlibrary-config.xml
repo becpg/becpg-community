@@ -235,7 +235,8 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:client&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="nc" label="menu.create-content.nc" index="140" icon="generic-nc">
+			<content id="nc" label="menu.create-content.nc"  type="pagelink"
+				index="140" icon="generic-nc">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:nc&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>

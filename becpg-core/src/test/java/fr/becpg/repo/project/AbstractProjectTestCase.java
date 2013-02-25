@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.AbstractProjectData;
@@ -68,6 +69,9 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 				projectTplData.setParentNodeRef(testFolderNodeRef);
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
 				projectTplNodeRef = projectTplData.getNodeRef();
+				
+				// add aspect entityTpl				
+				nodeService.addAspect(projectTplNodeRef, BeCPGModel.ASPECT_ENTITY_TPL, null);
 				
 				// create documents in tpl folder
 				assertNotNull(projectTplData.getNodeRef());

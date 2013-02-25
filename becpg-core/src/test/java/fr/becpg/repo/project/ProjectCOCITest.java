@@ -25,9 +25,6 @@ import fr.becpg.repo.project.data.ProjectData;
  */
 public class ProjectCOCITest extends AbstractProjectTestCase {
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProjectCOCITest.class);
-
 	@Resource
 	private CheckOutCheckInService checkOutCheckInService;
 
