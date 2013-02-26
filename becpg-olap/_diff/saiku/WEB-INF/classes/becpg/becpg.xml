@@ -43,7 +43,7 @@
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
-					MAX(IF(prop.prop_name = "qa:ncPriority",prop.date_value,NULL)) as ncPriority,
+					MAX(IF(prop.prop_name = "qa:ncPriority",prop.long_value,NULL)) as ncPriority,
 					MAX(IF(prop.prop_name = "qa:ncState",prop.date_value,NULL)) as ncState,
 					MAX(IF(prop.prop_name = "qa:ncQuantityNc",prop.long_value,NULL)) as ncQuantityNc, 
 					MAX(IF(prop.prop_name = "qa:ncCost",prop.long_value,NULL)) as ncCost, 
@@ -391,7 +391,7 @@
 							datalist.entity_fact_id as entity_fact_id
 						from
 							becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
-						where datalist.datalist_name = "ingList" and datalist.item_type = "bcpg:ingList" and prop.prop_name="bcpg:geoOrigin"
+						where datalist.datalist_name = "ingList" and datalist.item_type = "bcpg:ingList" and prop.prop_name="bcpg:ingListgeoOrigin"
 					</SQL>
 				</View>
 				<Level name="Pays" column="nodeRef" nameColumn="name" type="String"  >
