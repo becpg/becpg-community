@@ -121,6 +121,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			Map<QName, Serializable> after) {
 		
 		boolean formulateProject = false;
+		boolean saveProject = false;
+		ProjectData projectData = null;
 		String beforeState = (String) before.get(ProjectModel.PROP_TL_STATE);
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
@@ -137,12 +139,13 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			}
 			
 			//start project by task list if project has state InProgress -> InProgress
-			if(!afterState.equals(beforeState) && afterState.equals(TaskState.InProgress)){
+			if(!afterState.equals(beforeState) && afterState.equals(TaskState.InProgress.toString())){
 				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
-				ProjectData projectData = (ProjectData)alfrescoRepository.findOne(projectNodeRef);
+				projectData = (ProjectData)alfrescoRepository.findOne(projectNodeRef);
 				if(ProjectState.Planned.equals(projectData.getProjectState())){
 					projectData.setProjectState(ProjectState.InProgress);
 					formulateProject = true;
+					saveProject = true;
 				}
 			}
 		}
@@ -153,6 +156,10 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
+		}
+		
+		if(saveProject && projectData != null){
+			alfrescoRepository.save(projectData);
 		}
 				
 		if(formulateProject){
