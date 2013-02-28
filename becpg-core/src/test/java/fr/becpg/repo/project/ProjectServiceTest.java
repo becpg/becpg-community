@@ -768,4 +768,66 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				}, false, true);
 
 	}
+	
+	/**
+	 * Test the project is InProgress if we set a task InProgress
+	 */
+	@Test
+	public void testStartProjectByStartingTask() {
+
+		initTest();
+
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
+								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
+
+						projectData.setParentNodeRef(testFolderNodeRef);
+
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						return projectData.getNodeRef();
+					}
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+				assertNotNull(projectData);
+				assertNotNull(projectData.getTaskList());
+				assertEquals(6, projectData.getTaskList().size());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());
+				
+				projectData.getTaskList().get(0).setState(TaskState.InProgress);
+				alfrescoRepository.save(projectData);
+
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+				assertNotNull(projectData);
+				assertNotNull(projectData.getTaskList());
+				assertEquals(6, projectData.getTaskList().size());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());
+				
+				assertEquals(ProjectState.InProgress, projectData.getProjectState());				
+
+				return null;
+			}
+		}, false, true);
+	}
 }
