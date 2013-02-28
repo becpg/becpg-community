@@ -19,6 +19,8 @@ public interface OlapService {
 	List<OlapChart> retrieveOlapCharts()  throws JSONException, IOException;
 	
 	OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException;
+
+	String getCurrentOlapUserName();
 	
 	
 }

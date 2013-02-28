@@ -7,7 +7,7 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>${basedir}/_diff</directory>
+      <directory>${basedir}/src/main/config</directory>
       <outputDirectory>/dist</outputDirectory>
     </fileSet>
     <fileSet>
@@ -31,4 +31,15 @@
 	   <outputDirectory>/lib</outputDirectory>
 	  </file>
   </files>
+   <dependencySets>
+     <dependencySet>
+       <outputDirectory>/dist/saiku/WEB-INF/lib</outputDirectory>
+       <includes>
+       	<include>fr.becpg:becpg-olap</include>
+       	<include>org.apache.httpcomponents:httpclient</include>
+       	<include>commons-codec:commons-codec</include>
+       	<include>org.apache.httpcomponents:httpcore</include>
+       </includes>
+     </dependencySet>
+  </dependencySets>
 </assembly>
