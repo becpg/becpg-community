@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -32,7 +30,7 @@ public class OlapServiceTest extends RepoBaseTestCase {
 				OlapChart olapChart = (OlapChart) iterator.next();
 				logger.info(olapChart.toJSONObject().toString());
 				OlapChartData olapChartData = olapService.retrieveChartData(olapChart.getQueryId());
-				Assert.assertNotNull(olapChartData);
+				assertNotNull(olapChartData);
 				logger.info(olapChartData.toJSONObject().toString());
 			}
 		} catch (Exception e) {

@@ -9,13 +9,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * 
- * @author matthieu
- * Warning not thread safe transaction (use single thread or modify)
+ * @author matthieu Warning not thread safe transaction (use single thread or
+ *         modify)
  */
 public class JdbcConnectionManager {
 
@@ -24,7 +26,10 @@ public class JdbcConnectionManager {
 	private String dbPassword;
 
 	private String dbConnectionUrl;
-	
+
+	private DataSource dataSource;
+
+	private static Log logger = LogFactory.getLog(JdbcConnectionManager.class);
 
 	public interface JdbcConnectionManagerCallBack {
 
@@ -33,25 +38,22 @@ public class JdbcConnectionManager {
 	}
 
 	private Connection connection;
-	
 
-	public static void doInTransaction(JdbcConnectionManager  jdbcConnectionManager, JdbcConnectionManagerCallBack callback ) throws Exception{
+	public static void doInTransaction(JdbcConnectionManager jdbcConnectionManager, JdbcConnectionManagerCallBack callback) throws Exception {
 		jdbcConnectionManager.initConnection();
-		
-		try(Connection connection = jdbcConnectionManager.connection){
+
+		try (Connection connection = jdbcConnectionManager.connection) {
 			connection.setAutoCommit(false);
 			try {
 				callback.execute(jdbcConnectionManager);
-			} catch(Exception e){
-				logger.error("Rollback transaction caused by: "+e.getMessage(),e);
+			} catch (Exception e) {
+				logger.error("Rollback transaction caused by: " + e.getMessage(), e);
 				connection.rollback();
 			}
 			connection.commit();
 		}
-		
-		
+
 	};
-	
 
 	public interface RowMapper<T> {
 		public T mapRow(ResultSet rs, int line) throws SQLException;
@@ -62,28 +64,38 @@ public class JdbcConnectionManager {
 		this.dbUser = dbUser;
 		this.dbPassword = dbPassword;
 		this.dbConnectionUrl = dbConnectionUrl;
-		
-	}
-	
-	public void initConnection() throws SQLException{
-		this.connection = DriverManager.getConnection(dbConnectionUrl, dbUser, dbPassword);
+
 	}
 
-	private static Log logger = LogFactory.getLog(JdbcConnectionManager.class);
+	public JdbcConnectionManager() {
+		super();
+	}
 
-	static {
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception e) {
-			logger.error(e, e);
+	private Connection createConnection() throws SQLException {
+		if (dataSource != null) {
+			return dataSource.getConnection();
+		} else {
+			try {
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+			} catch (Exception e) {
+				logger.error(e, e);
+			}
+			return DriverManager.getConnection(dbConnectionUrl, dbUser, dbPassword);
 		}
 	}
 
+	public void initConnection() throws SQLException {
+
+		this.connection = createConnection();
+
+	}
+
 	public Long update(String sql, Object[] objects) throws SQLException {
-		
-	
-		
+
 		try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
 
 			for (int i = 0; i < objects.length; i++) {
@@ -96,23 +108,26 @@ public class JdbcConnectionManager {
 				}
 			}
 		}
-		
+
 		return -1L;
 	}
 
-	public <T> List<T> list(String sql, RowMapper<T> rowMapper) throws SQLException {
+	public <T> List<T> list(String sql, RowMapper<T> rowMapper, Object[] objects) throws SQLException {
 
 		List<T> ret = new ArrayList<T>();
-		try (Connection connection = DriverManager.getConnection(dbConnectionUrl, dbUser, dbPassword);
-				Statement st = connection.createStatement();
-				ResultSet rs = st.executeQuery(sql);) {
-			if (rs != null) {
-				int line = 0;
-				while (rs.next()) {
-					ret.add(rowMapper.mapRow(rs, line));
-					line++;
-				}
+		try (Connection connection = createConnection(); PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+			for (int i = 0; i < objects.length; i++) {
+				pst.setObject(i + 1, objects[i]);
+			}
+			try (ResultSet rs = pst.executeQuery();) {
+				if (rs != null) {
+					int line = 0;
+					while (rs.next()) {
+						ret.add(rowMapper.mapRow(rs, line));
+						line++;
+					}
 
+				}
 			}
 
 			return ret;

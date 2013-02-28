@@ -1,21 +1,21 @@
 package fr.becpg.olap.http;
 
 
-public class GetEntityCommand  extends AbstractHttpCommand {
+
+public class RetrieveUserCommand  extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/becpg/remote/entity?nodeRef=%s";
+	private static String COMMAND_URL_TEMPLATE = "/api/people/%s?groups=true";
 
 	
-	public GetEntityCommand(String serverUrl) {
+	public RetrieveUserCommand(String serverUrl) {
 		super(serverUrl);
 	}
 
 	@Override
 	public String getHttpUrl(Object... params) {
-	
 		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, params );
 	}
-	
+
 	
 }
