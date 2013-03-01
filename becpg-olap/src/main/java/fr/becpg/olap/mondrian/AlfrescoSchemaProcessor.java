@@ -38,8 +38,11 @@ public class AlfrescoSchemaProcessor implements DynamicSchemaProcessor {
 			Instance instance = ((AlfrescoUserDetails)auth.getPrincipal()).getInstance();
 			HttpClient httpClient =  instanceManager.createInstanceSession(instance);
 			GetMondrianSchemaCommand schemaCommand = new GetMondrianSchemaCommand(instance.getInstanceUrl());
-			
-			return schemaCommand.getSchema(httpClient, instance.getId());
+			try {
+				return schemaCommand.getSchema(httpClient, instance.getId());
+			} finally {
+				httpClient.getConnectionManager().shutdown();
+			}
 			 
 		 }
 		

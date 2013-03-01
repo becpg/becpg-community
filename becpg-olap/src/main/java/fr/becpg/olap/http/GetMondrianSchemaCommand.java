@@ -21,7 +21,7 @@ public class GetMondrianSchemaCommand  extends AbstractHttpCommand {
 	@Override
 	public String getHttpUrl(Object... params) {
 	
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, params );
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
 	}
 
 	public String getSchema(HttpClient httpClient,Object... params) throws IOException {

@@ -51,6 +51,7 @@ public class AlfrescoAuthenticationProvider extends AbstractUserDetailsAuthentic
 	            throw new BadCredentialsException(messages.getMessage(
 	                    "AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 	        }
+	        
         } else {
         	throw new BadCredentialsException("UserDetails is not instance of AlfrescoUserDetails");
         }

@@ -1,6 +1,7 @@
 package fr.becpg.olap.http;
 
 
+
 public class GetEntityCommand  extends AbstractHttpCommand {
 
 
@@ -13,9 +14,9 @@ public class GetEntityCommand  extends AbstractHttpCommand {
 
 	@Override
 	public String getHttpUrl(Object... params) {
-	
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, params );
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
 	}
-	
+
+
 	
 }

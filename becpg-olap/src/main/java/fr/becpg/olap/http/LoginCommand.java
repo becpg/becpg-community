@@ -23,7 +23,7 @@ public class LoginCommand  extends AbstractHttpCommand {
 
 	@Override
 	public String getHttpUrl(Object... params) {
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, params );
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
 	}
 	
 	public String getAlfTicket(String login, String password) throws UsernameNotFoundException{
