@@ -8,16 +8,6 @@
 			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 
-	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/dataSource" expected-type="javax.sql.DataSource" />
-
-	<bean id="jdbcConnectionManager" class="fr.becpg.olap.jdbc.JdbcConnectionManager">
-		<property name="dataSource" ref="dataSource"/>
-	</bean>
-
-	<bean id="instanceManager" class="fr.becpg.olap.InstanceManager">
-		<property name="jdbcConnectionManager" ref="jdbcConnectionManager"/>
-	</bean>
-
 	<bean id="alfrescoUserDetailsService" class="fr.becpg.olap.authentication.AlfrescoUserDetailsService">
 		<property name="instanceManager" ref="instanceManager"/>
 	</bean>

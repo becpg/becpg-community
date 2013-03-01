@@ -96,6 +96,7 @@ public class OlapChartWebScript  extends AbstractWebScript
 		    	JSONObject metadata = new JSONObject();
 		    	metadata.put("currentUserName", olapService.getCurrentOlapUserName());
 		    	metadata.put("olapServerUrl", olapServerUrl);
+		    	metadata.put("olapQueriesFolder", olapService.getOlapQueriesFolder());
 		    	ret.put("metadata",metadata);
 		    	
 		    	String jsonString = ret.toString();

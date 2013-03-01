@@ -2,13 +2,13 @@ package fr.becpg.olap.http;
 
 
 
-public class RetrieveUserCommand  extends AbstractHttpCommand {
+public class ListQueriesCommand  extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/api/people/%s?groups=true";
+	private static String COMMAND_URL_TEMPLATE = "/becpg/olap/chart";
 
 	
-	public RetrieveUserCommand(String serverUrl) {
+	public ListQueriesCommand(String serverUrl) {
 		super(serverUrl);
 	}
 

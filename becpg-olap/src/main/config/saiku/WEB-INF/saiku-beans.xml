@@ -1,22 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-         http://www.springframework.org/schema/context 
-   		 http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+				http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+				http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+            http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+	<!-- beCPG -->
 
 	<context:property-placeholder />
 
+	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/dataSource" expected-type="javax.sql.DataSource" />
+
+	<bean id="jdbcConnectionManager" class="fr.becpg.olap.jdbc.JdbcConnectionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<bean id="instanceManager" class="fr.becpg.olap.InstanceManager">
+		<property name="jdbcConnectionManager" ref="jdbcConnectionManager"/>
+	</bean>
+
+
 	<bean id="mondrianApplicationContextProvider" class="fr.becpg.olap.mondrian.MondrianApplicationContextProvider"/>
 
+	<bean id="alfrepository" scope="request" class="org.saiku.web.rest.resources.AlfrescoRepository">
+	 	<property name="instanceManager" ref="instanceManager"/> 
+	</bean> 
+	
+	<bean id="adminSaikuRestClient" scope="request" class="org.saiku.web.rest.resources.AdminSaikuRestClient">
+	 	<property name="instanceManager" ref="instanceManager"/> 
+	 	<property name="jdbcConnectionManager" ref="jdbcConnectionManager"/> 
+	</bean> 
+	
+	<bean id="sessionService" class="org.saiku.web.service.AlfrescoSessionService">
+		<property name="authenticationManager" ref="authenticationManager" />
+	</bean>
+
+	<!-- Saiku -->
 
 	<bean id="classpathDsManager" class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
 		<property name="path" value="res:saiku-datasources" />
 	</bean>
-
+<!-- 
 	<bean id="sessionService" class="org.saiku.web.service.SessionService">
 		<property name="authenticationManager" ref="authenticationManager" />
-	</bean>
+	</bean> -->
 
 	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init">
 		<property name="dataSourceManager" ref="classpathDsManager" />
@@ -62,9 +93,8 @@
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="path" value="file://${saiku.home}/saiku-repository/" />
 	</bean>
-	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
-
-	<bean id="acl" scope="session" class="org.saiku.web.rest.objects.acl.Acl">
+	
+	 <bean id="acl" scope="session" class="org.saiku.web.rest.objects.acl.Acl">
 		<property name="path" value="file://${saiku.home}/saiku-repository/" />
 		<property name="adminRoles">
 			<list>
@@ -72,12 +102,14 @@
 			</list>
 		</property>
 	</bean>
-
+	
 	<bean id="repository2bean" scope="request" class="org.saiku.web.rest.resources.BasicRepositoryResource2">
 		<property name="path" value="file://${saiku.home}/saiku-repository/" />
 		<property name="sessionService" ref="sessionService" />
 		<property name="acl" ref="acl" />
-	</bean>
+	</bean> 
+
+ 	
 
 	<bean id="tagRepositoryBean" scope="request" class="org.saiku.web.rest.resources.BasicTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />

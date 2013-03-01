@@ -98,6 +98,8 @@
 			</param-name>
 			<param-value>/rest</param-value>
 		</init-param>
+
+		
 	</servlet>
 
 	<servlet-mapping>
@@ -119,6 +121,7 @@
 		<servlet-name>jersey</servlet-name>
 		<url-pattern>/rest/saiku/*</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet-mapping>
 		<servlet-name>jersey</servlet-name>

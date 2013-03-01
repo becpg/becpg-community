@@ -102,7 +102,7 @@ public class InstanceManager {
 
 	}
 
-	List<Instance> getAllInstances() throws SQLException {
+	public List<Instance> getAllInstances() throws SQLException {
 		return jdbcConnectionManager.list(
 				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`  FROM `becpg_instance`",
 				new JdbcConnectionManager.RowMapper<Instance>() {

@@ -7,7 +7,9 @@
 		<property name="olapServerUrl" value="${becpg.olap.url.internal}" />
 		<property name="instanceName" value="${becpg.instance.name}" />
 		<property name="authenticationService" ref="authenticationService"/>
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="contentService" ref="contentService" />
+		<property name="repoService" ref="repoService"/>
 	</bean>
 
 

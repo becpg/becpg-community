@@ -129,6 +129,9 @@ public class RepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 	
+	// olap
+	public static final String PATH_OLAP_QUERIES = "OlapQueries";
+	
 	// ECO
 	public static final String PATH_ECO = "ECO";
 	public static final String PATH_ECO_TEMPORARY = "Temporary";	
@@ -194,6 +197,7 @@ public class RepoConsts {
 	public static final String ISO_CHARSET = "ISO-8859-15";
 	
 	public static final Integer DATA_LISTS_PAGESIZE = 25;
+	
 
 
 	

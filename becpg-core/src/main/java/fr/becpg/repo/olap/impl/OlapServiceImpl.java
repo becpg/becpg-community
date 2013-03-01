@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
@@ -13,8 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
-import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.OlapUtils;
 import fr.becpg.repo.olap.data.OlapChart;
@@ -28,7 +34,11 @@ public class OlapServiceImpl implements OlapService {
 
 	private String olapServerUrl;
 
-	private BeCPGCacheService beCPGCacheService;
+	private FileFolderService fileFolderService;
+
+	private ContentService contentService;
+
+	private RepoService repoService;
 
 	private AuthenticationService authenticationService;
 
@@ -39,7 +49,7 @@ public class OlapServiceImpl implements OlapService {
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
 	}
-	
+
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
@@ -48,52 +58,84 @@ public class OlapServiceImpl implements OlapService {
 		this.olapServerUrl = olapServerUrl;
 	}
 
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+	
+	
+
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
 	}
 
 	@Override
-	public List<OlapChart> retrieveOlapCharts() {
+	public List<OlapChart> retrieveOlapCharts()  {
+		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
 
-		return beCPGCacheService.getFromCache(OlapService.class.getName(), "olapCharts", new BeCPGCacheDataProviderCallBack<List<OlapChart>>() {
+		for (FileInfo fileInfo : fileFolderService.list(getOlapQueriesFolder())) {
 
-			@Override
-			public List<OlapChart> getData() {
-
-				List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+			if (fileInfo.getName().endsWith(".saiku")) {
 				try {
+					OlapChart chart = new OlapChart(fileInfo);
 
-					OlapContext olapContext = OlapUtils.createOlapContext(getCurrentOlapUserName());
+					ContentReader reader = contentService.getReader(fileInfo.getNodeRef(), ContentModel.PROP_CONTENT);
 
-					JSONArray jsonArray = OlapUtils.readJsonArrayFromUrl(buildRepositoryUrl(olapContext), olapContext);
+					chart.load(reader.getContentString());
 
-					if (jsonArray != null) {
-
-						for (int row = 0; row < jsonArray.length(); row++) {
-							String queryName = jsonArray.getJSONObject(row).getString("name");
-							try {
-
-								OlapChart chart = new OlapChart(queryName);
-
-								JSONObject json = OlapUtils.readJsonObjectFromUrl(buildQueryUrl(queryName, olapContext), olapContext);
-
-								chart.load(json.getString("xml"));
-								olapCharts.add(chart);
-							} catch (Exception e) {
-								logger.error("Cannot load query :" + queryName);
-								logger.debug(e, e);
-							}
-						}
-
-					}
+					olapCharts.add(chart);
 				} catch (Exception e) {
 					logger.error(e, e);
 				}
-
-				return olapCharts;
 			}
 
-		});
+		}
+
+		return olapCharts;
+	}
+
+	@Override
+	public NodeRef getOlapQueriesFolder() {
+		return repoService.getFolderByPath("./cm:"+RepoConsts.PATH_SYSTEM +"/cm:" + RepoConsts.PATH_OLAP_QUERIES);
+	}
+
+	@Override
+	public List<OlapChart> retrieveOlapChartsFromSaiku() {
+
+		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+		try {
+
+			OlapContext olapContext = OlapUtils.createOlapContext(getCurrentOlapUserName());
+
+			JSONArray jsonArray = OlapUtils.readJsonArrayFromUrl(buildRepositoryUrl(olapContext), olapContext);
+
+			if (jsonArray != null) {
+
+				for (int row = 0; row < jsonArray.length(); row++) {
+					String queryName = jsonArray.getJSONObject(row).getString("name");
+					try {
+
+						OlapChart chart = new OlapChart(queryName);
+
+						JSONObject json = OlapUtils.readJsonObjectFromUrl(buildQueryUrl(queryName, olapContext), olapContext);
+
+						chart.load(json.getString("xml"));
+						olapCharts.add(chart);
+					} catch (Exception e) {
+						logger.error("Cannot load query :" + queryName);
+						logger.debug(e, e);
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			logger.error(e, e);
+		}
+
+		return olapCharts;
 
 	}
 
@@ -160,10 +202,10 @@ public class OlapServiceImpl implements OlapService {
 	}
 
 	@Override
-	public  String getCurrentOlapUserName() {
-		String currentUserName =(instanceName!=null ?instanceName : "default")+"$"+authenticationService.getCurrentUserName();
-		if(!currentUserName.contains("@")){
-			currentUserName+="@default";
+	public String getCurrentOlapUserName() {
+		String currentUserName = (instanceName != null ? instanceName : "default") + "$" + authenticationService.getCurrentUserName();
+		if (!currentUserName.contains("@")) {
+			currentUserName += "@default";
 		}
 		return currentUserName;
 	}

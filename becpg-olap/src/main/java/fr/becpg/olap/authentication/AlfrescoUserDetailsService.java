@@ -22,24 +22,21 @@ import fr.becpg.olap.InstanceManager;
 import fr.becpg.olap.InstanceManager.Instance;
 import fr.becpg.olap.helper.UserNameHelper;
 import fr.becpg.olap.http.RetrieveUserCommand;
+
 /**
  * 
  * @author matthieu
- *
+ * 
  */
 public class AlfrescoUserDetailsService implements UserDetailsService {
 
 	private static Log logger = LogFactory.getLog(AlfrescoUserDetailsService.class);
 
 	InstanceManager instanceManager;
-	
-	
 
 	public void setInstanceManager(InstanceManager instanceManager) {
 		this.instanceManager = instanceManager;
 	}
-
-
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -50,27 +47,30 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 			HttpClient client = instanceManager.createInstanceSession(instance);
 
 			RetrieveUserCommand retrieveUserCommand = new RetrieveUserCommand(instance.getInstanceUrl());
+			try {
 
-			String presentedLogin = UserNameHelper.extractLogin(username);
-			
-			List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-			try (InputStream in = retrieveUserCommand.runCommand(client, presentedLogin)) {
+				String presentedLogin = UserNameHelper.extractLogin(username);
 
-			
-				
-				JsonFactory jsonFactory = new JsonFactory();
-				JsonParser jp = jsonFactory.createJsonParser(in);
+				List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+				try (InputStream in = retrieveUserCommand.runCommand(client, presentedLogin)) {
 
-				 ObjectMapper mapper = new ObjectMapper();
-				 
-				JsonNode rootNode = mapper.readTree(jp);
+					JsonFactory jsonFactory = new JsonFactory();
+					JsonParser jp = jsonFactory.createJsonParser(in);
 
-				for (JsonNode node : rootNode.path("groups") ) {
-					authorities.add(new GrantedAuthorityImpl(node.path("itemName").getTextValue()));
+					ObjectMapper mapper = new ObjectMapper();
+
+					JsonNode rootNode = mapper.readTree(jp);
+
+					for (JsonNode node : rootNode.path("groups")) {
+						authorities.add(new GrantedAuthorityImpl(node.path("itemName").getTextValue()));
+					}
+
+					return new AlfrescoUserDetails(username, "no-password", rootNode.path("enabled").asBoolean(), authorities, instance);
+
 				}
 
-				return new AlfrescoUserDetails(username, "no-password", rootNode.path("enabled").asBoolean(), authorities,instance);
-
+			} finally {
+				client.getConnectionManager().shutdown();
 			}
 
 		} catch (Exception e) {
