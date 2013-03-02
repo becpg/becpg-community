@@ -6,10 +6,15 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * ProjectData used to manipulate project
@@ -19,10 +24,11 @@ import fr.becpg.repo.repository.annotation.AlfType;
  */
 @AlfType
 @AlfQname(qname = "pjt:project")
-public class ProjectData extends AbstractProjectData {
+public class ProjectData extends BeCPGDataObject {
 
 	
 	private NodeRef hierarchy1;
+	private NodeRef hierarchy2;
 	private Date startDate;
 	private Date dueDate;
 	private Date completionDate;
@@ -32,15 +38,22 @@ public class ProjectData extends AbstractProjectData {
 	private Integer completionPercent = 0;
 	private NodeRef entity;
 	private List<NodeRef> legends = new ArrayList<NodeRef>();
+	private Integer overdue = 0;
+	private Integer score = 0;
+	
+	private List<TaskListDataItem> taskList;
+	private List<DeliverableListDataItem> deliverableList;
+	private List<ScoreListDataItem> scoreList;
 
 	public ProjectData() {
 		super();
 	}
 
-	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, Date startDate, Date dueDate, Date completionDate, Integer priority,ProjectState projectState,
+	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate, Integer priority,ProjectState projectState,
 			NodeRef projectTpl, Integer completionPercent, NodeRef entity) {
 		super(nodeRef, name);
 		this.hierarchy1 = hierarchy1;
+		this.hierarchy2 = hierarchy2;
 		this.startDate = startDate;
 		this.dueDate = dueDate;
 		this.completionDate = completionDate;
@@ -59,6 +72,16 @@ public class ProjectData extends AbstractProjectData {
 
 	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectHierarchy2")
+	public NodeRef getHierarchy2() {
+		return hierarchy2;
+	}
+
+	public void setHierarchy2(NodeRef hierarchy2) {
+		this.hierarchy2 = hierarchy2;
 	}
 
 	@AlfProp
@@ -149,6 +172,56 @@ public class ProjectData extends AbstractProjectData {
 
 	public void setLegends(List<NodeRef> legends) {
 		this.legends = legends;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:projectOverdue")
+	public Integer getOverdue() {
+		return overdue;
+	}
+
+	public void setOverdue(Integer overdue) {
+		this.overdue = overdue;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectScore")
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
+	}
+
+	@DataList
+	@AlfQname(qname="pjt:taskList")
+	public List<TaskListDataItem> getTaskList() {
+		return taskList;
+	}
+	
+	@DataList
+	@AlfQname(qname="pjt:deliverableList")
+	public List<DeliverableListDataItem> getDeliverableList() {
+		return deliverableList;
+	}
+
+	public void setDeliverableList(List<DeliverableListDataItem> deliverableList) {
+		this.deliverableList = deliverableList;
+	}
+
+	public void setTaskList(List<TaskListDataItem> taskList) {
+		this.taskList = taskList;
+	}
+
+	@DataList
+	@AlfQname(qname="pjt:scoreList")
+	public List<ScoreListDataItem> getScoreList() {
+		return scoreList;
+	}
+
+	public void setScoreList(List<ScoreListDataItem> scoreList) {
+		this.scoreList = scoreList;
 	}
 
 	@Override

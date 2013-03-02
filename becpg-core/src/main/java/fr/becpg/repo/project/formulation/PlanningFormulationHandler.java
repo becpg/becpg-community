@@ -44,6 +44,10 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			calculateRetroPlanning(projectData, null, projectData.getStartDate());
 		}
 		
+		Integer projectOverdue = calculateOverdue(projectData, null);
+		logger.debug("projectOverdue: " + projectOverdue);
+		projectData.setOverdue(projectOverdue);
+		
 		return true;
 	}
 	
@@ -61,16 +65,13 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 	}
 	
-	private void calculatePlanning(ProjectData projectData, NodeRef taskNodeRef, Date startDate) {
+	private void calculatePlanning(ProjectData projectData, NodeRef taskNodeRef, Date startDate) throws FormulateException {
 
 		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
 
 			// avoid cycle
-			if (taskNodeRef != null && nextTask.getNodeRef() != null && taskNodeRef.equals(nextTask.getNodeRef())) {
-				logger.error("cycle detected on task " + nextTask.getTaskName());
-				return;
-			}
-			
+			checkCycle(taskNodeRef, nextTask);
+						
 			logger.debug("nextTask " + nextTask.getTaskName() + " - startDate " + startDate);
 
 			// check new startDate is equals or after, otherwise we stop since a parallel branch is after			
@@ -88,7 +89,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 	}
 	
-	private void calculateRetroPlanning(ProjectData projectData, TaskListDataItem task, Date endDate) {
+	private void calculateRetroPlanning(ProjectData projectData, TaskListDataItem task, Date endDate) throws FormulateException {
 
 		List<TaskListDataItem> prevTasks = null;
 		if(task == null){
@@ -101,10 +102,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		for (TaskListDataItem prevTask : prevTasks) {
 
 			// avoid cycle
-			if (task != null && prevTask.getNodeRef() != null && prevTask.getNodeRef().equals(task.getNodeRef())) {
-				logger.error("cycle detected on task " + prevTask.getTaskName());
-				return;
-			}
+			checkCycle(prevTask.getNodeRef(), task);
 			
 			if(TaskState.InProgress.equals(prevTask.getState())){
 				
@@ -128,6 +126,44 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			}			
 		}
 	}
+	
+	private Integer calculateOverdue(ProjectData projectData, NodeRef taskNodeRef) throws FormulateException {
+		
+		Integer taskOverdue = 0;	
+		Integer nextTaskOverdue = 0;
+		boolean initOverdue = true;
+		boolean initNextOverdue = true;
+		
+		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
+
+			// avoid cycle
+			checkCycle(taskNodeRef, nextTask);			
+			
+			Integer o = ProjectHelper.calculateOverdue(nextTask);
+			if(o != null && (initOverdue || o.compareTo(taskOverdue) < 0)){
+				taskOverdue += o;
+				initOverdue = false;
+			}			
+
+			o = calculateOverdue(projectData, nextTask.getNodeRef());
+			if(o != null && (initNextOverdue || o.compareTo(nextTaskOverdue) < 0)){
+				nextTaskOverdue +=o;
+				initNextOverdue = false;
+			}					
+		}
+				
+		return taskOverdue + nextTaskOverdue;
+	}
+	
+	private void checkCycle(NodeRef taskNodeRef, TaskListDataItem nextTask) throws FormulateException{
+		
+		if (taskNodeRef != null && nextTask != null && taskNodeRef.equals(nextTask.getNodeRef())) {
+			String error = "cycle detected. taskNodeRef: " + taskNodeRef + " nextTask: " + nextTask.getNodeRef() + " nextTask name: " + nextTask.getTaskName();
+			logger.error(error);
+			throw new FormulateException(error);
+		}
+	}
 
 	
 }
+

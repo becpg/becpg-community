@@ -431,6 +431,31 @@ var g; // gantt var
 
 		               return "advancement-less20" + suffix;
 	               },
+	               getOverdueClass : function PL_getOverdueClass(oRecord, task, size, start) {
+		               var percent = 0, 
+		               		overdue = oRecord.getData("itemData")["prop_pjt_projectOverdue"],
+		               		dates = this.extractDates(oRecord),
+		               		suffix = size != null ? "-" + size : "";
+
+		               if (overdue.value != null && dates.start != null && dates.due != null) {
+		            	   percent = 100 * (overdue.value / (dates.due.getTime() - dates.start.getTime())) * 24 * 60 * 60 * 1000;
+		               }	               
+
+		               if (percent > 30) {
+			               return "overdue-30plus" + suffix;
+		               }
+		               if (percent > 20) {
+			               return "overdue-20to29" + suffix;
+		               }
+		               if (percent > 10) {
+			               return "overdue-10to19" + suffix;
+		               }
+		               if (percent > 0) {
+			               return "overdue-0to9" + suffix;
+		               }
+
+		               return "overdue-negative" + suffix;
+	               },
 	               extractDates : function(oRecord, start) {
 
 		               var startDate = null, endDate = null, dueDate = null;

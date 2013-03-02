@@ -45,6 +45,10 @@ public interface ProjectModel {
 	public static final QName ASSOC_DL_TASK = QName.createQName(PROJECT_URI, "dlTask");
 	public static final QName ASSOC_DL_CONTENT = QName.createQName(PROJECT_URI, "dlContent");
 	
+	public static final QName TYPE_SCORE_LIST = QName.createQName(PROJECT_URI, "scoreList");
+	public static final QName PROP_SL_SCORE = QName.createQName(PROJECT_URI, "slScore");
+	public static final QName PROP_SL_WEIGHT = QName.createQName(PROJECT_URI, "slWeight");
+	
 	public static final QName ASPECT_COMPLETION_ASPECT = QName.createQName(PROJECT_URI, "completionAspect");
 	public static final QName PROP_COMPLETION_PERCENT = QName.createQName(PROJECT_URI, "completionPercent");
 	

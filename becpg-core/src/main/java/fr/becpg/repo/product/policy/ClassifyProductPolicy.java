@@ -53,6 +53,8 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_PRODUCT,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		
+		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_PRODUCT);
 	}
 
 	/**
@@ -88,7 +90,7 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 		if(classify){
 			
 			String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-			if (!SiteHelper.isSitePath(path) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+			if (!SiteHelper.isSitePath(path)) {
 				queueNode(nodeRef);
 			}
 		}
@@ -98,7 +100,10 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
-			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
+			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) &&
+					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL) &&
+					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				
 				productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
 			}
 		}

@@ -28,7 +28,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
 @Service
 public class EntityTplServiceImpl implements EntityTplService {
 
-	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"%s\" +@bcpg\\:entityTplEnabled:true +@bcpg\\:entityTplIsDefault:true";
+	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"%s\" +@bcpg\\:entityTplEnabled:true +@bcpg\\:entityTplIsDefault:true -ASPECT:\"bcpg:compositeVersion\"";
 	private static final String QUERY_LOAD_CHARACTS = " +TYPE:\"%s\"";
 	
 	private NodeService nodeService;

@@ -98,6 +98,8 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	protected static final String HIERARCHY2_QUICHE = "Quiche";
 	
 	protected static final String PROJECT_HIERARCHY1_PAIN = "Pain";
+	
+	protected static final String PROJECT_HIERARCHY2_PANINI = "Panini";
 
 	protected NodeRef HIERARCHY1_SEA_FOOD_REF;
 
@@ -112,6 +114,8 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	protected NodeRef HIERARCHY2_QUICHE_REF;
 	
 	protected NodeRef PROJECT_HIERARCHY1_PAIN_REF;
+	
+	protected NodeRef PROJECT_HIERARCHY2_PANINI_REF;
 	
 	protected NodeRef testFolderNodeRef;
 	
@@ -389,6 +393,16 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();			
 		}
+		
+		// score criteria
+		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_SCORE_CRITERIA);
+		for (int i=0;i<5;i++) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, "Criterion" + i);
+			nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();			
+		}
+		
 	}
 	
 	/**

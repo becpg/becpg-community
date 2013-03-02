@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.common.versionlabel.SerialVersionLabelPolicy;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -102,15 +103,28 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
 	}
+	
+	@Override
+	public NodeRef createVersion(final NodeRef nodeRef, Map<String,Serializable> versionProperties){
+		return internalCreateVersionAndCheckin(nodeRef, null, versionProperties);
+	}
 
 	@Override
-	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
+	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String,Serializable> versionProperties) {
+		
+		return internalCreateVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties);
+	}
+	
+	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String,Serializable> versionProperties) {
 
 
 		logger.debug("createEntityVersion: " + origNodeRef);
 
-		final NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
-
+		NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
+		if(versionHistoryRef ==null){
+			versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
+		}
+		final NodeRef finalVersionHistoryRef = versionHistoryRef; 
 		NodeRef versionNodeRef = null;
 
 		// Rights are checked by copyService during recursiveCopy
@@ -118,27 +132,38 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				@Override
 			public NodeRef doWork() throws Exception {
 			    // Non recursive copy
-				NodeRef nodeRef =  copyService.copy(origNodeRef, versionHistoryRef, ContentModel.ASSOC_CONTAINS,
+				NodeRef nodeRef =  copyService.copy(origNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
 							ContentModel.ASSOC_CHILDREN,false);
-				//Move origNodeRef DataList to version
-				entityListDAO.moveDataLists(origNodeRef, nodeRef);
-				//Move workingCopyNodeRef DataList to origNodeRef
-				entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
-				//Move files to version
-				entityService.moveFiles(origNodeRef, nodeRef);
-				//Move files to origNodeRef
-				entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+				
+				if(workingCopyNodeRef != null){
+					//Move origNodeRef DataList to version
+					entityListDAO.moveDataLists(origNodeRef, nodeRef);
+					//Move workingCopyNodeRef DataList to origNodeRef
+					entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
+					//Move files to version
+					entityService.moveFiles(origNodeRef, nodeRef);
+					//Move files to origNodeRef
+					entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+				}
+				else{
+					entityListDAO.copyDataLists(origNodeRef, nodeRef, false);
+					entityService.copyFiles(origNodeRef, nodeRef);
+				}
+				
 				return nodeRef;
 
 			}
 		 }, AuthenticationUtil.getSystemUserName());
 
-		Map<QName, Serializable> versionProperties = nodeService.getProperties(versionNodeRef);
+		//Map<QName, Serializable> versionProperties = nodeService.getProperties(versionNodeRef);
+		String versionLabel = getVersionLabel(origNodeRef, versionProperties);
 
 		String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER
-				+ nodeService.getProperty(origNodeRef, ContentModel.PROP_VERSION_LABEL);
-		versionProperties.put(ContentModel.PROP_NAME, name);
-		nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionProperties);
+				+ versionLabel;
+		Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);
+		aspectProperties.put(ContentModel.PROP_NAME, name);
+		aspectProperties.put(ContentModel.PROP_VERSION_LABEL, versionLabel);
+		nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
 
 		updateVersionEffectivity(origNodeRef, versionNodeRef);
 		return versionNodeRef;
@@ -203,21 +228,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 *            a node reference
 	 * @return a reference to the version history node, null of none
 	 */
-	private NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
+	public NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
 		NodeRef vhNodeRef = null;
 		NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
 		if (entitiesHistoryFolder != null) {
 			vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
-					nodeRef.getId());
-			
-			if (vhNodeRef == null) {
-				logger.debug("createVersionHistory");
-				vhNodeRef = createVersionHistory(entitiesHistoryFolder, nodeRef);
-			}
+					nodeRef.getId());						
 		}
 
 		return vhNodeRef;
-	}
+	}	
 
 	/**
 	 * Get the entitys history folder node where we store entity versions.
@@ -275,7 +295,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (versionHistoryRef != null) {
 			nodeService.deleteNode(versionHistoryRef);
 		}
-
 	}
 
 	@Override
@@ -302,7 +321,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 		}
 
-		logger.error("Failed to find entity version. version: " + version.getFrozenStateNodeRef());
+		logger.error("Failed to find entity version. version: " + version.getFrozenStateNodeRef() + " versionLabel: " + version.getVersionLabel());
 		return null;
 	}
 
@@ -313,7 +332,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 				
 		if(versionHistory != null){
-			List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
+			List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);			
 			
 			for(Version version : versionHistory.getAllVersions()){
 				NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
@@ -325,4 +344,17 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 		return entityVersions;
 	}
+	
+	private String getVersionLabel(NodeRef origNodeRef, Map<String,Serializable> versionProperties){
+    	
+    	QName classRef = nodeService.getType(origNodeRef);
+    	Version preceedingVersion = versionService.getCurrentVersion(origNodeRef);
+    	
+    	// Default the version label to the SerialVersionLabelPolicy
+        SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
+        String versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
+        
+        logger.debug("versionLabel: " + versionLabel);        
+        return versionLabel;        
+    }
 }

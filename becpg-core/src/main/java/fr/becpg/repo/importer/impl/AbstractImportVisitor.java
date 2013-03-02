@@ -239,6 +239,13 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 		// import properties		
 		Map<QName, Serializable> properties = getNodePropertiesToImport(importContext, values); 				 		
 		 
+		// work around since CodePolicy is asynchronous, so we need to generate code if empty
+		String code = (String)properties.get(BeCPGModel.PROP_CODE);
+		if(code !=null && code.isEmpty()){
+			code = autoNumService.getAutoNumValue(importContext.getType(), BeCPGModel.PROP_CODE);
+			properties.put(BeCPGModel.PROP_CODE, code);
+		}
+					
 		NodeRef nodeRef = findNode(importContext, importContext.getType(), properties);		 
 		 
 		if(nodeRef == null){
@@ -249,13 +256,6 @@ public class AbstractImportVisitor  implements ImportVisitor, ApplicationContext
 			QName assocName = ContentModel.ASSOC_CHILDREN;
 			if(name != null && name.length()>0){
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
-			}
-			
-			// work around since CodePolicy is asynchronous, so we need to generate code if empty
-			String code = (String)properties.get(BeCPGModel.PROP_CODE);
-			if(code !=null && code.isEmpty()){
-				code = autoNumService.getAutoNumValue(importContext.getType(), BeCPGModel.PROP_CODE);
-				properties.put(BeCPGModel.PROP_CODE, code);
 			}
 			
 			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,

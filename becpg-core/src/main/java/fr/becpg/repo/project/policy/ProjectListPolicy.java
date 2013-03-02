@@ -80,6 +80,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
+				ProjectModel.TYPE_SCORE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this,
 						"onCreateAssociation"));
@@ -114,7 +116,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			onUpdatePropertiesTaskList(nodeRef, before, after);
 		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_DELIVERABLE_LIST)) {
 			onUpdatePropertiesDeliverableList(nodeRef, before, after);
-		}
+		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_SCORE_LIST)) {
+				onUpdatePropertiesScoreList(nodeRef, before, after);
+			}
 	}
 
 	public void onUpdatePropertiesTaskList(NodeRef nodeRef, Map<QName, Serializable> before,
@@ -150,9 +154,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			}
 		}
 		
-		if (isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_DURATION)
-				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_START)
-				|| isPropChanged(nodeRef, before, after, ProjectModel.PROP_TL_END)){
+		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION)
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_START)
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_END)){
 			
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
@@ -163,12 +167,11 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 				
 		if(formulateProject){
-			NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
-			queueNode(projectNodeRef);
+			queueListItem(nodeRef);
 		}
 	}
 
-	private boolean isPropChanged(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after,
+	private boolean isPropChanged(Map<QName, Serializable> before, Map<QName, Serializable> after,
 			QName propertyQName) {
 		Serializable beforeProp = before.get(propertyQName);
 		Serializable afterProp = after.get(propertyQName);
@@ -189,8 +192,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			if (beforeState.equals(DeliverableState.InProgress.toString())
 					&& afterState.equals(DeliverableState.Completed.toString())) {
 				logger.debug("submit deliverable: " + nodeRef);
-				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
-				queueNode(projectNodeRef);
+				queueListItem(nodeRef);
 			} else if (beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
 
@@ -198,10 +200,25 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				logger.debug("re-open deliverable: " + nodeRef);
 				projectService.openDeliverable(nodeRef);
 
-				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
-				queueNode(projectNodeRef);
+				queueListItem(nodeRef);
 			}
 		}
+	}
+	
+	public void onUpdatePropertiesScoreList(NodeRef nodeRef, Map<QName, Serializable> before,
+			Map<QName, Serializable> after) {
+
+		if (isPropChanged(before, after, ProjectModel.PROP_SL_SCORE)
+				|| isPropChanged(before, after, ProjectModel.PROP_SL_WEIGHT)){
+			
+			logger.debug("update score list : " + nodeRef);
+			queueListItem(nodeRef);
+		}
+	}
+	
+	private void queueListItem(NodeRef listItemNodeRef){
+		NodeRef projectNodeRef = wUsedListService.getRoot(listItemNodeRef);
+		queueNode(projectNodeRef);
 	}
 
 	@Override

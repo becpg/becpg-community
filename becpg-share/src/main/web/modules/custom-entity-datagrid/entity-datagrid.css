@@ -334,3 +334,8 @@
 .datagrid  .yui-dt-highlighted span.document-version {
     visibility: visible;
 }
+
+.datagrid  div.scoreList-screening {
+	height: 150px;
+	overflow:auto;
+}

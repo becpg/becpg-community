@@ -9,7 +9,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -24,7 +23,7 @@ public class ProjectHelper {
 
 	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
 
-	public static TaskListDataItem getTask(AbstractProjectData projectData, NodeRef taskListNodeRef) {
+	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
 		if (taskListNodeRef != null && projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
@@ -36,7 +35,7 @@ public class ProjectHelper {
 		return null;
 	}
 
-	public static List<TaskListDataItem> getNextTasks(AbstractProjectData projectData, NodeRef taskListNodeRef) {
+	public static List<TaskListDataItem> getNextTasks(ProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		if (projectData.getTaskList() != null) {
@@ -51,7 +50,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
-	public static List<TaskListDataItem> getPrevTasks(AbstractProjectData projectData, TaskListDataItem taskListDataItem) {
+	public static List<TaskListDataItem> getPrevTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		if (taskListDataItem.getPrevTasks() != null) {
@@ -64,7 +63,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 	
-	public static List<TaskListDataItem> getLastTasks(AbstractProjectData projectData) {
+	public static List<TaskListDataItem> getLastTasks(ProjectData projectData) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		if (projectData.getTaskList() != null) {
@@ -77,7 +76,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
-	public static List<DeliverableListDataItem> getDeliverables(AbstractProjectData projectData, NodeRef taskListNodeRef) {
+	public static List<DeliverableListDataItem> getDeliverables(ProjectData projectData, NodeRef taskListNodeRef) {
 
 		List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();
 		if (projectData.getDeliverableList() != null) {
@@ -119,7 +118,7 @@ public class ProjectHelper {
 	 * @param projectData
 	 * @return
 	 */
-	public static int geProjectCompletionPercent(AbstractProjectData projectData) {
+	public static int geProjectCompletionPercent(ProjectData projectData) {
 
 		int totalWork = 0;
 		int workDone = 0;
@@ -211,16 +210,16 @@ public class ProjectHelper {
 		return calendar.get(Calendar.DAY_OF_WEEK) != 7 && calendar.get(Calendar.DAY_OF_WEEK) != 1;
 	}
 
-	public static int calculateTaskDuration(Date startDate, Date endDate) {
+	public static Integer calculateTaskDuration(Date startDate, Date endDate) {
 
 		if (startDate == null || endDate == null) {
 			logger.error("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
-			return -1;
+			return null;
 		}
 
 		if (startDate.after(endDate)) {
 			logger.error("startDate is after endDate");
-			return -1;
+			return null;
 		}
 
 		int duration = 1;
@@ -254,5 +253,13 @@ public class ProjectHelper {
 	
 	public static Date calculatePrevEndDate(Date startDate) {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
+	}
+	
+	public static Integer calculateOverdue(TaskListDataItem task){
+		Integer realDuration = calculateTaskDuration(task.getStart(), task.getEnd());
+		if(realDuration != null && task.getDuration() != null){
+			return realDuration - task.getDuration();
+		}
+		return null;
 	}
 }

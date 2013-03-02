@@ -89,19 +89,20 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements No
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		
 		for (NodeRef entityNodeRef : pendingNodes) {
-			
-			NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);		
-			
-			if(entityTplNodeRef == null){
-				QName entityType = nodeService.getType(entityNodeRef);
-				entityTplNodeRef = entityTplService.getEntityTpl(entityType);
-				if(entityTplNodeRef!=null){
-					if(logger.isDebugEnabled()){
-						logger.debug("Found default entity template '" + nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + "' to assoc.");
-					}				
-					associationService.update(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, entityTplNodeRef);
+			if(nodeService.exists(entityNodeRef)){
+				NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);		
+				
+				if(entityTplNodeRef == null){
+					QName entityType = nodeService.getType(entityNodeRef);
+					entityTplNodeRef = entityTplService.getEntityTpl(entityType);
+					if(entityTplNodeRef!=null){
+						if(logger.isDebugEnabled()){
+							logger.debug("Found default entity template '" + nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + "' to assoc.");
+						}				
+						associationService.update(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, entityTplNodeRef);
+					}
 				}
-			}			
+			}					
 		}
 	}
 	

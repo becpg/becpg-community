@@ -17,7 +17,6 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -36,7 +35,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
-	private AlfrescoRepository<AbstractProjectData> alfrescoRepository;
+	private AlfrescoRepository<ProjectData> alfrescoRepository;
 	private WorkflowService workflowService;
 	private AssociationService associationService;
 	private NodeService nodeService;
@@ -46,7 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	private FormulationService<ProjectData> formulationService;
 
-	public void setAlfrescoRepository(AlfrescoRepository<AbstractProjectData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -120,9 +119,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 		logger.debug("cancel project: " + projectNodeRef);
 		if(nodeService.exists(projectNodeRef)){
-			AbstractProjectData abstractProjectData = alfrescoRepository.findOne(projectNodeRef);
+			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 	         
-			for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
+			for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
 				if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
 					
 					WorkflowInstance workflowInstance = workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance());
@@ -139,7 +138,7 @@ public class ProjectServiceImpl implements ProjectService {
 				}					
 			}    
 			
-			alfrescoRepository.save(abstractProjectData);
+			alfrescoRepository.save(projectData);
 		}		
 	}
 

@@ -170,4 +170,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 	   	return '<div style="background-color:#' +  color + ';width:15px;height:15px;border: 1px solid; border-radius: 5px;margin-left:15px;"></div></div>';
 	   }
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		   propertyName : "pjt:slScreening",
+		   renderer : function(oRecord, data, label, scope) {
+		   	 
+		   	return '<div class="scoreList-screening">' + data.displayValue + '</div>';
+		   }
+		});
 }

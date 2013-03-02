@@ -34,13 +34,13 @@
         	
 		<!-- Addons -->
 		
-		<dependency>
-		  <groupId>de.fme</groupId>
-		  <artifactId>jsconsole</artifactId>
-		  <version>0.5.1</version>
-		  <scope>runtime</scope>
-		  <classifier>share</classifier>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 		  <groupId>de.fme</groupId> -->
+<!-- 		  <artifactId>jsconsole</artifactId> -->
+<!-- 		  <version>0.5.1</version> -->
+<!-- 		  <scope>runtime</scope> -->
+<!-- 		  <classifier>share</classifier> -->
+<!-- 		</dependency> -->
         
 	</dependencies>
 	<properties>

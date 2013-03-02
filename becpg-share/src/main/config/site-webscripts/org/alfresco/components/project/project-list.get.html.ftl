@@ -149,11 +149,11 @@
 					sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
 				   dataUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node",
 				   itemUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/item/node/",
-				   groupBy : "prop_pjt_projectHierarchy1",
+				   groupBy : "prop_pjt_projectHierarchy2",
 				   groupFormater : function(args, record){
-				    return record.getData("itemData")["prop_pjt_projectHierarchy1"].displayValue;
+				    return record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue;
 				   },
-				   hiddenColumns : ["prop_bcpg_code","prop_pjt_completionPercent", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"]
+				   hiddenColumns : ["prop_pjt_projectHierarchy2", "prop_bcpg_code","prop_pjt_completionPercent", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"]
 			   }).setMessages(${messages});
 		
 			
