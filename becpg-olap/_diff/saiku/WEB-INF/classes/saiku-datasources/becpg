@@ -1,6 +1,0 @@
-type=OLAP
-name=beCPG
-security.enabled=true
-security.type=one2one
-driver=mondrian.olap4j.MondrianOlap4jDriver
-location=jdbc:mondrian:Datasource=java:comp/env/jdbc/dataSource;Catalog=res:becpg/becpg.xml

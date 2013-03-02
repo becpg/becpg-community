@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+				http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+            http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+	<bean id="alfrescoUserDetailsService" class="fr.becpg.olap.authentication.AlfrescoUserDetailsService">
+		<property name="instanceManager" ref="instanceManager"/>
+	</bean>
+
+	<bean id="alfrescoAuthenticationProvider"  class="fr.becpg.olap.authentication.AlfrescoAuthenticationProvider" >
+		<property name="userDetailsService" ref="alfrescoUserDetailsService"/>
+	</bean>
+
+
+	<bean id="alfrescoPreAuthenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+		<property name="preAuthenticatedUserDetailsService">
+			<bean id="userDetailsServiceWrapper" class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+				<property name="userDetailsService" ref="alfrescoUserDetailsService" />
+			</bean>
+		</property>
+	</bean>
+
+	<security:authentication-manager alias="authenticationManager">
+	 <security:authentication-provider ref="alfrescoAuthenticationProvider"/>
+	</security:authentication-manager>
+
+	<!-- Format instance$user@tenant -->
+
+
+	<bean id="becpgFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+		<property name="principalRequestHeader" value="ALF_USER" />
+		<property name="exceptionIfHeaderMissing" value="false"/>
+		<property name="authenticationManager" ref="preAuthenticationManager" />
+	</bean>
+
+
+    <bean id="preAuthenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref bean="alfrescoPreAuthenticationProvider" />
+            </list>
+        </property>
+    </bean>
+    
+ 
+
+
+</beans>

@@ -290,6 +290,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/qualityModel.xml");
 		
+		
+		//OLAP
+		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+		
+		
 	}
 
 
@@ -309,6 +314,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}
 		if (folderName == RepoConsts.PATH_IMPORT_SAMPLES) {
 			addFilesResources(folderNodeRef, "classpath:beCPG/import/samples/*.csv");
+		}
+		if (folderName == RepoConsts.PATH_OLAP_QUERIES) {
+			addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
 		}
 
 	}

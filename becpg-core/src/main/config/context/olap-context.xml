@@ -4,10 +4,12 @@
 <beans>
 
 	<bean id="olapService" class="fr.becpg.repo.olap.impl.OlapServiceImpl">
-		<property name="olapPassword" value="${becpg.olap.password}" />
-		<property name="olapServerUrl" value="${becpg.olap.url}" />
-		<property name="olapUser" value="${becpg.olap.user}" />
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="olapServerUrl" value="${becpg.olap.url.internal}" />
+		<property name="instanceName" value="${becpg.instance.name}" />
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="contentService" ref="contentService" />
+		<property name="repoService" ref="repoService"/>
 	</bean>
 
 
@@ -15,6 +17,7 @@
 	<bean id="webscript.fr.becpg.olap.olapChart.get" class="fr.becpg.repo.olap.webscripts.OlapChartWebScript"
 		parent="webscript">
 		<property name="olapService" ref="olapService" />
+		<property name="olapServerUrl" value="${becpg.olap.url.public}" />
 	</bean>
 
 </beans>
