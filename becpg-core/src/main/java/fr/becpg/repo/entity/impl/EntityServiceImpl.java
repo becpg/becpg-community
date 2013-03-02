@@ -83,15 +83,11 @@ public class EntityServiceImpl implements EntityService {
 
 	private PermissionService permissionService;
 
-	private EntityVersionService entityVersionService;
-
 	private CopyService copyService;
 
 	private ContentService contentService;
 
 	private DictionaryService dictionaryService;
-
-	private BehaviourFilter policyBehaviourFilter;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -121,10 +117,6 @@ public class EntityServiceImpl implements EntityService {
 		this.copyService = copyService;
 	}
 
-	public void setEntityVersionService(EntityVersionService entityVersionService) {
-		this.entityVersionService = entityVersionService;
-	}
-
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
@@ -133,10 +125,6 @@ public class EntityServiceImpl implements EntityService {
 		this.dictionaryService = dictionaryService;
 	}
 	
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
 
@@ -285,12 +273,6 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	@Override
-	public void deleteEntity(NodeRef entityNodeRef) {
-		logger.debug("delete entity");
-		entityVersionService.deleteVersionHistory(entityNodeRef);
-	}
-
-	@Override
 	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
 		NodeRef ret = null;
 		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
@@ -303,23 +285,12 @@ public class EntityServiceImpl implements EntityService {
 				@Override
 				public NodeRef doWork() throws Exception {
 
-					try {
+					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
 
-						policyBehaviourFilter.disableBehaviour(entityType);
+					//Done by copy initializeEntityFolder(ret);
 
-						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-
-						//Done by copy initializeEntityFolder(ret);
-
-						return ret;
-
-					} finally {
-
-						policyBehaviourFilter.enableBehaviour(entityType);
-
-					}
-
+					return ret;
 				}
 			}, AuthenticationUtil.getSystemUserName());
 

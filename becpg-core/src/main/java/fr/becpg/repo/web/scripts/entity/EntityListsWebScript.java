@@ -40,6 +40,7 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.policy.BeCPGPolicyHelper;
 import fr.becpg.repo.security.SecurityService;
@@ -114,6 +115,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	
 	private PermissionService permissionService;
 	
+	private AssociationService associationService;	
 	
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -155,6 +157,10 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		this.authorityService = authorityService;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	/**
 	 * Suggest values according to query
 	 * 
@@ -190,7 +196,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		// We get datalist for a given aclGroup
-		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeService.getType(nodeRef))) {
+		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
 			logger.debug("We want to get datalist for current ACL entity");
 			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
 			QName aclTypeQname = DefaultTypeConverter.INSTANCE.convert(QName.class, aclType);
@@ -208,8 +214,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			skipFilter = true;
 		}
 		// We get datalist for entityTpl
-		else if ((BeCPGModel.TYPE_ENTITY_V2.equals(nodeType) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) || 
-				BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeService.getType(nodeRef))) {
+		else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) || 
+				BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
 
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 			if (listContainerNodeRef == null) {
@@ -218,12 +224,12 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	
 			// Add types that can be added
 	        Set<ClassDefinition> classDefinitions = new HashSet<ClassDefinition>();
-			Collection <QName> qname = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+			Collection <QName> entityListTypes = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
 			
-	        for(QName qnameObj: qname)
+	        for(QName entityListType: entityListTypes)
 		    {	
-	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(qnameObj) && !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(qnameObj)){
-	        		classDefinitions.add(dictionaryService.getClass(qnameObj));
+	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType) && !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(entityListType)){
+	        		classDefinitions.add(dictionaryService.getClass(entityListType));
 	        	}
 		    }
 	    	
@@ -235,10 +241,14 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		// We get datalist for entity
 		else {
 
-			final NodeRef templateNodeRef = entityTplService.getEntityTpl(nodeType);
+			NodeRef entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			if(entityTplNodeRef == null){
+				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
+			}
 
-			if (templateNodeRef != null) {
-
+			if (entityTplNodeRef != null) {
+				
+				final NodeRef templateNodeRef = entityTplNodeRef;
 				// Redmine #59 : copy missing datalists as admin, otherwise, if
 				// a datalist is added in product template, users cannot see
 				// datalists of valid products

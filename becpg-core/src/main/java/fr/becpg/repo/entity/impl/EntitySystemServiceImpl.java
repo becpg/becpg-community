@@ -12,6 +12,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -32,6 +34,8 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	private static final String XPATH = "./%s:%s";
 
+	private static Log logger = LogFactory.getLog(EntitySystemServiceImpl.class);
+	
 	private EntityListDAO entityListDAO;
 
 	private BehaviourFilter policyBehaviourFilter;
@@ -61,6 +65,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 		try {
 
+			// disable policy in order to have getTranslatedPath in cm:name
 			policyBehaviourFilter.disableBehaviour(DataListModel.TYPE_DATALIST);
 
 			String entityName = TranslateHelper.getTranslatedPath(entityPath);
@@ -120,8 +125,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 		String entityName = TranslateHelper.getTranslatedPath(dataListPath);
 		if (entityName == null) {
 			entityName = dataListPath;
-		}
-
+		}		
 		return entityListDAO.getList(entityListDAO.getListContainer(systemEntityNodeRef), dataListPath);
 	}
 

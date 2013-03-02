@@ -100,26 +100,23 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 						" - isDefault " + nodeService.getProperty(projectTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT));
 			}			
 			
-			if(Boolean.FALSE.equals(nodeService.getProperty(projectTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT))){
-				
-				// copy folders
-				// already done by entity policy
-				
-				// copy datalist from Tpl to project
-				if(logger.isDebugEnabled()){
-					logger.debug("copy datalists from template " + nodeService.getProperty(projectTplNodeRef, ContentModel.PROP_NAME));
-				}
-				
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);			
-				entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, false);
+			// copy folders
+			// already done by entity policy
+			
+			// copy datalist from Tpl to project
+			if(logger.isDebugEnabled()){
+				logger.debug("copy datalists from template " + nodeService.getProperty(projectTplNodeRef, ContentModel.PROP_NAME));
+			}
+			
+			Collection<QName> dataLists = new ArrayList<QName>();
+			dataLists.add(ProjectModel.TYPE_TASK_LIST);
+			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);			
+			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, false);
 
-				initializeNodeRefsAfterCopy(projectNodeRef);
+			initializeNodeRefsAfterCopy(projectNodeRef);
 
-				// initialize
-				queueNode(projectNodeRef);
-			}			
+			// initialize
+			queueNode(projectNodeRef);		
 		} else if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {
 			
 			NodeRef entityNodeRef = assocRef.getTargetRef();

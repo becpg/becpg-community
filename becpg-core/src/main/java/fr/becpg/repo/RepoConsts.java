@@ -99,6 +99,11 @@ public class RepoConsts {
 	public static final String PATH_TASK_LEGENDS = "TaskLegends";
 	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
 	public static final String PATH_PROJECT_HIERARCHY = "project_Hierarchy";
+	public static final String PATH_REQUEST_STATES = "RequestStates";
+	public static final String PATH_REQUEST_ORIGINS = "RequestOrigins";
+	public static final String PATH_SCORE_CRITERIA = "ScoreCriteria";
+	public static final String PATH_SPONSORS = "Sponsors";
+	
 	
 	//Security
 	public static final String PATH_SECURITY = "Security";

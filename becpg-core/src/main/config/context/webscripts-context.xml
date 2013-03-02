@@ -44,6 +44,7 @@
 		<property name="dictionaryService" ref="DictionaryService" />
 		<property name="authorityService" ref="AuthorityService" />
 		<property name="permissionService" ref="PermissionService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.entity.datalist.data.post" class="fr.becpg.repo.web.scripts.entity.datalist.EntityDataListWebScript"

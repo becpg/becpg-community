@@ -2,26 +2,35 @@ package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
+import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -45,9 +54,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 												CheckOutCheckInServicePolicies.BeforeCheckIn,
 												CheckOutCheckInServicePolicies.OnCheckIn,
 												CheckOutCheckInServicePolicies.BeforeCancelCheckOut,
+												NodeServicePolicies.OnAddAspectPolicy,
+												NodeServicePolicies.OnRemoveAspectPolicy,
+												NodeServicePolicies.OnDeleteNodePolicy,
 												ApplicationContextAware{
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
+	private static final String MSG_INITIAL_VERSION = "create_version.initial_version";
     
 	private static Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 	    
@@ -89,10 +102,26 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	public void doInit(){
 		logger.debug("Init EntityCheckOutCheckInServicePolicy...");
 		
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onCheckOut"));
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforeCheckIn"));
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "onCheckIn"));
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, BeCPGModel.TYPE_ENTITY_V2, new JavaBehaviour(this, "beforeCancelCheckOut"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME,
+				BeCPGModel.ASPECT_ENTITYLISTS, new JavaBehaviour(this, "onCheckOut"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME,
+				BeCPGModel.ASPECT_ENTITYLISTS, new JavaBehaviour(this, "beforeCheckIn"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME,
+				BeCPGModel.ASPECT_ENTITYLISTS, new JavaBehaviour(this, "onCheckIn"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME,
+				BeCPGModel.ASPECT_ENTITYLISTS, new JavaBehaviour(this, "beforeCancelCheckOut"));
+		
+		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onAddAspect"),
+				ContentModel.ASPECT_VERSIONABLE, new JavaBehaviour(this, "onAddAspect",
+				Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+		
+		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onRemoveAspect"),
+				ContentModel.ASPECT_VERSIONABLE, new JavaBehaviour(this, "onRemoveAspect",
+						Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+
+		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onDeleteNode"),
+				ContentModel.ASPECT_VERSIONABLE, new JavaBehaviour(this, "onDeleteNode",
+						Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
 	}
 
 
@@ -104,30 +133,11 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
 			@Override
 			public Void doWork() throws Exception {
-				
-				try {
-					//disable datalist policies
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_COSTLIST);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_NUTLIST);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.disableBehaviour(DataListModel.TYPE_DATALIST);
 
-					NodeRef nodeRef = getCheckedOut(workingCopy);
-					entityListDAO.copyDataLists(nodeRef, workingCopy, true);
-					
-					moveFiles(nodeRef, workingCopy);
-					return null;
-					
-				} finally {
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_COSTLIST);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_NUTLIST);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					policyBehaviourFilter.enableBehaviour(DataListModel.TYPE_DATALIST);
-				}
+				NodeRef nodeRef = getCheckedOut(workingCopy);										
+				entityListDAO.copyDataLists(nodeRef, workingCopy, true);					
+				moveFiles(nodeRef, workingCopy);					
+				return null;
 
 			}
 		}, AuthenticationUtil.getSystemUserName());	
@@ -145,24 +155,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
             boolean keepCheckedOut) {
 		
 			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-			
-			QName type = nodeService.getType(origNodeRef);
 
-
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_CODE);
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);		
-			policyBehaviourFilter.disableBehaviour(type);
-			try {
-				entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef);
-			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_CODE);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
-				policyBehaviourFilter.enableBehaviour(type);
-			}			
+			entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties);
 			
 			//frozeVersionSensitiveLists(origNodeRef, entityVersionRef);
 	}
@@ -270,6 +264,47 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 				}
 			}
 		}		
+	}
+	
+	@Override
+	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
+
+		if (isNodeArchived == false) {
+			// If we are perminantly deleting the node then we need to remove
+			// the associated version history
+			entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
+		}
+	}
+
+	@Override
+	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
+
+		// When the versionable aspect is removed from a node, then delete the
+		// associated version history
+		entityVersionService.deleteVersionHistory(nodeRef);
+	}
+
+	@Override
+	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		
+		if (nodeService.exists(nodeRef) == true &&
+				nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) &&
+				nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) == false) {
+						
+			// Create the initial-version
+            Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
+            
+            // If a major version is requested, indicate it in the versionProperties map
+            String versionType = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_TYPE);
+            if (versionType == null  || !versionType.equals(VersionType.MINOR.toString()))
+            {
+                versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+            }
+            
+            versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			entityVersionService.createVersion(nodeRef, versionProperties);
+		}
+		
 	}
 
 //    private void frozeVersionSensitiveLists(NodeRef origNodeRef, NodeRef entityVersionRef){

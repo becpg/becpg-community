@@ -320,9 +320,43 @@
     background-position: top left;
 }
 
-
 .project-list span.doc-file {
 	padding-right: 4px;
 	text-decoration: none;
 	cursor: pointer;
+}
+
+.project-list span.overdue-negative-32 {
+	background: url( ./images/overdue-negative.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.overdue-0to9-32 {
+	background: url( ./images/overdue-0to9.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.overdue-10to19-32 {
+	background: url( ./images/overdue-10to19.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.overdue-20to29-32 {
+	background: url( ./images/overdue-20to29.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
+}
+
+.project-list span.overdue-30plus-32 {
+	background: url( ./images/overdue-30plus.png ) no-repeat;
+	padding-left: 40px;
+	height: 40px;
+	display: inline-block;
 }

@@ -17,7 +17,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -83,9 +82,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	
 	@Resource
 	private NamespaceService namespaceService;
-	
-	@Resource
-	private BehaviourFilter policyBehaviourFilter;
 	
 	@Resource
 	private HierarchyService hierarchyService;
@@ -372,7 +368,8 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// load folder where products have been moved in ./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
 		List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 													PATH_CLASSIF_FOLDER_RM, 
-													null, namespaceService, false);
+													null, namespaceService, false);		
+		
 		assertEquals("classif folder should exist", (int)1 , nodes.size());
 		NodeRef productsNodeRef = nodes.get(0);		
 		assertEquals("4 products should exist", (int)4 , fileFolderService.list(productsNodeRef).size()); 				
@@ -651,16 +648,9 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	logger.debug("import.csv loaded");
  		    	writer.putContent(in);
  		    	
- 		    	/*
- 		    	 * Disable product policy to avoid productCode policy
- 		    	 */
- 		    	policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITY_V2);
- 		    		
 	    		logger.debug("Start import");
  				importService.importText(nodeRef, true, false);
  	 			
- 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITY_V2);
- 				
  				return null;
 
  			}},false,true);	
@@ -676,7 +666,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				assertNotNull("import folder should exist", importFolderNodeRef);
  				assertEquals("import folder should be empty", (int)0 , fileFolderService.listFiles(importFolderNodeRef).size());
  				
- 				// load folder where products have been moved in ./cm:Products/cm:ToValidate/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
+ 				// load folder where products have been moved in ./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
  				List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
 																PATH_CLASSIF_FOLDER_RM, 
 																null, namespaceService, false);

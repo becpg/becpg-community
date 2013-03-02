@@ -57,14 +57,7 @@ public interface EntityService {
 	 * @return
 	 */
 	 byte[] getImage(NodeRef imgNodeRef);
-
-
-	/**
-	 * Delete all version of the entity
-	 * @param entityNodeRef
-	 */
-	 void deleteEntity(NodeRef entityNodeRef);
-
+	 
 	/**
 	 * Create or copy an entity
 	 * @param sourceNodeRef

@@ -210,46 +210,31 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- create folders : Test, system, product templates--*/
-				
-				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-				// clear entityTpls
-				NodeRef entityTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_ENTITY_TEMPLATES));
-				if (entityTplsFolder != null) {
-					nodeService.deleteNode(entityTplsFolder);
-				}
-				entityTplsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_ENTITY_TEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_ENTITY_TEMPLATES));
-
-				/*-- Create raw material Tpl --*/
-				logger.debug("/*-- Create raw material Tpl --*/");
-				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_RAWMATERIAL, true, null, null);
-
-				/*-- Create finished product Tpl with product folder and product image --*/
-				logger.debug("/*-- Create finished product Tpl --*/");
-				NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true, null, null);
-
-				NodeRef imagesFolder = fileFolderService.create(entityTplNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
+				NodeRef entityTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_FINISHEDPRODUCT);
+				NodeRef imagesFolder = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+				assertNotNull(imagesFolder);
 				addProductImage(imagesFolder);
 
 				// add permissions on image folder Tpl
-				Set<String> zones = new HashSet<String>();
-				String collaboratorGroupName = "Collaborator_Test";
-				if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + collaboratorGroupName)) {
-					zones.add(AuthorityService.ZONE_APP_DEFAULT);
-					zones.add(AuthorityService.ZONE_APP_SHARE);
-					zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-					authorityService.createAuthority(AuthorityType.GROUP, collaboratorGroupName, collaboratorGroupName, zones);
+				if(nodeService.hasAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL)){
+					Set<String> zones = new HashSet<String>();
+					String collaboratorGroupName = "Collaborator_Test";
+					if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + collaboratorGroupName)) {
+						zones.add(AuthorityService.ZONE_APP_DEFAULT);
+						zones.add(AuthorityService.ZONE_APP_SHARE);
+						zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
+						authorityService.createAuthority(AuthorityType.GROUP, collaboratorGroupName, collaboratorGroupName, zones);
+					}
+					NodeRef groupNodeRef = authorityDAO.getAuthorityNodeRefOrNull(PermissionService.GROUP_PREFIX + collaboratorGroupName);
+					logger.debug("imagesFolder: " + imagesFolder);
+					logger.debug("groupNodeRef: " + groupNodeRef);
+					nodeService.addAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL, null);
+					logger.debug("aspects: " + nodeService.getAspects(imagesFolder));
+					logger.info("imagesFolder" + imagesFolder);
+					logger.info("groupNodeRef" + groupNodeRef);
+					nodeService.createAssociation(imagesFolder, groupNodeRef, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS);
 				}
-				NodeRef groupNodeRef = authorityDAO.getAuthorityNodeRefOrNull(PermissionService.GROUP_PREFIX + collaboratorGroupName);
-				logger.debug("imagesFolder: " + imagesFolder);
-				logger.debug("groupNodeRef: " + groupNodeRef);
-				nodeService.addAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL, null);
-				logger.debug("aspects: " + nodeService.getAspects(imagesFolder));
-				nodeService.createAssociation(imagesFolder, groupNodeRef, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS);
 
 				return null;
 
@@ -322,28 +307,33 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		/*-- add product image--*/
 		logger.debug("/*-- add product image--*/");
 		String imageName = I18NUtil.getMessage(RepoConsts.PATH_PRODUCT_IMAGE) + ".jpg";
-		logger.debug("image name: " + imageName);
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, imageName);
-		NodeRef imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
+		NodeRef imageNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+				imageName);
+		
+		if(imageNodeRef == null){
+			logger.debug("image name: " + imageName);
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, imageName);
+			imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
 
-		ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
-		String imageFullPath = System.getProperty("user.dir") + "/src/test/resources/beCPG/birt/productImage.jpg";
-		logger.debug("Load image file " + imageFullPath);
-		FileInputStream imageStream = new FileInputStream(imageFullPath);
-		logger.debug("image file loaded " + imageStream);
+			ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
+			String imageFullPath = System.getProperty("user.dir") + "/src/test/resources/beCPG/birt/productImage.jpg";
+			logger.debug("Load image file " + imageFullPath);
+			FileInputStream imageStream = new FileInputStream(imageFullPath);
+			logger.debug("image file loaded " + imageStream);
 
-		String mimetype = mimetypeService.guessMimetype(imageFullPath);
-		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-		Charset charset = charsetFinder.getCharset(imageStream, mimetype);
-		String encoding = charset.name();
+			String mimetype = mimetypeService.guessMimetype(imageFullPath);
+			ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+			Charset charset = charsetFinder.getCharset(imageStream, mimetype);
+			String encoding = charset.name();
 
-		logger.debug("mimetype : " + mimetype);
-		logger.debug("encoding : " + encoding);
-		writer.setMimetype(mimetype);
-		writer.setEncoding(encoding);
-		writer.putContent(imageStream);
+			logger.debug("mimetype : " + mimetype);
+			logger.debug("encoding : " + encoding);
+			writer.setMimetype(mimetype);
+			writer.setEncoding(encoding);
+			writer.putContent(imageStream);
+		}		
 	}
 
 	/**

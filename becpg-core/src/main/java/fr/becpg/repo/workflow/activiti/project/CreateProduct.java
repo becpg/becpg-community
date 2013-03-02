@@ -6,7 +6,6 @@ package fr.becpg.repo.workflow.activiti.project;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateExecution;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
@@ -51,8 +50,6 @@ public class CreateProduct extends BaseJavaDelegate {
 	private EntityService entityService;
 
 	private ProductService productService;
-	
-	private BehaviourFilter policyBehaviourFilter;
 
 	private RepoService repoService;
 
@@ -71,10 +68,6 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	public void setRepoService(RepoService repoService) {
@@ -134,9 +127,9 @@ public class CreateProduct extends BaseJavaDelegate {
 
 					NodeRef productNodeRef = null;
 					
-					try{
-						//disable classify
-						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
+//					try{
+//						//disable classify
+//						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
 						
 						
 						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, nodeService.getType(sourceNodeRef),
@@ -144,10 +137,10 @@ public class CreateProduct extends BaseJavaDelegate {
 						
 						// change state: ToValidate
 						nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
-					}
-					finally{
-						policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
-					}					
+//					}
+//					finally{
+//						policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
+//					}					
 
 	
 					// Copy datalist

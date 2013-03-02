@@ -34,6 +34,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.project.policy.ProjectPolicy;
 
@@ -54,23 +55,8 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testProjectAspectOnEntity() {
 
-		
-
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
-								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
-
-						projectData.setParentNodeRef(testFolderNodeRef);
-
-						projectData = (ProjectData) alfrescoRepository.save(projectData);
-						return projectData.getNodeRef();
-					}
-				}, false, true);
+		initTest();
+		createProject(ProjectState.Planned);
 
 		assertTrue(nodeService.hasAspect(rawMaterialNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT));
 		assertEquals(projectNodeRef, associationService.getTargetAssoc(rawMaterialNodeRef, ProjectModel.ASSOC_PROJECT));
@@ -83,22 +69,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testCreateProjectInProgress() {
 
 		initTest();
-
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
-								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
-
-						projectData.setParentNodeRef(testFolderNodeRef);
-
-						projectData = (ProjectData) alfrescoRepository.save(projectData);
-						return projectData.getNodeRef();
-					}
-				}, false, true);
+		createProject(ProjectState.InProgress);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -130,22 +101,8 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testCancelProject() {
 
 		initTest();
-
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
-								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
-
-						projectData.setParentNodeRef(testFolderNodeRef);
-
-						projectData = (ProjectData) alfrescoRepository.save(projectData);
-						return projectData.getNodeRef();
-					}
-				}, false, true);
+		initTest();
+		createProject(ProjectState.InProgress);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -174,24 +131,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testSubmitTask() {
 
 		initTest();
-
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
-								null, null, 2, ProjectState.InProgress, projectTplNodeRef, 0, rawMaterialNodeRef);
-
-						projectData.setParentNodeRef(testFolderNodeRef);
-
-						projectData = (ProjectData) alfrescoRepository.save(projectData);
-
-						projectService.formulate(projectData.getNodeRef());
-						return projectData.getNodeRef();
-					}
-				}, false, true);
+		createProject(ProjectState.InProgress);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -379,11 +319,11 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 		assertEquals(1,
-				ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("15/11/2012")));
+				ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("15/11/2012")).intValue());
 		assertEquals(2,
-				ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("16/11/2012")));
+				ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("16/11/2012")).intValue());
 		assertEquals(3,
-				ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("19/11/2012")));
+				ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("19/11/2012")).intValue());
 	}
 
 	@Test
@@ -391,23 +331,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		initTest();
-
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-						Date startDate = dateFormat.parse("15/11/2012");
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, startDate,
-								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
-						projectData.setParentNodeRef(testFolderNodeRef);
-
-						projectData = (ProjectData) alfrescoRepository.save(projectData);
-						logger.info("Create : " + projectData.toString());
-
-						return projectData.getNodeRef();
-					}
-				}, false, true);
+		createProject(ProjectState.Planned);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -587,28 +511,14 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testInitDeliverables() throws InterruptedException {
 
 		initTest();
+		createProject(ProjectState.Planned);
 
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
 
-				ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(), null,
-						null, 2, ProjectState.Planned, projectTplNodeRef, 0, null);
-
-				projectData.setParentNodeRef(testFolderNodeRef);
-				projectData = (ProjectData) alfrescoRepository.save(projectData);
-
-				projectPolicy.initializeNodeRefsAfterCopy(projectData.getNodeRef());
-				
-				return projectData.getNodeRef();
-			}
-		}, false, true);
-		
-		//Thread.sleep(6000);
-		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
+				
+				projectPolicy.initializeNodeRefsAfterCopy(projectNodeRef);
 
 				NodeRef subFolder = nodeService.getChildByName(projectNodeRef, ContentModel.ASSOC_CONTAINS,
 						"SubFolder");
@@ -671,23 +581,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		initTest();
-
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-						Date startDate = dateFormat.parse("15/11/2012");
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, null,
-								startDate, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
-						projectData.setParentNodeRef(testFolderNodeRef);
-
-						projectData = (ProjectData) alfrescoRepository.save(projectData);
-						logger.info("Create : " + projectData.toString());
-
-						return projectData.getNodeRef();
-					}
-				}, false, true);
+		createProject(ProjectState.Planned);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -736,7 +630,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 					public NodeRef execute() throws Throwable {
 						
 						// create project Tpl
-						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_PAIN_REF, null,
+						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, null,
 										null, null, null, null, null, 0, null);
 						
 						// create datalists
@@ -776,22 +670,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testStartProjectByStartingTask() {
 
 		initTest();
-
-		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, new Date(),
-								null, null, 2, ProjectState.Planned, projectTplNodeRef, 0, rawMaterialNodeRef);
-
-						projectData.setParentNodeRef(testFolderNodeRef);
-
-						projectData = (ProjectData) alfrescoRepository.save(projectData);
-						return projectData.getNodeRef();
-					}
-				}, false, true);
+		createProject(ProjectState.Planned);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -830,4 +709,60 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			}
 		}, false, true);
 	}
+	
+	/**
+	 * Test the calculation of scoring
+	 */
+	@Test
+	public void testCalculateScoring() {
+
+		initTest();
+		createProject(ProjectState.Planned);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+				assertNotNull(projectData);
+				assertNotNull(projectData.getScoreList());
+				assertEquals(5, projectData.getScoreList().size());
+				for(int i=0;i<5;i++){
+					assertEquals("Criterion" + i, projectData.getScoreList().get(i).getCriterion());
+					assertEquals(i*10, projectData.getScoreList().get(i).getWeight().intValue());
+				}
+				
+//		coef		10		2	
+//				0	0		0		0
+//				1	10		2		20
+//				2	20		4		80
+//				3	30		6		180
+//				4	40		8		320
+//		somme		100				6
+				
+				
+				for(int i=0;i<5;i++){
+					projectData.getScoreList().get(i).setScore(i*2);
+				}
+				
+				alfrescoRepository.save(projectData);
+
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+				assertNotNull(projectData);				
+				assertEquals(6, projectData.getScore().intValue());							
+
+				return null;
+			}
+		}, false, true);
+	}	
 }

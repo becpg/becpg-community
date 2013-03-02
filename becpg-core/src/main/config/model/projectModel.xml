@@ -99,6 +99,66 @@
 				<value>100</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="pjt:requestStates"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/RequestStates</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:requestOrigins"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/RequestOrigins</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:scoreCriteria"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/ScoreCriteria</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:sponsors"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/Sponsors</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>		
 
 	</constraints>
 
@@ -111,6 +171,22 @@
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
 				</property>
+				<property name="pjt:projectHierarchy2">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="pjt:projectOrigin">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:requestOrigins" />
+               </constraints>
+            </property>
+            <property name="pjt:projectSponsor">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:sponsors" />
+               </constraints>
+            </property>
 				<property name="pjt:projectStartDate">
 					<type>d:date</type>
 				</property>
@@ -139,6 +215,15 @@
 					<type>d:noderef</type>		
 					<multiple>true</multiple>			
 				</property>
+				<property name="pjt:projectOverdue">
+					<type>d:int</type>
+				</property>
+				<property name="pjt:projectScore">
+					<type>d:int</type>
+					<constraints>
+                  <constraint ref="pjt:percentage" />
+               </constraints>
+				</property>				
 			</properties>
 			<associations>			
 				<association name="pjt:projectEntity">
@@ -152,6 +237,17 @@
 						<many>true</many>
 					</target>
 				</association>
+				<association name="pjt:projectManager">
+               <source>
+                  <mandatory>false</mandatory>
+                  <many>true</many>
+               </source>
+               <target>
+                  <class>cm:person</class>
+                  <mandatory>false</mandatory>
+                  <many>false</many>
+               </target>
+            </association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
@@ -296,22 +392,56 @@
 				<aspect>pjt:completionAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		 <type name="pjt:scoreList">
+         <parent>bcpg:entityListItem</parent>
+         <properties>            
+            <property name="pjt:slCriterion">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:scoreCriteria" />
+               </constraints>
+            </property>
+            <property name="pjt:slWeight">
+               <type>d:int</type>
+               <constraints>
+                  <constraint ref="pjt:percentage" />
+               </constraints>
+            </property>
+            <property name="pjt:slScore">
+               <type>d:int</type>
+               <constraints>
+                  <constraint ref="pjt:percentage" />
+               </constraints>
+            </property>
+            <property name="pjt:slScreening">
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+         </properties>     
+         <mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+				<aspect>pjt:completionAspect</aspect>
+			</mandatory-aspects>   
+      </type>
 
 		<!-- Data List - Request List -->
       <type name="pjt:requestList">
-         <title>Request List</title>
          <parent>dl:dataListItem</parent>
          <properties>            
             <property name="pjt:rlState">
-               <title>Status</title>
                <type>d:text</type>
-               <default>Not Started</default>
                <constraints>
-                  <constraint ref="dl:task_status" />
+                  <constraint ref="pjt:requestStates" />
+               </constraints>
+            </property>
+             <property name="pjt:rlOrigin">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:requestOrigins" />
                </constraints>
             </property>
             <property name="pjt:rlPriority">
-               <title>Priority</title>
                <type>d:text</type>
                <default>Normal</default>
                <constraints>
@@ -319,19 +449,16 @@
                </constraints>
             </property>
             <property name="pjt:rlDueDate">
-               <title>Due Date</title>
                <type>d:date</type>
                <mandatory>false</mandatory>
             </property>
             <property name="pjt:rlComments">
-               <title>Comments</title>
                <type>d:text</type>
                <mandatory>false</mandatory>
             </property>
          </properties>
          <associations>
             <association name="pjt:rlAssignedTo">
-               <title>Assigned To</title>
                <source>
                   <mandatory>false</mandatory>
                   <many>true</many>
@@ -349,6 +476,7 @@
             <aspect>cm:likesRatingSchemeRollups</aspect>
          </mandatory-aspects>
       </type>
+     
 	</types>
 
 	<aspects>
@@ -396,5 +524,6 @@
 				</association>
 			</associations>
 		</aspect>
+				
 	</aspects>
 </model>

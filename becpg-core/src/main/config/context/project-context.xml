@@ -24,6 +24,7 @@
 		<property name="handlers">
 			<list>
 				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" />
+				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
 				<bean	class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
 					<property name="workflowService" ref="WorkflowService" />
 					<property name="nodeService" ref="nodeService" />
@@ -64,7 +65,6 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityService" ref="entityService" />
 		<property name="productService" ref="productService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="repoService" ref="repoService" />
 	</bean>
 

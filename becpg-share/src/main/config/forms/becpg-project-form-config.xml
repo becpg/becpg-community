@@ -5,10 +5,14 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:code" />
 					<show id="cm:title" force="true" />
-               <show id="cm:description" force="true" />
-					<show id="bcpg:code" for-mode="view" />
+               <show id="cm:description" force="true" />					
 					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectOrigin" />
+					<show id="pjt:projectSponsor" />
+					<show id="pjt:projectManager" />					
 					<show id="bcpg:entityTplRef" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
@@ -16,8 +20,10 @@
 										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectCompletionDate" for-mode="view" />					
-					<show id="pjt:completionPercent" />
+					<show id="pjt:projectCompletionDate" />					
+					<show id="pjt:completionPercent"/>
+					<show id="pjt:projectOverdue"/>
+					<show id="pjt:projectScore"/>
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -25,24 +31,35 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" />
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 						
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:title" set="mainInfo" />	
 					<field id="cm:description" set="mainInfo" />						
-					<field id="bcpg:code" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="pjt:projectHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
 						</control>
 					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectOrigin" set="mainInfo" />
+					<field id="pjt:projectSponsor" set="mainInfo" />		
+					<field id="pjt:projectManager" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -60,12 +77,14 @@
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
-					</field>						
+					</field>	
+					<field id="pjt:projectScore" read-only="true" set="mainInfo" />					
 					
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
 					<field id="pjt:projectCompletionDate" set="planning" />
-					<field id="pjt:completionPercent" set="planning" />
+					<field id="pjt:completionPercent" read-only="true" set="planning" />
+					<field id="pjt:projectOverdue" read-only="true" set="planning" />					
 						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -132,10 +151,14 @@
 			<form>
 				<field-visibility>
 				   <show id="cm:name" />
+				   <show id="bcpg:entityTplRef" />
 				   <show id="cm:title" force="true" />
                <show id="cm:description" force="true" />
 					<show id="pjt:projectHierarchy1" />
-					<show id="bcpg:entityTplRef" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectOrigin" />
+					<show id="pjt:projectSponsor" />
+					<show id="pjt:projectManager" />					
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />										
@@ -149,11 +172,11 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" />
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" />
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 						
@@ -166,6 +189,17 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectOrigin" set="mainInfo" />
+					<field id="pjt:projectSponsor" set="mainInfo" />		
+					<field id="pjt:projectManager" set="mainInfo" />		
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -209,15 +243,17 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:projectPriority" />
-					<show id="pjt:completionPercent" />
+					<show id="pjt:completionPercent" />					
+					<show id="pjt:projectScore" />					
 					<show id="bcpg:code" />
 					<show id="cm:name" />
 					<show id="pjt:projectEntity" />
 					<show id="dataList_pjt:taskList" />
 					<show id="dataList_pjt:deliverableList" />
-					<show id="cm:creator" />
+					<show id="pjt:projectManager" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
@@ -226,8 +262,6 @@
 				<appearance>
 					<field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" />
 					<field id="dataList_pjt:taskList" label-id="becpg.forms.field.projects.datagrid.taskList.label" />
-					<field id="pjt:projectHierarchy1" label-id="becpg.forms.label.empty"  />
-					<field id="pjt:projectPriority" label-id="becpg.forms.label.empty"  />
 					<field id="pjt:projectStartDate" label-id="becpg.forms.field.projects.datagrid.projectStartDate.label"   />
 				</appearance>
 
@@ -237,6 +271,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:projectPriority"  />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
@@ -247,6 +282,14 @@
 					<field id="pjt:projectHierarchy1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
 							</control-param>
 						</control>
 					</field>
@@ -271,6 +314,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
@@ -282,6 +326,14 @@
 					<field id="pjt:projectHierarchy1" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
 							</control-param>
 						</control>
 					</field>
@@ -567,6 +619,55 @@
 			</form>
 		</forms>
 	</config>
+	
+	<config condition="pjt:scoreList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:slCriterion" />
+					<show id="pjt:slWeight" />
+					<show id="pjt:slScore" />
+					<show id="pjt:slScreening" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:slScreening">
+                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
+                  <control-param name="editorHeight">8</control-param>
+               </control>
+               </field>					
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:scoreList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:slCriterion" />
+					<show id="pjt:slWeight" />
+					<show id="pjt:slScore" />
+					<show id="pjt:slScreening" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:slScreening">
+                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
+                  <control-param name="editorHeight">8</control-param>
+               </control>
+               </field>	
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+         <form id="datagrid">
+            <field-visibility>
+            	<show id="pjt:slCriterion" />
+					<show id="pjt:slWeight" />
+					<show id="pjt:slScore" />
+					<show id="pjt:slScreening" />
+            </field-visibility>
+         </form>
+		</forms>
+	</config>
+	
 	<config evaluator="aspect" condition="pjt:projectAspect">
 		<forms>
 			<form>
@@ -591,7 +692,8 @@
                <show id="cm:title" />
                <show id="cm:description" />
                <show id="pjt:rlAssignedTo" />
-               <show id="pjt:rlStatus" />
+               <show id="pjt:rlOrigin" />
+               <show id="pjt:rlState" />               
                <show id="pjt:rlPriority" />               
                <show id="pjt:rlDueDate" />
                <show id="pjt:rlComments" />
@@ -619,11 +721,12 @@
             	<show id="cm:likesRatingSchemeCount"/>
                <show id="cm:description" />
                <show id="pjt:rlAssignedTo" />
-               <show id="pjt:rlStatus" />
+               <show id="pjt:rlOrigin" />
+               <show id="pjt:rlState" />               
                <show id="pjt:rlPriority" />               
                <show id="pjt:rlDueDate" />
-               <show id="pjt:rlComments" />
                <show id="cm:attachments" />
+               <show id="cm:created" />
             </field-visibility>
          </form>
       </forms>
@@ -638,7 +741,8 @@
                <show id="cm:title" />
                <show id="cm:description" />
                <show id="pjt:rlAssignedTo" />
-               <show id="pjt:rlStatus" />
+               <show id="pjt:rlOrigin" />
+               <show id="pjt:rlState" />               
                <show id="pjt:rlPriority" />               
                <show id="pjt:rlDueDate" />
                <show id="pjt:rlComments" />

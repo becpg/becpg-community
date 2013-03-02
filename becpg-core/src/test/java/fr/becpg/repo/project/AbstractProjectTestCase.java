@@ -2,6 +2,7 @@ package fr.becpg.repo.project;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,13 +16,16 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.project.data.AbstractProjectData;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.BeCPGTestHelper;
@@ -29,9 +33,10 @@ import fr.becpg.test.RepoBaseTestCase;
 
 public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 
+	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 
 	@Resource
-	protected AlfrescoRepository<AbstractProjectData> alfrescoRepository;
+	protected AlfrescoRepository<ProjectData> alfrescoRepository;
 
 	@Resource(name = "WorkflowService")
 	protected WorkflowService workflowService;
@@ -47,6 +52,8 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 	protected List<NodeRef> assigneesOne;
 	protected List<NodeRef> assigneesTwo;
 	protected NodeRef projectTplNodeRef;
+	protected NodeRef rawMaterialNodeRef;
+	protected NodeRef projectNodeRef;
 	
 	protected void initTest() {
 
@@ -64,7 +71,7 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 				assigneesTwo.add(userTwo);
 								
 				// create project Tpl
-				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_PAIN_REF, null,
+				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, null,
 								null, null, null, null, null, 0, null);
 				projectTplData.setParentNodeRef(testFolderNodeRef);
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
@@ -122,6 +129,13 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 						"activiti$projectAdhoc"));
 				projectTplData.setTaskList(taskList);
 				
+				// create scoreList
+				List<ScoreListDataItem> scoreList = new LinkedList<ScoreListDataItem>();
+				for(int i=0;i<5;i++){
+					scoreList.add(new ScoreListDataItem(null, "Criterion" + i, i * 10, null));
+				}
+				projectTplData.setScoreList(scoreList);
+				
 				alfrescoRepository.save(projectTplData);
 
 
@@ -170,5 +184,24 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 				return null;
 			}
 		}, false, true);
+	}
+	
+	protected void createProject(final ProjectState projectState){
+		
+		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, new Date(),
+								null, null, 2, projectState, projectTplNodeRef, 0, rawMaterialNodeRef);
+
+						projectData.setParentNodeRef(testFolderNodeRef);
+
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						return projectData.getNodeRef();
+					}
+				}, false, true);
 	}
 }

@@ -19,14 +19,7 @@
 
 		   }
 
-		});
-
-		YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		   propertyName : "pjt:projectHierarchy1",
-		   renderer : function(oRecord, data, label, scope) {
-			   return '<span class="' + scope.getAdvancementClass(oRecord, null, 32) + '">&nbsp;</span>';
-		   }
-		});
+		});				
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
@@ -128,6 +121,20 @@
 		   }
 
 		});
-
+		
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : "pjt:projectOverdue",
+			   renderer : function(oRecord, data, label, scope) {
+				 //return '<span class="' + scope.getAdvancementClass(oRecord, null, 32) + '">&nbsp;</span>';
+				   return '<span class="center ' + scope.getOverdueClass(oRecord, null, 32) + '">' + $html(data.displayValue)+ '&nbsp;' + scope.msg("overdue.day") + '</span>';
+			   }
+			});
+		
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : "pjt:projectScore",
+			   renderer : function(oRecord, data, label, scope) {
+				   return (data.value !=null) ? $html(data.displayValue)+ '&nbsp; %' : '';
+			   }
+			});
 	}
 })();

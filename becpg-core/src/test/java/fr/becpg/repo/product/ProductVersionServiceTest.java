@@ -133,9 +133,10 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 	/**
 	 * Test check out check in.
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testCheckOutCheckIn() {
+	public void testCheckOutCheckIn() throws InterruptedException {
 		
 		final ProductUnit productUnit = ProductUnit.L;
 		final int valueAdded = 1;
@@ -154,6 +155,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				return r;
 			}
 		}, false, true);
+		
+		Thread.sleep(6000);
 		
 		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -174,7 +177,6 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
 				List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
-				logger.info(dbReports.size());
 				assertEquals(1, dbReports.size());
 				dbReports = associationService.getTargetAssocs(workingCopyNodeRef, ReportModel.ASSOC_REPORTS);
 				assertEquals(1, dbReports.size());
@@ -220,6 +222,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				// Check in
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 			}
 				
@@ -230,15 +233,15 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 				
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);				
-				assertEquals("Check version", "1.1", getVersionLabel(newRawMaterial));
+				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
+				assertEquals("Check version", "1.0", getVersionLabel(newRawMaterial));
 				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 				
 				// checkVersion
 				VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
-				Version version10 = versionHistory.getVersion("1.0");
-				assertNotNull(version10);
-				NodeRef entityVersionNodeRef = entityVersionService.getEntityVersion(version10);								
+				Version version = versionHistory.getVersion("1.0");				
+				assertNotNull(version);
+				NodeRef entityVersionNodeRef = entityVersionService.getEntityVersion(version);								
 				assertNotNull(entityVersionNodeRef);
 				assertNotNull(getFolderDocuments(entityVersionNodeRef));				
 
@@ -309,16 +312,29 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	@Test
 	public void testCancelCheckOut() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create raw material --*/
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
-				assertNotNull(getFolderDocuments(rawMaterialNodeRef));
+				return createRawMaterial(testFolderNodeRef, "MP test report");				
 
-				// Check out
-				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+			}
+		}, false, true);
+		
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				return checkOutCheckInService.checkout(rawMaterialNodeRef);				
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
 				
 				// Documents is moved on working copy
@@ -363,13 +379,15 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
 				Map<String, Serializable> properties = new HashMap<String, Serializable>();
-				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
+				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				Version vRawMaterialNodeRef = versionService.createVersion(rawMaterialNodeRef, properties);
 
-				assertEquals("0.1", vRawMaterialNodeRef.getVersionLabel());
+				assertEquals("1.0", vRawMaterialNodeRef.getVersionLabel());
 
+				properties = new HashMap<String, Serializable>();
+				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
 				Version vRawMaterialNodeRefV0_2 = versionService.createVersion(rawMaterialNodeRef, properties);
-				assertEquals("0.2", vRawMaterialNodeRefV0_2.getVersionLabel());
+				assertEquals("1.1", vRawMaterialNodeRefV0_2.getVersionLabel());
 
 				VersionHistory versionHistory = versionService.getVersionHistory(rawMaterialNodeRef);
 				assertEquals("Should have 2 versions", 2, versionHistory.getAllVersions().size());
@@ -412,6 +430,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
@@ -462,6 +481,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
@@ -478,7 +498,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				
 				//check version sensitive
 				VersionHistory versionHistory = versionService.getVersionHistory(rawMaterialNodeRef);
-				Version version = versionHistory.getVersion("0.1");
+				Version version = versionHistory.getVersion("1.0");
 				assertNotNull(version);
 				
 				NodeRef entityVersionRef = entityVersionService.getEntityVersion(version);
