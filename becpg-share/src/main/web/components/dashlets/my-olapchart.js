@@ -42,6 +42,17 @@
 		 * dataSource
 		 */
 	   dataSource : null,
+	   
+	   /**
+	    * saiku-ui
+	    */
+	   saikuUrl : null,
+	   
+	   /**
+	    * currentUser
+	    */
+	   
+	   saikuUser : null,
 
 	   /**
 		 * Object container for initialization options
@@ -204,9 +215,13 @@
 				      value : json.queries[i].queryId
 				   });
 			   }
-			   this.chartPicker.getMenu().addItems(items);
-			   this.chartPicker.getMenu().render(document.body);
+			   me.chartPicker.getMenu().addItems(items);
+			   me.chartPicker.getMenu().render(document.body);
 			   me.selectMenuValue(me.chartPicker, encodeURIComponent(firstQueryId));
+			   
+			   me.saikuUrl = json.metadata.olapServerUrl;
+			   me.saikuUser = json.metadata.currentUserName;
+			   
 		   }
 
 		   // Load preferences to override default filter and range
@@ -387,7 +402,9 @@
 		 * 
 		 */
 	   openSaikuClick : function OlapChart_openSaikuClick() {
-		   window.open("/saiku-ui");
+	   	if(this.saikuUrl!=null){
+	   		window.open(this.saikuUrl+"?username="+this.saikuUser);
+	   	}
 	   }
 
 	});

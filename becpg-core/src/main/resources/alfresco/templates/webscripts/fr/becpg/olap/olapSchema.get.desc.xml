@@ -1,0 +1,7 @@
+<webscript>
+	<shortname>Olap Schema</shortname>
+	<description>Olap Schema service - retrieve olap Schema</description>	
+	<url>/becpg/olap/schema?instance={instanceId}</url>
+	<format default="xml">argument</format>
+	<authentication>admin</authentication>
+</webscript>

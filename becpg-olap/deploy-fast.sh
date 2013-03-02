@@ -11,6 +11,6 @@ fi
 
 export SERVER=$INSTANCE_DIR/$1
 
-cp -rf _diff/* $SERVER/webapps
+cp -rf src/main/config/* $SERVER/webapps
 
 

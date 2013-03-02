@@ -9,6 +9,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +28,7 @@ import fr.becpg.common.dom.DOMUtils;
  */
 public class OlapChart {
 	
+	private NodeRef nodeRef;
 	private String queryName;
 	private String queryId;
 	private String mdx;
@@ -36,9 +39,15 @@ public class OlapChart {
 	
 	private static Log logger = LogFactory.getLog(OlapChart.class);
 
-	public OlapChart(String queryName) {
+	public OlapChart(FileInfo fileInfo) {
 		super();
-		this.queryName = queryName;
+		this.queryName = fileInfo.getName().replace(".saiku", "");
+		this.nodeRef = fileInfo.getNodeRef();
+	}
+
+
+	public OlapChart(String queryName) {
+		// TODO Auto-generated constructor stub
 	}
 
 
@@ -71,6 +80,13 @@ public class OlapChart {
 
 	public String getXml() {
 		return xml;
+	}
+	
+	
+
+
+	public NodeRef getNodeRef() {
+		return nodeRef;
 	}
 
 
@@ -126,6 +142,7 @@ public class OlapChart {
 		//obj.put("mdx",mdx);
 		obj.put("cube",cube);
 		obj.put("type",type);
+		obj.put("noderef", nodeRef);
 		return obj;
 	}
 

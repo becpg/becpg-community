@@ -33,6 +33,8 @@ public class OlapChartWebScript  extends AbstractWebScript
 	/** The Constant PARAM_ACTION. */
 	private static final String PARAM_QUERY_ID = "olapQueryId";
 	
+	private String olapServerUrl;
+	
 	
 	private OlapService olapService;
 	
@@ -41,6 +43,11 @@ public class OlapChartWebScript  extends AbstractWebScript
 		this.olapService = olapService;
 	}
 
+    
+
+	public void setOlapServerUrl(String olapServerUrl) {
+		this.olapServerUrl = olapServerUrl;
+	}
 
 
 
@@ -86,6 +93,12 @@ public class OlapChartWebScript  extends AbstractWebScript
 					obj.put(olapChart.toJSONObject());
 				}
 		    	ret.put("queries",obj);
+		    	JSONObject metadata = new JSONObject();
+		    	metadata.put("currentUserName", olapService.getCurrentOlapUserName());
+		    	metadata.put("olapServerUrl", olapServerUrl);
+		    	metadata.put("olapQueriesFolder", olapService.getOlapQueriesFolder());
+		    	ret.put("metadata",metadata);
+		    	
 		    	String jsonString = ret.toString();
 		    	res.getWriter().write(jsonString);
 		    

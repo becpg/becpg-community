@@ -6,14 +6,14 @@ public class ListEntitiesCommand extends AbstractHttpCommand {
 	private static String COMMAND_URL_TEMPLATE = "/becpg/remote/entity/list?query=%s";
 
 	
-	public ListEntitiesCommand(String serverUrl, String remoteUser, char[] remotePwd) {
-		super(serverUrl, remoteUser, remotePwd);
+	public ListEntitiesCommand(String serverUrl) {
+		super(serverUrl);
 	}
 
 	@Override
-	public String getHttpUrl(String param) {
+	public String getHttpUrl(Object... params) {
 	
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, param );
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
 	}
 	
 	
