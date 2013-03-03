@@ -131,7 +131,7 @@
 			});
 		
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
-			   propertyName : "pjt:projectScore",
+			   propertyName : ["pjt:projectScore","pjt:completionPercent"],
 			   renderer : function(oRecord, data, label, scope) {
 				   return (data.value !=null) ? $html(data.displayValue)+ '&nbsp; %' : '';
 			   }
