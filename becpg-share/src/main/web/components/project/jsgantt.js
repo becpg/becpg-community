@@ -1353,7 +1353,7 @@ JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
 			if (vShowDur == 1)
 				vLeftTable += '  <TH    nowrap >Durée</TH>';
 			if (vShowComp == 1)
-				vLeftTable += '  <TH    nowrap >% Av.</TH>';
+				vLeftTable += '  <TH    nowrap >% Réal.</TH>';
 			if (vShowStartDate == 1)
 				vLeftTable += '  <TH   nowrap >Début</TH>';
 			if (vShowEndDate == 1)

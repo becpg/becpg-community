@@ -403,7 +403,7 @@ public class EntityServiceImpl implements EntityService {
 				
 				if(nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, file.getName()) == null){
 					
-					logger.debug("copy file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);
+					logger.debug("copy file: " + file.getName() + " sourceNodeRef: " + sourceNodeRef + " targetNodeRef: " + targetNodeRef);
 					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
 					

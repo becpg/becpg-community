@@ -34,7 +34,6 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
-import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.project.policy.ProjectPolicy;
 
@@ -46,8 +45,6 @@ import fr.becpg.repo.project.policy.ProjectPolicy;
 public class ProjectServiceTest extends AbstractProjectTestCase {	
 
 	private static Log logger = LogFactory.getLog(ProjectServiceTest.class);
-
-	private NodeRef rawMaterialNodeRef;
 	
 	@Resource
 	private ProjectPolicy projectPolicy;
@@ -56,7 +53,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testProjectAspectOnEntity() {
 
 		initTest();
-		createProject(ProjectState.Planned);
+		createProject(ProjectState.Planned, new Date(), null);
 
 		assertTrue(nodeService.hasAspect(rawMaterialNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT));
 		assertEquals(projectNodeRef, associationService.getTargetAssoc(rawMaterialNodeRef, ProjectModel.ASSOC_PROJECT));
@@ -69,7 +66,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testCreateProjectInProgress() {
 
 		initTest();
-		createProject(ProjectState.InProgress);
+		createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -101,8 +98,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testCancelProject() {
 
 		initTest();
-		initTest();
-		createProject(ProjectState.InProgress);
+		createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -131,7 +127,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testSubmitTask() {
 
 		initTest();
-		createProject(ProjectState.InProgress);
+		createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -327,11 +323,11 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	}
 
 	@Test
-	public void testCalculatePlanningDates() {
+	public void testCalculatePlanningDates() throws ParseException {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		initTest();
-		createProject(ProjectState.Planned);
+		createProject(ProjectState.Planned, dateFormat.parse("15/11/2012"), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -511,8 +507,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testInitDeliverables() throws InterruptedException {
 
 		initTest();
-		createProject(ProjectState.Planned);
-
+		createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -577,11 +572,11 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	}
 	
 	@Test
-	public void testCalculateRetroPlanningDates() {
+	public void testCalculateRetroPlanningDates() throws ParseException {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		initTest();
-		createProject(ProjectState.Planned);
+		createProject(ProjectState.Planned, null, dateFormat.parse("15/11/2012"));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -670,7 +665,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testStartProjectByStartingTask() {
 
 		initTest();
-		createProject(ProjectState.Planned);
+		createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -717,7 +712,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testCalculateScoring() {
 
 		initTest();
-		createProject(ProjectState.Planned);
+		createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

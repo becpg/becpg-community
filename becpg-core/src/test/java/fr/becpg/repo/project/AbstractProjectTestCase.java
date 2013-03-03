@@ -186,7 +186,7 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 		}, false, true);
 	}
 	
-	protected void createProject(final ProjectState projectState){
+	protected void createProject(final ProjectState projectState, final Date startDate, final Date endDate){
 		
 		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
@@ -194,8 +194,8 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, new Date(),
-								null, null, 2, projectState, projectTplNodeRef, 0, rawMaterialNodeRef);
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, startDate,
+								endDate, null, 2, projectState, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
 

@@ -222,7 +222,7 @@ var g; // gantt var
 					                     + this.getProjectTitle(oRecord) + '</span>';
 	
 					               var initiator = '<span class="resource-title">'
-					                     + oRecord.getData("itemData")["prop_cm_creator"].displayValue + '</span>';
+					                     + oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue + '</span>';
 					               var percent = oRecord.getData("itemData")["prop_pjt_completionPercent"].value;
 	
 					               var dates = this.extractDates(oRecord);
