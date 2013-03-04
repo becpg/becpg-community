@@ -126,7 +126,7 @@
 			   propertyName : "pjt:projectOverdue",
 			   renderer : function(oRecord, data, label, scope) {
 				 //return '<span class="' + scope.getAdvancementClass(oRecord, null, 32) + '">&nbsp;</span>';
-				   return '<span class="center ' + scope.getOverdueClass(oRecord, null, 32) + '">' + $html(data.displayValue)+ '&nbsp;' + scope.msg("overdue.day") + '</span>';
+				   return '<span class="center ' + scope.getOverdueClass(oRecord, 32) + '">' + $html(data.displayValue)+ '&nbsp;' + scope.msg("overdue.day") + '</span>';
 			   }
 			});
 		

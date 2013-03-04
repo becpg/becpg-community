@@ -82,7 +82,7 @@
 					
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
-					<field id="pjt:projectCompletionDate" set="planning" />
+					<field id="pjt:projectCompletionDate" read-only="true" set="planning" />
 					<field id="pjt:completionPercent" read-only="true" set="planning" />
 					<field id="pjt:projectOverdue" read-only="true" set="planning" />					
 						
