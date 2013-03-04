@@ -472,7 +472,7 @@
 												break;
 											case "category":
 												if (datalistColumn.name == "cm:taggable") {
-													html += '<img width="16" title="pwet" alt="" src="/share/res/components/images/filetypes/generic-tag-16.png">&nbsp;'
+													html += '<img width="16" title="category" alt="" src="/share/res/components/images/filetypes/generic-tag-16.png">&nbsp;'
 															+ oRecord.getData("tags");
 												} else {
 													html += $html(data.displayValue);
@@ -496,7 +496,7 @@
 															+ '" style="padding-left:'
 															+ padding
 															+ 'px;"><a href="'
-															+ Alfresco.util.siteURL('document-details?nodeRef='
+															+ Alfresco.util.siteURL('entity-details?nodeRef='
 																	+ data.value) + '">' + $html(data.displayValue)
 															+ '</a></span>';
 												} else if (datalistColumn.name == "bcpg:packagingListProduct") {
@@ -571,7 +571,7 @@
 												} else if (datalistColumn.name == "qa:sdlControlPoint"
 														|| datalistColumn.name == "qa:slControlPoint") {
 													html += '<span class="sample"><a href="'
-															+ Alfresco.util.siteURL('document-details?nodeRef='
+															+ Alfresco.util.siteURL('entity-details?nodeRef='
 																	+ data.value) + '">' + $html(data.displayValue)
 															+ '</a></span>';
 												} else if (datalistColumn.name == "qa:clCharacts") {
@@ -580,7 +580,7 @@
 												} else if (datalistColumn.name == "bcpg:code"
 														|| datalistColumn.name == "cm:name") {
 													html += '<a href="'
-															+ Alfresco.util.siteURL('document-details?nodeRef='
+															+ Alfresco.util.siteURL('entity-details?nodeRef='
 																	+ oRecord.getData("nodeRef")) + '">'
 															+ $html(data.displayValue) + '</a>';
 												} else if(datalistColumn.name == "bcpg:productState" && data.value!=null){

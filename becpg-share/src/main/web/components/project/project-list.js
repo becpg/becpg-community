@@ -218,7 +218,7 @@ var g; // gantt var
 					               var oData = oRecord.getData();
 					               var projectId = oData.nodeRef;
 	
-					               var title = '<span class="' + this.getAdvancementClass(oRecord) + '">'
+					               var title = '<span class="' + this.getOverdueClass(oRecord) + '">'
 					                     + this.getProjectTitle(oRecord) + '</span>';
 	
 					               var initiator = '<span class="resource-title">'
@@ -372,70 +372,28 @@ var g; // gantt var
 		               }
 	               },
 
-	               getAdvancementClass : function PL_getAdvancementClass(oRecord, task, size, start) {
-		               var percent = 0, suffix = "";
+	               getTaskAdvancementClass : function PL_getAdvancementClass(task) {
 
-		               if (task != null) {
-			               percent = this.getTaskAdvancementPercent(task, start);
-		               } else {
-			               if (size != null) {
-				               suffix = "-" + size;
-			               }
-
-			               var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
-			               if(taskList.length == 0){
-			            	   percent = 100;
-			               }
-			               else{
-			            	   
-			            	   for (i in taskList) {
-
-					               if (!taskList[i]["itemData"]["prop_pjt_tlState"].value == "Completed") {
-						               percent += this.getTaskAdvancementPercent(taskList[i]);
-					               } else {
-						               percent += 100;
-					               }
-				               }
-
-				               
-				               percent = percent / taskList.length;		               
-
-				               var dates = this.extractDates(oRecord);
-
-				               if (dates.due != null && dates.end == null) {
-					               var completionDate = this.resetDate(new Date());
-					               if (completionDate.getTime() == dates.due.getTime()) {
-						               percent = 75;
-					               } else if (completionDate.getTime() > dates.due.getTime()) {
-						               percent = 0;
-					               }
-				               }
-			               }			               
+		               if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
+		            	   return "advancement-done";
 		               }
-		               if (percent < 0) {
-			               return "advancement-done" + suffix;
-		               }
+		               
+		               var dates = this.extractDates(task), now = new Date();
 
-		               if (percent > 80) {
-			               return "advancement-less100" + suffix;
+		               if (now.getTime() == dates.end.getTime()) {
+			               return "overdue-0to9";
 		               }
-		               if (percent > 60) {
-			               return "advancement-less80" + suffix;
+		               if (now.getTime() > dates.end.getTime()) {
+			               return "overdue-20to29";
 		               }
-		               if (percent > 40) {
-			               return "advancement-less60" + suffix;
-		               }
-		               if (percent > 20) {
-			               return "advancement-less40" + suffix;
-		               }
-
-		               return "advancement-less20" + suffix;
+		               
+			           return "overdue-negative";		               
 	               },
-	               getOverdueClass : function PL_getOverdueClass(oRecord, task, size, start) {
+	               getOverdueClass : function PL_getOverdueClass(oRecord, size) {
 		               var percent = 0, 
 		               		overdue = oRecord.getData("itemData")["prop_pjt_projectOverdue"],
 		               		dates = this.extractDates(oRecord),
-		               		suffix = size != null ? "-" + size : "";
+		               		suffix = size != null ? "-" + size : "";		              
 
 		               if (overdue.value != null && dates.start != null && dates.due != null) {
 		            	   percent = 100 * (overdue.value / (dates.due.getTime() - dates.start.getTime())) * 24 * 60 * 60 * 1000;
@@ -534,23 +492,6 @@ var g; // gantt var
 		               return ret;
 	               },
 
-	               getTaskAdvancementPercent : function PL_getTaskAdvancementPercent(task, start) {
-
-		               var dates = this.extractDates(task, start), now = new Date();
-
-		               if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
-			               return -1;
-		               }
-
-		               if (now.getTime() == dates.end.getTime()) {
-			               return 50;
-		               }
-		               if (now.getTime() > dates.end.getTime()) {
-			               return 0;
-		               }
-
-		               return 100;
-	               },
 	               resetDate : function PL_resetDate(date) {
 		               if (date == null) {
 			               date = new Date();
@@ -563,7 +504,7 @@ var g; // gantt var
 	               },
 
 	               getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, full, start) {
-		               var ret = '<span class="' + this.getAdvancementClass(null, task, null, start) + '">';
+		               var ret = '<span class="' + this.getTaskAdvancementClass(task) + '">';
 
 		               if (full) {
 			               ret += '<div class="projectStatus" style="background-color:#' + this.getTaskColor(task)

@@ -153,7 +153,8 @@
 				   groupFormater : function(args, record){
 				    return record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue;
 				   },
-				   hiddenColumns : ["prop_pjt_projectHierarchy2", "prop_bcpg_code", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"]
+				   hiddenColumns : ["prop_pjt_projectHierarchy2", "prop_bcpg_code", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"],
+				   formWidth : "65em"
 			   }).setMessages(${messages});
 		
 			
