@@ -80,6 +80,9 @@ public class ImportServiceImpl implements ImportService {
 	
 	private static final String PFX_IMPORT_TYPE = "IMPORT_TYPE";
 	
+	private static final String PFX_DOCS_BASE_PATH = "DOCS_BASE_PATH";
+	
+	
 	private static final String PFX_DISABLED_POLICIES = "DISABLED_POLICIES";
 	
 	private static final String PATH_SITES = "st:sites";
@@ -438,8 +441,14 @@ public class ImportServiceImpl implements ImportService {
 				
 				NodeRef parentNodeRef = repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), paths);				
 				importContext.setParentNodeRef(parentNodeRef);																
-			}
-			else if(prefix.equals(PFX_IMPORT_TYPE)){
+			} else if(prefix.equals(PFX_DOCS_BASE_PATH)){
+				
+				String importDocsBasePath = arrStr[COLUMN_MAPPING];
+				if(!importDocsBasePath.isEmpty()){
+					importContext.setDocsBasePath(importDocsBasePath);
+				}
+
+			} else if(prefix.equals(PFX_IMPORT_TYPE)){
 				
 				importContext.setImportType(null);
 				
