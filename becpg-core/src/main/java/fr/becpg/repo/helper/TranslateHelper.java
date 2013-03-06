@@ -1,5 +1,7 @@
 package fr.becpg.repo.helper;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.alfresco.service.namespace.QName;
@@ -61,26 +63,43 @@ public class TranslateHelper {
 		return translation;
 	}
 	
-	public static String getConstraint(QName propertyName, String value, boolean useDefaultLocale) {
-				
-		String translation = null;
-		String messageKey = String.format(CONSTRAINT_MSG_PFX, propertyName.getLocalName().toLowerCase(), value.toLowerCase());
+	@SuppressWarnings("unchecked")
+	public static String getConstraint(QName propertyName, Serializable value, boolean useDefaultLocale) {
 		
-		if(useDefaultLocale){
-			translation = I18NUtil.getMessage(messageKey, Locale.getDefault());
-		}
-		else{
-			translation = I18NUtil.getMessage(messageKey);
-		}
+		if(value instanceof String){
+			String v = (String)value; 
 				
-		if(translation == null){
-			if(logger.isDebugEnabled()){
-				logger.debug("Failed to translate constraint. propertyName: " + propertyName + " - value: " + value);
-			}			
-			translation = value;
-		}
+			String translation = null;
+			String messageKey = String.format(CONSTRAINT_MSG_PFX, propertyName.getLocalName().toLowerCase(), v.toLowerCase());
+			
+			if(useDefaultLocale){
+				translation = I18NUtil.getMessage(messageKey, Locale.getDefault());
+			}
+			else{
+				translation = I18NUtil.getMessage(messageKey);
+			}
+					
+			if(translation == null){
+				if(logger.isDebugEnabled()){
+					logger.debug("Failed to translate constraint. propertyName: " + propertyName + " - value: " + v);
+				}			
+				translation = v;
+			}
+			
+			return translation;
+		} else if(value instanceof ArrayList){
+			String ret ="";
+			for (String v : (ArrayList<String>)value) {
+				if(!ret.isEmpty()){
+					ret+=",";
+				}
+				ret+=getConstraint(propertyName,v,useDefaultLocale);
+			}
+
+			return ret;	
+		}	
+		throw new IllegalStateException("Unknow constraint type ");
 		
-		return translation;
 	}
 	
 }
