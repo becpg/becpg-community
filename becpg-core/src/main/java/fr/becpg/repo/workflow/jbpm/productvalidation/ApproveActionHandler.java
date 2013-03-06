@@ -10,6 +10,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.jbpm.JBPMNode;
 import org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -51,6 +52,8 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
 	/** The repository helper. */
 	private Repository repositoryHelper;
 	
+	private DictionaryService dictionaryService;
+	
 	/* (non-Javadoc)
 	 * @see org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler#initialiseHandler(org.springframework.beans.factory.BeanFactory)
 	 */
@@ -62,6 +65,8 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
 		nodeService = (NodeService)factory.getBean("nodeService");
 		fileFolderService = (FileFolderService)factory.getBean("fileFolderService");
 		repositoryHelper = (Repository)factory.getBean("repositoryHelper");
+		dictionaryService = (DictionaryService)factory.getBean("dictionaryService");
+		
 	}
 
 	/* (non-Javadoc)
@@ -86,9 +91,11 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
             		for(FileInfo file : files){
             			
             			NodeRef productNodeRef = file.getNodeRef();
-            			nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);
             			
-            			productService.classifyProduct(repositoryHelper.getCompanyHome(), file.getNodeRef());
+            			if(dictionaryService.isSubClass(nodeService.getType(productNodeRef), BeCPGModel.TYPE_PRODUCT)){
+            				nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);                			
+                			productService.classifyProduct(repositoryHelper.getCompanyHome(), file.getNodeRef());
+            			}            			
             		}
         		}
         		catch(Exception e){
