@@ -18,6 +18,7 @@ public interface ProjectModel {
 	
 	public static final QName TYPE_PROJECT = QName.createQName(PROJECT_URI, "project");		
 	public static final QName PROP_PROJECT_HIERARCHY1 = QName.createQName(PROJECT_URI, "projectHierarchy1");
+	public static final QName PROP_PROJECT_HIERARCHY2 = QName.createQName(PROJECT_URI, "projectHierarchy2");
 	public static final QName PROP_PROJECT_START_DATE = QName.createQName(PROJECT_URI, "projectStartDate");
 	public static final QName PROP_PROJECT_DUE_DATE = QName.createQName(PROJECT_URI, "projectDueDate");
 	public static final QName PROP_PROJECT_COMPLETION_DATE = QName.createQName(PROJECT_URI, "projectCompletionDate");

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+    <!--                 -->
+    <!-- Scheduled tasks -->
+    <!--                 -->
+
+
+    <!-- Project formulation -->
+        
+    <bean id="projectFormulationJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>fr.becpg.repo.project.impl.ProjectFormulationJob</value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="projectFormulationWorker">
+                    <ref bean="projectFormulationWorker" />
+                </entry>
+                <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="projectFormulationTrigger" class="org.alfresco.util.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="projectFormulationJob"/>
+        </property>
+        <property name="scheduler">
+            <ref bean="schedulerFactory"/>
+        </property>
+        <property name="cronExpression">
+            <value>${project.formulation.cronExpression}</value>
+        </property>
+    </bean>
+    
+</beans>

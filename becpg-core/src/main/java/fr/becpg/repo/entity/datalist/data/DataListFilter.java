@@ -49,6 +49,8 @@ public class DataListFilter {
 	
 	private boolean allFilter = false;
 	
+	private String sortId = null;
+	
 	public DataListFilter() {
 		super();
 		sortMap.put("@bcpg:sort", true);
@@ -152,6 +154,14 @@ public class DataListFilter {
 		if(sortMap!=null && !sortMap.isEmpty()){
 			this.sortMap = sortMap;
 		}
+	}
+
+	public String getSortId() {
+		return sortId;
+	}
+
+	public void setSortId(String sortId) {
+		this.sortId = sortId;
 	}
 
 	public QName getDataType() {

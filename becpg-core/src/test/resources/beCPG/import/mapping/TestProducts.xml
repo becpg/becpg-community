@@ -2,7 +2,7 @@
 <mappings>
 
 	<!-- PRODUCT -->
-	<mapping name="bcpg:entity">
+	<mapping name="bcpg:entityV2">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
