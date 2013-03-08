@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.DataListSortPlugin;
+import fr.becpg.repo.entity.datalist.DataListSortRegistry;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
@@ -41,6 +43,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	private EntityListDAO entityListDAO;
 	
 	private NamespaceService namespaceService;
+	
+	private DataListSortRegistry dataListSortRegistry;
 	
 	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
 	
@@ -59,6 +63,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+
+	public void setDataListSortRegistry(DataListSortRegistry dataListSortRegistry) {
+		this.dataListSortRegistry = dataListSortRegistry;
 	}
 
 	@Override
@@ -123,6 +131,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 			results = advSearchService.queryAdvSearch(dataListFilter.getSearchQuery(), SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(),
 					dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), pagination.getMaxResults());
+			
+			if(dataListFilter.getSortId() != null){
+				DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
+				if(plugin != null){
+					plugin.sort(results);
+				}
+			}					
 
 			results = pagination.paginate(results);
 

@@ -17,8 +17,6 @@
 	</bean>
 
 	<!-- Formulation -->
-
-
 	<bean id="projectFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
 		init-method="init">
 		<property name="handlers">
@@ -66,6 +64,20 @@
 		<property name="entityService" ref="entityService" />
 		<property name="productService" ref="productService" />
 		<property name="repoService" ref="repoService" />
+	</bean>
+	
+	<!-- Worker -->
+	<bean id="projectFormulationWorker" class="fr.becpg.repo.project.impl.ProjectFormulationWorker">
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="projectService" ref="projectService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="transactionService" ref="transactionService" />		
+	</bean>
+	
+	<!-- project list sort -->
+	<bean id="ProjectListSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ProjectListSortPlugin">
+		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
+		<property name="nodeService" ref="nodeService" />
 	</bean>
 
 </beans>

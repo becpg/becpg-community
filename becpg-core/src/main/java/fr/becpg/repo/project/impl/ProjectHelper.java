@@ -256,9 +256,23 @@ public class ProjectHelper {
 	}
 	
 	public static Integer calculateOverdue(TaskListDataItem task){
-		Integer realDuration = calculateTaskDuration(task.getStart(), task.getEnd());
-		if(realDuration != null && task.getDuration() != null){
-			return realDuration - task.getDuration();
+		
+		Date endDate;
+		
+		if(TaskState.InProgress.equals(task.getState())){
+			endDate = new Date();
+		}
+		else if(TaskState.Completed.equals(task.getState())){
+			endDate = task.getEnd();
+		}
+		else{
+			return null;
+		}
+		
+		Integer realDuration = calculateTaskDuration(task.getStart(), endDate);
+		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
+		if(realDuration != null &&  plannedDuration != null){
+			return realDuration - plannedDuration;
 		}
 		return null;
 	}

@@ -625,7 +625,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 					public NodeRef execute() throws Throwable {
 						
 						// create project Tpl
-						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, null,
+						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
 										null, null, null, null, null, 0, null);
 						
 						// create datalists

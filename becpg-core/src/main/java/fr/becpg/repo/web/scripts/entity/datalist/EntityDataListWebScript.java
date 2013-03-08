@@ -60,7 +60,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	
 	protected static final String PARAM_FILTER_PARAMS = "filterParams";
 
-	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
+	protected static final String PARAM_DATA_LIST_NAME = "dataListName";	
 	
 	/**
 	 * Sites search params
@@ -91,6 +91,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	/** Pagination **/
 
 	protected static final String PARAM_SORT = "sort";
+	
+	protected static final String PARAM_SORT_ID = "sortId";
 	
 	protected static final String PARAM_PAGE = "page";
 
@@ -173,9 +175,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		dataListFilter.setDataType(dataType);
 
 		String sort = req.getParameter(PARAM_SORT);
-		Map<String, Boolean> sortMap = WebscriptHelper.extractSortMap(sort,namespaceService);
+		Map<String, Boolean> sortMap = WebscriptHelper.extractSortMap(sort,namespaceService);		
+		String sortId = req.getParameter(PARAM_SORT_ID);
 		
 		dataListFilter.setSortMap(sortMap);
+		dataListFilter.setSortId(sortId);
 		
 		//Site filter 
 		dataListFilter.setSiteId(req.getParameter(PARAM_SITE));
@@ -212,7 +216,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		
 		String filterId = req.getParameter(PARAM_FILTER);
 		String filterData = req.getParameter(PARAM_FILTER_DATA);
-		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);
+		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);		
 
 		try {
 
@@ -229,6 +233,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 						if(filterJSON.has(PARAM_FILTER_PARAMS) && !filterJSON.isNull(PARAM_FILTER_PARAMS)){
 							filterParams = (String) filterJSON.get(PARAM_FILTER_PARAMS);
 						}
+						filterId = (String) filterJSON.get(PARAM_FILTER_ID);
 					}
 				} else {
 					filterId = DataListFilter.ALL_FILTER;

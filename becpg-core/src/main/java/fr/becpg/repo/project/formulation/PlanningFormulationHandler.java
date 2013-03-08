@@ -137,8 +137,8 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
 
 			// avoid cycle
-			checkCycle(taskNodeRef, nextTask);			
-			
+			checkCycle(taskNodeRef, nextTask);
+						
 			Integer o = ProjectHelper.calculateOverdue(nextTask);
 			if(o != null && (initOverdue || o.compareTo(taskOverdue) < 0)){
 				taskOverdue += o;
