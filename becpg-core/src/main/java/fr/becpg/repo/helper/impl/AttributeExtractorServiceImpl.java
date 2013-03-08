@@ -182,7 +182,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			// translate constraints (not cm:name)
 			else if (!propertyDef.getName().isMatch(ContentModel.PROP_NAME) && !propertyDef.getConstraints().isEmpty()) {
 
-				value = TranslateHelper.getConstraint(propertyDef.getName(), (String) v, propertyFormats.isUseDefaultLocale());
+				value = TranslateHelper.getConstraint(propertyDef.getName(), v, propertyFormats.isUseDefaultLocale());
 			} else if (propertyDef.isMultiValued()) {
 
 				List<String> values = (List<String>) v;

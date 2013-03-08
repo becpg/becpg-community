@@ -49,7 +49,7 @@ public class ImportContext {
 	private List<AbstractAttributeMapping> columns = new ArrayList<AbstractAttributeMapping>();
 	
 	/** The class mappings. */
-	private Map<QName, ClassMapping>classMappings = new HashMap<QName, ClassMapping>();	
+	private Map<QName, ClassMapping> classMappings = new HashMap<QName, ClassMapping>();	
 	
 	private Map<String, NodeRef> cacheNodes = new HashMap<String, NodeRef>();
 		
@@ -60,6 +60,8 @@ public class ImportContext {
 	private List<String> log = new ArrayList<String>();
 	
 	private String path;
+	
+	private String docsBasePath;
 	
 	private boolean requiresNewTransaction = false;
 	
@@ -307,6 +309,16 @@ public class ImportContext {
 	public void setPath(String path) {
 		this.path = path;
 	}
+
+	public String getDocsBasePath() {
+		return docsBasePath;
+	}
+
+	public void setDocsBasePath(String docsBasePath) {
+		this.docsBasePath = docsBasePath;
+	}
+
+	
 
 	
 }
