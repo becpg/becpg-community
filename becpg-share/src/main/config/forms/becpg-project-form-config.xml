@@ -20,10 +20,21 @@
 										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectCompletionDate" for-mode="view" />					
+					<show id="pjt:completionPercent" for-mode="view"/>
+					<show id="pjt:projectOverdue" for-mode="view"/>
+					<show id="pjt:projectScore" for-mode="view"/>
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
+					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+					
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
@@ -73,10 +84,16 @@
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
-					</field>					
+					</field>				
+					<field id="pjt:projectScore" set="mainInfo" />		
 					
 					<field id="pjt:projectStartDate" set="planning" />
-					<field id="pjt:projectDueDate" set="planning" />								
+					<field id="pjt:projectDueDate" set="planning" />	
+					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectCompletionDate" set="planning" />
+					<field id="pjt:completionPercent" set="planning" />
+					<field id="pjt:projectOverdue" set="planning" />					
+																	
 						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -94,6 +111,13 @@
 							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
+					
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+					
 				</appearance>
 			</form>
 			<!-- Document Library pop-up Edit Metadata form -->
