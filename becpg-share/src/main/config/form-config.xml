@@ -79,7 +79,7 @@
 				<type name="association:bcpg:subsidiary" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />			
 				<type name="association:bcpg:certification" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:approvalNumber" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />							
-				<type name="association:bcpg:productSpecification" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+				<type name="association:bcpg:productSpecifications" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 				</type>
 				<type name="association:bcpg:productMicrobioCriteria" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >

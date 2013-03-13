@@ -13,7 +13,7 @@
 
 	<context:property-placeholder />
 
-	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/saikuDataSource" expected-type="javax.sql.DataSource" />
+   <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/saikuDataSource" resource-ref="true" expected-type="javax.sql.DataSource" />
 
 	<bean id="jdbcConnectionManager" class="fr.becpg.olap.jdbc.JdbcConnectionManager">
 		<property name="dataSource" ref="dataSource"/>

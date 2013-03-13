@@ -88,7 +88,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:productMicrobioCriteria" />
 					<show id="bcpg:useByDate" force="true" />
 
@@ -229,7 +229,7 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
-					<field id="bcpg:productSpecification" set="formulation">
+					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
@@ -352,7 +352,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:productMicrobioCriteria" />
 					<show id="bcpg:useByDate" force="true" />
 
@@ -422,7 +422,7 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
-					<field id="bcpg:productSpecification" set="formulation">
+					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
@@ -1263,7 +1263,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
@@ -1323,7 +1323,7 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
-					<field id="bcpg:productSpecification" set="formulation">
+					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
@@ -1386,7 +1386,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecification" />
+					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
@@ -1439,7 +1439,7 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
-					<field id="bcpg:productSpecification" set="formulation">
+					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
