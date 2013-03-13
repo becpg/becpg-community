@@ -469,7 +469,7 @@ public interface BeCPGModel {
 	QName ASPECT_TRANSFORMATION = QName.createQName(BECPG_URI, "transformationAspect");
 	QName PROP_PRODUCT_QTY = QName.createQName(BECPG_URI, "productQty");
 	QName PROP_PRODUCT_DENSITY = QName.createQName(BECPG_URI, "productDensity");
-	QName ASSOC_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI, "productSpecification");
+	QName ASSOC_PRODUCT_SPECIFICATIONS = QName.createQName(BECPG_URI, "productSpecifications");
 	QName PROP_PRODUCT_COMMENTS = QName.createQName(BECPG_URI, "productComments");
 
 	// ean aspect
