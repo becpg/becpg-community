@@ -1,0 +1,8 @@
+PATH;/System/ProjectLists/bcpg:entityLists/Sponsors
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Direction
+VALUES;Marketing
+VALUES;Quality
+VALUES;Purchasing
+VALUES;Client

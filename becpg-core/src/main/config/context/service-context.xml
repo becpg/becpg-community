@@ -297,6 +297,7 @@
 		<property name="fileFolderService" ref="fileFolderService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="namespaceService" ref="namespaceService"/>
+		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
 	</bean>
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
@@ -317,11 +318,17 @@
 		<property name="multiLevelExtractor" ref="multiLevelExtractor" />
 	</bean>
 
+	<!-- datalist sort -->
 	<bean id="dataListSortService"
 		class="fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+	</bean>	
+	
+	<bean id="dataListSortRegistry" class="fr.becpg.repo.entity.datalist.impl.DataListSortRegistryImpl"/>	
+	<bean id="baseDataListSortPlugin" abstract="true"  class="fr.becpg.repo.entity.datalist.AbstractDataListSortPlugin" init-method="init">
+		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>
 	</bean>
 
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
@@ -401,6 +408,8 @@
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/>
 		<property name="mlNodeService" ref="mlAwareNodeService"/>
 	</bean>
+	
+	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper"/>
 
 
 </beans>
