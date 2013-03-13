@@ -96,10 +96,6 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	/** The Constant HIERARCHY2_QUICHE. */
 	protected static final String HIERARCHY2_QUICHE = "Quiche";
-	
-	protected static final String PROJECT_HIERARCHY1_PAIN = "Pain";
-	
-	protected static final String PROJECT_HIERARCHY2_PANINI = "Panini";
 
 	protected NodeRef HIERARCHY1_SEA_FOOD_REF;
 
@@ -113,9 +109,11 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	protected NodeRef HIERARCHY2_QUICHE_REF;
 	
-	protected NodeRef PROJECT_HIERARCHY1_PAIN_REF;
-	
-	protected NodeRef PROJECT_HIERARCHY2_PANINI_REF;
+	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
+
+	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
+
+	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
 	
 	protected NodeRef testFolderNodeRef;
 	
@@ -621,7 +619,10 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemNodeRef, RepoConsts.PATH_PROJECT_LISTS);
 		NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef,
 				HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));		
-		HIERARCHY1_SEA_FOOD_REF = hierarchyService.createHierarchy1(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);		
+		PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.createHierarchy1(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
+		PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy2(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+		PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy2(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);		
+		
 	}
 
 	

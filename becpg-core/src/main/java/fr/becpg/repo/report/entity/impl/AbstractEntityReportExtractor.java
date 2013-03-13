@@ -269,6 +269,10 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		
 		for(Map.Entry<QName, String> tempValue : tempValues.entrySet()){
 			AssociationDefinition associationDef =  dictionaryService.getAssociation(tempValue.getKey());
+			if(associationDef == null){
+				logger.error("This association doesn't exist. Name: " + tempValue.getKey());
+				continue;
+			}
 			values.put(associationDef, tempValue.getValue());
 		}
 		

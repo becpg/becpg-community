@@ -134,11 +134,13 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			if (beforeState.equals(TaskState.InProgress.toString())
 					&& afterState.equals(TaskState.Completed.toString())) {
 				logger.debug("update task list: " + nodeRef + " - afterState: " + afterState);
-				Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
-				Date endDate = ProjectHelper.removeTime(new Date());
-				Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
+//				Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+//				Date endDate = ProjectHelper.removeTime(new Date());
+//				Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
+//				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
+//				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
+				// we want to keep the planned duration to calculate overdue
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));
 				formulateProject = true;
 			}
 			

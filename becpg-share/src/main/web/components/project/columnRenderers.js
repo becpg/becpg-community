@@ -125,8 +125,8 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 			   propertyName : "pjt:projectOverdue",
 			   renderer : function(oRecord, data, label, scope) {
-				 //return '<span class="' + scope.getAdvancementClass(oRecord, null, 32) + '">&nbsp;</span>';
-				   return '<span class="center ' + scope.getOverdueClass(oRecord, 32) + '">' + $html(data.displayValue)+ '&nbsp;' + scope.msg("overdue.day") + '</span>';
+				   var overdue = data.displayValue != null ? $html(data.displayValue)+ '&nbsp;' + scope.msg("overdue.day") : '';
+				   return '<span class="center ' + scope.getOverdueClass(oRecord, 32) + '">' + overdue + '</span>';
 			   }
 			});
 		

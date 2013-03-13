@@ -71,7 +71,7 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 				assigneesTwo.add(userTwo);
 								
 				// create project Tpl
-				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, null,
+				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
 								null, null, null, null, null, 0, null);
 				projectTplData.setParentNodeRef(testFolderNodeRef);
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
@@ -194,7 +194,7 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
-						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_PAIN_REF, PROJECT_HIERARCHY2_PANINI_REF, startDate,
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
 								endDate, null, 2, projectState, projectTplNodeRef, 0, rawMaterialNodeRef);
 
 						projectData.setParentNodeRef(testFolderNodeRef);

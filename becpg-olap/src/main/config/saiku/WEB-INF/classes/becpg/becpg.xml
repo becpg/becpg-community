@@ -189,6 +189,7 @@
 								entity.entity_id as entity_noderef,
 								entity.entity_name as name,
 								MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
+								MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 								entity.id as id
 							from
 								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
@@ -199,6 +200,8 @@
 						</SQL>
 					</View>		
 				<Level name="Famille" column="projectHierarchy1" type="String"   >
+				</Level>
+				<Level name="Sous-famille" column="projectHierarchy2" type="String"   >
 				</Level>
 				<Level name="Projet" column="entity_noderef" nameColumn="name" type="String"   >
 				</Level>
@@ -221,6 +224,7 @@
 					entity.entity_id as noderef,
 					entity.entity_name as name,
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
+					MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
@@ -249,6 +253,7 @@
 		<Dimension  name="D&#233;signation" >
 			<Hierarchy name="Projet par famille" hasAll="true" allMemberCaption="Tous les projets">
 				<Level name="Famille" column="projectHierarchy1"  type="String"    />
+				<Level name="Sous-famille" column="projectHierarchy2"  type="String"    />
 				<Level name="Nom projet" column="name"  type="String"    />
 				<Level name="Code projet" column="code"  type="String"    />
 			</Hierarchy>
