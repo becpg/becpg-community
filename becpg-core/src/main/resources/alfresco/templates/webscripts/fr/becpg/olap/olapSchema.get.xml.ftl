@@ -190,6 +190,7 @@
 								entity.entity_id as entity_noderef,
 								entity.entity_name as name,
 								MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
+								MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 								entity.id as id
 							from
 								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
@@ -200,6 +201,8 @@
 						</SQL>
 					</View>		
 				<Level name="Famille" column="projectHierarchy1" type="String"   >
+				</Level>
+				<Level name="Sous famille" column="projectHierarchy2" type="String"   >
 				</Level>
 				<Level name="Projet" column="entity_noderef" nameColumn="name" type="String"   >
 				</Level>
@@ -221,6 +224,7 @@
 					entity.entity_id as noderef,
 					entity.entity_name as name,
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
+					MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
@@ -228,7 +232,9 @@
 					MAX(IF(prop.prop_name = "pjt:projectDueDate",prop.date_value,NULL)) as projectDueDate,
 					MAX(IF(prop.prop_name = "pjt:projectCompletionDate",prop.date_value,NULL)) as completionDate,
 					MAX(IF(prop.prop_name = "pjt:projectPriority",prop.long_value,NULL)) as projectPriority, 
-					MAX(IF(prop.prop_name = "pjt:completionPercent",prop.long_value,NULL)) as completionPercent, 
+					MAX(IF(prop.prop_name = "pjt:completionPercent",prop.long_value,NULL)) as completionPercent,
+					MAX(IF(prop.prop_name = "pjt:projectScore",prop.long_value,NULL)) as projectScore,
+					MAX(IF(prop.prop_name = "pjt:projectOverdue",prop.long_value,NULL)) as projectOverdue, 
 					entity.instance_id as instance_id
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
@@ -249,6 +255,7 @@
 		<Dimension  name="D&#233;signation" >
 			<Hierarchy name="Projet par famille" hasAll="true" allMemberCaption="Tous les projets">
 				<Level name="Famille" column="projectHierarchy1"  type="String"    />
+				<Level name="Sous famille" column="projectHierarchy2"  type="String"    />
 				<Level name="Nom projet" column="name"  type="String"    />
 				<Level name="Code projet" column="code"  type="String"    />
 			</Hierarchy>
@@ -322,6 +329,8 @@
 		<DimensionUsage name="Date de fin" caption="Date de fin" source="Time dimension" foreignKey="completionDate" />
 		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
 		<Measure name="Avancement" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Note" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Retard" column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 
 	<Cube name="Produits" cache="true" enabled="true" defaultMeasure="Nombre de produits">
