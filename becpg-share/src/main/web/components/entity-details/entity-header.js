@@ -86,9 +86,8 @@
 		                     });
 		               this.widgets.viewEntityDocuments = Alfresco.util.createYUIButton(me, "viewEntityDocuments-button",
 		                     function(sType, aArgs, p_obj) {
-
-			                     window.location.href = beCPG.util.entityDocumentsURL(me.options.siteId, me.options.path,
-			                           me.options.itemName);
+		               			window.location.href = beCPG.util.entityDocumentsURL(me.options.siteId, me.options.path ,
+			                           me.options.itemName,true);
 		                     });
 
 		               if (this.options.report != null) {
