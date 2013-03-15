@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -113,8 +114,10 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	}
 
 	private void onUpdateProduct(NodeRef entityNodeRef){
-
-		queueNode(entityNodeRef);	
+		
+		if(!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+			queueNode(entityNodeRef);	
+		}
 	}
 
 	@Override
