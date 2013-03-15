@@ -118,7 +118,7 @@ public class InstanceManager {
 
 		final Long batchId = jdbcConnectionManager.update("INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[] {});
 
-		instance.setLastImport(new Date());
+		
 		instance.setBatchId(batchId);
 
 		return instance;
@@ -127,6 +127,8 @@ public class InstanceManager {
 	
 	public void updateBatchAndDate(Instance instance) throws SQLException {
 
+		instance.setLastImport(new Date());
+		
 		jdbcConnectionManager.update("UPDATE `becpg_instance` SET `last_imported`=?, `batch_id`=? WHERE `id`=? ", new Object[] { instance.getLastImport(), instance.getBatchId(),
 				instance.getId() });
 	}

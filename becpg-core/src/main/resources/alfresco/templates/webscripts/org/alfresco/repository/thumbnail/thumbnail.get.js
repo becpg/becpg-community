@@ -29,6 +29,14 @@ function main()
       return;
    }
    
+
+   //beCPG
+   if(node.isSubType("bcpg:entityV2")){
+	   node = bThumbnail.getThumbnailNode(node);
+	}
+   
+   
+   
    // Get the queue/force create setting
    var qc = false;
    var fc = false;

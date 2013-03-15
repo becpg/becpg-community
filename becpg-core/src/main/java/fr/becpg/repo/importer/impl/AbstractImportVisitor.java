@@ -1049,7 +1049,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			else {
 
 				// is it a product
-				if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
+				if (!searchByName && dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 					// +@cm\\:localName:%s
 
 					queryPath.append(LuceneHelper.getCond(
