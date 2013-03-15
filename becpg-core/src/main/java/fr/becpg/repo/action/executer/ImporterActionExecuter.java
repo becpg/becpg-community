@@ -39,6 +39,8 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 	private static final String LOG_STARTING_DATE = "Starting date: ";	
 	private static final String LOG_ENDING_DATE = "Ending date: ";	
 	private static final String LOG_ERROR = "Error: ";	
+	private static final int ERROR_LOGS_LIMIT = 50;
+	private static final String LOG_ERROR_MAX_REACHED = "More than "+ERROR_LOGS_LIMIT+" errors, stop printing";	
 	private static final String LOG_SEPARATOR = "\n";
 	private static final String KEY_FILES_TO_IMPORT = "keyFilesToImport";	
 	
@@ -176,10 +178,16 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
                     	List<String> errors = importService.importText(nodeRef, true, true);
                           
                         if(errors != null && !errors.isEmpty()){
-         	                
+         	                int limit = 0;
                          	for(String error : errors){
-         	                	log += LOG_SEPARATOR;
+         	                	if(limit>ERROR_LOGS_LIMIT){
+         	                		log += LOG_SEPARATOR;
+             	                    log += LOG_ERROR_MAX_REACHED;
+             	                    break;
+         	                	}
+                         		log += LOG_SEPARATOR;
          	                    log += error;
+         	                    limit++;
          	                }
                          
                              hasFailed = true;

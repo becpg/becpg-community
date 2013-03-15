@@ -37,7 +37,7 @@ import fr.becpg.repo.importer.ImporterException;
 public class ImportEntityListAspectVisitor extends AbstractImportVisitor implements ImportVisitor {
 
 	/** The logger. */
-	protected static Log logger = LogFactory.getLog(ImportEntityListAspectVisitor.class);
+	private static Log logger = LogFactory.getLog(ImportEntityListAspectVisitor.class);
 
 	protected static final String CACHE_KEY = "cKey%s-%s";
 
