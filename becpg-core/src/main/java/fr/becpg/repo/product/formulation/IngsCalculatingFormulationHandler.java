@@ -81,7 +81,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		
 		// Load product specification
     	ProductData productSpecicationData = null;
-    	List<AssociationRef> productSpecificationAssocRefs = nodeService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATION);
+    	List<AssociationRef> productSpecificationAssocRefs = nodeService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
     	if(productSpecificationAssocRefs != null && !productSpecificationAssocRefs.isEmpty() && 
     			productSpecificationAssocRefs.get(0).getTargetRef() != null){
     		

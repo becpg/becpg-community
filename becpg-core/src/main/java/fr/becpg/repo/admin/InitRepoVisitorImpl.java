@@ -244,6 +244,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_POINTS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_METHODS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_STEPS);
+		
+		visitFolder(qualityNodeRef, RepoConsts.PATH_PRODUCT_SPECIFICATIONS);
+		
 		// NC
 		visitFolder(qualityNodeRef, RepoConsts.PATH_NC);
 		// QualityControls

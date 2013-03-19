@@ -36,15 +36,26 @@
    };
    
    
-   beCPG.util.entityDocumentsURL = function(siteId,path,name){
+   beCPG.util.entityDocumentsURL = function(siteId,path,name, isFullPath ){
    	 var url= null; 
    		
    	if (siteId) {
-   		url = 'documentlibrary?path=' + encodeURIComponent('/' + path + '/' + name);
+   		if(isFullPath){
+   			url = 'documentlibrary?path=' + encodeURIComponent(path + '/' + name);
+   		} else {
+   			url = 'documentlibrary?path=' + encodeURIComponent('/' + path + '/' + name);
+   		}
         } else {
+      	  
            if (path) {
-              url = 'repository?path='
-                    + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
+         	  if(isFullPath){
+         		  url = 'repository?path='
+                    + encodeURIComponent(path+'/'+name);
+         	  } else {
+		           url = 'repository?path='
+		                    + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
+              
+         	  }
            }
         }
    	if(url!=null){

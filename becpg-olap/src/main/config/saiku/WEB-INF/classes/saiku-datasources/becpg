@@ -3,4 +3,4 @@ name=beCPG
 security.enabled=true
 security.type=one2one
 driver=mondrian.olap4j.MondrianOlap4jDriver
-location=jdbc:mondrian:Datasource=java:comp/env/jdbc/dataSource;Catalog=AlfrescoCatalog; DynamicSchemaProcessor=fr.becpg.olap.mondrian.AlfrescoSchemaProcessor;UseContentChecksum=true
+location=jdbc:mondrian:Datasource=java:comp/env/jdbc/saikuDataSource;Catalog=AlfrescoCatalog;DynamicSchemaProcessor=fr.becpg.olap.mondrian.AlfrescoSchemaProcessor;UseContentChecksum=true

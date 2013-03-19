@@ -138,6 +138,16 @@
 		<url-pattern>/xml/saiku/session</url-pattern>
 	</servlet-mapping>
 
+	
+	 <resource-ref>
+      <description>DB Connection</description>
+      <res-ref-name>jdbc/saikuDataSource</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+      <res-sharing-scope>Unshareable</res-sharing-scope>
+    </resource-ref>
+	
+
 	<mime-mapping>
 		<extension>wsdl</extension>
 		<mime-type>text/xml</mime-type>
@@ -147,5 +157,7 @@
 		<extension>xsd</extension>
 		<mime-type>text/xml</mime-type>
 	</mime-mapping>
+
+	
 
 </web-app>

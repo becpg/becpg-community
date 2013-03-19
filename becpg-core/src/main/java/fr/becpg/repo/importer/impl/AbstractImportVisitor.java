@@ -242,44 +242,42 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	public NodeRef importNode(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
 
 		logger.debug("ImportNode. type: " + importContext.getType());
-				  						 
-		// import properties		
-		Map<QName, Serializable> properties = getNodePropertiesToImport(importContext, values); 				 		
-		 
-		// work around since CodePolicy is asynchronous, so we need to generate code if empty
-		String code = (String)properties.get(BeCPGModel.PROP_CODE);
-		if(code !=null && code.isEmpty()){
+
+		// import properties
+		Map<QName, Serializable> properties = getNodePropertiesToImport(importContext, values);
+
+		// work around since CodePolicy is asynchronous, so we need to generate
+		// code if empty
+		String code = (String) properties.get(BeCPGModel.PROP_CODE);
+		if (code != null && code.isEmpty()) {
 			code = autoNumService.getAutoNumValue(importContext.getType(), BeCPGModel.PROP_CODE);
 			properties.put(BeCPGModel.PROP_CODE, code);
 		}
-					
-		NodeRef nodeRef = findNode(importContext, importContext.getType(), properties);		 
-		 
-		if(nodeRef == null){
-			String name = (String)properties.get(ContentModel.PROP_NAME);
-			if(logger.isDebugEnabled()){
-				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);				
+
+		NodeRef nodeRef = findNode(importContext, importContext.getType(), properties);
+
+		if (nodeRef == null) {
+			String name = (String) properties.get(ContentModel.PROP_NAME);
+			if (logger.isDebugEnabled()) {
+				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
 			}
 			QName assocName = ContentModel.ASSOC_CHILDREN;
 			if (name != null && name.length() > 0) {
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 			}
-			
-			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-					assocName, importContext.getType(), properties).getChildRef();			 			
-		}
-		else if(importContext.isDoUpdate()){
-			
-			if(logger.isDebugEnabled()){
+
+			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(), properties).getChildRef();
+		} else if (importContext.isDoUpdate()) {
+
+			if (logger.isDebugEnabled()) {
 				logger.debug("update node. Properties: " + properties);
 			}
 			nodeService.setType(nodeRef, importContext.getType());
-			 
-			for(Map.Entry<QName, Serializable> entry : properties.entrySet()){
-				nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue()); 
-			}			
-		}
-		else{
+
+			for (Map.Entry<QName, Serializable> entry : properties.entrySet()) {
+				nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
+			}
+		} else {
 			logger.info("Update mode is not enabled so no update is done.");
 		}
 
@@ -448,8 +446,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							String regexp = value.replace("reg:", "");
 							if (Pattern.matches(regexp, file.getName())) {
 
-								logger.debug(file.getName()+" match regexp "+regexp);
-								
+								logger.debug(file.getName() + " match regexp " + regexp);
+
 								NodeRef fileNodeRef = createFile(targetFolderNodeRef, file.getName(), file.getName());
 								String mimetype = mimetypeService.guessMimetype(file.getName());
 								FileInputStream in = null;
@@ -470,7 +468,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								} finally {
 									IOUtils.closeQuietly(in);
 								}
-							} 
+							}
 						}
 
 					} else {
@@ -478,58 +476,32 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					}
 				} else if (value != null && !value.isEmpty()) {
 
-				
 					// add file content
 					if (fileMapping.getAttribute().getName().equals(ContentModel.PROP_CONTENT)) {
-						InputStream in = null;
-						try {
-							if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("http:") || value.startsWith("ftp:"))) {
 
-								try {
-									Resource resource = applicationContext.getResource(value);
-									in = resource.getInputStream();
-								} catch (IOException e) {
-									throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
-								}
-
-							} else if (new File(value).exists()) {
-								try {
-									in = new FileInputStream(value);
-								} catch (FileNotFoundException e) {
-									throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
-								}
-							} else {
-								logger.warn(I18NUtil.getMessage(MSG_ERROR_FILE_NOT_FOUND, value));
+						if (value.contains(",")) {
+							int count = 0;
+							for (String fileNameValue : value.split(",")) {
+								importFileContent(fileNameValue, targetFolderNodeRef, fixFileNameExtension(fileName, fileNameValue, count), fileMapping.getId()
+										+ (count > 0 ? "-" + count : ""));
+								count++;
 							}
 
-							if (in != null) {
-								// create file if it doesn't exist
-								NodeRef fileNodeRef = createFile(targetFolderNodeRef, fileName, fileMapping.getId());
-								
-								String mimetype = mimetypeService.guessMimetype(value);
-								ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-								Charset charset = charsetFinder.getCharset(in, mimetype);
-								String encoding = charset.name();
+						} else {
 
-								ContentWriter writer = contentService.getWriter(fileNodeRef, contentQName, true);
-								writer.setMimetype(mimetype);
-								writer.setEncoding(encoding);
-								writer.putContent(in);
-							}
+							importFileContent(value, targetFolderNodeRef, fixFileNameExtension(fileName, value, 0), fileMapping.getId());
 
-						} finally {
-							IOUtils.closeQuietly(in);
 						}
 					}
 					// manage only properties
 					else if (fileMapping.getAttribute() instanceof PropertyDefinition) {
 
 						NodeRef fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
-						
-						if(fileNodeRef!=null){
-						
+
+						if (fileNodeRef != null) {
+
 							PropertyDefinition propertyDefinition = (PropertyDefinition) fileMapping.getAttribute();
-	
+
 							nodeService.setProperty(fileNodeRef, propertyDefinition.getName(), ImportHelper.loadPropertyValue(importContext, values, z_idx));
 						}
 					}
@@ -538,13 +510,67 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 	}
 
+	private String fixFileNameExtension(String fileName, String value, int count) {
+		String[] tokens = value.split("\\.(?=[^\\.]+$)");
+
+		if (tokens.length > 1) {
+			return fileName.split("\\.(?=[^\\.]+$)")[0] + (count > 0 ? "-" + count : "") + "." + tokens[1];
+		}
+
+		return fileName;
+
+	}
+
+	private void importFileContent(String value, NodeRef targetFolderNodeRef, String mappingFileName, String mappingId) throws ImporterException {
+		InputStream in = null;
+		try {
+			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("http:") || value.startsWith("ftp:"))) {
+
+				try {
+					Resource resource = applicationContext.getResource(value);
+					in = resource.getInputStream();
+				} catch (IOException e) {
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
+				}
+
+			} else if (new File(value).exists()) {
+				try {
+					in = new FileInputStream(value);
+				} catch (FileNotFoundException e) {
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
+				}
+			} else {
+				logger.warn(I18NUtil.getMessage(MSG_ERROR_FILE_NOT_FOUND, value));
+			}
+
+			if (in != null) {
+				// create file if it doesn't exist
+				NodeRef fileNodeRef = createFile(targetFolderNodeRef, mappingFileName, mappingId);
+
+				String mimetype = mimetypeService.guessMimetype(value);
+				ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+				Charset charset = charsetFinder.getCharset(in, mimetype);
+				String encoding = charset.name();
+
+				ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
+				writer.setMimetype(mimetype);
+				writer.setEncoding(encoding);
+				writer.putContent(in);
+			}
+
+		} finally {
+			IOUtils.closeQuietly(in);
+		}
+
+	}
+
 	private NodeRef createFile(NodeRef targetFolderNodeRef, String fileName, String localName) {
 		NodeRef fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
 		if (fileNodeRef == null) {
 			Map<QName, Serializable> fileProperties = new HashMap<QName, Serializable>();
 			fileProperties.put(ContentModel.PROP_NAME, fileName);
-			fileNodeRef = nodeService.createNode(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(localName)),
-					ContentModel.TYPE_CONTENT, fileProperties).getChildRef();
+			fileNodeRef = nodeService.createNode(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(localName)), ContentModel.TYPE_CONTENT, fileProperties).getChildRef();
 		}
 		return fileNodeRef;
 	}
@@ -871,8 +897,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryPath);
 
-			queryPath+= LuceneHelper.DEFAULT_IGNORE_QUERY;
-			
+			queryPath += LuceneHelper.DEFAULT_IGNORE_QUERY;
+
 			List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
 			logger.debug("resultSet.length() : " + resultSet.size());
@@ -950,11 +976,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()), value);
 
+			queryPath += LuceneHelper.DEFAULT_IGNORE_QUERY;
 
-			queryPath+= LuceneHelper.DEFAULT_IGNORE_QUERY;
-			
 			logger.debug("findPropertyTargetNodeByValue: " + queryPath);
-
 
 			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_256);
 
@@ -994,7 +1018,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, QName type, String value) throws ImporterException {
 		return findTargetNodeByValue(importContext, type, value, false);
 	}
-	
+
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, QName type, String value, boolean searchByName) throws ImporterException {
 
 		NodeRef nodeRef = null;
@@ -1025,9 +1049,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			else {
 
 				// is it a product
-				if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
+				if (!searchByName && dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 					// +@cm\\:localName:%s
-					queryPath.append(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value, LuceneHelper.Operator.AND));
+
+					queryPath.append(LuceneHelper.getCond(
+							LuceneHelper.getGroup(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value),
+									LuceneHelper.getCondEqualValue(BeCPGModel.PROP_ERP_CODE, value, LuceneHelper.Operator.OR)), LuceneHelper.Operator.AND));
+
 					doQuery = true;
 				}
 				// code
@@ -1059,7 +1087,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (doQuery) {
 
 				logger.debug("findTargetNodeByValue: " + queryPath);
-				
 
 				queryPath.append(LuceneHelper.DEFAULT_IGNORE_QUERY);
 
@@ -1068,22 +1095,19 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				logger.debug("resultSet.length() : " + resultSet.size());
 				if (resultSet.isEmpty()) {
 
-					
-					if(searchByName){
-					
+					if (searchByName) {
+
 						String typeTitle = type.toString();
 						TypeDefinition typeDef = dictionaryService.getType(type);
 						if (typeDef != null && typeDef.getTitle() != null && !typeDef.getTitle().isEmpty()) {
 							typeTitle = typeDef.getTitle();
 						}
-	
-						
-						
+
 						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
-				 } else {
-					 return findTargetNodeByValue( importContext,  type,  value, true);
-				 }
-					
+					} else {
+						return findTargetNodeByValue(importContext, type, value, true);
+					}
+
 				} else if (resultSet.size() == 1) {
 					nodeRef = resultSet.get(0);
 				} else {
@@ -1141,9 +1165,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private NodeRef getItemByTypeAndName(QName type, String name) {
 
 		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
-		
 
-		queryPath+= LuceneHelper.DEFAULT_IGNORE_QUERY;
+		queryPath += LuceneHelper.DEFAULT_IGNORE_QUERY;
 
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 

@@ -376,18 +376,6 @@
 	
 
 
-	<!-- Override Thumbnail service implementation bean -->
-	<bean id="thumbnailService" class="fr.becpg.repo.thumbnail.impl.BeCPGThumbnailServiceImpl"
-		init-method="init">
-		<property name="entityService" ref="entityService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="renditionService" ref="renditionService" />
-		<property name="thumbnailRegistry" ref="thumbnailRegistry" />
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
-	</bean>
-
 	<!-- Cache -->
 
 	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">

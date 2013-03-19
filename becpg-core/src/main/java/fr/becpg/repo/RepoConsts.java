@@ -86,6 +86,7 @@ public class RepoConsts {
 	public static final String PATH_REGULATIONS = "Regulations";	
 	public static final String PATH_PRODUCT_MICROBIO_CRITERIA = "ProductMicrobioCriteria";
 	public static final String PATH_QUALITY_SPECIFICATIONS = "QualitySpecifications";	
+	public static final String PATH_PRODUCT_SPECIFICATIONS = "ProductSpecifications";
 	public static final String PATH_CONTROL_PLANS = "ControlPlans";
 	public static final String PATH_CONTROL_POINTS = "ControlPoints";	
 	public static final String PATH_CONTROL_STEPS = "ControlSteps";

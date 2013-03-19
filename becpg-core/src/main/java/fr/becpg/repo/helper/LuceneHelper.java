@@ -17,9 +17,10 @@ import fr.becpg.repo.RepoConsts;
  */
 public class LuceneHelper {
 
-	private static final String QUERY_COND_PROP_EQUAL_VALUE = " %s +@%s:\"%s\"";
+	private static final String QUERY_COND_PROP_EQUAL_VALUE = "@%s:\"%s\"";
+	
 	private static final String QUERY_COND_PROP_CONTAINS_VALUE = " %s +@%s:%s";
-	private static final String QUERY_COND_PROP_ISNULL_VALUE = " %s ISNULL:\"%s\"";
+	private static final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
 	private static final String QUERY_COND_PATH = " %s +PATH:\"/app:company_home/%s/*\"";
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
 	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
@@ -41,14 +42,20 @@ public class LuceneHelper {
 	 */
 	public static String getCondEqualValue(QName property, String value, Operator operator) {
 
-		if(value == null || value.isEmpty()){
-			return getCondIsNullValue(property, operator);
-		}
-		else{
-			return String.format(QUERY_COND_PROP_EQUAL_VALUE, operator != null ? operator : "", escapeQName(property), value);
-		}		
+		return getCond(getCondEqualValue( property,  value), operator);
+		
 	}
 
+	
+	public static String getCondEqualValue(QName property, String value) {
+		if(value == null || value.isEmpty()){
+			return getCondIsNullValue(property);
+		}
+		else{
+			return String.format(QUERY_COND_PROP_EQUAL_VALUE, escapeQName(property), value);
+		}	
+	}
+	
 	/**
 	 * Return an equal condition on ID of nodeRef
 	 * 
@@ -80,9 +87,15 @@ public class LuceneHelper {
 	 * @param value
 	 * @return
 	 */
-	public static String getCondIsNullValue(QName property, Operator operator) {
+	public static String getCondIsNullValue(QName property) {
 
-		return String.format(QUERY_COND_PROP_ISNULL_VALUE, operator != null ? operator : "", escapeQName(property));
+		return String.format(QUERY_COND_PROP_ISNULL_VALUE, escapeQName(property));
+	}
+	
+	
+	public static String getCondIsNullValue(QName property,Operator operator) {
+
+		return getCond(String.format(QUERY_COND_PROP_ISNULL_VALUE, escapeQName(property)),operator);
 	}
 
 	/**
@@ -231,5 +244,12 @@ public class LuceneHelper {
 	public static String exclude(String condType) {
 		return " -"+condType;
 	}
+
+
+	public static String getGroup(String op1, String op2) {
+		return " ("+op1+" "+op2+")";
+	}
+
+	
 
 }

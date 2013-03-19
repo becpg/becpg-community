@@ -1,7 +1,7 @@
 PATH;/Temp/Import;;;;;;;;;;;;;;;;;;;;;;;;
 TYPE;bcpg:finishedProduct;;;;;;;;;;;;;;;;;;;;;;;;
 MAPPING;Default;;;;;;;;;;;;;;;;;;;;;;;;
-COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:erpCode;bcpg:eanCode;bcpg:productState;bcpg:trademark;bcpg:clients;bcpg:productUnit;bcpg:productQty;bcpg:productDensity;bcpg:productSpecification;bcpg:productMicrobioCriteria;bcpg:useByDate;bcpg:unitPrice;bcpg:unitTotalCost;bcpg:priceCurrency;bcpg:breakEven;bcpg:projectedQty;bcpg:profitability;;
+COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:erpCode;bcpg:eanCode;bcpg:productState;bcpg:trademark;bcpg:clients;bcpg:productUnit;bcpg:productQty;bcpg:productDensity;bcpg:productSpecifications;bcpg:productMicrobioCriteria;bcpg:useByDate;bcpg:unitPrice;bcpg:unitTotalCost;bcpg:priceCurrency;bcpg:breakEven;bcpg:projectedQty;bcpg:profitability;;
 VALUES;Arnispray Formule à l'arnica;Boiron;;;Bien-être;Homéopathie;;;ToValidate;;Sephora;P;1;0.02;;;30;;;€;;;;;
 VALUES;Baume Amazonien anti-rides Flacon 50ml;baume anti-rides;;http://www.aroma-zone.com/aroma/Fiche_extrait_concombreBIO.asp#lait-visage-hydratant-concombre;Beauté et soins;Anti-âges;;;ToValidate;;Sephora;P;1;0.5;;;30;;0;€;;;;;	
 VALUES;Bioptimum vitalité physique et intellectuelle;Bioptimum vitalité physique et intellectuelle;;;Bien-être;Homéopathie;;;ToValidate;;Sephora;P;1;0.1;;;30;;;€;;;;;

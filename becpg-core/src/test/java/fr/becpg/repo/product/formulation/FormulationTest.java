@@ -1653,7 +1653,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							
 							
 				// create association
-				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATION);
+				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
 				
 				/*-- Formulate product --*/
 				logger.info("/*-- Formulate product --*/");
@@ -1720,7 +1720,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				/*
 				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)
 				 */				
-				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATION);
+				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
 					
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");

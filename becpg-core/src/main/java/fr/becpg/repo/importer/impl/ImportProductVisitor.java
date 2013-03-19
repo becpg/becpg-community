@@ -14,6 +14,8 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -46,6 +48,9 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	private Repository repositoryHelper;
 
 	private HierarchyService hierarchyService;
+	
+	
+	private static Log logger = LogFactory.getLog(ImportProductVisitor.class);
 
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
@@ -120,6 +125,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 
 				// Check if product exists in Import folder
 				if (nodeRef == null) {
+					logger.debug("Product to update found in import folder");
 					nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
 				}
 			} else {

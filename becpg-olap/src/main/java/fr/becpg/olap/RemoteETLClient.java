@@ -68,6 +68,8 @@ public class RemoteETLClient {
 						httpClient.getConnectionManager().shutdown();
 
 					}
+					
+					instanceManager.updateBatchAndDate(instance);
 				}
 			});
 
