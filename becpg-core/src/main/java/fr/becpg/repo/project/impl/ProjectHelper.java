@@ -260,7 +260,13 @@ public class ProjectHelper {
 		Date endDate;
 		
 		if(TaskState.InProgress.equals(task.getState())){
-			endDate = new Date();
+			endDate = ProjectHelper.removeTime(new Date());
+			logger.info("###task in progress: " + task.getTaskName() + " - " + endDate + " - " + task.getEnd());
+			
+			// we wait the overdue of the task to take it in account
+			if(endDate.before(task.getEnd())){
+				return null;
+			}
 		}
 		else if(TaskState.Completed.equals(task.getState())){
 			endDate = task.getEnd();
@@ -272,6 +278,7 @@ public class ProjectHelper {
 		Integer realDuration = calculateTaskDuration(task.getStart(), endDate);
 		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
 		if(realDuration != null &&  plannedDuration != null){
+			logger.info("###calcalate overdue : " + task.getTaskName() + " - " + (realDuration - plannedDuration));
 			return realDuration - plannedDuration;
 		}
 		return null;

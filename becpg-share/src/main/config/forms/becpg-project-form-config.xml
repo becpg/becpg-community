@@ -745,7 +745,8 @@
                <show id="pjt:rlPriority" />               
                <show id="pjt:rlDueDate" />
                <show id="cm:attachments" />
-               <show id="cm:created" />
+               <show id="cm:creator" />
+               <show id="cm:created" />               
             </field-visibility>
          </form>
       </forms>

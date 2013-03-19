@@ -34,6 +34,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.project.policy.ProjectPolicy;
 
@@ -760,4 +761,85 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			}
 		}, false, true);
 	}	
+	
+	/**
+	 * Test the calculation of the project overdue
+	 */
+	@Test
+	public void testProjectOverdue() {
+
+		initTest();
+		createProject(ProjectState.Planned, new Date(), null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+				assertNotNull(projectData);
+				assertEquals(0, projectData.getOverdue().intValue());
+				
+				PlanningFormulationHandler planningFormulationHandler = new PlanningFormulationHandler();					
+				
+				projectData.getTaskList().get(0).setState(TaskState.InProgress);				
+				planningFormulationHandler.process(projectData);				
+				assertEquals(0, projectData.getOverdue().intValue());
+				
+				// set start date to simulate 1 day after start (task in progress)				
+				Date startDate = ProjectHelper.calculateNextDate(new Date(), 1, false);
+				projectData.setStartDate(startDate);
+				planningFormulationHandler.process(projectData);				
+				assertEquals(0, projectData.getOverdue().intValue());
+				
+				// set start date to simulate 3 days after start (task in progress)
+				startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);
+				projectData.getTaskList().get(0).setStart(startDate);				
+				planningFormulationHandler.process(projectData);	
+				assertEquals(1, projectData.getOverdue().intValue());
+				
+				// set start date to simulate 3 days after start (task completed in time)
+				startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);			
+				Date endDate = ProjectHelper.calculateEndDate(startDate, 2);
+				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectData.getTaskList().get(0).setStart(startDate);	
+				projectData.getTaskList().get(0).setEnd(endDate);
+				projectData.getTaskList().get(1).setState(TaskState.InProgress);
+				planningFormulationHandler.process(projectData);				
+				assertEquals(0, projectData.getOverdue().intValue());
+				
+				// set start date to simulate 6 days after start (task4 and task5 in progress)
+				startDate = ProjectHelper.calculateNextDate(new Date(), 6, false);			
+				projectData.setStartDate(startDate);
+				for(TaskListDataItem t : projectData.getTaskList()){
+					t.setState(TaskState.Planned);
+				}				
+				planningFormulationHandler.process(projectData);	
+				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectData.getTaskList().get(1).setState(TaskState.Completed);
+				projectData.getTaskList().get(2).setState(TaskState.Completed);
+				projectData.getTaskList().get(3).setState(TaskState.InProgress);
+				projectData.getTaskList().get(4).setState(TaskState.InProgress);	
+				planningFormulationHandler.process(projectData);
+				assertEquals(0, projectData.getOverdue().intValue());
+				
+				// set start date to simulate 9 days after start (task4 and task5 in progress)
+				startDate = ProjectHelper.calculateNextDate(new Date(), 9, false);			
+				projectData.setStartDate(startDate);
+				for(TaskListDataItem t : projectData.getTaskList()){
+					t.setState(TaskState.Planned);
+				}
+				planningFormulationHandler.process(projectData);	
+				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectData.getTaskList().get(1).setState(TaskState.Completed);
+				projectData.getTaskList().get(2).setState(TaskState.Completed);
+				projectData.getTaskList().get(3).setState(TaskState.InProgress);
+				projectData.getTaskList().get(4).setState(TaskState.InProgress);
+				planningFormulationHandler.process(projectData);
+				assertEquals(1, projectData.getOverdue().intValue());
+
+				return null;
+			}
+		}, false, true);		
+	}
 }

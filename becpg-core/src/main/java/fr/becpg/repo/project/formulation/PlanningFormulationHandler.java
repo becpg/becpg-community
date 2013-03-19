@@ -45,7 +45,6 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 		
 		Integer projectOverdue = calculateOverdue(projectData, null);
-		logger.debug("projectOverdue: " + projectOverdue);
 		projectData.setOverdue(projectOverdue);
 		
 		return true;
