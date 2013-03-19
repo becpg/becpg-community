@@ -2,15 +2,18 @@
  * beCPG console
  */
 
-function getSystemEntities() {
+function getSystemInfos() {
 	var json = remote.call("/becpg/admin/repository/system-entities");
 	if (json.status == 200) {
 		var obj = eval('(' + json + ')');
 		if (obj) {
-			return obj.items;
+			return obj;
 		}
 	}
 	return [];
 }
 
-model.systemEntities = getSystemEntities();
+var infos = getSystemInfos();
+
+model.systemEntities = infos.items;
+model.systemInfo = infos.systemInfo;

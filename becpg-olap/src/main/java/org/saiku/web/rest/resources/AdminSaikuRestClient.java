@@ -74,6 +74,8 @@ public class AdminSaikuRestClient {
 						httpClient.getConnectionManager().shutdown();
 
 					}
+					
+					instanceManager.updateBatchAndDate(instance);
 				}
 			});
 

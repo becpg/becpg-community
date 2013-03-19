@@ -15,6 +15,18 @@
         </property>
     </bean>
     
+    <bean id="thumbnailScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Thumbnail">
+        <property name="extensionName">
+            <value>bThumbnail</value>
+        </property> 
+        	<property name="entityService" ref="entityService" />
+			<property name="beCPGSearchService" ref="beCPGSearchService" />
+			<property name="nodeService" ref="nodeService" />
+			<property name="beCPGCacheService" ref="beCPGCacheService" />
+			<property name="serviceRegistry" ref="ServiceRegistry"/>
+    </bean>
+    
+    
     <!-- Override Alfresco -->
     
     <bean id="jsonConversionComponent" class="fr.becpg.repo.jscript.app.BeCPGJSONConversionComponent" parent="baseJsonConversionComponent">
