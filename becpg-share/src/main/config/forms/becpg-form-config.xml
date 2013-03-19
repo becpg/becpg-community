@@ -743,7 +743,10 @@
 					<show id="pack:palletLayers" />
 					<show id="pack:palletDimensions" />
 					<show id="pack:palletBoxesPerLayer" />
-					<show id="pack:palletBoxesPerPallet" />					
+					<show id="pack:palletBoxesPerPallet" />				
+					<show id="pack:palletNbOfIntercropping"/>
+					<show id="pack:palletHeight" />
+					<show id="pack:palletNbOfBoxes" />
 					
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -803,7 +806,11 @@
 					<field id="pack:palletLayers" set="pallet" />
 					<field id="pack:palletDimensions" set="pallet" />
 					<field id="pack:palletBoxesPerLayer" set="pallet" />
-					<field id="pack:palletBoxesPerPallet" set="pallet" />					
+					<field id="pack:palletBoxesPerPallet" set="pallet" />			
+					<field id="pack:palletNbOfIntercropping" set="pallet" />		
+					<field id="pack:palletHeight" set="pallet" />		
+					<field id="pack:palletNbOfBoxes" set="pallet" />		
+							
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -979,7 +986,11 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
-
+					
+					<!-- tare -->
+					<show id="pack:tare"/>
+               <show id="pack:tareUnit"/>
+               
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
@@ -994,6 +1005,8 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="tare" appearance="bordered-panel"
+						label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -1033,6 +1046,11 @@
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" force="true" set="mainInfo" />
 					<field id="rep:reportTpls" set="mainInfo" />
+					
+					
+					<!-- tare -->
+					<field id="pack:tare" set="tare"/>
+               <field id="pack:tareUnit" set="tare"/>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -4495,5 +4513,24 @@
 			</form>
 		</forms>
 	</config>
+	
+	<config evaluator="aspect" condition="pack:sizeAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pack:length" />
+					<show id="pack:width" />
+					<show id="pack:height" />
+				</field-visibility>
+				<appearance>
+					<set id="size" label-id="becpg.forms.set.pack.size.label" appearance="bordered-panel" />
+					<field id="pack:length" set="size" />
+					<field id="pack:width"  set="size" />
+					<field id="pack:height" set="size" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
 
 </alfresco-config>

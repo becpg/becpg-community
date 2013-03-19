@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +84,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		String action = templateArgs.get(PARAM_ACTION);
 		Map<String, Object> ret = new HashMap<String, Object>();
-		ret.put("status", "SUCCESS");
+		
 
 		// Check arg
 		if (action == null || action.isEmpty()) {
@@ -107,14 +109,33 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			if(logger.isDebugEnabled()){
 				logger.debug("System entities size:"+refs.size());
 			}
+		
 			
 			ret.put("items", refs);
 		} else {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 		}
 
+		
+		//Add status
+		
+		ret.put("status", "SUCCESS");
+		
+		//Add system infos
+		
+		MemoryMXBean memoryMXBean=ManagementFactory.getMemoryMXBean();
+		
+		Runtime runtime = Runtime.getRuntime();
+		
+		ret.put("totalMemory", runtime.totalMemory());
+		ret.put("freeMemory", runtime.freeMemory());
+		ret.put("maxMemory", runtime.maxMemory());
+		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed());
+		
+		
 		return ret;
 
 	}
+	
 
 }

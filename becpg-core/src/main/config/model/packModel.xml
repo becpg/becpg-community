@@ -88,22 +88,16 @@
 					<title>Nombre d'emb / palette</title>
 					<type>d:int</type>
 				</property>
-				<!-- <property name="pack:palletDimensions">
-					<title>Dimensions palette (mm)</title>
-					<type>d:text</type>
-				</property> -->
-				<property name="pack:palletNbOfIntercropping">
-					<title>Intercallaires</title>
-					<type>d:int</type>
-				</property>
 				<property name="pack:palletHeight">
 					<title>Hauteur pallette (mm)</title>
 					<type>d:int</type>
 				</property>
-				<property name="pack:palletNbOfBoxes">
-					<title>Nombres de cartons</title>
-					<type>d:int</type>
-				</property>
+				
+				<!-- <property name="pack:palletDimensions">
+					<title>Dimensions palette (mm)</title>
+					<type>d:text</type>
+				</property> -->
+				
 			</properties>			
 		</aspect>
 		
