@@ -204,7 +204,12 @@
        */
       getWebscriptUrl: function BeCPGCatalog_getWebscriptUrl()
       {
-         return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/"+this.options.catalogType+"/node/alfresco/company/home?max=" + this.options.maxItems;
+    	  if(Alfresco.constants.SITE != null && Alfresco.constants.SITE != ""){
+    		  return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/" + this.options.catalogType+ "/site/" + Alfresco.constants.SITE + "/documentLibrary?max=" + this.options.maxItems;    		  
+    	  }
+    	  else{
+    		  return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/" + this.options.catalogType + "/node/alfresco/company/home?max=" + this.options.maxItems;
+    	  }         
       },
 
       /**

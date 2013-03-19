@@ -29,7 +29,8 @@ var Filters =
    IGNORED_ASPECTS:
    [
       "bcpg:compositeVersion", //beCPG
-      "bcpg:hiddenFolder"
+      "bcpg:hiddenFolder",
+      "bcpg:entityTplAspect"
    ],
 
 

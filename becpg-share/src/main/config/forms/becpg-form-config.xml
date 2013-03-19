@@ -88,9 +88,10 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
-					<show id="bcpg:useByDate" force="true" />
+					<show id="bcpg:useByDate" force="true" />					
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -229,6 +230,14 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:entityTplRef" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="style">width:200px</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -241,7 +250,7 @@
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
-					<field id="bcpg:useByDate" set="formulation" />
+					<field id="bcpg:useByDate" set="formulation" />					
 
 					<!-- profitability -->
 					<field id="bcpg:unitPrice" set="profitability" />
@@ -392,9 +401,10 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productSpecification" />
 					<show id="bcpg:productMicrobioCriteria" />
-					<show id="bcpg:useByDate" force="true" />
+					<show id="bcpg:useByDate" force="true" />					
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -462,6 +472,14 @@
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:entityTplRef" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="style">width:200px</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productSpecification" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -474,8 +492,8 @@
 							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
-					<field id="bcpg:useByDate" set="formulation" />
-
+					<field id="bcpg:useByDate" set="formulation" />					
+					
 					<!-- profitability -->
 					<field id="bcpg:unitPrice" set="profitability" />
 					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />

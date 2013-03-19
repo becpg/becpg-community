@@ -229,6 +229,7 @@
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
 					MAX(IF(prop.prop_name = "pjt:projectState",prop.string_value,NULL)) as projectState,
+					MAX(IF(prop.prop_name = "pjt:projectStartDate",prop.date_value,NULL)) as projectStart,
 					MAX(IF(prop.prop_name = "pjt:projectDueDate",prop.date_value,NULL)) as projectDueDate,
 					MAX(IF(prop.prop_name = "pjt:projectCompletionDate",prop.date_value,NULL)) as completionDate,
 					MAX(IF(prop.prop_name = "pjt:projectPriority",prop.long_value,NULL)) as projectPriority, 
@@ -325,8 +326,9 @@
 		
 	   <DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
-		<DimensionUsage name="Date due" caption="Date due" source="Time dimension" foreignKey="projectDueDate" />
-		<DimensionUsage name="Date de fin" caption="Date de fin" source="Time dimension" foreignKey="completionDate" />
+		<DimensionUsage name="Date de d&#233;but" caption="Date de d&#233;but" source="Time dimension" foreignKey="projectStartDate" />
+		<DimensionUsage name="Date d&#39;&#233;ch&#233;ance" caption="Date d&#39;&#233;ch&#233;ance" source="Time dimension" foreignKey="projectDueDate" />
+		<DimensionUsage name="Date d&#39;ach&#232;vement" caption="Date d&#39;ach&#232;vement" source="Time dimension" foreignKey="completionDate" />
 		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
 		<Measure name="Avancement" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="Note" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />

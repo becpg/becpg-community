@@ -336,6 +336,35 @@
             <!-- cm:workingcopy aspect -->
             <evaluator>evaluator.doclib.action.hasWorkingCopy</evaluator>
          </action>
+         
+         <!-- Manage permissions (site roles) -->
+		   <action id="entity-manage-site-permissions" type="javascript" icon="document-manage-permissions" label="actions.document.manage-permissions">
+		      <param name="function">onActionManagePermissions</param>
+		      <permissions>
+		         <permission allow="true">ChangePermissions</permission>
+		      </permissions>
+		      <evaluator>evaluator.doclib.action.siteBased</evaluator>
+		      <evaluator negate="true">evaluator.becpg.doclib.action.project</evaluator>
+		   </action>
+		
+		   <!-- Manage permissions (repository roles) -->
+		   <action id="entity-manage-repo-permissions" type="pagelink" icon="document-manage-permissions" label="actions.document.manage-permissions">
+		      <param name="page">manage-permissions?nodeRef={node.nodeRef}</param>
+		      <permissions>
+		         <permission allow="true">ChangePermissions</permission>
+		      </permissions>
+		      <evaluator negate="true">evaluator.doclib.action.siteBased</evaluator>
+		      <evaluator negate="true">evaluator.becpg.doclib.action.project</evaluator>
+		   </action>
+		   
+		   <!-- Manage permissions (projects) -->
+		   <action id="project-manage-permissions" type="pagelink" icon="document-manage-permissions" label="actions.document.manage-permissions">
+		      <param name="page">manage-permissions?nodeRef={node.nodeRef}</param>
+		      <permissions>
+		         <permission allow="true">ChangePermissions</permission>
+		      </permissions>
+		      <evaluator>evaluator.becpg.doclib.action.project</evaluator>
+		   </action>
 
 		</actions>
 
@@ -364,8 +393,9 @@
             <action index="160" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
             <action index="170" id="folder-manage-rules" />
             <action index="180" id="document-delete" icon="folder-delete" label="actions.entity.delete" />
-            <action index="190" id="document-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-            <action index="200" id="document-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="190" id="entity-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="200" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="201" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
             <action index="210" id="document-manage-aspects" label="actions.folder.manage-aspects" />
             <action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
             <action index="360" id="document-cloud-sync" />
@@ -388,8 +418,9 @@
             <action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
             <action index="150" id="folder-manage-rules" />
             <action index="160" id="document-delete" icon="folder-delete" label="actions.entity.delete" />
-            <action index="170" id="document-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-            <action index="180" id="document-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="170" id="entity-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="180" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+            <action index="181" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
             <action index="190" id="document-manage-aspects" label="actions.folder.manage-aspects" />
             <action index="200" id="document-change-type" label="actions.folder.change-type" />
             <action index="210" id="view-in-explorer" />
