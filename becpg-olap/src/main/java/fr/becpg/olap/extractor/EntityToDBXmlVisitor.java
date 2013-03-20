@@ -185,8 +185,11 @@ public class EntityToDBXmlVisitor {
 		// TODO look if already exist aka same nodeRef same date modification or
 		// creation
 
-		Long columnId = jdbcConnectionManager.update("insert into `becpg_datalist` " + "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`) "
-				+ " values (?,?,?,?,?,?)", new Object[] { dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId() });
+
+		jdbcConnectionManager.update("update  `becpg_datalist` set is_last_version = ? where  datalist_id = ?", new Object[]{false, dataListItemNodeRef});
+		
+		Long columnId = jdbcConnectionManager.update("insert into `becpg_datalist` " + "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`,`is_last_version`) "
+				+ " values (?,?,?,?,?,?,?)", new Object[] { dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId() ,true});
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
@@ -223,9 +226,12 @@ public class EntityToDBXmlVisitor {
 
 		// TODO look if already exist aka same nodeRef same date modification or
 		// creation
+		
+		jdbcConnectionManager.update("update  `becpg_entity` set is_last_version = ? where  entity_id = ?", new Object[]{false, nodeRef});
 
-		Long columnId = jdbcConnectionManager.update("insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`) " + " values (?,?,?,?,?)",
-				new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId() });
+		Long columnId = jdbcConnectionManager.update("insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) " 
+				+ " values (?,?,?,?,?,?)",
+				new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId(),true });
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());

@@ -66,8 +66,8 @@
     <category name="fr.becpg">
      <priority value="DEBUG"/>
    </category>
-   
-  <!--  <category name="mondrian.sql">
+   <!-- 
+	 <category name="mondrian.sql">
       <priority value="DEBUG"/>
    </category>
    
