@@ -37,6 +37,7 @@
        <includes>
        	<include>fr.becpg:becpg-olap</include>
        	<include>org.apache.httpcomponents:httpclient</include>
+       	<include>org.apache.httpcomponents:httpmime</include>
        	<include>commons-codec:commons-codec</include>
        	<include>org.apache.httpcomponents:httpcore</include>
        </includes>
