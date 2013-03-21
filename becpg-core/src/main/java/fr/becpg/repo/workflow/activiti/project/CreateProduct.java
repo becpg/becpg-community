@@ -172,9 +172,9 @@ public class CreateProduct extends BaseJavaDelegate {
 					nodeService.createAssociation(projectNodeRef, productNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
 					
 					NodeRef projectTask = ((ActivitiScriptNode) task.getVariable("pjt_workflowTask")).getNodeRef();
-					nodeService.setProperty(projectTask, ProjectModel.PROP_TL_STATE, "Completed");
-					
-					
+					if(nodeService.exists(projectTask)){
+						nodeService.setProperty(projectTask, ProjectModel.PROP_TL_STATE, "Completed");
+					}
 					
 				} catch (Exception e) {
 					logger.error("Failed to create product", e);

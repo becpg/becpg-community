@@ -234,7 +234,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
 				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
-				assertEquals("Check version", "1.0", getVersionLabel(newRawMaterial));
+				logger.info("###getVersionLabel(newRawMaterial): " + getVersionLabel(newRawMaterial));
+				assertEquals("Check version", "2.0", getVersionLabel(newRawMaterial));
 				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 				
 				// checkVersion
@@ -257,7 +258,9 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
 
 					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
-					assertEquals("Check cost value", costListDataItem.getValue() + valueAdded, vCostListDataItem.getValue());
+					logger.info("###vCostListDataItem.getValue(): " + vCostListDataItem.getValue());
+					logger.info("###costListDataItem.getValue() + valueAdded: " + costListDataItem.getValue());
+					assertEquals("Check cost value", (costListDataItem.getValue() + valueAdded), vCostListDataItem.getValue());
 					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
 				}
 
@@ -279,7 +282,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
-				assertEquals("Check version", "2.0",  getVersionLabel(newRawMaterial));
+				assertEquals("Check version", "3.0",  getVersionLabel(newRawMaterial));
 
 				// Check cost Unit has changed after transaction
 				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {

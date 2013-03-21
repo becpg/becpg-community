@@ -1,4 +1,4 @@
-package fr.becpg.repo.migration;
+package fr.becpg.repo.migration.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;

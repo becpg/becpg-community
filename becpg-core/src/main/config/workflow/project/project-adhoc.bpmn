@@ -13,8 +13,11 @@
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>var projectTask = pjt_workflowTask;
-projectTask.properties['pjt:tlState'] = 'Completed';
-projectTask.save();</activiti:string>
+            if(projectTask.exists()){
+            	projectTask.properties['pjt:tlState'] = 'Completed';
+					projectTask.save();
+            }
+				</activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>

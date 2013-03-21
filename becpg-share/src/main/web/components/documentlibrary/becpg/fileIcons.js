@@ -82,7 +82,9 @@ if (!beCPG.util.getFileIcon) {
 	   "{http://www.bcpg.fr/model/publication/1.0}productCatalog" : "productCatalog",
 	   "bp:productCatalog" : "productCatalog",
 	   "{http://www.bcpg.fr/model/project/1.0}project" : "project",
-	   "pjt:project" : "project"
+	   "pjt:project" : "project",
+	   "{http://www.bcpg.fr/model/becpg/1.0}project" : "productSpecification",
+	   "bcpg:productSpecification" : "productSpecification"
 	};
 
 	Alfresco.util.getFileIcon.folders = {

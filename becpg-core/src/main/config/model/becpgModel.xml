@@ -1456,7 +1456,6 @@
 			<parent>cm:folder</parent>			
 			<mandatory-aspects>
 				<aspect>bcpg:effectivityAspect</aspect>
-				<aspect>bcpg:entityVersionable</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -1548,6 +1547,18 @@
 				</property>
 			</properties>
 			<associations>
+				<!-- @Deprecated -->
+				<association name="bcpg:productSpecification">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productSpecification</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 				<association name="bcpg:productSpecifications">
 					<source>
 						<mandatory>false</mandatory>
@@ -1843,14 +1854,10 @@
 		</aspect>
 
 		<!-- versionable with datalists -->
+		<!-- @Deprecated -->
 		<aspect name="bcpg:compositeVersionable">
 			<title>Versionable with datalists</title>
-			<properties>
-				<property name="bcpg:versionLabel">
-					<title>Version Label</title>
-					<type>d:text</type>
-					<protected>true</protected>
-				</property>
+			<properties>				
 				<property name="bcpg:initialVersion">
 					<title>Initial Version</title>
 					<type>d:boolean</type>
@@ -1864,6 +1871,11 @@
 			<title>Versionable with datalists</title>
 			<properties>
 				<property name="bcpg:versionDescription">
+					<title>Version Label</title>
+					<type>d:text</type>
+					<protected>true</protected>
+				</property>
+				<property name="bcpg:versionLabel">
 					<title>Version Label</title>
 					<type>d:text</type>
 					<protected>true</protected>
@@ -2009,14 +2021,16 @@
 		</aspect>
 		
 		<!-- ALF-8143 -->
+		<!-- @Deprecated -->
 		<aspect name="bcpg:entityVersionable">
 			<title>Entity Versionable</title>
-			<parent>cm:versionable</parent>
+			<!-- comment parent, otherwise when cm:versionable is removed when we remove bcpg:entityVersionable -->
+<!-- 			<parent>cm:versionable</parent>
 			<overrides>
 				<property name="cm:autoVersion">
 					<default>false</default>
 				</property>
-			</overrides>
+			</overrides>-->
 		</aspect>
 
 	</aspects>

@@ -84,4 +84,18 @@ public interface EntityService {
 	 void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef); 
     
 	 void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef);
+	 
+	 /**
+	 * delete files
+	 * @param nodeRef
+	 * @param deleteArchivedNode (delete from trash)
+	 */
+	 void deleteFiles(NodeRef entityNodeRef, boolean deleteArchivedNodes);
+	 
+	 /**
+	 * delete dataLists
+	 * @param nodeRef
+	 * @param deleteArchivedNode (delete from trash)
+	 */
+	 void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes);
 }

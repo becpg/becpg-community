@@ -457,5 +457,37 @@ public class EntityServiceImpl implements EntityService {
 			}
 		}		
 	}
+	
+	@Override
+	public void deleteFiles(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
+		
+		if(entityNodeRef != null){			
+			for (FileInfo file : fileFolderService.list(entityNodeRef)) {
+				
+				logger.debug("delete file: " + file.getName() + " entityFolderNodeRef: " + entityNodeRef);				
+				deleteNode(file.getNodeRef(), deleteArchivedNodes);
+			}
+		}		
+	}
+	
+	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode){
+		
+		nodeService.deleteNode(nodeRef);
+		
+		// delete from trash
+		if(deleteArchivedNode){
+			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, nodeRef.getId());
+			nodeService.deleteNode(archivedNodeRef);
+		}		
+	}
+
+	@Override
+	public void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
+		
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if(listContainerNodeRef != null){
+			deleteNode(listContainerNodeRef, deleteArchivedNodes);						
+		}		
+	}
 
 }

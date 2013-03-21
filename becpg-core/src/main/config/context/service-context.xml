@@ -190,7 +190,7 @@
 		</property>
 	</bean>
 
-	<bean id="beCPGSystemFolderMigrator" class="fr.becpg.repo.migration.BeCPGSystemFolderMigrator">
+	<bean id="beCPGSystemFolderMigrator" class="fr.becpg.repo.migration.impl.BeCPGSystemFolderMigrator">
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entitySystemService" ref="entitySystemService" />
@@ -205,10 +205,10 @@
 			<ref bean="mtAwareNodeService" />
 		</property>
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="hierarchyService" ref="hierarchyService" />
+		<property name="hierarchyService" ref="hierarchyService" />		
 	</bean>
 	
-	<bean id="entityFolderMigrator" class="fr.becpg.repo.migration.EntityFolderMigrator">
+	<bean id="entityFolderMigrator" class="fr.becpg.repo.migration.impl.EntityFolderMigrator">
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="nodeService" ref="nodeService" />		
@@ -217,6 +217,15 @@
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="entityService" ref="entityService" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="versionService" ref="versionService" />
+	</bean>
+	
+	<bean id="migrationService" class="fr.becpg.repo.migration.impl.MigrationServiceImpl">
+		<property name="nodeService" ref="nodeService" />		
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="tenantAdminService" ref="tenantAdminService"/>
+		<property name="transactionService" ref="transactionService" />
+		<property name="dictionaryService" ref="dictionaryService" />		
 	</bean>
 
 	<!-- CompareEntityService -->
