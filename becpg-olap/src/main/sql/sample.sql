@@ -20,3 +20,13 @@ INSERT INTO `becpg_instance` (`tenant_username`,`tenant_password`,`tenant_name`,
 -- NON EMPTY {Hierarchize({{[Désignation.Projet par famille].[Famille].Members}, {[Désignation.Projet par famille].[Nom projet].Members}})} ON ROWS
 -- FROM [Projets] WHERE {Hierarchize({[État].[En cours]})}
 
+
+					
+					
+					
+					
+					
+					
+					
+					
+					
