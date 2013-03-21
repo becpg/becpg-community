@@ -54,6 +54,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	/** The Constant VERSION_NAME_DELIMITER. */
 	private static final String VERSION_NAME_DELIMITER = " v";
+	private static final String INITIAL_VERSION = "1.0";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
@@ -118,9 +119,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String,Serializable> versionProperties) {
 
 
-		logger.debug("createEntityVersion: " + origNodeRef);
+		logger.debug("createEntityVersion: " + origNodeRef + " versionProperties: " + versionProperties);
 
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
+		boolean isInitialVersion = versionHistoryRef == null ? true : false;
 		if(versionHistoryRef ==null){
 			versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
 		}
@@ -129,40 +131,41 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		// Rights are checked by copyService during recursiveCopy
 		versionNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
-				@Override
+			@Override
 			public NodeRef doWork() throws Exception {
-			    // Non recursive copy
-				NodeRef nodeRef =  copyService.copy(origNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN,false);
-				
-				if(workingCopyNodeRef != null){
-					//Move origNodeRef DataList to version
-					entityListDAO.moveDataLists(origNodeRef, nodeRef);
-					//Move workingCopyNodeRef DataList to origNodeRef
+
+				// version is a copy of working copy or orig for 1st version
+				NodeRef nodeToVersionNodeRef = workingCopyNodeRef != null ? workingCopyNodeRef : origNodeRef;
+
+				// Non recursive copy
+				NodeRef nodeRef = copyService.copy(nodeToVersionNodeRef, finalVersionHistoryRef,
+						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, false);
+
+				entityListDAO.copyDataLists(nodeToVersionNodeRef, nodeRef, false);
+				entityService.copyFiles(nodeToVersionNodeRef, nodeRef);
+
+				if (workingCopyNodeRef != null) {
+					// Move workingCopyNodeRef DataList to origNodeRef
+					entityService.deleteDataLists(origNodeRef, true);
 					entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
-					//Move files to version
-					entityService.moveFiles(origNodeRef, nodeRef);
-					//Move files to origNodeRef
+					// Move files to origNodeRef
+					entityService.deleteFiles(origNodeRef, true);
 					entityService.moveFiles(workingCopyNodeRef, origNodeRef);
 				}
-				else{
-					entityListDAO.copyDataLists(origNodeRef, nodeRef, false);
-					entityService.copyFiles(origNodeRef, nodeRef);
-				}
-				
+
 				return nodeRef;
 
 			}
-		 }, AuthenticationUtil.getSystemUserName());
+		}, AuthenticationUtil.getSystemUserName());
 
 		//Map<QName, Serializable> versionProperties = nodeService.getProperties(versionNodeRef);
-		String versionLabel = getVersionLabel(origNodeRef, versionProperties);
+		String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion);
 
 		String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER
 				+ versionLabel;
-		Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);
+		Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);		
 		aspectProperties.put(ContentModel.PROP_NAME, name);
-		aspectProperties.put(ContentModel.PROP_VERSION_LABEL, versionLabel);
+		aspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, versionLabel);
 		nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
 
 		updateVersionEffectivity(origNodeRef, versionNodeRef);
@@ -293,7 +296,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public void deleteVersionHistory(NodeRef entityNodeRef) {
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
 		if (versionHistoryRef != null) {
+			logger.debug("delete versionHistoryRef " + versionHistoryRef);
 			nodeService.deleteNode(versionHistoryRef);
+			
+			// delete from trash
+			NodeRef archiveVersionHistoryNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, versionHistoryRef.getId());
+			logger.debug("delete archiveVersionHistoryNodeRef " + archiveVersionHistoryNodeRef);
+			nodeService.deleteNode(archiveVersionHistoryNodeRef);			
 		}
 	}
 
@@ -313,7 +322,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
 
 			NodeRef versionNodeRef = versionAssoc.getChildRef();
-			String entityVersionLabel = (String)nodeService.getProperty(versionNodeRef, ContentModel.PROP_VERSION_LABEL);
+			String entityVersionLabel = (String)nodeService.getProperty(versionNodeRef, BeCPGModel.PROP_VERSION_LABEL);
 			logger.debug("versionLabel: " + version.getVersionLabel() + " - entityVersionLabel: " + entityVersionLabel);
 			
 			if (version.getVersionLabel().equals(entityVersionLabel)) {
@@ -345,16 +354,22 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return entityVersions;
 	}
 	
-	private String getVersionLabel(NodeRef origNodeRef, Map<String,Serializable> versionProperties){
+	private String getVersionLabel(NodeRef origNodeRef, Map<String,Serializable> versionProperties, boolean isInitialVersion){
     	
     	QName classRef = nodeService.getType(origNodeRef);
     	Version preceedingVersion = versionService.getCurrentVersion(origNodeRef);
     	
-    	// Default the version label to the SerialVersionLabelPolicy
-        SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
-        String versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
+    	String versionLabel = INITIAL_VERSION;
+    	if(!isInitialVersion){
+    		// Default the version label to the SerialVersionLabelPolicy
+            SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
+            versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
+    	}    	   
         
-        logger.debug("versionLabel: " + versionLabel);        
+    	if(logger.isDebugEnabled()){
+    		logger.debug("new versionLabel: " + versionLabel + " - preceedingVersion: " + preceedingVersion);
+    	}
+                
         return versionLabel;        
     }
 }

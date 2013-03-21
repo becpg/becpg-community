@@ -34,7 +34,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -269,6 +268,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
 
+		logger.debug("OnDeleteNode cm:versionable " + childAssocRef.getChildRef() + " isNodeArchived: " + isNodeArchived);
+		
 		if (isNodeArchived == false) {
 			// If we are perminantly deleting the node then we need to remove
 			// the associated version history
@@ -289,7 +290,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		
 		if (nodeService.exists(nodeRef) == true &&
 				nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) &&
-				nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) == false) {
+				!isBeCPGVersion(nodeRef)) {
 						
 			// Create the initial-version
             Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);

@@ -165,6 +165,8 @@
 		<property name="productService" ref="productService"/>		
 		<property name="repository" ref="repositoryHelper"/>
 		<property name="tenantAdminService" ref="tenantAdminService"/>
+		<property name="namespaceService" ref="NamespaceService" />
+		<property name="migrationService" ref="migrationService" />
 	</bean>
 
 

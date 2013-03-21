@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.web.scripts.migration;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +19,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyCheck;
 import org.apache.commons.logging.Log;
@@ -29,11 +29,11 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
-import fr.becpg.repo.migration.BeCPGSystemFolderMigrator;
-import fr.becpg.repo.migration.EntityFolderMigrator;
+import fr.becpg.repo.migration.MigrationService;
+import fr.becpg.repo.migration.impl.BeCPGSystemFolderMigrator;
+import fr.becpg.repo.migration.impl.EntityFolderMigrator;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -42,21 +42,34 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
-public class MigrateRepositoryWebScript extends AbstractWebScript {
+public class MigrateRepositoryWebScript extends AbstractWebScript {	
+	
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_NODEREF = "nodeRef";
 	private static final String PARAM_OLD_USERNAME = "oldUserName";
-	private static final String PARAM_NEW_USERNAME = "newUserName";
-	private static final String PARAM_PAGINATION = "pagination";
+	private static final String PARAM_NEW_USERNAME = "newUserName";	
 
 	private static final String ACTION_MIGRATE_SYSTEM_FOLDER = "systemFolder";
 	private static final String ACTION_MIGRATE_FIX_PRODUCT_HIERARCHY = "fixProductHierarchy";
-	private static final String ACTION_MIGRATE_PROPERTY = "property";
 	private static final String ACTION_MIGRATE_VERSION = "version";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	private static final String ACTION_RENAME_USER = "renameUser";
 	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";
 	private static final String ACTION_MIGRATE_CLASSIFY_PRODUCT = "classifyProduct";
+	
+	private static final String ACTION_REMOVE_ASPECT = "removeAspect";
+	private static final String ACTION_ADD_MANDATORY_ASPECT = "addMandatoryAspect";
+	private static final String PARAM_TYPE = "type";
+	private static final String PARAM_ASPECT = "aspect";
+	
+	private static final String ACTION_MIGRATE_ASSOC = "migrateAssociation";
+	private static final String PARAM_CLASS_QNAME = "classQName";
+	private static final String PARAM_SOURCE_ASSOC = "sourceAssoc";
+	private static final String PARAM_TARGET_ASSOC = "targetAssoc";
+	
+	private static final String ACTION_MIGRATE_PROP = "migrateProperty";
+	private static final String PARAM_SOURCE_PROP = "sourceProp";
+	private static final String PARAM_TARGET_PROP = "targetProp";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
@@ -83,7 +96,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private Repository repository;
 
 	private TenantAdminService tenantAdminService;
-
+	
+	private NamespaceService namespaceService;	
+	
+	private MigrationService migrationService;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -128,6 +144,14 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+	public void setMigrationService(MigrationService migrationService) {
+		this.migrationService = migrationService;
+	}
 
 	public void doMigrateEntityFolderInMt() {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);
@@ -159,7 +183,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}, AuthenticationUtil.getSystemUserName());
 
 	}
-
+	
+	
+	
+	
+	
 	private void migrateEntityFolder() {
 		try {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -175,15 +203,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		logger.debug("start migration");
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 
-		String action = templateArgs.get(PARAM_ACTION);
-		String pagination = req.getParameter(PARAM_PAGINATION);
-		Integer iPagination = (pagination != null && !pagination.isEmpty()) ? Integer.parseInt(pagination) : null;
+		String action = templateArgs.get(PARAM_ACTION);		
 
-		if (ACTION_MIGRATE_PROPERTY.equals(action)) {
-			// migration ingMLName
-			QName ingMLNameQName = QName.createQName(BeCPGModel.BECPG_URI, "ingMLName");
-			migrateProperty(iPagination, " +TYPE:\"bcpg:ing\" ", ingMLNameQName, BeCPGModel.PROP_LEGAL_NAME, mlNodeService);
-		} else if (ACTION_MIGRATE_VERSION.equals(action)) {
+		if (ACTION_MIGRATE_VERSION.equals(action)) {
 
 			migrationVersion();
 		} else if (ACTION_DELETE_MODEL.equals(action)) {
@@ -214,40 +236,48 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			}
+		} else if(ACTION_ADD_MANDATORY_ASPECT.equals(action)){
+			String type = req.getParameter(PARAM_TYPE);
+			String aspect = req.getParameter(PARAM_ASPECT);
+			if(type != null && aspect != null){				
+				migrationService.addMandatoryAspectInMt(QName.createQName(type, namespaceService), QName.createQName(aspect, namespaceService));
+			}
+			else{
+				logger.error("Missing param for action " + action + " type " + type + " aspect " + aspect);
+			}
+		} else if(ACTION_REMOVE_ASPECT.equals(action)){
+			String type = req.getParameter(PARAM_TYPE);
+			String aspect = req.getParameter(PARAM_ASPECT);
+			if(type != null && aspect != null){				
+				migrationService.removeAspectInMt(QName.createQName(type, namespaceService), QName.createQName(aspect, namespaceService));				
+			}
+			else{
+				logger.error("Missing param for action " + action + " type " + type + " aspect " + aspect);
+			}
+		} else if(ACTION_MIGRATE_ASSOC.equals(action)){
+			String classQName = req.getParameter(PARAM_CLASS_QNAME);
+			String sourceAssoc = req.getParameter(PARAM_SOURCE_ASSOC);
+			String targetAssoc = req.getParameter(PARAM_TARGET_ASSOC);
+			if(classQName != null && sourceAssoc != null && targetAssoc != null){				
+				migrationService.migrateAssociationInMt(QName.createQName(classQName, namespaceService), QName.createQName(sourceAssoc, namespaceService), QName.createQName(targetAssoc, namespaceService));
+			}
+			else{
+				logger.error("Missing param for action " + action + " classQName " + classQName + " sourceAssoc " + sourceAssoc + " targetAssoc " + targetAssoc);
+			}
+		}  else if(ACTION_MIGRATE_PROP.equals(action)){
+			String classQName = req.getParameter(PARAM_CLASS_QNAME);
+			String sourceProp = req.getParameter(PARAM_SOURCE_PROP);
+			String targetProp = req.getParameter(PARAM_TARGET_PROP);
+			if(classQName != null && sourceProp != null && targetProp != null){				
+				migrationService.migratePropertyInMt(QName.createQName(classQName, namespaceService), QName.createQName(sourceProp, namespaceService), QName.createQName(targetProp, namespaceService));
+			}
+			else{
+				logger.error("Missing param for action " + action + " classQName " + classQName + " sourceProp " + sourceProp + " targetProp " + targetProp);
+			}
 		} else {
 			logger.error("Unknown action" + action);
 		}
 
-	}
-
-	private void migrateProperty(Integer iPagination, String query, QName oldProperty, QName newProperty, NodeService nodeService) {
-
-		logger.info("migrateProperty");
-
-		List<NodeRef> items = beCPGSearchService.luceneSearch(query);
-
-		logger.info("items to migrate: " + items.size());
-
-		int maxCnt = iPagination != null && iPagination < items.size() ? iPagination : items.size();
-		for (int cnt = 0; cnt < maxCnt; cnt++) {
-
-			NodeRef nodeRef = items.get(cnt);
-
-			policyBehaviourFilter.disableBehaviour(nodeRef);
-
-			try {
-
-				Serializable value = nodeService.getProperty(nodeRef, oldProperty);
-
-				if (value != null) {
-					logger.info("node: " + nodeRef + " - change property: " + oldProperty + " - value: " + value);
-					nodeService.setProperty(nodeRef, newProperty, value);
-					nodeService.removeProperty(nodeRef, oldProperty);
-				}
-			} finally {
-				policyBehaviourFilter.enableBehaviour(nodeRef);
-			}
-		}
 	}
 
 	private void migrationVersion() {

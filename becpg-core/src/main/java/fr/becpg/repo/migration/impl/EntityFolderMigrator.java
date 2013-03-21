@@ -1,9 +1,6 @@
-package fr.becpg.repo.migration;
+package fr.becpg.repo.migration.impl;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -17,6 +14,9 @@ import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.GUID;
@@ -55,6 +55,8 @@ public class EntityFolderMigrator {
 	private EntityService entityService;
 	
 	private EntityListDAO entityListDAO;
+	
+	private VersionService versionService;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -88,37 +90,20 @@ public class EntityFolderMigrator {
 		this.entityListDAO = entityListDAO;
 	}
 
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+
 	@SuppressWarnings("deprecation")
 	public void migrate() {
 		
-		// search for entity and entityFolder
-		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_FOLDER)) +
-						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_VERSIONABLE)) +
-						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_EFFECTIVITY));
+//		addMandatoryAspect(BeCPGModel.TYPE_ENTITY_V2, BeCPGModel.ASPECT_EFFECTIVITY);
+//		addMandatoryAspect(BeCPGModel.TYPE_PRODUCT, ReportModel.ASPECT_REPORT_ENTITY);
+//		migrationService.removeAspectInMt(BeCPGModel.TYPE_ENTITY_V2, BeCPGModel.ASPECT_COMPOSITE_VERSIONABLE);
+//		migrationService.removeAspectInMt(BeCPGModel.TYPE_ENTITY_V2, BeCPGModel.ASPECT_ENTITY_VERSIONABLE);
 		
-		List<NodeRef> entityFolderNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
-
-		logger.info("Found " + entityFolderNodeRefs.size() + " entity folders to migrate");
-		
-		if (!entityFolderNodeRefs.isEmpty()) {
-			
-			for (final List<NodeRef> batchList : Lists.partition(entityFolderNodeRefs, BATCH_SIZE)) {
-				transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-					public Boolean execute() throws Exception {
-
-						for(NodeRef entityFolderNodeRef : batchList){
-							if(nodeService.exists(entityFolderNodeRef)){
-								addEntityV2Aspects(entityFolderNodeRef);
-							}
-						}
-						return true;
-					}
-				}, false, true);
-			}
-		}
-				
 		// search for entity and entityTplAspect
-		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY)) + 
+		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY)) + 
 				LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL));
 		
 		List<NodeRef> entityTplNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
@@ -147,7 +132,6 @@ public class EntityFolderMigrator {
 								List<NodeRef> entityFolderTplNodeRefs = beCPGSearchService.luceneSearch(String.format(" +PATH:\"/app:company_home/cm:System/cm:FolderTemplates//*\" +TYPE:\"bcpg:entityFolder\" +@bcpg\\:entityTplClassName:\"%s\" +@bcpg\\:entityTplEnabled:true", type));
 								NodeRef entityFolderTplNodeRef = entityFolderTplNodeRefs!=null && !entityFolderTplNodeRefs.isEmpty() ? entityFolderTplNodeRefs.get(0) : null;
 								if(entityFolderTplNodeRef != null){
-									addEntityV2Aspects(entityFolderTplNodeRef);
 									entityService.moveFiles(entityFolderTplNodeRef, newEntityTplNodeRef);						
 									nodeService.deleteNode(entityFolderTplNodeRef);
 								}					
@@ -222,6 +206,56 @@ public class EntityFolderMigrator {
 			}
 		}
 		
+		// migrate cm:versionLabel to bcpg:versionLabel for compositeVersion 
+		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)) +
+				LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_VERSION_LABEL));
+				
+		List<NodeRef> compositeVersionToMigrate = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+
+		logger.info("Found " + compositeVersionToMigrate.size() + " composite version to migrate");
+		
+		if (!compositeVersionToMigrate.isEmpty()) {
+
+			for (final List<NodeRef> batchList : Lists.partition(compositeVersionToMigrate, BATCH_SIZE)) {
+				transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+					public Boolean execute() throws Exception {
+
+						for(NodeRef n : batchList){
+							if(nodeService.exists(n)){
+								
+								String versionLabel = (String)nodeService.getProperty(n, ContentModel.PROP_VERSION_LABEL);
+								logger.debug("entityVersion to migrate " + n + " versionLabel: " + versionLabel);
+								if(versionLabel == null || versionLabel.isEmpty()){
+									logger.warn("Failed to migrate versionLabel since cm:versionLabel is null or empty. nodeRef: " + n);
+								}
+								else{
+									
+									NodeRef entityVersionHistoryNodeRef = nodeService.getPrimaryParent(n).getParentRef();
+									NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, 
+															(String)nodeService.getProperty(entityVersionHistoryNodeRef, ContentModel.PROP_NAME));
+									
+									VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+									
+									if(versionHistory !=null && !versionHistory.getAllVersions().isEmpty()){
+										
+										nodeService.setProperty(n, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+										
+										Version version = versionHistory.getVersion(versionLabel);
+										if(version != null){
+											logger.debug("version.getFrozenStateNodeRef(): " + version.getFrozenStateNodeRef());
+											logger.debug("versionLabel on version is: " + nodeService.getProperty(version.getFrozenStateNodeRef(),  ContentModel.PROP_VERSION_LABEL));
+											nodeService.setProperty(n, ContentModel.PROP_VERSION_LABEL, nodeService.getProperty(version.getFrozenStateNodeRef(),  ContentModel.PROP_VERSION_LABEL));
+										}
+									}									
+								}																								
+							}							
+						}
+						return true;
+					}
+				}, false, true);
+			}
+		}		
+		
 	}
 
 	@SuppressWarnings("deprecation")
@@ -266,8 +300,6 @@ public class EntityFolderMigrator {
 
 						logger.info("migrate entity " + entityName + " - " + entityNodeRef);
 						
-						addEntityV2Aspects(entityFolderNodeRef);
-
 						try {
 
 							// rename entityFolder, move entity as sibling of
@@ -307,8 +339,6 @@ public class EntityFolderMigrator {
 						}
 					}
 
-					addEntityV2Aspects(entityNodeRef);					
-
 					// add aspect bcpg:entityTplRefAspect
 					if ((dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_PRODUCT) || dictionaryService.isSubClass(entityType, ProjectModel.TYPE_PROJECT))
 							&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
@@ -319,21 +349,5 @@ public class EntityFolderMigrator {
 
 		}
 		return true;
-	}
-	
-	private void addEntityV2Aspects(NodeRef entityV2NodeRef){
-		
-		/*
-		 * mandatory aspects on folder
-		 */
-		logger.debug("add mandatory aspects on folder " + entityV2NodeRef);
-		if (!nodeService.hasAspect(entityV2NodeRef, BeCPGModel.ASPECT_ENTITY_VERSIONABLE)) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_AUTO_VERSION, false);
-			nodeService.addAspect(entityV2NodeRef, BeCPGModel.ASPECT_ENTITY_VERSIONABLE, properties);
-		}						
-		if (!nodeService.hasAspect(entityV2NodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-			nodeService.addAspect(entityV2NodeRef, BeCPGModel.ASPECT_EFFECTIVITY, null);
-		}
 	}
 }

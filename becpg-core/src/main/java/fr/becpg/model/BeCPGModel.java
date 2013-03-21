@@ -469,6 +469,8 @@ public interface BeCPGModel {
 	QName ASPECT_TRANSFORMATION = QName.createQName(BECPG_URI, "transformationAspect");
 	QName PROP_PRODUCT_QTY = QName.createQName(BECPG_URI, "productQty");
 	QName PROP_PRODUCT_DENSITY = QName.createQName(BECPG_URI, "productDensity");
+	@Deprecated
+	QName ASSOC_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI, "productSpecification");
 	QName ASSOC_PRODUCT_SPECIFICATIONS = QName.createQName(BECPG_URI, "productSpecifications");
 	QName PROP_PRODUCT_COMMENTS = QName.createQName(BECPG_URI, "productComments");
 
@@ -504,10 +506,6 @@ public interface BeCPGModel {
 	@Deprecated
 	QName ASPECT_COMPOSITE_VERSIONABLE = QName.createQName(BECPG_URI, "compositeVersionable");
 
-	/** The Constant PROP_VERSION_LABEL. */
-	@Deprecated
-	QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
-
 	/** The Constant PROP_INITIAL_VERSION. */
 	@Deprecated
 	QName PROP_INITIAL_VERSION = QName.createQName(BECPG_URI, "initialVersion");
@@ -516,6 +514,9 @@ public interface BeCPGModel {
 	/** The Constant ASPECT_COMPOSITE_VERSION. */
 	QName ASPECT_COMPOSITE_VERSION = QName.createQName(BECPG_URI, "compositeVersion");
 
+	/** The Constant PROP_VERSION_LABEL. */
+	QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
+	
 	/** The Constant PROP_VERSION_DESCRIPTION. */
 	@Deprecated
 	QName PROP_VERSION_DESCRIPTION = QName.createQName(BECPG_URI, "versionDescription");
@@ -653,5 +654,6 @@ public interface BeCPGModel {
 	
 	QName PROP_COLOR = QName.createQName(BECPG_URI, "color");
 	
+	@Deprecated
 	QName ASPECT_ENTITY_VERSIONABLE = QName.createQName(BECPG_URI, "entityVersionable");
 }

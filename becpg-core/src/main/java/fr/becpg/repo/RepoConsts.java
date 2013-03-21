@@ -145,6 +145,7 @@ public class RepoConsts {
 	/*-- DataLists --*/
 	public static final String CONTAINER_DATALISTS = "DataLists";	
 	
+	public static final StoreRef ARCHIVE_STORE =  new StoreRef(StoreRef.PROTOCOL_ARCHIVE, "SpacesStore");
 	public static final StoreRef SPACES_STORE =  new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore");
 	public static final StoreRef VERSION_STORE =  new StoreRef(Version2Model.STORE_PROTOCOL, Version2Model.STORE_ID);
 	
