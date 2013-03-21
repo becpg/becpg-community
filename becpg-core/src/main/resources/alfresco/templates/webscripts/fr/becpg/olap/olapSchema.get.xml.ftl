@@ -12,10 +12,12 @@
 	</Dimension>
 	-->
 
+	
+
 	<Dimension type="TimeDimension"  name="Time dimension">
 		<Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date">
 			<Table name="becpg_dimdate" alias="olapDate" />
-			<Level name="Annee" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
+			<Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
 			<Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
 			<Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
@@ -54,7 +56,7 @@
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type IN ("qa:nc") and instance_id = ${instanceId}
+					entity.entity_type IN ("qa:nc") and instance_id = ${instanceId} and isLastVersion = true
 				group by 
 					id
 				]]>
@@ -152,7 +154,7 @@
 				from
 					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
 				where
-					datalist.datalist_name = "taskList" and datalist.item_type = "pjt:taskList" and is_last_version = true and instance_id = ${instanceId}
+					datalist.datalist_name = "taskList" and datalist.item_type = "pjt:taskList" and isLastVersion = true and instance_id = ${instanceId}
 				group by 
 					id
 				]]>
@@ -218,7 +220,7 @@
 		<Measure name="Moyenne des dur&#233;es" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 	</Cube>
 
-	<Cube name="Projets" cache="true" enabled="true" defaultMeasure="Nombre de projets">
+	<Cube name="Projets" cache="true" enabled="true" defaultMeasure="Nombre de projets (Distinct)">
 		<View alias="projet">
 			<SQL dialect="generic">
 			<![CDATA[
@@ -233,7 +235,7 @@
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
 					MAX(IF(prop.prop_name = "pjt:projectState",prop.string_value,NULL)) as projectState,
-					MAX(IF(prop.prop_name = "pjt:projectStartDate",prop.date_value,NULL)) as projectStart,
+					MAX(IF(prop.prop_name = "pjt:projectStartDate",prop.date_value,NULL)) as projectStartDate,
 					MAX(IF(prop.prop_name = "pjt:projectDueDate",prop.date_value,NULL)) as projectDueDate,
 					MAX(IF(prop.prop_name = "pjt:projectCompletionDate",prop.date_value,NULL)) as completionDate,
 					MAX(IF(prop.prop_name = "pjt:projectPriority",prop.long_value,NULL)) as projectPriority, 
@@ -264,13 +266,12 @@
 				<Level name="Nom projet" column="name"  type="String"    />
 				<Level name="Code projet" column="code"  type="String"    />
 			</Hierarchy>
-		</Dimension>
-		
-		<Dimension  name="Version active" >
-			<Hierarchy name="Version active" hasAll="true" allMemberCaption="Tous les projets">
-				<Level name="Dernière version" column="isLastVersion"  type="String"    />
+			<Hierarchy name="Projet par nom" hasAll="true" allMemberCaption="Tous les projets">
+				<Level name="Nom projet" column="name"  type="String"    />
+				<Level name="Code projet" column="code"  type="String"    />
 			</Hierarchy>
 		</Dimension>
+		
 		
 		<Dimension  name="Priorit&#233;">
 			<Hierarchy name="Priorit&#233;" hasAll="true" allMemberCaption="Toutes les priorit&#233;s">
@@ -335,15 +336,25 @@
 			</Hierarchy>
 		</Dimension>
 		
+		
+		<Dimension  name="Historique" >
+			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
+				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
+			</Hierarchy>
+		</Dimension>
+		
 	   <DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
 		<DimensionUsage name="Date de d&#233;but" caption="Date de d&#233;but" source="Time dimension" foreignKey="projectStartDate" />
 		<DimensionUsage name="Date d&#39;&#233;ch&#233;ance" caption="Date d&#39;&#233;ch&#233;ance" source="Time dimension" foreignKey="projectDueDate" />
 		<DimensionUsage name="Date d&#39;ach&#232;vement" caption="Date d&#39;ach&#232;vement" source="Time dimension" foreignKey="completionDate" />
-		<Measure name="Nombre de projets" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
-		<Measure name="Avancement" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
-		<Measure name="Note" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
-		<Measure name="Retard" column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
+		
+		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
+		<Measure name="Nombre de projets (Distinct)" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="Avancement (Moyen)" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Avancement (Max)" column="completionPercent" datatype="Numeric" aggregator="max" visible="true"  />
+		<Measure name="Note (Moyenne)" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Retard " column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 
 	<Cube name="Produits" cache="true" enabled="true" defaultMeasure="Nombre de produits">
@@ -600,6 +611,13 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
+		
+		<Dimension  name="Historique" >
+			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
+				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
+			</Hierarchy>
+		</Dimension>
+		
 		<DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
 		<DimensionUsage name="Debut d&#39;effectivit&#233;" caption="Debut d&#39;effectivit&#233;" source="Time dimension" foreignKey="startEffectivity" />
