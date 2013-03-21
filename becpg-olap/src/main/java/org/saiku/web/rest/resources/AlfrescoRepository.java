@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.HttpClient;
@@ -276,11 +277,22 @@ public class AlfrescoRepository {
 						if (nodeRef != null) {
 
 							try (InputStream in = uploadQueryCommand.runCommand(httpClient, nodeRef, content)) {
+								
+								if(log.isDebugEnabled()){
+									IOUtils.copy(in, System.out);
+								}
+								
 								return Response.ok().build();
 							}
 
 						} else {
-							try (InputStream in = uploadQueryCommand.runCommand(httpClient, queryList.getParentNodeRef(), file, content)) {
+							try (InputStream in = uploadQueryCommand.runCommand(httpClient, queryList.getParentNodeRef(), file.replace(".saiku", "")+".saiku", content)) {
+								
+								
+								if(log.isDebugEnabled()){
+									IOUtils.copy(in, System.out);
+								}
+								
 								return Response.ok().build();
 							}
 
