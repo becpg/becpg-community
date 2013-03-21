@@ -258,8 +258,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="permissionService" ref="permissionService" />		
+		<property name="fileFolderService" ref="fileFolderService" />		
 		<property name="copyService" ref="copyService" />
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService" />

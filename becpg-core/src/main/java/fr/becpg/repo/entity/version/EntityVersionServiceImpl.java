@@ -151,6 +151,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					// Move files to origNodeRef
 					entityService.deleteFiles(origNodeRef, true);
 					entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+					// delete files that are not moved (ie: Documents) otherwise checkin copy them and fails since they already exits
+					entityService.deleteFiles(workingCopyNodeRef, true);
 				}
 
 				return nodeRef;

@@ -14,8 +14,6 @@ import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -34,12 +32,10 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.event.CheckInEntityEvent;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -68,7 +64,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
     private PermissionService permissionService;
     private ApplicationContext applicationContext;
     private EntityVersionService entityVersionService;
-    private FileFolderService fileFolderService;
+    private EntityService entityService;
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
@@ -91,8 +87,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		this.entityVersionService = entityVersionService;
 	}
 
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
 
 	/**
@@ -135,7 +131,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 
 				NodeRef nodeRef = getCheckedOut(workingCopy);										
 				entityListDAO.copyDataLists(nodeRef, workingCopy, true);					
-				moveFiles(nodeRef, workingCopy);					
+				entityService.moveFiles(nodeRef, workingCopy);					
 				return null;
 
 			}
@@ -220,49 +216,12 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		public NodeRef doWork() throws Exception {
 		    
 			// move files
-			moveFiles(workingCopyNodeRef, origNodeRef);
+			entityService.moveFiles(workingCopyNodeRef, origNodeRef);
 			return null;
 
 		}
 	 }, AuthenticationUtil.getSystemUserName());
 		
-	}
-	
-	private void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
-		
-		if(targetNodeRef != null && sourceNodeRef != null){	
-
-			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
-				
-				if(file.getName().equals(TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS))){
-					
-					// create Documents folder if needed
-					String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
-					NodeRef documentsFolderNodeRef = nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
-					if(documentsFolderNodeRef == null){
-						documentsFolderNodeRef = fileFolderService.create(targetNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
-					}
-					
-					for (FileInfo file2 : fileFolderService.list(file.getNodeRef())){
-						
-						// move files that are not report
-						if(!ReportModel.TYPE_REPORT.equals(file2.getType())){
-							
-							NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, file2.getName());
-							if (documentNodeRef != null) {
-								nodeService.deleteNode(documentNodeRef);
-							}				
-							logger.debug("move file in Documents: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);
-							nodeService.moveNode(file2.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
-						}						
-					}
-				}	
-				else{
-					logger.debug("move file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);				
-					nodeService.moveNode(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
-				}
-			}
-		}		
 	}
 	
 	@Override
