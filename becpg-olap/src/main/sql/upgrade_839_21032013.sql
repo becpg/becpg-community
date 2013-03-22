@@ -15,4 +15,3 @@ UPDATE becpg_datalist SET is_last_version = TRUE WHERE
  		SELECT MAX(datalist.id) as id  FROM  (SELECT * FROM becpg_datalist) AS datalist GROUP BY datalist.datalist_id
 );
 			
-		
