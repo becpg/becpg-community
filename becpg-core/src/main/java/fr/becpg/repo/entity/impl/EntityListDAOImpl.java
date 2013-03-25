@@ -17,6 +17,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -321,8 +322,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Override
 	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName) {
-				
-		return beCPGSearchService.luceneSearch(String.format(QUERY_LIST_ITEM, listNodeRef, listQName), LuceneHelper.getSort(BeCPGModel.PROP_SORT), RepoConsts.MAX_RESULTS_256);
+		return beCPGSearchService.search(String.format(QUERY_LIST_ITEM, listNodeRef, listQName), LuceneHelper.getSort(BeCPGModel.PROP_SORT), RepoConsts.MAX_RESULTS_256, SearchService.LANGUAGE_LUCENE, listNodeRef.getStoreRef());
 	}
 
 	@Override

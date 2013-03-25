@@ -89,6 +89,21 @@ public class ProjectHelper {
 		return deliverableList;
 	}
 
+	public static boolean areTasksDone(ProjectData projectData) {
+
+		if (projectData.getTaskList() != null && !projectData.getTaskList().isEmpty()) {
+			for(TaskListDataItem t : projectData.getTaskList()){
+				if(!TaskState.Completed.equals(t.getState())){
+					return false;
+				}
+			}
+		}
+		else{
+			return false;
+		}
+		return true;
+	}
+	
 	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
 
 		// no task : they are not done
@@ -146,7 +161,7 @@ public class ProjectHelper {
 
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " start: " + startDate);
-		if (TaskState.Planned.equals(t.getState()) && !TaskManualDate.Start.equals(t.getManualDate())) {			
+		if ((t.getStart() == null || TaskState.Planned.equals(t.getState())) && !TaskManualDate.Start.equals(t.getManualDate())) {			
 			t.setStart(removeTime(startDate));
 		}
 	}
@@ -261,7 +276,6 @@ public class ProjectHelper {
 		
 		if(TaskState.InProgress.equals(task.getState())){
 			endDate = ProjectHelper.removeTime(new Date());
-			logger.info("###task in progress: " + task.getTaskName() + " - " + endDate + " - " + task.getEnd());
 			
 			// we wait the overdue of the task to take it in account
 			if(endDate.before(task.getEnd())){
@@ -278,7 +292,6 @@ public class ProjectHelper {
 		Integer realDuration = calculateTaskDuration(task.getStart(), endDate);
 		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
 		if(realDuration != null &&  plannedDuration != null){
-			logger.info("###calcalate overdue : " + task.getTaskName() + " - " + (realDuration - plannedDuration));
 			return realDuration - plannedDuration;
 		}
 		return null;

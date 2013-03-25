@@ -1,6 +1,23 @@
 <alfresco-config>
 
-
+	<!-- cm:folder type (creating nodes) for entity -->
+   <config evaluator="model-type" condition="cm:folder">
+      <forms>
+         <!-- Document Library Common form -->
+         <form>
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+            </field-visibility>
+            <appearance>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+            </appearance>
+         </form>
+      </forms>
+   </config>
 
 
 	<!--___________________________________________________ PRODUITS __________________________________________________ -->
@@ -51,9 +68,7 @@
 			</form>
 		</forms>
 	</config>
-
-
-
+	
 	<!-- bcpg:finishedProduct type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:finishedProduct">
 		<forms>
@@ -76,6 +91,7 @@
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:clients" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
 					<show id="rep:reportTpls" />
 					
 					<!-- Product Catalog -->
@@ -87,8 +103,7 @@
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:productDensity" />					
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:productMicrobioCriteria" />
 					<show id="bcpg:useByDate" force="true" />					
@@ -219,6 +234,13 @@
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:trademark" set="mainInfo" />
 					<field id="bcpg:clients" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 					
 					<!-- Product Catalog -->
@@ -229,15 +251,7 @@
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
-					<field id="bcpg:productDensity" set="formulation" />
-					<field id="bcpg:entityTplRef" set="formulation" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-							<control-param name="style">width:200px</control-param>
-						</control>
-					</field>
+					<field id="bcpg:productDensity" set="formulation" />					
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -395,13 +409,13 @@
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:clients" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 
 					<!-- formulation -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:productQty" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:productDensity" />					
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:productMicrobioCriteria" />
 					<show id="bcpg:useByDate" force="true" />					
@@ -466,20 +480,19 @@
 					<field id="bcpg:plants" force="true" set="mainInfo" />
 					<field id="bcpg:trademark" force="true" set="mainInfo" />
 					<field id="bcpg:clients" force="true" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation" />
-					<field id="bcpg:productDensity" set="formulation" />
-					<field id="bcpg:entityTplRef" set="formulation" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-							<control-param name="style">width:200px</control-param>
-						</control>
-					</field>
+					<field id="bcpg:productDensity" set="formulation" />					
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -755,6 +768,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view"  />
 					<show id="rep:reportTpls" />
 					
 					<!-- pallet -->
@@ -818,6 +832,13 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>					
 					<field id="rep:reportTpls" set="mainInfo" />
 					
 					<!-- pallet -->
@@ -914,6 +935,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 
 					<!-- tags and categories -->
@@ -960,6 +982,14 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="style">width:200px</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- categories -->
@@ -1003,6 +1033,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view"  />
 					<show id="rep:reportTpls" />
 					
 					<!-- tare -->
@@ -1063,6 +1094,13 @@
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" force="true" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 					
 					
@@ -1157,6 +1195,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 
 					<!-- tags and categories -->
@@ -1203,6 +1242,13 @@
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" force="true" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- categories -->
@@ -1248,6 +1294,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view"  />
 					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
@@ -1303,6 +1350,13 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:productDensity" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
@@ -1400,6 +1454,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
@@ -1447,6 +1502,13 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:productDensity" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
 						<control
@@ -1493,6 +1555,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view"  />
 					<show id="rep:reportTpls" />
 
 					<!-- formulation -->
@@ -1553,6 +1616,13 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- formulation -->
@@ -1656,6 +1726,7 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 
 					<!-- formulation -->
@@ -1709,6 +1780,13 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- formulation -->
@@ -2145,6 +2223,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+					<show id="cm:name" />
 					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
 				</field-visibility>
@@ -2217,6 +2296,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+					<show id="cm:name" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 				</field-visibility>
@@ -2290,6 +2370,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+					<show id="cm:name" />
 					<show id="bcpg:ingType" />
 				</field-visibility>
 			</form>
@@ -3306,7 +3387,7 @@
 				<appearance>
 					<field id="bcpg:packagingListProduct">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">ingList
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>

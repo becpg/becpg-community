@@ -34,8 +34,9 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final int COMPLETED = 100;
-	private static final String WORKFLOW_DESCRIPTION = "%s : ";
-	private static final String DESCRIPTION_SEPARATOR = ", ";
+	private static final String WORKFLOW_DESCRIPTION = "%s - %s";
+	private static final String DESCRIPTION__TASK_DL_SEPARATOR = " : ";
+	private static final String DESCRIPTION_DL_SEPARATOR = ", ";
 
 	private static Log logger = LogFactory.getLog(TaskStateFormulationHandler.class);
 
@@ -52,7 +53,17 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		visitTask(projectData, null);		
+		visitTask(projectData, null);
+				
+		// is project completed ?
+		if(ProjectHelper.areTasksDone(projectData)){
+			projectData.setCompletionDate(new Date());
+			projectData.setCompletionPercent(COMPLETED);
+			projectData.setProjectState(ProjectState.Completed);
+		}
+		
+		projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
+		
 		calculateProjectLegends(projectData);		
 		return true;
 	}
@@ -68,47 +79,23 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		logger.debug("nextTasks size: " + nextTasks.size());
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
+				
+				// is project started by task ?
+				if(ProjectState.Planned.equals(projectData.getProjectState()) && TaskState.InProgress.equals(nextTask.getState())){
+					projectData.setProjectState(ProjectState.InProgress);
+				}
 
 				// should we continue ?
 				// - we are on first task and Project is in progress
 				// - previous task are done
 				if ((ProjectState.InProgress.equals(projectData.getProjectState()) && nextTask.getPrevTasks().isEmpty())
 						|| ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
-
+					
 					// start task
 					if (TaskState.Planned.equals(nextTask.getState())) {
 						ProjectHelper.setTaskStartDate(nextTask, new Date());
 						nextTask.setState(TaskState.InProgress);
 
-						// deliverable list
-						String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName());
-						boolean isFirst = true;
-						List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
-								nextTask.getNodeRef());
-
-						for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-
-							// set Planned dl InProgress
-							if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
-								nextDeliverable.setState(DeliverableState.InProgress);								
-							}
-
-							if (DeliverableState.InProgress.equals(nextDeliverable.getState())) {
-								if (isFirst) {
-									isFirst = false;
-								} else {
-									workflowDescription += DESCRIPTION_SEPARATOR;
-								}
-								workflowDescription += nextDeliverable.getDescription();
-							}
-						}
-
-						if (nextTask.getResources() != null) {
-							for (NodeRef resource : nextTask.getResources()) {
-								// start workflow
-								startWorkflow(projectData, nextTask, workflowDescription, resource);
-							}
-						}
 					} else if (TaskState.InProgress.equals(nextTask.getState())) {
 
 						Integer taskCompletionPercent = 0;
@@ -135,7 +122,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
 									+ nextTask.getNodeRef());
 							nextTask.setCompletionPercent(taskCompletionPercent);							
-						}
+						}												
 					} else if (TaskState.Completed.equals(nextTask.getState())) {
 
 						List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
@@ -147,21 +134,57 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 						nextTask.setCompletionPercent(COMPLETED);
 					}
+					
+					// workflow (task may have been set as InProgress with UI)
+					if (TaskState.InProgress.equals(nextTask.getState()) && 
+							nextTask.getWorkflowInstance() == null &&  
+							nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
+							nextTask.getResources() != null) {
+						for (NodeRef resource : nextTask.getResources()) {
+							// start workflow
+							startWorkflow(projectData, nextTask, resource);
+						}
+					}
 
 					visitTask(projectData, nextTask);
 				}
-				projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 			}
-		} else if(taskListDataItem !=null && TaskState.Completed.equals(taskListDataItem.getState())) {
-			projectData.setCompletionDate(new Date());
-			projectData.setCompletionPercent(COMPLETED);
-			projectData.setProjectState(ProjectState.Completed);
 		}
+	}
+	
+	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem){
+		
+		// deliverable list
+		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName(), taskListDataItem.getTaskName());
+		boolean isFirst = true;
+		List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
+				taskListDataItem.getNodeRef());
 
+		for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
+
+			// set Planned dl InProgress
+			if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
+				nextDeliverable.setState(DeliverableState.InProgress);								
+			}
+
+			if (DeliverableState.InProgress.equals(nextDeliverable.getState())) {
+				if (isFirst) {
+					isFirst = false;
+					workflowDescription += DESCRIPTION__TASK_DL_SEPARATOR;
+				} else {
+					workflowDescription += DESCRIPTION_DL_SEPARATOR;
+				}
+				workflowDescription += nextDeliverable.getDescription();
+			}
+		}
+		
+		return workflowDescription;
 	}
 
-	private void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem, String workflowDescription,
+	private void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem,
 			NodeRef assignee) {
+		
+		String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem);
 		Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
 		Calendar cal = Calendar.getInstance();
 

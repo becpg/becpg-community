@@ -56,7 +56,7 @@
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type IN ("qa:nc") and instance_id = ${instanceId} and isLastVersion = true
+					entity.entity_type IN ("qa:nc") and instance_id = ${instanceId} and is_last_version = true
 				group by 
 					id
 				]]>
@@ -150,11 +150,12 @@
 					MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL)) as tlStart,
 					MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)) as tlEnd,
 					MAX(IF(prop.prop_name = "pjt:tlState",prop.string_value,NULL)) as tlState,
+					MAX(IF(prop.prop_name = "pjt:tlResources",prop.string_value,NULL)) as tlResources,					
 					datalist.instance_id as instance_id
 				from
 					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
 				where
-					datalist.datalist_name = "taskList" and datalist.item_type = "pjt:taskList" and isLastVersion = true and instance_id = ${instanceId}
+					datalist.datalist_name = "taskList" and datalist.item_type = "pjt:taskList" and datalist.is_last_version = true and instance_id = ${instanceId}
 				group by 
 					id
 				]]>
@@ -200,7 +201,7 @@
 							from
 								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
-								 entity.entity_type IN ("pjt:project") and isLastVersion = true and entity.instance_id = ${instanceId}
+								 entity.entity_type IN ("pjt:project") and entity.is_last_version = true and entity.instance_id = ${instanceId}
 							group by id
 							]]>
 						</SQL>
@@ -211,6 +212,12 @@
 				</Level>
 				<Level name="Projet" column="entity_noderef" nameColumn="name" type="String"   >
 				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Ressource" >
+			<Hierarchy name="Ressource" hasAll="true" allMemberCaption="Toutes les ressources">
+				<Level name="Ressource" column="tlResources"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
@@ -241,7 +248,11 @@
 					MAX(IF(prop.prop_name = "pjt:projectPriority",prop.long_value,NULL)) as projectPriority, 
 					MAX(IF(prop.prop_name = "pjt:completionPercent",prop.long_value,NULL)) as completionPercent,
 					MAX(IF(prop.prop_name = "pjt:projectScore",prop.long_value,NULL)) as projectScore,
-					MAX(IF(prop.prop_name = "pjt:projectOverdue",prop.long_value,NULL)) as projectOverdue, 
+					MAX(IF(prop.prop_name = "pjt:projectOverdue",prop.long_value,NULL)) as projectOverdue,
+					MAX(IF(prop.prop_name = "pjt:projectManager",prop.string_value,NULL)) as projectManager,
+					MAX(IF(prop.prop_name = "pjt:projectOrigin",prop.string_value,NULL)) as projectOrigin,
+					MAX(IF(prop.prop_name = "pjt:projectSponsor",prop.string_value,NULL)) as projectSponsor,
+					MAX(IF(prop.prop_name = "bcpg:entityTplRef",prop.string_value,NULL)) as entityTplRef, 					
 					entity.instance_id as instance_id
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
@@ -340,6 +351,30 @@
 		<Dimension  name="Historique" >
 			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
 				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Chef de projet" >
+			<Hierarchy name="Chef de projet" hasAll="true" allMemberCaption="Tous les chefs de projet">
+				<Level name="Chef de projet" column="projectManager"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Origine de l&#39;id&#233;e" >
+			<Hierarchy name="Origine de l&#39;id&#233;e" hasAll="true" allMemberCaption="Toutes les origines">
+				<Level name="Origine de l&#39;id&#233;e" column="projectOrigin"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Sponsor" >
+			<Hierarchy name="Sponsor" hasAll="true" allMemberCaption="Tous les sponsors">
+				<Level name="Sponsor" column="projectSponsor"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Mod&#232;le de projet" >
+			<Hierarchy name="Mod&#232;le de projet" hasAll="true" allMemberCaption="Tous les mod&#232;les de projet">
+				<Level name="Mod&#232;le de projet" column="entityTplRef"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		

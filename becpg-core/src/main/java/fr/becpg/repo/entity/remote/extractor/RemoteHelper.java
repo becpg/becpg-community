@@ -12,6 +12,9 @@ public class RemoteHelper {
 		if(BeCPGModel.TYPE_LINKED_VALUE.equals(type)){
 			return BeCPGModel.PROP_LKV_VALUE;
 		}
+		else if(ContentModel.TYPE_USER.equals(type)){
+			return ContentModel.PROP_USER_USERNAME;
+		}
 		return ContentModel.PROP_NAME;
 	}
 

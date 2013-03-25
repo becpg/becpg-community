@@ -299,12 +299,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
 		if (versionHistoryRef != null) {
 			logger.debug("delete versionHistoryRef " + versionHistoryRef);
-			nodeService.deleteNode(versionHistoryRef);
+			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.deleteNode(versionHistoryRef);		
 			
-			// delete from trash
-			NodeRef archiveVersionHistoryNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, versionHistoryRef.getId());
-			logger.debug("delete archiveVersionHistoryNodeRef " + archiveVersionHistoryNodeRef);
-			nodeService.deleteNode(archiveVersionHistoryNodeRef);			
+//			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, versionHistoryRef.getId());
+//			nodeService.deleteNode(archivedNodeRef);
 		}
 	}
 
