@@ -363,7 +363,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertNotNull("Temp folder should exist", tempNodeRef);
 		NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
 		assertNotNull("import folder should exist", importFolderNodeRef);
-		assertEquals("import folder has one the productTpl", (int)1 , fileFolderService.listFiles(importFolderNodeRef).size());
+		assertEquals("import folder has one the productTpl", (int)1 , fileFolderService.list(importFolderNodeRef).size());
 		
 		// load folder where products have been moved in ./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish 				
 		List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), 
