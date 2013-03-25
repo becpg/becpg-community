@@ -15,7 +15,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -95,7 +94,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	/** The Constant TAG_INGLABELING. */
 	protected static final String TAG_INGLABELING = "ingLabeling";
-
 	/** The Constant TAG_NUT. */
 	protected static final String TAG_NUT = "nut";
 
@@ -530,7 +528,21 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			partElt.addAttribute(PackModel.PROP_HEIGHT.getLocalName(), toString((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
 		}
 
+		
+		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET)) {
+			partElt.addAttribute(PackModel.PROP_PALLET_BOXES_PER_LAYER.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_LAYER)));
+			partElt.addAttribute(PackModel.PROP_PALLET_LAYERS.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_LAYERS)));
+			partElt.addAttribute(PackModel.PROP_PALLET_BOXES_PER_PALLET.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET)));
+			partElt.addAttribute(PackModel.PROP_PALLET_HEIGHT.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_HEIGHT)));
+			
+		}
+		
+
 		return partElt;
+	}
+
+	private String toString(Integer value) {
+		return value == null ? VALUE_NULL : Integer.toString(value);
 	}
 
 	private String toString(Double value) {
@@ -541,43 +553,21 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	// manage 2 level depth
 	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt) {
 
+		Element packagingKitEl = loadPackagingMaterial(dataItem, packagingListElt);
+
+		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
+		Element packagingKitListEl = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
+		
+		
+		
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
-		boolean isPallet = nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET);
-		Element palletElt = null;
-
+	
+		
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-			Element packagingMaterial = loadPackagingMaterial(p, packagingListElt);
-
-			// use dataItem qty, instead of qty in pk
-			packagingMaterial.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_QTY.getLocalName(), toString(dataItem.getQty()));
-
-			// TODO MAster tertiaire instead --> PAlette
-			// Master secondaire --> Carton
-
-			// pallet has qty != 1
-			if (isPallet && p.getQty() != 1d) {
-				palletElt = packagingMaterial;
-				Map<ClassAttributeDefinition, String> palletAttributes = loadNodeAttributes(dataItem.getProduct());
-
-				for (Map.Entry<ClassAttributeDefinition, String> kv : palletAttributes.entrySet()) {
-
-					QName propertyQName = kv.getKey().getName();
-					if (palletElt.selectSingleNode("@" + propertyQName.getLocalName()) == null) {
-						palletElt.addAttribute(propertyQName.getLocalName(), kv.getValue());
-					}
-				}
-
-				// calculation (Nombre UVC/palette)
-				if (dataItem.getQty() != null && p.getQty() != null) {
-					Double qty = dataItem.getQty() * p.getQty();
-					palletElt.addAttribute(ATTR_NB_FP_THIRD_LEVEL, qty.toString());
-				}
-			}
+			
+			loadPackagingMaterial(p, packagingKitListEl);
 		}
-
-		// is pallet
-		if (isPallet && palletElt == null) {
-			logger.error("PackagingKit with aspect Pallet doesn't have a third level packaging in is children");
-		}
+		
+		
 	}
 }
