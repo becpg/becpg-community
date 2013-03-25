@@ -65,6 +65,7 @@
       <@region id="header" scope="global"/>
       <@region id="title" scope="template" />
       <@region id="navigation" scope="template"/>
+      <@region id="node-header" scope="template"/>
    </div>
    <div id="bd">
       <@region id="actions-common" scope="template" />

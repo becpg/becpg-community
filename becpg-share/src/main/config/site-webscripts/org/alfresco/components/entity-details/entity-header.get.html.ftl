@@ -73,6 +73,8 @@
                      <@renderPaths paths />
                   </div>
                </#if>
+               <#if pathMode == "false">
+               
                 	<#assign idx=node.type?index_of(":")+1 />
                	<img src="${url.context}/components/images/filetypes/generic-${node.type?substring(idx)}-48.png"
                        title="${displayName}" class="node-thumbnail" width="48" />
@@ -99,7 +101,9 @@
                      <span id="${el}-quickshare" class="item item-separator"></span>
                      </#if>
                   </div>
+                  </#if>
                </div>
+               <#if pathMode == "false">
                <div class="node-action">
               
                	<#if reports?? && reports?size &gt; 0 >
@@ -124,9 +128,12 @@
 				   		<a id="${el}-viewEntityDocuments-button" title="${msg("actions.entity.view-documents")}"  href="#" >${msg("actions.entity.view-documents.short")}</a>
 				   	</div>
 	               
-               </div>
-               <div class="clear"></div>
-            </div>
+              </div>
+              </#if>
+            <div class="clear"></div>
+         </div>
+         
+            
          <#else>
             <div class="node-header">
                <div class="status-banner theme-bg-color-2 theme-border-4">

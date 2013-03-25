@@ -83,6 +83,21 @@
    margin-left: -10px;
 }
 
+#alf-hd .node-header {
+    border-bottom: 1px solid #CCCCCC;
+    clear: left;
+    margin: 0 -10px;
+    min-height: 1em;
+    padding: 5px 0 6px;
+}
+
+#alf-hd  .node-header .node-path {
+	padding : 0;
+	 margin-left: -10px;
+}
+
+
+
 .form-container .form-fields
 {
    border-bottom: medium none;
@@ -107,6 +122,9 @@
    min-height: 44px;
    padding: 4px 0 4px 44px;
 }
+
+
+
 
 
 
