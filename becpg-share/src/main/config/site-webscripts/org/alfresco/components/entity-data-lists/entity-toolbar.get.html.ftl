@@ -14,13 +14,13 @@
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
-		<@inlineScript group="entity-toolbar">//<![CDATA[
+		<@inlineScript group="entity-toolbar">
 		   new beCPG.component.EntityDataListToolbar("${el}").setOptions(
 		   {
 		     siteId: "${page.url.templateArgs.site!""}",
 			  entityNodeRef: "${page.url.args.nodeRef!""}"
 		   }).setMessages(${messages});
-		//]]></@>
+		</@>
 		<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/custom-entity-toolbar.js" group="entity-toolbar"></@script>
 		<div id="${args.htmlid}-body" class="datalist-toolbar toolbar">
 		   <div id="${args.htmlid}-headerBar" class="header-bar flat-button theme-bg-2">
