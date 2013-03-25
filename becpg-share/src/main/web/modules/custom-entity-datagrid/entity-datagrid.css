@@ -158,6 +158,79 @@
 }
 
 
+/* Archived */
+
+.datagrid span.finishedProduct-Archived {
+	background: url(../../components/images/states/archived-16.png),
+		url(../../components/images/filetypes/generic-finishedProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+.datagrid span.localSemiFinishedProduct-Archived {
+	background: url(../../components/images/states/archived-16.png),
+		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+.datagrid span.packagingKit-Archived {
+	background: url(../../components/images/states/archived-16.png),
+		url(../../components/images/filetypes/generic-packagingKit-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+.datagrid span.packagingMaterial-Archived {
+	background: url(../../components/images/states/archived-16.png),
+		url(../../components/images/filetypes/generic-packagingMaterial-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+.datagrid span.rawMaterial-Archived {
+	background: url(../../components/images/states/archived-16.png),
+		url(../../components/images/filetypes/generic-rawMaterial-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+.datagrid span.semiFinishedProduct-Archived {
+	background: url(../../components/images/states/archived-16.png),
+		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+.datagrid span.resourceProduct-Archived {
+	background: url(../../components/images/states/archived-16.png),
+		url(../../components/images/filetypes/generic-resourceProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+}
+
+
 
 /* Allergens */
 .datagrid .presentAllergen {
