@@ -2,6 +2,7 @@ package fr.becpg.repo.project.impl;
 
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
@@ -18,6 +19,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -80,27 +82,25 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {
 
-		Integer dlCompletionPercent = (Integer) nodeService.getProperty(deliverableNodeRef,
-				ProjectModel.PROP_COMPLETION_PERCENT);
-		logger.debug("open Deliverable. completionPercent: " + dlCompletionPercent);
-
+		logger.debug("open Deliverable " + deliverableNodeRef);
 		NodeRef taskNodeRef = associationService.getTargetAssoc(deliverableNodeRef, ProjectModel.ASSOC_DL_TASK);
-
 		if (taskNodeRef != null) {
-
-			Integer taskDuration = (Integer) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_DURATION);
-
-			if (taskDuration != null && dlCompletionPercent != null) {
-				int newDuration = taskDuration * dlCompletionPercent;
-				nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_DURATION, taskDuration + newDuration);
-			}
-			logger.debug("set taskList InProgress: " + taskNodeRef);
 			nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_STATE, TaskState.InProgress.toString());
 		} else {
-			logger.debug("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
+			logger.warn("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
 		}
 	}
 
+	@Override
+	public void openTask(NodeRef taskNodeRef) {
+		
+		logger.debug("open Task " + taskNodeRef);
+		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);		
+		for(AssociationRef sourceAssoc : sourceAssocs){
+			nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
+		}
+	}
+	
 	@Override
 	public List<NodeRef> getTaskLegendList() {
 		return beCPGSearchService.luceneSearch(QUERY_TASK_LEGEND);
@@ -117,7 +117,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void cancel(NodeRef projectNodeRef) {
 
-		logger.debug("cancel project: " + projectNodeRef);
+		logger.debug("cancel project: " + projectNodeRef + " exists ? " + nodeService.exists(projectNodeRef));		
 		if(nodeService.exists(projectNodeRef)){
 			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 	         
@@ -129,7 +129,7 @@ public class ProjectServiceImpl implements ProjectService {
 						if(workflowInstance.isActive()){
 							logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
 							workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
-							taskListDataItem.setWorkflowInstance(null);
+							//taskListDataItem.setWorkflowInstance(null);
 						}
 					}
 					else{

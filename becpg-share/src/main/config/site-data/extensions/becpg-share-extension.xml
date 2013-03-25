@@ -37,6 +37,10 @@
 					<targetPackageRoot>org.alfresco.components.dashlets</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-dashlets</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>

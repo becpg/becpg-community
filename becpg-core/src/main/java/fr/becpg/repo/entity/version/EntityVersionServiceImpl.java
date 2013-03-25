@@ -151,6 +151,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					// Move files to origNodeRef
 					entityService.deleteFiles(origNodeRef, true);
 					entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+					// delete files that are not moved (ie: Documents) otherwise checkin copy them and fails since they already exits
+					entityService.deleteFiles(workingCopyNodeRef, true);
 				}
 
 				return nodeRef;
@@ -297,12 +299,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
 		if (versionHistoryRef != null) {
 			logger.debug("delete versionHistoryRef " + versionHistoryRef);
-			nodeService.deleteNode(versionHistoryRef);
+			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.deleteNode(versionHistoryRef);		
 			
-			// delete from trash
-			NodeRef archiveVersionHistoryNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, versionHistoryRef.getId());
-			logger.debug("delete archiveVersionHistoryNodeRef " + archiveVersionHistoryNodeRef);
-			nodeService.deleteNode(archiveVersionHistoryNodeRef);			
+//			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, versionHistoryRef.getId());
+//			nodeService.deleteNode(archivedNodeRef);
 		}
 	}
 

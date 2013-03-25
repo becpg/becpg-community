@@ -23,7 +23,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -31,7 +30,6 @@ import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
@@ -43,6 +41,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -79,8 +78,6 @@ public class EntityServiceImpl implements EntityService {
 
 	private FileFolderService fileFolderService;
 
-	private PermissionService permissionService;
-
 	private CopyService copyService;
 
 	private ContentService contentService;
@@ -105,10 +102,6 @@ public class EntityServiceImpl implements EntityService {
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
-	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
 	}
 
 	public void setCopyService(CopyService copyService) {
@@ -395,67 +388,111 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		
-		// copy files
-		if(targetNodeRef != null && sourceNodeRef != null){			
-			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
-				
-				if(nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, file.getName()) == null){
-					
-					logger.debug("copy file: " + file.getName() + " sourceNodeRef: " + sourceNodeRef + " targetNodeRef: " + targetNodeRef);
-					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
-					
-					// initialize permissions according to template
-					if (file.isFolder() && nodeService.hasAspect(file.getNodeRef(), BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
-
-						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
-								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
-						String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
-								RepoConsts.PERMISSION_COLLABORATOR };
-
-						for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
-
-							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
-							String permissionName = permissionNames[cnt];
-							List<AssociationRef> groups = nodeService.getTargetAssocs(file.getNodeRef(), permissionGroupAssociation);
-
-							if (groups!=null && !groups.isEmpty()) {
-								for (AssociationRef assocRef : groups) {
-									NodeRef groupNodeRef = assocRef.getTargetRef();
-									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
-									logger.debug("add permission, folder: " + file.getName() + " authority: " + authorityName + " perm: " + permissionName);
-									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
-
-									// remove association
-									nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
-								}
-							}
-						}
-
-						// TODO
-						// remove aspect when every association has been
-						// removed
-						// nodeService.removeAspect(subFolderNodeRef,
-						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
-						
-						//TODO also copy datalist
-					}
-				}				
-			}
-		}
+//		// copy files
+//		if(targetNodeRef != null && sourceNodeRef != null){			
+//			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
+//				
+//				if(nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, file.getName()) == null){
+//					
+//					logger.debug("copy file: " + file.getName() + " sourceNodeRef: " + sourceNodeRef + " targetNodeRef: " + targetNodeRef);
+//					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+//					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+//					
+//					// initialize permissions according to template
+//					if (file.isFolder() && nodeService.hasAspect(file.getNodeRef(), BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
+//
+//						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
+//								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
+//						String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
+//								RepoConsts.PERMISSION_COLLABORATOR };
+//
+//						for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
+//
+//							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
+//							String permissionName = permissionNames[cnt];
+//							List<AssociationRef> groups = nodeService.getTargetAssocs(file.getNodeRef(), permissionGroupAssociation);
+//
+//							if (groups!=null && !groups.isEmpty()) {
+//								for (AssociationRef assocRef : groups) {
+//									NodeRef groupNodeRef = assocRef.getTargetRef();
+//									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+//									logger.debug("add permission, folder: " + file.getName() + " authority: " + authorityName + " perm: " + permissionName);
+//									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
+//
+//									// remove association
+//									nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
+//								}
+//							}
+//						}
+//
+//						// TODO
+//						// remove aspect when every association has been
+//						// removed
+//						// nodeService.removeAspect(subFolderNodeRef,
+//						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
+//						
+//						//TODO also copy datalist
+//					}
+//				}				
+//			}
+//		}
+		
+		copyOrMoveFiles(sourceNodeRef, targetNodeRef, true);
 		
 	}
-
+	
 	@Override
 	public void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+		copyOrMoveFiles(sourceNodeRef, targetNodeRef, false);		
+	}
+	
+	private void copyOrMoveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean isCopy){
 		
-		if(targetNodeRef != null && sourceNodeRef != null){			
+		if(targetNodeRef != null && sourceNodeRef != null){	
+
 			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
 				
-				logger.debug("move file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);				
-				nodeService.moveNode(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+				if(file.getName().equals(TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS))){
+					
+					// create Documents folder if needed
+					String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
+					NodeRef documentsFolderNodeRef = nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
+					if(documentsFolderNodeRef == null){
+						documentsFolderNodeRef = fileFolderService.create(targetNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+					}
+					
+					for (FileInfo file2 : fileFolderService.list(file.getNodeRef())){
+						
+						// copy/move files that are not report
+						if(!ReportModel.TYPE_REPORT.equals(file2.getType())){																							
+							copyOrMoveFile(file2, documentsFolderNodeRef, isCopy);
+						}						
+					}
+				}	
+				else{
+					copyOrMoveFile(file, targetNodeRef, isCopy);									
+				}
 			}
-		}		
+		}
+	}
+	
+	private void copyOrMoveFile(FileInfo file, NodeRef parentNodeRef, boolean isCopy){		
+		
+		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, file.getName());
+		if (documentNodeRef == null) {			
+		
+			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
+			if(isCopy){
+				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+			}
+			else{
+				nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+			}	
+		}
+		else{
+			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: " + parentNodeRef);
+		}
 	}
 	
 	@Override
@@ -470,15 +507,13 @@ public class EntityServiceImpl implements EntityService {
 		}		
 	}
 	
-	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode){
-		
-		nodeService.deleteNode(nodeRef);
-		
+	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode){		
+
 		// delete from trash
 		if(deleteArchivedNode){
-			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, nodeRef.getId());
-			nodeService.deleteNode(archivedNodeRef);
-		}		
+			nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, null);
+		}
+		nodeService.deleteNode(nodeRef);
 	}
 
 	@Override

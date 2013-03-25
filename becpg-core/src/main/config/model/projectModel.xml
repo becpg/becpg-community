@@ -518,7 +518,7 @@
 					</source>
 					<target>
 						<class>pjt:project</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>

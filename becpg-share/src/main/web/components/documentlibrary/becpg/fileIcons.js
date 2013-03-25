@@ -83,8 +83,10 @@ if (!beCPG.util.getFileIcon) {
 	   "bp:productCatalog" : "productCatalog",
 	   "{http://www.bcpg.fr/model/project/1.0}project" : "project",
 	   "pjt:project" : "project",
-	   "{http://www.bcpg.fr/model/becpg/1.0}project" : "productSpecification",
-	   "bcpg:productSpecification" : "productSpecification"
+	   "{http://www.bcpg.fr/model/becpg/1.0}productSpecification" : "productSpecification",
+	   "bcpg:productSpecification" : "productSpecification",
+	   "{http://www.bcpg.fr/model/becpg/1.0}productMicrobioCriteria" : "productMicrobioCriteria",
+	   "bcpg:productMicrobioCriteria" : "productMicrobioCriteria"
 	};
 
 	Alfresco.util.getFileIcon.folders = {

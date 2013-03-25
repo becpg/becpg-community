@@ -27,7 +27,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
-import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -125,8 +124,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			Map<QName, Serializable> after) {
 		
 		boolean formulateProject = false;
-		boolean saveProject = false;
-		ProjectData projectData = null;
 		String beforeState = (String) before.get(ProjectModel.PROP_TL_STATE);
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
@@ -134,25 +131,22 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			if (beforeState.equals(TaskState.InProgress.toString())
 					&& afterState.equals(TaskState.Completed.toString())) {
 				logger.debug("update task list: " + nodeRef + " - afterState: " + afterState);
-//				Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
-//				Date endDate = ProjectHelper.removeTime(new Date());
-//				Integer duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
-//				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
-//				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_DURATION, duration);
 				// we want to keep the planned duration to calculate overdue
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));
 				formulateProject = true;
+			} 
+			else if (beforeState.equals(DeliverableState.Completed.toString())
+					&& afterState.equals(DeliverableState.InProgress.toString())) {
+
+				// re-open task
+				logger.debug("re-open task: " + nodeRef);				
+				projectService.openTask(nodeRef);
+
+				formulateProject = true;
 			}
-			
-			//start project by task list if project has state InProgress -> InProgress
-			if(!afterState.equals(beforeState) && afterState.equals(TaskState.InProgress.toString())){
-				NodeRef projectNodeRef = wUsedListService.getRoot(nodeRef);
-				projectData = (ProjectData)alfrescoRepository.findOne(projectNodeRef);
-				if(ProjectState.Planned.equals(projectData.getProjectState())){
-					projectData.setProjectState(ProjectState.InProgress);
-					formulateProject = true;
-					saveProject = true;
-				}
+			// start a task
+			else if (!afterState.equals(beforeState) && afterState.equals(TaskState.InProgress.toString())) {
+				formulateProject = true;
 			}
 		}
 		
@@ -162,10 +156,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
-		}
-		
-		if(saveProject && projectData != null){
-			alfrescoRepository.save(projectData);
 		}
 				
 		if(formulateProject){
@@ -198,10 +188,16 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			} else if (beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
 
-				// re-open deliverable
+				// re-open deliverable and disable policy to avoid every dl are re-opened
 				logger.debug("re-open deliverable: " + nodeRef);
-				projectService.openDeliverable(nodeRef);
-
+				try{
+					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					projectService.openDeliverable(nodeRef);
+				}
+				finally{
+					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				}
+				
 				queueListItem(nodeRef);
 			}
 		}

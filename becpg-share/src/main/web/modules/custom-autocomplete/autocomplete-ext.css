@@ -178,3 +178,18 @@
 	background: url(../../components/images/filetypes/generic-productCatalog-16.png) no-repeat;
 	padding-left: 20px;
 }
+
+.yui-ac-container span.project {
+	background: url(../../components/images/filetypes/generic-project-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.productSpecification {
+	background: url(../../components/images/filetypes/generic-productSpecification-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.yui-ac-container span.productMicrobioCriteria {
+	background: url(../../components/images/filetypes/generic-productMicrobioCriteria-16.png) no-repeat;
+	padding-left: 20px;
+}
