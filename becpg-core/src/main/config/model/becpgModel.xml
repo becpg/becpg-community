@@ -790,7 +790,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:ing</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -801,7 +801,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:ing</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>

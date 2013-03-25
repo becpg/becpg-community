@@ -316,7 +316,6 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
-				assertEquals((2*1.3), projectData.getTaskList().get(1).getDuration());
 
 				// check task 3 is InProgress
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
