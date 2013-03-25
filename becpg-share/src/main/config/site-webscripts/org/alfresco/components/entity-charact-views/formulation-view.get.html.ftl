@@ -54,7 +54,7 @@
 			    </span>
 		   </div>
 		</div>
-		<div id="yui-main">
+		<div id="main-view-${el}">
 				  <@dataGridDashlet dashletId="compoList-${el}" />
 				<div class="yui-g formulation">
 					<div class="yui-u first dynamicCharactList">

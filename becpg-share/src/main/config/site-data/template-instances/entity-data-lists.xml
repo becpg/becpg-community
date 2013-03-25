@@ -49,6 +49,41 @@
 				</sub-component>
 			</sub-components>
 		</component>
+		
+		 <!-- Document Header -->
+      <component>
+         <region-id>node-header</region-id>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if in site: Site header -->
+                  <evaluation id="site">
+                     <evaluators>
+                        <evaluator type="site.component.evaluator"/>
+                     </evaluators>
+                     <url>/components/entity-details/entity-header</url>
+                     <properties>
+                        <nodeRef>{nodeRef}</nodeRef>
+                        <rootPage>documentlibrary</rootPage>
+                        <rootLabelId>path.documents</rootLabelId>
+                        <pathMode>true</pathMode>
+                     </properties>
+                  </evaluation>
+                  <!-- otherwise: Repo header -->
+                  <evaluation id="repo">
+                     <url>/components/entity-details/entity-header</url>
+                     <properties>
+                        <nodeRef>{nodeRef}</nodeRef>
+                        <rootPage>repository</rootPage>
+                        <rootLabelId>path.repository</rootLabelId>
+                        <pathMode>true</pathMode>
+                     </properties>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+      </component>
+		
 
 		<!-- Toolbar -->
 		<component>

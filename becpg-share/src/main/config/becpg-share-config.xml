@@ -31,7 +31,7 @@
 						<item type="link" id="my-workflows">/my-workflows#filter=workflows|active</item>
 						<item type="link" id="my-content">/user/user-content</item>
 						<item type="link" id="my-sites">/user/user-sites</item>
-						<item type="link" id="my-profile">{userprofilepage}</item>
+					<!-- 	<item type="link" id="my-profile">{userprofilepage}</item> -->
 						<item type="link" id="project-list">/project-list#filter=projects|InProgress</item>
 					</container-group>
 					<container-group id="tools" permission="admin">
