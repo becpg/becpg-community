@@ -805,12 +805,15 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			// calculate mappedColumns
 			List<String> mappedColumns = new ArrayList<String>();
-			if (classMapping != null)
-				for (AbstractAttributeMapping attrMapping : classMapping.getColumns())
+			if (classMapping != null){
+				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()){
 					mappedColumns.add(attrMapping.getId());
-
-			throw new MappingException(
-					I18NUtil.getMessage(MSG_ERROR_COLUMNS_DO_NOT_RESPECT_MAPPING, importContext.getType(), (classMapping != null), unknownColumns, mappedColumns));
+				}					
+			}
+				
+			String error = I18NUtil.getMessage(MSG_ERROR_COLUMNS_DO_NOT_RESPECT_MAPPING, importContext.getType(), (classMapping != null), unknownColumns, mappedColumns);
+			logger.error(error);
+			throw new MappingException(error);
 		}
 
 		importContext.setColumns(columnsAttributeMapping);
