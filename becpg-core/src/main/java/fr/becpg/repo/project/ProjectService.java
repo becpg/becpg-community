@@ -20,6 +20,12 @@ public interface ProjectService {
 	 * @param deliverableNodeRef
 	 */
 	public void openDeliverable(NodeRef deliverableNodeRef);
+	
+	/**
+	 * Open task in progress
+	 * @param deliverableNodeRef
+	 */
+	public void openTask(NodeRef taskNodeRef);
 
 	/**
 	 * Get the task legend list

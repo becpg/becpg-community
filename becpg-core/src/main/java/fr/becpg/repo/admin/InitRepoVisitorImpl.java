@@ -508,6 +508,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = QualityModel.TYPE_NC;
 		} else if (folderName == RepoConsts.PATH_PROJECT_TEMPLATES) {
 			createRuleAspect(nodeRef, true, ProjectModel.TYPE_PROJECT, BeCPGModel.ASPECT_ENTITY_TPL);
+		} else if (folderName == RepoConsts.PATH_PRODUCT_SPECIFICATIONS) {
+			specialiseType = BeCPGModel.TYPE_PRODUCT_SPECIFICATION;
 		}
 
 		// specialise type

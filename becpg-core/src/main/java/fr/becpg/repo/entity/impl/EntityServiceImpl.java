@@ -464,32 +464,34 @@ public class EntityServiceImpl implements EntityService {
 					for (FileInfo file2 : fileFolderService.list(file.getNodeRef())){
 						
 						// copy/move files that are not report
-						if(!ReportModel.TYPE_REPORT.equals(file2.getType())){
-							
-							NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, file2.getName());
-							if (documentNodeRef != null) {
-								nodeService.deleteNode(documentNodeRef);
-							}				
-							logger.debug("copy or move file in Documents: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);
-							if(isCopy){
-								copyService.copy(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-							}
-							else{
-								nodeService.moveNode(file2.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
-							}							
+						if(!ReportModel.TYPE_REPORT.equals(file2.getType())){																							
+							copyOrMoveFile(file2, documentsFolderNodeRef, isCopy);
 						}						
 					}
 				}	
 				else{
-					logger.debug("move file: " + file.getName() + " entityFolderNodeRef: " + targetNodeRef);
-					if(isCopy){
-						copyService.copy(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-					}
-					else{
-						nodeService.moveNode(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
-					}					
+					copyOrMoveFile(file, targetNodeRef, isCopy);									
 				}
 			}
+		}
+	}
+	
+	private void copyOrMoveFile(FileInfo file, NodeRef parentNodeRef, boolean isCopy){		
+		
+		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, file.getName());
+		if (documentNodeRef == null) {			
+		
+			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
+			if(isCopy){
+				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+			}
+			else{
+				nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+			}	
+		}
+		else{
+			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: " + parentNodeRef);
 		}
 	}
 	
@@ -505,15 +507,13 @@ public class EntityServiceImpl implements EntityService {
 		}		
 	}
 	
-	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode){
-		
-		nodeService.deleteNode(nodeRef);
-		
+	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode){		
+
 		// delete from trash
 		if(deleteArchivedNode){
-			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, nodeRef.getId());
-			nodeService.deleteNode(archivedNodeRef);
-		}		
+			nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, null);
+		}
+		nodeService.deleteNode(nodeRef);
 	}
 
 	@Override
