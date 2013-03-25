@@ -35,7 +35,7 @@ VALUES;1016;dorade 80x20x3;;dorade;Sea food;Fish;ToValidate;;;;;08/06/2011;utili
 VALUES;1020;Thon 80x20x8 ;;thon;Sea food;Fish;ToValidate;;;;;08/06/2011;utilisateur.r&d;;admin;1000013,1000014;0;0;24,3;1;0,9;file:${basedir}/src/test/resources/beCPG/import/images/sushi thon/produit.jpg;
 ;;;;;;;;;;;;;;;;;;;;;;;
 PATH;/Temp/Products;;;;;;;;;;;;;;;;;;;;;;
-TYPE;bcpg:entity;;;;;;;;;;;;;;;;;;;;;;
+TYPE;bcpg:rawMaterial;;;;;;;;;;;;;;;;;;;;;;
 MAPPING;TestProducts;;;;;;;;;;;;;;;;;;;;;;
 COLUMNS;cm:name;bcpg:entityTplClassName;bcpg:entityTplEnabled;coutMP;coutMPPrev;coutEmb;nutProteines;nutLipides;nutGlucides;;;;;;;;;;;;;;
 VALUES;productTpl;bcpg:rawMaterial;true;1;2;3,1;2,5;3,6;5,6;;;;;;;;;;;;;;
