@@ -16,7 +16,7 @@ echo "Copy to saas"
 echo "**********************************************************"
 
 cd $BECPG_ROOT/distribution/target
-#scp -P 22222 becpg-*-distribution.tar.gz  root@saas.becpg.fr:/root/install/
+scp -P 22222 becpg-*-distribution.tar.gz  root@saas.becpg.fr:/root/install/
 
 cd $BECPG_OLAP_ROOT/target
 scp -P 22222 becpg-olap-*-distribution.tar.gz  root@saas.becpg.fr:/root/install/

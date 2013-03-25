@@ -1,6 +1,6 @@
 <alfresco-config>
 
-	<config evaluator="string-compare" condition="DocumentLibrary">
+	<config evaluator="string-compare" condition="DocumentLibrary" >
 		<aspects>
 			<visible>
 				<aspect name="cm:generalclassifiable" />

@@ -18,6 +18,29 @@ public class PackModel {
 			"palletBoxesPerLayer");
 	public static final QName PROP_PALLET_BOXES_PER_PALLET = QName.createQName(PACK_URI,
 			"palletBoxesPerPallet");
-	public static final QName PROP_PALLET_DIMENSIONS = QName.createQName(PACK_URI,
-			"palletLayers");	
+	public static final QName PROP_PALLET_HEIGHT = QName.createQName(PACK_URI,
+			"palletHeight");	
+	
+	public static final QName ASPECT_TARE =   QName.createQName(PACK_URI,
+			"tareAspect");
+	
+	public static final QName PROP_TARE = QName.createQName(PACK_URI,
+			"tare");	
+	
+	public static final QName PROP_TARE_UNIT = QName.createQName(PACK_URI,
+			"tareUnit");	
+	
+	public static final QName ASPECT_SIZE =   QName.createQName(PACK_URI,
+			"sizeAspect");
+	
+	public static final QName PROP_LENGTH = QName.createQName(PACK_URI,
+			"length");	
+	
+	public static final QName PROP_WIDTH = QName.createQName(PACK_URI,
+			"width");	
+	
+	public static final QName PROP_HEIGHT = QName.createQName(PACK_URI,
+			"height");	
+	
+	
 }

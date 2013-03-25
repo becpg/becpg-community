@@ -7,44 +7,52 @@
 
 /* Share forms */
 
-.yui-navset .set {
+.form-container .yui-navset .set {
 	padding-bottom: 0em;
 }
 
-.yui-g .form-field input[type="text"] {
+.form-container .yui-g .form-field input[type="text"], 
+.form-container .yui-g .form-field select {
 	width: 27em;
 }
 
-.yui-g .form-field textarea {
+
+.form-container .yui-g .form-field textarea {
+	width: 27em !important;
+}
+
+.form-container .yui-g .yui-ac .ac-body {
 	width: 27em;
 }
 
-.yui-g .yui-ac .ac-body {
+.form-container .yui-navset .form-field input[type="text"],
+.form-container .yui-navset .form-field select
+ {
+	width: 26em;
+}
+
+.form-container .yui-navset .form-field textarea {
+	width: 26em !important;
+}
+
+.form-container .form-container .yui-navset .form-field textarea {
 	width: 27em;
 }
 
-.yui-navset .form-field input[type="text"] {
+.form-container .yui-navset .yui-ac .ac-body {
 	width: 26em;
 }
 
-.yui-navset .form-field textarea {
-	width: 26em;
-}
-
-.yui-navset .yui-ac .ac-body {
-	width: 26em;
-}
-
-.yui-navset .yui-ac .ac-body .yui-ac-input,
+.form-container .yui-navset .yui-ac .ac-body .yui-ac-input,
 .yui-g .yui-ac .ac-body .yui-ac-input  {
 	width: 90%;
 }
 
-.yui-gb .yui-ac .ac-body .yui-ac-input  {
+.form-container .yui-gb .yui-ac .ac-body .yui-ac-input  {
 	width: 85%;
 }
 
-.yui-gb .form-field input[type="text"] {
+.form-container .yui-gb .form-field input[type="text"] {
 	width: 16em;
 }
 
@@ -54,6 +62,10 @@
 	border-color: #EEEEEE;
 	margin-bottom: 0.5em;
 	padding-top: 0.5em;
+}
+
+.yui-skin-lightTheme .share-form  .form-container .yui-navset .yui-content {
+	background-color: #FFFFFF;
 }
 
 .share-form .form-container .yui-navset .yui-nav .selected a,.yui-skin-default .yui-navset .yui-nav .selected a em
