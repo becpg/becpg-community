@@ -1036,9 +1036,14 @@
 					<show id="bcpg:entityTplRef" force="true" for-mode="view"  />
 					<show id="rep:reportTpls" />
 					
-					<!-- tare -->
-					<show id="pack:tare"/>
-               <show id="pack:tareUnit"/>
+					<!-- Tare -->
+					<show id="pack:tare"      force="true"  />
+		         <show id="pack:tareUnit"  force="true" />
+		       
+		         <!-- Dimension -->
+		         <show id="pack:length"   />
+		         <show id="pack:width"   />
+		         <show id="pack:height"   />
                
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1056,6 +1061,8 @@
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="tare" appearance="bordered-panel"
 						label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="dimension" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -1107,6 +1114,13 @@
 					<!-- tare -->
 					<field id="pack:tare" set="tare"/>
                <field id="pack:tareUnit" set="tare"/>
+
+					 <!-- Dimension -->
+	        		<field id="pack:length"  set="dimension" />
+	         	<field id="pack:width"   set="dimension" />
+        			<field id="pack:height"  set="dimension" />
+               
+
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

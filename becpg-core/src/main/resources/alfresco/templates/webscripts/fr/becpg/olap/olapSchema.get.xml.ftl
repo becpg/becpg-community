@@ -388,8 +388,29 @@
 		<Measure name="Nombre de projets (Distinct)" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="Avancement (Moyen)" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="Avancement (Max)" column="completionPercent" datatype="Numeric" aggregator="max" visible="true"  />
+		<#--
+		<NamedSet name="Trois derniers mois">
+			<Formula>{CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]').Lag(2): CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]')}</Formula>
+		</NamedSet>
+		-->
+		
+		<#--
+		<CalculatedMember name="Dernier avancement" dimension="Measures" visible="true">
+			<Formula>Tail(NonEmptyCrossJoin({[Date de modification].[Date].firstChild:[Date de modification].[Date].currentMember},[Measures].[Avancement (Moyen)])).Item(0)</Formula>
+		</CalculatedMember> 
+		-->
+		<#--
+		  <CalculatedMember name="Retard" dimension="Measures" visible="true">
+		       <Formula>[Date de modification].[Date].currentMember - CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]') * [Retard]  </Formula>
+		  </CalculatedMember> 
+		-->
+		
+		
 		<Measure name="Note (Moyenne)" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="Retard " column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
+		
+
+		
 	</Cube>
 
 	<Cube name="Produits" cache="true" enabled="true" defaultMeasure="Nombre de produits">
