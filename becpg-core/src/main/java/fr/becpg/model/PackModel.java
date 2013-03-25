@@ -20,8 +20,6 @@ public class PackModel {
 			"palletBoxesPerPallet");
 	public static final QName PROP_PALLET_HEIGHT = QName.createQName(PACK_URI,
 			"palletHeight");	
-
-	
 	
 	public static final QName ASPECT_TARE =   QName.createQName(PACK_URI,
 			"tareAspect");
@@ -43,7 +41,6 @@ public class PackModel {
 	
 	public static final QName PROP_HEIGHT = QName.createQName(PACK_URI,
 			"height");	
-	
 	
 	
 }
