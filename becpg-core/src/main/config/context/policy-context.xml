@@ -40,7 +40,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="entityVersionService" ref="entityVersionService" />
-		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="entityService" ref="entityService" />
 	</bean>
 
 	<!-- Entity Datalist Policies -->

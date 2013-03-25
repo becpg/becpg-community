@@ -231,6 +231,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					nodeService.deleteNode(productsFolder);
 				}
                 
+                // products
                 List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT)) +
 						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)));
                 

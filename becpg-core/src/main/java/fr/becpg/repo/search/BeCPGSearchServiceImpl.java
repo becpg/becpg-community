@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
@@ -69,69 +70,8 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	}
 
 	@Override
-	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults,
-			String searchLanguage ) {
-	
-
-			List<NodeRef> nodes = new LinkedList<NodeRef>();
-			
-			StopWatch watch = null;
-			if (logger.isDebugEnabled()) {
-				watch = new StopWatch();
-				watch.start();
-			}
-			
-			SearchParameters sp = new SearchParameters();
-	        sp.addStore(RepoConsts.SPACES_STORE);
-	        sp.setLanguage(searchLanguage);
-	        sp.setQuery(runnedQuery);	
-	        sp.addLocale(Locale.getDefault());
-	    	sp.excludeDataInTheCurrentTransaction(false);
-	    	//sp.setDefaultOperator(Operator.AND);
-	    	
-	        if(maxResults == RepoConsts.MAX_RESULTS_UNLIMITED){
-				sp.setLimitBy(LimitBy.UNLIMITED);
-			}
-			else{
-				sp.setLimit(maxResults);
-				sp.setMaxItems(maxResults);
-				sp.setLimitBy(LimitBy.FINAL_SIZE);			
-			}
-	        
-	        
-	        if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(searchLanguage)){
-		        sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
-		        sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
-	        }
-	        
-
-			if (sort != null) {
-				for(Map.Entry<String, Boolean> kv : sort.entrySet()){
-					logger.debug("Add sort :"+kv.getKey()+" "+ kv.getValue());
-					sp.addSort(kv.getKey(), kv.getValue());
-				}			
-			}
-	        
-			ResultSet result = null;
-			try {
-				result = searchService.query(sp);
-				if (result != null) {
-					nodes =  new LinkedList<NodeRef>(result.getNodeRefs());
-				}
-			} finally {
-				if (result != null) {
-					result.close();
-				}
-				if (logger.isDebugEnabled()) {
-					watch.stop();
-					logger.debug(runnedQuery + " executed in  "
-							+ watch.getTotalTimeSeconds() + " seconds - size results "
-							+  nodes.size() );
-				}
-			}
-			return nodes;
-			
-		
+	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults, String searchLanguage) {
+		return search(runnedQuery, sort, maxResults, searchLanguage, RepoConsts.SPACES_STORE);
 	}
 
 	@Override
@@ -142,6 +82,64 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 		
 	}
 
+	@Override
+	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults, String searchLanguage,
+			StoreRef storeRef) {
+
+		List<NodeRef> nodes = new LinkedList<NodeRef>();
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		SearchParameters sp = new SearchParameters();
+		sp.addStore(storeRef);
+		sp.setLanguage(searchLanguage);
+		sp.setQuery(runnedQuery);
+		sp.addLocale(Locale.getDefault());
+		sp.excludeDataInTheCurrentTransaction(false);
+		// sp.setDefaultOperator(Operator.AND);
+
+		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
+			sp.setLimitBy(LimitBy.UNLIMITED);
+		} else {
+			sp.setLimit(maxResults);
+			sp.setMaxItems(maxResults);
+			sp.setLimitBy(LimitBy.FINAL_SIZE);
+		}
+
+		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(searchLanguage)) {
+			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
+			sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
+		}
+
+		if (sort != null) {
+			for (Map.Entry<String, Boolean> kv : sort.entrySet()) {
+				logger.debug("Add sort :" + kv.getKey() + " " + kv.getValue());
+				sp.addSort(kv.getKey(), kv.getValue());
+			}
+		}
+
+		ResultSet result = null;
+		try {
+			result = searchService.query(sp);
+			if (result != null) {
+				nodes = new LinkedList<NodeRef>(result.getNodeRefs());
+			}
+		} finally {
+			if (result != null) {
+				result.close();
+			}
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug(runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results "
+						+ nodes.size());
+			}
+		}
+		return nodes;
+	}
 	
 
 

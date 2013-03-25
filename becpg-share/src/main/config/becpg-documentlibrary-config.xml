@@ -255,7 +255,11 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>			
-
+			<content id="entity" label="menu.create-content.entity"
+				type="pagelink" index="170" icon="generic-entity">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:folder&amp;formId=create-entity&amp;isEntity=true
+				</param>
+			</content>	
 		</create-content>
 
 
@@ -422,7 +426,6 @@
             <action index="180" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
             <action index="181" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
             <action index="190" id="document-manage-aspects" label="actions.folder.manage-aspects" />
-            <action index="200" id="document-change-type" label="actions.folder.change-type" />
             <action index="210" id="view-in-explorer" />
             <action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
             <action index="270" id="document-assign-workflow" />

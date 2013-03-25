@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
@@ -228,10 +229,13 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssoc, boolean isNodeArchived) {
 		
-		if(!isNodeArchived){
-			logger.debug("Project policy delete");
-			projectService.cancel(childAssoc.getChildRef());
-		}		
+		logger.debug("Project policy delete");
+				
+		// cancel project even if it is still in trash
+		if(isNodeArchived){			
+			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, childAssoc.getChildRef().getId());
+			projectService.cancel(archivedNodeRef);
+		}
 	}
 
 }

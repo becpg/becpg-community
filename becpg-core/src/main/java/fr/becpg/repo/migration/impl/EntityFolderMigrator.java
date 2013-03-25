@@ -254,7 +254,42 @@ public class EntityFolderMigrator {
 					}
 				}, false, true);
 			}
-		}		
+		}
+		
+		// fix bcpg:entityVersionable 
+		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_VERSIONABLE));
+				
+		List<NodeRef> entityVersionableToFix = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+
+		logger.info("Found " + entityVersionableToFix.size() + " entityVersionable to fix");
+		
+		if (!entityVersionableToFix.isEmpty()) {
+
+			for (final List<NodeRef> batchList : Lists.partition(entityVersionableToFix, BATCH_SIZE)) {
+				transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+					public Boolean execute() throws Exception {
+
+						for(NodeRef n : batchList){
+							if(nodeService.exists(n)){
+								
+								// delete when there is one version
+								VersionHistory versionHistory = versionService.getVersionHistory(n);
+								if(versionHistory != null && versionHistory.getAllVersions().size() == 1){
+									if(nodeService.hasAspect(n, ContentModel.ASPECT_VERSIONABLE)){
+										nodeService.removeAspect(n, ContentModel.ASPECT_VERSIONABLE);
+									}									
+								}
+								
+								if(nodeService.hasAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE)){
+									nodeService.removeAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE);
+								}								
+							}							
+						}
+						return true;
+					}
+				}, false, true);
+			}
+		}
 		
 	}
 

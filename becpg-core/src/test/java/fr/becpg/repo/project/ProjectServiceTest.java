@@ -123,6 +123,38 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			}
 		}, false, true);
 	}
+	
+	/**
+	 * Test a project can be deleted (and workflow)
+	 */
+	@Test
+	public void testDeleteProject() {
+
+		initTest();
+		createProject(ProjectState.InProgress, new Date(), null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+				// check workflow instance is active
+				assertEquals(true,
+						workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance())
+								.isActive());
+
+				// cancel project and check wf are not active
+				logger.debug("projectData.getTaskList().get(0).getWorkflowInstance(): "
+						+ projectData.getTaskList().get(0).getWorkflowInstance());
+				nodeService.deleteNode(projectNodeRef);
+				assertEquals(null,
+						workflowService.getWorkflowById(projectData.getTaskList().get(0).getWorkflowInstance()));
+
+				return null;
+			}
+		}, false, true);
+	}
 
 	@Test
 	public void testSubmitTask() {
@@ -284,6 +316,53 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
+				assertEquals((2*1.3), projectData.getTaskList().get(1).getDuration());
+
+				// check task 3 is InProgress
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
+
+				// submit deliverable 2
+				projectData.getDeliverableList().get(1).setState(DeliverableState.Completed);
+				alfrescoRepository.save(projectData);
+				
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);								
+
+				// check task 2
+				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getState());
+				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(1).getState());
+				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
+
+				// check task 3 is InProgress
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
+
+				// reopen task 2
+				projectData.getTaskList().get(1).setState(TaskState.InProgress);
+				alfrescoRepository.save(projectData);
+				
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);								
+
+				// check task 2
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(1).getState());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(2).getState());
 
 				// check task 3 is InProgress
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
@@ -837,6 +916,66 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				projectData.getTaskList().get(4).setState(TaskState.InProgress);
 				planningFormulationHandler.process(projectData);
 				assertEquals(1, projectData.getOverdue().intValue());
+
+				return null;
+			}
+		}, false, true);		
+	}
+	
+	/**
+	 * Test the project state calculation
+	 * This project has 2 task in //, both must be completed in order project is completed
+	 */
+	@Test
+	public void testProjectState(){
+
+		initTest();
+		
+		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, new Date(),
+								null, null, 2, ProjectState.InProgress, null, 0, rawMaterialNodeRef);
+
+						projectData.setParentNodeRef(testFolderNodeRef);
+						
+						// create datalists
+						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+
+						taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
+								"activiti$projectAdhoc"));
+						taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0),
+								"activiti$projectAdhoc"));
+						
+						projectData.setTaskList(taskList);
+						projectData = (ProjectData) alfrescoRepository.save(projectData);
+						return projectData.getNodeRef();
+					}
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+				assertNotNull(projectData);
+				assertEquals(ProjectState.InProgress, projectData.getProjectState());					
+				
+				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				alfrescoRepository.save(projectData); 
+				projectService.formulate(projectNodeRef);	
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				assertEquals(ProjectState.InProgress, projectData.getProjectState());
+				
+				projectData.getTaskList().get(1).setState(TaskState.Completed);
+				alfrescoRepository.save(projectData);
+				projectService.formulate(projectNodeRef);
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				assertEquals(ProjectState.Completed, projectData.getProjectState());
 
 				return null;
 			}
