@@ -31,8 +31,10 @@ public class LuceneHelper {
 	public static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" -ASPECT:\"bcpg:entityTplAspect\" "  
 				+ " -@cm\\:lockType:READ_ONLY_LOCK"
 				+ " -ASPECT:\"bcpg:compositeVersion\""
-				+ " -ASPECT:\"bcpg:hiddenFolder\"";
+				+ " -ASPECT:\"bcpg:hiddenFolder\"" 
+				+ " -ASPECT:\"ecm:simulationEntityAspect\"";
 
+	
 	/**
 	 * Return an equal condition on a property
 	 * 

@@ -30,9 +30,10 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 	
-	private static final String QUERY_TEMPLATES = "%(cm:name cm:title cm:description ia:whatEvent ia:descriptionEvent lnk:title lnk:description TEXT)";
 	
 	private SearchService searchService;
+	
+	private String defaultSearchTemplate;
 	
 	private NamespaceService namespaceService;
 
@@ -43,6 +44,11 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+
+	
+	public void setDefaultSearchTemplate(String defaultSearchTemplate) {
+		this.defaultSearchTemplate = defaultSearchTemplate;
 	}
 
 
@@ -112,7 +118,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 
 		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(searchLanguage)) {
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
-			sp.addQueryTemplate(DEFAULT_FIELD_NAME, QUERY_TEMPLATES);
+			sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
 		}
 
 		if (sort != null) {
