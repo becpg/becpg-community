@@ -22,12 +22,12 @@ function main()
       model.paths = AlfrescoUtil.getPaths(nodeDetails, model.rootPage, model.rootLabelId);
       model.showQuickShare = (!model.isContainer && model.showQuickShare && config.scoped["Social"]["quickshare"].getChildValue("url") != null).toString();
       model.showComments = ((nodeDetails.item.node.permissions.user["CreateChildren"] || false) && model.showComments).toString();
-      model.showDownload = (!model.pathMode  && !model.isContainer && model.showDownload ).toString();
+      model.showDownload = (!model.isContainer && model.showDownload ).toString();
       
       var count = nodeDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
       model.defaultReport = null;
-      if(!model.pathMode && nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){
+      if(model.pathMode != "true" && nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){
       
       	model.reports = nodeDetails.item.node.associations["rep:reports"];
       	
