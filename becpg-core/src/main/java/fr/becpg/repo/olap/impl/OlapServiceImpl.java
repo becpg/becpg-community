@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -41,6 +42,8 @@ public class OlapServiceImpl implements OlapService {
 	private RepoService repoService;
 
 	private AuthenticationService authenticationService;
+	
+	private TenantService tenantService;
 
 	private static String ROW_HEADER = "ROW_HEADER_HEADER";
 
@@ -48,6 +51,10 @@ public class OlapServiceImpl implements OlapService {
 
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
+	}
+	
+	public void setTenantService(TenantService tenantService) {
+		this.tenantService = tenantService;
 	}
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
@@ -204,7 +211,7 @@ public class OlapServiceImpl implements OlapService {
 	@Override
 	public String getCurrentOlapUserName() {
 		String currentUserName = (instanceName != null ? instanceName : "default") + "$" + authenticationService.getCurrentUserName();
-		if (!currentUserName.contains("@")) {
+		if (!currentUserName.contains("@") || !tenantService.isEnabled()) {
 			currentUserName += "@default";
 		}
 		return currentUserName;

@@ -36,8 +36,6 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 
-	/** The Constant PRODUCTS_TO_EXCLUDE. */
-	private static final String PRODUCTS_TO_EXCLUDE = " AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 
@@ -131,7 +129,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		ftsQuery = typeQuery + (ftsQuery.length() != 0 ? " AND (" + ftsQuery + ")" : "");
 
 		// beCPG : now, exclude always product history
-		ftsQuery += PRODUCTS_TO_EXCLUDE;
+		ftsQuery += LuceneHelper.DEFAULT_IGNORE_QUERY;
 
 		if(logger.isDebugEnabled()){
 			logger.debug(" build searchQueryByProperties :" +ftsQuery );
