@@ -279,7 +279,7 @@
           this.doclistMetadata = Alfresco.util.deepCopy(obj.metadata);
           if (obj.metadata.parent && obj.metadata.parent.nodeRef)
           {
-         	 if(obj.metadata.parent.aspects!=null && obj.metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0){
+         	 if(beCPG.util.isEntity(obj.metadata.parent)){
          		 this.entityLinkCustomClass = obj.metadata.parent.type.replace(":","_");
          		 this.folderDetailsUrl = $siteURL("entity-details?nodeRef=" + obj.metadata.parent.nodeRef); 
          	 } else {

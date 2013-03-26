@@ -29,7 +29,7 @@
 		<![endif]-->
 		<input id="yui-history-field" type="hidden" />
 		<script type="text/javascript">//<![CDATA[
-		    Alfresco.constants.DASHLET_RESIZE = YAHOO.env.ua.mobile === null;
+		     Alfresco.constants.DASHLET_RESIZE = YAHOO.env.ua.mobile === null;
 		   
 		      new beCPG.component.FormulationView("${el}").setOptions(
 			   {
