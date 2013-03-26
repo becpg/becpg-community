@@ -25,11 +25,12 @@
 	width: 27em;
 }
 
-.form-container .yui-navset .form-field input[type="text"],
+.yui-navset .form-field input[type="text"],
 .form-container .yui-navset .form-field select
  {
 	width: 26em;
 }
+
 
 .form-container .yui-navset .form-field textarea {
 	width: 26em !important;
@@ -39,7 +40,7 @@
 	width: 27em;
 }
 
-.yui-navset .yui-ac .ac-body {
+.form-container .yui-navset .yui-g  .yui-ac .ac-body {
 	width: 26em;
 }
 
@@ -52,7 +53,8 @@
 	width: 85%;
 }
 
-.yui-gb .form-field input[type="text"] {
+.yui-gb .form-field input[type="text"],
+.form-container .yui-gb .form-field select {
 	width: 16em;
 }
 

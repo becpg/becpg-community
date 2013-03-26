@@ -275,10 +275,10 @@
 		    },
 		   fn : function(instance) {
 
-		   	var url = beCPG.util.entityDetailsURL(this.options.siteId,this.options.entityNodeRef,this.entity.type)
+		   	var url = beCPG.util.entityDetailsURL(this.options.siteId,this.options.entityNodeRef,this.entity.type);
 		   	
 	         
-	         if(this.entity.aspects.indexOf("rep:reportEntityAspect") > 0){
+	         if(Array.indexOf(this.entity.aspects,"rep:reportEntityAspect") >0){
 	         	refreshReports(this,url);
 	         } else {
 	         	window.location.href = url;
@@ -294,12 +294,11 @@
 		   	 return entity.type != "bcpg:systemEntity";
 		    },
 		   fn : function(instance) {
-		   	var me = this;
-		   	
-		   	var url = beCPG.util.entityDocumentsURL(this.options.siteId,this.entity.path,this.entity.name)
+		    	
+		   	var url = beCPG.util.entityDocumentsURL(this.options.siteId,this.entity.path,this.entity.name);
 
 			   
-	         if(this.entity.aspects.indexOf("rep:reportEntityAspect") > 0){
+	         if(Array.indexOf(this.entity.aspects,"rep:reportEntityAspect") > 0){
 	         	refreshReports(this,url);
 	         } else {
 	         	 window.location.href = url;

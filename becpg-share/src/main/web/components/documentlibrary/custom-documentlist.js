@@ -37,10 +37,7 @@
 		  var metadata = args[1].metadata, me = this;
 		  //beCPG 
 		  
-		  if(metadata!=null 
-        		&& metadata.parent!=null 
-        		&& metadata.parent.aspects!=null
-        		&& metadata.parent.aspects.indexOf("bcpg:entityListsAspect") > 0)  {
+		  if(metadata!=null && beCPG.util.isEntity(metadata.parent))  {
         	 var div = Dom.get(me.id + "-becpg-entityFolder-message"),
       		entityClassName = metadata.parent.type.split(":")[1], 
       		instructions;
