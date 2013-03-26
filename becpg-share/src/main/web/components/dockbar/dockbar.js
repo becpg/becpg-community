@@ -345,9 +345,10 @@
 	               },
 	               _getBrowseUrlForRecord : function DockBar__getBrowseUrlForRecord(record) {
 		               var site = record.getData("site"), recordSiteName = site != null && $isValueSet(site.shortName) ? site.shortName
-		                     : null, url = beCPG.util.entityDetailsURL(recordSiteName, record.getData("nodeRef"), record
-		                     .getData("itemType"));
-
+		                     : null,url =null,nodeRef = record.getData("nodeRef"),itemType = record.getData("itemType");
+		               
+		               url = beCPG.util.entityDetailsURL(recordSiteName,nodeRef , itemType);
+		               
 		               return (url !== null ? url : '#');
 	               }
 

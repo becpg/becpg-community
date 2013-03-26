@@ -10,6 +10,7 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="contentService" ref="contentService" />
 		<property name="repoService" ref="repoService"/>
+		<property name="tenantService" ref="tenantService"/>
 	</bean>
 
 

@@ -65,6 +65,7 @@
    	
    };
    
+   
    beCPG.util.entityDetailsURL = function (siteId, nodeRef, type){
    	nodeRef = new Alfresco.util.NodeRef(nodeRef);
    	

@@ -18,10 +18,10 @@
 	   	</div>
 	   	<div id="${el}-becpg-entityFolder-buttons" class="entityFolderToolbar-buttons flat-button hidden">
 		   	<div class="entity-view-details" >
-		   		<a id="${el}-viewEntityDetails-button" name="viewEntityDetails" href="entity-details?nodeRef={nodeRef}" >${msg("actions.entity.view-details")}</a>
+		   		<a id="${el}-viewEntityDetails-button" name="viewEntityDetails" href="#" >${msg("actions.entity.view-details")}</a>
 		   	</div>
 		   	<div class="entity-view-datalist">
-		   		<a id="${el}-viewEntityLists-button" name="viewEntityLists" href="entity-data-lists?nodeRef={nodeRef}" >${msg("actions.entity.view-datalists")}</a>
+		   		<a id="${el}-viewEntityLists-button" name="viewEntityLists" href="#" >${msg("actions.entity.view-datalists")}</a>
 		   	</div>
 	   	</div>
 	   </div>

@@ -370,6 +370,7 @@
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="searchService" />
 		<property name="namespaceService" ref="namespaceService" />
+		<property name="defaultSearchTemplate" value="${beCPG.defaultSearchTemplate}"/>
 	</bean>
 	
 	<!-- Public API -->
