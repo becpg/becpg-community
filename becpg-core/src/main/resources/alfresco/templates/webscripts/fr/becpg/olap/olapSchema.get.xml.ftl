@@ -387,7 +387,7 @@
 		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
 		<Measure name="Nombre de projets (Distinct)" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="Avancement (Moyen)" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
-		<Measure name="Avancement (Max)" column="completionPercent" datatype="Numeric" aggregator="max" visible="true"  />
+		<#--<Measure name="Avancement (Max)" column="completionPercent" datatype="Numeric" aggregator="max" visible="true"  />-->
 		<#--
 		<NamedSet name="Trois derniers mois">
 			<Formula>{CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]').Lag(2): CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]')}</Formula>

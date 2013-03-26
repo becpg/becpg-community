@@ -1,16 +1,3 @@
-Hello ${person.properties["cm:firstName"]!""},
-
-You account as been created on becpg.
-
-Username: ${username}
-Password: ${password}
-
-We strongly advise you to change your password when you log in for the first time.
-
-
-Regards,
-Becpg Team
-
 <html>
 
    <head>
@@ -49,7 +36,7 @@ Becpg Team
                                                 </td>
                                                 <td>
                                                    <div style="font-size: 22px; padding-bottom: 4px;">
-                                                      Account for beCPG
+                                                      Trial account for beCPG
                                                    </div>
                                                    <div style="font-size: 13px;">
                                                       ${date?datetime?string.full}
@@ -60,16 +47,20 @@ Becpg Team
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
                                              <p>Hi ${person.properties["cm:firstName"]!""},</p>
                                              
-                                             <p>Here is your account for beCPG:
+                                             <p>Here is your account to try beCPG:
 															<br />- Url : <a href="${shareUrl}">${shareUrl}</a>
 															<br />- Account : ${username}
 															<br />- Password (I advice you to change it) : ${password}</p>
 															
-															<p>I advice you to use Firefox or Chrome browser.<br />															
+															<p>I advice you to use Firefox or Chrome browser.<br />
+															In the site "Projects", you will find some project samples.<br />
+															In the site "R&D", you will find some product samples.<br />
 															You can create new products or new projects in the existing sites or create new sites.<br />
 															Visit this page to get some tutorials: <a href="http://www.becpg.net/documentation/starting-kit">http://www.becpg.net/documentation/starting-kit</a><br />
 															</p>
 															
+															<p>Feel free to come back to Philippe (philippe.quere@becpg.fr) for any question / comment or if you want a web demo of 30 minutes in order to have an overview of beCPG.</p>
+                                             
                                              <p>Sincerely,<br />
                                              beCPG</p>
                                           </div>

@@ -11,7 +11,7 @@
 	padding-bottom: 0em;
 }
 
-.form-container .yui-g .form-field input[type="text"], 
+.yui-g .form-field input[type="text"], 
 .form-container .yui-g .form-field select {
 	width: 27em;
 }
@@ -39,7 +39,7 @@
 	width: 27em;
 }
 
-.form-container .yui-navset .yui-ac .ac-body {
+.yui-navset .yui-ac .ac-body {
 	width: 26em;
 }
 
@@ -52,7 +52,7 @@
 	width: 85%;
 }
 
-.form-container .yui-gb .form-field input[type="text"] {
+.yui-gb .form-field input[type="text"] {
 	width: 16em;
 }
 
