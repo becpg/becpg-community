@@ -218,8 +218,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			property.getKey().equals(ContentModel.PROP_STORE_IDENTIFIER) ||
 			property.getKey().equals(ContentModel.PROP_STORE_NAME) ||
 			property.getKey().equals(ContentModel.PROP_STORE_PROTOCOL) ||
-			property.getKey().equals(ContentModel.PROP_CONTENT) ||
-			property.getKey().equals(ContentModel.PROP_VERSION_LABEL))){
+			property.getKey().equals(ContentModel.PROP_CONTENT))){
 			
 				PropertyDefinition propertyDef =  dictionaryService.getProperty(property.getKey());
 				if(propertyDef == null){
