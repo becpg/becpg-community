@@ -2,6 +2,7 @@ package fr.becpg.repo.mail.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.alfresco.service.cmr.repository.TemplateService;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.UrlUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,6 +100,9 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		templateModel.put("person", new TemplateNode(personNodeRef, serviceRegistry, null));
 		templateModel.put("username", userName);
 		templateModel.put("password", password);
+		templateModel.put(TemplateService.KEY_SHARE_URL, UrlUtil.getShareUrl(this.serviceRegistry.getSysAdminParams()));
+		// current date/time is useful to have and isn't supplied by FreeMarker by default
+		templateModel.put("date", new Date());
 
 		String email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
 		if (!StringUtils.isEmpty(email)) {
@@ -125,9 +130,20 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	public void sendMail(List<String> emails, String subjet, String templateName, Map<String, Object> templateModel) {
 
 		NodeRef templateNodeRef = nodeService.getChildByName(getEmailTemplatesFolder(), ContentModel.ASSOC_CONTAINS, templateName);
-		String contenuText = null;
+		String text = null;
+		boolean isHTML = false;
 		if (templateName != null && templateNodeRef != null) {
-			contenuText = templateService.processTemplate("freemarker", templateNodeRef.toString(), templateModel);
+			text = templateService.processTemplate("freemarker", templateNodeRef.toString(), templateModel);
+
+			if (text != null) {
+				// Note: only simplistic match here - expects <html tag at the
+				// start of the text
+				String htmlPrefix = "<html";
+				if (text.length() >= htmlPrefix.length()
+						&& text.substring(0, htmlPrefix.length()).equalsIgnoreCase(htmlPrefix)) {
+					isHTML = true;
+				}
+			}
 		}
 
 		for (String email : emails) {
@@ -138,10 +154,10 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 					messageHelper.setTo(email);
 					messageHelper.setSubject(subjet);
 
-					if (contenuText != null) {
-						messageHelper.setText(contenuText);
+					if (text != null) {
+						messageHelper.setText(text, isHTML);
 						_logger.debug("Message subject = " + l_mimeMessage.getSubject());
-						_logger.debug("Message content = " + contenuText);
+						_logger.debug("Message content = " + text);
 					} else {
 						_logger.warn("Mail model not found : [NOK]");
 						messageHelper.setText(I18NUtil.getMessage("becpg.mail.template.notfound"), true);

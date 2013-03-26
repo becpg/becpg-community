@@ -1,16 +1,3 @@
-Hello ${person.properties["cm:firstName"]!""},
-
-You account as been created on becpg.
-
-Username: ${username}
-Password: ${password}
-
-We strongly advise you to change your password when you log in for the first time.
-
-
-Regards,
-Becpg Team
-
 <html>
 
    <head>
@@ -49,7 +36,7 @@ Becpg Team
                                                 </td>
                                                 <td>
                                                    <div style="font-size: 22px; padding-bottom: 4px;">
-                                                      Account for beCPG
+                                                      Compte d'essai pour beCPG
                                                    </div>
                                                    <div style="font-size: 13px;">
                                                       ${date?datetime?string.full}
@@ -58,22 +45,26 @@ Becpg Team
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p>Hi ${person.properties["cm:firstName"]!""},</p>
+                                             <p>Bonjour ${person.properties["cm:firstName"]!""},</p>
                                              
-                                             <p>Here is your account for beCPG:
+                                             <p>Voici votre compte pour accéder au système de démo :
 															<br />- Url : <a href="${shareUrl}">${shareUrl}</a>
-															<br />- Account : ${username}
-															<br />- Password (I advice you to change it) : ${password}</p>
-															
-															<p>I advice you to use Firefox or Chrome browser.<br />															
-															You can create new products or new projects in the existing sites or create new sites.<br />
-															Visit this page to get some tutorials: <a href="http://www.becpg.net/documentation/starting-kit">http://www.becpg.net/documentation/starting-kit</a><br />
+															<br />- Compte : ${username}
+															<br />- Mot de passe (modifiez le lors de votre première connexion) : ${password}                                             
 															</p>
 															
-                                             <p>Sincerely,<br />
-                                             beCPG</p>
+															<p>Je vous conseille d'utiliser Firefox ou Chrome.
+															<br />Dans le site "Projets", vous trouverez des exemples de projets.
+															<br />Dans le site "Produits", vous trouverez des exemples de produits.
+															<br />Vous pouvez créer de nouveaux projets ou produits dans les sites existants ou vous pouvez créer un nouveau site.
+															<br />Vous trouverez des tutoriels à cette page : <a href="http://www.becpg.fr/documentation/starting-kit">http://www.becpg.fr/documentation/starting-kit</a></p>
+															
+															<p>N'hésitez pas à revenir vers moi (philippe.quere@becpg.fr) pour toute question / remarque ou si vous souhaitez une web démo de 30 minutes pour avoir une vue d'ensemble de beCPG.</p>
+                                             
+                                             <p>Cordialement,
+                                             <br />beCPG</p>
                                           </div>
-                                       </td>vidéos 
+                                       </td>
                                     </tr>
                                  </table>
                               </td>
@@ -85,7 +76,7 @@ Becpg Team
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 To find out more about beCPG visit <a href="http://www.becpg.net">http://www.becpg.net</a>
+                                 Pour avoir plus d'informations sur beCPG, visitez <a href="http://www.becpg.fr">http://www.becpg.fr</a>
                               </td>
                            </tr>
                            <tr>

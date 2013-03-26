@@ -41,6 +41,10 @@
 					<targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.custom-modules</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>
