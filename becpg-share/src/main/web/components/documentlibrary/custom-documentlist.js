@@ -67,8 +67,18 @@
 	       div.innerHTML = instructions;
 	       
 	      
-	       this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(me, "viewEntityDetails-button",this.onEntityHelperButton);
-	 	    this.widgets.viewEntityLists = Alfresco.util.createYUIButton(me, "viewEntityLists-button",this.onEntityHelperButton);
+	       this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(me, "viewEntityDetails-button",function (sType, aArgs, p_obj){
+	 	   	 
+	      	 window.location.href  = beCPG.util.entityDetailsURL(me.options.siteId, me.doclistMetadata.parent.nodeRef , me.doclistMetadata.parent.type);
+		 	   	 
+		 	    });
+	       
+	       
+	 	    this.widgets.viewEntityLists = Alfresco.util.createYUIButton(me, "viewEntityLists-button",function (sType, aArgs, p_obj){
+	 	   	 
+	 	   	window.location.href = beCPG.util.entityCharactURL(me.options.siteId, me.doclistMetadata.parent.nodeRef , me.doclistMetadata.parent.type);
+	 	   	 
+	 	    });
 	 	    
 	 	    Dom.removeClass(me.id + "-becpg-entityFolder-buttons", "hidden");
 	 	    
@@ -80,26 +90,6 @@
          }
         //End beCPG
 	  },
-	  
-	  onEntityHelperButton: function CustomDL_onEntityHelperButton(sType, aArgs, p_obj){
-		  var eventTarget = aArgs,
-        anchor = eventTarget.getElementsByTagName("a")[0];
-     
-	     if (anchor && anchor.nodeName == "A")
-	     {
-	        anchor.href = YAHOO.lang.substitute(anchor.href,
-	        {
-	           nodeRef: this.doclistMetadata.parent.nodeRef
-	        });
-	        
-	        // Portlet fix: parameter might be encoded
-	        if (anchor.href.indexOf("%7BnodeRef%7D") !== -1)
-	        {
-	           anchor.href = anchor.href.replace("%7BnodeRef%7D", encodeURIComponent(this.doclistMetadata.parent.nodeRef));
-	        }
-	        
-	     }
-		 },
 		 
 		 /**
 	       * Like/Unlike event handler
