@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.CompanyHomeHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.ProductService;
@@ -86,11 +87,13 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 			classify = true;					
 		}
 			
-		//don't classify product that are in a site, force to use wf && don't classify templates
+		//don't classify product that are in a site, 
+		// force to use wf && don't classify user dierctory
+		
 		if(classify){
 			
 			String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-			if (!SiteHelper.isSitePath(path)) {
+			if (!SiteHelper.isSitePath(path) && !CompanyHomeHelper.isInUserHome(path)) {
 				queueNode(nodeRef);
 			}
 		}

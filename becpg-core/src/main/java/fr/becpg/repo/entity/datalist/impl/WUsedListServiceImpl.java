@@ -7,6 +7,8 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,9 +27,17 @@ public class WUsedListServiceImpl implements WUsedListService {
 	
 	private NodeService nodeService;
 	
+	private PermissionService permissionService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
+
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
 
 	@Override
 	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
@@ -48,7 +58,8 @@ public class WUsedListServiceImpl implements WUsedListService {
 			NodeRef nodeRef = associationRef.getSourceRef();
 			
 			//we display nodes that are in workspace
-			if(nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)){
+			if(nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
+					&& permissionService.hasReadPermission(nodeRef)  == AccessStatus.ALLOWED ){
 				NodeRef rootNodeRef = getRoot(nodeRef);				
 				
 				//we don't display history version and simulation entities
