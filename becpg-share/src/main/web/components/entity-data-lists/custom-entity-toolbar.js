@@ -283,7 +283,7 @@
 		   	var url = beCPG.util.entityDetailsURL(this.options.siteId,this.options.entityNodeRef,this.entity.type);
 		   	
 	         
-	         if(Array.indexOf(this.entity.aspects,"rep:reportEntityAspect") >0){
+	         if(beCPG.util.isEntity(this.entity)){
 	         	refreshReports(this,url);
 	         } else {
 	         	window.location.href = url;
@@ -303,7 +303,7 @@
 		   	var url = beCPG.util.entityDocumentsURL(this.options.siteId,this.entity.path,this.entity.name);
 
 			   
-	         if(Array.indexOf(this.entity.aspects,"rep:reportEntityAspect") > 0){
+	         if(beCPG.util.isEntity(this.entity)){
 	         	refreshReports(this,url);
 	         } else {
 	         	 window.location.href = url;
