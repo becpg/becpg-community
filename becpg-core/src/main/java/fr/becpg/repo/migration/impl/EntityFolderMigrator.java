@@ -6,6 +6,7 @@ import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -223,31 +224,73 @@ public class EntityFolderMigrator {
 						for(NodeRef n : batchList){
 							if(nodeService.exists(n)){
 								
+//								String versionLabel = (String)nodeService.getProperty(n, ContentModel.PROP_VERSION_LABEL);
+//								logger.debug("entityVersion to migrate " + n + " versionLabel: " + versionLabel);
+//								if(versionLabel == null || versionLabel.isEmpty()){
+//									logger.warn("Failed to migrate versionLabel since cm:versionLabel is null or empty. nodeRef: " + n);
+//								}
+//								else{
+//									
+//									NodeRef entityVersionHistoryNodeRef = nodeService.getPrimaryParent(n).getParentRef();
+//									NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, 
+//															(String)nodeService.getProperty(entityVersionHistoryNodeRef, ContentModel.PROP_NAME));
+//									
+//									VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+//									
+//									if(versionHistory !=null && !versionHistory.getAllVersions().isEmpty()){
+//										
+//										nodeService.setProperty(n, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+//										
+//										Version version = versionHistory.getVersion(versionLabel);
+//										if(version != null){
+//											logger.debug("version.getFrozenStateNodeRef(): " + version.getFrozenStateNodeRef());
+//											logger.debug("versionLabel on version is: " + nodeService.getProperty(version.getFrozenStateNodeRef(),  ContentModel.PROP_VERSION_LABEL));
+//											nodeService.setProperty(n, ContentModel.PROP_VERSION_LABEL, nodeService.getProperty(version.getFrozenStateNodeRef(),  ContentModel.PROP_VERSION_LABEL));
+//										}
+//									}									
+//								}
+								
+								/*
+								 *  2nd version
+								 */
+								
 								String versionLabel = (String)nodeService.getProperty(n, ContentModel.PROP_VERSION_LABEL);
 								logger.debug("entityVersion to migrate " + n + " versionLabel: " + versionLabel);
-								if(versionLabel == null || versionLabel.isEmpty()){
-									logger.warn("Failed to migrate versionLabel since cm:versionLabel is null or empty. nodeRef: " + n);
+								
+								NodeRef entityVersionHistoryNodeRef = nodeService.getPrimaryParent(n).getParentRef();
+								NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, 
+														(String)nodeService.getProperty(entityVersionHistoryNodeRef, ContentModel.PROP_NAME));
+								
+								VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+								
+								// if 2 versions
+								if(versionHistory !=null && versionHistory.getAllVersions().size() > 1){
+									
+									logger.debug("entityVersion to migrate " + n + " versionLabel: " + versionLabel);
+									if(versionLabel == null || versionLabel.isEmpty()){
+										logger.warn("Failed to migrate versionLabel since cm:versionLabel is null or empty. nodeRef: " + n);
+									}
+									else{
+										for(Version version : versionHistory.getAllVersions()){
+																						
+											String v = (String)nodeService.getProperty(version.getFrozenStateNodeRef(),  ContentModel.PROP_VERSION_LABEL);
+											if(versionLabel.equals(v)){
+												nodeService.setProperty(n, BeCPGModel.PROP_VERSION_LABEL, nodeService.getProperty(version.getFrozenStateNodeRef(),  Version2Model.PROP_QNAME_VERSION_LABEL));
+											}
+										}
+									}								
 								}
 								else{
-									
-									NodeRef entityVersionHistoryNodeRef = nodeService.getPrimaryParent(n).getParentRef();
-									NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, 
-															(String)nodeService.getProperty(entityVersionHistoryNodeRef, ContentModel.PROP_NAME));
-									
-									VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-									
-									if(versionHistory !=null && !versionHistory.getAllVersions().isEmpty()){
-										
-										nodeService.setProperty(n, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
-										
-										Version version = versionHistory.getVersion(versionLabel);
-										if(version != null){
-											logger.debug("version.getFrozenStateNodeRef(): " + version.getFrozenStateNodeRef());
-											logger.debug("versionLabel on version is: " + nodeService.getProperty(version.getFrozenStateNodeRef(),  ContentModel.PROP_VERSION_LABEL));
-											nodeService.setProperty(n, ContentModel.PROP_VERSION_LABEL, nodeService.getProperty(version.getFrozenStateNodeRef(),  ContentModel.PROP_VERSION_LABEL));
-										}
+									// 1 version -> delete versionHistory
+									if(nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)){
+										nodeService.removeAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 									}									
-								}																								
+									nodeService.deleteNode(entityVersionHistoryNodeRef);
+								}
+								
+								if(nodeService.hasAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE)){
+									nodeService.removeAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE);
+								}
 							}							
 						}
 						return true;
@@ -257,7 +300,8 @@ public class EntityFolderMigrator {
 		}
 		
 		// fix bcpg:entityVersionable 
-		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_VERSIONABLE));
+		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS))+
+				LuceneHelper.mandatory(LuceneHelper.getCondAspect(ContentModel.ASPECT_VERSIONABLE));
 				
 		List<NodeRef> entityVersionableToFix = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
 
@@ -274,7 +318,7 @@ public class EntityFolderMigrator {
 								
 								// delete when there is one version
 								VersionHistory versionHistory = versionService.getVersionHistory(n);
-								if(versionHistory != null && versionHistory.getAllVersions().size() == 1){
+								if(versionHistory == null || (versionHistory != null && versionHistory.getAllVersions().size() < 2)){
 									if(nodeService.hasAspect(n, ContentModel.ASPECT_VERSIONABLE)){
 										nodeService.removeAspect(n, ContentModel.ASPECT_VERSIONABLE);
 									}									
