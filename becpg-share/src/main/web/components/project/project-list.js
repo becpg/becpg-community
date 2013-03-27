@@ -513,7 +513,8 @@ var g; // gantt var
 
 		               ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 '
 		                     + TASK_EVENTCLASS + '" title="' + this.msg("link.title.task-edit") + '" >'
-		                     + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span>';
+		                     + task["itemData"]["prop_pjt_tlTaskName"].displayValue + 
+		                     ' (' + task["itemData"]["prop_pjt_completionPercent"].displayValue  + '%)</a></span>';
 
 		               if (task["itemData"]["prop_pjt_tlWorkflowInstance"]
 		                     && task["itemData"]["prop_pjt_tlWorkflowInstance"].value) {

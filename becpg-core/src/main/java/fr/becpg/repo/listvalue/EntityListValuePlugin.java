@@ -215,6 +215,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		List<NodeRef> ret = null;
 
 		if (props != null) {
+			
+			// exclude class
+			String excludeClassNames = (String) props.get(ListValueService.PROP_EXCLUDE_CLASS_NAMES);
+			String[] arrExcludeClassNames = excludeClassNames != null ? excludeClassNames.split(PARAM_VALUES_SEPARATOR) : null;
+			queryPath = excludeByClass(queryPath, arrExcludeClassNames);
+			
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
 				String filterByAssoc = (String) extras.get(PROP_FILTER_BY_ASSOC);
@@ -549,6 +555,22 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			}
 
 			query += " AND (" + queryClassNames + ")";
+		}
+
+		return query;
+	}
+	
+	private String excludeByClass(String query, String[] arrClassNames) {
+
+		if (arrClassNames != null) {
+
+			for (String className : arrClassNames) {				
+				
+				QName classQName = QName.createQName(className, namespaceService);
+				ClassDefinition classDef = dictionaryService.getClass(classQName);
+
+				query += LuceneHelper.exclude(classDef.isAspect() ? LuceneHelper.getCondAspect(classQName) : LuceneHelper.getCondType(classQName));				
+			}
 		}
 
 		return query;
