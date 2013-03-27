@@ -31,7 +31,7 @@
            description: p_oData.description
         }, p_oParent, p_expanded);
         
-        if(p_oData.aspects!=null && Array.indexOf(p_oData.aspects,"bcpg:entityListsAspect") > 0){
+        if(beCPG.util.isEntity(p_oData)){
       	  treeNode.labelStyle = p_oData.type.replace(":", "-")+" ygtvlabel";
         }
         

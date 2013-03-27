@@ -28,8 +28,8 @@
 		<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
 		<![endif]-->
 		<input id="yui-history-field" type="hidden" />
-		<script type="text/javascript">//<![CDATA[
-		     Alfresco.constants.DASHLET_RESIZE = YAHOO.env.ua.mobile === null;
+		<@inlineScript group="formulation-view">
+		      Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
 		   
 		      new beCPG.component.FormulationView("${el}").setOptions(
 			   {
@@ -37,7 +37,7 @@
 				  entityNodeRef: "${page.url.args.nodeRef!""}"
 			   }).setMessages(${messages});
 		
-		//]]></script>
+		</@>
 		<div id="toolbar-contribs-${el}" style="display:none;">  
 		  <div class="formulate">
 			    <span id="${el}-formulateButton" class="yui-button yui-push-button">
@@ -55,16 +55,16 @@
 		   </div>
 		</div>
 		<div id="main-view-${el}">
-				  <@dataGridDashlet dashletId="compoList-${el}" />
+				  <@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
 				<div class="yui-g formulation">
 					<div class="yui-u first dynamicCharactList">
-						<@dataGridDashlet 
+						<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
 							dashletId="dynamicCharactList-${el}" 
 							dashletTitle=msg("dashlet.dynamicCharactList.title")  
 							itemType="bcpg:dynamicCharactList"  />
 					</div>
 				   <div class="yui-u constraintsList">
-				   <@dataGridDashlet 
+				   <@dataGridDashlet dashletName="constraintsListDashlet"
 				   	dashletId="constraintsList-${el}" 
 				   	dashletTitle=msg("dashlet.constraintsList.title")
 				   	itemType="bcpg:reqCtrlList"  />
