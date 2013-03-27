@@ -126,7 +126,9 @@ public abstract class AbstractBeCPGPolicy {
 			keys.add(key);
 			AlfrescoTransactionSupport.bindResource(key, pendingNodes);
 		}
-		pendingNodes.add(nodeRef);
+		if(!pendingNodes.contains(nodeRef)){
+			pendingNodes.add(nodeRef);
+		}	
 		
 		AlfrescoTransactionSupport.bindListener(this.transactionListener);
 

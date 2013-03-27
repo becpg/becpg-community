@@ -64,7 +64,7 @@
                                              <p>Sincerely,<br />
                                              beCPG</p>
                                           </div>
-                                       </td>vidéos 
+                                       </td> 
                                     </tr>
                                  </table>
                               </td>

@@ -140,7 +140,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 				
 				// generate report depending of properties updated
 				if(hasChanged && !ReportModel.PROP_REPORT_ENTITY_GENERATED.equals(kv.getKey()) &&
-						!ContentModel.PROP_CONTENT.equals(kv.getKey()) &&
+						!ContentModel.PROP_MODIFIED.equals(kv.getKey()) &&
+						!ContentModel.PROP_MODIFIER.equals(kv.getKey()) &&
 						!ContentModel.PROP_VERSION_LABEL.equals(kv.getKey()) &&
 						!ContentModel.PROP_LAST_THUMBNAIL_MODIFICATION_DATA.equals(kv.getKey())){
 					
