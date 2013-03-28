@@ -2,10 +2,10 @@
 
 <#macro dataGridDashlet dashletId dashletName usePagination=true useFilter=true showCreateButton=false extra...>
 <@inlineScript group="formulation-view">
-		(function() {
+	
 
-		 	  new Alfresco.widget.DashletResizer("${dashletId}", "${dashletName}");
-			  new Alfresco.widget.DashletTitleBarActions("${dashletId}").setOptions(
+		new Alfresco.widget.DashletResizer("${dashletId}", "${dashletName}");
+	   new Alfresco.widget.DashletTitleBarActions("${dashletId}").setOptions(
 			   {
 			      actions:
 			      [
@@ -23,8 +23,7 @@
 			         }
 			      ]
 			   });
-		   
-			new beCPG.module.EntityDataGrid('${dashletId}'<#if extra["itemType"]??>,true</#if>).setOptions(
+		 new beCPG.module.EntityDataGrid('${dashletId}'<#if extra["itemType"]??>,true</#if>).setOptions(
 			   {
 			       entityNodeRef: "${page.url.args.nodeRef!""}",
 			       siteId: "${page.url.templateArgs.site!""}",
@@ -40,8 +39,7 @@
 			       	,itemType : "${extra["itemType"]?string}"
 			       </#if>
 			   }).setMessages(${messages});
-			
-				})();
+			   
 </@>
 	
 <div id="${dashletId}">
