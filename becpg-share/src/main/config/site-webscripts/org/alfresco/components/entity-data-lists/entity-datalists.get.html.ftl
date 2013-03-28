@@ -14,16 +14,13 @@
 </@>
 
 
+<@markup id="widgets">
+  	<@createWidgets group="entity-datalist"/>
+</@>
+
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
-		<script type="text/javascript">//<![CDATA[
-		   new beCPG.component.EntityDataLists("${el}").setOptions(
-		   {
-		      entityNodeRef: "${page.url.args.nodeRef!""}",
-		      listId: "${(page.url.args.list!"")?js_string}"
-		   }).setMessages(${messages});
-		//]]></script>
 		<div id="${el}-body" class="datalists">
 		   <div id="${el}-headerBar" class="header-bar toolbar flat-button theme-bg-2">
 		      <div class="left">

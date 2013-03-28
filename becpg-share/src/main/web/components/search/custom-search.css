@@ -7,4 +7,10 @@
    padding-left: 22px; 
 }
 
+/* fix ie chrome */
+
+.yui-skin-lightTheme #bd {
+    padding-bottom: 0;
+}
+
 

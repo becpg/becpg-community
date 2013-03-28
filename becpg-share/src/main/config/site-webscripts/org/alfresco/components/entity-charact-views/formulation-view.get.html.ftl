@@ -9,6 +9,7 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
+	
 	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="entity-datagrid"></@script>
 	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/columnRenderers.js" group="entity-datagrid"></@script>
 	
@@ -17,6 +18,13 @@
 	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="entity-datagrid"></@script>
 	
 	<@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/formulation-view.js" group="formulation-view"></@script>
+</@>
+
+<@markup id="widgets">
+   	<@inlineScript group="formulation-view">
+		      Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
+		</@>
+  		<@createWidgets group="formulation-view"/>
 </@>
 
 
@@ -28,16 +36,7 @@
 		<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
 		<![endif]-->
 		<input id="yui-history-field" type="hidden" />
-		<@inlineScript group="formulation-view">
-		      Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
-		   
-		      new beCPG.component.FormulationView("${el}").setOptions(
-			   {
-			     siteId: "${page.url.templateArgs.site!""}",
-				  entityNodeRef: "${page.url.args.nodeRef!""}"
-			   }).setMessages(${messages});
 		
-		</@>
 		<div id="toolbar-contribs-${el}" style="display:none;">  
 		  <div class="formulate">
 			    <span id="${el}-formulateButton" class="yui-button yui-push-button">
@@ -55,7 +54,7 @@
 		   </div>
 		</div>
 		<div id="main-view-${el}">
-				  <@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
+				<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
 				<div class="yui-g formulation">
 					<div class="yui-u first dynamicCharactList">
 						<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
