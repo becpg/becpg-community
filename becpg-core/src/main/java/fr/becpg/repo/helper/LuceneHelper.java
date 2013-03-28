@@ -31,8 +31,7 @@ public class LuceneHelper {
 	public static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" -ASPECT:\"bcpg:entityTplAspect\" "  
 				+ " -@cm\\:lockType:READ_ONLY_LOCK"
 				+ " -ASPECT:\"bcpg:compositeVersion\""
-				+ " -ASPECT:\"bcpg:hiddenFolder\"" 
-				+ " -ASPECT:\"ecm:simulationEntityAspect\"";
+				+ " -ASPECT:\"bcpg:hiddenFolder\"";
 
 	
 	/**
@@ -235,7 +234,7 @@ public class LuceneHelper {
 			path += "*/";
 		}
 		
-		return "+PATH:\"" + path + "/*\"" ;
+		return "PATH:\"" + path + "/*\"" ;
 	}
 
 	public static String mandatory(String condType) {

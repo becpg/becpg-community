@@ -186,7 +186,7 @@ public class DataListFilter {
 		
 		
 		if (!isRepo && parentNodeRef==null) {
-			searchQuery = 	LuceneHelper.getSiteSearchPath( siteId, containerId)+ " AND ("+searchQuery+")";
+			searchQuery = 	LuceneHelper.mandatory(LuceneHelper.getSiteSearchPath( siteId, containerId))+ " AND ("+searchQuery+")";
 		}
 		return searchQuery;
 	}

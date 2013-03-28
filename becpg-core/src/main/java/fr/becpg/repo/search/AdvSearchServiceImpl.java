@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -106,30 +105,35 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		String ftsQuery = "";
 		// Simple keyword search and tag specific search
 		if (term != null && term.length() != 0) {
-			ftsQuery = "(" + term + ") PATH:\"/cm:taggable/cm:" + ISO9075.encode(term) + "/member\" ";
+			ftsQuery =  term + " ";
 		} else if (tag != null && tag.length() != 0) {
-			ftsQuery = "PATH:\"/cm:taggable/cm:" + ISO9075.encode(tag) + "/member\" ";
+			ftsQuery = "TAG:"+ tag ;
 		}
 
 		// we processed the search terms, so suffix the PATH query
 	
+		String pathQuery = "PATH:\"/app:company_home//*\"";
 		if (!isRepo) {
-			ftsQuery = 	LuceneHelper.getSiteSearchPath( siteId, containerId)+ (ftsQuery.length() != 0 ? " AND " + ftsQuery : "");
+			pathQuery =LuceneHelper.getSiteSearchPath(siteId, containerId);
 		}
-
-		String typeQuery = "";
+		
+		ftsQuery =  pathQuery + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
+		
+		
 		if (datatype != null) {
-			typeQuery = "+TYPE:\"" + datatype + "\"";
+			ftsQuery = "TYPE:\"" + datatype + "\" AND (" + ftsQuery + ")" ;
 		} else {
-			typeQuery = "-TYPE:\"cm:thumbnail\"";
+			ftsQuery += " AND (-TYPE:\"cm:thumbnail\" -TYPE:\"cm:failedThumbnail\" -TYPE:\"cm:rating\" -TYPE:\"bcpg:entityListItem\" -TYPE:\"systemfolder\" )";
 		}
 
 		// extract data type for this search - advanced search query is type
 		// specific
-		ftsQuery = typeQuery + (ftsQuery.length() != 0 ? " AND (" + ftsQuery + ")" : "");
+		ftsQuery += " AND (-ASPECT:\"ecm:simulationEntityAspect\""
+				    +" -ASPECT: \"bcpg:hiddenFolder\""
+				    +" -ASPECT:\"bcpg:compositeVersion\""
+				    +" -ASPECT:\"bcpg:entityTplAspect\""
+					+" -ASPECT:\"bcpg:entityListsAspect\")";
 
-		// beCPG : now, exclude always product history
-		ftsQuery += LuceneHelper.DEFAULT_IGNORE_QUERY;
 
 		if(logger.isDebugEnabled()){
 			logger.debug(" build searchQueryByProperties :" +ftsQuery );
@@ -138,6 +142,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return ftsQuery;
 	}
 
+	
 	private boolean isAssocSearch(Map<String, String> criteria) {
 		if (criteria != null) {
 			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
