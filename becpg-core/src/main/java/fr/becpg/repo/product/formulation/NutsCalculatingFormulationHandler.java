@@ -3,11 +3,15 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -143,4 +147,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return BeCPGModel.TYPE_NUTLIST;
 	}
 
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct){
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>(formulatedProduct.getNutList().size());
+		for(NutListDataItem n : formulatedProduct.getNutList()){
+			mandatoryCharacts.put(n.getCharactNodeRef(), new ArrayList<NodeRef>());
+		}
+		return mandatoryCharacts;
+	}
 }

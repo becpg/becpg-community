@@ -3,6 +3,12 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,5 +56,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		}
 		Boolean isFormulated = (Boolean)nodeService.getProperty(sl.getCharactNodeRef(), BeCPGModel.PROP_PHYSICO_CHEM_FORMULATED); 
 		return isFormulated != null ? isFormulated.booleanValue() : false;
+	}
+	
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct){
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>(formulatedProduct.getPhysicoChemList().size());
+		for(PhysicoChemListDataItem p : formulatedProduct.getPhysicoChemList()){
+			mandatoryCharacts.put(p.getCharactNodeRef(), new ArrayList<NodeRef>());
+		}
+		return mandatoryCharacts;
 	}
 }

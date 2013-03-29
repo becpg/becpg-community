@@ -31,7 +31,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
-		logger.debug("Composition calculating visitor");
+		logger.debug("Composition calculating visitor");		
 		
 		// no compo => no formulation
 		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.ALL)){			

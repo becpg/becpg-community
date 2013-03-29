@@ -10,14 +10,14 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
+		//First Reset 			
+		if(productData.getCompoListView()!=null && productData.getCompoListView().getReqCtrlList()!=null){
+			productData.getCompoListView().getReqCtrlList().clear();
+		}
+		
 		if ((productData.hasCompoListEl(EffectiveFilters.ALL)) ||
 		(productData.hasPackagingListEl(EffectiveFilters.ALL)) ||
-		(productData.hasProcessListEl(EffectiveFilters.ALL))) {
-			//First Reset 
-			
-			if(productData.getCompoListView()!=null && productData.getCompoListView().getReqCtrlList()!=null){
-				productData.getCompoListView().getReqCtrlList().clear();
-			}
+		(productData.hasProcessListEl(EffectiveFilters.ALL))) {			
 			
 			// Continue
 			return true;
