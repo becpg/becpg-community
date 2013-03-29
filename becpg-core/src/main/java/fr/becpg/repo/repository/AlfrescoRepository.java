@@ -15,6 +15,7 @@ import org.alfresco.service.namespace.QName;
  */
 public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRepository<T, NodeRef> {
 
+	boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname);
 	List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname);
 	
 	T create(NodeRef parentNodeRef, T entity);

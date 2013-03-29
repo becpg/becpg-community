@@ -70,6 +70,7 @@
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
+					<property name="entityTplService" ref="entityTplService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />

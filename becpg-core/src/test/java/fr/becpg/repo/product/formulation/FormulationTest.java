@@ -18,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
@@ -45,6 +46,7 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class FormulationTest.
@@ -83,7 +85,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
 				properties.put(BeCPGModel.PROP_COSTFIXED, true);
 				NodeRef fixedCost = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
-				
+
 				/*-- Create finished product --*/
 				logger.info("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
@@ -100,9 +102,17 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
+				
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 4000d, "€", null, fixedCost, true));
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
+				
+				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				finishedProduct.setNutList(nutList);
 				
 				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<DynamicCharactListItem>();
 				//Literal formula
@@ -176,7 +186,6 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				assertEquals(3, checks);
 				
 				//dynamicCharact
-
 				assertNotNull("DynamicCharact is null", formulatedProduct.getCompoListView().getDynamicCharactList());
 				for(DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()){
 					String trace = "Dyn charact :"+dynamicCharactListItem.getName()+" value "+dynamicCharactListItem.getValue();
@@ -339,6 +348,27 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					}
 				}
 				assertEquals(1, checks);
+				
+				// ReqCtrlList
+				checks = 0;
+				String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, 
+										nodeService.getProperty(nut1, ContentModel.PROP_NAME));
+				String message2 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, 
+						nodeService.getProperty(nut2, ContentModel.PROP_NAME));
+				logger.info(message1);
+				logger.info(message2);
+				for(ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()){
+					
+					logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
+					
+					if(message1.equals(r.getReqMessage()) ||
+							message2.equals(r.getReqMessage())){
+						assertEquals(1, r.getSources().size());
+						assertEquals(rawMaterial4NodeRef, r.getSources().get(0));
+						checks++;
+					}					
+				}
+				assertEquals(2, checks);
 				
 				return null;
 
@@ -1606,54 +1636,70 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 						public NodeRef execute() throws Throwable {					   						
 							
-							// specification
+							// specification1
 							Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
-							properties.put(ContentModel.PROP_NAME, "Spec");
-							NodeRef productSpecificationNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
+							properties.put(ContentModel.PROP_NAME, "Spec1");
+							NodeRef productSpecificationNodeRef1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 											(String)properties.get(ContentModel.PROP_NAME)), 
 											BeCPGModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 							
-							ProductData productSpecification = alfrescoRepository.findOne(productSpecificationNodeRef);
+							ProductData productSpecification1 = alfrescoRepository.findOne(productSpecificationNodeRef1);
 							
 							List<NodeRef> ings = new ArrayList<NodeRef>();
 							List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
 							List<NodeRef> bioOrigins = new ArrayList<NodeRef>();
 							
-							List<ForbiddenIngListDataItem> forbiddenIngList = new ArrayList<ForbiddenIngListDataItem>();
-							forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "OGM interdit", null, Boolean.TRUE, null, ings, geoOrigins, bioOrigins));
-							forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ionisation interdite", null, null, Boolean.TRUE, ings, geoOrigins, bioOrigins));
+							List<ForbiddenIngListDataItem> forbiddenIngList1 = new ArrayList<ForbiddenIngListDataItem>();
+							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "OGM interdit", null, Boolean.TRUE, null, ings, geoOrigins, bioOrigins));
+							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ionisation interdite", null, null, Boolean.TRUE, ings, geoOrigins, bioOrigins));
 							
 							ings = new ArrayList<NodeRef>();
 							geoOrigins = new ArrayList<NodeRef>();
 							ings.add(ing3);				
 							geoOrigins.add(geoOrigin1);
-							forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Tolerated, "Ing3 geoOrigin1 toléré", null, null, null, ings, geoOrigins, bioOrigins));
+							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Tolerated, "Ing3 geoOrigin1 toléré", null, null, null, ings, geoOrigins, bioOrigins));
 							
 							ings = new ArrayList<NodeRef>();
 							geoOrigins = new ArrayList<NodeRef>();
 							ings.add(ing3);				
-							forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 < 40%", 0.4d, null, null, ings, geoOrigins, bioOrigins));
+							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 < 40%", 0.4d, null, null, ings, geoOrigins, bioOrigins));
 							
 							ings = new ArrayList<NodeRef>();
 							geoOrigins = new ArrayList<NodeRef>();
 							ings.add(ing1);
 							ings.add(ing4);
 							geoOrigins.clear();
-							forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing1 et ing4 interdits", null, null, null, ings, geoOrigins, bioOrigins));
+							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing1 et ing4 interdits", null, null, null, ings, geoOrigins, bioOrigins));
+							
+							productSpecification1.setForbiddenIngList(forbiddenIngList1);
+							alfrescoRepository.save(productSpecification1);
+							
+							// specification2
+							properties = new HashMap<QName, Serializable>();		
+							properties.put(ContentModel.PROP_NAME, "Spec2");
+							NodeRef productSpecificationNodeRef2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
+											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
+											(String)properties.get(ContentModel.PROP_NAME)), 
+											BeCPGModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+							
+							ProductData productSpecification2 = alfrescoRepository.findOne(productSpecificationNodeRef2);
+														
+							List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<ForbiddenIngListDataItem>();
 							
 							ings = new ArrayList<NodeRef>();
 							geoOrigins = new ArrayList<NodeRef>();
 							ings.add(ing2);				
 							geoOrigins.add(geoOrigin2);
-							forbiddenIngList.add(new ForbiddenIngListDataItem(null, RequirementType.Info, "Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, bioOrigins));
+							forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Info, "Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, bioOrigins));
 							
-							productSpecification.setForbiddenIngList(forbiddenIngList);
-							alfrescoRepository.save(productSpecification);
+							productSpecification2.setForbiddenIngList(forbiddenIngList2);
+							alfrescoRepository.save(productSpecification2);
 							
 							
 				// create association
-				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef2, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
 				
 				/*-- Formulate product --*/
 				logger.info("/*-- Formulate product --*/");
@@ -1720,7 +1766,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				/*
 				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)
 				 */				
-				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
 					
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");

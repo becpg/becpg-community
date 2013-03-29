@@ -526,4 +526,18 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	@Override
+	public boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname) {		
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+
+		if (listContainerNodeRef != null) {
+			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
+
+			if (dataListNodeRef != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
