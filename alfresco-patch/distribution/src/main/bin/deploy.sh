@@ -46,4 +46,5 @@ echo "**********************************************************"
 echo "Deploy patch "
 echo "**********************************************************"
 
+#jar ufv $SERVER/webapps/alfresco.war -C dist/alfresco .
 jar ufv $SERVER/webapps/share.war -C dist/share .
