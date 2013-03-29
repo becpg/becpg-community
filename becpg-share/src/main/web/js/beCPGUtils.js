@@ -73,30 +73,18 @@
    };
    
    beCPG.util.isEntity = function (record){
-   	if(record && record.jsNode && Array.indexOf(record.jsNode.aspects,"bcpg:entityListsAspect") > 0){
+   	if(record && record.jsNode && beCPG.util.contains(record.jsNode.aspects,"bcpg:entityListsAspect")){
    		return true;
    	}
    	
    	if(record &&  record.aspects!=null
-				&& Array.indexOf(record.aspects,"bcpg:entityListsAspect") > 0){
+				&& beCPG.util.contains(record.aspects,"bcpg:entityListsAspect")){
    		return true;
    	}
    	return false;
    	
    };
    
-   beCPG.util.isEntityDocLib = function (metadata){
-		  if( metadata!=null 
-				&& metadata.parent!=null 
-				&& metadata.parent.aspects!=null
-				&& Array.indexOf(metadata.parent.aspects,"bcpg:entityListsAspect") > 0){
-				return true;
-			}
-			return false;
-			
-		};
-   
-
    beCPG.util.postActivity = function(siteId, activityType, title, page, data, callback)
    {
       // Mandatory parameter check

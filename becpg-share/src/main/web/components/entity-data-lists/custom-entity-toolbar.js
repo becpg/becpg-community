@@ -3,8 +3,9 @@
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
 		   actionName : "eco-calculate-wused",
-		   evaluate : function(asset) {
-			   return asset.name != null && (asset.name === "replacementList");
+		   evaluate : function(asset,entity) {
+			   return asset.name != null && (asset.name === "replacementList")
+			   		 &&  entity.userAccess.edit;
 		   },
 		   fn : function(instance) {
 
@@ -45,8 +46,9 @@
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
 		   actionName : "eco-do-simulation",
-		   evaluate : function(asset) {
-			   return asset.name != null && (asset.name === "replacementList");
+		   evaluate : function(asset,entity) {
+			   return asset.name != null && (asset.name === "replacementList")
+			   		 &&  entity.userAccess.edit;
 		   },
 		   fn : function(instance) {
 
@@ -88,8 +90,9 @@
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
 		   actionName : "eco-apply",
-		   evaluate : function(asset) {
-			   return asset.name != null && (asset.name === "replacementList");
+		   evaluate : function(asset,entity) {
+			   return asset.name != null && (asset.name === "replacementList")
+			   		 &&  entity.userAccess.edit;
 		   },
 		   fn : function(instance) {
 
@@ -131,9 +134,10 @@
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
 		   actionName : "formulate",
-		   evaluate : function(asset) {
+		   evaluate : function(asset,entity) {
 			   return asset.name != null
-			         && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList");
+			         && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList")
+			         &&  entity.userAccess.edit;
 		   },
 		   fn : function(instance) {
 
@@ -177,8 +181,9 @@
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
 		   actionName : "import",
-		   evaluate : function(asset) {
-			   return asset.name != null && (asset.name === "compoList");
+		   evaluate : function(asset,entity) {
+			   return asset.name != null && (asset.name === "compoList")
+			   		 &&  entity.userAccess.edit;
 		   },
 		   fn : function(instance) {
 			   var actionUrl = Alfresco.constants.PROXY_URI + "becpg/remote/import";
@@ -278,7 +283,7 @@
 		   	var url = beCPG.util.entityDetailsURL(this.options.siteId,this.options.entityNodeRef,this.entity.type);
 		   	
 	         
-	         if(Array.indexOf(this.entity.aspects,"rep:reportEntityAspect") >0){
+	         if(beCPG.util.isEntity(this.entity)){
 	         	refreshReports(this,url);
 	         } else {
 	         	window.location.href = url;
@@ -298,7 +303,7 @@
 		   	var url = beCPG.util.entityDocumentsURL(this.options.siteId,this.entity.path,this.entity.name);
 
 			   
-	         if(Array.indexOf(this.entity.aspects,"rep:reportEntityAspect") > 0){
+	         if(beCPG.util.isEntity(this.entity)){
 	         	refreshReports(this,url);
 	         } else {
 	         	 window.location.href = url;

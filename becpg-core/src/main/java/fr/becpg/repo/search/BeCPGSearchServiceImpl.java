@@ -21,36 +21,32 @@ import fr.becpg.repo.RepoConsts;
 
 /**
  * BeCPG Search Service
+ * 
  * @author "Matthieu Laborie <laborima@gmail.com>"
- *
+ * 
  */
 @Service
-public class BeCPGSearchServiceImpl implements BeCPGSearchService{
+public class BeCPGSearchServiceImpl implements BeCPGSearchService {
 
-	
 	private static final String DEFAULT_FIELD_NAME = "keywords";
-	
-	
-	private SearchService searchService;
-	
-	private String defaultSearchTemplate;
-	
-	private NamespaceService namespaceService;
 
+	private SearchService searchService;
+
+	private String defaultSearchTemplate;
+
+	private NamespaceService namespaceService;
 
 	public void setSearchService(SearchService searchService) {
 		this.searchService = searchService;
 	}
-	
+
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
-	
 	public void setDefaultSearchTemplate(String defaultSearchTemplate) {
 		this.defaultSearchTemplate = defaultSearchTemplate;
 	}
-
 
 	private static Log logger = LogFactory.getLog(BeCPGSearchServiceImpl.class);
 
@@ -58,18 +54,17 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	public List<NodeRef> luceneSearch(String runnedQuery) {
 		return luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_UNLIMITED);
 	}
-	
+
 	@Override
 	public List<NodeRef> luceneSearch(String runnedQuery, int maxResults) {
 		return luceneSearch(runnedQuery, null, maxResults);
 	}
-	
 
 	@Override
 	public List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort) {
 		return luceneSearch(runnedQuery, sort, RepoConsts.MAX_RESULTS_UNLIMITED);
 	}
-		
+
 	@Override
 	public List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort, int maxResults) {
 		return search(runnedQuery, sort, maxResults, SearchService.LANGUAGE_LUCENE);
@@ -83,22 +78,17 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 	@Override
 	public List<NodeRef> searchByPath(NodeRef parentNodeRef, String xPath) {
 
-		return searchService.selectNodes(parentNodeRef, 
-				xPath, null, namespaceService, false);
-		
+		return searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
+
 	}
 
 	@Override
-	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults, String searchLanguage,
-			StoreRef storeRef) {
+	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults, String searchLanguage, StoreRef storeRef) {
 
 		List<NodeRef> nodes = new LinkedList<NodeRef>();
 
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
+		StopWatch watch = new StopWatch();
+		watch.start();
 
 		SearchParameters sp = new SearchParameters();
 		sp.addStore(storeRef);
@@ -138,17 +128,16 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService{
 			if (result != null) {
 				result.close();
 			}
+			watch.stop();
+			if (watch.getTotalTimeSeconds() > 1) {
+				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + nodes.size());
+			}
+
 			if (logger.isDebugEnabled()) {
-				watch.stop();
-				logger.debug(runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results "
-						+ nodes.size());
+				logger.debug(runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + nodes.size());
 			}
 		}
 		return nodes;
 	}
-	
 
-
-	
-	
 }
