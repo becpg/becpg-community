@@ -369,11 +369,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			tmp.put("version", nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
 			tmp.put("label", attribute.getTitle());
 			tmp.put("displayValue", displayName);
-			if(value instanceof Date){
-				tmp.put("value",ISO8601DateFormat.format((Date)value));
-			} else {
-				tmp.put("value", value);
-			}
+			tmp.put("value",formatValue(value));
+			
 			return tmp;
 
 		} else if (attribute instanceof AssociationDefinition) {// associations
@@ -419,9 +416,27 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 				return ret;
 			}
-
 		}
+		return null;
+	}
 
+	private Object formatValue(Serializable value) {
+		if (value != null) {
+			if (value instanceof Date) {
+				return ISO8601DateFormat.format((Date) value);
+			} else if (value instanceof Double) {
+				Double d = (Double) value;
+				if (d.isInfinite()){
+					return 0 == d.compareTo(Double.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
+				}
+			} else if (value instanceof Float) {
+				Float f = (Float) value;
+				if (f.isInfinite()){
+					return 0 == f.compareTo(Float.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
+				}
+			}
+			return value;
+		}
 		return null;
 	}
 
