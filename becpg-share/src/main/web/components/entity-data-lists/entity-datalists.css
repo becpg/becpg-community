@@ -88,15 +88,18 @@
     clear: left;
     margin: 0 -10px;
     min-height: 1em;
-    padding: 5px 0 6px;
+    padding: ;
 }
 
 #alf-hd  .node-header .node-path {
-	padding : 0;
+	 padding: 5px 0 6px;
 	 margin-left: -10px;
 }
 
 
+#alf-hd  .node-header .status-banner {
+    margin-top: 0;
+}
 
 .form-container .form-fields
 {

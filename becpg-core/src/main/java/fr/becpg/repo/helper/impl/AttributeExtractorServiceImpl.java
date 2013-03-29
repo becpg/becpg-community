@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.tagging.TaggingService;
@@ -155,7 +156,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		if (dataType.equals(DataTypeDefinition.ASSOC_REF.toString())) {
 			QName type = nodeService.getType((NodeRef) v);
-			value = (String) nodeService.getProperty((NodeRef) v, getPropName(type));
+			value = extractPropName(type, (NodeRef)v);
 		} else if (dataType.equals(DataTypeDefinition.CATEGORY.toString())) {
 
 			List<NodeRef> categories = (ArrayList<NodeRef>) v;
@@ -206,7 +207,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
 			QName type = nodeService.getType((NodeRef) v);
-			value = (String) nodeService.getProperty((NodeRef) v, getPropName(type));
+			value = extractPropName(type,(NodeRef) v);
 
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
@@ -368,11 +369,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			tmp.put("version", nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
 			tmp.put("label", attribute.getTitle());
 			tmp.put("displayValue", displayName);
-			if(value instanceof Date){
-				tmp.put("value",ISO8601DateFormat.format((Date)value));
-			} else {
-				tmp.put("value", value);
-			}
+			tmp.put("value",formatValue(value));
+			
 			return tmp;
 
 		} else if (attribute instanceof AssociationDefinition) {// associations
@@ -388,7 +386,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 
 					type = nodeService.getType(assocRef.getTargetRef());
-					displayName += (String) nodeService.getProperty(assocRef.getTargetRef(), getPropName(type));
+					displayName += extractPropName(type,assocRef.getTargetRef());
 					nodeRefs += assocRef.getTargetRef().toString();
 				}
 				tmp.put("label", attribute.getTitle());
@@ -407,7 +405,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						tmp.put("metadata", extractMetadata(type, assocRef.getTargetRef()));
 					}
 					tmp.put("version", nodeService.getProperty(assocRef.getTargetRef(),ContentModel.PROP_VERSION_LABEL));
-					tmp.put("displayValue", (String) nodeService.getProperty(assocRef.getTargetRef(), getPropName(type)));
+					tmp.put("displayValue", extractPropName(type,assocRef.getTargetRef()));
 					tmp.put("value", assocRef.getTargetRef().toString());
 					String siteId = extractSiteId(assocRef.getTargetRef());
 					if (siteId != null) {
@@ -418,11 +416,43 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 				return ret;
 			}
-
 		}
-
 		return null;
 	}
+
+	private Object formatValue(Serializable value) {
+		if (value != null) {
+			if (value instanceof Date) {
+				return ISO8601DateFormat.format((Date) value);
+			} else if (value instanceof Double) {
+				Double d = (Double) value;
+				if (d.isInfinite()){
+					return 0 == d.compareTo(Double.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
+				}
+			} else if (value instanceof Float) {
+				Float f = (Float) value;
+				if (f.isInfinite()){
+					return 0 == f.compareTo(Float.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
+				}
+			}
+			return value;
+		}
+		return null;
+	}
+
+	private String extractPropName(QName type, NodeRef nodeRef) {
+		String value = "";
+		
+		if(permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED){
+			value = (String) nodeService.getProperty(nodeRef, getPropName(type));
+		} else {
+			value = I18NUtil.getMessage("message.becpg.access.denied");
+		}
+		
+		return  value;
+	}
+	
+	
 
 	private QName getPropName(QName type) {
 		if (type.equals(ContentModel.TYPE_PERSON)) {

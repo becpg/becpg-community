@@ -23,12 +23,12 @@
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
 			<Level name="Jour" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 		</Hierarchy>
-		<Hierarchy name="Date par mois"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date par mois">
+		<Hierarchy name="Date par mois"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date par mois" visible="false">
 			<Table name="becpg_dimdate" alias="olapDate" />
 			<Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
 			<Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
 		</Hierarchy>
-		<Hierarchy name="Date par semaine"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date par semaine">
+		<Hierarchy name="Date par semaine"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date par semaine" visible="false">
 			<Table name="becpg_dimdate" alias="olapDate" />
 			<Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
@@ -197,6 +197,7 @@
 								entity.is_last_version as isLastVersion,
 								MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
 								MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
+								MAX(IF(prop.prop_name = "pjt:projectManager",prop.string_value,NULL)) as projectManager,
 								entity.id as id
 							from
 								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
@@ -209,6 +210,8 @@
 				<Level name="Famille" column="projectHierarchy1" type="String"   >
 				</Level>
 				<Level name="Sous famille" column="projectHierarchy2" type="String"   >
+				</Level>
+				<Level name="Chef de projet" column="projectManager"  type="String"    >
 				</Level>
 				<Level name="Projet" column="entity_noderef" nameColumn="name" type="String"   >
 				</Level>
@@ -387,27 +390,29 @@
 		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
 		<Measure name="Nombre de projets (Distinct)" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="Avancement (Moyen)" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
-		<#--<Measure name="Avancement (Max)" column="completionPercent" datatype="Numeric" aggregator="max" visible="true"  />-->
+		<Measure name="Note (Moyenne)" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Retard " column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
+		
+
+		<CalculatedMember name="Avancement (Dernier)" dimension="Measures" visible="true">
+			<Formula>([Measures].[Avancement (Moyen)], LastNonEmpty(Descendants([Date de modification.Date].currentMember,[Date de modification.Date].[Jour]),[Measures].[Avancement (Moyen)]))</Formula>
+		</CalculatedMember> 
+		
 		<#--
 		<NamedSet name="Trois derniers mois">
 			<Formula>{CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]').Lag(2): CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]')}</Formula>
 		</NamedSet>
-		-->
-		
-		<#--
 		<CalculatedMember name="Dernier avancement" dimension="Measures" visible="true">
 			<Formula>Tail(NonEmptyCrossJoin({[Date de modification].[Date].firstChild:[Date de modification].[Date].currentMember},[Measures].[Avancement (Moyen)])).Item(0)</Formula>
 		</CalculatedMember> 
-		-->
-		<#--
+		
+		
 		  <CalculatedMember name="Retard" dimension="Measures" visible="true">
 		       <Formula>[Date de modification].[Date].currentMember - CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]') * [Retard]  </Formula>
 		  </CalculatedMember> 
 		-->
 		
 		
-		<Measure name="Note (Moyenne)" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
-		<Measure name="Retard " column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
 		
 
 		

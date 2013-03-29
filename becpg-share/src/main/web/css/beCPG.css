@@ -107,3 +107,9 @@
     position: inherit;
 }
 
+/** fix ie chrome */
+
+.yui-skin-lightTheme .search-title div.clear {
+	clear: none;
+}
+

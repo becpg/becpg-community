@@ -1,7 +1,7 @@
 
 <@markup id="customSearch-css" target="css"  action="after">
    <#-- CSS Dependencies -->
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/search/custom-search.css" group="search"/>
+  <@link href="${url.context}/res/components/search/custom-search.css" group="search"/>
 </@>
 
 <#-- BUG HERE Why should I use replace ? -->
@@ -52,24 +52,23 @@
                   </#list>
                </select>
                	<#if exportSearchTpls?has_content >
-						<#-- beCPG : export -->
-						<span class="yui-button yui-push-button" id="${el}-export-menubutton">
+					<#-- beCPG : export -->
+				    <span class="yui-button yui-push-button" id="${el}-export-menubutton">
 				            <span class="first-child"><button></button></span>
-				         </span>
-				         <select id="${el}-export-menu" >
-				            <option value="-"></option>
-				            <#list exportSearchTpls as exportSearchTpl>
-				            <option value="${exportSearchTpl.nodeRef}" fileName="${exportSearchTpl.name}.${exportSearchTpl.format?lower_case}">${exportSearchTpl.name}</option>
-				            </#list>
-				         </select>
-				         </#if>
-				          <#-- beCPG : bulkedit -->
-						<span id="${el}-bulk-edit" class="yui-button yui-push-button bulk-edit-button">
-						   <button>
-								<span>${msg("button.bulkEdit")}</span>
-							</button>
-						</span>
-               
+				    </span>
+				    <select id="${el}-export-menu" >
+				          <option value="-"></option>
+				          <#list exportSearchTpls as exportSearchTpl>
+				          <option value="${exportSearchTpl.nodeRef}" fileName="${exportSearchTpl.name}.${exportSearchTpl.format?lower_case}">${exportSearchTpl.name}</option>
+				          </#list>
+				    </select>
+				</#if>
+				<#-- beCPG : bulkedit -->
+				<span id="${el}-bulk-edit" class="yui-button yui-push-button bulk-edit-button">
+				   <button>
+						<span>${msg("button.bulkEdit")}</span>
+				   </button>
+				</span>
             </div>
          </div>
          

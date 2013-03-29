@@ -1,28 +1,29 @@
 <#include "../../../modules/entity-datagrid/include/entity-datagrid.lib.ftl" />
 
-<#macro dataGridDashlet dashletId usePagination=true useFilter=true showCreateButton=false extra...>
-<script type="text/javascript">//<![CDATA[
-		(function() {
-		  new Alfresco.widget.DashletResizer("${dashletId}", "${dashletId}");
-		  new Alfresco.widget.DashletTitleBarActions("${dashletId}").setOptions(
-		   {
-		      actions:
-		      [
-		         {
-		            cssClass: "help",
-		            bubbleOnClick:
-		            {
-		              	<#if extra["itemType"]??>
-		               	message: "${msg("dashlet.help." + extra["itemType"]?replace(":", "_"))?js_string}"
-							<#else>
-		               	message: "${msg("dashlet.help.composition")?js_string}"
-							</#if>
-		            },
-		            tooltip: "${msg("dashlet.help.tooltip")?js_string}"
-		         }
-		      ]
-		   });
-			new beCPG.module.EntityDataGrid('${dashletId}'<#if extra["itemType"]??>,true</#if>).setOptions(
+<#macro dataGridDashlet dashletId dashletName usePagination=true useFilter=true showCreateButton=false extra...>
+<@inlineScript group="formulation-view">
+	
+
+		new Alfresco.widget.DashletResizer("${dashletId}", "${dashletName}");
+	   new Alfresco.widget.DashletTitleBarActions("${dashletId}").setOptions(
+			   {
+			      actions:
+			      [
+			         {
+			            cssClass: "help",
+			            bubbleOnClick:
+			            {
+			              	<#if extra["itemType"]??>
+			               	message: "${msg("dashlet.help." + extra["itemType"]?replace(":", "_"))?js_string}"
+								<#else>
+			               	message: "${msg("dashlet.help.composition")?js_string}"
+								</#if>
+			            },
+			            tooltip: "${msg("dashlet.help.tooltip")?js_string}"
+			         }
+			      ]
+			   });
+		 new beCPG.module.EntityDataGrid('${dashletId}'<#if extra["itemType"]??>,true</#if>).setOptions(
 			   {
 			       entityNodeRef: "${page.url.args.nodeRef!""}",
 			       siteId: "${page.url.templateArgs.site!""}",
@@ -38,11 +39,9 @@
 			       	,itemType : "${extra["itemType"]?string}"
 			       </#if>
 			   }).setMessages(${messages});
-			
-				})();
-			//]]>	
-
-</script>
+			   
+</@>
+	
 <div id="${dashletId}">
 	<div class="dashlet datagrid" id="${dashletId}-body" >
 		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"/>&nbsp;(<span id="${dashletId}-description"/>)</#if></div>
