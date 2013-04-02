@@ -136,7 +136,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 				
 		logger.debug("SortableListPolicy.onDeleteNode");
 		
-		if(nodeService.exists(childRef.getParentRef()) && nodeService.exists(childRef.getChildRef())){
+		//if(nodeService.exists(childRef.getParentRef()) && nodeService.exists(childRef.getChildRef())){
 			try{
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
@@ -144,7 +144,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 			finally{
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 			}
-		}				
+		//}				
 	}
 
 	@Override
