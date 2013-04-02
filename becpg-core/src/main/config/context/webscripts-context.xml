@@ -82,6 +82,8 @@
 		parent="webscript">		
 		<property name="entityService" ref="entityService" />
 		<property name="entityReportService" ref="entityReportService" />
+		<property name="nodeService" ref="NodeService"/>
+		<property name="lockService" ref="lockService"/>
 	</bean>
 
 	<!-- Entity new version form -->
