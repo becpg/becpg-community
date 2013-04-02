@@ -156,10 +156,12 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 				NodeRef listNodeRef =   entityListDAO.getList(listContainerNodeRef, dataListQname);
-				List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
-			
-				for (NodeRef nodeRef : results) {
-					ret.add(extract(nodeRef, metadataFields, props));
+				if(listNodeRef!=null){
+					List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
+				
+					for (NodeRef nodeRef : results) {
+						ret.add(extract(nodeRef, metadataFields, props));
+					}
 				}
 
 				
