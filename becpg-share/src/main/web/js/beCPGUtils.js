@@ -1,128 +1,113 @@
 /**
  * Asset location helper class.
- *
+ * 
  * @namespace Alfresco
  * @class Alfresco.Location
  */
-(function()
-{
-	
+(function() {
+
    /**
     * Alfresco Slingshot aliases
     */
-   var  $siteURL = Alfresco.util.siteURL;
-   
-   
-   
-   beCPG.util.entityCharactURL = function(siteId, nodeRef , type) {
-   	
-   	nodeRef = new Alfresco.util.NodeRef(nodeRef);
-   	
-   	var redirect  = $siteURL("entity-data-lists?nodeRef="+nodeRef.toString(),
-      {
-         site: siteId
+   var $siteURL = Alfresco.util.siteURL;
+
+   beCPG.util.entityCharactURL = function(siteId, pNodeRef, type) {
+
+      var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
+
+      var redirect = $siteURL("entity-data-lists?nodeRef=" + nodeRef.toString(), {
+         site : siteId
       });
-   	
-   	if(type == "bcpg:finishedProduct" || type == "bcpg:semiFinishedProduct"){
-   		redirect+="&list=compoList";
-   	}
-		else if(type == "bcpg:packagingKit"){
-			redirect+="&list=packagingList";
-		}
-   	
-   	return redirect;
-   	
+
+      if (type == "bcpg:finishedProduct" || type == "bcpg:semiFinishedProduct") {
+         redirect += "&list=compoList";
+      } else if (type == "bcpg:packagingKit") {
+         redirect += "&list=packagingList";
+      }
+
+      return redirect;
+
    };
-   
-   
-   beCPG.util.entityDocumentsURL = function(siteId,path,name, isFullPath ){
-   	 var url= null; 
-   		
-   	if (siteId) {
-   		if(isFullPath){
-   			url = 'documentlibrary?path=' + encodeURIComponent(path + '/' + name);
-   		} else {
-   			url = 'documentlibrary?path=' + encodeURIComponent('/' + path + '/' + name);
-   		}
-        } else {
-      	  
-           if (path) {
-         	  if(isFullPath){
-         		  url = 'repository?path='
-                    + encodeURIComponent(path+'/'+name);
-         	  } else {
-		           url = 'repository?path='
-		                    + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
-              
-         	  }
-           }
-        }
-   	if(url!=null){
-   		url = $siteURL(url,{site:siteId});
-   	}
-   	return url;
-   	
+
+   beCPG.util.entityDocumentsURL = function(siteId, path, name, isFullPath) {
+      var url = null;
+
+      if (siteId) {
+         if (isFullPath) {
+            url = 'documentlibrary?path=' + encodeURIComponent(path + '/' + name);
+         } else {
+            url = 'documentlibrary?path=' + encodeURIComponent('/' + path + '/' + name);
+         }
+      } else {
+
+         if (path) {
+            if (isFullPath) {
+               url = 'repository?path=' + encodeURIComponent(path + '/' + name);
+            } else {
+               url = 'repository?path=' + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
+
+            }
+         }
+      }
+      if (url !== null) {
+         url = $siteURL(url, {
+            site : siteId
+         });
+      }
+      return url;
+
    };
-   
-   
-   beCPG.util.entityDetailsURL = function (siteId, nodeRef, type){
-   	nodeRef = new Alfresco.util.NodeRef(nodeRef);
-   	
-   	return $siteURL("entity-details?nodeRef=" + nodeRef.toString(),{site:siteId});
-   	
+
+   beCPG.util.entityDetailsURL = function(siteId, pNodeRef, type) {
+      var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
+
+      return $siteURL("entity-details?nodeRef=" + nodeRef.toString(), {
+         site : siteId
+      });
+
    };
-   
-   beCPG.util.isEntity = function (record){
-   	if(record && record.jsNode && beCPG.util.contains(record.jsNode.aspects,"bcpg:entityListsAspect")){
-   		return true;
-   	}
-   	
-   	if(record &&  record.aspects!=null
-				&& beCPG.util.contains(record.aspects,"bcpg:entityListsAspect")){
-   		return true;
-   	}
-   	return false;
-   	
+
+   beCPG.util.isEntity = function(record) {
+      if (record && record.jsNode && beCPG.util.contains(record.jsNode.aspects, "bcpg:entityListsAspect")) {
+         return true;
+      }
+
+      if (record && record.aspects !== null && beCPG.util.contains(record.aspects, "bcpg:entityListsAspect")) {
+         return true;
+      }
+      return false;
+
    };
-   
-   beCPG.util.postActivity = function(siteId, activityType, title, page, data, callback)
-   {
+
+   beCPG.util.postActivity = function(siteId, activityType, title, page, data, callback) {
       // Mandatory parameter check
-      if (!YAHOO.lang.isString(siteId) || siteId.length === 0 ||
-         !YAHOO.lang.isString(activityType) || activityType.length === 0 ||
-         !YAHOO.lang.isString(title) || title.length === 0 ||
-         !YAHOO.lang.isObject(data) === null ||
-         !(YAHOO.lang.isString(data.nodeRef) || YAHOO.lang.isString(data.parentNodeRef)))
-      {
+      if (!YAHOO.lang.isString(siteId) || siteId.length === 0 || !YAHOO.lang.isString(activityType) || activityType.length === 0 || !YAHOO.lang
+            .isString(title) || title.length === 0 || !YAHOO.lang.isObject(data) === null || !(YAHOO.lang
+            .isString(data.nodeRef) || YAHOO.lang.isString(data.parentNodeRef))) {
          return;
       }
 
-      var config =
-      {
-         method: "POST",
-         url: Alfresco.constants.PROXY_URI + "slingshot/activity/create",
-         successCallback:
-         {
-            fn: callback,
-            scope: this
+      var config = {
+         method : "POST",
+         url : Alfresco.constants.PROXY_URI + "slingshot/activity/create",
+         successCallback : {
+            fn : callback,
+            scope : this
          },
-         failureCallback:
-         {
-            fn: callback,
-            scope: this
+         failureCallback : {
+            fn : callback,
+            scope : this
          },
-         dataObj: YAHOO.lang.merge(
-         {
-            site: siteId,
-            type: activityType,
-            title: title,
-            page: page
+         dataObj : YAHOO.lang.merge({
+            site : siteId,
+            type : activityType,
+            title : title,
+            page : page
          }, data)
       };
 
-       Alfresco.util.Ajax.jsonRequest(config);
-    
+      Alfresco.util.Ajax.jsonRequest(config);
+
    };
-   
-   
+
 })();
