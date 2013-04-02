@@ -1,11 +1,15 @@
 package fr.becpg.repo.policy;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
+import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
@@ -23,7 +27,8 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 
-public abstract class AbstractBeCPGPolicy {
+public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy,
+													CopyServicePolicies.OnCopyCompletePolicy{
 
 	protected BehaviourFilter policyBehaviourFilter;
 
@@ -68,12 +73,28 @@ public abstract class AbstractBeCPGPolicy {
 	}
 
 	public void disableOnCopyBehaviour(QName type) {
-		DisableBehaviourOnCopy disableBehaviourOnCopy = new DisableBehaviourOnCopy(type, policyBehaviourFilter);
+		//DisableBehaviourOnCopy disableBehaviourOnCopy = new DisableBehaviourOnCopy(type, policyBehaviourFilter);
 
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, type, new JavaBehaviour(disableBehaviourOnCopy, "getCopyCallback"));
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, type, new JavaBehaviour(disableBehaviourOnCopy, "onCopyComplete"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, type, new JavaBehaviour(this, "getCopyCallback"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, type, new JavaBehaviour(this, "onCopyComplete"));
 
 	}
+	
+	@Override
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		policyBehaviourFilter.disableBehaviour(copyDetails.getTargetNodeRef(), classRef);
+		return new DefaultCopyBehaviourCallback();
+	}
+	
+	@Override
+	public void onCopyComplete(QName classRef,
+            NodeRef sourceNodeRef,
+            NodeRef destinationRef,
+            boolean copyToNewNode,
+            Map<NodeRef, NodeRef> copyMap){
+		
+		policyBehaviourFilter.enableBehaviour(destinationRef, classRef);     
+    }
 
 	protected boolean isWorkingCopyOrVersion(NodeRef nodeRef) {
 
@@ -126,7 +147,9 @@ public abstract class AbstractBeCPGPolicy {
 			keys.add(key);
 			AlfrescoTransactionSupport.bindResource(key, pendingNodes);
 		}
-		pendingNodes.add(nodeRef);
+		if(!pendingNodes.contains(nodeRef)){
+			pendingNodes.add(nodeRef);
+		}	
 		
 		AlfrescoTransactionSupport.bindListener(this.transactionListener);
 

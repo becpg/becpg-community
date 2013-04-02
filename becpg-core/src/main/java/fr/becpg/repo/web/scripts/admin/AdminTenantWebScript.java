@@ -1,5 +1,6 @@
 package fr.becpg.repo.web.scripts.admin;
 
+import java.io.File;
 import java.util.Map;
 
 import org.alfresco.repo.tenant.TenantAdminService;
@@ -33,8 +34,11 @@ public class AdminTenantWebScript extends AbstractWebScript {
 	private static final String PARAM_PASSWORD = "tenantPassword";
 
 	private static final String PARAM_ROOT_CONTENT = "rootContentStoreDir";
+	
+	private static final String PARAM_DIRECTORY_DESTINATION = "directoryDestination";
 
 	private static final String ACTION_CREATE = "create";
+	private static final String ACTION_EXPORT = "export";
 
 	private TenantAdminService tenantAdminService;
 	private TenantService tenantService;
@@ -78,22 +82,25 @@ public class AdminTenantWebScript extends AbstractWebScript {
 			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 
 			String action = templateArgs.get(PARAM_ACTION);
-
-			// Check arg
-			if (action == null || action.isEmpty())
+			String tenant = req.getParameter(PARAM_DOMAIN);
+			
+			// Check arg			
+			if (action == null || action.isEmpty()){
 				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
+			}
+						
+			if (tenant == null || tenant.isEmpty()) {
+				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'tenantDomain' argument cannot be null or empty");
+			}
 
 			logger.debug("Call admin tenant webscript for action :" + action);
 
 			if (ACTION_CREATE.equals(action)) {
 
-				String newTenant = req.getParameter(PARAM_DOMAIN);
+				
 				String tenantAdminRawPassword = req.getParameter(PARAM_PASSWORD);
 				String rootContentStoreDir = req.getParameter(PARAM_ROOT_CONTENT);
-				if (newTenant == null || newTenant.isEmpty()) {
-					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'tenantDomain' argument cannot be null or empty");
-				}
-
+				
 				if (tenantAdminRawPassword == null || tenantAdminRawPassword.isEmpty()) {
 					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'tenantPassword' argument cannot be null or empty");
 				}
@@ -102,8 +109,18 @@ public class AdminTenantWebScript extends AbstractWebScript {
 					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'rootContentStoreDir' argument cannot be null or empty");
 				}
 
-				tenantAdminService.createTenant(newTenant, tenantAdminRawPassword.toCharArray(), rootContentStoreDir);
+				tenantAdminService.createTenant(tenant, tenantAdminRawPassword.toCharArray(), rootContentStoreDir);
 
+			}
+			else if(ACTION_EXPORT.equals(action)){
+				    
+				String directoryDestination = req.getParameter(PARAM_DIRECTORY_DESTINATION);
+				if (directoryDestination == null || directoryDestination.isEmpty()) {
+					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'directoryDestination' argument cannot be null or empty");
+				}
+					            
+				File directoryDestinationFile = new File(directoryDestination);
+	            tenantAdminService.exportTenant(tenant, directoryDestinationFile);
 			}
     		else{
     			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);

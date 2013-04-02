@@ -3,6 +3,7 @@ package fr.becpg.repo.product;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -428,6 +429,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			geoOrigins.add(geoOrigin2);			
 			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial4.setIngList(ingList);		
+			rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
+			rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
 			rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
 			
 			/*-- Raw material 5 --*/

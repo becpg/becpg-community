@@ -3,7 +3,9 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -11,12 +13,15 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -24,6 +29,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
 
 	public static final String UNIT_SEPARATOR = "/";
+	public static final String MESSAGE_MISSING_MANDATORY_CHARACT = "message.formulate.missing.mandatory.charact";
 	
 	private static Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 	
@@ -55,6 +61,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	protected abstract QName getDataListVisited();
 	
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct){
+		return new HashMap<NodeRef, List<NodeRef>>();
+	}
 
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		logger.debug("formulateSimpleList");			
@@ -69,111 +78,137 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			}
 		}
-		
-		List<T> retainNodes = new ArrayList<T>();
-		
-		//manuel
-		for(T sl : simpleListDataList){
-			if(sl.getIsManual()!= null && sl.getIsManual()){
-				retainNodes.add(sl);
-			}
-		}
-		
-		visitChildren(formulatedProduct, simpleListDataList, retainNodes);		
-		simpleListDataList.retainAll(retainNodes);			
+				
+		visitChildren(formulatedProduct, simpleListDataList);		
 		
 		//sort
 		sort(simpleListDataList);
 	}
 	
-	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList, List<T> retainNodes) throws FormulateException{
+	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){
-		
+			
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct);
+			
 			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE)){
 				Double qty = FormulationHelper.getQty(compoItem, nodeService);
 				
 				if(qty != null){
-					visitPart(compoItem.getProduct(), simpleListDataList, retainNodes, qty, netWeight);
+					visitPart(compoItem.getProduct(), simpleListDataList, qty, netWeight, mandatoryCharacts);
 				}			
 			}
+			
+			addReqCtrlList(formulatedProduct, mandatoryCharacts);
 		}		
+	}
+	
+	protected void addReqCtrlList(ProductData formulatedProduct, Map<NodeRef, List<NodeRef>> mandatoryCharacts){
+		
+		//ReqCtrlList
+		for(Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()){
+			if(mandatoryCharact.getValue() != null && !mandatoryCharact.getValue().isEmpty()){
+				String message = I18NUtil.getMessage(MESSAGE_MISSING_MANDATORY_CHARACT,
+									nodeService.getProperty(mandatoryCharact.getKey(), ContentModel.PROP_NAME));
+				
+				formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null,  RequirementType.Tolerated, message, mandatoryCharact.getValue()));					
+			}
+		}
 	}
 	
 	/**
 	 * Visit part.
 	 *
 	 */
-	protected void visitPart(NodeRef componentNodeRef,  List<T> simpleListDataList, List<T> retainNodes, Double qtyUsed, Double netWeight) throws FormulateException{
-				
-		List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited() ,getDataListVisited());					
+	protected void visitPart(NodeRef componentNodeRef,  
+			List<T> simpleListDataList,
+			Double qtyUsed, 
+			Double netWeight, 
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts) throws FormulateException{								
 		
-		if(componentSimpleListDataList == null){
-			logger.debug("simpleListDataList is null");
+		if(!alfrescoRepository.hasDataList(componentNodeRef, getDataListVisited())){
+			logger.debug("simpleListDataList " + getDataListVisited() + " is null");
 			return;
 		}	
 		
-		for(SimpleListDataItem slDataItem : componentSimpleListDataList){			
-			
-			//Look for charact
-			NodeRef slNodeRef = slDataItem.getCharactNodeRef();
-			
-			T newSimpleListDataItem = findSimpleListDataItem(simpleListDataList, slNodeRef);
-			
-			if(newSimpleListDataItem == null){
-				try {
-					newSimpleListDataItem = createNewInstance();
-				} catch (InstantiationException e) {
-					throw new FormulateException(e);
-				} catch (IllegalAccessException e) {
-					throw new FormulateException(e);
-				}
-				newSimpleListDataItem.setCharactNodeRef(slNodeRef);													
-				simpleListDataList.add(newSimpleListDataItem);					
+		List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited() ,getDataListVisited());
+		
+		if(componentSimpleListDataList.isEmpty()){
+			logger.debug("simpleListDataList " + getDataListVisited() + " is empty");
+			for(NodeRef charactNodeRef : mandatoryCharacts.keySet()){
+				addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, componentNodeRef);
 			}
+			return;
+		}
+		else{
 			
-			if(!retainNodes.contains(newSimpleListDataItem)){
-				retainNodes.add(newSimpleListDataItem);
-			}			
-			
-			if(isCharactFormulated(newSimpleListDataItem)){
-				
-				//Calculate values				
-				if(qtyUsed != null){
-										
-					Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
-					Double value = slDataItem.getValue();
-					if(value != null){
-						newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netWeight));
-					}
-					else{
-						value = 0d;
-					}
+			for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
+				if(newSimpleListDataItem.getCharactNodeRef() != null && isCharactFormulated(newSimpleListDataItem)){
 					
-					Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
-					Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
-					if(miniValue < value || origMini < origValue){
-						newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netWeight));
-					}
-					
-					Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
-					Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
-					if(maxiValue > value || origMaxi > origValue){
-						newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netWeight));
-					}					
-					
-					if(logger.isDebugEnabled()){
-						logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
-						if(slNodeRef!=null){
-							logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
-							logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
-							logger.debug("charact: " + nodeService.getProperty(slNodeRef, ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
+					// look for charact in component
+					SimpleListDataItem slDataItem = null;				
+					for(SimpleListDataItem s : componentSimpleListDataList){
+						if(newSimpleListDataItem.getCharactNodeRef() != null && s.getCharactNodeRef() != null &&
+								newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())){						
+							slDataItem = s;
+							break;
 						}
-					}					
-				}	
-			}							
+					}
+								
+					//is it a mandatory charact ?
+					if(slDataItem == null || slDataItem.getValue() == null){					
+						addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
+					}
+					
+					//Calculate values			
+					if(slDataItem != null && qtyUsed != null){
+											
+						Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
+						Double value = slDataItem.getValue();
+						if(value != null){
+							newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netWeight));
+						}
+						else{
+							value = 0d;
+						}
+						
+						Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
+						Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
+						if(miniValue < value || origMini < origValue){
+							newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netWeight));
+						}
+						
+						Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
+						Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
+						if(maxiValue > value || origMaxi > origValue){
+							newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netWeight));
+						}					
+						
+						if(logger.isDebugEnabled()){
+							logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
+							if(newSimpleListDataItem.getNodeRef()!=null){
+								logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
+								logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
+								logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
+							}
+						}					
+					}		
+				}						
+			}	
+		}		
+	}
+	
+	protected void addMissingMandatoryCharact(Map<NodeRef, List<NodeRef>> mandatoryCharacts, NodeRef charactNodeRef, NodeRef componentNodeRef){
+		if(mandatoryCharacts.containsKey(charactNodeRef)){
+			List<NodeRef> sources = mandatoryCharacts.get(charactNodeRef);
+			if(sources==null){
+				sources = mandatoryCharacts.put(charactNodeRef, new ArrayList<NodeRef>());
+			}
+			if(!sources.contains(componentNodeRef)){
+				sources.add(componentNodeRef);
+			}
 		}
 	}
 	

@@ -9,9 +9,15 @@ import javax.annotation.Resource;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.datalist.policy.SortableListPolicy;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -20,10 +26,10 @@ import fr.becpg.test.RepoBaseTestCase;
  * 
  * @author querephi
  */
-//Test if not used
-@Deprecated
 public class CopyEntityServiceTest extends RepoBaseTestCase {
 
+	private static Log logger = LogFactory.getLog(CopyEntityServiceTest.class);
+	
 	@Resource
 	private EntityService entityService;
 
@@ -70,6 +76,27 @@ public class CopyEntityServiceTest extends RepoBaseTestCase {
 		Date startEffectivity2 = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
 		assertNotNull(startEffectivity2);
 		assertTrue(startEffectivity.getTime() < startEffectivity2.getTime());
+		
+		// #276 bcpg:parent nodeRef must be different
+		ProductData sourceProductData = alfrescoRepository.findOne(sourceNodeRef);
+		ProductData copyProductData = alfrescoRepository.findOne(productNodeRef);
+		
+		int [] arrRawMaterials = {2,4};
+		
+		for(int rawMaterial : arrRawMaterials){
+			
+			logger.debug("check rawMaterial " + rawMaterial);
+			NodeRef sourceMP1NodeRef = sourceProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
+			NodeRef copyMP1NodeRef = copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
+			
+			assertEquals(BeCPGModel.TYPE_RAWMATERIAL, nodeService.getType(sourceMP1NodeRef));
+			assertEquals(BeCPGModel.TYPE_RAWMATERIAL, nodeService.getType(copyMP1NodeRef));
+			assertEquals(sourceMP1NodeRef, copyMP1NodeRef);
+			
+			// source and copy have different parents
+			assertFalse(sourceProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef().equals(copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef()));
+			// check parent
+			assertEquals(copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial-1).getNodeRef(), copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef());
+		}		
 	}
-
 }

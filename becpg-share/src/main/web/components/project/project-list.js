@@ -68,7 +68,7 @@ var g; // gantt var
                    */
                   onReady : function PL_onReady() {
 
-                     var url = Alfresco.constants.PROXY_URI + "becpg/project/info" + (this.options.siteId !== null && this.options.siteId.length > 0 ? "?site=" + this.options.siteId
+                     var url = Alfresco.constants.PROXY_URI + "becpg/project/info" + (this.options.siteId != null && this.options.siteId.length > 0 ? "?site=" + this.options.siteId
                            : "");
 
                      Alfresco.util.Ajax
@@ -201,7 +201,7 @@ var g; // gantt var
 
                      var fnDrawGantt = function PL_onReady_fnDrawGantt() {
                         var recordSet = this.widgets.dataTable.getRecordSet();
-                        if (recordSet.getLength() !== 0) {
+                        if (recordSet.getLength() != 0) {
                            g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), 'day');
                            g.setDateInputFormat("shortDate");
                            g.setDateDisplayFormat("shortDate");
@@ -216,12 +216,7 @@ var g; // gantt var
                               var title = '<span class="' + this.getOverdueClass(oRecord) + '">' + this
                                     .getProjectTitle(oRecord) + '</span>';
 
-                              var initiator = null;
-                               if(oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue){
-                                  initiator =  '<span class="resource-title">' + oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue + '</span>';
-                               }
-                                 
-                                
+                              var initiator = '<span class="resource-title">' + oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue + '</span>';
                               var percent = oRecord.getData("itemData")["prop_pjt_completionPercent"].value;
 
                               var dates = this.extractDates(oRecord);
@@ -233,7 +228,7 @@ var g; // gantt var
 
                               var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
 
-                              for (var j in taskList) {
+                              for (j in taskList) {
                                  var task = taskList[j];
                                  var taskId = task.nodeRef;
                                  var precTaskIds = "";
@@ -244,7 +239,7 @@ var g; // gantt var
                                     }
                                     precTaskIds += precTaskId;
 
-                                    if (this.cache[precTaskId] !== null && this.cache[precTaskId].end !== null && this.cache[precTaskId].end
+                                    if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null && this.cache[precTaskId].end
                                           .getTime() > start.getTime()) {
                                        start = this.cache[precTaskId].end;
                                     }
@@ -287,7 +282,7 @@ var g; // gantt var
                   getTaskColor : function PL_getTaskColor(task) {
                      var id = task["itemData"]["assoc_pjt_tlTaskLegend"][0].value;
 
-                     for (var i in this.taskLegends) {
+                     for (i in this.taskLegends) {
                         if (this.taskLegends[i].id == id) {
                            return this.taskLegends[i].color;
                         }
@@ -332,9 +327,9 @@ var g; // gantt var
                      var obj = args[1];
                      if (obj && (obj.nodeRef !== null)) {
 
-                        var nodeRef = new Alfresco.util.NodeRef(obj.nodeRef), url = this.options.itemUrl + nodeRef.uri + ((this.options.entityNodeRef !== null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
-                              : "?") + "itemType=" + encodeURIComponent(this.options.itemType !== null ? this.options.itemType
-                              : this.datalistMeta.itemType) + "&dataListName=" + encodeURIComponent(this.datalistMeta.name !== null ? this.datalistMeta.name
+                        var nodeRef = new Alfresco.util.NodeRef(obj.nodeRef), url = this.options.itemUrl + nodeRef.uri + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "?entityNodeRef=" + this.options.entityNodeRef + "&"
+                              : "?") + "itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
+                              : this.datalistMeta.itemType) + "&dataListName=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
                               : this.options.list);
 
                         // Reload the node's metadata
@@ -505,7 +500,7 @@ var g; // gantt var
                      }
 
                      ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-                           .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue + '</a></span>';
+                           .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue + ' (' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%)</a></span>';
 
                      if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value) {
                         ret += '<a class="task-link" title="' + this.msg("link.title.open-workflow") + '" href="' + Alfresco.constants.URL_PAGECONTEXT + 'workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value + '&referrer=project-list&myWorkflowsLinkBack=true' + '" >&nbsp;</a>';

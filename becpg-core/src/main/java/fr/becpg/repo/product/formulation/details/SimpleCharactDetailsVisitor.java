@@ -80,13 +80,13 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		if(entityNodeRef == null){
 			return;
 		}
-		
-		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.loadDataList(entityNodeRef,dataListType,  dataListType);
 
-		if (simpleCharactDataList == null) {
+		if (!alfrescoRepository.hasDataList(entityNodeRef,dataListType)) {
 			logger.debug("no datalist for this product, exit. dataListType: " + dataListType + " entity: " + entityNodeRef);
 			return;
 		}
+		
+		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.loadDataList(entityNodeRef,dataListType,  dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
 			if (simpleCharact != null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
