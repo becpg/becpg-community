@@ -80,17 +80,17 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 		
 		// Load product specification
-    	ProductData productSpecicationData = null;
+		List<ProductData> productSpecicationDataList = new ArrayList<ProductData>();    	
     	List<AssociationRef> productSpecificationAssocRefs = nodeService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
-    	if(productSpecificationAssocRefs != null && !productSpecificationAssocRefs.isEmpty() && 
-    			productSpecificationAssocRefs.get(0).getTargetRef() != null){
-    		
-        	productSpecicationData = (ProductData) alfrescoRepository.findOne(productSpecificationAssocRefs.get(0).getTargetRef()); 
+    	if(productSpecificationAssocRefs != null && !productSpecificationAssocRefs.isEmpty()){    		
+    		for(AssociationRef productSpecificationAssocRef : productSpecificationAssocRefs){
+    			productSpecicationDataList.add((ProductData) alfrescoRepository.findOne(productSpecificationAssocRef.getTargetRef()));            	
+    		}    		
     	}
 		
-		//IngList
-		calculateIL(formulatedProduct, productSpecicationData);
-		
+    	//IngList
+		calculateIL(formulatedProduct, productSpecicationDataList);
+    	
 		//IngLabelling
 		logger.debug("Calculate Ingredient Labeling");
 		List<IngLabelingListDataItem> retainNodes = new ArrayList<IngLabelingListDataItem>();
@@ -128,7 +128,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @return the list
 	 * @throws FormulateException 
 	 */
-	private void calculateIL(ProductData formulatedProduct, ProductData productSpecicationData) throws FormulateException{
+	private void calculateIL(ProductData formulatedProduct, List<ProductData> productSpecicationDataList) throws FormulateException{
 	
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE);
 		
@@ -145,7 +145,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		
 		if(compoList != null){
 			for(CompoListDataItem compoItem : compoList){
-				visitILOfPart(productSpecicationData, compoItem, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, reqCtrlMap);
+				visitILOfPart(productSpecicationDataList, compoItem, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, reqCtrlMap);
 			}
 		}		
 		
@@ -163,12 +163,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 		
 		//check formulated product
-		checkILOfFormulatedProduct(formulatedProduct.getIngList(), productSpecicationData, reqCtrlMap);
+		checkILOfFormulatedProduct(formulatedProduct.getIngList(), productSpecicationDataList, reqCtrlMap);
 		
 		//sort collection					
 		sortIL(formulatedProduct.getIngList());		
 		
-		formulatedProduct.getCompoListView().getReqCtrlList().clear();
 		formulatedProduct.getCompoListView().getReqCtrlList().addAll(reqCtrlMap.values());
 	}
 	
@@ -180,7 +179,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void visitILOfPart(ProductData productSpecicationData, CompoListDataItem compoListDataItem, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
+	private void visitILOfPart(List<ProductData> productSpecicationDataList, CompoListDataItem compoListDataItem, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
 
 		ProductData productData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());				
@@ -197,7 +196,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		calculateILOfPart(productData, compoListDataItem, ingList, retainNodes, totalQtyIngMap);
 		
 		// check product respect specification
-		checkILOfPart(productData, productSpecicationData, reqCtrlMap);
+		checkILOfPart(productData, productSpecicationDataList, reqCtrlMap);
 	}
 	
 	/**
@@ -289,10 +288,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param ingMap the ing map
 	 * @param totalQtyIngMap the total qty ing map
 	 */
-	private void checkILOfPart(ProductData productData, ProductData productSpecicationData, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
+	private void checkILOfPart(ProductData productData, List<ProductData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
 		
 		
-		if(productSpecicationData != null && productSpecicationData.getForbiddenIngList() != null){
+		for(ProductData productSpecificationData : productSpecicationDataList){
 			
 
 			if(logger.isDebugEnabled()){
@@ -303,7 +302,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if(logger.isDebugEnabled()){
 					logger.debug("For "+productData.getName()+" testing ing :"+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME));
 				}
-				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){					
+				for(ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()){					
 					
 					// GMO
 					if(fil.getIsGMO() != null && !fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())){
@@ -373,13 +372,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * check the ingredients of the part according to the specification
 	 *
 	 */
-	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, ProductData productSpecicationData, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
+	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, List<ProductData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
 		
-		if(productSpecicationData != null && productSpecicationData.getForbiddenIngList() != null){
+		for(ProductData productSpecification : productSpecicationDataList){
 		
 			for(IngListDataItem ingListDataItem : ingList){										
 				
-				for(ForbiddenIngListDataItem fil : productSpecicationData.getForbiddenIngList()){										
+				for(ForbiddenIngListDataItem fil : productSpecification.getForbiddenIngList()){										
 					
 					// Ings
 					if(!fil.getIngs().isEmpty()){

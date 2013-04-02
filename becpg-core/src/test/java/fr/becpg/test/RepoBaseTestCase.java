@@ -52,6 +52,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.entity.EntitySystemService;
+import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -187,6 +188,9 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 	
 	@Resource
 	protected BeCPGSearchService beCPGSearchService;
+	
+	@Resource
+	protected EntityTplService entityTplService;
 
 	/** The allergens. */
 	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
@@ -281,6 +285,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					dictionaryDAO.reset();
 	
 					initCharacteristics();
+					initEntityTemplates();
 					initHierarchyLists();
 					// reset dictionary to reload constraints on list_values
 					dictionaryDAO.reset();
@@ -579,6 +584,22 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		
 		return rawMaterial.getNodeRef();
 
+	}
+	
+	private void initEntityTemplates(){
+		
+		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_RAWMATERIAL);
+		ProductData rawMaterialData = (ProductData)alfrescoRepository.findOne(rawMaterialTplNodeRef);		
+		rawMaterialData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(0), null));
+		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
+		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
+		alfrescoRepository.save(rawMaterialData);
+		
+		NodeRef packMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_PACKAGINGMATERIAL);
+		ProductData packMaterialTplData = (ProductData)alfrescoRepository.findOne(packMaterialTplNodeRef);
+		packMaterialTplData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(3), null));
+		alfrescoRepository.save(packMaterialTplData);
+		
 	}
 
 	/**

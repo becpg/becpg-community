@@ -240,7 +240,12 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			String type = req.getParameter(PARAM_TYPE);
 			String aspect = req.getParameter(PARAM_ASPECT);
 			if(type != null && aspect != null){				
-				migrationService.addMandatoryAspectInMt(QName.createQName(type, namespaceService), QName.createQName(aspect, namespaceService));
+				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					migrationService.addMandatoryAspectInMt(QName.createQName(type, namespaceService), QName.createQName(aspect, namespaceService));
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}				
 			}
 			else{
 				logger.error("Missing param for action " + action + " type " + type + " aspect " + aspect);
@@ -248,8 +253,13 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		} else if(ACTION_REMOVE_ASPECT.equals(action)){
 			String type = req.getParameter(PARAM_TYPE);
 			String aspect = req.getParameter(PARAM_ASPECT);
-			if(type != null && aspect != null){				
-				migrationService.removeAspectInMt(QName.createQName(type, namespaceService), QName.createQName(aspect, namespaceService));				
+			if(type != null && aspect != null){	
+				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					migrationService.removeAspectInMt(QName.createQName(type, namespaceService), QName.createQName(aspect, namespaceService));
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}							
 			}
 			else{
 				logger.error("Missing param for action " + action + " type " + type + " aspect " + aspect);
@@ -258,8 +268,13 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			String classQName = req.getParameter(PARAM_CLASS_QNAME);
 			String sourceAssoc = req.getParameter(PARAM_SOURCE_ASSOC);
 			String targetAssoc = req.getParameter(PARAM_TARGET_ASSOC);
-			if(classQName != null && sourceAssoc != null && targetAssoc != null){				
-				migrationService.migrateAssociationInMt(QName.createQName(classQName, namespaceService), QName.createQName(sourceAssoc, namespaceService), QName.createQName(targetAssoc, namespaceService));
+			if(classQName != null && sourceAssoc != null && targetAssoc != null){		
+				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					migrationService.migrateAssociationInMt(QName.createQName(classQName, namespaceService), QName.createQName(sourceAssoc, namespaceService), QName.createQName(targetAssoc, namespaceService));
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}						
 			}
 			else{
 				logger.error("Missing param for action " + action + " classQName " + classQName + " sourceAssoc " + sourceAssoc + " targetAssoc " + targetAssoc);
@@ -268,8 +283,13 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			String classQName = req.getParameter(PARAM_CLASS_QNAME);
 			String sourceProp = req.getParameter(PARAM_SOURCE_PROP);
 			String targetProp = req.getParameter(PARAM_TARGET_PROP);
-			if(classQName != null && sourceProp != null && targetProp != null){				
-				migrationService.migratePropertyInMt(QName.createQName(classQName, namespaceService), QName.createQName(sourceProp, namespaceService), QName.createQName(targetProp, namespaceService));
+			if(classQName != null && sourceProp != null && targetProp != null){	
+				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					migrationService.migratePropertyInMt(QName.createQName(classQName, namespaceService), QName.createQName(sourceProp, namespaceService), QName.createQName(targetProp, namespaceService));
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}				
 			}
 			else{
 				logger.error("Missing param for action " + action + " classQName " + classQName + " sourceProp " + sourceProp + " targetProp " + targetProp);

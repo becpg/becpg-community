@@ -54,8 +54,9 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				NodeRef supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
 
+				// suggest supplier 1
 				String[] arrClassNames = { "bcpg:supplier" };
-				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames,null).getResults();
+				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames, null).getResults();
 
 				boolean containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
@@ -68,30 +69,50 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				assertEquals("1 suggestion", 1, suggestions.size());
 				assertTrue("check supplier key", containsSupplier);
 
+				// suggest supplier (return supplier 1 and template				
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "*", 0, 10,arrClassNames,null).getResults();
+
+				containsSupplier = false;
+				for (ListValueEntry s : suggestions) {
+					logger.debug("supplier: " + s.getName());
+					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")) {
+						containsSupplier = true;
+					}
+				}
+
+				assertEquals("2 suggestions", 2, suggestions.size());
+				assertTrue("check supplier key", containsSupplier);
+				
+				// suggest supplier and exclude entityTplAspect (return supplier 1 and template				
+				Map<String, Serializable> props = new HashMap<String, Serializable>();
+				props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, "bcpg:entityTplAspect");
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "*", 0, 10,arrClassNames,props).getResults();
+
+				containsSupplier = false;
+				for (ListValueEntry s : suggestions) {
+					logger.debug("supplier: " + s.getName());
+					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")) {
+						containsSupplier = true;
+					}
+				}
+
+				assertEquals("1 suggestions", 1, suggestions.size());
+				assertTrue("check supplier key", containsSupplier);
+
 				// filter by client : no results
 				String[] arrClassNames2 = { "bcpg:client" };
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10, arrClassNames2,null).getResults();
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames2,null).getResults();
 
 				assertEquals("0 suggestion", 0, suggestions.size());
 				
 				//test permissions
-
-				authenticationComponent.setSystemUserAsCurrentUser();
-				
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null ,null).getResults();
-
+				authenticationComponent.setSystemUserAsCurrentUser();				
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();				
 				assertEquals("2 suggestion", 2, suggestions.size());
 				
-				
-				authenticationComponent.setCurrentUser(BeCPGTestHelper.USER_ONE);
-				
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null ,null).getResults();
-
-				
+				authenticationComponent.setCurrentUser(BeCPGTestHelper.USER_ONE);				
+				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
 				assertEquals("1 suggestion", 1, suggestions.size());
-				
-
-				
 				
 				return null;
 			}

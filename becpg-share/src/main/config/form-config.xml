@@ -54,7 +54,7 @@
             <type name="association:packageItems" template="/org/alfresco/components/form/controls/workflow/packageitems.ftl" />
 			<!--beCPG -->            
 				<type name="association:bcpg:product" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
-					<control-param name="ds">becpg/autocomplete/product</control-param>
+					<control-param name="ds">becpg/autocomplete/product?excludeClassNames=bcpg:entityTplAspect</control-param>
 					<control-param name="showTooltip">true</control-param>
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 				</type>
@@ -69,10 +69,12 @@
 				<type name="association:bcpg:client" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="showTooltip">true</control-param>
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:client?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:bcpg:supplier" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="showTooltip">true</control-param>
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:supplier?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:bcpg:plant" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:trademark" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -81,21 +83,26 @@
 				<type name="association:bcpg:approvalNumber" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />							
 				<type name="association:bcpg:productSpecifications" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productSpecifications?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:bcpg:productMicrobioCriteria" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productMicrobioCriteria?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>		
 				<type name="association:qa:controlPoint" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlPoint?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:qa:controlStep" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:qa:controlMethod" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:qa:controlPlan" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlPlan?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:rep:reportTpl" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:pjt:project" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:pjt:taskList" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:pjt:taskLegend" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
