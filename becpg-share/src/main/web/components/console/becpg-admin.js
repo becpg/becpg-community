@@ -1,8 +1,8 @@
 /**
- * beCPGAdminConsole tool component.
+ * AdminConsole tool component.
  * 
  * @namespace Extras
- * @class beCPG.component.beCPGAdminConsole
+ * @class beCPG.component.AdminConsole
  */
 (function() {
 
@@ -14,62 +14,19 @@
     * @return {Extras.ConsoleCreateUsers} The new ConsoleCreateUsers instance
     * @constructor
     */
-   beCPG.component.beCPGAdminConsole = function(htmlId) {
-      this.name = "beCPGAdminConsole";
-      beCPG.component.beCPGAdminConsole.superclass.constructor.call(this, htmlId);
+   beCPG.component.AdminConsole = function(htmlId) {
 
-      /* Register this component */
-      Alfresco.util.ComponentManager.register(this);
+      beCPG.component.AdminConsole.superclass.constructor.call(this, "beCPG.component.AdminConsole", htmlId, [
+            "button", "menu", "container", "json" ]);
 
-      /* Load YUI Components */
-      Alfresco.util.YUILoaderHelper.require([ "button", "container", "datasource", "datatable", "json", "history" ],
-            this.onComponentsLoaded, this);
-
-      /* Define panel handlers */
-      var me = this;
-
-      // NOTE: the panel registered first is considered the "default" view and
-      // is displayed first
-
-      /* Search Panel Handler */
-      FormPanelHandler = function FormPanelHandler_constructor() {
-         FormPanelHandler.superclass.constructor.call(this, "form");
-      };
-
-      YAHOO.extend(FormPanelHandler, Alfresco.ConsolePanelHandler, {
-         /**
-          * PANEL LIFECYCLE CALLBACKS
-          */
-
-         /**
-          * Called by the ConsolePanelHandler when this panel shall be loaded
-          * 
-          * @method onLoad
-          */
-         onLoad : function onLoad() {
-            // Buttons
-            me.widgets.reloadModelButton = Alfresco.util.createYUIButton(me, "reload-model-button",
-                  me.onReloadModelClick);
-            me.widgets.reloadConfigButton = Alfresco.util.createYUIButton(me, "reload-config-button",
-                  me.onReloadConfigClick);
-            me.widgets.initRepoButton = Alfresco.util.createYUIButton(me, "init-repo-button",
-                  me.onInitRepoClick);
-            me.widgets.initAclButton = Alfresco.util.createYUIButton(me, "init-acl-button",
-                  me.onInitAclClick);
-            me.widgets.emptyCacheButton = Alfresco.util.createYUIButton(me, "empty-cache-button",
-                  me.onEmptyCacheClick);
-         },
-
-         onShow : function onShow() {
-
-         }
+      // Chart google
+      google.load('visualization', '1', {
+         packages : [ 'gauge' ]
       });
-      new FormPanelHandler();
-
       return this;
    };
 
-   YAHOO.extend(beCPG.component.beCPGAdminConsole, Alfresco.ConsoleTool, {
+   YAHOO.extend(beCPG.component.AdminConsole, Alfresco.component.Base, {
       /**
        * Object container for initialization options
        * 
@@ -77,7 +34,7 @@
        * @type object
        */
       options : {
-
+         memory : 0
       },
 
       /**
@@ -86,9 +43,35 @@
        * 
        * @method onReady
        */
-      onReady : function ConsolebeCPGAdmin_onReady() {
+      onReady : function AdminConsole_onReady() {
+
          // Call super-class onReady() method
-         beCPG.component.beCPGAdminConsole.superclass.onReady.call(this);
+         this.widgets.reloadModelButton = Alfresco.util.createYUIButton(this, "reload-model-button",
+               this.onReloadModelClick);
+         this.widgets.reloadConfigButton = Alfresco.util.createYUIButton(this, "reload-config-button",
+               this.onReloadConfigClick);
+         this.widgets.initRepoButton = Alfresco.util.createYUIButton(this, "init-repo-button", this.onInitRepoClick);
+         this.widgets.initAclButton = Alfresco.util.createYUIButton(this, "init-acl-button", this.onInitAclClick);
+         this.widgets.emptyCacheButton = Alfresco.util.createYUIButton(this, "empty-cache-button",
+               this.onEmptyCacheClick);
+
+         var data = google.visualization.arrayToDataTable([ [ 'Label', 'Value' ],
+               [ this.msg("label.memory"), this.options.memory ] ]);
+
+         var options = {
+            width : 400,
+            height : 120,
+            redFrom : 90,
+            redTo : 100,
+            yellowFrom : 80,
+            yellowTo : 90,
+            greenFrom : 60,
+            greenTo : 80,
+            minorTicks : 5
+         };
+
+         var chart = new google.visualization.Gauge(document.getElementById(this.id+'-gauge-div'));
+         chart.draw(data, options);
 
          // Do stuff here
       },
@@ -106,7 +89,7 @@
        * @param args
        *            {array} Event parameters (depends on event type)
        */
-      onReloadModelClick : function ConsolebeCPGAdmin_onReloadModelClick(e, args) {
+      onReloadModelClick : function AdminConsole_onReloadModelClick(e, args) {
          // Disable the button temporarily
          this.widgets.reloadModelButton.set("disabled", true);
 
@@ -132,7 +115,7 @@
        * @param response
        *            {object} Server response
        */
-      onReloadModelSuccess : function ConsolebeCPGAdmin_onReloadModelSuccess(response) {
+      onReloadModelSuccess : function AdminConsole_onReloadModelSuccess(response) {
          Alfresco.util.PopupManager.displayMessage({
             text : this.msg("message.reload-model.success")
          });
@@ -145,7 +128,7 @@
        * @param response
        *            {object} Server response
        */
-      onReloadModelFailure : function ConsolebeCPGAdmin_onReloadModelFailure(response) {
+      onReloadModelFailure : function AdminConsole_onReloadModelFailure(response) {
          if (response.json.message !== null) {
             Alfresco.util.PopupManager.displayPrompt({
                text : response.json.message
@@ -167,7 +150,7 @@
        * @param args
        *            {array} Event parameters (depends on event type)
        */
-      onReloadConfigClick : function ConsolebeCPGAdmin_onReloadConfigClick(e, args) {
+      onReloadConfigClick : function AdminConsole_onReloadConfigClick(e, args) {
          // Disable the button temporarily
          this.widgets.reloadConfigButton.set("disabled", true);
 
@@ -193,7 +176,7 @@
        * @param response
        *            {object} Server response
        */
-      onReloadConfigSuccess : function ConsolebeCPGAdmin_onReloadConfigSuccess(response) {
+      onReloadConfigSuccess : function AdminConsole_onReloadConfigSuccess(response) {
          Alfresco.util.PopupManager.displayMessage({
             text : this.msg("message.reload-config.success")
          });
@@ -207,7 +190,7 @@
        * @param response
        *            {object} Server response
        */
-      onReloadConfigFailure : function ConsolebeCPGAdmin_onReloadConfigFailure(response) {
+      onReloadConfigFailure : function AdminConsole_onReloadConfigFailure(response) {
          if (response.json.message !== null) {
             Alfresco.util.PopupManager.displayPrompt({
                text : response.json.message
@@ -229,7 +212,7 @@
        * @param args
        *            {array} Event parameters (depends on event type)
        */
-      onInitRepoClick : function ConsolebeCPGAdmin_onInitRepoClick(e, args) {
+      onInitRepoClick : function AdminConsole_onInitRepoClick(e, args) {
          // Disable the button temporarily
          this.widgets.initRepoButton.set("disabled", true);
 
@@ -255,7 +238,7 @@
        * @param response
        *            {object} Server response
        */
-      onInitRepoSuccess : function ConsolebeCPGAdmin_onInitRepoSuccess(response) {
+      onInitRepoSuccess : function AdminConsole_onInitRepoSuccess(response) {
          Alfresco.util.PopupManager.displayMessage({
             text : this.msg("message.init-repo.success")
          });
@@ -269,7 +252,7 @@
        * @param response
        *            {object} Server response
        */
-      onInitRepoFailure : function ConsolebeCPGAdmin_onInitRepoFailure(response) {
+      onInitRepoFailure : function AdminConsole_onInitRepoFailure(response) {
          if (response.json.message !== null) {
             Alfresco.util.PopupManager.displayPrompt({
                text : response.json.message
@@ -290,7 +273,7 @@
        * @param args
        *            {array} Event parameters (depends on event type)
        */
-      onInitAclClick : function ConsolebeCPGAdmin_onInitAclClick(e, args) {
+      onInitAclClick : function AdminConsole_onInitAclClick(e, args) {
          // Disable the button temporarily
          this.widgets.initAclButton.set("disabled", true);
 
@@ -316,7 +299,7 @@
        * @param response
        *            {object} Server response
        */
-      onInitAclSuccess : function ConsolebeCPGAdmin_onInitAclSuccess(response) {
+      onInitAclSuccess : function AdminConsole_onInitAclSuccess(response) {
          Alfresco.util.PopupManager.displayMessage({
             text : this.msg("message.init-acl.success")
          });
@@ -330,7 +313,7 @@
        * @param response
        *            {object} Server response
        */
-      onInitAclFailure : function ConsolebeCPGAdmin_onInitAclFailure(response) {
+      onInitAclFailure : function AdminConsole_onInitAclFailure(response) {
          if (response.json.message !== null) {
             Alfresco.util.PopupManager.displayPrompt({
                text : response.json.message
@@ -351,7 +334,7 @@
        * @param args
        *            {array} Event parameters (depends on event type)
        */
-      onEmptyCacheClick : function ConsolebeCPGAdmin_onEmptyCacheClick(e, args) {
+      onEmptyCacheClick : function AdminConsole_onEmptyCacheClick(e, args) {
          // Disable the button temporarily
          this.widgets.emptyCacheButton.set("disabled", true);
 
@@ -377,7 +360,7 @@
        * @param response
        *            {object} Server response
        */
-      emptyCacheSuccess : function ConsolebeCPGAdmin_emptyCacheRepoSuccess(response) {
+      emptyCacheSuccess : function AdminConsole_emptyCacheRepoSuccess(response) {
          Alfresco.util.PopupManager.displayMessage({
             text : this.msg("message.empty-cache.success")
          });
@@ -391,7 +374,7 @@
        * @param response
        *            {object} Server response
        */
-      emptyCacheFailure : function ConsolebeCPGAdmin_emptyCacheFailure(response) {
+      emptyCacheFailure : function AdminConsole_emptyCacheFailure(response) {
          if (response.json.message !== null) {
             Alfresco.util.PopupManager.displayPrompt({
                text : response.json.message

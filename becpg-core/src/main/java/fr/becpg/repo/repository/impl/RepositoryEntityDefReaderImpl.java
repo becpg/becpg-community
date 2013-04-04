@@ -15,7 +15,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -27,7 +27,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.model.BaseObject;
 
-@Service
+@Repository
 public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> {
 
 	private static Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
@@ -75,6 +75,23 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return readValueMap(entity, DataListView.class, BaseObject.class);
 	}
 	
+	
+	@Override
+	public QName getType(Class<? extends RepositoryEntity> clazz) {
+		if (clazz.getAnnotation(AlfQname.class) != null) {
+
+			String qName = clazz.getAnnotation(AlfQname.class).qname();
+			return QName.createQName(qName, namespaceService);
+		}
+		throw new RuntimeException("No @AlfType annotation in class");
+	}
+
+	@Override
+	public QName readQName(Method readMethod) {
+		String qName = readMethod.getAnnotation(AlfQname.class).qname();
+		QName fieldQname = QName.createQName(qName, namespaceService);
+		return fieldQname;
+	}
 
 	@SuppressWarnings("unchecked")
 	private <R,Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
@@ -111,22 +128,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return o;
 	}
 
-	@Override
-	public QName getType(Class<? extends RepositoryEntity> clazz) {
-		if (clazz.getAnnotation(AlfQname.class) != null) {
-
-			String qName = clazz.getAnnotation(AlfQname.class).qname();
-			return QName.createQName(qName, namespaceService);
-		}
-		throw new RuntimeException("No @AlfType annotation in class");
-	}
-
-	@Override
-	public QName readQName(Method readMethod) {
-		String qName = readMethod.getAnnotation(AlfQname.class).qname();
-		QName fieldQname = QName.createQName(qName, namespaceService);
-		return fieldQname;
-	}
+	
 
 
 }

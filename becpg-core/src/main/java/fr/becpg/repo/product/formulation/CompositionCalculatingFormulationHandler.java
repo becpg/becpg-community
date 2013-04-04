@@ -3,6 +3,7 @@ package fr.becpg.repo.product.formulation;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
@@ -15,6 +16,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
+@Service
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	public static final Double DEFAULT_DENSITY = 1d;

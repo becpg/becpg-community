@@ -6,6 +6,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
@@ -19,6 +20,7 @@ import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 
+@Service
 public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	private static Log logger = LogFactory.getLog(CostCharactDetailsVisitor.class);
