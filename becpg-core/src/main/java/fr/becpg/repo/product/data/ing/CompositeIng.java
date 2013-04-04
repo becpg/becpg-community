@@ -7,8 +7,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,25 +47,19 @@ public class CompositeIng extends AbstractIng {
 	private static Log logger = LogFactory.getLog(CompositeIng.class);
 	
 	/** The ing list. */
-	private Map<NodeRef, AbstractIng> ingList = new HashMap<NodeRef, AbstractIng>();
+	private Map<NodeRef, AbstractIng> ingList = new LinkedHashMap<NodeRef, AbstractIng>();
 	
 	/** The ing list not declared. */
-	private Map<NodeRef, AbstractIng> ingListNotDeclared = new HashMap<NodeRef, AbstractIng>();	
+	private Map<NodeRef, AbstractIng> ingListNotDeclared = new LinkedHashMap<NodeRef, AbstractIng>();	
+	
+	private Double qtyRMUsed = 0d;
+	
+	public Double getQtyRMUsed() {
+		return qtyRMUsed;		
+	}
 
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ing.Ing#getQty()
-	 */
-	@Override
-	public Double getQty() {
-		Double qty = 0d;
-		
-		for(Ing ing : ingList.values())
-			qty += ing.getQty();
-		
-		for(Ing ing : ingListNotDeclared.values())
-			qty += ing.getQty();
-		
-		return qty;
+	public void setQtyRMUsed(Double qtyRMUsed) {
+		this.qtyRMUsed = qtyRMUsed;
 	}
 	
 	/**
@@ -136,8 +130,8 @@ public class CompositeIng extends AbstractIng {
 	 * @param ing the nodeRef of the ing
 	 * @param mlName the ml name
 	 */
-	public CompositeIng(NodeRef ing, MLText mlName){
-		super(ing, mlName);		
+	public CompositeIng(NodeRef ing, MLText mlName, Double qty){
+		super(ing, mlName, qty);
 	}
 	
 	public Set<Locale> getLocales(){
@@ -159,25 +153,23 @@ public class CompositeIng extends AbstractIng {
 	 * @param locale the locale
 	 * @return the ing labeling
 	 */
-	public String getIngLabeling(Locale locale){
-		
-		logger.debug("getIngLabeling(), ing: " + ing + "- ing list size: " + ingList.values().size());
+	public String getIngLabeling(Locale locale){				
 		
 		String ingredients = "";
-		Double totalQty = getQty();				
 		List<AbstractIng> sortedIngList = new ArrayList<AbstractIng>(ingList.values());
 		Collections.sort(sortedIngList);
 		DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(locale);
 		df.applyPattern(QTY_FORMAT);
 		
 		for(AbstractIng ing : sortedIngList){
-						
-			String qtyPerc = "";
-			if(ing.getQty() != 0d){
-				qtyPerc = SPACE + df.format(100 * ing.getQty() / totalQty) + SPACE + PERCENTAGE;
-			}
 			
+			String qtyPerc = "";
 			String ingName = ing.getName(locale);
+			
+			if(ing.getQty() != null && ing.getQty() != 0d){
+				//Double ingQty = (ing instanceof CompositeIng) ? ((CompositeIng)ing).getQtyUsed() : ing.getQty();
+				qtyPerc = SPACE + df.format(100 * ing.getQty() / getQtyRMUsed()) + SPACE + PERCENTAGE;
+			}						
 			
 			if(ingName == null){
 				logger.warn("Ing '" + ing.getIng() + "' doesn't have a value for this locale '" + locale + "'.");
@@ -191,7 +183,6 @@ public class CompositeIng extends AbstractIng {
 			}
 			else if(ing instanceof CompositeIng){
 				String subIngredients = ((CompositeIng)ing).getIngLabeling(locale);
-				logger.trace("subIngredients: " + subIngredients);
 				ingredients += ingName + qtyPerc + SPACE + LEFT_PARENTHESES + subIngredients + RIGHT_PARENTHESES;
 			}
 			else{
@@ -199,7 +190,11 @@ public class CompositeIng extends AbstractIng {
 			}
 		}
 		
-		logger.trace("getIngLabeling(), ingredients: " + ingredients);
+		if(logger.isDebugEnabled()){
+			logger.debug("getIngLabeling(), ing: " + this.getName(Locale.getDefault()) + "- ing list size: " + ingList.values().size() + " - getQtyRMUsed: " + getQtyRMUsed());
+			logger.debug("getIngLabeling(), ingredients: " + ingredients);
+		}
+				
 		return ingredients;
-	}	
+	}
 }

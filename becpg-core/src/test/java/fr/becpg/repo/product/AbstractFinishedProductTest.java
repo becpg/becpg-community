@@ -308,11 +308,11 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, false, false, ing1, false));
+			ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, false, false, ing1, false));
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial1.setIngList(ingList);
 			//physicoChem
 			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
@@ -354,12 +354,12 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin1);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, true, true, ing1, false));
+			ingList.add(new IngListDataItem(null, 100/4d, geoOrigins, bioOrigins, true, true, ing1, false));
 			bioOrigins = new ArrayList<NodeRef>();
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 3d, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 300/4d, geoOrigins, bioOrigins, false, false, ing2, false));
 			//physicoChem
 			physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, 2.1d, physicoChem1));
@@ -402,7 +402,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));
+			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, ing3, false));
 			//physicoChem
 			physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, null, physicoChem1));
@@ -427,7 +427,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
+			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial4.setIngList(ingList);		
 			rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
 			rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
@@ -435,7 +435,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			
 			/*-- Raw material 5 --*/
 			ingList = new ArrayList<IngListDataItem>();
-			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));	
+			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, ing3, false));	
 			
 			RawMaterialData rawMaterial5 = new RawMaterialData();
 			rawMaterial5.setName("Raw material 5");
@@ -537,11 +537,11 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin1);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, false, false, ing1, false));
+			ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, false, false, ing1, false));
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial11.setIngList(ingList);
 			rawMaterial11NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial11).getNodeRef();
 			
@@ -558,12 +558,12 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin1);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin1);			
-			ingList.add(new IngListDataItem(null, 1d, geoOrigins, bioOrigins, true, true, ing1, false));
+			ingList.add(new IngListDataItem(null, 100/4d, geoOrigins, bioOrigins, true, true, ing1, false));
 			bioOrigins = new ArrayList<NodeRef>();
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(new IngListDataItem(null, 3d, geoOrigins, bioOrigins, false, false, ing2, false));
+			ingList.add(new IngListDataItem(null, 300/4d, geoOrigins, bioOrigins, false, false, ing2, false));
 			rawMaterial12.setIngList(ingList);			
 			rawMaterial12NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial12).getNodeRef();
 			
@@ -581,7 +581,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));			
+			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, ing3, false));			
 			rawMaterial13.setIngList(ingList);		
 			rawMaterial13NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial13).getNodeRef();
 			
@@ -599,8 +599,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);			
-			ingList.add(new IngListDataItem(null, 4d, geoOrigins, bioOrigins, true, true, ing3, false));
-			ingList.add(new IngListDataItem(null, 2d, geoOrigins, bioOrigins, true, true, ing4, false));
+			ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, true, true, ing3, false));
+			ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, true, true, ing4, false));
 			rawMaterial14.setIngList(ingList);		
 			rawMaterial14NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial14).getNodeRef();
 			
