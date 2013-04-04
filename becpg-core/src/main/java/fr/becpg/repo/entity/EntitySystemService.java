@@ -48,9 +48,14 @@ public interface EntitySystemService {
 	public NodeRef getSystemEntityDataList(NodeRef parentNodeRef, String systemEntityPath, String dataListPath);
 
 	/**
-	 * 
 	 * @return entities of type TYPE_SYSTEM_ENTITY
 	 */
 	public List<NodeRef> getSystemEntities();
+	
+	
+	/**
+	 * @return folders with aspect SYSTEM_FOLDER
+	 */
+	public List<NodeRef> getSystemFolders();
 
 }

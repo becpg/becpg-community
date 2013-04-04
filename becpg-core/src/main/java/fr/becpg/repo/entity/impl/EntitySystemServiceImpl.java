@@ -132,9 +132,15 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public List<NodeRef> getSystemEntities() {
-		String searchQuery = "+TYPE:\"" + BeCPGModel.TYPE_SYSTEM_ENTITY + "\" -TYPE:\"cm:systemfolder\""
+		String searchQuery = "+TYPE:\"" + BeCPGModel.TYPE_SYSTEM_ENTITY + "\""
 				+ " -@cm\\:lockType:READ_ONLY_LOCK"
 				+ " -ASPECT:\"bcpg:compositeVersion\"";
+		return beCPGSearchService.luceneSearch(searchQuery);
+	}
+
+	@Override
+	public List<NodeRef> getSystemFolders() {
+		String searchQuery = "+TYPE:\"" + ContentModel.TYPE_FOLDER + "\" +ASPECT:\""+BeCPGModel.ASPECT_SYSTEM_FOLDER+"\"";
 		return beCPGSearchService.luceneSearch(searchQuery);
 	}
 
