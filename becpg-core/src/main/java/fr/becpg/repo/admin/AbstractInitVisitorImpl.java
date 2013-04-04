@@ -128,10 +128,16 @@ public abstract class AbstractInitVisitorImpl {
 	    
 	    visitPermissions(folderNodeRef, folderName);
 	    visitFiles(folderNodeRef, folderPath);
+	    vivitFolderAspects(folderNodeRef, folderPath);
 	    
 	    return folderNodeRef;
 	}
 	
+	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
+
+		
+	}
+
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 		
 	}

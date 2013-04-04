@@ -6,7 +6,7 @@
 {
    font-size: 123.1%;
    font-weight: bold;
-   padding-bottom: 0.5em;
+   padding: 0.5em;
 }
 
 .becpg-admin-console .section
@@ -17,11 +17,21 @@
 
 .becpg-admin-console .section .action
 {
-   margin: 16px 16px 10px 10px;
+   margin: 10px;
 }
 
+.becpg-admin-console .section .action span
+{
+ vertical-align: middle;
+}
 
 .becpg-admin-console span.systemEntity {
 	background: url(../../components/images/filetypes/generic-systemEntity-16.png) no-repeat;
 	padding-left: 20px;
 }
+
+.becpg-admin-console span.systemFolder {
+	background: url(../../components/images/filetypes/generic-folder-16.png) no-repeat;
+	padding-left: 20px;
+}
+

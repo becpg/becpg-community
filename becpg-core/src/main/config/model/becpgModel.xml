@@ -2020,6 +2020,11 @@
 			</properties>
 		</aspect>
 		
+		
+		<aspect name="bcpg:systemFolderAspect">
+			
+		</aspect>
+		
 		<!-- ALF-8143 -->
 		<!-- @Deprecated -->
 		<aspect name="bcpg:entityVersionable">

@@ -1038,4 +1038,23 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	}
 
+	@Override
+	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
+		switch (folderName) {
+		case RepoConsts.PATH_ENTITY_TEMPLATES:
+		case RepoConsts.PATH_PROJECT_TEMPLATES:
+		case RepoConsts.PATH_REPORTS:
+		case RepoConsts.PATH_SECURITY:
+		case RepoConsts.PATH_ICON:	
+			if(!nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)){
+				nodeService.addAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
+			}
+			break;
+		default:
+			break;
+		}
+		
+		
+	}
+
 }

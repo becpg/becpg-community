@@ -6,12 +6,11 @@ package fr.becpg.repo.web.scripts.admin;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.Cache;
@@ -53,6 +52,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 	private EntitySystemService entitySystemService;
 	
+	private AbstractAuthenticationService authenticationService;
+	
 	public void setEntitySystemService(EntitySystemService entitySystemService) {
 		this.entitySystemService = entitySystemService;
 	}
@@ -75,6 +76,10 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 	public void setRepository(Repository repository) {
 		this.repository = repository;
+	}
+
+	public void setAuthenticationService(AbstractAuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
 	}
 
 	@Override
@@ -105,13 +110,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			dictionaryDAO.reset();
 		} else if (action.equals(ACTION_GET_SYSTEM_ENTITIES)) {
 			logger.debug("Get system entities");
-			List<NodeRef> refs = entitySystemService.getSystemEntities();
-			if(logger.isDebugEnabled()){
-				logger.debug("System entities size:"+refs.size());
-			}
-		
-			
-			ret.put("items", refs);
+			ret.put("systemEntities", entitySystemService.getSystemEntities());
+			ret.put("systemFolders", entitySystemService.getSystemFolders());
 		} else {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 		}
@@ -127,10 +127,12 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		
 		Runtime runtime = Runtime.getRuntime();
 		
-		ret.put("totalMemory", runtime.totalMemory());
-		ret.put("freeMemory", runtime.freeMemory());
-		ret.put("maxMemory", runtime.maxMemory());
-		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed());
+		ret.put("totalMemory", runtime.totalMemory()/ 1000000d);
+		ret.put("freeMemory", runtime.freeMemory()/ 1000000d);
+		ret.put("maxMemory", runtime.maxMemory()/ 1000000d);
+		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed()/ 1000000d);
+		ret.put("connectedUsers", authenticationService.getUsersWithTickets(true).size());
+		
 		
 		
 		return ret;

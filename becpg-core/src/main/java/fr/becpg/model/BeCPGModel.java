@@ -648,6 +648,12 @@ public interface BeCPGModel {
 	QName PROP_IS_DELETED = QName.createQName(BECPG_URI, "isDeleted");
 	
 	/**
+	 * systemFolder
+	 */
+	
+	QName ASPECT_SYSTEM_FOLDER = QName.createQName(BECPG_URI, "systemFolderAspect");
+	
+	/**
 	 * Color
 	 */
 	QName ASPECT_COLOR = QName.createQName(BECPG_URI, "colorAspect");
