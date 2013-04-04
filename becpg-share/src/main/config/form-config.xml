@@ -76,9 +76,6 @@
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:supplier?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
-				<type name="association:bcpg:plant" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:bcpg:trademark" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:bcpg:subsidiary" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />			
 				<type name="association:bcpg:certification" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:approvalNumber" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />							
 				<type name="association:bcpg:productSpecifications" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >

@@ -13,71 +13,77 @@ import fr.becpg.repo.helper.AssociationService;
 
 @Service
 public class AssociationServiceImpl implements AssociationService {
-	
+
 	private NodeService nodeService;
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+	// TODO : refactor : utiliser cette méthode dans la création des datalists !
+	// productdao, etc...
 	@Override
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs) {
-		
+
+		// nodeService.setAssociations(nodeRef, qName, assocNodeRefs);
+
 		List<AssociationRef> dbAssocNodeRefs = nodeService.getTargetAssocs(nodeRef, qName);
-		
-		if(dbAssocNodeRefs != null){
-			//remove from db
-    		for(AssociationRef assocRef : dbAssocNodeRefs){
-    			if(assocNodeRefs == null){
-    				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
-    			}
-    			else if(!assocNodeRefs.contains(assocRef.getTargetRef()))
-    				nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
-    			else
-    				assocNodeRefs.remove(assocRef.getTargetRef());//already in db
-    		}    		
+
+		if (dbAssocNodeRefs != null) {
+			// remove from db
+			for (AssociationRef assocRef : dbAssocNodeRefs) {
+				if (assocNodeRefs == null) {
+					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
+				} else if (!assocNodeRefs.contains(assocRef.getTargetRef())) {
+					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
+				} else {
+					assocNodeRefs.remove(assocRef.getTargetRef());// already in
+																	// db
+				}
+			}
 		}
-		
-		//add nodes that are not in db
-		if(assocNodeRefs != null){
-			for(NodeRef n : assocNodeRefs){
-				if(nodeService.exists(n)){
+
+		// add nodes that are not in db
+		if (assocNodeRefs != null) {
+			for (NodeRef n : assocNodeRefs) {
+				if (nodeService.exists(n)) {
 					nodeService.createAssociation(nodeRef, n, qName);
 				}
 			}
-		}		
+		}
 	}
-	
-	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+
+	// TODO : refactor : utiliser cette méthode dans la création des datalists !
+	// productdao, etc...
 	@Override
 	public void update(NodeRef nodeRef, QName qName, NodeRef assocNodeRef) {
-		
+
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
-		
+
 		boolean createAssoc = true;
-		if(!assocRefs.isEmpty() && assocRefs.get(0).getTargetRef() != null){
-			if(assocRefs.get(0).getTargetRef().equals(assocNodeRef)){
+		if (!assocRefs.isEmpty() && assocRefs.get(0).getTargetRef() != null) {
+			if (assocRefs.get(0).getTargetRef().equals(assocNodeRef)) {
 				createAssoc = false;
-			}
-			else{
+			} else {
 				nodeService.removeAssociation(nodeRef, assocRefs.get(0).getTargetRef(), qName);
 			}
 		}
-		
-		if(createAssoc && assocNodeRef != null){
+
+		if (createAssoc && assocNodeRef != null) {
 			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
 		}
 	}
 
-	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+	// TODO : refactor : utiliser cette méthode dans la création des datalists !
+	// productdao, etc...
 	@Override
 	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName) {
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
-		return assocRefs!=null && !assocRefs.isEmpty() ? assocRefs.get(0).getTargetRef() : null;
+		return assocRefs != null && !assocRefs.isEmpty() ? assocRefs.get(0).getTargetRef() : null;
 	}
 
-	// TODO : refactor : utiliser cette méthode dans la création des datalists ! productdao, etc...
+	// TODO : refactor : utiliser cette méthode dans la création des datalists !
+	// productdao, etc...
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
@@ -85,7 +91,7 @@ public class AssociationServiceImpl implements AssociationService {
 		for (AssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getTargetRef());
 		}
-		
+
 		return listItems;
 	}
 
