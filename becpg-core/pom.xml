@@ -114,7 +114,14 @@
 			<scope>test</scope>
 		</dependency> -->
 
-
+		<!-- Insight 
+		<dependency>
+        <groupId>com.springsource.insight</groupId> 
+        <artifactId>insight-annotation</artifactId>
+        <version>1.5.0.RELEASE</version>
+        <scope>provided</scope>
+      </dependency>
+	-->
 	</dependencies>
 	<build>
 		<plugins>

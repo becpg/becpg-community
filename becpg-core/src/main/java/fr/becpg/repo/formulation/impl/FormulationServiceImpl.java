@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChain;
@@ -21,6 +22,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @since 1.5
  * @param <T>
  */
+@Service
 public class FormulationServiceImpl<T extends RepositoryEntity> implements FormulationService<T>{
 
 	AlfrescoRepository<T> alfrescoRepository;

@@ -1,4 +1,4 @@
-
+<#assign el=args.htmlid?html>
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
@@ -13,41 +13,17 @@
 </@>
 
 
+<@markup id="widgets">
+		<@createWidgets group="becpg-admin"/> 		
+</@>
 
 
 
 <@markup id="html">
  <@uniqueIdDiv>
-   
-	<#assign el=args.htmlid?html>
-
-	<script type="text/javascript">//<![CDATA[
-	   new beCPG.component.beCPGAdminConsole("${el}").setMessages(${messages});
-	
-	      google.load('visualization', '1', {packages:['gauge']});
-	      google.setOnLoadCallback(drawChart);
-	      function drawChart() {
-	       var memory = Math.round((${systemInfo.totalMemory?c}-${systemInfo.freeMemory?c})/${systemInfo.totalMemory?c}*100);
-	        var data = google.visualization.arrayToDataTable([
-	          ['Label', 'Value'],
-	          ['Memory', memory]
-	        ]);
-	
-	        var options = {
-	          width: 400, height: 120,
-	          redFrom: 90, redTo: 100,
-	          yellowFrom: 80, yellowTo: 90,
-	          greenFrom:60, greenTo: 80,
-	          minorTicks: 5
-	        };
-	
-	        var chart = new google.visualization.Gauge(document.getElementById('${el}-gauge-div'));
-	        chart.draw(data, options);
-	      }
-	     //]]>
-	</script>
 	<div id="${el}-body" class="becpg-admin-console">
-		 <div class="system-info-container">	
+		 <div class="yui-g">
+				 <div class="yui-u first system-info-container">	
 					<div class="header-bar">
 			         <div class="title">${msg("label.informations")}</div>
 			      </div>      
@@ -58,12 +34,14 @@
 				 			</td>
 				 			<td>
 				 			<div class="infos">
-				 				<label>Free memory</label>
-								<span class="info">${systemInfo.freeMemory} octets</span><br/>
-								<label>Total memory</label>
-								<span class="info">${systemInfo.totalMemory} octets</span><br/>
-								<label>Non heap memory</label>
-								<span class="info">${systemInfo.nonHeapMemoryUsage} octets</span><br/>
+				 				<label>${msg("label.freeMemory")}</label>
+								<span class="info">${systemInfo.freeMemory?string("0")} Mo</span><br/>
+								<label>${msg("label.totalMemory")}</label>
+								<span class="info">${systemInfo.totalMemory?string("0")} Mo</span><br/>
+								<label>${msg("label.nonHeapMemory")}</label>
+								<span class="info">${systemInfo.nonHeapMemoryUsage?string("0")} Mo</span><br/>
+								<label>${msg("label.connectedUsers")}</label>
+								<span class="info">${systemInfo.connectedUsers}</span><br/>
 				 			</div>
 				 			 <div class="action">
 					    		<button type="button" name="${el}-empty-cache" id="${el}-empty-cache-button">${msg("button.empty-cache")}</button>
@@ -73,9 +51,33 @@
 				 			</tr>
 						</table>
 					</div>
-			</div>
-			<div class="yui-gd">
-				<div class="yui-u first jobs-list-container">	
+				</div>
+				<div class="yui-u system-action-container">
+			     	<div class="header-bar">
+			         <div class="title">${msg("label.repository")}</div>
+			      </div>      
+			      <div class="section">
+						<div class="action">				
+							<button type="button" name="${el}-reload-model-button" id="${el}-reload-model-button">${msg("button.reload-model")}</button>
+				         <label for="${el}-reload-model-button">${msg("label.reload-model")}</label>              
+				    	</div>
+				    	<div class="action">				
+							<button type="button" name="${el}-reload-config-button" id="${el}-reload-config-button">${msg("button.reload-config")}</button>
+				         <label for="${el}-reload-config-button">${msg("label.reload-config")}</label>             
+				    	</div>
+				    	<div class="action">
+				    		<button type="button" name="${el}-init-repo-button" id="${el}-init-repo-button">${msg("button.init-repo")}</button>
+				    		<label for="${el}-init-repo-button">${msg("label.init-repo")}</label>   		
+				    	</div>
+				    	<div class="action">
+				    		<button type="button" name="${el}-init-acl-button" id="${el}-init-acl-button">${msg("button.init-acl")}</button>
+				    		 <label for="${el}-init-acl-button">${msg("label.init-acl")}</label>   	
+				    	</div>
+					</div>
+			    </div>
+		   </div>
+			<div class="yui-g">
+				<div class="yui-u first system-charact-container">	
 					<div class="header-bar">
 			         <div class="title">${msg("label.characts")}</div>
 			      </div>      
@@ -83,32 +85,24 @@
 			      <#list systemEntities as item>
 				     		 <div class="action">				
 				     		 	${msg("label.characts.edit")}<a href="${url.context}/page/entity-data-lists?nodeRef=${item.nodeRef}"><span class="systemEntity">${item.name}</span></a>
+				     		 	<#if item.title?? && item.title?length &gt; 0 ><span>(${item.title})</span></#if>
+				    		   <#if item.description??  && item.description?length &gt; 0 ><p>${item.description}</p></#if>
 					    	</div>
 					</#list>
 					</div>
 				</div>
-				<div class="yui-u job-detail-container">
+				<div class="yui-u system-folder-container">
 			     	<div class="header-bar">
-			         <div class="title">${msg("label.repository")}</div>
+			         <div class="title">${msg("label.systemFolders")}</div>
 			      </div>      
 			      <div class="section">
+			        <#list systemFolders as item>
 						<div class="action">				
-							<button type="button" name="${el}-reload-model-button" id="${el}-reload-model-button">${msg("button.reload-model")}</button>
-				         <label for="${el}-reload-model-button">${msg("label.reload-model")}</label>               
+							${msg("label.systemFolder.access")}<a href="${url.context}/page/repository#filter=path|${item.path?split("/")?last?url}%2F${item.name?url}"><span class="systemFolder">${item.name}</span></a>
+				    		<#if item.title?? && item.title?length &gt; 0 ><span>(${item.title})</span></#if>
+				    		<#if item.description??  && item.description?length &gt; 0 ><p>${item.description}</p></#if>
 				    	</div>
-				    	<div class="action">				
-							<button type="button" name="${el}-reload-config-button" id="${el}-reload-config-button">${msg("button.reload-config")}</button>
-				         <label for="${el}-reload-config-button">${msg("label.reload-config")}</label>               
-				    	</div>
-				    	<div class="action">
-				    		<button type="button" name="${el}-init-repo-button" id="${el}-init-repo-button">${msg("button.init-repo")}</button>
-				    		<label for="${el}-init-repo-button">${msg("label.init-repo")}</label>    		
-				    	</div>
-				    	<div class="action">
-				    		<button type="button" name="${el}-init-acl-button" id="${el}-init-acl-button">${msg("button.init-acl")}</button>
-				    		<label for="${el}-init-acl-button">${msg("label.init-acl")}</label>    		
-				    	</div>
-				    	
+				    </#list>
 					</div>
 			    </div>
 		   </div>

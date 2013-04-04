@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.CharactDetailsVisitor;
@@ -19,6 +20,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
+@Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 	private static Log logger = LogFactory.getLog(SimpleCharactDetailsVisitor.class);
