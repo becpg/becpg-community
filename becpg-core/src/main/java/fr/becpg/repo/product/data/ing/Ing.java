@@ -8,7 +8,6 @@ import java.util.Locale;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Ing.
  *
@@ -48,5 +47,5 @@ public interface Ing {
 	 *
 	 * @return the qty
 	 */
-	public Double getQty();
+	public Double getQty();	
 }

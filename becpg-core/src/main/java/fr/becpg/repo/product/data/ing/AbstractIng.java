@@ -21,43 +21,30 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 	protected NodeRef ing;
 	
 	/** The ml name. */
-	protected MLText mlName;
+	protected MLText mlName;	
+	
+	protected Double qty = 0d;
 			
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ing.Ing#getName()
-	 */
 	@Override
 	public NodeRef getIng() {
 		return ing;
 	}
 	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ing.Ing#setName(java.lang.String)
-	 */
 	@Override
 	public void setIng(NodeRef ing) {
 		this.ing = ing;
 	}
 	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ing.Ing#getMLName()
-	 */
 	@Override
 	public MLText getMLName() {
 		return mlName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ing.Ing#setMLName(org.alfresco.service.cmr.repository.MLText)
-	 */
 	@Override
 	public void setMLName(MLText mlName) {
 		this.mlName = mlName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ing.Ing#getName(java.util.Locale)
-	 */
 	@Override
 	public String getName(Locale locale) {
 		if(mlName!=null){
@@ -66,15 +53,25 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 		return "";
 	}
 	
+	@Override
+	public Double getQty() {
+		return qty;
+	}		
+	
+	public void setQty(Double qty) {
+		this.qty = qty;
+	}
+	
 	/**
 	 * Instantiates a new abstract ing.
 	 *
 	 * @param name the name
 	 * @param mlName the ml name
 	 */
-	public AbstractIng(NodeRef ing, MLText mlName){
+	public AbstractIng(NodeRef ing, MLText mlName, Double qty){
 		this.ing = ing;
 		this.mlName = mlName;
+		this.qty = qty;
 	}
 	
 	/**
@@ -86,7 +83,7 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 	 */
 	@Override
 	public int compareTo(Ing ing) {
-		return Double.compare(ing.getQty(), this.getQty());
+		return (ing.getQty() != null && this.getQty() != null) ? Double.compare(ing.getQty(), this.getQty()) : 0;
 	}
 
 	@Override

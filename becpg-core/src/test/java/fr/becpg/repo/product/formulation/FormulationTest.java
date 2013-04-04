@@ -14,9 +14,12 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -46,7 +49,6 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class FormulationTest.
@@ -55,6 +57,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public class FormulationTest extends AbstractFinishedProductTest {
 	
+	protected static Log logger = LogFactory.getLog(FormulationTest.class);
     
     /* (non-Javadoc)
      * @see fr.becpg.test.RepoBaseTestCase#setUp()
@@ -71,7 +74,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 	 *
 	 * @throws Exception the exception
 	 */
-	@Test
+    @Test
 	public void testFormulateProduct() throws Exception{
 		   
 		logger.info("testFormulateProduct");
@@ -95,12 +98,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(22.4d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
@@ -296,9 +299,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					
 					df = new DecimalFormat("0.000000");
 					
-					//ing: ing1 - qty: 13.043478 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
+					//ing: ing1 - qty: 13.88888888888889 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
 					if(ingListDataItem.getIng().equals(ing1)){
-						assertEquals("ing1.getQtyPerc() == 13.043478, actual values: " + trace,  df.format(13.043478), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing1.getQtyPerc() == 13.88888888888889, actual values: " + trace,  df.format(13.88888888888889), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -307,9 +310,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue() == true);
 						checks++;
 					}
-					//ing2 - qty: 34.782608 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+					//ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 					if(ingListDataItem.getIng().equals(ing2)){
-						assertEquals("ing2.getQtyPerc() == 34.782608, actual values: " + trace, df.format(34.78260869565217), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing2.getQtyPerc() == 36.111111111111114, actual values: " + trace, df.format(36.111111111111114), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -318,9 +321,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("ing2.getIsIonized().booleanValue() is false, actual values: " + trace, false, ingListDataItem.getIsIonized().booleanValue());
 						checks++;
 					}
-					//ing3 - qty: 52.173912 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+					//ing3 - qty: 50 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 					if(ingListDataItem.getIng().equals(ing3)){
-						assertEquals("ing3.getQtyPerc() == 52.173913, actual values: " + trace, df.format(52.17391304347826), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing3.getQtyPerc() == 50, actual values: " + trace, df.format(50), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -335,15 +338,22 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//verify IngLabelingList
 				checks=0;
 				assertNotNull("IngLabelingList is null", formulatedProduct.getIngLabelingList());
+
 				for(IngLabelingListDataItem illDataItem : formulatedProduct.getIngLabelingList()){				
 					
 					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
 					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
 					
-					//Garniture 52,17 % (ing3 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
+					//Pâte 50 % (Legal Raw material 2 66,67 % (ing2 75,00 %, ing1 25,00 %), ing2 22,22 %, ing1 11,11 %), Garniture 50 % (ing3 50,00 %)
 					if(illDataItem.getGrp() == null){		
-						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check.",  "Garniture french 52,17 % (ing3 french 100,00 %), Pâte french 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
-						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check.",  "Garniture english 52.17 % (ing3 english 100.00 %), Pâte english 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));
+						
+						checkILL("Pâte french 50,00 % (Legal Raw material 2 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)",
+								"Garniture french 50,00 % (ing3 french 50,00 %)",
+								illDataItem.getValue().getValue(Locale.FRENCH));
+						
+						checkILL("Pâte english 50.00 % (Legal Raw material 2 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
+								"Garniture english 50.00 % (ing3 english 50.00 %)", 
+								illDataItem.getValue().getValue(Locale.ENGLISH));						
 						checks++;
 					}
 				}
@@ -375,6 +385,20 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			}},false,true);
 		   
 	   }
+	
+	public void checkILL(String expectedStr1, String expectedStr2, String actualStr){
+		
+		String expectedStr = "";
+		
+		if(actualStr.startsWith(expectedStr1)){
+			expectedStr = expectedStr1 + ", " + expectedStr2;
+		}
+		else{
+			expectedStr = expectedStr2 + ", " + expectedStr1;
+		}
+		
+		assertEquals(expectedStr, actualStr);
+	}
 
 	
 	/**
@@ -403,12 +427,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setQty(2d);
 			finishedProduct1.setUnit(ProductUnit.kg);				
 			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList1.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+			compoList1.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
 			
@@ -443,9 +467,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 				DecimalFormat df = new DecimalFormat("0.000000");
 				
-				//ing: ing1 - qty: 7.3170733 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
+				//ing: ing1 - qty: 9.25925925925926 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing1)){
-					assertEquals("ing1.getQtyPerc() == 13.043478, actual values: " + trace,  df.format(7.3170733), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing1.getQtyPerc() == 9.25925925925926, actual values: " + trace,  df.format(9.25925925925926), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -453,9 +477,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
 					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
 				}
-				//ing: ing2 - qty: 19.512196 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+				//ing: ing2 - qty: 24.074074074074076 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 				if(ingListDataItem.getIng().equals(ing2)){
-					assertEquals("ing2.getQtyPerc() == 34.782608, actual values: " + trace, df.format(19.512195), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing2.getQtyPerc() == 24.074074074074076, actual values: " + trace, df.format(24.074074074074076), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -463,9 +487,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsGMO().booleanValue());
 					assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsIonized().booleanValue());
 				}
-				//ing: ing3 - qty: 58.536587 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+				//ing: ing3 - qty: 55.55555555555556 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing3)){
-					assertEquals("ing3.getQtyPerc() == 58.536585, actual values: " + trace, df.format(58.53658536585366), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing3.getQtyPerc() == 55.55555555555556, actual values: " + trace, df.format(55.55555555555556), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -473,9 +497,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
 					assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
 				}
-				//ing: ing4 - qty: 14.634146 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+				//ing: ing4 - qty: 11.11111111111111 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing4)){
-					assertEquals("ing3.getQtyPerc() == 14.634146, actual values: " + trace, df.format(14.634146), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals("ing3.getQtyPerc() == 11.11111111111111, actual values: " + trace, df.format(11.11111111111111), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -492,12 +516,16 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
 				logger.debug(trace);			
 				
-				//Garniture 73,17 % (ing3 80,00 %, ing4 20,00 %), Pâte 26,83 % (Legal Raw material 12 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
+				//Garniture default 50,00 % (ing3 default 83,33 %, ing4 default 16,67 %), Pâte default 50,00 % (Legal Raw material 12 66,67 % (ing2 default 75,00 %, ing1 default 25,00 %), ing2 default 22,22 %, ing1 default 11,11 %)
 				if(illDataItem.getGrp() == null){
-					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-					assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 73,17 % (ing3 french 80,00 %, ing4 french 20,00 %), Pâte french 26,83 % (Legal Raw material 12 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
-					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-					assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 73.17 % (ing3 english 80.00 %, ing4 english 20.00 %), Pâte english 26.83 % (Legal Raw material 12 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+					
+					checkILL("Garniture french 50,00 % (ing3 french 83,33 %, ing4 french 16,67 %)", 
+							"Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)", 
+							illDataItem.getValue().getValue(Locale.FRENCH));
+					
+					checkILL("Garniture english 50.00 % (ing3 english 83.33 %, ing4 english 16.67 %)", 
+							"Pâte english 50.00 % (Legal Raw material 12 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
+							illDataItem.getValue().getValue(Locale.ENGLISH));					
 				}
 			}
 			
@@ -513,12 +541,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct2.setQty(2d);
 			finishedProduct2.setUnit(ProductUnit.kg);
 			List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList2.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList2.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
+			compoList2.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+			compoList2.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+			compoList2.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
 			finishedProduct2.getCompoListView().setCompoList(compoList2);
 			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(testFolderNodeRef, finishedProduct2).getNodeRef();			
 			
@@ -554,9 +582,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 				
 				
-				//ing: ing1 - qty: 7.3170733 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
+				//ing: ing1 - qty:  9.25925925925926 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing1)){
-					assertEquals("ing1.getQtyPerc() == 13.043478, actual values: " + trace,  df.format(7.3170733), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals(df.format(9.25925925925926), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -564,9 +592,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue() == true);
 					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue() == true);
 				}
-				//ing: ing2 - qty: 19.512195 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+				//ing: ing2 - qty: 24.074074074074076 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 				if(ingListDataItem.getIng().equals(ing2)){
-					assertEquals("ing2.getQtyPerc() == 19.512195, actual values: " + trace, df.format(19.512195), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals(df.format(24.074074074074076), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -574,9 +602,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsGMO().booleanValue());
 					assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsIonized().booleanValue());
 				}
-				//ing: ing3 - qty: 58.536585 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+				//ing: ing3 - qty: 55.55555555555556 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing3)){
-					assertEquals("ing3.getQtyPerc() == 58.536585, actual values: " + trace, df.format(58.536585), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals(df.format(55.55555555555556), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -584,9 +612,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
 					assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
 				}
-				//ing: ing4 - qty: 14.634147 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+				//ing: ing4 - qty: 11.11111111111111 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 				if(ingListDataItem.getIng().equals(ing4)){
-					assertEquals("ing3.getQtyPerc() == 14.634147, actual values: " + trace, df.format(14.63414634), df.format(ingListDataItem.getQtyPerc()));
+					assertEquals(df.format(11.11111111111111), df.format(ingListDataItem.getQtyPerc()));
 					assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 					assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
@@ -603,12 +631,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
 				logger.debug(trace);			
 				
-				//Garniture 73,17 % (ing3 40,00 %), Pâte 26,83 % (Legal Raw material 12 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
+				//Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %), Garniture french 50,00 % (ing3 french 50,00 %)
 				if(illDataItem.getGrp() == null){
-					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-					assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 73,17 % (ing3 french 40,00 %), Pâte french 26,83 % (Legal Raw material 12 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
-					trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-					assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 73.17 % (ing3 english 40.00 %), Pâte english 26.83 % (Legal Raw material 12 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+					checkILL("Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)", 
+							"Garniture french 50,00 % (ing3 french 50,00 %)", 
+							illDataItem.getValue().getValue(Locale.FRENCH));
+					
+					checkILL("Pâte english 50.00 % (Legal Raw material 12 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
+							"Garniture english 50.00 % (ing3 english 50.00 %)", 
+							illDataItem.getValue().getValue(Locale.ENGLISH));										
 				}
 			}
 			
@@ -639,12 +670,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 				
@@ -719,12 +750,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.P);
 				finishedProduct.setDensity(0.1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 40d, 0d, 0d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 30d, 0d, 0d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 0.05d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.P, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 40d, null, null, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.P, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 30d, null, null, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 0.05d, null, null, CompoListUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 				
@@ -816,12 +847,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					logger.debug(trace);
 										
 					if(ingListDataItem.getIng().equals(ing1)){
-						assertEquals("ing1.getQtyPerc() == 79.02098, actual values: " + trace,  df.format(79.02098), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals(df.format(60.5555555555556), df.format(ingListDataItem.getQtyPerc()));
 						checks++;
 					}
-					//ing: ing2 - qty: 19.512195 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+					//ing: ing2 - qty: 0.394444444444444 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 					if(ingListDataItem.getIng().equals(ing2)){
-						assertEquals("ing2.getQtyPerc() == 20.97902, actual values: " + trace, df.format(20.97902), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals(df.format(39.4444444444444), df.format(ingListDataItem.getQtyPerc()));
 						checks++;
 					}					
 				}
@@ -923,7 +954,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					SFProduct2.setUnit(ProductUnit.kg);
 					SFProduct2.setQty(1d);
 					List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-					compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, SFProduct1NodeRef));			
+					compoList2.add(new CompoListDataItem(null, 1, 3d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, SFProduct1NodeRef));			
 					SFProduct2.getCompoListView().setCompoList(compoList2);
 					
 					nutList = new ArrayList<NutListDataItem>();
@@ -987,8 +1018,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				SFProduct1.setUnit(ProductUnit.kg);
 				SFProduct1.setQty(1d);
 				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-				compoList1.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList1.add(new CompoListDataItem(null, 1, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));					
+				compoList1.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList1.add(new CompoListDataItem(null, 1, 2d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));					
 				SFProduct1.getCompoListView().setCompoList(compoList1);
 				NodeRef SFProduct1NodeRef = alfrescoRepository.create(testFolderNodeRef, SFProduct1).getNodeRef();
 				
@@ -999,8 +1030,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				SFProduct2.setUnit(ProductUnit.kg);
 				SFProduct2.setQty(1d);
 				List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList2.add(new CompoListDataItem(null, 1, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));					
+				compoList2.add(new CompoListDataItem(null, 1, 3d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList2.add(new CompoListDataItem(null, 1, 3d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));					
 				SFProduct2.getCompoListView().setCompoList(compoList2);
 				NodeRef SFProduct2NodeRef = alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
 						
@@ -1011,8 +1042,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 				
@@ -1240,12 +1271,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 				
@@ -1333,11 +1364,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getInVoluntarySources().size());
 					}				
 				}
+				
 				//verify IngList
 				// 1 * RM1				, ingList : 		1 ing1 ; bio1 ; geo1		// 2 ing2 ; bio1 ; geo1|geo2	//
 				// 2 * RM2				, ingList : 		1 ing1 ; bio1 ; geo1		// 3 ing2 ; bio2 ; geo1|geo2	//
 				// 3 * RM3				, ingList : 											//											//	4 ing3 ; bio1|bio2 ; geo2
 				// 3 * RM4 [OMIT]	, ingList : 											//											//	4 ing3 ; bio1|bio2 ; geo2
+				int checks=0;
 				assertNotNull("IngList is null", formulatedProduct.getIngList());
 				for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){
 				
@@ -1350,55 +1383,69 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
 					
 					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO().booleanValue() + " is ionized: " + ingListDataItem.getIsIonized().booleanValue();
-					logger.debug(trace);					
+					logger.debug(trace);
 					
-					//ing: ing1 - qty: 13.043478 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
+					df = new DecimalFormat("0.000000");
+					
+					//ing: ing1 - qty: 13.88888888888889 - geo origins: geoOrigin1,  - bio origins: bioOrigin1,  is gmo: true
 					if(ingListDataItem.getIng().equals(ing1)){
-						assertEquals("ing1.getQtyPerc() == 13.043478, actual values: " + trace,  df.format(13.043478), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing1.getQtyPerc() == 13.88888888888889, actual values: " + trace,  df.format(13.88888888888889), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
 						assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false, ingListDataItem.getBioOrigin().contains(bioOrigin2));
 						assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue() == true);
 						assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue() == true);
+						checks++;
 					}
-					//ing2 - qty: 34.782609 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
+					//ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 					if(ingListDataItem.getIng().equals(ing2)){
-						assertEquals("ing2.getQtyPerc() == 34.782609, actual values: " + trace, df.format(34.782609), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing2.getQtyPerc() == 36.111111111111114, actual values: " + trace, df.format(36.111111111111114), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
 						assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
 						assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsGMO().booleanValue());
 						assertEquals("ing2.getIsIonized().booleanValue() is false, actual values: " + trace, false, ingListDataItem.getIsIonized().booleanValue());
+						checks++;
 					}
-					//ing3 - qty: 52.173913 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
+					//ing3 - qty: 50 - geo origins: geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: true
 					if(ingListDataItem.getIng().equals(ing3)){
-						assertEquals("ing3.getQtyPerc() == 52.173913, actual values: " + trace, df.format(52.173913), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing3.getQtyPerc() == 50, actual values: " + trace, df.format(50), df.format(ingListDataItem.getQtyPerc()));
 						assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
 						assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
 						assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
 						assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
 						assertEquals("ing3.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
+						checks++;
 					}
 				}
+				assertEquals(3, checks);
 				
 				//verify IngLabelingList
+				checks=0;
 				assertNotNull("IngLabelingList is null", formulatedProduct.getIngLabelingList());
+
 				for(IngLabelingListDataItem illDataItem : formulatedProduct.getIngLabelingList()){				
 					
-					String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-					logger.debug(trace);	
+					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
+					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
 					
-					//Garniture 52,17 % (ing3 100,00 %), Pâte 47,83 % (Legal Raw material 2 72,73 % (ing2 75,00 %, ing1 25,00 %), ing2 18,18 %, ing1 9,09 %)
+					//Pâte 50 % (Legal Raw material 2 66,67 % (ing2 75,00 %, ing1 25,00 %), ing2 22,22 %, ing1 11,11 %), Garniture 50 % (ing3 50,00 %)
 					if(illDataItem.getGrp() == null){		
-						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-						assertEquals("illDataItem.getValue().getValue(Locale.FRENCH) check: " + trace,  "Garniture french 52,17 % (ing3 french 100,00 %), Pâte french 47,83 % (Legal Raw material 2 72,73 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 18,18 %, ing1 french 9,09 %)", illDataItem.getValue().getValue(Locale.FRENCH));
-						trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH);
-						assertEquals("illDataItem.getValue().getValue(Locale.ENGLISH) check: " + trace,  "Garniture english 52.17 % (ing3 english 100.00 %), Pâte english 47.83 % (Legal Raw material 2 72.73 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 18.18 %, ing1 english 9.09 %)", illDataItem.getValue().getValue(Locale.ENGLISH));						
+						
+						checkILL("Pâte french 50,00 % (Legal Raw material 2 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)",
+								"Garniture french 50,00 % (ing3 french 50,00 %)",
+								illDataItem.getValue().getValue(Locale.FRENCH));
+						
+						checkILL("Pâte english 50.00 % (Legal Raw material 2 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
+								"Garniture english 50.00 % (ing3 english 50.00 %)", 
+								illDataItem.getValue().getValue(Locale.ENGLISH));						
+						checks++;
 					}
 				}
+				assertEquals(1, checks);
 								
 				return null;
 
@@ -1812,12 +1859,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
@@ -1913,12 +1960,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				finishedProduct.setUnit(ProductUnit.kg);
 //				finishedProduct.setQty(2d);
 //				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpPate, DeclarationType.Detail, localSF1NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
-//				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.Detail, localSF2NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
-//				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
+//				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, grpPate, DeclarationType.Detail, localSF1NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
+//				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, grpGarniture, DeclarationType.Detail, localSF2NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
+//				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
 //				finishedProduct.setCompoList(compoList);
 //				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 //				
@@ -2116,14 +2163,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				CompoListDataItem parent = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+				CompoListDataItem parent = new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
 				compoList.add(parent);
-				compoList.add(new CompoListDataItem(null, parent, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, parent, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				parent = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+				compoList.add(new CompoListDataItem(null, parent, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, parent, 2d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				parent = new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
 				compoList.add(parent);
-				compoList.add(new CompoListDataItem(null, parent, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, parent, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, parent, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, parent, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 
@@ -2565,12 +2612,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);		
 				
 				List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();				
@@ -2611,6 +2658,83 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				}
 				assertEquals(2, checks);
 				
+				
+				return null;
+
+			}},false,true);
+		   
+	   }
+	
+	/**
+	 * Test ingredients calculating.
+	 *
+	 * @throws Exception the exception
+	 */
+	@Test
+	public void testCalculateILLWithRMWithNullPerc() throws Exception{
+		
+		logger.info("testIngredientsCalculating");
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			public NodeRef execute() throws Throwable {					   
+			
+				/*-- Raw material 14 --*/
+				RawMaterialData rawMaterial100 = new RawMaterialData();
+				rawMaterial100.setName("Raw material 100");
+				MLText legalName = new MLText("Legal Raw material 100");
+				legalName.addValue(Locale.FRENCH, "Legal Raw material 100");
+				legalName.addValue(Locale.ENGLISH, "Legal Raw material 100");
+				rawMaterial100.setLegalName(legalName);
+				//ingList : 4 ing3 ; bio1|bio2 ; geo2
+				List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();					
+				ingList.add(new IngListDataItem(null, null, null, null, true, true, ing3, false));
+				ingList.add(new IngListDataItem(null, 30d, null, null, true, true, ing2, false));
+				ingList.add(new IngListDataItem(null, null, null, null, true, true, ing4, false));
+				rawMaterial100.setIngList(ingList);		
+				NodeRef rawMaterial100NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial100).getNodeRef();
+				
+				FinishedProductData finishedProduct1 = new FinishedProductData();
+				finishedProduct1.setName("Finished product 1");
+				finishedProduct1.setLegalName("Legal Finished product 1");
+				finishedProduct1.setQty(2d);
+				finishedProduct1.setUnit(ProductUnit.kg);				
+				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
+				compoList1.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+				compoList1.add(new CompoListDataItem(null, 2, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+				compoList1.add(new CompoListDataItem(null, 2, 2d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
+				compoList1.add(new CompoListDataItem(null, 1, 1d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+				compoList1.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+				compoList1.add(new CompoListDataItem(null, 2, 3d, null, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial100NodeRef));
+				finishedProduct1.getCompoListView().setCompoList(compoList1);
+				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+				
+				/*-- Formulate product --*/
+				logger.debug("/*-- Formulate product --*/");
+				productService.formulate(finishedProductNodeRef1);
+				
+				/*-- Verify formulation --*/
+				logger.debug("/*-- Verify formulation --*/");
+				ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
+				
+				//verify IngLabelingList
+				assertNotNull("IngLabelingList is null", formulatedProduct1.getIngLabelingList());
+				for(IngLabelingListDataItem illDataItem : formulatedProduct1.getIngLabelingList()){				
+					
+					String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
+					logger.debug(trace);			
+					
+					//Garniture french 50,00 % (ing3 french 50,00 %, Legal Raw material 100 50,00 % (ing3 french, ing2 french 30,00 %, ing4 french)), Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)
+					if(illDataItem.getGrp() == null){
+						
+						checkILL("Garniture french 50,00 % (ing3 french 50,00 %, Legal Raw material 100 50,00 % (ing3 french, ing2 french 30,00 %, ing4 french))", 
+								"Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)", 
+								illDataItem.getValue().getValue(Locale.FRENCH));
+						
+						checkILL("Garniture english 50.00 % (ing3 english 50.00 %, Legal Raw material 100 50.00 % (ing3 english, ing2 english 30.00 %, ing4 english))", 
+								"Pâte english 50.00 % (Legal Raw material 12 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
+								illDataItem.getValue().getValue(Locale.ENGLISH));					
+					}
+				}				
 				
 				return null;
 

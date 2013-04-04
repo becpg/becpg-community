@@ -50,8 +50,14 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			netWeight = qty * density;
 		}
 		
+		logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL));
+		logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
+		
 		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));		
 		visitChildren(netWeight, netWeight, composite);
+		
+		logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL));
+		logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
 		
 		// Yield
 		Double qtyUsed = calculateQtyUsedBeforeProcess(composite);
@@ -70,6 +76,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if(parentQty != null && qtyAfterProcess != null && !qtyAfterProcess.equals(0d)){
 				
 				Double qtySubFormula = component.getData().getQtySubFormula();
+				logger.debug("qtySubFormula: " + qtySubFormula + " qtyAfterProcess: " + qtyAfterProcess + " parentQty: " + parentQty);
 				if(qtySubFormula != null){
 					
 					Double qty = null;
@@ -134,6 +141,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 		// qty after process
 		Double qtyAfterProcess = FormulationHelper.getQty(composite.getData(), nodeService);
+		logger.debug("qtyAfterProcess: " + qtyAfterProcess + " - qtyUsed: " + qtyUsed);
 		if(qtyAfterProcess != 0 && qtyUsed != 0){
 			yieldPerc = qtyAfterProcess / qtyUsed * 100;
 		}
