@@ -1,28 +1,16 @@
 package fr.becpg.repo.project.formulation;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.workflow.WorkflowDefinition;
-import org.alfresco.service.cmr.workflow.WorkflowPath;
-import org.alfresco.service.cmr.workflow.WorkflowService;
-import org.alfresco.service.cmr.workflow.WorkflowTask;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -33,28 +21,29 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 
 public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
-	private static final int COMPLETED = 100;
-	private static final String WORKFLOW_DESCRIPTION = "%s - %s";
-	private static final String DESCRIPTION__TASK_DL_SEPARATOR = " : ";
-	private static final String DESCRIPTION_DL_SEPARATOR = ", ";
+	private static final int COMPLETED = 100;	
 
 	private static Log logger = LogFactory.getLog(TaskStateFormulationHandler.class);
 
-	private WorkflowService workflowService;
-	private NodeService nodeService;
+	private ProjectWorkflowService projectWorkflowService;
 
-	public void setWorkflowService(WorkflowService workflowService) {
-		this.workflowService = workflowService;
-	}
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
+	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
+		this.projectWorkflowService = projectWorkflowService;
 	}
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
 		visitTask(projectData, null);
 				
+//		// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
+//		if(ProjectState.Planned.equals(projectData.getProjectState()) && 
+//				projectData.getStartDate() != null && 
+//				!projectData.getStartDate().equals(projectData.getCreated()) &&
+//				projectData.getStartDate().before(new Date())){
+//			projectData.setProjectState(ProjectState.InProgress);
+//		}
+		
 		// is project completed ?
 		if(ProjectHelper.areTasksDone(projectData)){
 			projectData.setCompletionDate(new Date());
@@ -93,36 +82,11 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					
 					// start task
 					if (TaskState.Planned.equals(nextTask.getState())) {
-						ProjectHelper.setTaskStartDate(nextTask, new Date());
-						nextTask.setState(TaskState.InProgress);
-
-					} else if (TaskState.InProgress.equals(nextTask.getState())) {
-
-						Integer taskCompletionPercent = 0;
-						int finishedDL = 0;
-						List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
-								nextTask.getNodeRef());
-
-						for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-
-							// Completed or Closed
-							if (DeliverableState.Completed.equals(nextDeliverable.getState())
-									|| DeliverableState.Closed.equals(nextDeliverable.getState())) {
-								taskCompletionPercent += nextDeliverable.getCompletionPercent();
-								finishedDL++;
-							}
+						// manual date -> we wait the date
+						if(nextTask.getManualDate() == null || nextTask.getStart().before(new Date())){
+							ProjectHelper.setTaskStartDate(nextTask, new Date());
+							nextTask.setState(TaskState.InProgress);
 						}
-
-						if (nextDeliverables.size() > 0 && nextDeliverables.size() == finishedDL) {
-							logger.debug("set completion percent to 100%");
-							nextTask.setCompletionPercent(COMPLETED);
-							nextTask.setState(TaskState.Completed);	
-							nextTask.setEnd(ProjectHelper.removeTime(new Date()));
-						} else {							
-							logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
-									+ nextTask.getNodeRef());
-							nextTask.setCompletionPercent(taskCompletionPercent);							
-						}												
 					} else if (TaskState.Completed.equals(nextTask.getState())) {
 
 						List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
@@ -132,115 +96,64 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							nextDeliverable.setState(DeliverableState.Completed);
 						}
 
-						nextTask.setCompletionPercent(COMPLETED);
+						nextTask.setCompletionPercent(COMPLETED);											
 					}
 					
-					// workflow (task may have been set as InProgress with UI)
-					if (TaskState.InProgress.equals(nextTask.getState()) && 
-							nextTask.getWorkflowInstance() == null &&  
-							nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
-							nextTask.getResources() != null) {
-						for (NodeRef resource : nextTask.getResources()) {
+					// cancel active workflow if task is not anymore InProgress
+					if(!TaskState.InProgress.equals(nextTask.getState()) &&
+							projectWorkflowService.isWorkflowActive(nextTask)){
+						projectWorkflowService.cancelWorkflow(nextTask);
+					}
+					
+					if (TaskState.InProgress.equals(nextTask.getState())) {
+
+						Integer taskCompletionPercent = 0;
+						List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
+								nextTask.getNodeRef());
+
+						for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
+
+							// Completed or Closed
+							if (DeliverableState.Completed.equals(nextDeliverable.getState())
+									|| DeliverableState.Closed.equals(nextDeliverable.getState())) {
+								taskCompletionPercent += nextDeliverable.getCompletionPercent();
+							}
+							
+							// set Planned dl InProgress
+							if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
+								nextDeliverable.setState(DeliverableState.InProgress);								
+							}
+						}
+
+						logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
+								+ nextTask.getNodeRef());
+						nextTask.setCompletionPercent(taskCompletionPercent);
+						
+						// task may be reopened so 
+						if(nextTask.getWorkflowInstance() != null && 
+							!nextTask.getWorkflowInstance().isEmpty() && 
+							!projectWorkflowService.isWorkflowActive(nextTask)){
+							
+							nextTask.setWorkflowInstance(null);
+						}
+						
+						// workflow (task may have been set as InProgress with UI)
+						if (nextTask.getWorkflowInstance() == null &&  
+								nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
+								nextTask.getResources() != null) {					
+							
 							// start workflow
-							startWorkflow(projectData, nextTask, resource);
+							projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
 						}
 					}
-
+					
 					visitTask(projectData, nextTask);
 				}
 			}
 		}
 	}
 	
-	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem){
-		
-		// deliverable list
-		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName(), taskListDataItem.getTaskName());
-		boolean isFirst = true;
-		List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
-				taskListDataItem.getNodeRef());
-
-		for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-
-			// set Planned dl InProgress
-			if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
-				nextDeliverable.setState(DeliverableState.InProgress);								
-			}
-
-			if (DeliverableState.InProgress.equals(nextDeliverable.getState())) {
-				if (isFirst) {
-					isFirst = false;
-					workflowDescription += DESCRIPTION__TASK_DL_SEPARATOR;
-				} else {
-					workflowDescription += DESCRIPTION_DL_SEPARATOR;
-				}
-				workflowDescription += nextDeliverable.getDescription();
-			}
-		}
-		
-		return workflowDescription;
-	}
-
-	private void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem,
-			NodeRef assignee) {
-		
-		String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem);
-		Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
-		Calendar cal = Calendar.getInstance();
-
-		if (taskListDataItem.getDuration() != null) {
-			cal.add(Calendar.DAY_OF_YEAR, taskListDataItem.getDuration());
-			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, cal.getTime());
-		}
-		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
-		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
-		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEE, assignee);
-		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
-
-		NodeRef wfPackage = workflowService.createPackage(null);
-		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-				ContentModel.ASSOC_CHILDREN);
-		if (projectData.getEntity() != null) {
-			nodeService.addChild(wfPackage, projectData.getEntity(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					ContentModel.ASSOC_CHILDREN);
-		}
-		workflowProps.put(WorkflowModel.ASSOC_PACKAGE, wfPackage);
-
-		String workflowDefId = getWorkflowDefId(taskListDataItem.getWorkflowName());
-		logger.debug("workflowDefId: " + workflowDefId);
-		if (workflowDefId != null) {
-
-			WorkflowPath wfPath = workflowService.startWorkflow(workflowDefId, workflowProps);
-			logger.debug("New worflow started. Id: " + wfPath.getId() + " - workflowDescription: "
-					+ workflowDescription);
-			String workflowId = wfPath.getInstance().getId();
-			taskListDataItem.setWorkflowInstance(workflowId);
-
-			// get the workflow tasks
-			WorkflowTask startTask = workflowService.getStartTask(workflowId);
-
-			// end task
-			try {
-				workflowService.endTask(startTask.getId(), null);
-			} catch (RuntimeException err) {
-				if (logger.isDebugEnabled())
-					logger.debug("Failed - caught error during project adhoc workflow transition: " + err.getMessage());
-				throw err;
-			}
-		}
-	}
-
-	private String getWorkflowDefId(String workflowName) {
-		if (workflowName != null && !workflowName.isEmpty()) {
-			WorkflowDefinition def = workflowService.getDefinitionByName(workflowName);
-			if (def != null) {
-				return def.getId();
-			}
-		}
-
-		logger.error("Unknown workflow name: " + workflowName);
-		return null;
-	}
+	
 
 	private void calculateProjectLegends(ProjectData projectData){
 		

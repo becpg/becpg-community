@@ -1,9 +1,9 @@
 package fr.becpg.repo.policy;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyBehaviourCallback;
@@ -140,7 +140,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		@SuppressWarnings("unchecked")
 		Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
 		if (pendingNodes == null) {
-			pendingNodes = new CopyOnWriteArraySet<NodeRef>();
+			pendingNodes = new LinkedHashSet<NodeRef>();
 			if(logger.isDebugEnabled()){
 				logger.debug("Bind key to transaction : "+key);
 			}

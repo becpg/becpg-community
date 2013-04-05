@@ -40,6 +40,11 @@ public class ProjectData extends BeCPGDataObject {
 	private List<NodeRef> legends = new ArrayList<NodeRef>();
 	private Integer overdue = 0;
 	private Integer score = 0;
+	private Date created;
+	private Date modified;
+	private String creator;
+	private String modifier;
+	private NodeRef projectManager;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -192,6 +197,56 @@ public class ProjectData extends BeCPGDataObject {
 
 	public void setScore(Integer score) {
 		this.score = score;
+	}
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:projectManager")
+	public NodeRef getProjectManager() {
+		return projectManager;
+	}
+
+	public void setProjectManager(NodeRef projectManager) {
+		this.projectManager = projectManager;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "cm:created")
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "cm:modified")
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "cm:creator")
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "cm:modifier")
+	public String getModifier() {
+		return modifier;
+	}
+
+	public void setModifier(String modifier) {
+		this.modifier = modifier;
 	}
 
 	@DataList

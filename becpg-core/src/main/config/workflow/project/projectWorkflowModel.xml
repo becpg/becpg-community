@@ -25,7 +25,7 @@
 		<type name="pjtwf:submitAdhocTask">
 			<parent>bpm:startTask</parent>
 			<mandatory-aspects>
-				<aspect>bpm:assignee</aspect>
+				<aspect>bpm:assignees</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -52,7 +52,7 @@
 		<type name="pjtwf:submitNewProductTask">
 			<parent>bpm:startTask</parent>
 			<mandatory-aspects>
-				<aspect>bpm:assignee</aspect>
+				<aspect>bpm:assignees</aspect>
 			</mandatory-aspects>
 		</type>
 

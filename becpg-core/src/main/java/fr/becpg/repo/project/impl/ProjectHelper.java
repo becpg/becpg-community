@@ -270,7 +270,7 @@ public class ProjectHelper {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
 	}
 	
-	public static Integer calculateOverdue(TaskListDataItem task){
+	public static Integer calculateOverdue(TaskListDataItem task){				
 		
 		Date endDate;
 		
@@ -278,7 +278,7 @@ public class ProjectHelper {
 			endDate = ProjectHelper.removeTime(new Date());
 			
 			// we wait the overdue of the task to take it in account
-			if(endDate.before(task.getEnd())){
+			if(task.getEnd() != null && endDate.before(task.getEnd())){
 				return null;
 			}
 		}
@@ -288,12 +288,12 @@ public class ProjectHelper {
 		else{
 			return null;
 		}
-		
 		Integer realDuration = calculateTaskDuration(task.getStart(), endDate);
 		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
 		if(realDuration != null &&  plannedDuration != null){
 			return realDuration - plannedDuration;
 		}
+		
 		return null;
 	}
 }
