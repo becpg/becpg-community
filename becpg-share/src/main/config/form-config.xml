@@ -1,16 +1,18 @@
 <alfresco-config>
 
-<!-- TODO remove this files #Matthieu -->
+
+	<!-- TODO try to move  this under @script tag -->
 	<config>
 		<forms>
 			<dependencies>
-				<css src="/modules/custom-autocomplete/autocomplete-ext-min.css" />
-				<css src="/modules/spel-editor/spel-editor-min.css" />
+				<css src="/modules/custom-autocomplete/autocomplete-ext.css" />
+				<!-- Spel editor -->
+				<css src="/modules/spel-editor/spel-editor.css" />
 				<css src="/modules/spel-editor/shThemeDefault.css" />
-				<js src="/modules/spel-editor/spel-editor-min.js" />
+				<js src="/yui/editor/editor.js"/>
+				<js src="/modules/spel-editor/spel-editor.js" />
 				<js src="/modules/spel-editor/shCore.js" />
 				<js src="/modules/spel-editor/shBrushJScript.js" />
-				<js src="/yui/editor/editor-min.js" />
 			</dependencies>
 		</forms>
 	</config>

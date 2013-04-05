@@ -33,7 +33,7 @@
     	 	</activiti:executionListener>
 		  </extensionElements>
     </startEvent>
-    <userTask id="adhocTask" name="Adhoc Task" activiti:candidateUsers="${pjtwf_assignees}" activiti:formKey="pjtwf:adhocTask">
+    <userTask id="adhocTask" name="Project Task" activiti:candidateUsers="${pjtwf_assignees}" activiti:formKey="pjtwf:adhocTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
