@@ -186,6 +186,10 @@
 	text-decoration: none;
 }
 
+.project-list.project-task a {
+	cursor: pointer;
+}
+
 .project-list .project-cancel-link-over,.project-list .project-view-link-over
 	{
 	background-color: #FFF;

@@ -36,7 +36,6 @@ import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 public class ProductData extends AbstractEffectiveDataItem  {
 	
 
-	private String versionLabel;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
@@ -416,12 +415,12 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	
 	@Override
 	public String toString() {
-		return "ProductData [versionLabel=" + versionLabel + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title
-				+ ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice="
-				+ unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList + ", priceList="
-				+ priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList="
-				+ microbioList + ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", compoListView=" + compoListView + ", processListView="
-				+ processListView + ", packagingListView=" + packagingListView + "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
+				+ ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
+				+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList
+				+ ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList="
+				+ physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", compoListView=" + compoListView + ", processListView=" + processListView + ", packagingListView="
+				+ packagingListView + "]";
 	}
 
 	@Override
@@ -453,7 +452,6 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
 		result = prime * result + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
-		result = prime * result + ((versionLabel == null) ? 0 : versionLabel.hashCode());
 		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
 		return result;
 	}
@@ -585,11 +583,6 @@ public class ProductData extends AbstractEffectiveDataItem  {
 			if (other.unitTotalCost != null)
 				return false;
 		} else if (!unitTotalCost.equals(other.unitTotalCost))
-			return false;
-		if (versionLabel == null) {
-			if (other.versionLabel != null)
-				return false;
-		} else if (!versionLabel.equals(other.versionLabel))
 			return false;
 		if (yield == null) {
 			if (other.yield != null)
