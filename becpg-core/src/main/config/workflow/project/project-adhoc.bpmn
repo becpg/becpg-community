@@ -2,7 +2,7 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
   <process isExecutable="true" id="projectAdhoc" name="Project Adhoc Process">
     <startEvent id="startevent1" name="Start" activiti:formKey="wf:submitAdhocTask"></startEvent>
-    <userTask id="adhocTask" name="Adhoc Task" activiti:assignee="${bpm_assignee.properties.userName}" activiti:formKey="pjtwf:adhocTask">
+    <userTask id="adhocTask" name="Project Task" activiti:assignee="${bpm_assignee.properties.userName}" activiti:formKey="pjtwf:adhocTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">

@@ -24,7 +24,7 @@
 	<@script type="text/javascript" src="${url.context}/res/components/workflow/workflow-actions.js" group="project-list" />
 	
 	<@script type="text/javascript" src="${url.context}/res/components/project/jsgantt.js" group="project-list" />
-	
+	<@script type="text/javascript" src="${url.context}/res/components/project/project-commons.js" group="project-list" />
 	<@script type="text/javascript" src="${url.context}/res/components/project/project-list.js" group="project-list" />
 
 </@>

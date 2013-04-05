@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Project Task info</shortname>
+	<description>Project Component - retrieve project task info</description>
+	<url>/becpg/project/task?nodeRef={noderef}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readonly" buffersize="0">required</transaction>
+</webscript>
