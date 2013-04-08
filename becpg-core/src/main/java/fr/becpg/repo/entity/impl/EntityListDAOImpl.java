@@ -345,4 +345,21 @@ public class EntityListDAOImpl implements EntityListDAO {
 		}
 		
 	}
+
+	@Override
+	public NodeRef getEntity(NodeRef listItemNodeRef) {
+		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
+
+		if(listNodeRef != null){
+			NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+			
+			if(listContainerNodeRef != null){
+				NodeRef rootNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+				logger.debug("rootNodeRef: " + rootNodeRef);
+				return rootNodeRef;
+			}
+		}
+		
+		return null;
+	}
 }
