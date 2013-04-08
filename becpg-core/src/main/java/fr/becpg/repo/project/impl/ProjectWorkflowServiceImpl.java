@@ -55,7 +55,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		
 		logger.debug("Cancel workflow instance: " + task.getWorkflowInstance());
 		workflowService.cancelWorkflow(task.getWorkflowInstance());
-		task.setWorkflowInstance(null);	
+		task.setWorkflowInstance("");	
 	}
 
 	@Override

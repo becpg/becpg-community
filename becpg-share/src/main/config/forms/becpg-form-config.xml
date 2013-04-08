@@ -237,7 +237,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -484,7 +484,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -837,7 +837,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>					
@@ -987,9 +987,8 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-							<control-param name="style">width:200px</control-param>
 						</control>
 					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
@@ -1106,7 +1105,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -1261,7 +1260,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -1369,7 +1368,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -1521,7 +1520,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -1635,7 +1634,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -1800,7 +1799,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:entityTplAspect</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
@@ -1865,6 +1864,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1918,6 +1918,13 @@
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -2006,6 +2013,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:entityTplRef" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -2053,6 +2061,13 @@
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

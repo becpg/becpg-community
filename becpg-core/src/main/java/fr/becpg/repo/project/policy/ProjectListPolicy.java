@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
+import org.alfresco.repo.copy.CopyServicePolicies;
+import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -41,7 +45,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 @Service
 public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy,
 	NodeServicePolicies.OnCreateAssociationPolicy,
-	NodeServicePolicies.OnDeleteAssociationPolicy{
+	NodeServicePolicies.OnDeleteAssociationPolicy,
+	CopyServicePolicies.OnCopyNodePolicy{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProjectListPolicy.class);
@@ -86,7 +91,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 						"onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this,
-						"onDeleteAssociation"));
+						"onDeleteAssociation"));		
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));
 	}
 
 	@Override
@@ -127,13 +134,14 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		String beforeState = (String) before.get(ProjectModel.PROP_TL_STATE);
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
-		if (beforeState != null && afterState != null) {
-			if (beforeState.equals(TaskState.InProgress.toString())
-					&& afterState.equals(TaskState.Completed.toString())) {
+		if (beforeState != null && afterState != null && !beforeState.equals(afterState)) {
+			
+			formulateProject = true;
+			
+			if (afterState.equals(TaskState.Completed.toString())) {
 				logger.debug("update task list: " + nodeRef + " - afterState: " + afterState);
 				// we want to keep the planned duration to calculate overdue
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));
-				formulateProject = true;
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));				
 			} 
 			else if (beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
@@ -141,12 +149,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				// re-open task
 				logger.debug("re-open task: " + nodeRef);				
 				projectService.openTask(nodeRef);
-
-				formulateProject = true;
-			}
-			// start a task
-			else if (!afterState.equals(beforeState) && afterState.equals(TaskState.InProgress.toString())) {
-				formulateProject = true;
 			}
 		}
 		
@@ -259,5 +261,31 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				
 			}
 		}		
+	}
+	
+	@Override
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		return new TaskListCopyBehaviourCallback();
+	}
+	
+	private class TaskListCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
+		
+		
+        private TaskListCopyBehaviourCallback(){
+        }
+        
+		@Override
+		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {				
+			return true;
+		}
+
+		@Override
+		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
+				Map<QName, Serializable> properties) {		
+			
+			logger.debug("TaskListCopyBehaviourCallback.getCopyProperties()");			
+			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+			return properties;
+		}
 	}
 }

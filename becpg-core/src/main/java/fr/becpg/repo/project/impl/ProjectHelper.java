@@ -106,9 +106,9 @@ public class ProjectHelper {
 	
 	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
 
-		// no task : they are not done
+		// no task : they are done
 		if (taskNodeRefs.isEmpty()) {
-			return false;
+			return true;
 		}
 
 		List<NodeRef> inProgressTasks = new ArrayList<NodeRef>();

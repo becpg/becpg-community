@@ -33,7 +33,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		if(projectData.getDueDate() == null){
 			// planning
 			if (projectData.getStartDate() == null) {
-				projectData.setStartDate(new Date());
+				projectData.setStartDate(projectData.getCreated());
 			}
 			projectData.setCompletionDate(projectData.getStartDate());
 			calculatePlanning(projectData, null, projectData.getStartDate());
