@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
@@ -27,6 +28,8 @@ public class WUsedListServiceImpl implements WUsedListService {
 	
 	private NodeService nodeService;
 	
+	private EntityListDAO entityListDAO;
+	
 	private PermissionService permissionService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -36,6 +39,10 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 
@@ -60,7 +67,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 			//we display nodes that are in workspace
 			if(nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
 					&& permissionService.hasReadPermission(nodeRef)  == AccessStatus.ALLOWED ){
-				NodeRef rootNodeRef = getRoot(nodeRef);				
+				NodeRef rootNodeRef = entityListDAO.getEntity(nodeRef);				
 				
 				//we don't display history version and simulation entities
 				if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY)){
@@ -119,23 +126,6 @@ public class WUsedListServiceImpl implements WUsedListService {
 		}
 		
 		return listQName;
-	}
-
-	@Override
-	public NodeRef getRoot(NodeRef listItemNodeRef) {
-		NodeRef listNodeRef = nodeService.getPrimaryParent(listItemNodeRef).getParentRef();
-
-		if(listNodeRef != null){
-			NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
-			
-			if(listContainerNodeRef != null){
-				NodeRef rootNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-				logger.debug("rootNodeRef: " + rootNodeRef);
-				return rootNodeRef;
-			}
-		}
-		
-		return null;
 	}
 
 }

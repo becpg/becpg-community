@@ -22,9 +22,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
+import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -48,18 +49,16 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	private ProjectService projectService;
 
-	private WUsedListService wUsedListService;
-	
 	private PermissionService permissionService;
 	
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 	
+	private ProjectActivityService projectActivityService;
+	
+	private EntityListDAO entityListDAO;
+	
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
-	}
-
-	public void setwUsedListService(WUsedListService wUsedListService) {
-		this.wUsedListService = wUsedListService;
 	}
 
 	public void setPermissionService(PermissionService permissionService) {
@@ -68,6 +67,14 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+	
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
+	public void setProjectActivityService(ProjectActivityService projectActivityService) {
+		this.projectActivityService = projectActivityService;
 	}
 
 	/**
@@ -128,6 +135,11 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		String afterState = (String) after.get(ProjectModel.PROP_TL_STATE);
 
 		if (beforeState != null && afterState != null) {
+			
+			if(!afterState.equals(beforeState)){
+				projectActivityService.postTaskStateChangeActivity(nodeRef, beforeState, afterState);
+			}
+			
 			if (beforeState.equals(TaskState.InProgress.toString())
 					&& afterState.equals(TaskState.Completed.toString())) {
 				logger.debug("update task list: " + nodeRef + " - afterState: " + afterState);
@@ -181,6 +193,11 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
 
 		if (beforeState != null && afterState != null) {
+			
+			if(!afterState.equals(beforeState)){
+				projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState);
+			}
+			
 			if (beforeState.equals(DeliverableState.InProgress.toString())
 					&& afterState.equals(DeliverableState.Completed.toString())) {
 				logger.debug("submit deliverable: " + nodeRef);
@@ -215,7 +232,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	}
 	
 	private void queueListItem(NodeRef listItemNodeRef){
-		NodeRef projectNodeRef = wUsedListService.getRoot(listItemNodeRef);
+		NodeRef projectNodeRef =  entityListDAO.getEntity(listItemNodeRef);
 		queueNode(projectNodeRef);
 	}
 
@@ -237,7 +254,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
 		nodeRefs.add(taskListNodeRef);
 		
-		NodeRef projectNodeRef = wUsedListService.getRoot(taskListNodeRef);
+		NodeRef projectNodeRef =  entityListDAO.getEntity(taskListNodeRef);
 		
 		if(ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))){
 			String userName = (String)nodeService.getProperty(resourceNodeRef, ContentModel.PROP_USERNAME);

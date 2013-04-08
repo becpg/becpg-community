@@ -31,8 +31,9 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
+import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
 /**
@@ -51,6 +52,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	private EntityListDAO entityListDAO;
 	private ProjectService projectService;
 	private AssociationService associationService;
+	private ProjectActivityService projectActivityService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -62,6 +64,10 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
+	}
+	
+	public void setProjectActivityService(ProjectActivityService projectActivityService) {
+		this.projectActivityService = projectActivityService;
 	}
 
 	/**
@@ -185,12 +191,17 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 		// change state
 		if (afterState != null && !afterState.equals(beforeState)) {
-			if (afterState.equals(TaskState.InProgress.toString())) {
+			
+			if(!afterState.equals(beforeState)){
+				projectActivityService.postProjectStateChangeActivity(nodeRef, beforeState, afterState);
+			}
+			
+			if (afterState.equals(ProjectState.InProgress.toString())) {
 				logger.debug("onUpdateProperties:start project");
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE,
 						ProjectHelper.removeTime(new Date()));
 				queueNode(nodeRef);
-			} else if (afterState.equals(TaskState.Cancelled.toString())) {
+			} else if (afterState.equals(ProjectState.Cancelled.toString())) {
 				logger.debug("onUpdateProperties:cancel project");
 				projectService.cancel(nodeRef);
 			}
