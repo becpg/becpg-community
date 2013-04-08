@@ -34,15 +34,31 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		visitTask(projectData, null);
-				
-//		// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
-//		if(ProjectState.Planned.equals(projectData.getProjectState()) && 
-//				projectData.getStartDate() != null && 
-//				!projectData.getStartDate().equals(projectData.getCreated()) &&
-//				projectData.getStartDate().before(new Date())){
-//			projectData.setProjectState(ProjectState.InProgress);
-//		}
+		
+		// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
+		if(ProjectState.Planned.equals(projectData.getProjectState()) && 
+				projectData.getStartDate() != null && 
+				!projectData.getStartDate().equals(projectData.getCreated()) &&
+				projectData.getStartDate().before(new Date())){
+			projectData.setProjectState(ProjectState.InProgress);
+		}
+		
+		// first tasks to manage Project state
+		if(ProjectState.Planned.equals(projectData.getProjectState())){
+			List<TaskListDataItem> firstTasks = ProjectHelper.getNextTasks(projectData, null);
+			if (!firstTasks.isEmpty()) {
+				for (TaskListDataItem nextTask : firstTasks) {
+					if(TaskState.InProgress.equals(nextTask.getState()) || TaskState.Completed.equals(nextTask.getState())){
+						projectData.setProjectState(ProjectState.InProgress);
+						break;
+					}				
+				}			
+			}
+		}
+		
+		if(ProjectState.InProgress.equals(projectData.getProjectState())){
+			visitTask(projectData, null);
+		}		
 		
 		// is project completed ?
 		if(ProjectHelper.areTasksDone(projectData)){
@@ -69,86 +85,78 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
 				
-				// is project started by task ?
-				if(ProjectState.Planned.equals(projectData.getProjectState()) && TaskState.InProgress.equals(nextTask.getState())){
-					projectData.setProjectState(ProjectState.InProgress);
+				// cancel active workflow if task is not anymore InProgress								
+				if(!TaskState.InProgress.equals(nextTask.getState()) &&
+						projectWorkflowService.isWorkflowActive(nextTask)){
+					projectWorkflowService.cancelWorkflow(nextTask);
 				}
-
-				// should we continue ?
+					
+				// start task
 				// - we are on first task and Project is in progress
 				// - previous task are done
-				if ((ProjectState.InProgress.equals(projectData.getProjectState()) && nextTask.getPrevTasks().isEmpty())
-						|| ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
-					
-					// start task
-					if (TaskState.Planned.equals(nextTask.getState())) {
-						// manual date -> we wait the date
-						if(nextTask.getManualDate() == null || nextTask.getStart().before(new Date())){
-							ProjectHelper.setTaskStartDate(nextTask, new Date());
-							nextTask.setState(TaskState.InProgress);
-						}
-					} else if (TaskState.Completed.equals(nextTask.getState())) {
-
-						List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
-								nextTask.getNodeRef());
-
-						for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-							nextDeliverable.setState(DeliverableState.Completed);
-						}
-
-						nextTask.setCompletionPercent(COMPLETED);											
+				if (TaskState.Planned.equals(nextTask.getState()) && ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
+					// manual date -> we wait the date
+					if(nextTask.getManualDate() == null || nextTask.getStart().before(new Date())){
+						logger.debug("Start task since we are after planned startDate.");
+						ProjectHelper.setTaskStartDate(nextTask, new Date());
+						nextTask.setState(TaskState.InProgress);							
 					}
-					
-					// cancel active workflow if task is not anymore InProgress
-					if(!TaskState.InProgress.equals(nextTask.getState()) &&
-							projectWorkflowService.isWorkflowActive(nextTask)){
-						projectWorkflowService.cancelWorkflow(nextTask);
+				} else if (TaskState.Completed.equals(nextTask.getState())) {
+
+					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
+							nextTask.getNodeRef());
+
+					for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
+						nextDeliverable.setState(DeliverableState.Completed);
 					}
-					
-					if (TaskState.InProgress.equals(nextTask.getState())) {
 
-						Integer taskCompletionPercent = 0;
-						List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
-								nextTask.getNodeRef());
-
-						for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-
-							// Completed or Closed
-							if (DeliverableState.Completed.equals(nextDeliverable.getState())
-									|| DeliverableState.Closed.equals(nextDeliverable.getState())) {
-								taskCompletionPercent += nextDeliverable.getCompletionPercent();
-							}
-							
-							// set Planned dl InProgress
-							if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
-								nextDeliverable.setState(DeliverableState.InProgress);								
-							}
-						}
-
-						logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
-								+ nextTask.getNodeRef());
-						nextTask.setCompletionPercent(taskCompletionPercent);
-						
-						// task may be reopened so 
-						if(nextTask.getWorkflowInstance() != null && 
-							!nextTask.getWorkflowInstance().isEmpty() && 
-							!projectWorkflowService.isWorkflowActive(nextTask)){
-							
-							nextTask.setWorkflowInstance(null);
-						}
-						
-						// workflow (task may have been set as InProgress with UI)
-						if (nextTask.getWorkflowInstance() == null &&  
-								nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
-								nextTask.getResources() != null) {					
-							
-							// start workflow
-							projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
-						}
-					}
-					
-					visitTask(projectData, nextTask);
+					nextTask.setCompletionPercent(COMPLETED);											
 				}
+				
+				if (TaskState.InProgress.equals(nextTask.getState())) {
+
+					Integer taskCompletionPercent = 0;
+					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
+							nextTask.getNodeRef());
+
+					for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
+
+						// Completed or Closed
+						if (DeliverableState.Completed.equals(nextDeliverable.getState())
+								|| DeliverableState.Closed.equals(nextDeliverable.getState())) {
+							taskCompletionPercent += nextDeliverable.getCompletionPercent();
+						}
+						
+						// set Planned dl InProgress
+						if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
+							nextDeliverable.setState(DeliverableState.InProgress);								
+						}
+					}
+
+					logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
+							+ nextTask.getNodeRef());
+					nextTask.setCompletionPercent(taskCompletionPercent);
+					
+					// task may be reopened so 
+					if(nextTask.getWorkflowInstance() != null && 
+						!nextTask.getWorkflowInstance().isEmpty() && 
+						!projectWorkflowService.isWorkflowActive(nextTask)){
+						
+						nextTask.setWorkflowInstance("");
+					}
+										
+					// workflow (task may have been set as InProgress with UI)
+					if ((nextTask.getWorkflowInstance() == null ||  nextTask.getWorkflowInstance().isEmpty()) &&
+							nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
+							nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {					
+						
+						// start workflow
+						projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
+					}
+				}										
+					
+				// we visit every task since user can have started a task in the middle of the project even if previous are not started
+				visitTask(projectData, nextTask);
 			}
 		}
 	}

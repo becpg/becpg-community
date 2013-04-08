@@ -115,7 +115,7 @@
 			<workflow name="activiti$activitiAdhoc" />
 			<workflow name="activiti$activitiReview" />
 			<workflow name="jbpm$npdwf:newProductDevelopmentWF" />
-<!-- 			<workflow name="activiti$projectAdhoc" /> -->
+			<workflow name="activiti$projectAdhoc" />
 			<workflow name="activiti$projectNewProduct" />
 			<workflow name="jbpm$wf:adhoc" />
 			<workflow name="jbpm$wf:reviewpooled" />

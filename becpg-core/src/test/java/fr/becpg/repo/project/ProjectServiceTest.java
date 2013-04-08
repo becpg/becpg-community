@@ -49,6 +49,9 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	
 	@Resource
 	private ProjectPolicy projectPolicy;
+	
+	@Resource
+	private ProjectWorkflowService projectWorkflowService;
 
 	@Test
 	public void testProjectAspectOnEntity() {
@@ -407,7 +410,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		initTest();
-		createProject(ProjectState.Planned, dateFormat.parse("15/11/2012"), null);
+		createProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -656,7 +659,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		initTest();
-		createProject(ProjectState.Planned, null, dateFormat.parse("15/11/2012"));
+		createProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -745,7 +748,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testStartProjectByStartingTask() {
 
 		initTest();
-		createProject(ProjectState.Planned, new Date(), null);
+		createProject(ProjectState.Planned, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -980,5 +983,43 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				return null;
 			}
 		}, false, true);		
+	}
+	
+	@Test
+	public void testTaskWorkflow() {
+
+		initTest();
+		createProject(ProjectState.InProgress, new Date(), null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				// check
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
+				
+				// replan 1st task
+				projectData.getTaskList().get(0).setState(TaskState.OnHold);
+				alfrescoRepository.save(projectData);
+				projectService.formulate(projectNodeRef);
+				
+				// check
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				assertEquals("", projectData.getTaskList().get(0).getWorkflowInstance());
+
+				// start 1st task
+				projectData.getTaskList().get(0).setState(TaskState.InProgress);
+				alfrescoRepository.save(projectData);
+				projectService.formulate(projectNodeRef);
+				
+				// check
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
+				
+				return null;
+			}
+		}, false, true);
+		
 	}
 }

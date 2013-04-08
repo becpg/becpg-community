@@ -16,8 +16,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityTplService;
@@ -32,8 +30,6 @@ import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
-
-	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 
 	@Resource
 	protected AlfrescoRepository<ProjectData> alfrescoRepository;
