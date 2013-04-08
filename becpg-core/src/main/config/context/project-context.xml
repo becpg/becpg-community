@@ -9,6 +9,13 @@
 		<property name="nodeService" ref="nodeService" />		
 	</bean>
 
+	<bean id="projectActivityService" class="fr.becpg.repo.project.impl.ProjectActivityServiceImpl">
+		<property name="activityService" ref="activityService"/>
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="nodeService" ref="nodeService"/>
+		<property name="attributeExtractorService" ref="attributeExtractorService"/>
+	</bean>
+
 	<bean id="projectService" class="fr.becpg.repo.project.impl.ProjectServiceImpl">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="associationService" ref="associationService" />
@@ -40,15 +47,17 @@
 	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="projectService" ref="projectService" />
-		<property name="wUsedListService" ref="wUsedListService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="permissionService" ref="permissionService" />
-		<property name="alfrescoRepository" ref="alfrescoRepository" />		
+		<property name="alfrescoRepository" ref="alfrescoRepository" />	
+		<property name="projectActivityService" ref="projectActivityService"/>	
 	</bean>
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="projectService" ref="projectService" />
 		<property name="associationService" ref="associationService" />
+		<property name="projectActivityService" ref="projectActivityService"/>	
 	</bean>
 
 	<bean id="taskValuePlugin" parent="baseListValuePlugin"

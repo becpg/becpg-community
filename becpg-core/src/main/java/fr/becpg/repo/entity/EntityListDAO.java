@@ -10,6 +10,14 @@ import org.alfresco.service.namespace.QName;
 
 public interface EntityListDAO {
 
+	
+	/**
+	 * Return entity containing this dataListItem
+	 * @param listItemNodeRef
+	 * @return
+	 */
+    public NodeRef getEntity(NodeRef listItemNodeRef);
+	
 	/**
 	 * Get the data list container.
 	 * 

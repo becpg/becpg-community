@@ -100,6 +100,22 @@
    background-image: url(../images/filetypes/generic-entity-16.png);
 }
 
+.activities .activity .detail .project
+{
+   background-image: url(../images/filetypes/generic-project-16.png);
+}
+
+.activities .activity .detail .projectTask
+{
+   background-image: url(../images/filetypes/generic-task-16.png);
+}
+
+.activities .activity .detail .projectDeliverable
+{
+   background-image: url(../images/filetypes/txt-file-16.png);
+}
+
+
 .activities .activity .detail .folder
 {
    background-image: url(../images/filetypes/generic-folder-16.png);

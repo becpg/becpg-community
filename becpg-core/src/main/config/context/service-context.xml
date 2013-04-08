@@ -355,6 +355,7 @@
 	<bean id="wUsedListService" class="fr.becpg.repo.entity.datalist.impl.WUsedListServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="permissionService" ref="permissionService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 
 
