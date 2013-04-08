@@ -16,7 +16,6 @@
    <style type="org.alfresco.calendar.event-deleted" css="calendar" />
    <style type="org.alfresco.documentlibrary.file-added" css="document" />
    <style type="org.alfresco.documentlibrary.files-added" css="document" />
-   <style type="org.alfresco.documentlibrary.entity-created" css="entity" />
    <style type="org.alfresco.documentlibrary.file-created" css="document" />
    <style type="org.alfresco.documentlibrary.file-deleted" css="document" />
    <style type="org.alfresco.documentlibrary.files-deleted" css="document" />
@@ -31,7 +30,6 @@
    <style type="org.alfresco.documentlibrary.inline-edit" css="document" />
    <style type="org.alfresco.documentlibrary.file-liked" css="like" />
    <style type="org.alfresco.documentlibrary.folder-liked" css="like" />
-   <style type="org.alfresco.documentlibrary.entity-liked" css="like" />
    <style type="org.alfresco.wiki.page-created" css="wiki" />
    <style type="org.alfresco.wiki.page-edited" css="wiki" />
    <style type="org.alfresco.wiki.page-renamed" css="wiki" />
@@ -51,4 +49,11 @@
    <style type="org.alfresco.datalists.list-deleted" css="datalist" />
    <style type="org.alfresco.subscription.followed" css="user" />
    <style type="org.alfresco.subscription.subscribed" css="user" />
+   <!-- beCPG -->
+   <style type="org.alfresco.datalists.list-item-liked" css="like" />
+   <style type="fr.becpg.project.project-state" css="project" />
+   <style type="fr.becpg.project.task-state" css="projectTask" />
+   <style type="fr.becpg.project.deliverable-state" css="projectDeliverable" />
+   <style type="org.alfresco.documentlibrary.entity-created" css="entity" />
+   <style type="org.alfresco.documentlibrary.entity-liked" css="like" />
 </styles>

@@ -56,4 +56,6 @@ public interface ProjectService {
 	 * @throws FormulateException 
 	 */
 	public void formulate(NodeRef projectNodeRef) throws FormulateException;
+
+	
 }
