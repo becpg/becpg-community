@@ -323,6 +323,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 				// submit deliverable 2
 				projectData.getDeliverableList().get(1).setState(DeliverableState.Completed);
+				projectData.getTaskList().get(1).setState(TaskState.Completed);
 				alfrescoRepository.save(projectData);
 				
 				return null;

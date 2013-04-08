@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -8,6 +9,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,9 +52,15 @@ public class ProjectFormulationWorker {
         	public Object execute() throws Throwable{
         		
         		// query
-        		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)) +
+        		String queryInProgress = LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT) +
         				LuceneHelper.getCondEqualValue(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString(), LuceneHelper.Operator.AND);
-
+        		
+        		String queryPlanned = LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT) +
+        				LuceneHelper.getCondEqualValue(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString(), LuceneHelper.Operator.AND) + 
+        				LuceneHelper.getCondMinMax(ProjectModel.PROP_PROJECT_START_DATE, ISO8601DateFormat.format(new Date()), "MAX", LuceneHelper.Operator.AND);
+        		
+        		String query = "(" + queryInProgress + ") OR (" + queryPlanned + ")";
+        		logger.debug("ProjectFormulationWorker: " + query);        		
         		List<NodeRef> projectNodeRefs = beCPGSearchService.luceneSearch(query);
         		
         		try{

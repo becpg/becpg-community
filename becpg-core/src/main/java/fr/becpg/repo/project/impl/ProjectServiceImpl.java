@@ -6,8 +6,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.cmr.workflow.WorkflowInstance;
-import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,6 +16,7 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -37,24 +36,19 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
-	private AlfrescoRepository<ProjectData> alfrescoRepository;
-	private WorkflowService workflowService;
+	private AlfrescoRepository<ProjectData> alfrescoRepository;	
 	private AssociationService associationService;
 	private NodeService nodeService;
 	private BeCPGSearchService beCPGSearchService;
 	private RepoService repoService;
 	private SiteService siteService;
-	
 	private FormulationService<ProjectData> formulationService;
-
+	private ProjectWorkflowService projectWorkflowService;
+	
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
-
-	public void setWorkflowService(WorkflowService workflowService) {
-		this.workflowService = workflowService;
-	}
-
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -77,6 +71,10 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
+	}
+
+	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
+		this.projectWorkflowService = projectWorkflowService;
 	}
 
 	@Override
@@ -121,20 +119,9 @@ public class ProjectServiceImpl implements ProjectService {
 		if(nodeService.exists(projectNodeRef)){
 			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 	         
-			for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-				if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
-					
-					WorkflowInstance workflowInstance = workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance());
-					if(workflowInstance != null){
-						if(workflowInstance.isActive()){
-							logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
-							workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
-							//taskListDataItem.setWorkflowInstance(null);
-						}
-					}
-					else{
-						logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
-					}
+			for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {				
+				if (projectWorkflowService.isWorkflowActive(taskListDataItem)){
+					projectWorkflowService.cancelWorkflow(taskListDataItem);					
 				}					
 			}    
 			
@@ -148,5 +135,5 @@ public class ProjectServiceImpl implements ProjectService {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {			
 			formulationService.formulate(projectNodeRef);			
 		}
-	}
+	}	
 }

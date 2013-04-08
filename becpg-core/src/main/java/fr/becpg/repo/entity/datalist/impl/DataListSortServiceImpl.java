@@ -1,8 +1,10 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -52,35 +54,65 @@ public class DataListSortServiceImpl implements DataListSortService {
 	}
 
 	@Override
-	public void computeDepthAndSort(NodeRef nodeRef) {
+	public void computeDepthAndSort(Set<NodeRef> nodeRefs) {		
 		
-		QName dataType = nodeService.getType(nodeRef);
-		NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
-
-		// depthLevel manage sort
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
-			NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+		NodeRef prevLastChild = null;
+		NodeRef prevParentLevel = null;
+		
+		NodeRef prevListContainer = null;
+		int sort = RepoConsts.SORT_DEFAULT_STEP - RepoConsts.SORT_INSERTING_STEP;
+		
+		HashSet<NodeRef> pendingNodeRefs = new HashSet<NodeRef>(nodeRefs);
+		
+		for(NodeRef nodeRef : nodeRefs){
 			
-			// cycle detection
-			if(nodeRef.equals(parentLevel)){
+			QName dataType = nodeService.getType(nodeRef);
+			NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
+
+			// depthLevel manage sort
+			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
+				NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 				
-				logger.error("Cannot select itself as parent, otherwise we get a cycle. nodeRef: " + nodeRef);
-			}
-			else{
-			
-				NodeRef siblingNode = getLastChildOfLevel(dataType, listContainer, parentLevel, nodeRef);
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
+				// cycle detection
+				if(nodeRef.equals(parentLevel)){
+					
+					logger.error("Cannot select itself as parent, otherwise we get a cycle. nodeRef: " + nodeRef);
 				}
+				else{
 
-				insertAfter(dataType, listContainer, siblingNode, nodeRef);
-			}			
-		} else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("computeDepthAndSort for :" + tryGetName(nodeRef));
+					}
+					
+					// #351 : we avoid lucene queries
+					if(prevParentLevel == null || !prevParentLevel.equals(parentLevel)){
+						prevParentLevel = parentLevel;
+						prevLastChild = getLastChildOfLevel(dataType, listContainer, parentLevel, nodeRef);
+					}					
 
-			insertAfter(dataType, listContainer, getLastChild(dataType, null, listContainer, nodeRef, false), nodeRef);
+					insertAfter(dataType, listContainer, prevLastChild, nodeRef, pendingNodeRefs);
+					prevLastChild = nodeRef;
+				}			
+			} else {
+
+				// #351 : we avoid lucene queries
+				if(prevListContainer == null || !prevListContainer.equals(listContainer)){					
+					prevListContainer = listContainer;
+					NodeRef prevSiblingNode = getLastChild(dataType, null, listContainer, nodeRef, false);
+					if(prevSiblingNode != null){
+						Integer s = (Integer)nodeService.getProperty(prevSiblingNode, BeCPGModel.PROP_SORT);
+						if(s!=null){
+							sort = s;							
+						}
+					}					
+				}
+				
+				sort += RepoConsts.SORT_INSERTING_STEP;
+				nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sort);				
+			}
+			
+			pendingNodeRefs.remove(nodeRef);
 		}
-
 	}
 
 	@Override
@@ -95,10 +127,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}		
 
 		NodeRef listContainer = nodeService.getPrimaryParent(selectedNodeRef).getParentRef();
-		insertAfter(dataType, listContainer, nodeRef, selectedNodeRef);
+		insertAfter(dataType, listContainer, nodeRef, selectedNodeRef, new HashSet<NodeRef>());
 	}
 
-	private void insertAfter(QName dataType, NodeRef listContainer, NodeRef siblingNode, NodeRef nodeRef) {
+	private void insertAfter(QName dataType, NodeRef listContainer, NodeRef siblingNode, NodeRef nodeRef, HashSet<NodeRef> pendingNodeRefs) {
 
 		logger.debug("insertAfter");				
 		
@@ -169,7 +201,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 				logger.debug(" nextSort not available : " + nextSort + " - node: " + tryGetName(nodeRef) + " - taken by: " + tryGetName(sortedNodeRef));
 			}
 			fixSortableList(dataType, listContainer);
-			insertAfter(dataType, listContainer, siblingNode, nodeRef);
+			insertAfter(dataType, listContainer, siblingNode, nodeRef, pendingNodeRefs);
 		} else {			
 
 			setProperty(nodeRef, BeCPGModel.PROP_SORT, nextSort);
@@ -184,7 +216,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 				
 				for (NodeRef tmp : listItems) {
 					logger.debug("start call insertAfter: " + tryGetName(tmp));
-					insertAfter(dataType, listContainer, prevNode, tmp);
+					if(!pendingNodeRefs.contains(tmp)){
+						insertAfter(dataType, listContainer, prevNode, tmp, pendingNodeRefs);
+					}					
 					prevNode = tmp;
 				}
 			}			

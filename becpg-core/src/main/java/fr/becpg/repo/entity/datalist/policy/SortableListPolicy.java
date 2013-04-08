@@ -6,6 +6,7 @@ package fr.becpg.repo.entity.datalist.policy;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
@@ -108,7 +109,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		}
 		
 		if(hasChanged){		
-			dataListSortService.computeDepthAndSort(nodeRef);
+			queueNode(nodeRef);
 		}		
 	}
 
@@ -127,9 +128,20 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 				logger.debug("Add sortable aspect policy ");
 			}
 	
-			dataListSortService.computeDepthAndSort(nodeRef);
+			queueNode(nodeRef);			
 		}
 	}	
+	
+	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		
+		for (NodeRef nodeRef : pendingNodes) {
+			if(!nodeService.exists(nodeRef)){
+				pendingNodes.remove(nodeRef);
+			}
+		}
+		
+		dataListSortService.computeDepthAndSort(pendingNodes);
+	}
 	
 	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
