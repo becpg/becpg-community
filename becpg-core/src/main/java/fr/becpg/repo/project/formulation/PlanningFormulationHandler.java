@@ -41,6 +41,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		else{
 			//retro-planning
 			projectData.setStartDate(projectData.getDueDate());
+			projectData.setCompletionDate(projectData.getDueDate());
 			calculateRetroPlanning(projectData, null, projectData.getStartDate());
 		}
 		
