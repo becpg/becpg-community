@@ -100,7 +100,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this,
 						"onDeleteAssociation"));		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
-				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));		
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "getCopyCallback"));
 	}
 
 	@Override
@@ -148,8 +150,13 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			
 			if (afterState.equals(TaskState.Completed.toString())) {
 				logger.debug("update task list: " + nodeRef + " - afterState: " + afterState);
-				// we want to keep the planned duration to calculate overdue
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));				
+				// we want to keep the planned duration to calculate overdue				
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));
+				//milestone duration is maximum 1 day
+				Boolean isMileStone = (Boolean)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
+				if(isMileStone != null && isMileStone.booleanValue()){
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, ProjectHelper.removeTime(new Date()));
+				}
 			} 
 			else if (beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
@@ -171,17 +178,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if(formulateProject){
 			queueListItem(nodeRef);
 		}
-	}
-
-	private boolean isPropChanged(Map<QName, Serializable> before, Map<QName, Serializable> after,
-			QName propertyQName) {
-		Serializable beforeProp = before.get(propertyQName);
-		Serializable afterProp = after.get(propertyQName);
-
-		if (afterProp != null && !afterProp.equals(beforeProp)) {
-			return true;
-		}
-		return false;
 	}
 
 	public void onUpdatePropertiesDeliverableList(NodeRef nodeRef, Map<QName, Serializable> before,
@@ -276,13 +272,12 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
-		return new TaskListCopyBehaviourCallback();
+		return new ProjectListCopyBehaviourCallback();
 	}
 	
-	private class TaskListCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
+	private class ProjectListCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
 		
-		
-        private TaskListCopyBehaviourCallback(){
+        private ProjectListCopyBehaviourCallback(){        
         }
         
 		@Override
@@ -294,8 +289,19 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
 				Map<QName, Serializable> properties) {		
 			
-			logger.debug("TaskListCopyBehaviourCallback.getCopyProperties()");			
-			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+			if(ProjectModel.TYPE_TASK_LIST.equals(classQName)){
+				properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+				properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
+				if(properties.containsKey(ProjectModel.PROP_TL_STATE)){
+					properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
+				}
+			}
+			else if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)){
+				if(properties.containsKey(ProjectModel.PROP_DL_STATE)){
+					properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
+				}
+			}
+			
 			return properties;
 		}
 	}

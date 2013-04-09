@@ -1,46 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
   <process isExecutable="true" id="projectAdhoc" name="Project Adhoc Process">
-    <startEvent id="startevent1" name="Start" activiti:formKey="wf:submitAdhocTask">
-    	 <extensionElements>
-    	 	<activiti:executionListener event="end" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
-    	 		<activiti:field name="script">
-	            <activiti:string>
-	            	<![CDATA[	            		
-	            		 	            		
-							var assignees="";
-	            		if (bpm_assignees != null){
-	            		
-								for (var i = 0; i < bpm_assignees.size(); i++){
-				
-									var assignee = bpm_assignees.get(i);
-									
-	                      	/*workaround en fonction de si on valide directement ou si on envoie a un relecteur, svawf_notifyUsers.get(i) est de type person ou nodeRef*/
-									if(assignee.properties==null){
-										assignee = utils.getNodeFromString(assignee); 
-									}
-									
-									if(assignees != ""){                     		
-	                      		assignees += ", ";                      		
-	                      	}
-	                      	assignees += assignee.properties.userName;
-	                     }
-	                   }
-                      execution.setVariable('pjtwf_assignees', assignees);
-                   ]]>    
+    <startEvent id="startevent1" name="Start" activiti:formKey="wf:submitAdhocTask"/>    	
+    <userTask id="adhocTask" name="Project Task" activiti:formKey="pjtwf:adhocTask">
+      <extensionElements>
+      	 <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+	          <activiti:field name="script">
+	            <activiti:string>            
+	            	<![CDATA[
+	            	if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate
+	               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+	                      
+	            	if (bpm_assignees != null){
+		            		
+							for (var i = 0; i < bpm_assignees.size(); i++){
+		
+								var assignee = bpm_assignees.get(i);									
+						
+	                  	/*workaround en fonction de si on valide directement ou si on envoie a un relecteur, svawf_notifyUsers.get(i) est de type person ou nodeRef*/
+								if(assignee.properties==null){
+									assignee = utils.getNodeFromString(assignee); 
+								}					
+								if(bpm_assignees.size()>1){
+									task.addCandidateUser(assignee.properties.userName);
+								}
+								else{
+									task.setAssignee(assignee.properties.userName);
+								}									
+							}					
+	              	}
+		            ]]>
 	            </activiti:string>
 	          </activiti:field>
-    	 	</activiti:executionListener>
-		  </extensionElements>
-    </startEvent>
-    <userTask id="adhocTask" name="Project Task" activiti:candidateUsers="${pjtwf_assignees}" activiti:formKey="pjtwf:adhocTask">
-      <extensionElements>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate
-                      if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
+        </activiti:taskListener>        
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>var projectTask = pjt_workflowTask;

@@ -17,7 +17,9 @@ import javax.annotation.Resource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
@@ -37,6 +39,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.project.policy.ProjectPolicy;
+import fr.becpg.test.BeCPGTestHelper;
 
 /**
  * The Class ProjectServiceTest.
@@ -52,6 +55,11 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	
 	@Resource
 	private ProjectWorkflowService projectWorkflowService;
+	
+	@Resource
+	private CopyService copyService;
+	
+	@Resource private PersonService personService;
 
 	@Test
 	public void testProjectAspectOnEntity() {
@@ -989,37 +997,97 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testTaskWorkflow() {
 
 		initTest();
-		createProject(ProjectState.InProgress, new Date(), null);
+		createProject(ProjectState.Planned, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				// check
+				List<WorkflowTask> assignedWorkflowTasks1 = workflowService.getAssignedTasks(BeCPGTestHelper.USER_ONE, WorkflowTaskState.IN_PROGRESS);
+				
+				// Inprogress
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
+				projectData.setProjectState(ProjectState.InProgress);
+				alfrescoRepository.save(projectData);
+				projectService.formulate(projectNodeRef);
+				
+				// check assigned tasks
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));				
+				List<WorkflowTask> assignedWorkflowTasks2 = workflowService.getAssignedTasks(BeCPGTestHelper.USER_ONE, WorkflowTaskState.IN_PROGRESS);													
+				assertEquals(1, (assignedWorkflowTasks2.size() - assignedWorkflowTasks1.size()));
 				
 				// replan 1st task
 				projectData.getTaskList().get(0).setState(TaskState.OnHold);
 				alfrescoRepository.save(projectData);
 				projectService.formulate(projectNodeRef);
 				
-				// check
+				// check pooled tasks
 				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-				assertEquals("", projectData.getTaskList().get(0).getWorkflowInstance());
+				assertEquals("", projectData.getTaskList().get(0).getWorkflowInstance());				
+				List<WorkflowTask> pooledWorkflowTasks1 = workflowService.getPooledTasks(BeCPGTestHelper.USER_TWO);
 
 				// start 1st task
 				projectData.getTaskList().get(0).setState(TaskState.InProgress);
+				// test multiple assignments
+				projectData.getTaskList().get(0).getResources().add(personService.getPerson(BeCPGTestHelper.USER_TWO));
 				alfrescoRepository.save(projectData);
 				projectService.formulate(projectNodeRef);
 				
 				// check
 				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
+				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));				
+				List<WorkflowTask> pooledWorkflowTasks2 = workflowService.getPooledTasks(BeCPGTestHelper.USER_TWO);													
+				assertEquals(1, (pooledWorkflowTasks2.size() - pooledWorkflowTasks1.size()));
 				
 				return null;
 			}
 		}, false, true);
 		
+	}
+	
+	@Test
+	public void testCopyProject() {
+
+		initTest();
+		createProject(ProjectState.InProgress, null, null);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
+			@Override
+			public String execute() throws Throwable {
+
+				// check
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				assertEquals(ProjectState.InProgress, projectData.getProjectState());
+				assertNotSame("", projectData.getTaskList().get(0).getWorkflowInstance());
+				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
+
+				return null;
+			}
+
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				NodeRef copiedProjectNodeRef = copyService.copy(projectNodeRef, testFolderNodeRef,
+						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);				
+				
+				// check
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(copiedProjectNodeRef);
+				assertEquals(ProjectState.Planned, projectData.getProjectState());				
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getState());
+				assertNull(projectData.getTaskList().get(0).getWorkflowInstance());
+				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(0).getState());
+				
+				return null;
+				
+			}
+		}, false, true);		
 	}
 }

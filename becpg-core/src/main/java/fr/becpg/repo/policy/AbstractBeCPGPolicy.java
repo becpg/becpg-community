@@ -1,5 +1,6 @@
 package fr.becpg.repo.policy;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -119,9 +120,8 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 	protected boolean isNotLocked(NodeRef nodeRef) {
 		return nodeService.exists(nodeRef) && lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK;
-
 	}
-
+	
 	public abstract void doInit();
 
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
@@ -184,6 +184,16 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		return "KEY_"+this.getClass().getName();
 	}
 	
+	protected boolean isPropChanged(Map<QName, Serializable> before, Map<QName, Serializable> after,
+			QName propertyQName) {
+		Serializable beforeProp = before.get(propertyQName);
+		Serializable afterProp = after.get(propertyQName);
+
+		if (afterProp != null && !afterProp.equals(beforeProp)) {
+			return true;
+		}
+		return false;
+	}
 
 	class AbstractBeCPGPolicyTransactionListener extends TransactionListenerAdapter {
 

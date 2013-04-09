@@ -14,6 +14,10 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
+import org.alfresco.repo.copy.CopyServicePolicies;
+import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -44,7 +48,8 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 @Service
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy,
-		NodeServicePolicies.OnDeleteNodePolicy{
+		NodeServicePolicies.OnDeleteNodePolicy,
+		CopyServicePolicies.OnCopyNodePolicy{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
@@ -88,6 +93,9 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
 				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onDeleteNode"));
+		
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
+				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "getCopyCallback"));
 		
 		// disable otherwise, impossible to copy project that has a template
 		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);		
@@ -186,40 +194,35 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
+		boolean formulateProject = false;
 		String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
-		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
+		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);		
 
 		// change state
 		if (afterState != null && !afterState.equals(beforeState)) {
 			
-			if(!afterState.equals(beforeState)){
-				projectActivityService.postProjectStateChangeActivity(nodeRef, beforeState, afterState);
-			}
+			projectActivityService.postProjectStateChangeActivity(nodeRef, beforeState, afterState);
 			
 			if (afterState.equals(ProjectState.InProgress.toString())) {
 				logger.debug("onUpdateProperties:start project");
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE,
 						ProjectHelper.removeTime(new Date()));
-				queueNode(nodeRef);
+				formulateProject = true;
 			} else if (afterState.equals(ProjectState.Cancelled.toString())) {
 				logger.debug("onUpdateProperties:cancel project");
 				projectService.cancel(nodeRef);
 			}
 		}
 		
-		// change startdate
-		Date beforeStartDate = (Date) before.get(ProjectModel.PROP_PROJECT_START_DATE);
-		Date afterStartDate = (Date) after.get(ProjectModel.PROP_PROJECT_START_DATE);
-		if(afterStartDate != null && afterStartDate.equals(beforeStartDate)){
+		// change startdate, duedate
+		if(isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) ||
+				isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)){
+			formulateProject = true;
+		}
+				
+		if(formulateProject){
 			queueNode(nodeRef);
 		}
-		
-		// change duedate
-		Date beforeDueDate = (Date) before.get(ProjectModel.PROP_PROJECT_DUE_DATE);
-		Date afterDueDate = (Date) after.get(ProjectModel.PROP_PROJECT_DUE_DATE);
-		if(afterDueDate != null && afterDueDate.equals(beforeDueDate)){
-			queueNode(nodeRef);
-		}		
 	}
 
 	@Override
@@ -246,6 +249,44 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		if(isNodeArchived){			
 			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, childAssoc.getChildRef().getId());
 			projectService.cancel(archivedNodeRef);
+		}
+	}
+	
+	@Override
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		return new ProjectCopyBehaviourCallback();
+	}
+	
+	private class ProjectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
+		
+        private ProjectCopyBehaviourCallback(){        
+        }
+        
+		@Override
+		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {				
+			return true;
+		}
+
+		@Override
+		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
+				Map<QName, Serializable> properties) {		
+			
+			if(ProjectModel.TYPE_PROJECT.equals(classQName)){
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_STATE)){
+					properties.put(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned);
+				}
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_START_DATE)){					
+					properties.remove(ProjectModel.PROP_PROJECT_START_DATE);					
+				}
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_DUE_DATE)){					
+					properties.remove(ProjectModel.PROP_PROJECT_DUE_DATE);					
+				}
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_COMPLETION_DATE)){					
+					properties.remove(ProjectModel.PROP_PROJECT_COMPLETION_DATE);					
+				}
+			}
+			
+			return properties;
 		}
 	}
 

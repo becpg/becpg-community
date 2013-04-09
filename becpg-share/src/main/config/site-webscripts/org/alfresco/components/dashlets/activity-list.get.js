@@ -136,6 +136,7 @@ function specialize(item, activity, summary)
          if(activity.siteNetwork== null || activity.siteNetwork.length==0){
             item.suppressSite = true;
          }
+         item.title = summary.title + " [" + summary.entityTitle + "]";
          item.itemPage = baseUrl+"entity-data-lists?list=taskList&nodeRef="+summary.entityNodeRef;
          item.custom0 = msg.get("state." + summary.beforeState);
          item.custom1 = msg.get("state." + summary.afterState);
@@ -144,6 +145,7 @@ function specialize(item, activity, summary)
          if(activity.siteNetwork== null || activity.siteNetwork.length==0){
             item.suppressSite = true;
          }
+         item.title = summary.title + "[" + summary.entityTitle + "]";
          item.itemPage = baseUrl+"entity-data-lists?list=deliverableList&nodeRef="+summary.entityNodeRef;
          item.custom0 = msg.get("state." + summary.beforeState);
          item.custom1 = msg.get("state." + summary.afterState);

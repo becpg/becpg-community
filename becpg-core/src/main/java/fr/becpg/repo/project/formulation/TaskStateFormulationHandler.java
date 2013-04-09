@@ -56,7 +56,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			}
 		}
 		
-		if(ProjectState.InProgress.equals(projectData.getProjectState())){
+		if(ProjectState.InProgress.equals(projectData.getProjectState()) ){
 			visitTask(projectData, null);
 		}		
 		

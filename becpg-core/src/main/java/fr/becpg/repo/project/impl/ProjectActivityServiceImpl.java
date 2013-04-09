@@ -18,6 +18,7 @@ import fr.becpg.repo.project.ProjectActivityService;
 public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	private static String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
+	private static String PROJECT_LIST_ACTIVITY = "%s [%s]";
 
 	public static String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
 	public static String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";
@@ -51,7 +52,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 	}
 
 	@Override
-	public void postTaskStateChangeActivity(NodeRef taskNodeRef, String beforeState, String afterState) {
+	public void postTaskStateChangeActivity(NodeRef taskNodeRef, String beforeState, String afterState) {		
 		postStateChangeActivity(TASK_STATE_ACTIVITY,(String)nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) , taskNodeRef, beforeState, afterState, true);
 	}
 
@@ -72,7 +73,9 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 			try {
 				JSONObject data = new JSONObject();
 				if (isItem) {
-					data.put("entityNodeRef", getProjectNodeRef(itemNodeRef));
+					NodeRef projectNodeRef = getProjectNodeRef(itemNodeRef);
+					data.put("entityNodeRef", projectNodeRef);
+					data.put("entityTitle", nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
 				}
 				data.put(PostLookup.JSON_NODEREF, itemNodeRef);
 				data.put("title",title);
