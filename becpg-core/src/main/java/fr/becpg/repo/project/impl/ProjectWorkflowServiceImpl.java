@@ -70,11 +70,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 			cal.add(Calendar.DAY_OF_YEAR, taskListDataItem.getDuration());
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, cal.getTime());
 		}
-		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
+		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());
+		//workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
 		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
-
+		
 		NodeRef wfPackage = workflowService.createPackage(null);
 		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
 				ContentModel.ASSOC_CHILDREN);
