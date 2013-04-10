@@ -418,7 +418,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 		List<NodeRef> listItems = getChildren(null, listContainer, nodeRef,true);
 
 		for (NodeRef tmp : listItems) {
-			nodeService.deleteNode(tmp);
+			if(nodeService.exists(tmp)){
+				nodeService.deleteNode(tmp);
+			}			
 		}
 	}
 

@@ -254,9 +254,10 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		super.getCopyCallback(classRef, copyDetails);
 		return new ProjectCopyBehaviourCallback();
 	}
-	
+		
 	private class ProjectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
 		
         private ProjectCopyBehaviourCallback(){        

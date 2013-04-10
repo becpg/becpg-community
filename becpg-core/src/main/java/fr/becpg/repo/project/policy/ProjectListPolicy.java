@@ -98,7 +98,13 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 						"onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this,
-						"onDeleteAssociation"));		
+						"onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_PREV_TASKS, new JavaBehaviour(this,
+						"onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_PREV_TASKS, new JavaBehaviour(this,
+						"onDeleteAssociation"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
@@ -235,7 +241,12 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-		setPermission(assocRef, true);						
+		if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)){
+			setPermission(assocRef, true);
+		}
+		else if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_PREV_TASKS)){
+			queueListItem(assocRef.getSourceRef());
+		}								
 	}
 	
 	private void setPermission(AssociationRef assocRef, boolean allow){
