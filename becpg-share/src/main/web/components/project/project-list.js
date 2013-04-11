@@ -9,7 +9,7 @@ var g; // gantt var
    /**
     * YUI Library aliases
     */
-   var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
+   var Dom = YAHOO.util.Dom;
 
    /**
     * Alfresco Slingshot aliases
@@ -155,7 +155,11 @@ var g; // gantt var
                               var title = '<span class="' + this.getOverdueClass(oRecord) + '">' + this
                                     .getProjectTitle(oRecord) + '</span>';
 
-                              var initiator = '<span class="resource-title">' + oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue + '</span>';
+                              var initiator = oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue;
+                                 
+                              if( initiator && initiator!=null && initiator.length>0) {
+                                 initiator = '<span class="resource-title">' + initiator + '</span>';
+                              }
                               var percent = oRecord.getData("itemData")["prop_pjt_completionPercent"].value;
 
                               var dates = this.extractDates(oRecord);
