@@ -4,7 +4,6 @@
 package fr.becpg.repo.admin;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,19 +24,13 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -54,6 +47,7 @@ import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.designer.DesignerInitService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
@@ -119,10 +113,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	private ReportTplService reportTplService;
 
-	private ContentService contentService;
-
-	private MimetypeService mimetypeService;
-
+	
+	private ContentHelper contentHelper;
+	
 	private DictionaryService dictionaryService;
 
 	private EntityTplService entityTplService;
@@ -157,12 +150,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		this.reportTplService = reportTplService;
 	}
 
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
-	public void setMimetypeService(MimetypeService mimetypeService) {
-		this.mimetypeService = mimetypeService;
+	public void setContentHelper(ContentHelper contentHelper) {
+		this.contentHelper = contentHelper;
 	}
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
@@ -265,8 +254,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitEntityTpls(systemNodeRef);
 
 		// MailTemplates
-		addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath:beCPG/mails/*.ftl");
-		addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath:beCPG/mails/workflow/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath:beCPG/mails/*.ftl");	
+		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath:beCPG/mails/workflow/*.ftl");
 
 		// Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);
@@ -310,60 +299,21 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
 		if (folderName == RepoConsts.PATH_ICON) {
-			addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
 		}
 		if (folderName == RepoConsts.PATH_MAPPING) {
-			addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
 		}
 		if (folderName == RepoConsts.PATH_IMPORT_SAMPLES) {
-			addFilesResources(folderNodeRef, "classpath:beCPG/import/samples/*.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/samples/*.csv");
 		}
 		if (folderName == RepoConsts.PATH_OLAP_QUERIES) {
-			addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
 		}
 
 	}
 
-	private void addFilesResources(NodeRef folderNodeRef, String pattern) {
-		try {
-
-			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
-			for (Resource res : resolver.getResources(pattern)) {
-
-				String fileName = res.getFilename();
-				logger.debug("add file " + fileName);
-
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, fileName);
-
-				NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS,
-						(String) properties.get(ContentModel.PROP_NAME));
-				if (nodeRef == null) {
-					nodeRef = nodeService.createNode(
-							folderNodeRef,
-							ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									QName.createValidLocalName((String) properties.get(ContentModel.PROP_NAME))), ContentModel.TYPE_CONTENT,
-							properties).getChildRef();
-
-					ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-
-					InputStream in = res.getInputStream();
-					writer.setMimetype(mimetypeService.guessMimetype(fileName));
-					if (fileName.endsWith(".csv")) {
-						writer.setEncoding(RepoConsts.ISO_CHARSET);
-					}
-					writer.putContent(in);
-					in.close();
-
-				}
-			}
-		} catch (Exception e) {
-			logger.error(e, e);
-		}
-
-	}
+	
 	
 	
 	

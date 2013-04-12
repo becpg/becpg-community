@@ -17,7 +17,7 @@
 		              	mail.parameters.to = user.properties.email;
 	                 	mail.parameters.subject = "beCPG Adhoc : " + bpm_workflowDescription;
 	                 	mail.parameters.from = initiator.properties.email;
-			 			  	mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:product-validation-notify-task-email.ftl")[0];
+			 			  	mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl")[0];
 	                 	mail.parameters.text = "Vous êtes assigné à une validation de produit.";
 	                 	mail.execute(bpm_package);
 	                 	
@@ -70,7 +70,7 @@
                  mail.parameters.to = initiator.properties.email;
                  mail.parameters.subject = "beCPG Validation Produit : " + bpm_workflowDescription;
                  mail.parameters.from = bpm_assignee.properties.email;
-		 			  mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:product-validation-approved-task-email.ftl")[0];
+		 			  mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl")[0];
                  mail.parameters.text = "Le processus de validation est terminé. La demande a été acceptée.";
                  mail.execute(bpm_package);
               }
@@ -86,7 +86,7 @@
                  mail.parameters.to = initiator.properties.email;
                  mail.parameters.subject = "beCPG Validation Produit : " + bpm_workflowDescription;
                  mail.parameters.from = bpm_assignee.properties.email;
-		 			  mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:product-validation-rejected-task-email.ftl")[0];
+		 			  mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-rejected-task-email.ftl")[0];
                  mail.parameters.text = "Le processus de validation est terminé. La demande a été refusée.";
                  mail.execute(bpm_package);
               }

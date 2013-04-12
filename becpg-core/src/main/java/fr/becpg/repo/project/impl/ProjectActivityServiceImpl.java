@@ -18,7 +18,6 @@ import fr.becpg.repo.project.ProjectActivityService;
 public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	private static String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
-	private static String PROJECT_LIST_ACTIVITY = "%s [%s]";
 
 	public static String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
 	public static String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";

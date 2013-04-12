@@ -36,6 +36,8 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
+//MOVE that to admin.patch
+@Deprecated
 public class EntityFolderMigrator {
 
 	private static Log logger = LogFactory.getLog(EntityFolderMigrator.class);
@@ -337,7 +339,6 @@ public class EntityFolderMigrator {
 		
 	}
 
-	@SuppressWarnings("deprecation")
 	private Boolean doMigrate(List<NodeRef> entitiesNodeRef) {
 
 		// check parent is entityFolder and has the same name

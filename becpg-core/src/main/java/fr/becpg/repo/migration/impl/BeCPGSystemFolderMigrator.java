@@ -37,6 +37,8 @@ import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.hierarchy.HierarchyService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
+//MOVE that to admin.patch
+@Deprecated
 public class BeCPGSystemFolderMigrator {
 
 	public static final String PATH_PRODUCT_HIERARCHY = "System/ProductHierarchy";

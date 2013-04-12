@@ -1,6 +1,5 @@
 package fr.becpg.repo.mail.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,7 +18,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.TemplateService;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
 import org.alfresco.util.UrlUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -42,7 +40,6 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	private static Log _logger = LogFactory.getLog(BeCPGMailServiceImpl.class);
 
-	private static final String PATH_WORKFLOW = "workflow";
 	
 	private NodeService nodeService;
 	private TemplateService templateService;
@@ -176,39 +173,28 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	@Override
 	public NodeRef getEmailTemplatesFolder() {
-		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), "app:company_home/app:dictionary/app:email_templates/.", null, this.namespaceService, false);
-
-		if (nodeRefs.size() == 1) {
-			// Now localise this
-			NodeRef base = nodeRefs.get(0);
-			NodeRef local = fileFolderService.getLocalizedSibling(base);
-			return local;
-		} else {
-			throw new RuntimeException("Cannot find the email template folder !");
-		}
+		return searchFolder("app:company_home/app:dictionary/app:email_templates/.");
 	}
 
+	
 	@Override
 	public NodeRef getEmailWorkflowTemplatesFolder() {
-		NodeRef folderNodeRef = null;
-		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), "app:company_home/app:dictionary/app:email_templates/app:workflow/.", null,
+		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:workflownotification/.");
+
+	}
+	
+	private NodeRef searchFolder(String xpath){
+		
+		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(),xpath , null,
 				this.namespaceService, false);
 
 		if (nodeRefs.size() == 1) {
 			// Now localise this
 			NodeRef base = nodeRefs.get(0);
-			folderNodeRef = fileFolderService.getLocalizedSibling(base);
-		} else {
-			// create folder
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, I18NUtil.getMessage("path.email.workflow"));
-
-			folderNodeRef = nodeService.createNode(getEmailTemplatesFolder(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.APP_MODEL_1_0_URI, PATH_WORKFLOW),
-					ContentModel.TYPE_FOLDER, properties).getChildRef();
+			return fileFolderService.getLocalizedSibling(base);
+		}  else {
+			throw new RuntimeException("Cannot find the email template folder !");
 		}
-
-		return folderNodeRef;
-
 	}
 
 }
