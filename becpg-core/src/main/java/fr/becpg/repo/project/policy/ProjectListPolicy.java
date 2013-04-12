@@ -19,6 +19,7 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -259,7 +260,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		
 		NodeRef projectNodeRef =  entityListDAO.getEntity(taskListNodeRef);
 		
-		if(ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))){
+		if(ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef)) && permissionService.hasReadPermission(projectNodeRef) == AccessStatus.ALLOWED){
 			String userName = (String)nodeService.getProperty(resourceNodeRef, ContentModel.PROP_USERNAME);
 					
 			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
