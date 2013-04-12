@@ -39,7 +39,8 @@
   	<import resource="classpath:alfresco/module/${artifactId}/context/project-context.xml" />
   	<import resource="classpath:alfresco/module/${artifactId}/deprecated/deprecated-context.xml" />
   	<import resource="classpath:alfresco/module/${artifactId}/context/scheduled-jobs-context.xml" />
- 
+  	<import resource="classpath:alfresco/module/${artifactId}/context/patch-context.xml" />
+   
   
 <!--   	
 	 <bean id="${artifactId}.becpgCoreModule" class="fr.becpg.BeCPGCoreModule" parent="module.baseComponent" >
