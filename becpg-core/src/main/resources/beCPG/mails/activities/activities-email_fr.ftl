@@ -90,8 +90,8 @@
 																            <#assign itemLink="<a href=\"${shareUrl}/page/entity-details?nodeRef=${activity.activitySummary.nodeRef}\">${activity.activitySummary.title!\"\"}</a>">
 																            <#assign suppressSite=true>
 																         </#if>
-																         <#assign custom0=message("state."+ activity.activitySummary.beforeState)>
-																         <#assign custom1=message("state."+ activity.activitySummary.afterState)>
+																         <#assign custom0=message("state."+ activity.activitySummary.beforeState!"Unknow")>
+																         <#assign custom1=message("state."+ activity.activitySummary.afterState!"Unknow")>
 																     <#break>
 																     <#case "fr.becpg.project.task-state">
 																          <#if activity.siteNetwork?has_content>
@@ -100,8 +100,8 @@
 																            <#assign itemLink="<a href=\"${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${activity.activitySummary.entityNodeRef}\">${activity.activitySummary.title!\"\"} [${activity.activitySummary.entityTitle!\"\"}]</a>">
 																            <#assign suppressSite=true>
 																         </#if>
-																         <#assign custom0=message("state."+ activity.activitySummary.beforeState)>
-																         <#assign custom1=message("state."+ activity.activitySummary.afterState)>
+																         <#assign custom0=message("state."+ activity.activitySummary.beforeState!"Unknow")>
+																         <#assign custom1=message("state."+ activity.activitySummary.afterState!"Unknow")>
 																      <#break>
 																      <#case "fr.becpg.project.deliverable-state">
 																           <#if activity.siteNetwork?has_content>
@@ -110,8 +110,8 @@
 																            <#assign itemLink="<a href=\"${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${activity.activitySummary.entityNodeRef}\">${activity.activitySummary.title!\"\"} [${activity.activitySummary.entityTitle!\"\"}]</a>">
 																            <#assign suppressSite=true>
 																         </#if>
-																         <#assign custom0=message("state."+ activity.activitySummary.beforeState)>
-																         <#assign custom1=message("state."+ activity.activitySummary.afterState)>
+																         <#assign custom0=message("state."+ activity.activitySummary.beforeState!"Unknow")>
+																         <#assign custom1=message("state."+ activity.activitySummary.afterState!"Unknow")>
 																	   <#break>
                                                    <#default>
                                                 </#switch>
