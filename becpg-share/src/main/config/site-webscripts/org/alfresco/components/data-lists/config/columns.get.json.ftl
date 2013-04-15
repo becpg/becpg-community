@@ -12,7 +12,21 @@
          "label": "",
          </#if>
       <#if col.dataType??>
-         "dataType": "${col.dataType}"
+         "dataType": "${col.dataType}",
+         "protectedField": ${col.protectedField?string},
+          <#if col.constraints??>"constraints": 
+                    [
+                    <#list col.constraints as cnstrnt>
+                       {
+                          "type": "${cnstrnt.type}"<#if cnstrnt.parametersAsJSON??>,
+                          "parameters": 
+                          ${cnstrnt.parametersAsJSON?replace("\\","")}
+                          </#if>
+                       }<#if cnstrnt_has_next>,</#if>
+                    </#list>
+            ],</#if>
+         "mandatory": ${col.mandatory?string},
+         "repeating": ${col.repeating?string}
       <#else>
          "dataType": "${col.endpointType}"
       </#if>
