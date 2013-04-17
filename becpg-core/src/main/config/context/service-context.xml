@@ -98,6 +98,11 @@
 		init-method="init" class="fr.becpg.repo.listvalue.CompoListValuePlugin">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 	</bean>
+	
+	<bean id="variantListValuePlugin" parent="entityListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
+	</bean>
+	
 
 	<!-- Importer -->
 	<bean id="importService" class="fr.becpg.repo.importer.impl.ImportServiceImpl">
