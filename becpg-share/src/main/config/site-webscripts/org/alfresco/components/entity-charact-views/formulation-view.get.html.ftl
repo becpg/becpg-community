@@ -36,23 +36,7 @@
 		<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
 		<![endif]-->
 		<input id="yui-history-field" type="hidden" />
-		
-		<div id="toolbar-contribs-${el}" style="display:none;">  
-		  <div class="formulate">
-			    <span id="${el}-formulateButton" class="yui-button yui-push-button">
-			         <span class="first-child">
-			             <button type="button" title="${msg('button.formulate.description')}">${msg('button.formulate')}</button>
-			         </span>
-			    </span>
-		   </div>
-		   <div class="import">
-			    <span id="${el}-importButton" class="yui-button yui-push-button">
-			         <span class="first-child">
-			             <button type="button" title="${msg('button.import.description')}">${msg('button.import')}</button>
-			         </span>
-			    </span>
-		   </div>
-		</div>
+	
 		<div id="main-view-${el}">
 				<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
 				<div class="yui-g formulation">

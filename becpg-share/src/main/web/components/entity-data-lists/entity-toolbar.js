@@ -124,27 +124,43 @@
          for (var actionName in this.toolbarButtonActions) {
             var action = this.toolbarButtonActions[actionName];
             if (action.evaluate === null || action.evaluate(this.datalistMeta, this.entity)) {
-
-               var templateInstance = template.cloneNode(true);
-
-               Dom.addClass(templateInstance, actionName);
-
-               if (action.right !== null && action.right === true) {
-                  containerRight.appendChild(templateInstance);
+               
+               if(action.createWidget){
+                  if (action.right !== null && action.right === true) {
+                     this.widgets.actionButtons[actionName] = action.createWidget(containerRight, this); 
+                  } else {
+                     this.widgets.actionButtons[actionName] = action.createWidget(containerLeft, this); 
+                  }
+                 
                } else {
-                  containerLeft.appendChild(templateInstance);
+                  
+                  var templateInstance = template.cloneNode(true);
+                  
+                  Dom.setAttribute(templateInstance,"id", this.id + "-" + actionName + "ContainerDiv");
+
+                  Dom.addClass(templateInstance, actionName);
+
+                  if (action.right !== null && action.right === true) {
+                     containerRight.appendChild(templateInstance);
+                  } else {
+                     containerLeft.appendChild(templateInstance);
+                  }
+
+                  var spanEl = Dom.getFirstChild(templateInstance);
+                  
+               
+                  Dom.setAttribute(spanEl, "id", this.id + "-" + actionName + "Button");
+   
+                  this.widgets.actionButtons[actionName] = Alfresco.util.createYUIButton(this, actionName + "Button",
+                        action.fn);
+   
+                  this.widgets.actionButtons[actionName].set("label", this.msg("button." + actionName));
+                  this.widgets.actionButtons[actionName].set("title", this.msg("button." + actionName + ".description"));
+                  
+
+                  Dom.removeClass(templateInstance, "hidden");
                }
 
-               var spanEl = Dom.getFirstChild(templateInstance);
-               Dom.setAttribute(spanEl, "id", this.id + "-" + actionName + "Button");
-
-               this.widgets.actionButtons[actionName] = Alfresco.util.createYUIButton(this, actionName + "Button",
-                     action.fn);
-
-               this.widgets.actionButtons[actionName].set("label", this.msg("button." + actionName));
-               this.widgets.actionButtons[actionName].set("title", this.msg("button." + actionName + ".description"));
-
-               Dom.removeClass(templateInstance, "hidden");
             }
          }
       },

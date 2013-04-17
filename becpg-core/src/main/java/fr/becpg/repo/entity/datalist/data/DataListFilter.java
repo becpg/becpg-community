@@ -27,6 +27,8 @@ public class DataListFilter {
 
 	public static final String FORM_FILTER = "filterform";
 
+	public static final String FTS_FILTER = "fts";
+
 	private String filterQuery = null;
 	
 	private NodeRef entityNodeRef= null;
@@ -212,6 +214,8 @@ public class DataListFilter {
 		
 		
 		if (filterId != null) {
+			
+			
 
 			if (filterId.equals("recentlyAdded") || filterId.equals("recentlyModified") || filterId.equals("recentlyCreatedByMe") || filterId.equals("recentlyModifiedByMe")) {
 				boolean onlySelf = (filterId.indexOf("ByMe")) > 0 ? true : false;
@@ -259,7 +263,8 @@ public class DataListFilter {
 				if(ma.matches()){
 					filterQuery += " "+ma.group(1);
 				}
-				
+			} else if(filterId.equals(FTS_FILTER)){
+				filterQuery += " "+filterData;
 			}
 		}
 

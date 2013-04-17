@@ -3283,6 +3283,7 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
+					<show id="bcpg:variantIds" force="true"/>
 					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 
@@ -3307,6 +3308,12 @@
  							</control-param>	
 						</control>
  					</field> 
+ 					<field id="bcpg:variantIds" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -3373,6 +3380,7 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
+					<show id="bcpg:variantIds" force="true"/>
 					<!-- <show id="bcpg:compoListPlants"/> -->					
 				</field-visibility>
 
@@ -3397,7 +3405,13 @@
  							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
- 					</field> 					
+ 					</field>
+ 					<field id="bcpg:variantIds" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList</control-param>
+						</control>
+					</field> 					
 				</appearance>
 			</form>
 		</forms>
@@ -3415,6 +3429,7 @@
 					<show id="bcpg:packagingListUnit" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:variantIds" force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -3423,6 +3438,12 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">ingList
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:variantIds" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -3460,6 +3481,7 @@
 					<show id="bcpg:packagingListUnit" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:variantIds" force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -3468,6 +3490,12 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:variantIds" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4592,6 +4620,33 @@
 	</config>
 
 
+	<!-- Variant -->
+
+	<config evaluator="node-type" condition="bcpg:variant">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:clients" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:variant">
+		<forms>
+			<form >
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:clients" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	
 	<!-- ________________________________________________________________ ASPECTS 
 		________________________________________________________________ -->
 

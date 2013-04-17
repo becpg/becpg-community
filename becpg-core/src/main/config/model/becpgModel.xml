@@ -1483,6 +1483,12 @@
 				</property>
 			</properties>
 		</type>
+		
+			
+		<type name="bcpg:variant">
+		   <parent>cm:content</parent>
+		</type>
+		
 
 	</types>
 	<!-- __________________________________________ ASPECTS _________________________________________ -->
@@ -1712,6 +1718,38 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		
+		<!-- Variants  -->
+	
+		<aspect name="bcpg:entityVariantAspect">
+			<associations>
+				<child-association name="bcpg:variants">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:variant</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</child-association>
+			</associations>
+		</aspect>
+		
+		
+		<aspect name="bcpg:entityListVariantAspect">
+			<properties>
+				<property name="bcpg:variantIds">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+				</property>
+			</properties>
+		</aspect>
+		
+		
 
 		<aspect name="bcpg:codeAspect">
 			<properties>
