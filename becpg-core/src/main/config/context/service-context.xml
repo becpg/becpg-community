@@ -25,6 +25,7 @@
 				<value>alfresco/module/${pom.artifactId}/messages/groups</value>
 				<value>alfresco/module/${pom.artifactId}/messages/demo</value>
 				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>
+				<value>alfresco/module/${pom.artifactId}/messages/patch</value>
 			</list>
 		</property>
 	</bean>
@@ -39,8 +40,7 @@
 		<property name="authorityService" ref="authorityService" />
 		<property name="permissionService" ref="permissionService" />
 		<property name="reportTplService" ref="reportTplService" />
-		<property name="contentService" ref="contentService" />
-		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="contentHelper" ref="contentHelper" />
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="beCPGMailService" ref="beCPGMailService" />
@@ -50,6 +50,12 @@
 
 
 	<!-- Helper -->
+	<bean id="contentHelper" class="fr.becpg.repo.helper.ContentHelper">
+		<property name="contentService" ref="contentService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="nodeService" ref="nodeService" />
+	</bean>
+	
 	<bean id="repoService" class="fr.becpg.repo.helper.impl.RepoServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
@@ -92,6 +98,11 @@
 		init-method="init" class="fr.becpg.repo.listvalue.CompoListValuePlugin">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 	</bean>
+	
+	<bean id="variantListValuePlugin" parent="entityListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
+	</bean>
+	
 
 	<!-- Importer -->
 	<bean id="importService" class="fr.becpg.repo.importer.impl.ImportServiceImpl">

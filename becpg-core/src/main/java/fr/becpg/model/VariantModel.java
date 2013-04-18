@@ -2,6 +2,7 @@ package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
 
+@Deprecated
 public class VariantModel {
 
 	public static final String VARIANT_URI = "http://www.bcpg.fr/model/var/1.0";

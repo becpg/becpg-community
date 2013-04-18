@@ -26,6 +26,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * The Class CostCalculatingVisitor.
@@ -84,8 +85,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		 */
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, BeCPGModel.TYPE_RAWMATERIAL);
 		
-		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){									
-			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE));
+		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){									
+			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT));
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netWeight, mandatoryCharacts1);
 		}
 		
@@ -96,8 +97,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		 */
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, BeCPGModel.TYPE_PACKAGINGMATERIAL);
 
-		if(formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)){
-			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE)){
+		if(formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
+			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 				Double qty = FormulationHelper.getQty(packagingListDataItem);
 				visitPart(packagingListDataItem.getProduct(), costList, qty, netWeight, mandatoryCharacts2);
 			}
@@ -110,8 +111,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		 */
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, BeCPGModel.TYPE_RESOURCEPRODUCT);
 		
-		if(formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)){			
-			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE)){
+		if(formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){			
+			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 				
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if(processListDataItem.getResource() != null && qty != null){

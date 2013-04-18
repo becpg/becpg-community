@@ -4,6 +4,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -15,9 +16,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			productData.getCompoListView().getReqCtrlList().clear();
 		}
 		
-		if ((productData.hasCompoListEl(EffectiveFilters.ALL)) ||
-		(productData.hasPackagingListEl(EffectiveFilters.ALL)) ||
-		(productData.hasProcessListEl(EffectiveFilters.ALL))) {			
+		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
+		(productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
+		(productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {			
 			
 			// Continue
 			return true;

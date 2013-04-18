@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"   >
+
+	
+	<bean id="patch.bcpg.emailTemplatesPatch" class="fr.becpg.repo.admin.patch.EmailTemplatesPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.emailTemplatesPatch</value></property>
+        <property name="description"><value>patch.bcpg.emailTemplatesPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10001</value></property>
+        <property name="contentHelper" ref="contentHelper"/>
+        <property name="repository" ref="repositoryHelper"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+    </bean>
+ 
+    <bean id="patch.bcpg.redeployWfProcess" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployWfProcess</value></property>
+        <property name="description"><value>patch.bcpg.redeployWfProcess.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+         <property name="fixesToSchema"><value>6022</value></property>
+        <property name="targetSchema"><value>10000</value></property>
+       <property name="dependsOn" >
+            <list>
+                <ref bean="patch.bcpg.emailTemplatesPatch" />
+            </list>
+        </property> 
+        <property name="workflowDefinitions">
+            <list>
+	            <props>
+						<prop key="engineId">jbpm</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/adhoc_processdefinition.xml</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+					<props>
+						<prop key="engineId">jbpm</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/product_validation_processdefinition.xml</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-adhoc.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+					<!-- Not email aware -->
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>	
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-adhoc.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>				
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean> 
+	
+</beans>

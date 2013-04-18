@@ -587,6 +587,18 @@ public interface BeCPGModel {
 	QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 
 	/**
+	 * Variants
+	 */
+	QName TYPE_VARIANT = QName.createQName(BECPG_URI, "variant");
+	QName ASPECT_ENTITY_VARIANT = QName.createQName(BECPG_URI, "entityVariantAspect");
+	QName ASPECT_ENTITYLIST_VARIANT = QName.createQName(BECPG_URI, "entityListVariantAspect");
+	
+	
+	QName ASSOC_VARIANTS = QName.createQName(BECPG_URI, "variants");
+	QName PROP_VARIANTIDS = QName.createQName(BECPG_URI, "variantIds");
+	QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
+	
+	/**
 	 * Effectivity
 	 */
 
@@ -675,4 +687,6 @@ public interface BeCPGModel {
 	
 	@Deprecated
 	QName ASPECT_ENTITY_VERSIONABLE = QName.createQName(BECPG_URI, "entityVersionable");
+
+	
 }

@@ -1,0 +1,44 @@
+.datalist-toolbar .edit-variant span.first-child
+{
+   background: url(../images/edit-16.png) no-repeat 6px 4px;
+   padding: inherit 4px inherit 4px;
+}
+
+
+.datalist-toolbar .delete-variant span.first-child
+{
+   background: url(../images/delete-16.png) no-repeat 6px 4px;
+   padding: inherit 4px inherit 4px;
+}
+
+
+.datalist-toolbar .create-variant span.first-child
+{
+   background: url(../images/add-icon-16.png) no-repeat 6px 4px;
+   padding: inherit 4px inherit 4px;
+}
+
+
+.yui-skin-lightTheme  .datalist-toolbar div.variantPicker .yui-button  {
+	margin: 0px;
+}
+
+.datalist-toolbar span.variant-all {
+	
+}
+
+.datalist-toolbar span.variant-common {
+	
+}
+
+.datalist-toolbar  span.variant {
+	background: url(../../components/images/enabled-indicator-off-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+
+.datalist-toolbar  span.variant-default {
+	background: url(../../components/images/enabled-indicator-on-16.png) no-repeat;
+	padding-left: 20px;
+}

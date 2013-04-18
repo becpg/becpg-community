@@ -73,7 +73,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());
-		//workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
+		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
 		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
 		
 		NodeRef wfPackage = workflowService.createPackage(null);

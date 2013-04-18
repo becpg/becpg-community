@@ -34,10 +34,12 @@
 			       useFilter: "${useFilter?string}",
 			       showCreateButton : "${showCreateButton?string}",
 			       sortable : true,
-			       sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node"
+			       sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
 			       <#if extra["itemType"]??>
-			       	,itemType : "${extra["itemType"]?string}"
+			       	itemType : "${extra["itemType"]?string}",
 			       </#if>
+			       saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
+			       hiddenColumns : ["prop_bcpg_depthLevel"]
 			   }).setMessages(${messages});
 			   
 </@>

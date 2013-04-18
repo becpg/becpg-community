@@ -1,9 +1,13 @@
-<#if task??>
+<#if task?? && task.hasPermission("Read")>
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
 	"task":
 	{
-		"entityNodeRef" : "${task.parent.parent.nodeRef}",
+		<#if task.parent.hasPermission("Read") &&  task.parent.parent.hasPermission("Read") >
+		 "entityNodeRef" : "${task.parent.parent.nodeRef}",
+		<#else>
+		  "entityNodeRef" : "#access_forbidden",
+		</#if>
 		"name": "${task.properties["pjt:tlTaskName"]!""}",
 	   "state": "${task.properties["pjt:tlState"]!""}",
 	   "completionPercent": "${task.properties["pjt:completionPercent"]!""}",
@@ -12,6 +16,7 @@
 		[
 		<#if deliverables??>
 			<#list deliverables as deliverable>
+			<#if deliverable?? && deliverable.hasPermission("Read")>
 				{
 					"name": "${deliverable.properties["pjt:dlDescription"]!""}",
 					"nodeRef": "${deliverable.nodeRef}",
@@ -30,6 +35,7 @@
 		   			</#if>
 		   		] 
 				}<#if deliverable_has_next>,</#if>	
+			</#if>	
 			</#list>
 		</#if>
 		]
