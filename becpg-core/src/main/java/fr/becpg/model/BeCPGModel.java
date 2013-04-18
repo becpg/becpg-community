@@ -320,6 +320,16 @@ public interface BeCPGModel {
 	// contactList
 	QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI, "contactList");
 
+	// labelClaimList
+	QName TYPE_LABELCLAIMLIST = QName.createQName(BECPG_URI,
+			"labelClaimList");
+	QName PROP_LCL_TYPE = QName.createQName(BECPG_URI,
+			"lclType");
+	QName PROP_LCL_IS_CLAIMED = QName.createQName(BECPG_URI,
+			"lclIsClaimed");	
+	QName ASSOC_LCL_LABELCLAIM = QName.createQName(BECPG_URI,
+			"lclLabelClaim");
+	
 	// allergen
 	/** The Constant TYPE_ALLERGEN. */
 	QName TYPE_ALLERGEN = QName.createQName(BECPG_URI, "allergen");
@@ -638,6 +648,9 @@ public interface BeCPGModel {
 	 */
 	QName TYPE_APPROVAL_NUMBER = QName.createQName(BECPG_URI, "approvalNumber");
 
+	QName TYPE_LABEL_CLAIM = QName.createQName(BECPG_URI, "labelClaim");
+	QName PROP_LABEL_CLAIM_TYPE = QName.createQName(BECPG_URI, "labelClaimType");
+	
 	/**
 	 * legalName aspect
 	 */

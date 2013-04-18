@@ -17,6 +17,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -71,6 +72,7 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	private List<MicrobioListDataItem> microbioList;
 	private List<PhysicoChemListDataItem> physicoChemList;
 	private List<ForbiddenIngListDataItem> forbiddenIngList;
+	private List<LabelClaimListDataItem> labelClaimList;
 
 	
 	/*
@@ -326,8 +328,17 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	public void setForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
 		this.forbiddenIngList = forbiddenIngList;
 	}
-
 	
+	@DataList
+	@AlfQname(qname="bcpg:labelClaimList")
+	public List<LabelClaimListDataItem> getLabelClaimList() {
+		return labelClaimList;
+	}
+
+	public void setLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
+		this.labelClaimList = labelClaimList;
+	}
+
 	@DataListView
 	@AlfQname(qname="bcpg:compoList")
 	public CompoListView getCompoListView() {
@@ -415,12 +426,15 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
-				+ ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
-				+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList
-				+ ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList="
-				+ physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", compoListView=" + compoListView + ", processListView=" + processListView + ", packagingListView="
-				+ packagingListView + "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName
+				+ ", title=" + title + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density
+				+ ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
+				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList
+				+ ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList="
+				+ nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList="
+				+ microbioList + ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList
+				+ ", labelClaimList=" + labelClaimList + ", compoListView=" + compoListView + ", processListView="
+				+ processListView + ", packagingListView=" + packagingListView + "]";
 	}
 
 	@Override
@@ -437,6 +451,7 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
 		result = prime * result + ((ingLabelingList == null) ? 0 : ingLabelingList.hashCode());
 		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
+		result = prime * result + ((labelClaimList == null) ? 0 : labelClaimList.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
 		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
 		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
@@ -515,6 +530,11 @@ public class ProductData extends AbstractEffectiveDataItem  {
 				return false;
 		} else if (!ingList.equals(other.ingList))
 			return false;
+		if (labelClaimList == null) {
+			if (other.labelClaimList != null)
+				return false;
+		} else if (!labelClaimList.equals(other.labelClaimList))
+			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
@@ -591,9 +611,4 @@ public class ProductData extends AbstractEffectiveDataItem  {
 			return false;
 		return true;
 	}
-	
-	
-
-
-
 }
