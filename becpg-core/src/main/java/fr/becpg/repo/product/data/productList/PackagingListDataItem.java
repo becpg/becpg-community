@@ -9,11 +9,10 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:packagingList")
-public class PackagingListDataItem extends AbstractEffectiveDataItem {
+public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem {
 
 	private Double qty = 0d;
 	

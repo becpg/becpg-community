@@ -40,6 +40,7 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 //TODO use annotation on product data instead
 @Deprecated
@@ -241,10 +242,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// compoList
-		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
 			Element compoListElt = dataListsElt.addElement(TAG_COMPOLIST);
 
-			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
 
 				if (nodeService.exists(dataItem.getProduct())) {
 					String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
@@ -286,10 +287,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// packList
-		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
+		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
 			Element packagingListElt = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
 
-			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
 				loadPackaging(dataItem, packagingListElt);
 			}
 		}
@@ -563,7 +564,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 	
 		
-		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
 			
 			loadPackagingMaterial(p, packagingKitListEl);
 		}

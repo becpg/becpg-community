@@ -25,6 +25,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
 
@@ -89,11 +90,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
 		
-		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){
+		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct);
 			
-			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE)){
+			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 				Double qty = FormulationHelper.getQty(compoItem, nodeService);
 				
 				if(qty != null){

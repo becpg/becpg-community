@@ -3342,6 +3342,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
@@ -3352,7 +3353,10 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<!-- <show id="bcpg:compoListPlants"/> -->					
-				</field-visibility>				
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>				
 			</form>
 			<form id="datagridWUsed">
 				<field-visibility>
@@ -3452,12 +3456,16 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:packagingListProduct" />
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 			<form id="datagridWUsed">
 				<field-visibility>
@@ -3549,6 +3557,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
@@ -3557,6 +3566,9 @@
 					<show id="bcpg:isManualListItem" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -3625,12 +3637,16 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -3827,10 +3843,14 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -3889,6 +3909,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
@@ -3898,6 +3919,9 @@
 					<show id="bcpg:ingListSubIng" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -3966,12 +3990,16 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:mblMicrobio" />
 					<show id="bcpg:mblValue" />
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -4027,6 +4055,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListUnit" />
@@ -4035,6 +4064,9 @@
 					<show id="bcpg:nutListGroup" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -4082,9 +4114,13 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -4132,12 +4168,16 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclValue" />
 					<show id="bcpg:pclUnit" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -4627,6 +4667,7 @@
 			<form >
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:isDefaultVariant" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:clients" force="true" />
 				</field-visibility>
@@ -4639,6 +4680,7 @@
 			<form >
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:isDefaultVariant" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:clients" force="true" />
 				</field-visibility>

@@ -4,7 +4,6 @@
 package fr.becpg.model;
 
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.QNamePattern;
 
 /**
  * beCPG model definition.
@@ -587,7 +586,7 @@ public interface BeCPGModel {
 	
 	QName ASSOC_VARIANTS = QName.createQName(BECPG_URI, "variants");
 	QName PROP_VARIANTIDS = QName.createQName(BECPG_URI, "variantIds");
-	
+	QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
 	
 	/**
 	 * Effectivity

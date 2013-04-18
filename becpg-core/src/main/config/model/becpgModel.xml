@@ -1487,6 +1487,12 @@
 			
 		<type name="bcpg:variant">
 		   <parent>cm:content</parent>
+		   <properties>
+				<property name="bcpg:isDefaultVariant">
+					<type>d:boolean</type>
+				</property>
+			</properties>
+		   
 		</type>
 		
 

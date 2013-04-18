@@ -25,54 +25,54 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
+import fr.becpg.repo.variant.model.VariantData;
 
 
-public class ProductData extends AbstractEffectiveDataItem  {
-	
+public class ProductData extends AbstractEffectiveDataItem {
 
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
-	private String title;	
+	private String title;
 	private SystemState state = SystemState.ToValidate;
-	private ProductUnit unit = ProductUnit.kg;	
-	
+	private ProductUnit unit = ProductUnit.kg;
+
 	/*
 	 * Transformable properties
 	 */
 	private Double qty;
 	private Double density;
 	private Double yield;
-	
+
 	/*
 	 * Profitability properties
 	 */
-	private Double unitTotalCost;	
-	private Double unitPrice;	
-	private Double profitability;	
+	private Double unitTotalCost;
+	private Double unitPrice;
+	private Double profitability;
 	private Long breakEven;
-	
+
 	/*
 	 * DataList
 	 */
 	private List<AllergenListDataItem> allergenList;
-	private List<CostListDataItem> costList;	
+	private List<CostListDataItem> costList;
 	private List<PriceListDataItem> priceList;
 	private List<IngListDataItem> ingList;
 	private List<NutListDataItem> nutList;
-	private List<OrganoListDataItem> organoList;	
+	private List<OrganoListDataItem> organoList;
 	private List<IngLabelingListDataItem> ingLabelingList;
 	private List<MicrobioListDataItem> microbioList;
 	private List<PhysicoChemListDataItem> physicoChemList;
 	private List<ForbiddenIngListDataItem> forbiddenIngList;
 
-	
 	/*
 	 * View
 	 */
@@ -80,97 +80,108 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	private ProcessListView processListView = new ProcessListView();
 	private PackagingListView packagingListView = new PackagingListView();
 	
+	/*
+	 * Variants
+	 */
 	
+	private List<VariantData> variants;
+
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:variants")
+	public List<VariantData> getVariants() {
+		return variants;
+	}
+
+	public void setVariants(List<VariantData> variants) {
+		this.variants = variants;
+	}
 	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy1")
 	public NodeRef getHierarchy1() {
 		return hierarchy1;
 	}
-	
+
 	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy2")
 	public NodeRef getHierarchy2() {
 		return hierarchy2;
 	}
-	
+
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
-	
-	
+
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:legalName")
 	public MLText getLegalName() {
 		return legalName;
 	}
-	
+
 	public void setLegalName(MLText legalName) {
 		this.legalName = legalName;
 	}
-	
+
 	public void setLegalName(String legalName) {
 		this.legalName = new MLText(legalName);
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "cm:title")
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productState")
 	public SystemState getState() {
 		return state;
 	}
-	
+
 	public void setState(SystemState state) {
 		this.state = state;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
-	
 
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
-	}	
-	
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {
 		return qty;
 	}
-	
+
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productDensity")
 	public Double getDensity() {
 		return density;
 	}
-	
-	
+
 	public void setDensity(Double density) {
 		this.density = density;
 	}
-	
+
 	public Double getYield() {
 		return yield;
 	}
@@ -220,30 +231,27 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	}
 
 	@DataList
-	@AlfQname(qname="bcpg:allergenList")
+	@AlfQname(qname = "bcpg:allergenList")
 	public List<AllergenListDataItem> getAllergenList() {
 		return allergenList;
 	}
-	
-	
+
 	public void setAllergenList(List<AllergenListDataItem> allergenList) {
 		this.allergenList = allergenList;
 	}
-	
 
 	@DataList
-	@AlfQname(qname="bcpg:costList")
+	@AlfQname(qname = "bcpg:costList")
 	public List<CostListDataItem> getCostList() {
 		return costList;
 	}
-	
 
 	public void setCostList(List<CostListDataItem> costList) {
 		this.costList = costList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:priceList")
+	@AlfQname(qname = "bcpg:priceList")
 	public List<PriceListDataItem> getPriceList() {
 		return priceList;
 	}
@@ -253,72 +261,67 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	}
 
 	@DataList
-	@AlfQname(qname="bcpg:ingList")
+	@AlfQname(qname = "bcpg:ingList")
 	public List<IngListDataItem> getIngList() {
 		return ingList;
 	}
-	
-	
+
 	public void setIngList(List<IngListDataItem> ingList) {
 		this.ingList = ingList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:nutList")
+	@AlfQname(qname = "bcpg:nutList")
 	public List<NutListDataItem> getNutList() {
 		return nutList;
 	}
-	
+
 	public void setNutList(List<NutListDataItem> nutList) {
 		this.nutList = nutList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:organoList")
+	@AlfQname(qname = "bcpg:organoList")
 	public List<OrganoListDataItem> getOrganoList() {
 		return organoList;
 	}
-	
+
 	public void setOrganoList(List<OrganoListDataItem> organoList) {
 		this.organoList = organoList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:ingLabelingList")
+	@AlfQname(qname = "bcpg:ingLabelingList")
 	public List<IngLabelingListDataItem> getIngLabelingList() {
 		return ingLabelingList;
 	}
-	
-	
+
 	public void setIngLabelingList(List<IngLabelingListDataItem> ingLabelingList) {
 		this.ingLabelingList = ingLabelingList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:microbioList")
+	@AlfQname(qname = "bcpg:microbioList")
 	public List<MicrobioListDataItem> getMicrobioList() {
 		return microbioList;
 	}
-	
-	
+
 	public void setMicrobioList(List<MicrobioListDataItem> microbioList) {
 		this.microbioList = microbioList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:physicoChemList")
+	@AlfQname(qname = "bcpg:physicoChemList")
 	public List<PhysicoChemListDataItem> getPhysicoChemList() {
 		return physicoChemList;
 	}
-	
 
 	public void setPhysicoChemList(List<PhysicoChemListDataItem> physicoChemList) {
 		this.physicoChemList = physicoChemList;
 	}
-	
-	
+
 	@DataList
-	@AlfQname(qname="bcpg:forbiddenIngList")
+	@AlfQname(qname = "bcpg:forbiddenIngList")
 	public List<ForbiddenIngListDataItem> getForbiddenIngList() {
 		return forbiddenIngList;
 	}
@@ -327,79 +330,88 @@ public class ProductData extends AbstractEffectiveDataItem  {
 		this.forbiddenIngList = forbiddenIngList;
 	}
 
-	
 	@DataListView
-	@AlfQname(qname="bcpg:compoList")
+	@AlfQname(qname = "bcpg:compoList")
 	public CompoListView getCompoListView() {
 		return compoListView;
 	}
-	
-	
-	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData> filter) {
-		if(compoListView!=null &&  compoListView.getCompoList()!=null){
+
+	@SafeVarargs
+	public final List<CompoListDataItem> getCompoList( DataListFilter<ProductData>... filters) {
+		if (compoListView != null && compoListView.getCompoList() != null) {
 			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
-			CollectionUtils.filter(ret, filter.createPredicate(this));
+			if (filters != null) {
+				for (DataListFilter<ProductData> filter : filters) {
+					CollectionUtils.filter(ret, filter.createPredicate(this));
+				}
+			}
 			return ret;
 		}
 		return null;
 	}
-	
 
-	public boolean hasCompoListEl(DataListFilter<ProductData> filter) {
-		return compoListView!=null &&  compoListView.getCompoList()!=null && !getCompoList(filter).isEmpty();
+	@SafeVarargs
+	public final boolean hasCompoListEl(DataListFilter<ProductData>... filters) {
+		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 
 	public void setCompoListView(CompoListView compoListView) {
 		this.compoListView = compoListView;
 	}
-	
+
 	@DataListView
-	@AlfQname(qname="mpm:processList")
+	@AlfQname(qname = "mpm:processList")
 	public ProcessListView getProcessListView() {
 		return processListView;
 	}
 
-	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData> filter) {
-		if(processListView!=null && processListView.getProcessList()!=null){
+	@SafeVarargs
+	public final List<ProcessListDataItem> getProcessList(DataListFilter<ProductData>... filters) {
+		if (processListView != null && processListView.getProcessList() != null) {
 			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
-			CollectionUtils.filter(ret, filter.createPredicate(this));
+			if (filters != null) {
+				for (DataListFilter<ProductData> filter : filters) {
+					CollectionUtils.filter(ret, filter.createPredicate(this));
+				}
+			}
 			return ret;
 		}
 		return null;
 	}
-	
 
-	public boolean hasProcessListEl(DataListFilter<ProductData> filter) {
-		return processListView!=null && processListView.getProcessList()!=null && !getProcessList(filter).isEmpty();
+	@SafeVarargs
+	public final boolean hasProcessListEl(DataListFilter<ProductData>... filters) {
+		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
 	}
 
-	
 	public void setProcessListView(ProcessListView processListView) {
 		this.processListView = processListView;
 	}
-	
-	
 
 	@DataListView
-	@AlfQname(qname="bcpg:packagingList")
+	@AlfQname(qname = "bcpg:packagingList")
 	public PackagingListView getPackagingListView() {
 		return packagingListView;
 	}
-	
-	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData> filter) {
-		if(packagingListView!=null && packagingListView.getPackagingList()!=null){
+
+	@SafeVarargs
+	public final List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
+		if (packagingListView != null && packagingListView.getPackagingList() != null) {
 			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
-			CollectionUtils.filter(ret, filter.createPredicate(this));
+			if (filters != null) {
+				for (DataListFilter<ProductData> filter : filters) {
+					CollectionUtils.filter(ret, filter.createPredicate(this));
+				}
+			}
 			return ret;
 		}
 		return null;
 	}
-	
-	
-	public boolean hasPackagingListEl(DataListFilter<ProductData> filter) {
-		return packagingListView!=null && packagingListView.getPackagingList()!=null && !getPackagingList(filter).isEmpty();
-	}
 
+	@SafeVarargs
+	public final boolean hasPackagingListEl(DataListFilter<ProductData>... filters) {
+		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
+	}
 
 	public void setPackagingListView(PackagingListView packagingListView) {
 		this.packagingListView = packagingListView;
@@ -408,11 +420,10 @@ public class ProductData extends AbstractEffectiveDataItem  {
 	/**
 	 * Instantiates a new product data.
 	 */
-	public ProductData(){
+	public ProductData() {
 		super();
 	}
 
-	
 	@Override
 	public String toString() {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
@@ -591,9 +602,5 @@ public class ProductData extends AbstractEffectiveDataItem  {
 			return false;
 		return true;
 	}
-	
-	
-
-
 
 }

@@ -270,7 +270,10 @@
             actionName : "variant-picker",
             right : true,
             evaluate : function(asset, entity) {
-               return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity.userAccess.edit;
+               
+              return entity!=null  && entity.userAccess.edit && (beCPG.util.contains(entity.aspects, "bcpg:entityVariantAspect")
+                     || (asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") ));
+             
             },
             createWidget : function(containerDiv, instance) {
 

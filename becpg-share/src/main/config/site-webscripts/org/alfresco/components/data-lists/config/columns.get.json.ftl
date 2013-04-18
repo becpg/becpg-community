@@ -19,7 +19,7 @@
           "constraints": [
                 <#list col.constraints as cnstrnt>
                 { "type": "${cnstrnt.type}"
-                <#if cnstrnt.parametersAsJSON??>,
+                <#if cnstrnt.parameters??>,
                   "parameters": ${jsonUtils.toJSONString(cnstrnt.parameters)}
                   </#if>}<#if cnstrnt_has_next>,</#if>
               </#list>],

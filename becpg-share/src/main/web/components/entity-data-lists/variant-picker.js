@@ -16,10 +16,10 @@
 
       beCPG.component.VariantPicker.superclass.constructor.call(this, "beCPG.component.VariantPicker", htmlId, [
             "button", "container" ]);
-      
+
       // message
       this.name = "beCPG.component.EntityDataListToolbar";
-      
+
       return this;
    };
 
@@ -67,15 +67,15 @@
                      var entityVariantsPickerMenu = [
 
                      {
-                        text : this.msg("picker.variant.all"),
+                        text : '<span class="variant-all">' + this.msg("picker.variant.all") + '</span>',
                         value : "all",
                         onclick : {
                            fn : this.onMenuItemClick,
                            scope : this
                         }
                      }, {
-                        text : this.msg("picker.variant.default"),
-                        value : "default",
+                        text : '<span class="variant-common">' + this.msg("picker.variant.common") + '</span>',
+                        value : "common",
                         onclick : {
                            fn : this.onMenuItemClick,
                            scope : this
@@ -85,8 +85,12 @@
                      ];
 
                      for ( var i in this.options.entity.variants) {
+
+                        var variantLbl = '<span class="variant' + (this.options.entity.variants[i].isDefaultVariant ? '-default'
+                              : '') + '">' + this.options.entity.variants[i].name + '</span>';
+
                         entityVariantsPickerMenu.push({
-                           text : this.options.entity.variants[i].name,
+                           text : variantLbl,
                            value : this.options.entity.variants[i].nodeRef,
                            onclick : {
                               fn : this.onMenuItemClick,
@@ -95,7 +99,6 @@
                         });
                      }
 
-                     
                      this.widgets.variantPicker = new YAHOO.widget.Button({
                         type : "split",
                         label : this.msg("picker.variant.choose"),
@@ -105,13 +108,14 @@
                         lazyloadmenu : false
                      });
 
-                     this.widgets.createVariantButton = this.createYUIButton(this, "create-variant", this.onCreateVariant);
+                     this.widgets.createVariantButton = this.createYUIButton(this, "create-variant",
+                           this.onCreateVariant);
 
                      this.widgets.editVariantButton = this.createYUIButton(this, "edit-variant", this.onEditVariant);
 
-                     this.widgets.deleteVariantButton = this.createYUIButton(this, "delete-variant", this.onDeleteVariant);
-                     
-                     
+                     this.widgets.deleteVariantButton = this.createYUIButton(this, "delete-variant",
+                           this.onDeleteVariant);
+
                      Dom.setStyle(this.widgets.editVariantButton, 'display', 'none');
                      Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
 
@@ -129,11 +133,11 @@
 
                      this.options.containerDiv.appendChild(spanEl);
 
-                     buttonWidget =  Alfresco.util.createYUIButton(this, actionName + "Button", fn);
-                     
+                     buttonWidget = Alfresco.util.createYUIButton(this, actionName + "Button", fn);
+
                      buttonWidget.set("label", this.msg("button." + actionName));
                      buttonWidget.set("title", this.msg("button." + actionName + ".description"));
-                     
+
                      return buttonWidget;
 
                   },
@@ -141,11 +145,11 @@
                   onMenuItemClick : function(p_sType, p_aArgs, p_oItem) {
 
                      if (p_oItem) {
-                        var sText = p_oItem.cfg.getProperty("text");
+                        var sText = p_oItem.cfg.getProperty("text"), value = p_oItem.value;
                         this.widgets.variantPicker.set("label", sText);
 
-                        if ("all" === p_oItem.value  || "default" === p_oItem.value) {
-                          
+                        if ("all" === value || "common" === value) {
+
                            this.currentVariantNodeRef = null;
                            Dom.setStyle(this.widgets.createVariantButton, 'display', '');
                            Dom.setStyle(this.widgets.editVariantButton, 'display', 'none');
@@ -155,22 +159,25 @@
                                  filterOwner : this.id,
                                  filterId : "all"
                               });
-                           } else if ("default" === p_oItem.value) {
+                           } else if ("common" === p_oItem.value) {
                               YAHOO.Bubbling.fire("changeFilter", {
                                  filterOwner : this.id,
-                                 filterId : "custom",
-                                 filterData : "+ISNULL:bcpg\\:variantIds"
+                                 filterId : "fts",
+                                 filterData : "AND (ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds)"
                               });
                            }
                         } else {
-                           YAHOO.Bubbling.fire("changeFilter", {
-                              filterOwner : this.id,
-                              filterId : "fts",
-                              filterData : "+@bcpg\\:variantIds:\"" + p_oItem.value+"\"" 
-                           });
+                           YAHOO.Bubbling
+                                 .fire(
+                                       "changeFilter",
+                                       {
+                                          filterOwner : this.id,
+                                          filterId : "fts",
+                                          filterData : "AND (@bcpg\\:variantIds:\"" + p_oItem.value + "\" OR ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds)"
+                                       });
 
                            this.currentVariantNodeRef = p_oItem.value;
-                           
+
                            Dom.setStyle(this.widgets.createVariantButton, 'display', 'none');
                            Dom.setStyle(this.widgets.editVariantButton, 'display', '');
                            Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
@@ -214,16 +221,16 @@
                         onSuccess : {
                            fn : function EntityDataGrid_onActionCreate_success(response) {
 
-                             Alfresco.util.Ajax.jsonRequest({
-                                url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
-                                method : "POST",
-                                dataObj : {
-                                    items : [response.json.persistedObject]
-                                },
-                                successCallback : {
-                                   fn : function(res) {
+                              Alfresco.util.Ajax.jsonRequest({
+                                 url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
+                                 method : "POST",
+                                 dataObj : {
+                                    items : [ response.json.persistedObject ]
+                                 },
+                                 successCallback : {
+                                    fn : function(res) {
                                        var items = res.json.data.items, menuItems = [];
-                                       
+
                                        for ( var i = 0, il = items.length; i < il; i++) {
                                           menuItems.push({
                                              text : items[i].name,
@@ -231,22 +238,22 @@
                                              onclick : {
                                                 fn : instance.onMenuItemClick,
                                                 scope : instance
-                                             }});
-                                          
+                                             }
+                                          });
+
                                        }
- 
+
                                        instance.widgets.variantPicker.getMenu().addItems(menuItems);
-                                       
+
                                        Alfresco.util.PopupManager.displayMessage({
                                           text : instance.msg("message.new-variant.success")
                                        });
 
-                                   },
-                                   scope : instance
-                                }
-                             });
+                                    },
+                                    scope : instance
+                                 }
+                              });
 
-                              
                            },
                            scope : this
                         },
@@ -285,71 +292,80 @@
 
                         var editRow = new Alfresco.module.SimpleDialog(instance.id + "-editVariant");
 
-                        editRow.setOptions({
-                           width : instance.options.formWidth,
-                           templateUrl : templateUrl,
-                           actionUrl : null,
-                           destroyOnHide : true,
-                           doBeforeDialogShow : {
-                              fn : doBeforeDialogShow,
-                              scope : this
-                           },
-
-                           onSuccess : {
-                              fn : function(response) {
-                                 Alfresco.util.Ajax.jsonRequest({
-                                    url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
-                                    method : "POST",
-                                    dataObj : {
-                                        items : [response.json.persistedObject]
-                                    },
-                                    successCallback : {
-                                       fn : function(res) {
-                                           var items = res.json.data.items, menuItems = instance.widgets.variantPicker.getMenu().getItems();
-                                           
-                                           for ( var i = 0, il = items.length; i < il; i++) {
-                                            
-                                                 for (var index in menuItems) {
-                                                    if (menuItems.hasOwnProperty(index)) {
-                                                       if (menuItems[index].value === items[i].nodeRef) {
-                                                          instance.widgets.variantPicker.getMenu().removeItem(menuItems[index]);
-                                                          instance.widgets.variantPicker.getMenu().addItem({
-                                                             text : items[i].name,
-                                                             value : items[i].nodeRef,
-                                                             onclick : {
-                                                                fn : instance.onMenuItemClick,
-                                                                scope : instance
-                                                             }});
-                                                          instance.widgets.variantPicker.set("label", items[i].name);
-                                                       }
-                                     
-                                                    }
-                                              }
-                                           }
-     
-                                           instance.widgets.variantPicker.getMenu().addItems(menuItems);
-                                           
-                                           Alfresco.util.PopupManager.displayMessage({
-                                              text : instance.msg("message.edit-variant.success")
-                                           });
-
+                        editRow
+                              .setOptions(
+                                    {
+                                       width : instance.options.formWidth,
+                                       templateUrl : templateUrl,
+                                       actionUrl : null,
+                                       destroyOnHide : true,
+                                       doBeforeDialogShow : {
+                                          fn : doBeforeDialogShow,
+                                          scope : this
                                        },
-                                       scope : instance
-                                    }
-                                 });
 
-                              },
-                              scope : this
-                           },
-                           onFailure : {
-                              fn : function(response) {
-                                 Alfresco.util.PopupManager.displayMessage({
-                                    text : instance.msg("message.edit-variant.failure")
-                                 });
-                              },
-                              scope : this
-                           }
-                        }).show();
+                                       onSuccess : {
+                                          fn : function(response) {
+                                             Alfresco.util.Ajax
+                                                   .jsonRequest({
+                                                      url : Alfresco.constants.PROXY_URI + "api/forms/picker/items",
+                                                      method : "POST",
+                                                      dataObj : {
+                                                         items : [ response.json.persistedObject ]
+                                                      },
+                                                      successCallback : {
+                                                         fn : function(res) {
+                                                            var items = res.json.data.items, menuItems = instance.widgets.variantPicker
+                                                                  .getMenu().getItems();
+
+                                                            for ( var i = 0, il = items.length; i < il; i++) {
+
+                                                               for ( var index in menuItems) {
+                                                                  if (menuItems.hasOwnProperty(index)) {
+                                                                     if (menuItems[index].value === items[i].nodeRef) {
+                                                                        instance.widgets.variantPicker.getMenu()
+                                                                              .removeItem(menuItems[index]);
+                                                                        instance.widgets.variantPicker.getMenu()
+                                                                              .addItem({
+                                                                                 text : items[i].name,
+                                                                                 value : items[i].nodeRef,
+                                                                                 onclick : {
+                                                                                    fn : instance.onMenuItemClick,
+                                                                                    scope : instance
+                                                                                 }
+                                                                              });
+                                                                        instance.widgets.variantPicker.set("label",
+                                                                              items[i].name);
+                                                                     }
+
+                                                                  }
+                                                               }
+                                                            }
+
+                                                            instance.widgets.variantPicker.getMenu()
+                                                                  .addItems(menuItems);
+
+                                                            Alfresco.util.PopupManager.displayMessage({
+                                                               text : instance.msg("message.edit-variant.success")
+                                                            });
+
+                                                         },
+                                                         scope : instance
+                                                      }
+                                                   });
+
+                                          },
+                                          scope : this
+                                       },
+                                       onFailure : {
+                                          fn : function(response) {
+                                             Alfresco.util.PopupManager.displayMessage({
+                                                text : instance.msg("message.edit-variant.failure")
+                                             });
+                                          },
+                                          scope : this
+                                       }
+                                    }).show();
                      }
                   },
 
@@ -357,44 +373,46 @@
                      var instance = this, nodeRefs = [ instance.currentVariantNodeRef ];
                      if (instance.currentVariantNodeRef) {
                         var fnActionDeleteConfirm = function(items) {
-           
-                           Alfresco.util.Ajax.jsonRequest({
-                              url : Alfresco.constants.PROXY_URI + "slingshot/datalists/action/items?alf_method=delete",
-                              method : "POST",
-                              dataObj : {
-                                 nodeRefs : items
-                              },
-                              successCallback : {
-                                 fn : function(response) {
-                                     
-                                   var  menuItems = instance.widgets.variantPicker.getMenu().getItems();
-                                    
-                                    for ( var i = 0, il = items.length; i < il; i++) {
-                                       for (var index in menuItems) {
-                                          if (menuItems.hasOwnProperty(index)) {
-                                             if (menuItems[index].value === items[i]) {
-                                                instance.widgets.variantPicker.getMenu().removeItem(menuItems[index]);
-                                                break;
+
+                           Alfresco.util.Ajax
+                                 .jsonRequest({
+                                    url : Alfresco.constants.PROXY_URI + "slingshot/datalists/action/items?alf_method=delete",
+                                    method : "POST",
+                                    dataObj : {
+                                       nodeRefs : items
+                                    },
+                                    successCallback : {
+                                       fn : function(response) {
+
+                                          var menuItems = instance.widgets.variantPicker.getMenu().getItems();
+
+                                          for ( var i = 0, il = items.length; i < il; i++) {
+                                             for ( var index in menuItems) {
+                                                if (menuItems.hasOwnProperty(index)) {
+                                                   if (menuItems[index].value === items[i]) {
+                                                      instance.widgets.variantPicker.getMenu().removeItem(
+                                                            menuItems[index]);
+                                                      break;
+                                                   }
+                                                }
+                                                instance.widgets.variantPicker.set("label", instance
+                                                      .msg("picker.variant.choose"));
+
+                                                Dom.setStyle(instance.widgets.createVariantButton, 'display', '');
+                                                Dom.setStyle(instance.widgets.editVariantButton, 'display', 'none');
+                                                Dom.setStyle(instance.widgets.deleteVariantButton, 'display', 'none');
                                              }
                                           }
-                                          instance.widgets.variantPicker.set("label", instance.msg("picker.variant.choose"));
-                                          
-                                          Dom.setStyle(instance.widgets.createVariantButton, 'display', '');
-                                          Dom.setStyle(instance.widgets.editVariantButton, 'display', 'none');
-                                          Dom.setStyle(instance.widgets.deleteVariantButton, 'display', 'none');
-                                    }
-                                    }
-                                    
-                                     Alfresco.util.PopupManager.displayMessage({
-                                        text : instance.msg("message.delete-variant.success")
-                                     });
 
-                                 },
-                                 scope : instance
-                              }
-                           });
+                                          Alfresco.util.PopupManager.displayMessage({
+                                             text : instance.msg("message.delete-variant.success")
+                                          });
+
+                                       },
+                                       scope : instance
+                                    }
+                                 });
                         };
-                           
 
                         Alfresco.util.PopupManager.displayPrompt({
                            title : instance.msg("message.confirm.delete.title", nodeRefs.length),

@@ -101,6 +101,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
 					<show id="mpm:plStep" />
 					<show id="mpm:plProduct" />	
 					<show id="mpm:plQty" />										
@@ -109,6 +110,9 @@
 					<show id="mpm:plRateResource" />
 					<show id="mpm:plRateProduct" />					
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>

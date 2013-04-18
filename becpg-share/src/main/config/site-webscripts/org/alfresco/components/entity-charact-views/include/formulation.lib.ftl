@@ -38,7 +38,8 @@
 			       <#if extra["itemType"]??>
 			       	itemType : "${extra["itemType"]?string}",
 			       </#if>
-			       saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save"
+			       saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
+			       hiddenColumns : ["prop_bcpg_depthLevel"]
 			   }).setMessages(${messages});
 			   
 </@>

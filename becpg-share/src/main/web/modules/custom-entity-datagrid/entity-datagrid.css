@@ -412,3 +412,21 @@
 	height: 150px;
 	overflow:auto;
 }
+
+
+.datagrid span.variant-common {
+
+}
+
+.datagrid span.variant {
+	background: url(../../components/images/enabled-indicator-off-16.png) no-repeat;
+	padding-left: 14px;
+}
+
+
+.datagrid span.variant-default {
+	background: url(../../components/images/enabled-indicator-on-16.png)	no-repeat;
+	padding-left: 14px;
+}
+
+

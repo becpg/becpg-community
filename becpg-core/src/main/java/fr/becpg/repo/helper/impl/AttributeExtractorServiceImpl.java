@@ -206,9 +206,24 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
-			QName type = nodeService.getType((NodeRef) v);
-			value = extractPropName(type,(NodeRef) v);
+			if (!propertyDef.isMultiValued()){
+				QName type = nodeService.getType((NodeRef) v);
+				value = extractPropName(type,(NodeRef) v);
+			} else {
+				List<NodeRef> values = (List<NodeRef>) v;
 
+				for (NodeRef tempValue : values) {
+					if (value != null) {
+						value += RepoConsts.LABEL_SEPARATOR;
+					} else {
+						value="";
+					}
+					
+					QName type = nodeService.getType(tempValue);
+					value += extractPropName(type,tempValue);
+				}
+			}
+	
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
 			value = v.toString();
