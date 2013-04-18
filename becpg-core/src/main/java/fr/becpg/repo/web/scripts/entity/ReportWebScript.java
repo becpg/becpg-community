@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.web.scripts.entity;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.cmr.lock.LockService;
@@ -11,6 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -85,6 +87,8 @@ public class ReportWebScript extends AbstractWebScript {
 			}
 
 			if (generateReport) {
+				// #366 : force to use server locale for mlText fields 
+				I18NUtil.setLocale(Locale.getDefault());
 				entityReportService.generateReport(nodeRef);
 			}
 

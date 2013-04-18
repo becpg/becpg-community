@@ -25,6 +25,8 @@ public enum ProductUnit  {
 	/** The m2. */
 	m2,
 	
+	m3,
+	
 	h;
 	
 

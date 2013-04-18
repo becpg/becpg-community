@@ -629,6 +629,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(RepoConsts.PATH_PLANTS,BeCPGModel.TYPE_PLANT);
 		entityLists.put(RepoConsts.PATH_CERTIFICATIONS,BeCPGModel.TYPE_CERTIFICATION);
 		entityLists.put(RepoConsts.PATH_APPROVALNUMBERS,BeCPGModel.TYPE_APPROVAL_NUMBER);
+		entityLists.put(RepoConsts.PATH_LABELCLAIMS,BeCPGModel.TYPE_LABEL_CLAIM);
 		entityLists.put(RepoConsts.PATH_PROCESSSTEPS,MPMModel.TYPE_PROCESSSTEP);
 		entityLists.put(RepoConsts.PATH_VARIANT_CHARACTS,VariantModel.TYPE_CHARACT);
 
