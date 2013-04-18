@@ -173,4 +173,36 @@ if (beCPG.module.EntityDataGridRenderers) {
          return '<div class="scoreList-screening">' + data.displayValue + '</div>';
       }
    });
+
+   YAHOO.Bubbling
+         .fire(
+               "registerDataGridRenderer",
+               {
+                  propertyName : "bcpg:variantIds",
+                  renderer : function(oRecord, data, label, scope) {
+                     var variants = data.value, isInDefault = !variants || variants.length < 1;
+                     
+                     if(isInDefault){
+                        return "<span  class='variant-common'>&nbsp;</span>";
+                     }
+                     
+                     for( var j in variants) {
+                        for( var i in scope.entity.variants) {
+                           if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
+                              isInDefault = true
+                              break;
+                           }
+                        }
+                     }
+
+                     if (isInDefault) {
+                        return "<span title=\""+data.displayValue+"\" class='variant-default'>&nbsp;</span>";
+                     }
+
+                     return "<span title=\""+data.displayValue+"\" class='variant'>&nbsp;</span>";
+
+                  }
+
+               });
+
 }

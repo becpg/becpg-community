@@ -22,3 +22,23 @@
 .yui-skin-lightTheme  .datalist-toolbar div.variantPicker .yui-button  {
 	margin: 0px;
 }
+
+.datalist-toolbar span.variant-all {
+	
+}
+
+.datalist-toolbar span.variant-common {
+	
+}
+
+.datalist-toolbar  span.variant {
+	background: url(../../components/images/enabled-indicator-off-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+
+.datalist-toolbar  span.variant-default {
+	background: url(../../components/images/enabled-indicator-on-16.png) no-repeat;
+	padding-left: 20px;
+}

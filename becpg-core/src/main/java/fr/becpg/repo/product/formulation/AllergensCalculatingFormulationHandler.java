@@ -21,6 +21,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.variant.model.VariantDataItem;
 
 /**
  * The Class AllergensCalculatingVisitor.
@@ -67,7 +68,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			NodeRef part = compoItem.getProduct();
 			if (!visitedProducts.contains(part)) {
-				visitPart(part, formulatedProduct.getAllergenList(), retainNodes);
+				visitPart(compoItem, part, formulatedProduct.getAllergenList(), retainNodes);
 				visitedProducts.add(part);
 			}
 		}
@@ -80,7 +81,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				if (resource != null && !visitedProducts.contains(resource)) {
 					// TODO : resource is not a product => il faudrait déplacer
 					// les méthodes loadAllergenList ailleurs que dans
-					visitPart(resource, formulatedProduct.getAllergenList(), retainNodes);
+					visitPart(processItem, resource, formulatedProduct.getAllergenList(), retainNodes);
 					visitedProducts.add(resource);
 				}
 			}
@@ -98,7 +99,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 * @param allergenMap
 	 *            the allergen map
 	 */
-	private void visitPart(NodeRef part, List<AllergenListDataItem> allergenList, List<AllergenListDataItem> retainNodes) {
+	private void visitPart(VariantDataItem variantDataItem, NodeRef part, List<AllergenListDataItem> allergenList, List<AllergenListDataItem> retainNodes) {
 
 		ProductData productData = (ProductData) alfrescoRepository.findOne(part);
 
@@ -121,6 +122,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				}
 
 				if(!retainNodes.contains(newAllergenListDataItem)){
+					//Reset existing variants
+					newAllergenListDataItem.setVariants(null);
 					retainNodes.add(newAllergenListDataItem);
 				}				
 
@@ -166,6 +169,21 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 						}
 					}
+					
+					
+					//Add variants
+					if(variantDataItem.getVariants()!=null){
+						if(newAllergenListDataItem.getVariants()!=null){
+							for(NodeRef variant : variantDataItem.getVariants()){
+								if(!newAllergenListDataItem.getVariants().contains(variant)){
+									newAllergenListDataItem.getVariants().add(variant);
+								}
+							}
+						} else {
+							newAllergenListDataItem.setVariants(variantDataItem.getVariants());
+						}
+					}
+		
 				}				
 			}
 		}

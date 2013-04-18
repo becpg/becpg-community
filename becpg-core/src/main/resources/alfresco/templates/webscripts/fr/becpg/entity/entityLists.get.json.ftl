@@ -75,7 +75,12 @@
          	 <#list entity.childAssocs["bcpg:variants"] as variant>
          	 	{
          	 	 "nodeRef" : "${variant.nodeRef}",
-         	    "name": "${variant.name}"
+         	    "name": "${variant.name}",
+         	    <#if variant.properties["bcpg:isDefaultVariant"]??>
+         	     "isDefaultVariant" :${variant.properties["bcpg:isDefaultVariant"]?string}
+         	    <#else>
+         	     "isDefaultVariant" : false
+         	    </#if>
          	 	}
          		<#if variant_has_next>,</#if></#list>]
          </#if>

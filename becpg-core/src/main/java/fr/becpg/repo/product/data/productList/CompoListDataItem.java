@@ -13,11 +13,10 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
-public class CompoListDataItem extends AbstractEffectiveDataItem {
+public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  {
 
 	
 	private Integer depthLevel;
@@ -60,7 +59,7 @@ public class CompoListDataItem extends AbstractEffectiveDataItem {
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListQty")
 	public Double getQty() {

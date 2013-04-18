@@ -13,11 +13,10 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:allergenList")
-public class AllergenListDataItem extends AbstractManualDataItem {
+public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 
 	
 	private Boolean voluntary = false;
