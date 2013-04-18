@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<parent>
+		<groupId>fr.becpg</groupId>
+		<artifactId>alfresco-patch</artifactId>
+		<version>1.5.0</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>alfresco-repository</artifactId>
+	<version>${alfresco.version}</version>
+	<name>alfresco-repository-patch</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<!-- alfresco -->
+		 <dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-repository</artifactId>
+            <version>${alfresco.version}</version>
+            <exclusions>
+			        <exclusion>
+			            <groupId>*</groupId>
+			            <artifactId>*</artifactId>
+			        </exclusion>
+			    </exclusions>
+        </dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+						  <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
+		              <shadedArtifactAttached>false</shadedArtifactAttached>
+		              <createDependencyReducedPom>false</createDependencyReducedPom>
+							<artifactSet>
+								<includes>
+									<include>org.alfresco:alfresco-repository</include>
+								</includes>
+							</artifactSet>
+							<filters>
+								<filter>
+									<artifact>org.alfresco:alfresco-repository</artifact>
+									<excludes>																	
+										<exclude>org/alfresco/repo/forms/processor/node/TypeFormProcessor**</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

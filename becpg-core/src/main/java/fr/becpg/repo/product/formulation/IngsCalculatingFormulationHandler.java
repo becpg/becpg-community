@@ -26,7 +26,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.CompositeIng;
-import fr.becpg.repo.product.data.ing.Ing;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
@@ -36,6 +35,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * The Class IngsCalculatingVisitor.
@@ -77,7 +77,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		logger.debug("Calculate ingredient list");
 		
 		// no compo => no formulation
-		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)){			
+		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){			
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -133,7 +133,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void calculateIL(ProductData formulatedProduct, List<ProductData> productSpecicationDataList) throws FormulateException{
 	
-		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE);
+		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT);
 		
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
 		Map<NodeRef, Double> totalQtyIngMap = new HashMap<NodeRef, Double>();
@@ -414,7 +414,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private List<CompositeIng> calculateILL(ProductData productData) throws FormulateException{
 		
-		List<CompoListDataItem> compoList = productData.getCompoList(EffectiveFilters.EFFECTIVE);
+		List<CompoListDataItem> compoList = productData.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT);
 		List<CompositeIng> compositeIngList = new ArrayList<CompositeIng>();
 				
 		CompositeIng defaultCompositeIng = new CompositeIng(null, null, null);		

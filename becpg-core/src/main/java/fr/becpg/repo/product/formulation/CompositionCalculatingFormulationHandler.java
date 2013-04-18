@@ -15,6 +15,7 @@ import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 @Service
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
@@ -36,7 +37,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		logger.debug("Composition calculating visitor");		
 		
 		// no compo => no formulation
-		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.ALL)){			
+		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)){			
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -52,14 +53,18 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			netWeight = qty * density;
 		}
 		
-		logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL));
-		logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
+		if(logger.isDebugEnabled()){
+			logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
+			logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
+		}
 		
-		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));		
+		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));		
 		visitChildren(netWeight, netWeight, composite);
 		
-		logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL));
-		logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
+		if(logger.isDebugEnabled()){
+			logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
+			logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
+		}
 		
 		// Yield
 		Double qtyUsed = calculateQtyUsedBeforeProcess(composite);

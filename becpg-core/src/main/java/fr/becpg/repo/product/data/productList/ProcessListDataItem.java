@@ -9,11 +9,10 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
 @AlfType
 @AlfQname(qname = "mpm:processList")
-public class ProcessListDataItem extends AbstractEffectiveDataItem {
+public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem {
 	
 	private Double qty = 0d;	
 	private Double qtyResource = 0d;

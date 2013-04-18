@@ -14,7 +14,8 @@
 
             Alfresco.util.Ajax.request({
                method : Alfresco.util.Ajax.GET,
-               url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/","") + "/calculatewused",
+               url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/",
+                     "") + "/calculatewused",
                successCallback : {
                   fn : function EntityDataListthis_onECOCalculateWUsed_success(response) {
                      Alfresco.util.PopupManager.displayMessage({
@@ -249,9 +250,7 @@
                   Alfresco.util.PopupManager.displayMessage({
                      text : scope.msg("message.generate-report.success")
                   });
-
                   window.location = url;
-
                },
                scope : scope
             },
@@ -266,6 +265,36 @@
          });
 
       };
+
+      YAHOO.Bubbling.fire("registerToolbarButtonAction",{
+            actionName : "variant-picker",
+            right : true,
+            evaluate : function(asset, entity) {
+               
+              return entity!=null  && entity.userAccess.edit && (beCPG.util.contains(entity.aspects, "bcpg:entityVariantAspect")
+                     || (asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") ));
+             
+            },
+            createWidget : function(containerDiv, instance) {
+
+               var divEl = document.createElement("div");
+
+               containerDiv.appendChild(divEl);
+
+               Dom.setAttribute(divEl, "id", instance.id + "-variantPicker");
+               
+               Dom.addClass(divEl, "variantPicker");
+               
+               var picker = new beCPG.component.VariantPicker(instance.id + "-variantPicker").setOptions({
+                  entityNodeRef : instance.options.entityNodeRef,
+                  entity : instance.entity,
+                  containerDiv : divEl,
+                  toolBarInstance : instance
+               });
+
+               return picker;
+            }
+         });
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "view-details",

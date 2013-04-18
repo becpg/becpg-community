@@ -13,8 +13,21 @@
 	<name>Alfresco core Patch</name>
 	<description>AMP patch for Alfresco core</description>
 	<dependencies>
+
 		<!-- patch -->
-		 <dependency>
+		<dependency>
+            <groupId>fr.becpg</groupId>
+            <artifactId>alfresco-repository</artifactId>
+            <version>${alfresco.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.alfresco</groupId>
+            		<artifactId>alfresco-repository</artifactId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+		
+		<dependency>
             <groupId>fr.becpg</groupId>
             <artifactId>alfresco-remote-api</artifactId>
             <version>${alfresco.version}</version>
@@ -25,5 +38,7 @@
             	</exclusion>
             </exclusions>
         </dependency>
+        
 	</dependencies>
+
 </project>

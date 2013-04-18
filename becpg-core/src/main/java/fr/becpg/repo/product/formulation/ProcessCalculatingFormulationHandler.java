@@ -9,6 +9,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 @Service
 public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
@@ -21,16 +22,16 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		logger.debug("process calculating visitor");
 		
 		// no compo => no formulation
-		if(!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL)){			
+		if(!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)){			
 			logger.debug("no process => no formulation");
 			return true;
 		}
 		
 		// visit resources and steps from the end to the beginning
 		Double minRateProcess = null;
-		for(int z_idx=formulatedProduct.getProcessList(EffectiveFilters.ALL).size()-1 ; z_idx>=0 ; z_idx--){
+		for(int z_idx=formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT).size()-1 ; z_idx>=0 ; z_idx--){
 			
-			ProcessListDataItem p = formulatedProduct.getProcessList(EffectiveFilters.ALL).get(z_idx);
+			ProcessListDataItem p = formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT).get(z_idx);
 			
 			if(p.getRateResource() != null && p.getQtyResource() != null){
 				

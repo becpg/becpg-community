@@ -3,7 +3,7 @@
 
 <beans>
 
-	<bean id="lifecycle.workflowBootstrap" parent="workflowDeployer">
+	<bean id="beCPGWorkflowDeployer" parent="workflowDeployer">
 		<property name="workflowDefinitions">
 			<list>
 				<props>
