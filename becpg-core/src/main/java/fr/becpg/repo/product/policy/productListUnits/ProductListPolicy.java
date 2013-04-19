@@ -59,11 +59,15 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_NUTLIST, BeCPGModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(
 				this, "onCreateAssociation"));
+		
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
+				BeCPGModel.TYPE_LABELCLAIMLIST, BeCPGModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_PRODUCT, new JavaBehaviour(this, "onUpdateProperties"));
 
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_NUTLIST);
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_LABELCLAIMLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PRODUCT);
 
 		// transaction listeners
@@ -251,6 +255,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							// nutListGroup
 							String nutGroup = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_NUTGROUP);
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_GROUP, nutGroup);
+						} else if(type.equals(BeCPGModel.TYPE_LABELCLAIMLIST)){
+							
+							// labelClaimType
+							String labelClaimType = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_LABEL_CLAIM_TYPE);
+							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_LCL_TYPE, labelClaimType);
 						}
 					}
 				}

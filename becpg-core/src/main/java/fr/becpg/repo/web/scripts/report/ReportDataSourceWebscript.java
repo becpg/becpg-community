@@ -1,8 +1,10 @@
 package fr.becpg.repo.web.scripts.report;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -38,6 +40,8 @@ public class ReportDataSourceWebscript extends AbstractWebScript {
 
 		    NodeRef entityNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));	
 	    	
+		    // #366 : force to use server locale for mlText fields 
+		 	I18NUtil.setLocale(Locale.getDefault());
 			
 			res.setContentType("application/xml");
             res.setContentEncoding("UTF-8");

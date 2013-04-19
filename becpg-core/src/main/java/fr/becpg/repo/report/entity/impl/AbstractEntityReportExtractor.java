@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -15,6 +16,9 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
@@ -45,6 +49,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String TAG_DATALISTS = "dataLists";
 	protected static final String TAG_ATTRIBUTES = "attributes";
 	protected static final String TAG_ATTRIBUTE = "attribute";
+	protected static final String TAG_VERSIONS = "versions";
+	protected static final String TAG_VERSION = "version";
 	protected static final String ATTR_SET = "set";
 	protected static final String ATTR_NAME = "name";
 	protected static final String ATTR_VALUE = "value";
@@ -77,7 +83,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	
 	protected EntityService entityService;
 
-	
+	protected VersionService versionService;
 
 	/**
 	 * @param nodeService the nodeService to set
@@ -118,6 +124,11 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
+
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
@@ -175,6 +186,9 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
 		loadDataLists(entityNodeRef, dataListsElt);
+		
+		// render versions
+		loadVersions(entityNodeRef, entityElt);
 
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(extractImages(entityNodeRef, entityElt));
@@ -347,4 +361,23 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase();
 	}
 	
+	protected void loadVersions(NodeRef entityNodeRef, Element entityElt) {
+		
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);		
+		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
+		
+		if(versionHistory!=null && versionHistory.getAllVersions() != null){
+			
+			for(Version version : versionHistory.getAllVersions()){
+				Element versionElt = versionsElt.addElement(TAG_VERSION);
+				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());			
+				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
+				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
+				
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
+						attributeExtractorService.getPropertyFormats().getDateFormat().format(version.getFrozenModifiedDate()));
+			}
+		}
+		
+	}
 }
