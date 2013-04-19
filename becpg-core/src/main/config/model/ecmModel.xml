@@ -13,6 +13,7 @@
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
 	
 	<!-- Introduction of new namespaces defined by this model -->
@@ -98,6 +99,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>rep:reportEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 				
@@ -237,6 +239,7 @@
 						<many>false</many>
 					</target>
 				</association>
+				<!-- Deprecated -->
 				<association name="ecm:culSimulationItem">
 					<source>
 						<mandatory>true</mandatory>
@@ -317,6 +320,7 @@
 <!-- 		</aspect> -->
 
 		<!-- simulation entity aspect -->
+		<!-- Deprecated -->
 		<aspect name="ecm:simulationEntityAspect">		
 			<associations>
 				<association name="ecm:simulationSourceItem">

@@ -26,6 +26,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Repository;
 
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -104,35 +105,62 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Override
 	public T save(T entity) {
 
-		if (entity.getNodeRef() == null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Create instanceOf :" + entity.getClass().getName());
+		if (!L2CacheSupport.isCacheOnlyEnable()) {
+			if (entity.getNodeRef() == null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Create instanceOf :" + entity.getClass().getName());
+				}
+				Map<QName, Serializable> properties = extractProperties(entity);
+
+				String name = entity.getName();
+				if (entity.getName() == null) {
+					name = UUID.randomUUID().toString();
+				}
+
+				properties.put(ContentModel.PROP_NAME, name);
+
+				NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), repositoryEntityDefReader.getType(entity.getClass()),
+						properties).getChildRef();
+				entity.setNodeRef(productNodeRef);
+
+			} else {
+				logger.debug("Update instanceOf :" + entity.getClass().getName());
+
+				nodeService.addProperties(entity.getNodeRef(), extractProperties(entity));
 			}
-			Map<QName, Serializable> properties = extractProperties(entity);
 
-			String name = entity.getName();
-			if (entity.getName() == null) {
-				name = UUID.randomUUID().toString();
-			}
-
-			properties.put(ContentModel.PROP_NAME, name);
-
-			NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), repositoryEntityDefReader.getType(entity.getClass()), properties)
-					.getChildRef();
-			entity.setNodeRef(productNodeRef);
+			saveAssociations(entity);
+			saveDataLists(entity);
+			saveDataListViews(entity);
+			saveAspects(entity);
 
 		} else {
-			logger.debug("Update instanceOf :" + entity.getClass().getName());
-
-			nodeService.addProperties(entity.getNodeRef(), extractProperties(entity));
+			if (entity.getNodeRef() == null) {
+				entity.setNodeRef(L2CacheSupport.generateNodeRef());
+			}
+			
+			if(logger.isInfoEnabled()){
+				logger.info("Save entity "+entity.getName()+" only on memory");
+			}
 		}
 
-		saveAssociations(entity);
-		saveDataLists(entity);
-		saveDataListViews(entity);
+		if (L2CacheSupport.isThreadCacheEnable()) {
+			L2CacheSupport.getCurrentThreadCache().put(entity.getNodeRef(), entity);
+		}
 
 		return entity;
+	}
+
+	// For now only add aspect
+	private void saveAspects(T entity) {
+		if (entity.getAspects() != null) {
+			for (QName aspect : entity.getAspects()) {
+				if (!nodeService.hasAspect(entity.getNodeRef(), aspect)) {
+					nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<QName, Serializable>());
+				}
+			}
+		}
 	}
 
 	private Map<QName, Serializable> extractProperties(T entity) {
@@ -140,18 +168,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
 
 		for (Map.Entry<QName, T> prop : repositoryEntityDefReader.getEntityProperties(entity).entrySet()) {
-			NodeRef assocNodeRef = null;
-			if (prop.getValue() != null) {
-				if (prop.getValue().getNodeRef() == null && prop.getValue().getParentNodeRef() == null) {
-					prop.getValue().setParentNodeRef(entity.getParentNodeRef());
-				}
-				save(prop.getValue());
-				assocNodeRef = prop.getValue().getNodeRef();
-			}
-
-			properties.put(prop.getKey(), assocNodeRef);
+			properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
 		}
-
 		return properties;
 
 	}
@@ -159,15 +177,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private void saveAssociations(T entity) {
 
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
-			NodeRef assocNodeRef = null;
-			if (association.getValue() != null) {
-				if (association.getValue().getNodeRef() == null && association.getValue().getParentNodeRef() == null) {
-					association.getValue().setParentNodeRef(entity.getParentNodeRef());
-				}
-				save(association.getValue());
-				assocNodeRef = association.getValue().getNodeRef();
-			}
-			associationService.update(entity.getNodeRef(), association.getKey(), assocNodeRef);
+			associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
 		}
 		for (Map.Entry<QName, NodeRef> association : repositoryEntityDefReader.getSingleAssociations(entity).entrySet()) {
 			associationService.update(entity.getNodeRef(), association.getKey(), association.getValue());
@@ -175,6 +185,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		for (Map.Entry<QName, List<NodeRef>> association : repositoryEntityDefReader.getMultipleAssociations(entity).entrySet()) {
 			associationService.update(entity.getNodeRef(), association.getKey(), association.getValue());
 		}
+	}
+
+	private NodeRef getOrCreateNodeRef(Map.Entry<QName, T> entry, T entity) {
+		if (entry.getValue() != null) {
+			if (entry.getValue().getNodeRef() == null) {
+				if (entry.getValue().getParentNodeRef() == null) {
+					entry.getValue().setParentNodeRef(entity.getParentNodeRef());
+				}
+				save(entry.getValue());
+			}
+			return entry.getValue().getNodeRef();
+		}
+		return null;
 	}
 
 	private void saveDataLists(T entity) {
@@ -286,15 +309,15 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			throw new IllegalArgumentException("NodeRef cannot be null ");
 		}
 
-		return findOne(id, new HashMap<NodeRef, T>());
+		return findOne(id, L2CacheSupport.getCurrentThreadCache());
 
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private T findOne(NodeRef id, Map<NodeRef, T> caches) {
+	private T findOne(NodeRef id, Map<NodeRef, RepositoryEntity> caches) {
 
 		if (caches.containsKey(id)) {
-			return caches.get(id);
+			return (T) caches.get(id);
 		}
 
 		QName type = nodeService.getType(id);
@@ -348,6 +371,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			}
 
+			loadAspects(entity);
+
 			caches.put(id, entity);
 
 			return entity;
@@ -357,6 +382,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			throw new UnsupportedOperationException(e);
 		}
+	}
+
+	private void loadAspects(T entity) {
+		entity.setAspects(nodeService.getAspects(entity.getNodeRef()));
+
 	}
 
 	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType) throws InstantiationException, IllegalAccessException,
@@ -400,8 +430,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return dataList;
 	}
 
-	private void loadAssoc(T entity, PropertyDescriptor pd, Method readMethod, Map<NodeRef, T> caches, boolean multiple) throws IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException {
+	private void loadAssoc(T entity, PropertyDescriptor pd, Method readMethod, Map<NodeRef, RepositoryEntity> caches, boolean multiple) throws IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
 		if (multiple) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("read multi assoc : " + pd.getName());
@@ -419,7 +449,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				if (caches.containsKey(assocRef)) {
 					PropertyUtils.setProperty(entity, pd.getName(), caches.get(assocRef));
 				} else {
-					PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef));
+					PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef, caches));
 				}
 			} else {
 				PropertyUtils.setProperty(entity, pd.getName(), assocRef);
@@ -428,8 +458,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void loadProperties(T entity, PropertyDescriptor pd, Method readMethod, Map<QName, Serializable> properties, Map<NodeRef, T> caches) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	private void loadProperties(T entity, PropertyDescriptor pd, Method readMethod, Map<QName, Serializable> properties, Map<NodeRef, RepositoryEntity> caches)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (logger.isTraceEnabled()) {
 			logger.trace("read property : " + pd.getName());
 		}
@@ -445,7 +475,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (caches.containsKey(prop)) {
 				PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));
 			} else {
-				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop));
+				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
 			}
 		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
 			PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));

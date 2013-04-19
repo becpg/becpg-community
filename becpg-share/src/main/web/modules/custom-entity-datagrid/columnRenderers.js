@@ -6,7 +6,8 @@ if (beCPG.module.EntityDataGridRenderers) {
                {
                   propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity",
                         "bcpg:resourceProduct", "cm:content_bcpg:costDetailsListSource",
-                        "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct" ],
+                        "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct"
+                        , "ecm:wulSourceItem", "ecm:rlSourceItem", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culSourceItem", "ecm:cclSourceItem"],
                   renderer : function(oRecord, data, label, scope) {
 
                      var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
@@ -27,7 +28,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                         }
                      }
 
-                     if (label == "bcpg:compoListProduct") {
+                     if (label == "bcpg:compoListProduct" || label == "ecm:wulSourceItem") {
 
                         var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
                         return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">' + Alfresco.util
@@ -179,9 +180,13 @@ if (beCPG.module.EntityDataGridRenderers) {
                "registerDataGridRenderer",
                {
                   propertyName : "bcpg:variantIds",
-                  renderer : function(oRecord, data, label, scope) {
+                  renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
                      var variants = data.value, isInDefault = !variants || variants.length < 1;
                      
+                     Dom.setStyle(elCell, "width", "16px");
+                     Dom.setStyle(elCell.parentNode, "width", "16px");
+                     Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                      
                      if(isInDefault){
                         return "<span  class='variant-common'>&nbsp;</span>";
                      }

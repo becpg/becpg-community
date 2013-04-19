@@ -25,7 +25,6 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	private Boolean treated;
 	private NodeRef sourceItem;
 	private NodeRef targetItem;
-	private NodeRef simulationItem;
 	
 	@AlfProp
 	@AlfQname(qname="ecm:culRevision")
@@ -75,20 +74,13 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	public void setTargetItem(NodeRef targetItem) {
 		this.targetItem = targetItem;
 	}
-	@AlfSingleAssoc
-	@AlfQname(qname="ecm:culSimulationItem")
-	public NodeRef getSimulationItem() {
-		return simulationItem;
-	}
-	public void setSimulationItem(NodeRef simulationItem) {
-		this.simulationItem = simulationItem;
-	}
+
 	
 	
 	public ChangeUnitDataItem() {
 		super();
 	}
-	public ChangeUnitDataItem(NodeRef nodeRef, RevisionType revision, RequirementType reqType, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem, NodeRef simulationItem){
+	public ChangeUnitDataItem(NodeRef nodeRef, RevisionType revision, RequirementType reqType, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem){
 		
 		setNodeRef(nodeRef);
 		setRevision(revision);
@@ -97,7 +89,6 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 		setTreated(treated);
 		setSourceItem(sourceItem);
 		setTargetItem(targetItem);
-		setSimulationItem(simulationItem);
 	}
 	@Override
 	public int hashCode() {
@@ -106,7 +97,6 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 		result = prime * result + ((reqDetails == null) ? 0 : reqDetails.hashCode());
 		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
 		result = prime * result + ((revision == null) ? 0 : revision.hashCode());
-		result = prime * result + ((simulationItem == null) ? 0 : simulationItem.hashCode());
 		result = prime * result + ((sourceItem == null) ? 0 : sourceItem.hashCode());
 		result = prime * result + ((targetItem == null) ? 0 : targetItem.hashCode());
 		result = prime * result + ((treated == null) ? 0 : treated.hashCode());
@@ -130,11 +120,6 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 			return false;
 		if (revision != other.revision)
 			return false;
-		if (simulationItem == null) {
-			if (other.simulationItem != null)
-				return false;
-		} else if (!simulationItem.equals(other.simulationItem))
-			return false;
 		if (sourceItem == null) {
 			if (other.sourceItem != null)
 				return false;
@@ -155,7 +140,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	@Override
 	public String toString() {
 		return "ChangeUnitDataItem [revision=" + revision + ", reqType=" + reqType + ", reqDetails=" + reqDetails + ", treated=" + treated + ", sourceItem=" + sourceItem
-				+ ", targetItem=" + targetItem + ", simulationItem=" + simulationItem + "]";
+				+ ", targetItem=" + targetItem + "]";
 	}
 	
 	

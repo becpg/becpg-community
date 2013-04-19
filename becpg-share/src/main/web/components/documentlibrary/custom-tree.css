@@ -67,6 +67,10 @@
 }
 
 
+ .treeview  span.ygtvlabel.ecm-changeOrder {
+	background-image: url(../images/filetypes/generic-changeOrder-16.png) ;
+}
+
  .treeview  span.ygtvlabel.pjt-project,
  .treeview  span.ygtvlabel.bcpg-finishedProduct,
  .treeview  span.ygtvlabel.bcpg-packagingKit,
@@ -81,7 +85,8 @@
  .treeview  span.ygtvlabel.qa-qualityControl,
  .treeview  span.ygtvlabel.qa-nc,
  .treeview  span.ygtvlabel.qa-controlPlan,
- .treeview  span.ygtvlabel.qa-controlPoint
+ .treeview  span.ygtvlabel.qa-controlPoint,
+ .treeview  span.ygtvlabel.ecm-changeOrder
   {
 	background-position:  left bottom;
 	background-repeat: no-repeat;

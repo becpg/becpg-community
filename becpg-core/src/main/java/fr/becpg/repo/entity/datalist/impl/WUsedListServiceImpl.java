@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.WUsedListService;
@@ -70,7 +69,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 				NodeRef rootNodeRef = entityListDAO.getEntity(nodeRef);				
 				
 				//we don't display history version and simulation entities
-				if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && !nodeService.hasAspect(rootNodeRef, ECMModel.ASPECT_SIMULATION_ENTITY)){
+				if(!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)  && permissionService.hasReadPermission(rootNodeRef)  == AccessStatus.ALLOWED){
 					
 					MultiLevelListData multiLevelListData = null;						
 					// next level
@@ -84,7 +83,6 @@ public class WUsedListServiceImpl implements WUsedListService {
 				}
 			}			
 		}
-		
 		return ret;
 	}
 	

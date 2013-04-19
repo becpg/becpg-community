@@ -1,6 +1,10 @@
 package fr.becpg.repo.repository.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -13,6 +17,8 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	protected NodeRef parentNodeRef;
 	
 	protected String name;
+	
+	protected Set<QName> aspects = new HashSet<QName>();
 	
 	
 	public BeCPGDataObject() {
@@ -49,6 +55,15 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 
 	public void setParentNodeRef(NodeRef parentNodeRef) {
 		this.parentNodeRef = parentNodeRef;
+	}
+
+	
+	public Set<QName> getAspects() {
+		return aspects;
+	}
+
+	public void setAspects(Set<QName> aspects) {
+		this.aspects = aspects;
 	}
 
 	@Override

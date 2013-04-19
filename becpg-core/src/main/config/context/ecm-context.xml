@@ -12,27 +12,21 @@
     	<property name="productService" ref="productService"/>
     	<property name="alfrescoRepository" ref="alfrescoRepository" />
     	<property name="dictionaryService" ref="dictionaryService"/>
-    	<property name="repoService" ref="repoService"/>
-    	<property name="ecoReportService" ref="ecoReportService"/>		
 	</bean>
 	
-	<!-- policy -->
-   
-   <bean id="ecoPolicy" class="fr.becpg.repo.ecm.policy.ECOPolicy" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="nodeService" ref="nodeService" />		
-		<property name="ecoService" ref="ecoService"/>	
-  </bean>
+ 
   
-  <!-- Report service -->
-   
-   <bean id="ecoReportService" class="fr.becpg.repo.ecm.impl.ECOReportServiceImpl">
-		<property name="reportTplService" ref="reportTplService" />
-		<property name="nodeService" ref="nodeService" />		
-		<property name="contentService" ref="contentService"/>
-		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="beCPGReportEngine" ref="beCPGReportEngine"/>	
-  </bean>
+   <!-- Extractor -->
+	<bean id="ecoReportExtractor" class="fr.becpg.repo.ecm.report.ECOReportExtractor">
+		<property name="nodeService" ref="nodeService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />		
+	</bean>	
+	
+	<bean id="defaultECOExtractorPlugin" class="fr.becpg.repo.report.entity.ExtractorPlugin" init-method="init">
+		<property name="entityReportService" ref="entityReportService"/>
+		<property name="extractor" ref="ecoReportExtractor"/>
+		<property name="typeName" value="changeOrder"/>
+	</bean>
   
   <!-- ChangeOrder Webscript -->
   <bean id="webscript.fr.becpg.ecm.changeOrder.get" class="fr.becpg.repo.web.scripts.ecm.ChangeOrderWebScript" parent="webscript">

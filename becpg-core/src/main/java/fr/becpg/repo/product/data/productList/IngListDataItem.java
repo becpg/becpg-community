@@ -16,7 +16,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:ingList")
-public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem{
+public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem {
 
 	
 	private Double qtyPerc = 0d;

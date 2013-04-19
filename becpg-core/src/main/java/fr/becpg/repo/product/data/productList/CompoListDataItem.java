@@ -8,6 +8,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.data.hierarchicalList.Leaf;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -16,7 +17,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
-public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  {
+public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem {
 
 	
 	private Integer depthLevel;
@@ -259,56 +260,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  {
 		this.parent = c.parent;
 	}
 	
-	public static Composite<CompoListDataItem> getHierarchicalCompoList(List<CompoListDataItem> items){
-		
-		Composite<CompoListDataItem> composite = new Composite<CompoListDataItem>();
-		if(!items.isEmpty()){
-			loadChildren(composite, 1, 0, items);
-		}
-		return composite;
-	}
-	
-	
-	//TODO Compute by parent instead
-	@Deprecated 
-	private static int loadChildren(Composite<CompoListDataItem> composite, int level, int startPos, List<CompoListDataItem> items){
-		
-		int z_idx = startPos; 
-		
-		for( ; z_idx<items.size() ; z_idx++){
-			
-			CompoListDataItem compoListDataItem = items.get(z_idx);
-			
-			if(compoListDataItem.getDepthLevel() == level){				
-				
-				// is composite ?
-				boolean isComposite = false;
-				if((z_idx+1) < items.size()){
-				
-					CompoListDataItem nextComponent = items.get(z_idx+1);
-					if(nextComponent.getDepthLevel() > compoListDataItem.getDepthLevel()){
-						isComposite = true;
-					}
-				}
-				
-				if(isComposite){
-					Composite<CompoListDataItem> c = new Composite<CompoListDataItem>(compoListDataItem);
-					composite.addChild(c);
-					z_idx = loadChildren(c, level+1, z_idx+1, items);
-				}
-				else{
-					Leaf<CompoListDataItem> leaf = new Leaf<CompoListDataItem>(compoListDataItem);
-					composite.addChild(leaf);
-				}				
-			}
-			else if(compoListDataItem.getDepthLevel() < level){
-				z_idx--;
-				break;				
-			}
-		}
-		
-		return z_idx;
-	}
 
 	public static DeclarationType parseDeclarationType(String declType) {
 		

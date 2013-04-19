@@ -3355,7 +3355,7 @@
 					<!-- <show id="bcpg:compoListPlants"/> -->					
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>				
 			</form>
 			<form id="datagridWUsed">
@@ -3464,7 +3464,7 @@
 					<show id="bcpg:packagingListIsMaster" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 			<form id="datagridWUsed">
@@ -3567,7 +3567,7 @@
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -3645,7 +3645,7 @@
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -3849,7 +3849,7 @@
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -3920,7 +3920,7 @@
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -3998,7 +3998,7 @@
 					<show id="bcpg:mblTextCriteria" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -4065,7 +4065,7 @@
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -4119,7 +4119,7 @@
 					<show id="bcpg:organoListValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -4176,7 +4176,7 @@
 					<show id="bcpg:pclMaxi" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>

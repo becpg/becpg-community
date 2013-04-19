@@ -3,8 +3,6 @@
  */
 package fr.becpg.repo.product;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -98,27 +96,22 @@ public class ProductServiceImpl implements ProductService {
     }    
     
     
-    /**
-     * Instead a list of aspect should be on RepositoryEntity
-     * this aspect are added by dao on created and by formulation
-     * @param productData
-     * @return
-     */
+    //TODO add it during formulation instead
     @Deprecated
 	private ProductData markDetaillable(ProductData productData) {
 
-    	for(CostListDataItem costListDataItem : productData.getCostList()){
-    		nodeService.addAspect(costListDataItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
-    	}
-    	
-    	for(IngListDataItem ingListDataItem : productData.getIngList()){
-    		nodeService.addAspect(ingListDataItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
-    	}
-    	
-    	for(NutListDataItem nutListDataItem : productData.getNutList()){
-    		nodeService.addAspect(nutListDataItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM, new HashMap<QName, Serializable>());
-    	}
-    	
+	    	for(CostListDataItem costListDataItem : productData.getCostList()){
+	    		costListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+	    	}
+	    	
+	    	for(IngListDataItem ingListDataItem : productData.getIngList()){
+	    		ingListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+	    	}
+	    	
+	    	for(NutListDataItem nutListDataItem : productData.getNutList()){
+	    		nutListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+	    	}
+
     	return productData;
 	}
 

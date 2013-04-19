@@ -47,7 +47,8 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 	
 	@Override
 	public T formulate(NodeRef entityNodeRef) throws FormulateException {
-		 T entity = alfrescoRepository.findOne(entityNodeRef);
+		
+		T entity = alfrescoRepository.findOne(entityNodeRef);
 		
 		 entity =  formulate(entity);
 		 

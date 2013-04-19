@@ -265,7 +265,20 @@ public class ECOTest extends RepoBaseTestCase {
 				compoList.add(compo2);
 				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				
 				finishedProduct.getCompoListView().setCompoList(compoList);
+				
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				finishedProduct.setCostList(costList);
+				
+				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				finishedProduct.setNutList(nutList);
+				
+			
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 			}
@@ -467,144 +480,149 @@ public class ECOTest extends RepoBaseTestCase {
 
 	}
 
-	/**
-	 * Test ecoService
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@Test
-	public void testECOPolicy() throws Exception {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
-				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
-
-				/*
-				 * create a change order to replace RM4 by RM5
-				 */
-
-				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
-
-				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
-				calculatedCharacts.add(cost1);
-				calculatedCharacts.add(cost2);
-				calculatedCharacts.add(nut1);
-				calculatedCharacts.add(nut2);
-				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
-
-				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
-				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
-				changeOrderData.setReplacementList(replacementList);
-
-				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
-
-				// calculate WUsed
-				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToCalculateWUsed);
-
-				// verify WUsed
-				int checks = 0;
-				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-				assertNotNull("check ECO exist in DB", dbECOData);
-				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				assertEquals("Check impacted WUsed", 3, dbECOData.getWUsedList().size());
-
-				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-
-					assertNotNull(wul.getSourceItem());
-					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
-					assertNotNull(changeUnitData);
-
-					if (changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)) {
-
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
-
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
-
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					}
-				}
-				assertEquals(3, checks);
-
-				// simulation
-				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToSimulate);
-
-				// verify Simulation
-				checks = 0;
-				dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-				assertNotNull("check ECO exist in DB", dbECOData);
-				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
-				assertEquals("Check SchangeUnitDataimulation list", 8, dbECOData.getSimulationList().size());
-
-				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
-
-					if (sim.getSourceItem().equals(finishedProduct1NodeRef)) {
-
-						if (sim.getCharact().equals(cost1)) {
-
-							checks++;
-							assertEquals("check cost1 PF1", 4.0d, sim.getSourceValue());
-							assertEquals("check cost1 PF1", 11.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(cost2)) {
-
-							checks++;
-							assertEquals("check cost2 PF1", 6.0d, sim.getSourceValue());
-							assertEquals("check cost2 PF1", 15d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut1)) {
-
-							checks++;
-							assertEquals("check nut1 PF1", 3.0d, sim.getSourceValue());
-							assertEquals("check nut1 PF1", 4.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut2)) {
-
-							checks++;
-							assertEquals("check nut2 PF1", 6.0d, sim.getSourceValue());
-							assertEquals("check nut2 PF1", 10.5d, sim.getTargetValue());
-						}
-					} else if (sim.getSourceItem().equals(finishedProduct2NodeRef)) {
-
-						if (sim.getCharact().equals(cost1)) {
-
-							checks++;
-							assertEquals("check cost1 PF2", 4.0d, sim.getSourceValue());
-							assertEquals("check cost1 PF2", 11.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(cost2)) {
-
-							checks++;
-							assertEquals("check cost2 PF2", 6.0d, sim.getSourceValue());
-							assertEquals("check cost2 PF2", 15d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut1)) {
-
-							checks++;
-							assertEquals("check nut1 PF2", 3.0d, sim.getSourceValue());
-							assertEquals("check nut1 PF2", 4.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut2)) {
-
-							checks++;
-							assertEquals("check nut2 PF2", 6.0d, sim.getSourceValue());
-							assertEquals("check nut2 PF2", 10.5d, sim.getTargetValue());
-						}
-					}
-				}
-				assertEquals(8, checks);
-
-				// apply
-				// nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE,
-				// ECOState.ToApply);
-
-				return null;
-
-			}
-		}, false, true);
-
-	}
+//	No More policy 
+//	/**
+//	 * Test ecoService
+//	 * 
+//	 * @throws Exception
+//	 *             the exception
+//	 */
+//	@Test
+//	public void testECOPolicy() throws Exception {
+//
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+//			public NodeRef execute() throws Throwable {
+//
+//				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+//				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
+//
+//				/*
+//				 * create a change order to replace RM4 by RM5
+//				 */
+//
+//				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+//
+//				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
+//				calculatedCharacts.add(cost1);
+//				calculatedCharacts.add(cost2);
+//				calculatedCharacts.add(nut1);
+//				calculatedCharacts.add(nut2);
+//				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
+//
+//				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
+//				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
+//				changeOrderData.setReplacementList(replacementList);
+//
+//				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
+//
+//				// calculate WUsed
+//				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToCalculateWUsed);
+//				
+//
+//				// verify WUsed
+//				int checks = 0;
+//				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+//				assertNotNull("check ECO exist in DB", dbECOData);
+//				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+//				assertEquals("Check impacted WUsed", 3, dbECOData.getWUsedList().size());
+//
+//				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+//
+//					assertNotNull(wul.getSourceItem());
+//					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
+//					assertNotNull(changeUnitData);
+//
+//					if (changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)) {
+//
+//						checks++;
+//						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+//					} else if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
+//
+//						checks++;
+//						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+//					} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
+//
+//						checks++;
+//						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+//					}
+//				}
+//				assertEquals(3, checks);
+//
+//				// simulation
+//				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToSimulate);
+//
+//				// verify Simulation
+//				checks = 0;
+//				dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+//				assertNotNull("check ECO exist in DB", dbECOData);
+//				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
+//				assertEquals("Check SchangeUnitDataimulation list", 8, dbECOData.getSimulationList().size());
+//				
+//				
+//
+//				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
+//
+//					if (sim.getSourceItem().equals(finishedProduct1NodeRef)) {
+//
+//						if (sim.getCharact().equals(cost1)) {
+//
+//							checks++;
+//							
+//							assertEquals("check cost1 PF1", 4.0d, sim.getSourceValue());
+//							assertEquals("check cost1 PF1", 11.5d, sim.getTargetValue());
+//						} else if (sim.getCharact().equals(cost2)) {
+//
+//							checks++;
+//							assertEquals("check cost2 PF1", 6.0d, sim.getSourceValue());
+//							assertEquals("check cost2 PF1", 15d, sim.getTargetValue());
+//						} else if (sim.getCharact().equals(nut1)) {
+//
+//							checks++;
+//							assertEquals("check nut1 PF1", 3.0d, sim.getSourceValue());
+//							assertEquals("check nut1 PF1", 4.5d, sim.getTargetValue());
+//						} else if (sim.getCharact().equals(nut2)) {
+//
+//							checks++;
+//							assertEquals("check nut2 PF1", 6.0d, sim.getSourceValue());
+//							assertEquals("check nut2 PF1", 10.5d, sim.getTargetValue());
+//						}
+//					} else if (sim.getSourceItem().equals(finishedProduct2NodeRef)) {
+//
+//						if (sim.getCharact().equals(cost1)) {
+//
+//							checks++;
+//							assertEquals("check cost1 PF2", 4.0d, sim.getSourceValue());
+//							assertEquals("check cost1 PF2", 11.5d, sim.getTargetValue());
+//						} else if (sim.getCharact().equals(cost2)) {
+//
+//							checks++;
+//							assertEquals("check cost2 PF2", 6.0d, sim.getSourceValue());
+//							assertEquals("check cost2 PF2", 15d, sim.getTargetValue());
+//						} else if (sim.getCharact().equals(nut1)) {
+//
+//							checks++;
+//							assertEquals("check nut1 PF2", 3.0d, sim.getSourceValue());
+//							assertEquals("check nut1 PF2", 4.5d, sim.getTargetValue());
+//						} else if (sim.getCharact().equals(nut2)) {
+//
+//							checks++;
+//							assertEquals("check nut2 PF2", 6.0d, sim.getSourceValue());
+//							assertEquals("check nut2 PF2", 10.5d, sim.getTargetValue());
+//						}
+//					}
+//				}
+//				assertEquals(8, checks);
+//
+//				// apply
+//				// nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE,
+//				// ECOState.ToApply);
+//
+//				return null;
+//
+//			}
+//		}, false, true);
+//
+//	}
 
 	/**
 	 * Test ecoService in multi level compo
@@ -638,6 +656,18 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				
+				
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				finishedProduct3.setCostList(costList);
+				
+				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				finishedProduct3.setNutList(nutList);
+				
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct3).getNodeRef();
 
 			}
@@ -752,6 +782,11 @@ public class ECOTest extends RepoBaseTestCase {
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
 				assertEquals("Check changeUnitDataSimulation list", 12, dbECOData.getSimulationList().size());
 
+
+				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
+					System.out.println("Source - Target for "+sim.toString());
+				}
+				
 				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
 
 					if (sim.getSourceItem().equals(finishedProduct1NodeRef)) {

@@ -161,9 +161,9 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
-					<show id="ecm:impactedDataList" />
+					<show id="ecm:wulSourceItem" />
 					<show id="ecm:isWUsedImpacted" />
-					<show id="ecm:wulSourceItem" />				
+					<show id="ecm:impactedDataList" />		
 				</field-visibility>
 			</form>
 		</forms>
