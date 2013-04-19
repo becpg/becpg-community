@@ -140,34 +140,16 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
 
 		for (Map.Entry<QName, T> prop : repositoryEntityDefReader.getEntityProperties(entity).entrySet()) {
-			NodeRef assocNodeRef = null;
-			if (prop.getValue() != null) {
-				if (prop.getValue().getNodeRef() == null && prop.getValue().getParentNodeRef() == null) {
-					prop.getValue().setParentNodeRef(entity.getParentNodeRef());
-				}
-				save(prop.getValue());
-				assocNodeRef = prop.getValue().getNodeRef();
-			}
-
-			properties.put(prop.getKey(), assocNodeRef);
+			properties.put(prop.getKey(), getOrCreateNodeRef(prop,entity));
 		}
 
 		return properties;
-
 	}
 
 	private void saveAssociations(T entity) {
 
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
-			NodeRef assocNodeRef = null;
-			if (association.getValue() != null) {
-				if (association.getValue().getNodeRef() == null && association.getValue().getParentNodeRef() == null) {
-					association.getValue().setParentNodeRef(entity.getParentNodeRef());
-				}
-				save(association.getValue());
-				assocNodeRef = association.getValue().getNodeRef();
-			}
-			associationService.update(entity.getNodeRef(), association.getKey(), assocNodeRef);
+			associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
 		}
 		for (Map.Entry<QName, NodeRef> association : repositoryEntityDefReader.getSingleAssociations(entity).entrySet()) {
 			associationService.update(entity.getNodeRef(), association.getKey(), association.getValue());
@@ -175,6 +157,21 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		for (Map.Entry<QName, List<NodeRef>> association : repositoryEntityDefReader.getMultipleAssociations(entity).entrySet()) {
 			associationService.update(entity.getNodeRef(), association.getKey(), association.getValue());
 		}
+	}
+	
+	
+	
+	private NodeRef getOrCreateNodeRef(Map.Entry<QName, T> entry, T entity){
+		if (entry.getValue() != null) {
+			if (entry.getValue().getNodeRef() == null ) {
+				if(entry.getValue().getParentNodeRef() == null){
+					entry.getValue().setParentNodeRef(entity.getParentNodeRef());
+				}
+				save(entry.getValue());
+			}
+			return entry.getValue().getNodeRef();
+		}
+		return null;
 	}
 
 	private void saveDataLists(T entity) {
@@ -237,6 +234,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
 
+				if (logger.isDebugEnabled()) {
+					logger.debug("save dataListItems size: " + dataList.size());
+				}
+				
 				for (RepositoryEntity dataListItem : dataList) {
 					dataListItem.setParentNodeRef(dataListNodeRef);
 					save((T) dataListItem);
@@ -251,6 +252,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
 					nodeService.deleteNode(dataListItem.getNodeRef());
 				}
+				
+				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 
 			} else {
 
@@ -419,7 +422,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				if (caches.containsKey(assocRef)) {
 					PropertyUtils.setProperty(entity, pd.getName(), caches.get(assocRef));
 				} else {
-					PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef));
+					PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef,caches));
 				}
 			} else {
 				PropertyUtils.setProperty(entity, pd.getName(), assocRef);
@@ -445,7 +448,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (caches.containsKey(prop)) {
 				PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));
 			} else {
-				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop));
+				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop,caches));
 			}
 		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
 			PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));

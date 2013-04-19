@@ -38,10 +38,8 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	}
 	
 
-	public Set<E> getDeletedNodes() {
-		Set<E> ret = new HashSet<E>(deletedNodes);
-		deletedNodes.clear();
-		return ret;
+	public Set<E> getDeletedNodes() {		
+		return deletedNodes;
 	}
 	
 	
