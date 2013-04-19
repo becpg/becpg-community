@@ -5,6 +5,8 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -373,4 +375,55 @@ public class EntityVersionServiceImpl implements EntityVersionService {
                 
         return versionLabel;        
     }
+	
+	/**
+	 * Get the versions sort by date and node-ide.
+	 * 
+	 * @param versionHistoryRef
+	 *            the version history ref
+	 * @param nodeRef
+	 *            the node ref
+	 * @return the list
+	 */
+	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef) {
+
+		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryRef, true);
+		List<NodeRef> versionRefs = new ArrayList<NodeRef>();
+
+		for (ChildAssociationRef versionAssoc : versionAssocs) {
+
+			versionRefs.add(versionAssoc.getChildRef());
+		}
+
+		// sort versions by node id
+		Collections.sort(versionRefs, new Comparator<NodeRef>() {
+
+			@Override
+			public int compare(NodeRef v1, NodeRef v2) {
+				Date modifiedDateV1 = (Date) nodeService.getProperty(v1, ContentModel.PROP_CREATED);
+				Date modifiedDateV2 = (Date) nodeService.getProperty(v2, ContentModel.PROP_CREATED);
+				int result = modifiedDateV1.compareTo(modifiedDateV2);
+				if (result == 0) {
+					Long dbid1 = (Long) nodeService.getProperty(v1, ContentModel.PROP_NODE_DBID);
+					Long dbid2 = (Long) nodeService.getProperty(v2, ContentModel.PROP_NODE_DBID);
+
+					if (dbid1 != null && dbid2 != null) {
+						result = dbid1.compareTo(dbid2);
+					} else {
+						result = 0;
+
+						if (logger.isWarnEnabled()) {
+							logger.warn("node-dbid property is missing for versions: " + v1.toString() + " or "
+									+ v2.toString());
+						}
+					}
+				}
+				return result;
+			}
+
+		});
+
+		return versionRefs;
+
+	}
 }

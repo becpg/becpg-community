@@ -145,19 +145,7 @@ function main()
          var rootCategories = classification.getRootCategories(catAspect);
          if (rootCategories != null && rootCategories.length > 0)
          {
-            if (argsRootNode)
-            {
-               rootNode = resolveNode(argsRootNode);
-               if (rootNode == null)
-               {
-                  rootNode = rootCategories[0].parent;
-               }
-            }
-            else
-            {
-               rootNode = rootCategories[0].parent;
-            }
-
+            rootNode = rootCategories[0].parent;
             if (nodeRef == "alfresco://category/root")
             {
                parent = rootNode;
@@ -238,7 +226,6 @@ function isItemSelectable(node, selectableType)
    
    if (selectableType !== null && selectableType !== "")
    {
-      
       selectable = node.isSubType(selectableType) || (selectableType == "cm:content" && node.isSubType("bcpg:entityV2"));
       
       if (!selectable)
@@ -258,20 +245,22 @@ function sortByName(a, b)
    return (b.properties.name.toLowerCase() > a.properties.name.toLowerCase() ? -1 : 1);
 }
 
-function findUsers(filterTerm, maxResults, results)
+function findUsers(searchTerm, maxResults, results)
 {
    var paging = utils.createPaging(maxResults, -1);
-   
-   var personRefs = people.getPeoplePaging(filterTerm, paging, "lastName", true);
+   var searchResults = groups.searchUsers(searchTerm, paging, "lastName");
    
    // create person object for each result
-   for each(var personRef in personRefs)
+   for each(var user in searchResults)
    {
+      if (logger.isLoggingEnabled())
+         logger.log("found user = " + user.userName);
+      
       // add to results
       results.push(
       {
-         item: createPersonResult(search.findNode(personRef)),
-         selectable: true
+         item: createPersonResult(user.person),
+         selectable: true 
       });
    }
 }

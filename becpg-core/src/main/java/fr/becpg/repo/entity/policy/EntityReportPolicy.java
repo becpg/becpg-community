@@ -115,54 +115,48 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 
 	private void onUpdateProduct(NodeRef entityNodeRef){
 		
-		if(!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-				&& !isNotLocked(entityNodeRef) && !isVersionNode(entityNodeRef)){
-			queueNode(entityNodeRef);	
-		}
+		queueNode(entityNodeRef);	
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef entityNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		
-		if(logger.isDebugEnabled()){
+		for(Map.Entry<QName, Serializable> kv : after.entrySet()){
 			
-			for(Map.Entry<QName, Serializable> kv : after.entrySet()){
-				
-				boolean hasChanged = false;
-				
-				if(kv.getValue() == null){
-					if(before.get(kv.getKey()) != null){
-						hasChanged = true;
-					}			
-				}
-				else if(!kv.getValue().equals(before.get(kv.getKey()))){
+			boolean hasChanged = false;
+			
+			if(kv.getValue() == null){
+				if(before.get(kv.getKey()) != null){
 					hasChanged = true;
+				}			
+			}
+			else if(!kv.getValue().equals(before.get(kv.getKey()))){
+				hasChanged = true;
+			}
+			
+			// generate report depending of properties updated
+			if(hasChanged && !ReportModel.PROP_REPORT_ENTITY_GENERATED.equals(kv.getKey()) &&
+					!ContentModel.PROP_MODIFIED.equals(kv.getKey()) &&
+					!ContentModel.PROP_MODIFIER.equals(kv.getKey()) &&
+					!ContentModel.PROP_VERSION_LABEL.equals(kv.getKey()) &&
+					!ContentModel.PROP_LAST_THUMBNAIL_MODIFICATION_DATA.equals(kv.getKey())){
+				
+				if(logger.isDebugEnabled()){
+					logger.debug("Generate report since prop has changed. Prop: " + kv.getKey() +  
+							" before: " + before.get(kv.getKey()) + " after: " + kv.getValue());
 				}
 				
-				// generate report depending of properties updated
-				if(hasChanged && !ReportModel.PROP_REPORT_ENTITY_GENERATED.equals(kv.getKey()) &&
-						!ContentModel.PROP_MODIFIED.equals(kv.getKey()) &&
-						!ContentModel.PROP_MODIFIER.equals(kv.getKey()) &&
-						!ContentModel.PROP_VERSION_LABEL.equals(kv.getKey()) &&
-						!ContentModel.PROP_LAST_THUMBNAIL_MODIFICATION_DATA.equals(kv.getKey())){
-					
-					if(logger.isDebugEnabled()){
-						logger.debug("Generate report since prop has changed. Prop: " + kv.getKey() +  
-								" before: " + before.get(kv.getKey()) + " after: " + kv.getValue());
-					}
-					
-					onUpdateProduct(entityNodeRef);
-					return;
-				}
+				onUpdateProduct(entityNodeRef);
+				return;
 			}
 		}				
 	}
 
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-		for (NodeRef nodeRef : pendingNodes) {					
+		for (NodeRef nodeRef : pendingNodes) {						
 			Runnable runnable = new ProductReportGenerator(nodeRef, AuthenticationUtil.getSystemUserName());
-			threadExecuter.execute(runnable);			
+			threadExecuter.execute(runnable);	
 		}
 	}
 
@@ -205,7 +199,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
                             @Override
 							public Object execute()
                             {
-                            	if(nodeService.exists(entityNodeRef) && isNotLocked(entityNodeRef) && !isVersionStoreNode(entityNodeRef)){
+                            	if(nodeService.exists(entityNodeRef) && !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && 
+                            			isNotLocked(entityNodeRef) && !isVersionStoreNode(entityNodeRef)){
                             		
                             		try{
                                 		// Ensure that the policy doesn't refire for this node

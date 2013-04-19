@@ -64,11 +64,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		
 		String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
 		Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
-		Calendar cal = Calendar.getInstance();
-
-		if (taskListDataItem.getDuration() != null) {
-			cal.add(Calendar.DAY_OF_YEAR, taskListDataItem.getDuration());
-			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, cal.getTime());
+		
+		if (taskListDataItem.getEnd() != null) {			
+			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
 		}
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
