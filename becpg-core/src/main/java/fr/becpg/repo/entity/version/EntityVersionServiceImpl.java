@@ -5,6 +5,8 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.common.versionlabel.SerialVersionLabelPolicy;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -140,11 +143,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				// Non recursive copy
 				NodeRef nodeRef = copyService.copy(nodeToVersionNodeRef, finalVersionHistoryRef,
 						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, false);
-
+				
 				entityListDAO.copyDataLists(nodeToVersionNodeRef, nodeRef, false);
 				entityService.copyFiles(nodeToVersionNodeRef, nodeRef);
 
 				if (workingCopyNodeRef != null) {
+					
+					// remove assoc (copy used to checkin doesn't do it)
+					removeRemovedAssociation(workingCopyNodeRef, origNodeRef);
+					
 					// Move workingCopyNodeRef DataList to origNodeRef
 					entityService.deleteDataLists(origNodeRef, true);
 					entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
@@ -183,6 +190,72 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
 		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 	}
+	
+	private void removeRemovedAssociation(NodeRef sourceCopy, NodeRef targetCopy){
+	
+		/*
+		 * Extending DefaultCopyBehaviourCallback doesn't work since we must implement it for every aspect
+		 */
+		
+		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(sourceCopy, RegexQNamePattern.MATCH_ALL);
+		List<AssociationRef> targetAssocRefs = nodeService.getTargetAssocs(targetCopy, RegexQNamePattern.MATCH_ALL);
+		
+		// don't copy/remove theses assocs
+		List<QName> assocs = new ArrayList<QName>(0);
+		//assocs.add(ReportModel.ASSOC_REPORTS);
+		
+		List<QName> childAssocs = new ArrayList<QName>(2);
+		childAssocs.add(ContentModel.ASSOC_CHILDREN);
+		childAssocs.add(BeCPGModel.ASSOC_ENTITYLISTS);
+
+		for(AssociationRef targetAssocRef : targetAssocRefs){
+			
+			if(!assocs.contains(targetAssocRef.getTypeQName())){
+				
+				boolean removeAssoc = true;
+				if(targetAssocRef.getTargetRef() != null){
+					for(AssociationRef sourceAssocRef : sourceAssocRefs){
+						if(targetAssocRef.getTargetRef().equals(sourceAssocRef.getTargetRef())){
+							removeAssoc = false;
+							break;
+						}
+					}
+				}
+				
+				if(removeAssoc){
+					logger.debug("Remove association sourceRef : " + targetCopy + " targetRef: " + targetAssocRef.getTargetRef() + " assocType: " + targetAssocRef.getTypeQName());
+					nodeService.removeAssociation(targetCopy, targetAssocRef.getTargetRef(), targetAssocRef.getTypeQName());
+				}
+			}
+				
+					
+		}
+		
+		List<ChildAssociationRef> sourceChildAssocRefs = nodeService.getChildAssocs(sourceCopy);
+		List<ChildAssociationRef> targetChildAssocRefs = nodeService.getChildAssocs(targetCopy);
+		
+		for(ChildAssociationRef targetChildAssocRef : targetChildAssocRefs){
+			
+			if(!childAssocs.contains(targetChildAssocRef.getTypeQName())){
+				boolean removeAssoc = true;
+				if(targetChildAssocRef.getChildRef()!= null){
+					for(ChildAssociationRef sourceChildAssocRef : sourceChildAssocRefs){
+						if(targetChildAssocRef.getChildRef().equals(sourceChildAssocRef.getChildRef())){
+							removeAssoc = false;
+							break;
+						}
+					}
+				}
+				
+				if(removeAssoc){
+					logger.debug("Remove association sourceRef : " + targetCopy + " targetRef: " + targetChildAssocRef.getChildRef() + " assocType: " + targetChildAssocRef.getTypeQName());
+					nodeService.removeChildAssociation(targetChildAssocRef);
+				}	
+			}				
+		}
+	}
+	
+	
 
 	/**
 	 * Gets the version assocs.
@@ -373,4 +446,55 @@ public class EntityVersionServiceImpl implements EntityVersionService {
                 
         return versionLabel;        
     }
+	
+	/**
+	 * Get the versions sort by date and node-ide.
+	 * 
+	 * @param versionHistoryRef
+	 *            the version history ref
+	 * @param nodeRef
+	 *            the node ref
+	 * @return the list
+	 */
+	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef) {
+
+		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryRef, true);
+		List<NodeRef> versionRefs = new ArrayList<NodeRef>();
+
+		for (ChildAssociationRef versionAssoc : versionAssocs) {
+
+			versionRefs.add(versionAssoc.getChildRef());
+		}
+
+		// sort versions by node id
+		Collections.sort(versionRefs, new Comparator<NodeRef>() {
+
+			@Override
+			public int compare(NodeRef v1, NodeRef v2) {
+				Date modifiedDateV1 = (Date) nodeService.getProperty(v1, ContentModel.PROP_CREATED);
+				Date modifiedDateV2 = (Date) nodeService.getProperty(v2, ContentModel.PROP_CREATED);
+				int result = modifiedDateV1.compareTo(modifiedDateV2);
+				if (result == 0) {
+					Long dbid1 = (Long) nodeService.getProperty(v1, ContentModel.PROP_NODE_DBID);
+					Long dbid2 = (Long) nodeService.getProperty(v2, ContentModel.PROP_NODE_DBID);
+
+					if (dbid1 != null && dbid2 != null) {
+						result = dbid1.compareTo(dbid2);
+					} else {
+						result = 0;
+
+						if (logger.isWarnEnabled()) {
+							logger.warn("node-dbid property is missing for versions: " + v1.toString() + " or "
+									+ v2.toString());
+						}
+					}
+				}
+				return result;
+			}
+
+		});
+
+		return versionRefs;
+
+	}
 }

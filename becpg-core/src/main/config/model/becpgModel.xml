@@ -47,6 +47,7 @@
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
+					<value>m3</value>
 					<value>h</value>
 				</list>
 			</parameter>
@@ -289,6 +290,17 @@
 					<value></value>
 					<value>true</value>
 					<value>false</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:labelClaimTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Nutritionnelle</value>
+					<value>Santé</value>
+					<value>Environnementale</value>
+					<value>Qualité</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -887,7 +899,18 @@
 						<many>false</many>
 					</target>
 				</association>
-			</associations>
+				<association name="bcpg:costDetailsListSource">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>			
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
@@ -1380,6 +1403,39 @@
 				</property>
 			</properties>
 		</type>
+		
+		<!-- Data List - labelClaimList -->
+		<type name="bcpg:labelClaimList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:lclType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:labelClaimTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:lclIsClaimed">
+					<type>d:boolean</type>
+					<default>true</default>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:lclLabelClaim">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:labelClaim</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
 
 		<!-- Dynamic charact list -->
 
@@ -1484,6 +1540,17 @@
 			</properties>
 		</type>
 		
+		<type name="bcpg:labelClaim">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:labelClaimType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:labelClaimTypes"/>
+					</constraints>
+				</property>
+			</properties>
+		</type>
 			
 		<type name="bcpg:variant">
 		   <parent>cm:content</parent>
@@ -1494,7 +1561,6 @@
 			</properties>
 		   
 		</type>
-		
 
 	</types>
 	<!-- __________________________________________ ASPECTS _________________________________________ -->
@@ -1724,10 +1790,8 @@
 				</property>
 			</properties>
 		</aspect>
-		
-		
-		<!-- Variants  -->
 	
+		<!-- Variants  -->
 		<aspect name="bcpg:entityVariantAspect">
 			<associations>
 				<child-association name="bcpg:variants">
@@ -1742,8 +1806,7 @@
 					</target>
 				</child-association>
 			</associations>
-		</aspect>
-		
+		</aspect>		
 		
 		<aspect name="bcpg:entityListVariantAspect">
 			<properties>
@@ -1755,8 +1818,6 @@
 			</properties>
 		</aspect>
 		
-		
-
 		<aspect name="bcpg:codeAspect">
 			<properties>
 				<property name="bcpg:code">

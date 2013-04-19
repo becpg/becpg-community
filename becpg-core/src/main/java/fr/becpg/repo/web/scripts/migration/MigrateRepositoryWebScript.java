@@ -29,6 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
 import fr.becpg.repo.migration.MigrationService;
@@ -166,7 +167,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 						AuthenticationUtil.runAs(new RunAsWork<Object>() {
 							public Object doWork() throws Exception {
 								logger.info("Migrate entity folder for tenant: "+tenant.getTenantDomain());
-								migrateEntityFolder();
+								
+								entityFolderMigrator.migrate();							
 
 								return null;
 							}
@@ -176,25 +178,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 				} else {
 				  logger.info("Migrate entity folder for in non-tenant environment");
-				  migrateEntityFolder();
+				  entityFolderMigrator.migrate();
 				}
 				return null;
 			}
 		}, AuthenticationUtil.getSystemUserName());
-
-	}
-	
-	
-	
-	
-	
-	private void migrateEntityFolder() {
-		try {
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			entityFolderMigrator.migrate();
-		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-		}
 
 	}
 

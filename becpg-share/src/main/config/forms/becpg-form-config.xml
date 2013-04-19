@@ -3130,7 +3130,28 @@
 			</form>
 		</forms>
 	</config>
-
+	
+	<!-- bcpg:labelClaim type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:labelClaim">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:labelClaimType"/>
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
 	<!-- ______________________________________________ SUPPLIER_________________________________________ -->
 	<!-- bcpg:supplier type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:supplier">
@@ -4448,8 +4469,53 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- bcpg:labelClaimList type -->
+	<config evaluator="model-type" condition="bcpg:labelClaimList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:lclLabelClaim" />
+					<show id="bcpg:lclIsClaimed" />					
+				</field-visibility>				
+				<appearance>		
+					<field id="bcpg:lclLabelClaim">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
 
-
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:lclLabelClaim" />
+					<show id="bcpg:lclType" />
+					<show id="bcpg:lclIsClaimed" />	
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- bcpg:labelClaimList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:labelClaimList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:lclLabelClaim" />
+					<show id="bcpg:lclIsClaimed" />			
+				</field-visibility>
+				
+				<appearance>	
+					<field id="bcpg:lclLabelClaim">
+						<control
+							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
+					</field>			
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<!-- bcpg:dynamicCharactList type -->
 	<config evaluator="model-type" condition="bcpg:dynamicCharactList">

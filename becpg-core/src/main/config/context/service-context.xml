@@ -228,7 +228,9 @@
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="entityService" ref="entityService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="versionService" ref="versionService" />
+		<property name="versionService" ref="versionService" />		
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
 	
 	<bean id="migrationService" class="fr.becpg.repo.migration.impl.MigrationServiceImpl">

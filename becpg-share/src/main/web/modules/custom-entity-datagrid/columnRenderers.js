@@ -116,7 +116,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:cost", "bcpg:allergen", "bcpg:nut", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin",
-            "bcpg:geo", "bcpg:microbio", "bcpg:physicoChem", "bcpg:organo" ],
+            "bcpg:geo", "bcpg:microbio", "bcpg:physicoChem", "bcpg:organo", "bcpg:labelClaim" ],
       renderer : function(oRecord, data, label, scope) {
          return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
       }
