@@ -116,7 +116,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	private void onUpdateProduct(NodeRef entityNodeRef){
 		
 		if(!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-				&& !isNotLocked(entityNodeRef) && !isVersionNode(entityNodeRef)){
+				&& isNotLocked(entityNodeRef) && !isVersionNode(entityNodeRef)){
 			queueNode(entityNodeRef);	
 		}
 	}

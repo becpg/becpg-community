@@ -4,7 +4,7 @@
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "eco-calculate-wused",
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList") && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "replacementList" || asset.name === "wUsedList") && entity.userAccess.edit;
          },
          fn : function(instance) {
 
@@ -46,7 +46,7 @@
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "eco-do-simulation",
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList") && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "replacementList" || asset.name === "calculatedCharactList") && entity.userAccess.edit;
          },
          fn : function(instance) {
 

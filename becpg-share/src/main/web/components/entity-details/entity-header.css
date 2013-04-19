@@ -57,6 +57,10 @@
 	background-image:  url(../images/filetypes/generic-productMicrobioCriteria-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
 }
 
+.node-header .node-path .folder-ecm_changeOrder {
+	background-image:  url(../images/filetypes/generic-changeOrder-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
 .node-header .node-path .folder-pjt_project,
 .node-header .node-path .folder-bcpg_finishedProduct,
 .node-header .node-path .folder-bcpg_packagingKit,
@@ -69,7 +73,8 @@
 .node-header .node-path .folder-bcpg_systemEntity,
 .node-header .node-path .folder-bcpg_productMicrobioCriteria,
 .node-header .node-path .folder-bcpg_productSpecification,
-.node-header .node-path .folder-bcpg_productMicrobioCriteria {
+.node-header .node-path .folder-bcpg_productMicrobioCriteria,
+.node-header .node-path .folder-ecm_changeOrder {
 	background-position:  7px bottom,left;
 	background-repeat: not-repeat ;
 	background-size: 12px 12px, 16px 16px;

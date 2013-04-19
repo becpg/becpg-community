@@ -73,8 +73,10 @@ public class ECMModel {
 			"culSimulationItem");	
 	
 	//simulationEntityAspect
+	@Deprecated
 	public static final QName ASPECT_SIMULATION_ENTITY = QName.createQName(ECM_URI,
 			"simulationEntityAspect");
+	@Deprecated
 	public static final QName ASSOC_SIMULATION_SOURCE_ITEM = QName.createQName(ECM_URI,
 			"simulationSourceItem");
 	

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
@@ -41,7 +42,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		 * Calculate cost details
 		 */
 		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {		
-			Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.EFFECTIVE));		
+			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.EFFECTIVE));		
 			visitCompoListChildren(productData, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, netWeight);
 		}		
 

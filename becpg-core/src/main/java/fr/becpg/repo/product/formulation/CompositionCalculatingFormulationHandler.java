@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-
+import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.formulation.FormulateException;
@@ -58,7 +58,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
 		}
 		
-		Composite<CompoListDataItem> composite = CompoListDataItem.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));		
+		Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));		
 		visitChildren(netWeight, netWeight, composite);
 		
 		if(logger.isDebugEnabled()){

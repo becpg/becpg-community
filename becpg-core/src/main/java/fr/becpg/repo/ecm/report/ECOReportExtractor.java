@@ -1,35 +1,22 @@
-package fr.becpg.repo.ecm.impl;
-
-import java.util.HashMap;
-import java.util.Map;
+package fr.becpg.repo.ecm.report;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.ecm.ECOReportService;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
-import fr.becpg.repo.report.engine.BeCPGReportEngine;
-import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
-import fr.becpg.report.client.ReportFormat;
-import fr.becpg.report.client.ReportParams;
+import fr.becpg.repo.report.entity.EntityReportData;
+import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
-public class ECOReportServiceImpl implements ECOReportService {
+public class ECOReportExtractor implements EntityReportExtractor{
 
 	private static final String TAG_ECO = "eco";
 	private static final String TAG_CALCULATED_CHARACTS = "calculatedCharacts";
@@ -45,68 +32,39 @@ public class ECOReportServiceImpl implements ECOReportService {
 	
 	private static final Integer DEFAULT_PROJECTED_QTY = 1;
 	
-	private static Log logger = LogFactory.getLog(ECOServiceImpl.class);
-	
-	private ReportTplService reportTplService;
 	private NodeService nodeService;
-	private ContentService contentService;
-	private MimetypeService mimetypeService;	
-	private BeCPGReportEngine beCPGReportEngine;
 	
-	public void setReportTplService(ReportTplService reportTplService) {
-		this.reportTplService = reportTplService;
+	private AlfrescoRepository<ChangeOrderData> alfrescoRepository;
+	
+
+	public void setAlfrescoRepository(AlfrescoRepository<ChangeOrderData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
+
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
-	public void setMimetypeService(MimetypeService mimetypeService) {
-		this.mimetypeService = mimetypeService;
-	}
-
-	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
-		this.beCPGReportEngine = beCPGReportEngine;
-	}
-
+	
+	
 	@Override
-	//TODO move that to entityReport Service
-	public void generateReport(ChangeOrderData ecoData) {
-				
-		NodeRef tplNodeRef = reportTplService.getSystemReportTemplate(ReportType.System, 
-										null, 
-										TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_ECO));
+	public EntityReportData extract(NodeRef entityNodeRef) {
 		
-		if(tplNodeRef != null){
-			
-			//Prepare data source
-			Element ecoXmlDataElt = extractXml(ecoData);						
-			
-			try{
-				
-				ContentWriter contentWriter = contentService.getWriter(ecoData.getNodeRef(), ContentModel.PROP_CONTENT, true);			
-				String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
-				contentWriter.setMimetype(mimetype);
-				
-				Map<String,Object> params = new HashMap<String, Object>();
-				params.put(ReportParams.PARAM_FORMAT,ReportFormat.PDF);
-				
-				beCPGReportEngine.createReport(tplNodeRef, ecoXmlDataElt, contentWriter.getContentOutputStream(), params);
-					
-			}
-			catch(Exception e){
-				logger.error("Failed to run comparison report: ",  e);
-			} 
-			
-		}
+		EntityReportData ret = new EntityReportData();
+		
+		ChangeOrderData ecoData = alfrescoRepository.findOne(entityNodeRef);
+		
+		//Prepare data source
+		Element xmlDataSource = extractXml(ecoData);	
+		
+		ret.setXmlDataSource(xmlDataSource);
+		
+		return ret;
 		
 	}
 	
-	private Element extractXml(ChangeOrderData ecoData){
+	
+private Element extractXml(ChangeOrderData ecoData){
 		
 		Document document = DocumentHelper.createDocument();		
 		Element ecoElt = document.addElement(TAG_ECO);		
@@ -124,6 +82,7 @@ public class ECOReportServiceImpl implements ECOReportService {
 				isCost = Boolean.TRUE;
 			}
 			
+
 			Integer projectedQty = (Integer)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PROJECTED_QTY);
 			if(projectedQty == null){
 				projectedQty = DEFAULT_PROJECTED_QTY;
@@ -143,5 +102,4 @@ public class ECOReportServiceImpl implements ECOReportService {
 		
 		return ecoElt;
 	}
-
 }
