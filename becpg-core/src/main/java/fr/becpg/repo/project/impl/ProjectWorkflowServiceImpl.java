@@ -1,7 +1,6 @@
 package fr.becpg.repo.project.impl;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,12 +63,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		
 		String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
 		Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
-		Calendar cal = Calendar.getInstance();
 
-		if (taskListDataItem.getDuration() != null) {
-			cal.add(Calendar.DAY_OF_YEAR, taskListDataItem.getDuration());
-			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, cal.getTime());
+		if (taskListDataItem.getEnd() != null) {			
+			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
 		}
+
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());

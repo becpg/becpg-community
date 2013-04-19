@@ -51,20 +51,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			Double qty = (formulatedProduct.getQty()!=null) ? formulatedProduct.getQty() : DEFAULT_QUANTITY;
 			Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
 			netWeight = qty * density;
-		}
-		
-		if(logger.isDebugEnabled()){
-			logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
-			logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
-		}
+		}		
 		
 		Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));		
 		visitChildren(netWeight, netWeight, composite);
-		
-		if(logger.isDebugEnabled()){
-			logger.debug("formulatedProduct.getCompoList: " + formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
-			logger.debug("formulatedProduct.getCompoListView().getCompoList(): " + formulatedProduct.getCompoListView().getCompoList());
-		}
 		
 		// Yield
 		Double qtyUsed = calculateQtyUsedBeforeProcess(composite);
