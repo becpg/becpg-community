@@ -5,7 +5,7 @@
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>beCPG</name>
-	<version>1.5.0</version>
+	<version>1.5.1</version>
 	<description>BeCPG Parent Project</description>
 	<organization>
 		<name>BeCPG</name>
@@ -326,7 +326,7 @@
 			<id>dev-montrouge</id>
 			<properties>
 			    <!-- Test -->
-				<alfresco.data.location>/opt/becpg/workspace-1.5.a/becpg/alf_data</alfresco.data.location>
+				<alfresco.data.location>/opt/becpg/workspace-1.5.1/becpg/alf_data</alfresco.data.location>
 			</properties>
 		</profile>
 		<profile>
