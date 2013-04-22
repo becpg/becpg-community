@@ -91,7 +91,7 @@
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:clients" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					
 					<!-- Product Catalog -->
@@ -1864,7 +1864,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
