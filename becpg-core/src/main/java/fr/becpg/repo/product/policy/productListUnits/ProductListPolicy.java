@@ -257,7 +257,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_GROUP, nutGroup);
 						} else if (type.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)){
 							String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_PHYSICO_CHEM_UNIT);
-							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_PHYSICO_CHEM_UNIT, physicoChemUnit);
+							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
 						}
 					}
 				}
