@@ -91,7 +91,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netWeight, mandatoryCharacts1);
 		}
 		
-		addReqCtrlList(formulatedProduct, mandatoryCharacts1);
+		addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
 		
 		/*
 		 * PackagingList
@@ -105,7 +105,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			}
 		}
 
-		addReqCtrlList(formulatedProduct, mandatoryCharacts2);
+		addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
 		
 		/*
 		 * ProcessList 
@@ -122,7 +122,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			}
 		}
 		
-		addReqCtrlList(formulatedProduct, mandatoryCharacts3);
+		addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3);
 	}
 		
 	private void visitCompoListChildren(ProductData formulatedProduct, 
@@ -241,7 +241,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			
 			for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 				for(CostListDataItem c : costList){
-					if(c.getCost()!=null && c.getCost().equals(costListDataItem)){
+					if(c.getCost()!=null && c.getCost().equals(costListDataItem.getCost())){
 						mandatoryCharacts.put(c.getCost(), new ArrayList<NodeRef>());
 						break;
 					}

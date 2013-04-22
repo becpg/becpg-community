@@ -20,9 +20,6 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 @Service
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	public static final Double DEFAULT_DENSITY = 1d;
-	public static final Double DEFAULT_QUANTITY = 0d;
-	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 	
 	private NodeService nodeService;
@@ -48,8 +45,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			netWeight = formulatedProduct.getDensity();
 		}
 		else{
-			Double qty = (formulatedProduct.getQty()!=null) ? formulatedProduct.getQty() : DEFAULT_QUANTITY;
-			Double density = (formulatedProduct.getDensity() != null) ? formulatedProduct.getDensity():DEFAULT_DENSITY; //density is null => 1
+			Double qty = FormulationHelper.getQty(formulatedProduct);
+			Double density = FormulationHelper.getDensity(formulatedProduct);
 			netWeight = qty * density;
 		}		
 		

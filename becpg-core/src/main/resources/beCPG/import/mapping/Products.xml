@@ -8,11 +8,11 @@
 	<!-- PRODUCT -->
 	<mapping name="bcpg:rawMaterial">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<columns>
 
-			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="code" attribute="bcpg:erpCode" type="Attribute" />
 
 			<!-- costs -->
 			<column id="coutMP" dataListQName="bcpg:costList"
@@ -32,119 +32,37 @@
 			<column id="nutGlucides" dataListQName="bcpg:nutList"
 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
 				charactNodeRef="" charactName="Glucides" type="Characteristic" />
-
-<!-- 			<column id="Alpha lactalbumine" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Alpha lactalbumine" type="Characteristic" /> -->
-<!-- 			<column id="Amidon" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
-<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Amidon" -->
-<!-- 				type="Characteristic" /> -->
-<!-- 			<column id="Azote non protéique" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Azote non protéique" type="Characteristic" /> -->
-<!-- 			<column id="Béta lactoglobuline" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Béta lactoglobuline" type="Characteristic" /> -->
-<!-- 			<column id="Calcium" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Calcium" type="Characteristic" /> -->
-<!-- 			<column id="Caséine as1" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Caséine as1" type="Characteristic" /> -->
-<!-- 			<column id="Caséine as2" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Caséine as2" type="Characteristic" /> -->
-<!-- 			<column id="Caséine b" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Caséine b" type="Characteristic" /> -->
-<!-- 			<column id="Caséine k" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Caséine k" type="Characteristic" /> -->
-<!-- 			<column id="Caséines totales" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Caséines totales" type="Characteristic" /> -->
-<!-- 			<column id="Cholestérol " dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Cholestérol " type="Characteristic" /> -->
-<!-- 			<column id="Eau" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
-<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Eau" -->
-<!-- 				type="Characteristic" /> -->
-<!-- 			<column id="Extrait sec " dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Extrait sec " type="Characteristic" /> -->
-<!-- 			<column id="Extrait sec laitier " dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Extrait sec laitier " type="Characteristic" /> -->
-<!-- 			<column id="Fibres alimentaires" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Fibres alimentaires" type="Characteristic" /> -->
-<!-- 			<column id="Fibres insolubles " dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Fibres insolubles " type="Characteristic" /> -->
-<!-- 			<column id="Fibres solubles " dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Fibres solubles " type="Characteristic" /> -->
-<!-- 			<column id="Glucides" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Glucides" type="Characteristic" /> -->
-<!-- 			<column id="Energie (kCalories)" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Energie (kCalories)" type="Characteristic" /> -->
-<!-- 			<column id="Energie (kJoules)" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Energie (kJoules)" type="Characteristic" /> -->
-<!-- 			<column id="Lactose" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Lactose" type="Characteristic" /> -->
-<!-- 			<column id="Lipides" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Lipides" type="Characteristic" /> -->
-<!-- 			<column id="Lipides insaturés" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Lipides insaturés" type="Characteristic" /> -->
-<!-- 			<column id="Lipides mono insaturés" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Lipides mono insaturés" type="Characteristic" /> -->
-<!-- 			<column id="Lipides polyinsaturés" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Lipides polyinsaturés" type="Characteristic" /> -->
-<!-- 			<column id="Lipides saturés" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Lipides saturés" type="Characteristic" /> -->
-<!-- 			<column id="Lipides trans totaux" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Lipides trans totaux" type="Characteristic" /> -->
-<!-- 			<column id="Magnésium" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Magnésium" type="Characteristic" /> -->
-<!-- 			<column id="Minéraux totaux" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Minéraux totaux" type="Characteristic" /> -->
-<!-- 			<column id="Phosphore" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Phosphore" type="Characteristic" /> -->
-<!-- 			<column id="Polyols totaux" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Polyols totaux" type="Characteristic" /> -->
-<!-- 			<column id="Potassium" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Potassium" type="Characteristic" /> -->
-<!-- 			<column id="Protéines sériques totales" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Protéines sériques totales" type="Characteristic" /> -->
-<!-- 			<column id="Protéines vraies" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Protéines vraies" type="Characteristic" /> -->
-<!-- 			<column id="Protides" dataListQName="bcpg:nutList" -->
-<!-- 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
-<!-- 				charactNodeRef="" charactName="Protides" type="Characteristic" /> -->
-<!-- 			<column id="Sodium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
-<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sodium" -->
-<!-- 				type="Characteristic" /> -->
-<!-- 			<column id="Sucres" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" -->
-<!-- 				attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sucres" -->
-<!-- 				type="Characteristic" /> -->
-
+			
+			<!-- All Voluntary -->
+			<column id="alVolCereal" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Céréales contenant du gluten et produits à base de ces céréales" type="Characteristic" />
+			<column id="alVolCrustacean" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Crustacés et produits à base de crustacés" type="Characteristic" />
+			<column id="alVolEgg" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Oeuf et produit à base d'oeuf" type="Characteristic" />
+			<column id="alVolPeanut" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Arachides et produits à base de d'arachide" type="Characteristic" />
+			<column id="alVolSoy" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Soja et produits à base de soja" type="Characteristic" />
+			<column id="alVolMilk" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Lait et produit à base de (dont lactose)" type="Characteristic" />
+			<column id="alVolNuts" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Fruits à Coque* (noix noisettes)" type="Characteristic" />
+			<column id="alVolFish" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Poisson et produit à base de poisson" type="Characteristic" />
+			<column id="alVolCelery" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Céleri et produits à base de céleri" type="Characteristic" />
+			<column id="alVolMustard" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Moutarde et produits à base de moutarde" type="Characteristic" />
+			<column id="alVolSesame" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Graines de sésame et produits à base de graines de sésame" type="Characteristic" />
+			<column id="alVolSulphite" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Anhydride sulfureux et sulfites" type="Characteristic" />
+			<column id="alVolLupin" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Lupin  et produits à base de lupin" type="Characteristic" />
+			<column id="alVolMollusc" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListVoluntary" charactNodeRef="" charactName="Mollusque  et produits à base de mollusque" type="Characteristic" />
+			<!-- All InVoluntary -->
+			<column id="alInVolCereal" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Céréales contenant du gluten et produits à base de ces céréales" type="Characteristic" />
+			<column id="alInVolCrustacean" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Crustacés et produits à base de crustacés" type="Characteristic" />
+			<column id="alInVolEgg" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Oeuf et produit à base d'oeuf" type="Characteristic" />
+			<column id="alInVolPeanut" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Arachides et produits à base de d'arachide" type="Characteristic" />
+			<column id="alInVolSoy" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Soja et produits à base de soja" type="Characteristic" />
+			<column id="alInVolMilk" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Lait et produit à base de (dont lactose)" type="Characteristic" />
+			<column id="alInVolNuts" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Fruits à Coque* (noix noisettes)" type="Characteristic" />
+			<column id="alInVolFish" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Poisson et produit à base de poisson" type="Characteristic" />
+			<column id="alInVolCelery" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Céleri et produits à base de céleri" type="Characteristic" />
+			<column id="alInVolMustard" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Moutarde et produits à base de moutarde" type="Characteristic" />
+			<column id="alInVolSesame" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Graines de sésame et produits à base de graines de sésame" type="Characteristic" />
+			<column id="alInVolSulphite" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Anhydride sulfureux et sulfites" type="Characteristic" />
+			<column id="alInVolLupin" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Lupin  et produits à base de lupin" type="Characteristic" />
+			<column id="alInVolMollusc" dataListQName="bcpg:allergenList" charactQName="bcpg:allergenListAllergen" attribute="bcpg:allergenListInVoluntary" charactNodeRef="" charactName="Mollusque  et produits à base de mollusque" type="Characteristic" />
 
 			<!-- files -->
 			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
@@ -158,7 +76,7 @@
 	<!-- INGREDIENTS LIST -->
 	<mapping name="bcpg:ingList">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:ingListIng" />
@@ -180,7 +98,7 @@
 	<!-- COMPOSITION LIST -->
 	<mapping name="bcpg:compoList">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:compoListProduct" />

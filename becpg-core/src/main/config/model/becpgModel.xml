@@ -864,7 +864,7 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- TODO : remove it -->
+		<!-- @Deprecated -->
 		<type name="bcpg:costDetailsList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -910,6 +910,17 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="bcpg:costDetailsListSource">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
 			</associations>			
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>

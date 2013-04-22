@@ -60,6 +60,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_NUTLIST, BeCPGModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(
 				this, "onCreateAssociation"));
 		
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_PHYSICOCHEMLIST, 
+				BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM, new JavaBehaviour(this, "onCreateAssociation"));
+		
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
 				BeCPGModel.TYPE_LABELCLAIMLIST, BeCPGModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
 
@@ -67,6 +70,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_NUTLIST);
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_LABELCLAIMLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PRODUCT);
 
@@ -255,6 +259,10 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							// nutListGroup
 							String nutGroup = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_NUTGROUP);
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_GROUP, nutGroup);
+						} else if (type.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)){
+
+							String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_PHYSICO_CHEM_UNIT);
+							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
 						} else if(type.equals(BeCPGModel.TYPE_LABELCLAIMLIST)){
 							
 							// labelClaimType
