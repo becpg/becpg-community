@@ -37,6 +37,9 @@
 				<entry key="costList">
 					<ref bean="costCharactDetailsVisitor" />
 				</entry>
+				<entry key="physicoChemList">
+					<ref bean="simpleCharactDetailsVisitor" />
+				</entry>
 			</map>
 		</property>
 	</bean>

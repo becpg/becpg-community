@@ -80,56 +80,53 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 					Serializable value = ImportHelper.loadPropertyValue(importContext, values, z_idx);
 					logger.debug("import characteristic: " + charactMapping.getId() + " - value: " + value);
 
-					if (value != null) {
+					// look in the cache
+					String listKey = String.format(CACHE_KEY, listContainerNodeRef, charactMapping.getDataListQName());
+					String linkKey = String.format(CACHE_KEY, charactMapping.getCharactNodeRef(), charactMapping.getCharactQName());
 
-						// look in the cache
-						String listKey = String.format(CACHE_KEY, listContainerNodeRef, charactMapping.getDataListQName());
-						String linkKey = String.format(CACHE_KEY, charactMapping.getCharactNodeRef(), charactMapping.getCharactQName());
+					NodeRef listNodeRef = null;
+					NodeRef linkNodeRef = null;
 
-						NodeRef listNodeRef = null;
-						NodeRef linkNodeRef = null;
+					// look for list
+					if (cacheLists.containsKey(listKey)) {
+						listNodeRef = cacheLists.get(listKey);
+					} else {
+						listNodeRef = entityListDAO.getList(listContainerNodeRef, charactMapping.getDataListQName());
 
-						// look for list
-						if (cacheLists.containsKey(listKey)) {
-							listNodeRef = cacheLists.get(listKey);
-						} else {
-							listNodeRef = entityListDAO.getList(listContainerNodeRef, charactMapping.getDataListQName());
+						if (listNodeRef == null) {
+							listNodeRef = entityListDAO.createList(listContainerNodeRef, charactMapping.getDataListQName());
+							createList = true;
+						}
+						cacheLists.put(listKey, listNodeRef);
+					}
 
-							if (listNodeRef == null) {
-								listNodeRef = entityListDAO.createList(listContainerNodeRef, charactMapping.getDataListQName());
-								createList = true;
-							}
-							cacheLists.put(listKey, listNodeRef);
+					// look for link
+					if (createList && !cacheLinks.containsKey(linkKey)) {
+						// don't need to try to get it
+					} else if (cacheLinks.containsKey(linkKey)) {
+						linkNodeRef = cacheLinks.get(linkKey);
+					} else {
+						linkNodeRef = entityListDAO.getListItem(listNodeRef, charactMapping.getCharactQName(), charactMapping.getCharactNodeRef());
+						cacheLinks.put(linkKey, linkNodeRef);
+					}
+
+					// add property in DB
+					if (linkNodeRef != null) {
+						nodeService.setProperty(linkNodeRef, column.getName(), value);
+					} else {
+						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						properties.put(column.getName(), value);
+
+						// sort
+						if (createList) {
+							properties.put(BeCPGModel.PROP_SORT, sort);
+							sort += RepoConsts.SORT_DEFAULT_STEP;
 						}
 
-						// look for link
-						if (createList && !cacheLinks.containsKey(linkKey)) {
-							// don't need to try to get it
-						} else if (cacheLinks.containsKey(linkKey)) {
-							linkNodeRef = cacheLinks.get(linkKey);
-						} else {
-							linkNodeRef = entityListDAO.getListItem(listNodeRef, charactMapping.getCharactQName(), charactMapping.getCharactNodeRef());
-							cacheLinks.put(linkKey, linkNodeRef);
-						}
-
-						// add property in DB
-						if (linkNodeRef != null) {
-							nodeService.setProperty(linkNodeRef, column.getName(), value);
-						} else {
-							Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-							properties.put(column.getName(), value);
-
-							// sort
-							if (createList) {
-								properties.put(BeCPGModel.PROP_SORT, sort);
-								sort += RepoConsts.SORT_DEFAULT_STEP;
-							}
-
-							ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
-									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, charactMapping.getCharactNodeRef().getId()), charactMapping.getDataListQName(),
-									properties);
-							nodeService.createAssociation(childAssocRef.getChildRef(), charactMapping.getCharactNodeRef(), charactMapping.getCharactQName());
-						}
+						ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, charactMapping.getCharactNodeRef().getId()), charactMapping.getDataListQName(),
+								properties);
+						nodeService.createAssociation(childAssocRef.getChildRef(), charactMapping.getCharactNodeRef(), charactMapping.getCharactQName());
 					}
 				}
 			}

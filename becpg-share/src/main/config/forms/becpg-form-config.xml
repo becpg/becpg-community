@@ -1309,7 +1309,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view"  />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productMicrobioCriteria" />
 
 					<!-- tags and categories -->
@@ -2655,6 +2655,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
+					<show id="bcpg:physicoChemFormulated" />
 				</field-visibility>
 
 				<appearance>
@@ -3981,10 +3982,8 @@
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
-					<show id="bcpg:nutListGroup" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -4088,7 +4087,6 @@
 				<field-visibility>
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclValue" />
-					<show id="bcpg:pclUnit" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 				</field-visibility>
@@ -4121,7 +4119,6 @@
 				<field-visibility>
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclValue" />
-					<show id="bcpg:pclUnit" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 				</field-visibility>

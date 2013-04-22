@@ -25,7 +25,9 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
  */
 public class FormulationHelper {	
 
-	public static final Double DEFAULT_QUANTITY = 0d;
+	public static final Double DEFAULT_PRODUCT_QUANTITY = 1d;
+	
+	public static final Double DEFAULT_COMPONANT_QUANTITY = 0d;
 
 	public static final Double DEFAULT_DENSITY = 1d;
 
@@ -45,7 +47,7 @@ public class FormulationHelper {
 			logger.warn("Composition element doesn't have any quantity");
 		} 
 		
-		Double qty = compoListDataItem.getQty()!=null ? compoListDataItem.getQty() : DEFAULT_QUANTITY ;		
+		Double qty = compoListDataItem.getQty()!=null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY ;		
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
 		
 		if(compoListUnit == CompoListUnit.g || compoListUnit == CompoListUnit.mL){
@@ -88,7 +90,7 @@ public class FormulationHelper {
 			logger.warn("Packaging element doesn't have any quantity");
 		} 
 		
-		Double qty = packagingListDataItem.getQty()!=null ? packagingListDataItem.getQty() : DEFAULT_QUANTITY ;	
+		Double qty = packagingListDataItem.getQty()!=null ? packagingListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY ;	
 		PackagingListUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
 		
 		if(packagingListUnit == PackagingListUnit.PP && qty>0){
@@ -145,7 +147,7 @@ public class FormulationHelper {
 	public static Double getQty(ProductData productData) {
 		Double qty =  (productData.getUnit() != ProductUnit.P) ? productData.getQty(): QTY_FOR_PIECE; //unit => qty == 1
 		if(qty==null){
-			qty = DEFAULT_QUANTITY;
+			qty = DEFAULT_PRODUCT_QUANTITY;
 		}
 		return qty;
 	}

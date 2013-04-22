@@ -384,6 +384,7 @@ public interface BeCPGModel {
 	/** The Constant TYPE_PHYSICO_CHEM. */
 	QName TYPE_PHYSICO_CHEM = QName.createQName(BECPG_URI, "physicoChem");
 
+	QName PROP_PHYSICO_CHEM_UNIT = QName.createQName(BECPG_URI, "physicoChemUnit");
 	QName PROP_PHYSICO_CHEM_FORMULATED = QName.createQName(BECPG_URI, "physicoChemFormulated");
 
 	// linkedValue
