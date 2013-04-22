@@ -101,11 +101,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}			
 			}
 			
-			addReqCtrlList(formulatedProduct, mandatoryCharacts);
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts);
 		}		
 	}
 	
-	protected void addReqCtrlList(ProductData formulatedProduct, Map<NodeRef, List<NodeRef>> mandatoryCharacts){
+	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts){
 		
 		//ReqCtrlList
 		for(Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()){
@@ -113,7 +113,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				String message = I18NUtil.getMessage(MESSAGE_MISSING_MANDATORY_CHARACT,
 									nodeService.getProperty(mandatoryCharact.getKey(), ContentModel.PROP_NAME));
 				
-				formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null,  RequirementType.Tolerated, message, mandatoryCharact.getValue()));					
+				reqCtrlList.add(new ReqCtrlListDataItem(null,  RequirementType.Tolerated, message, mandatoryCharact.getValue()));					
 			}
 		}
 	}

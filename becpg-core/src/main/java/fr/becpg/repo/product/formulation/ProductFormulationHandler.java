@@ -14,6 +14,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if(productData.getCompoListView()!=null && productData.getCompoListView().getReqCtrlList()!=null){
 			productData.getCompoListView().getReqCtrlList().clear();
 		}
+		if(productData.getPackagingListView()!=null && productData.getPackagingListView().getReqCtrlList()!=null){
+			productData.getPackagingListView().getReqCtrlList().clear();
+		}
+		if(productData.getProcessListView()!=null && productData.getProcessListView().getReqCtrlList()!=null){
+			productData.getProcessListView().getReqCtrlList().clear();
+		}
+		
 		
 		if ((productData.hasCompoListEl(EffectiveFilters.ALL)) ||
 		(productData.hasPackagingListEl(EffectiveFilters.ALL)) ||

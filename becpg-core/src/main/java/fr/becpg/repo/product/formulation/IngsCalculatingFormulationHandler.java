@@ -26,7 +26,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.CompositeIng;
-import fr.becpg.repo.product.data.ing.Ing;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
@@ -44,9 +43,6 @@ import fr.becpg.repo.repository.filters.EffectiveFilters;
  */
 @Service
 public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData>{
-		
-	/** The Constant DEFAULT_DENSITY. */
-	public static final Double DEFAULT_DENSITY = 1d;
 	
 	/** The Constant NO_GRP. */
 	public static final String  NO_GRP = "-";
@@ -309,12 +305,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				for(ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()){					
 					
 					// GMO
-					if(fil.getIsGMO() != null && !fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())){
+					if(fil.getIsGMO() != null && !fil.getIsGMO().isEmpty() && !fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())){
 						continue; // check next rule
 					}
 					
 					// Ionized
-					if(fil.getIsIonized() != null && !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())){
+					if(fil.getIsIonized() != null && !fil.getIsIonized().isEmpty() && !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())){
 						continue; // check next rule
 					}
 					
