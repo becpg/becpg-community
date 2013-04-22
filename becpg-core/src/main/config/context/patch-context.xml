@@ -64,5 +64,16 @@
             </list>
         </property>
     </bean> 
-	
+    
+	<bean id="patch.bcpg.removeCostDetailsListPatch" class="fr.becpg.repo.admin.patch.RemoveCostDetailsListPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.removeCostDetailsListPatch</value></property>
+        <property name="description"><value>patch.bcpg.removeCostDetailsListPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10002</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+    
 </beans>

@@ -25,6 +25,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
@@ -112,6 +113,10 @@ public class ProductServiceImpl implements ProductService {
 	    		nutListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	    	}
 
+	    	for(PhysicoChemListDataItem physicoChemDataItem : productData.getPhysicoChemList()){
+	    		physicoChemDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+	    	}
+	    	
     	return productData;
 	}
 
