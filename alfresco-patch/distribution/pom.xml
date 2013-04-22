@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>fr.becpg</groupId>
-		<version>1.5.0</version>
+		<version>1.5.1</version>
 		<relativePath>../</relativePath>
 		<artifactId>alfresco-patch</artifactId>
 	</parent>
@@ -19,7 +19,7 @@
 			<groupId>fr.becpg</groupId>
 			<artifactId>alfresco-core-patch</artifactId>
 			<type>amp</type>
-			<version>1.5.0</version>
+			<version>1.5.1</version>
 		</dependency>
 	</dependencies>
 	<build>
