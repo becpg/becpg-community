@@ -12,11 +12,12 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Change Unit class
+ * 
  * @author quere
- *
+ * 
  */
 @AlfType
-@AlfQname(qname="ecm:changeUnitList")
+@AlfQname(qname = "ecm:changeUnitList")
 public class ChangeUnitDataItem extends BeCPGDataObject {
 
 	private RevisionType revision;
@@ -25,71 +26,82 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	private Boolean treated;
 	private NodeRef sourceItem;
 	private NodeRef targetItem;
-	
+
 	@AlfProp
-	@AlfQname(qname="ecm:culRevision")
+	@AlfQname(qname = "ecm:culRevision")
 	public RevisionType getRevision() {
 		return revision;
 	}
+
 	public void setRevision(RevisionType revision) {
 		this.revision = revision;
-	}	
+	}
+
 	@AlfProp
-	@AlfQname(qname="ecm:culReqType")
+	@AlfQname(qname = "ecm:culReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
+
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
 	}
+
 	@AlfProp
-	@AlfQname(qname="ecm:culReqDetails")
+	@AlfQname(qname = "ecm:culReqDetails")
 	public String getReqDetails() {
 		return reqDetails;
 	}
+
 	public void setReqDetails(String reqDetails) {
 		this.reqDetails = reqDetails;
 	}
+
 	@AlfProp
-	@AlfQname(qname="ecm:culTreated")
+	@AlfQname(qname = "ecm:culTreated")
 	public Boolean getTreated() {
 		return treated;
 	}
+
 	public void setTreated(Boolean treated) {
 		this.treated = treated;
 	}
+
 	@AlfSingleAssoc
-	@AlfQname(qname="ecm:culSourceItem")
+	@AlfQname(qname = "ecm:culSourceItem")
 	public NodeRef getSourceItem() {
 		return sourceItem;
 	}
+
 	public void setSourceItem(NodeRef sourceItem) {
 		this.sourceItem = sourceItem;
 	}
+
 	@AlfSingleAssoc
-	@AlfQname(qname="ecm:culTargetItem")
+	@AlfQname(qname = "ecm:culTargetItem")
 	public NodeRef getTargetItem() {
 		return targetItem;
 	}
+
 	public void setTargetItem(NodeRef targetItem) {
 		this.targetItem = targetItem;
 	}
 
-	
-	
 	public ChangeUnitDataItem() {
 		super();
 	}
-	public ChangeUnitDataItem(NodeRef nodeRef, RevisionType revision, RequirementType reqType, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem){
-		
-		setNodeRef(nodeRef);
-		setRevision(revision);
-		setReqType(reqType);
-		setReqDetails(reqDetails);
-		setTreated(treated);
-		setSourceItem(sourceItem);
-		setTargetItem(targetItem);
+
+	public ChangeUnitDataItem(RevisionType revision, RequirementType reqType, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem) {
+		super();
+		this.revision = revision;
+		this.reqType = reqType;
+		this.reqDetails = reqDetails;
+		this.treated = treated;
+		this.sourceItem = sourceItem;
+		this.targetItem = targetItem;
 	}
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -102,6 +114,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 		result = prime * result + ((treated == null) ? 0 : treated.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -137,11 +150,11 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 			return false;
 		return true;
 	}
+
 	@Override
 	public String toString() {
 		return "ChangeUnitDataItem [revision=" + revision + ", reqType=" + reqType + ", reqDetails=" + reqDetails + ", treated=" + treated + ", sourceItem=" + sourceItem
 				+ ", targetItem=" + targetItem + "]";
 	}
-	
-	
+
 }

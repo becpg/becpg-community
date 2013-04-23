@@ -83,8 +83,9 @@
 			<form>
 				<field-visibility>
 					<show id="ecm:rlRevisionType" />
-					<show id="ecm:rlSourceItem" />
-					<show id="ecm:rlTargetItem" />					
+					<show id="ecm:rlSourceItems" />
+					<show id="ecm:rlTargetItem" />	
+					<show id="ecm:rlQtyPerc" />				
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -94,7 +95,7 @@
 							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
 						</control>
 					</field>						
-					<field id="ecm:rlSourceItem">
+					<field id="ecm:rlSourceItems">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -108,8 +109,9 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="ecm:rlRevisionType" />
-					<show id="ecm:rlSourceItem" />
+					<show id="ecm:rlSourceItems" />
 					<show id="ecm:rlTargetItem" />
+					<show id="ecm:rlQtyPerc" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -121,8 +123,9 @@
 			<form>
 				<field-visibility>
 					<show id="ecm:rlRevisionType" />
-					<show id="ecm:rlSourceItem" />
+					<show id="ecm:rlSourceItems" />
 					<show id="ecm:rlTargetItem" />
+					<show id="ecm:rlQtyPerc" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -132,7 +135,7 @@
 							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
 						</control>
 					</field>
-					<field id="ecm:rlSourceItem">
+					<field id="ecm:rlSourceItems">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -153,15 +156,14 @@
 				<field-visibility>
 					<show id="ecm:impactedDataList" />
 					<show id="ecm:isWUsedImpacted" />
-					<show id="ecm:wulSourceItem" />										
+					<show id="ecm:wulSourceItems" />										
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
-					<show id="ecm:wulSourceItem" />
+					<show id="ecm:wulSourceItems" />
 					<show id="ecm:isWUsedImpacted" />
 					<show id="ecm:impactedDataList" />		
 				</field-visibility>
@@ -176,7 +178,7 @@
 				<field-visibility>
 					<show id="ecm:impactedDataList" />
 					<show id="ecm:isWUsedImpacted" />
-					<show id="ecm:wulSourceItem" />				
+					<show id="ecm:wulSourceItems" />				
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 			</form>
@@ -196,7 +198,6 @@
 					<show id="ecm:culReqType" />
 					<show id="ecm:culReqDetails" />												
 				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
 					<field id="ecm:culReqType">
 					<control
@@ -232,7 +233,6 @@
 					<show id="ecm:culReqType" />
 					<show id="ecm:culReqDetails" />
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
 					<field id="ecm:culReqType">
 					<control
@@ -255,8 +255,7 @@
 					<show id="ecm:cclCharact" />
 					<show id="ecm:cclSourceValue" />
 					<show id="ecm:cclTargetValue" />														
-				</field-visibility>
-				<create-form template="../data-lists/forms/bulkdataitem.ftl" />				
+				</field-visibility>		
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">

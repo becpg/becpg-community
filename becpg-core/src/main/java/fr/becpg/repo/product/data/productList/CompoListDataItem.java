@@ -3,13 +3,9 @@
  */
 package fr.becpg.repo.product.data.productList;
 
-import java.util.List;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
-import fr.becpg.repo.data.hierarchicalList.Leaf;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -17,7 +13,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
-public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem {
+public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem, CompositionDataItem {
 
 	
 	private Integer depthLevel;
@@ -343,6 +339,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	public String toString() {
 		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", qtyAfterProcess=" + qtyAfterProcess + ", compoListUnit="
 				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product + ", parent=" + parent + "]";
+	}
+
+	@Override
+	public CompositionDataItem createCopy() {
+		return new CompoListDataItem(this);
 	}
 
 	

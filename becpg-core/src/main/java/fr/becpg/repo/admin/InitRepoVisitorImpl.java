@@ -98,7 +98,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	private static final String PRODUCT_REPORT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
-	private static final String ECO_REPORT_PATH = "beCPG/birt/system/ecm/ECOReport.rptdesign";
+	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
@@ -839,7 +839,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			NodeRef ecoFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_ECO);
 			reportTplService.createTplRptDesign(ecoFolderNodeRef,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_ECO),
-					ECO_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
+					ECO_REPORT_PATH, ReportType.Document, ReportFormat.PDF, ECMModel.TYPE_ECO, true, true, false);
 		} catch (IOException e) {
 			logger.error("Failed to create eco report tpl.", e);
 		}

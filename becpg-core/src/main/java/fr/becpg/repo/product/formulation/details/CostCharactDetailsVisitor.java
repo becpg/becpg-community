@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -72,9 +71,9 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio, Double netWeight) throws FormulateException{
 		
-		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
+		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 
-			if(component instanceof Composite){
+			if(!component.isLeaf()){
 				
 				// take in account the loss perc			
 				Double lossPerc = component.getData().getLossPerc() != null ? component.getData().getLossPerc() : 0d;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube - calculatedCharacts.calculatedCharacts.x</property>
@@ -857,7 +857,7 @@
         </label>
         <label id="1580"/>
         <label id="1578"/>
-        <extended-item extensionName="Crosstab" extensionVersion="2.5.0" id="1707">
+        <extended-item extensionName="Crosstab" extensionVersion="3.7.0" id="1707">
             <property name="cube">Data Cube - calculatedCosts</property>
             <property name="measures">
                 <extended-item extensionName="MeasureView" id="1752">
@@ -1166,7 +1166,7 @@
             <text-property name="text">SYNTHÈSE AUTRES</text-property>
         </label>
         <label id="2359"/>
-        <extended-item extensionName="Crosstab" extensionVersion="2.5.0" id="1968">
+        <extended-item extensionName="Crosstab" extensionVersion="3.7.0" id="1968">
             <property name="cube">Data Cube - otherCalculatedCharacts</property>
             <property name="measures">
                 <extended-item extensionName="MeasureView" id="2010">

@@ -11,7 +11,6 @@
     	<property name="checkOutCheckInService" ref="checkOutCheckInService"/>
     	<property name="productService" ref="productService"/>
     	<property name="alfrescoRepository" ref="alfrescoRepository" />
-    	<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 	
  

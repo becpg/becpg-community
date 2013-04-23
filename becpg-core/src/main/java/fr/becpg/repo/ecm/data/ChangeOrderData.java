@@ -20,9 +20,9 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
-@AlfQname(qname="ecm:changeOrder")
+@AlfQname(qname = "ecm:changeOrder")
 public class ChangeOrderData extends BeCPGDataObject {
-	
+
 	private String code;
 	private ECOState ecoState;
 	private ChangeOrderType ecoType;
@@ -31,107 +31,111 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private List<WUsedListDataItem> wUsedList;
 	private List<SimulationListDataItem> simulationList;
 	private List<ChangeUnitDataItem> changeUnitList;
-	
-	
-	
+
 	@AlfProp
-	@AlfQname(qname="bcpg:code")
+	@AlfQname(qname = "bcpg:code")
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
+
 	@AlfProp
-	@AlfQname(qname="ecm:ecoState")
+	@AlfQname(qname = "ecm:ecoState")
 	public ECOState getEcoState() {
 		return ecoState;
 	}
+
 	public void setEcoState(ECOState ecoState) {
 		this.ecoState = ecoState;
 	}
-	
+
 	@AlfProp
-	@AlfQname(qname="ecm:ecoType")
+	@AlfQname(qname = "ecm:ecoType")
 	public ChangeOrderType getEcoType() {
 		return ecoType;
 	}
+
 	public void setEcoType(ChangeOrderType ecoType) {
 		this.ecoType = ecoType;
-	}	
-	
+	}
+
 	@AlfMultiAssoc
-	@AlfQname(qname="ecm:calculatedCharacts")
+	@AlfQname(qname = "ecm:calculatedCharacts")
 	public List<NodeRef> getCalculatedCharacts() {
 		return calculatedCharacts;
 	}
+
 	public void setCalculatedCharacts(List<NodeRef> calculatedCharacts) {
 		this.calculatedCharacts = calculatedCharacts;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="ecm:replacementList")
+	@AlfQname(qname = "ecm:replacementList")
 	public List<ReplacementListDataItem> getReplacementList() {
 		return replacementList;
 	}
+
 	public void setReplacementList(List<ReplacementListDataItem> replacementList) {
 		this.replacementList = replacementList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="ecm:wUsedList")
+	@AlfQname(qname = "ecm:wUsedList")
 	public List<WUsedListDataItem> getWUsedList() {
 		return wUsedList;
 	}
+
 	public void setWUsedList(List<WUsedListDataItem> wUsedList) {
 		this.wUsedList = wUsedList;
-	}		
+	}
 
 	@DataList
-	@AlfQname(qname="ecm:calculatedCharactList")
+	@AlfQname(qname = "ecm:calculatedCharactList")
 	public List<SimulationListDataItem> getSimulationList() {
 		return simulationList;
 	}
+
 	public void setSimulationList(List<SimulationListDataItem> simulationList) {
 		this.simulationList = simulationList;
 	}
-	
-	
-	
+
 	@DataList
-	@AlfQname(qname="ecm:changeUnitList")
+	@AlfQname(qname = "ecm:changeUnitList")
 	public List<ChangeUnitDataItem> getChangeUnitList() {
 		return changeUnitList;
 	}
+
 	public void setChangeUnitList(List<ChangeUnitDataItem> changeUnitList) {
 		this.changeUnitList = changeUnitList;
 	}
-	
-	
+
 	public Map<NodeRef, ChangeUnitDataItem> getChangeUnitMap() {
 
-		 Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
-		 
-		 for(ChangeUnitDataItem dataItem : changeUnitList){
-			 changeUnitMap.put(dataItem.getSourceItem(), dataItem);
-		 }
-		 
-		
+		Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
+
+		for (ChangeUnitDataItem dataItem : changeUnitList) {
+			changeUnitMap.put(dataItem.getSourceItem(), dataItem);
+		}
+
 		return Collections.unmodifiableMap(changeUnitMap);
 	}
 
-	
 	public ChangeOrderData() {
 		super();
 	}
-	public ChangeOrderData(NodeRef nodeRef, String name, String code, ECOState ecoState, ChangeOrderType ecoType, List<NodeRef> calculatedCharacts){
-		this.nodeRef=nodeRef;
-		this.name=name;
-		this.code=code;
-		this.ecoState=ecoState;
-		this.ecoType=ecoType;
-		this.calculatedCharacts=calculatedCharacts;
+
+	public ChangeOrderData(NodeRef nodeRef, String name, String code, ECOState ecoState, ChangeOrderType ecoType, List<NodeRef> calculatedCharacts) {
+		this.nodeRef = nodeRef;
+		this.name = name;
+		this.code = code;
+		this.ecoState = ecoState;
+		this.ecoType = ecoType;
+		this.calculatedCharacts = calculatedCharacts;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -146,6 +150,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 		result = prime * result + ((wUsedList == null) ? 0 : wUsedList.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -191,14 +196,11 @@ public class ChangeOrderData extends BeCPGDataObject {
 			return false;
 		return true;
 	}
+
 	@Override
 	public String toString() {
 		return "ChangeOrderData [code=" + code + ", ecoState=" + ecoState + ", ecoType=" + ecoType + ", calculatedCharacts=" + calculatedCharacts + ", replacementList="
 				+ replacementList + ", wUsedList=" + wUsedList + ", simulationList=" + simulationList + ", changeUnitList=" + changeUnitList + "]";
 	}
 
-	
-	
-	
-	
 }

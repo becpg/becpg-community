@@ -5,9 +5,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
-import fr.becpg.repo.data.hierarchicalList.AbstractComponent;
 import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
@@ -64,7 +63,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	
 	private void visitChildren(Double parentQty, Double qtyAfterProcess, Composite<CompoListDataItem> composite) throws FormulateException{				
 		
-		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){					
+		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
 			// qty and sub formula qty are defined and not equal to 0
 			if(parentQty != null && qtyAfterProcess != null && !qtyAfterProcess.equals(0d)){
@@ -88,32 +87,31 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			}	
 			
 			// calculate children
-			if(component instanceof Composite){
+			if(!component.isLeaf()){
 				
-				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
 				
 				// take in account percentage
 				if(component.getData().getCompoListUnit() != null && 
 						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
 					
-					visitChildren(parentQty, qtyAfterProcess, c);
+					visitChildren(parentQty, qtyAfterProcess, component);
 					
 					// no yield but calculate % of composite
 					Double compositePerc = 0d;
-					for(AbstractComponent<CompoListDataItem> child : c.getChildren()){	
+					for(Composite<CompoListDataItem> child : component.getChildren()){	
 						compositePerc += child.getData().getQtySubFormula();
 					}
-					c.getData().setQtySubFormula(compositePerc);
-					c.getData().setQty(compositePerc * parentQty / 100);
-					c.getData().setYieldPerc(null);
+					component.getData().setQtySubFormula(compositePerc);
+					component.getData().setQty(compositePerc * parentQty / 100);
+					component.getData().setYieldPerc(null);
 				}
 				else{
 														
-					Double afterProcess = c.getData().getQtyAfterProcess() != null ? c.getData().getQtyAfterProcess() : c.getData().getQtySubFormula();
-					visitChildren(c.getData().getQty(), afterProcess, c);
+					Double afterProcess = component.getData().getQtyAfterProcess() != null ?component.getData().getQtyAfterProcess() : component.getData().getQtySubFormula();
+					visitChildren(component.getData().getQty(), afterProcess,component);
 					
 					// Yield				
-					c.getData().setYieldPerc(calculateYield(c));
+					component.getData().setYieldPerc(calculateYield(component));
 				}				
 			}			
 		}
@@ -125,7 +123,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 		// qty Used in the sub formula
 		Double qtyUsed = 0d;				
-		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){
+		for(Composite<CompoListDataItem> component : composite.getChildren()){
 			
 			Double qty = FormulationHelper.getQty(component.getData(), nodeService);
 			if(qty != null){
@@ -147,13 +145,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 		Double qty = 0d;
 		
-		for(AbstractComponent<CompoListDataItem> component : composite.getChildren()){						
+		for(Composite<CompoListDataItem> component : composite.getChildren()){						
 			
-			if(component instanceof Composite){
-				
+			if(!component.isLeaf()){
 				// calculate children
-				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				qty += calculateQtyUsedBeforeProcess(c);
+				qty += calculateQtyUsedBeforeProcess(component);
 			}else{
 				qty += FormulationHelper.getQty(component.getData(), nodeService);
 			}

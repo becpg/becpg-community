@@ -2,86 +2,80 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.List;
 
-import org.alfresco.repo.admin.patch.AbstractPatch;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.google.common.collect.Lists;
-
 import fr.becpg.model.ECMModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
-//TODO
-public class ECMPatch extends AbstractPatch {
+public class ECMPatch extends AbstractBeCPGPatch {
 
 	private static Log logger = LogFactory.getLog(ECMPatch.class);
-	
-	private static int BATCH_SIZE = 50;
-	
+
+//	private InitVisitor initRepoVisitor;
+
 	private BeCPGSearchService beCPGSearchService;
 	
-	private DictionaryService dictionaryService;
+
+	// simulationEntityAspect
+	public static final QName ASPECT_SIMULATION_ENTITY = QName.createQName(ECMModel.ECM_URI, "simulationEntityAspect");
+
+	public static final QName ASSOC_SIMULATION_SOURCE_ITEM = QName.createQName(ECMModel.ECM_URI, "simulationSourceItem");
+
+//	public void setInitRepoVisitor(InitVisitor initRepoVisitor) {
+//		this.initRepoVisitor = initRepoVisitor;
+//	}
+
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
+	}
+
 	
-	
+
 	@Override
 	protected String applyInternal() throws Exception {
-	
-		//Remove simulation Item
-		//add aspect <aspect>rep:reportEntityAspect</aspect>
 
-		
-		
-		addMandatoryAspect(ECMModel.TYPE_ECO, ReportModel.ASPECT_REPORT_ENTITY);
-			
-		
-		return "Ecm patch success";
-	}
-	
-	private void addMandatoryAspect(QName type, final QName aspect) {
+		// Remove simulation Item
+		// add aspect <aspect>rep:reportEntityAspect</aspect>
 
-		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(type))
-				+ LuceneHelper.exclude(LuceneHelper.getCondAspect(aspect));
+		// Change template to ECO_REPORT_PATH, ReportType.Document,
+		// ReportFormat.PDF, ECMModel.TYPE_ECO, true, true, false);
+		// Delete template abd redo initrepo
+
+		NodeRef oldWFNodeRef = searchFolder("app:company_home/cm:System/cm:Reports/cm:ECOReports/.");
+
+		if (oldWFNodeRef != null) {
+			logger.info("Delete old OM report template");
+			nodeService.deleteNode(oldWFNodeRef);
+		}
+
+		// Delete ALL OM
+		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(ECMModel.TYPE_ECO));
 
 		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
-
-		logger.info("Found " + nodeRefs.size() + " node of type " + type + " without mandatory aspect " + aspect);
-
-		if (!nodeRefs.isEmpty()) {
-
-			for (final List<NodeRef> batchList : Lists.partition(nodeRefs, BATCH_SIZE)) {
-				transactionService.getRetryingTransactionHelper().doInTransaction(
-						new RetryingTransactionCallback<Boolean>() {
-							public Boolean execute() throws Exception {
-
-								for (NodeRef nodeRef : batchList) {
-									if (nodeService.exists(nodeRef)) {
-										if (!nodeService.hasAspect(nodeRef, aspect)) {
-											nodeService.addAspect(nodeRef, aspect, null);
-											//look for other mandatory aspects
-											TypeDefinition typeDef = dictionaryService.getType(nodeService.getType(nodeRef));
-											for(QName defaultAspect : typeDef.getDefaultAspectNames()){
-												if (!nodeService.hasAspect(nodeRef, defaultAspect)) {
-													logger.debug("Add other default aspect " + defaultAspect + " for node " + nodeRef);
-													nodeService.addAspect(nodeRef, defaultAspect, null);
-												}
-											}
-										}
-									}
-								}
-								return true;
-							}
-						}, false, true);
-			}
+		logger.info("Delete " + nodeRefs.size() + " OM ");
+		for (NodeRef nodeRef : nodeRefs) {
+			nodeService.deleteNode(nodeRef);
 		}
+
+		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(ASPECT_SIMULATION_ENTITY));
+
+		// Delete SIMULATION NODE
+		nodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		logger.info("Delete " + nodeRefs.size() + " simulation nodes ");
+		for (NodeRef nodeRef : nodeRefs) {
+			nodeService.deleteNode(nodeRef);
+		}
+		
+		//Doesn't work in junit test 
+		//initRepoVisitor.visitContainer(repository.getCompanyHome());
+
+		
+		return "ECM patch success";
 	}
 
-	
 }
