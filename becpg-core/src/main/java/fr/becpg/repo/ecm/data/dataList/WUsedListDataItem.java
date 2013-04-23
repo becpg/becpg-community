@@ -1,109 +1,109 @@
 package fr.becpg.repo.ecm.data.dataList;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+
 @AlfType
-@AlfQname(qname="ecm:wUsedList")
-public class WUsedListDataItem  extends BeCPGDataObject implements CompositeDataItem{
+@AlfQname(qname = "ecm:wUsedList")
+public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataItem {
 
 	private Integer depthLevel;
 	private Boolean isWUsedImpacted;
 	private QName impactedDataList;
 	private NodeRef link;
-	private NodeRef sourceItem;
+	private List<NodeRef> sourceItems;
 	private WUsedListDataItem parent;
-	
 
-	
 	@AlfProp
-	@AlfQname(qname="bcpg:parentLevel")
+	@AlfQname(qname = "bcpg:parentLevel")
 	public WUsedListDataItem getParent() {
 		return parent;
 	}
-	
+
 	public void setParent(WUsedListDataItem parent) {
 		this.parent = parent;
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:depthLevel")
+	@AlfQname(qname = "bcpg:depthLevel")
 	public Integer getDepthLevel() {
 		return depthLevel;
 	}
+
 	public void setDepthLevel(Integer depthLevel) {
 		this.depthLevel = depthLevel;
 	}
+
 	@AlfProp
-	@AlfQname(qname="ecm:isWUsedImpacted")
+	@AlfQname(qname = "ecm:isWUsedImpacted")
 	public Boolean getIsWUsedImpacted() {
 		return isWUsedImpacted;
 	}
+
 	public void setIsWUsedImpacted(Boolean isWUsedImpacted) {
 		this.isWUsedImpacted = isWUsedImpacted;
 	}
+
 	@AlfProp
-	@AlfQname(qname="ecm:impactedDataList")
+	@AlfQname(qname = "ecm:impactedDataList")
 	public QName getImpactedDataList() {
 		return impactedDataList;
 	}
+
 	public void setImpactedDataList(QName impactedDataList) {
 		this.impactedDataList = impactedDataList;
 	}
+
 	@AlfSingleAssoc
-	@AlfQname(qname="ecm:wulLink")
+	@AlfQname(qname = "ecm:wulLink")
 	public NodeRef getLink() {
 		return link;
 	}
+
 	public void setLink(NodeRef link) {
 		this.link = link;
-	}	
-	@AlfSingleAssoc
-	@AlfQname(qname="ecm:wulSourceItem")
-	public NodeRef getSourceItem() {
-		return sourceItem;
-	}
-	public void setSourceItem(NodeRef sourceItem) {
-		this.sourceItem = sourceItem;
 	}
 
-	
+	@AlfMultiAssoc
+	@AlfQname(qname = "ecm:wulSourceItems")
+	public List<NodeRef> getSourceItems() {
+		return sourceItems;
+	}
+
+	public void setSourceItems(List<NodeRef> sourceItems) {
+		this.sourceItems = sourceItems;
+	}
+
 	public WUsedListDataItem() {
 		super();
 	}
-	
-	public WUsedListDataItem(NodeRef nodeRef, WUsedListDataItem parent, QName impactedDataList,
-			Boolean isWUsedImpacted, NodeRef link, NodeRef sourceItem){
+
+	public WUsedListDataItem(NodeRef nodeRef, WUsedListDataItem parent, QName impactedDataList, Boolean isWUsedImpacted, NodeRef link, List<NodeRef> sourceItems) {
 		super();
-		this.nodeRef=nodeRef;
-		this.parent= parent;
-		if(parent == null || parent.getDepthLevel() == null){
+		this.nodeRef = nodeRef;
+		this.parent = parent;
+		if (parent == null || parent.getDepthLevel() == null) {
 			depthLevel = 1;
 		} else {
-			depthLevel = parent.getDepthLevel()+1;
+			depthLevel = parent.getDepthLevel() + 1;
 		}
-		this.impactedDataList=impactedDataList;
-		this.isWUsedImpacted=isWUsedImpacted;
-		this.link=link;
-		this.sourceItem=sourceItem;
-	}
-	
-	
-	@Override
-	public String toString() {
-		return "WUsedListDataItem [depthLevel=" + depthLevel + ", isWUsedImpacted=" + isWUsedImpacted + ", impactedDataList=" + impactedDataList + ", link=" + link
-				+ ", sourceItem=" + sourceItem + "]";
+		this.impactedDataList = impactedDataList;
+		this.isWUsedImpacted = isWUsedImpacted;
+		this.link = link;
+		this.sourceItems = sourceItems;
 	}
 
-	
 
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -113,7 +113,7 @@ public class WUsedListDataItem  extends BeCPGDataObject implements CompositeData
 		result = prime * result + ((isWUsedImpacted == null) ? 0 : isWUsedImpacted.hashCode());
 		result = prime * result + ((link == null) ? 0 : link.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + ((sourceItem == null) ? 0 : sourceItem.hashCode());
+		result = prime * result + ((sourceItems == null) ? 0 : sourceItems.hashCode());
 		return result;
 	}
 
@@ -151,13 +151,18 @@ public class WUsedListDataItem  extends BeCPGDataObject implements CompositeData
 				return false;
 		} else if (!parent.equals(other.parent))
 			return false;
-		if (sourceItem == null) {
-			if (other.sourceItem != null)
+		if (sourceItems == null) {
+			if (other.sourceItems != null)
 				return false;
-		} else if (!sourceItem.equals(other.sourceItem))
+		} else if (!sourceItems.equals(other.sourceItems))
 			return false;
 		return true;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "WUsedListDataItem [depthLevel=" + depthLevel + ", isWUsedImpacted=" + isWUsedImpacted + ", impactedDataList=" + impactedDataList + ", link=" + link
+				+ ", sourceItems=" + sourceItems + ", parent=" + parent + "]";
+	}
+
 }

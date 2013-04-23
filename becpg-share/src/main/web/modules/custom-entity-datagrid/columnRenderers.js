@@ -7,7 +7,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                   propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity",
                         "bcpg:resourceProduct", "cm:content_bcpg:costDetailsListSource",
                         "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct"
-                        , "ecm:wulSourceItem", "ecm:rlSourceItem", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culSourceItem", "ecm:cclSourceItem"],
+                        , "ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem","ecm:culTargetItem", "ecm:cclSourceItem"],
                   renderer : function(oRecord, data, label, scope) {
 
                      var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
@@ -28,7 +28,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                         }
                      }
 
-                     if (label == "bcpg:compoListProduct" || label == "ecm:wulSourceItem") {
+                     if (label == "bcpg:compoListProduct" || label == "ecm:wulSourceItems") {
 
                         var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
                         return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">' + Alfresco.util

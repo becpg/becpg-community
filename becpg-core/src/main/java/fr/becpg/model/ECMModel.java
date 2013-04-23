@@ -19,16 +19,19 @@ public class ECMModel {
 			"ecoType");
 	public static final QName ASSOC_CALCULATED_CHARACTS = QName.createQName(ECM_URI,
 			"calculatedCharacts");	
-	
+
 	//replacementList
 	public static final QName TYPE_REPLACEMENTLIST = QName.createQName(ECM_URI,
 			"replacementList");
 	public static final QName PROP_REVISION = QName.createQName(ECM_URI,
 			"rlRevisionType");
-	public static final QName ASSOC_SOURCE_ITEM = QName.createQName(ECM_URI,
-			"rlSourceItem");
+	public static final QName ASSOC_SOURCE_ITEMS = QName.createQName(ECM_URI,
+			"rlSourceItems");
 	public static final QName ASSOC_TARGET_ITEM = QName.createQName(ECM_URI,
 			"rlTargetItem");
+	
+	public static final QName PROP_QTY_PERCENT = QName.createQName(ECM_URI,
+			"rlQtyPerc");
 	
 	//wUsedList
 	public static final QName TYPE_WUSEDLIST = QName.createQName(ECM_URI,
@@ -39,8 +42,8 @@ public class ECMModel {
 			"isWUsedImpacted");	
 	public static final QName ASSOC_WUL_LINK = QName.createQName(ECM_URI,
 			"wulLink");
-	public static final QName ASSOC_WUL_SOURCE_ITEM = QName.createQName(ECM_URI,
-			"wulSourceItem");
+	public static final QName ASSOC_WUL_SOURCE_ITEMS = QName.createQName(ECM_URI,
+			"wulSourceItems");
 	
 	//simulationList
 	public static final QName TYPE_CALCULATEDCHARACTLIST = QName.createQName(ECM_URI,
@@ -65,19 +68,13 @@ public class ECMModel {
 			"culReqDetails");
 	public static final QName PROP_CUL_TREATED = QName.createQName(ECM_URI,
 			"culTreated");	
-	public static final QName ASSOC_CUL_SOURCE_ITEM = QName.createQName(ECM_URI,
-			"culSourceItem");
+	public static final QName ASSOC_CUL_SOURCE_ITEMS = QName.createQName(ECM_URI,
+			"culSourceItems");
 	public static final QName ASSOC_CUL_TARGET_ITEM = QName.createQName(ECM_URI,
 			"culTargetItem");	
 	public static final QName ASSOC_CUL_SIMULATION_ITEM = QName.createQName(ECM_URI,
 			"culSimulationItem");	
 	
-	//simulationEntityAspect
-	@Deprecated
-	public static final QName ASPECT_SIMULATION_ENTITY = QName.createQName(ECM_URI,
-			"simulationEntityAspect");
-	@Deprecated
-	public static final QName ASSOC_SIMULATION_SOURCE_ITEM = QName.createQName(ECM_URI,
-			"simulationSourceItem");
+	
 	
 }

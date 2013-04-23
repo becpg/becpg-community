@@ -69,6 +69,7 @@ public class MigrationServiceImpl implements MigrationService {
 	}
 
 	@Override
+	@Deprecated //Use patch instead
 	public void addMandatoryAspectInMt(final QName type, final QName aspect) {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);
 
@@ -97,7 +98,9 @@ public class MigrationServiceImpl implements MigrationService {
 		}, AuthenticationUtil.getSystemUserName());
 	}
 
-	private void addMandatoryAspect(QName type, final QName aspect) {
+	//TODO Use BatchProcessWorkProvider to do batching
+	
+	public void addMandatoryAspect(QName type, final QName aspect) {
 
 		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(type))
 				+ LuceneHelper.exclude(LuceneHelper.getCondAspect(aspect));
@@ -234,7 +237,8 @@ public class MigrationServiceImpl implements MigrationService {
 		}, AuthenticationUtil.getSystemUserName());
 	}
 
-	private void migrateAssociation(QName classQName, final QName sourceAssoc, final QName targetAssoc) {
+	@Override
+	public void migrateAssociation(QName classQName, final QName sourceAssoc, final QName targetAssoc) {
 
 		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(getLuceneQueryforClass(classQName), RepoConsts.MAX_RESULTS_UNLIMITED);
 

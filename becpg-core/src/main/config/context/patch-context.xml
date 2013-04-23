@@ -75,5 +75,19 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+	<bean id="patch.bcpg.ecmPatch" class="fr.becpg.repo.admin.patch.ECMPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.ecmPatch</value></property>
+        <property name="description"><value>patch.bcpg.ecmPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10003</value></property>
+       <!--  <property name="initRepoVisitor" ref="initRepoVisitor"/> -->
+        <property name="repository" ref="repositoryHelper"/>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+    </bean> 
+	
     
 </beans>

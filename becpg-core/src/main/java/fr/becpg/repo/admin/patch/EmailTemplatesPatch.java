@@ -19,11 +19,6 @@
 
 package fr.becpg.repo.admin.patch;
 
-import java.util.List;
-
-import org.alfresco.repo.admin.patch.AbstractPatch;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.service.cmr.admin.PatchException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,26 +29,18 @@ import fr.becpg.repo.helper.ContentHelper;
 /**
  * Override alfresco email template
  */
-public class EmailTemplatesPatch extends AbstractPatch {
+public class EmailTemplatesPatch extends AbstractBeCPGPatch {
     
 	private static Log logger = LogFactory.getLog(EmailTemplatesPatch.class);
 	
 	private static final String MSG_SUCCESS = "patch.bcpg.emailTemplatesPatch.result";
-    
-	private Repository repository;
-	
+
 	private ContentHelper contentHelper;
     
-    
-    public void setRepository(Repository repository) {
-		this.repository = repository;
-	}
-
-
+   
     public void setContentHelper(ContentHelper contentHelper) {
 		this.contentHelper = contentHelper;
 	}
-
 
 	@Override
     protected String applyInternal() throws Exception
@@ -87,24 +74,5 @@ public class EmailTemplatesPatch extends AbstractPatch {
 
 
 
-	private NodeRef searchFolder(String xpath)
-    {
-        List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), xpath, null, namespaceService, false);
-        if (nodeRefs.size() > 1)
-        {
-            throw new PatchException("XPath returned too many results: \n" +
-                    "   xpath: " + xpath + "\n" +
-                    "   results: " + nodeRefs);
-        }
-        else if (nodeRefs.size() == 0)
-        {
-            // the node does not exist
-            return null;
-        }
-        else
-        {
-            return nodeRefs.get(0);
-        }
-    }
-    
+	
 }

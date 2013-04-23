@@ -55,6 +55,10 @@
 				</list>
 			</parameter>
 		</constraint>
+		 <constraint name="ecm:percentCstrt" type="MINMAX">
+      	 <parameter name="minValue"><value>0</value></parameter>
+          <parameter name="maxValue"><value>100</value></parameter>
+      </constraint>
 	</constraints>
 
 	<types>
@@ -115,9 +119,29 @@
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
 				</property>
+				<property name="ecm:rlQtyPerc">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+					<default>100</default>
+					<index enabled="false"/>
+					<constraints>
+						<constraint ref="ecm:percentCstrt"></constraint>
+					</constraints>
+				</property>
 			</properties>
 			<associations>
-				<association name="ecm:rlSourceItem">
+				<association name="ecm:rlSourceItems">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="ecm:rlTargetItem">
 					<source>
 						<mandatory>true</mandatory>
 						<many>true</many>
@@ -128,7 +152,8 @@
 						<many>false</many>
 					</target>
 				</association>
-				<association name="ecm:rlTargetItem">
+				<!-- deprecated -->
+				<association name="ecm:rlSourceItem">
 					<source>
 						<mandatory>true</mandatory>
 						<many>true</many>
@@ -168,6 +193,18 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="ecm:wulSourceItems">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>	
+				<!-- deprecated -->
 				<association name="ecm:wulSourceItem">
 					<source>
 						<mandatory>true</mandatory>
@@ -178,7 +215,7 @@
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
-				</association>				
+				</association>			
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
@@ -240,6 +277,17 @@
 					</target>
 				</association>
 				<!-- Deprecated -->
+				<association name="ecm:culSourceItems">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="ecm:culSimulationItem">
 					<source>
 						<mandatory>true</mandatory>
@@ -251,6 +299,7 @@
 						<many>false</many>
 					</target>
 				</association>
+				
 			</associations>	
 		</type>
 		

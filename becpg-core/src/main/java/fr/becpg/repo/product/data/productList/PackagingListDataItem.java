@@ -12,21 +12,20 @@ import fr.becpg.repo.repository.annotation.AlfType;
 
 @AlfType
 @AlfQname(qname = "bcpg:packagingList")
-public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem {
+public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 
 	private Double qty = 0d;
-	
+
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
-	
-	private String pkgLevel;	
-	
+
+	private String pkgLevel;
+
 	private Boolean isMaster;
-	
+
 	private NodeRef product;
-	
 
 	@AlfProp
-	@AlfQname(qname="bcpg:packagingListQty")
+	@AlfQname(qname = "bcpg:packagingListQty")
 	public Double getQty() {
 		return qty;
 	}
@@ -36,7 +35,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:packagingListUnit")
+	@AlfQname(qname = "bcpg:packagingListUnit")
 	public PackagingListUnit getPackagingListUnit() {
 		return packagingListUnit;
 	}
@@ -46,7 +45,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:packagingListPkgLevel")
+	@AlfQname(qname = "bcpg:packagingListPkgLevel")
 	public String getPkgLevel() {
 		return pkgLevel;
 	}
@@ -56,7 +55,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:packagingListIsMaster")
+	@AlfQname(qname = "bcpg:packagingListIsMaster")
 	public Boolean getIsMaster() {
 		return isMaster;
 	}
@@ -66,39 +65,49 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	@AlfSingleAssoc
-	@AlfQname(qname="bcpg:packagingListProduct")
+	@AlfQname(qname = "bcpg:packagingListProduct")
 	public NodeRef getProduct() {
 		return product;
 	}
-	
-	
+
 	public void setProduct(NodeRef product) {
 		this.product = product;
-	}	
+	}
 
 	/**
 	 * Instantiates a new compo list data item.
 	 */
 	public PackagingListDataItem() {
-		
+
 	}
-	
+
 	/**
 	 * Instantiates a new packaging list data item.
+	 * 
 	 * @param nodeRef
 	 * @param qty
 	 * @param packagingListUnit
 	 * @param pkgLevel
 	 * @param product
 	 */
-	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, String pkgLevel, Boolean isMaster, NodeRef product){
-		
+	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, String pkgLevel, Boolean isMaster, NodeRef product) {
+
 		setNodeRef(nodeRef);
 		setQty(qty);
 		setPackagingListUnit(packagingListUnit);
 		setPkgLevel(pkgLevel);
 		setIsMaster(isMaster);
 		setProduct(product);
+	}
+
+	public PackagingListDataItem(PackagingListDataItem c) {
+		super();
+		this.nodeRef = c.nodeRef;
+		this.qty = c.qty;
+		this.packagingListUnit = c.packagingListUnit;
+		this.pkgLevel = c.pkgLevel;
+		this.isMaster = c.isMaster;
+		this.product = c.product;
 	}
 
 	@Override
@@ -156,7 +165,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	@Override
 	public String toString() {
 		return "PackagingListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", packagingListUnit=" + packagingListUnit + ", pkgLevel=" + pkgLevel + ", product=" + product + "]";
-	}	
-	
-	
+	}
+
+	@Override
+	public CompositionDataItem createCopy() {
+		return new PackagingListDataItem(this);
+	}
+
 }
