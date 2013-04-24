@@ -290,7 +290,7 @@
                      /**
                       * Simple View
                       */
-                     desc += '<h3 class="filename"><a title="' + this.msg("actions.entity.view-details") + '" class="theme-color-1" href="' + this
+                     desc += '<h3 class="filename"><a title="' + $html(record.displayName) + '" class="theme-color-1" href="' + this
                            ._getBrowseUrlForRecord(oRecord) + '">' + $html(record.displayName) + '</a></h3>';
 
                      /* Favourite / Charact / Download */
