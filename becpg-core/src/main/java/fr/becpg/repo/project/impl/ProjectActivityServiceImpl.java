@@ -60,7 +60,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 		postStateChangeActivity(PROJECT_STATE_ACTIVITY,(String)nodeService.getProperty(projectNodeRef,ContentModel.PROP_NAME), projectNodeRef, beforeState, afterState, false);
 
 	}
-
+	
 	@Override
 	public void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef, String beforeState, String afterState) {
 		postStateChangeActivity(DELIVERABLE_STATE_ACTIVITY,(String)nodeService.getProperty(deliverableNodeRef,ProjectModel.PROP_DL_DESCRIPTION), deliverableNodeRef, beforeState, afterState, true);
@@ -68,7 +68,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 	}
 
 	private void postStateChangeActivity(String activityType,String title, NodeRef itemNodeRef, String beforeState, String afterState, boolean isItem) {
-		if (itemNodeRef != null) {
+		if (itemNodeRef != null && beforeState!=null && afterState!=null) {
 			try {
 				JSONObject data = new JSONObject();
 				if (isItem) {
