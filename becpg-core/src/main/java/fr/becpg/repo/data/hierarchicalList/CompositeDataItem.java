@@ -1,9 +1,11 @@
 package fr.becpg.repo.data.hierarchicalList;
 
-public interface CompositeDataItem {
+public interface CompositeDataItem<T> {
 
 	Integer getDepthLevel();
      
-	CompositeDataItem getParent();
+	T getParent();
+	
+	void setParent(T parent);
 	
 }

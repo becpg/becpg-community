@@ -139,9 +139,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (entity.getNodeRef() == null) {
 				entity.setNodeRef(L2CacheSupport.generateNodeRef());
 			}
-			
-			if(logger.isInfoEnabled()){
-				logger.info("Save entity "+entity.getName()+" only on memory");
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Save entity " + entity.getName() + " only on memory");
 			}
 		}
 
@@ -176,6 +176,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	private void saveAssociations(T entity) {
 
+		//TODO manage child assocs
+		
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
 			associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
 		}
@@ -272,9 +274,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
+					nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(dataListItem.getNodeRef());
 				}
-				
+
 				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 
 			} else {
@@ -348,13 +351,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					if (readMethod.isAnnotationPresent(AlfProp.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						loadProperties(entity, pd, readMethod, properties, caches);
 					}
-
 					else if (readMethod.isAnnotationPresent(AlfSingleAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
-						loadAssoc(entity, pd, readMethod, caches, false);
-					}
-
-					else if (readMethod.isAnnotationPresent(AlfMultiAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
-						loadAssoc(entity, pd, readMethod, caches, true);
+						loadAssoc(entity, pd, readMethod, caches, false, readMethod.getAnnotation(AlfSingleAssoc.class).isChildAssoc());
+					} else if (readMethod.isAnnotationPresent(AlfMultiAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
+						loadAssoc(entity, pd, readMethod, caches, true, readMethod.getAnnotation(AlfMultiAssoc.class).isChildAssoc());
 					} else if (readMethod.isAnnotationPresent(DataListView.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 
 						QName datalistViewQname = repositoryEntityDefReader.readQName(readMethod);
@@ -432,27 +432,43 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return dataList;
 	}
 
-	private void loadAssoc(T entity, PropertyDescriptor pd, Method readMethod, Map<NodeRef, RepositoryEntity> caches, boolean multiple) throws IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+	private void loadAssoc(T entity, PropertyDescriptor pd, Method readMethod, Map<NodeRef, RepositoryEntity> caches, boolean multiple, boolean isChildAssoc)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (multiple) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("read multi assoc : " + pd.getName());
 			}
-			PropertyUtils.setProperty(entity, pd.getName(), associationService.getTargetAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod)));
+			List<NodeRef> assocRefs = null;
+			if(!isChildAssoc){
+				assocRefs =  associationService.getTargetAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
+			} else {
+				assocRefs = associationService.getChildAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
+			}
+			
+			if( assocRefs != null && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()){
+				List<RepositoryEntity> entities = new LinkedList<>();
+				for(NodeRef nodeRef : assocRefs){
+					entities.add(findOne(nodeRef,caches));
+				}
+				PropertyUtils.setProperty(entity, pd.getName(),entities);
+			} else {
+				PropertyUtils.setProperty(entity, pd.getName(), assocRefs);
+			}
 		} else {
 
 			if (logger.isTraceEnabled()) {
 				logger.trace("read single assoc : " + pd.getName());
 			}
 
-			NodeRef assocRef = associationService.getTargetAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
+			NodeRef assocRef = null;
+			if(!isChildAssoc){
+				assocRef = associationService.getTargetAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
+			} else {
+				assocRef = associationService.getChildAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
+			}
 
 			if (assocRef != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
-				if (caches.containsKey(assocRef)) {
-					PropertyUtils.setProperty(entity, pd.getName(), caches.get(assocRef));
-				} else {
-					PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef, caches));
-				}
+				PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef, caches));
 			} else {
 				PropertyUtils.setProperty(entity, pd.getName(), assocRef);
 			}
@@ -467,22 +483,26 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 		QName qname = repositoryEntityDefReader.readQName(readMethod);
 		Object prop = properties.get(qname);
-		if (prop != null && Enum.class.isAssignableFrom(pd.getPropertyType())) {
-			if (((String) prop).isEmpty()) {
-				PropertyUtils.setProperty(entity, pd.getName(), null);
+		try {
+			if (prop != null && Enum.class.isAssignableFrom(pd.getPropertyType())) {
+				if (((String) prop).isEmpty()) {
+					PropertyUtils.setProperty(entity, pd.getName(), null);
+				} else {
+					PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
+				}
+			} else if (prop != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
+				if (caches.containsKey(prop)) {
+					PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));
+				} else {
+					PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
+				}
+			} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
+				PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
 			} else {
-				PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
+				PropertyUtils.setProperty(entity, pd.getName(), prop);
 			}
-		} else if (prop != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
-			if (caches.containsKey(prop)) {
-				PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));
-			} else {
-				PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
-			}
-		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
-			PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
-		} else {
-			PropertyUtils.setProperty(entity, pd.getName(), prop);
+		} catch (NoSuchMethodException ex) {
+			logger.error("Error setting :" + pd.getName() + " under " + entity.toString(), ex);
 		}
 
 	}

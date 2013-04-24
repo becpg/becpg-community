@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface AlfMultiAssoc {
-	boolean isChildAssoc() default false;
-	boolean isEntity() default false;
+public @interface AlfReadOnly  {
+	
 }

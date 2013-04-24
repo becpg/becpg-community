@@ -13,7 +13,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
-public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem, CompositionDataItem {
+public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem<CompoListDataItem>, CompositionDataItem {
 
 	
 	private Integer depthLevel;
@@ -345,6 +345,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	public CompositionDataItem createCopy() {
 		return new CompoListDataItem(this);
 	}
+
 
 	
 	

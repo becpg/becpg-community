@@ -15,7 +15,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "ecm:wUsedList")
-public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataItem {
+public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataItem<WUsedListDataItem> {
 
 	private Integer depthLevel;
 	private Boolean isWUsedImpacted;

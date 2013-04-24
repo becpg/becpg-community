@@ -29,6 +29,7 @@ import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
@@ -87,8 +88,9 @@ public class ProductData extends AbstractEffectiveDataItem {
 	
 	private List<VariantData> variants;
 
-	@AlfMultiAssoc
+	@AlfMultiAssoc(isChildAssoc=true, isEntity=true)
 	@AlfQname(qname="bcpg:variants")
+	@AlfReadOnly
 	public List<VariantData> getVariants() {
 		return variants;
 	}
@@ -436,15 +438,12 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName
-				+ ", title=" + title + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density
-				+ ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
-				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList
-				+ ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList="
-				+ nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList="
-				+ microbioList + ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList
-				+ ", labelClaimList=" + labelClaimList + ", compoListView=" + compoListView + ", processListView="
-				+ processListView + ", packagingListView=" + packagingListView + "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
+				+ ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
+				+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList
+				+ ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList="
+				+ physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", labelClaimList=" + labelClaimList + ", compoListView=" + compoListView + ", processListView="
+				+ processListView + ", packagingListView=" + packagingListView + ", variants=" + variants + "]";
 	}
 
 	@Override
@@ -477,6 +476,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
 		result = prime * result + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
+		result = prime * result + ((variants == null) ? 0 : variants.hashCode());
 		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
 		return result;
 	}
@@ -613,6 +613,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 			if (other.unitTotalCost != null)
 				return false;
 		} else if (!unitTotalCost.equals(other.unitTotalCost))
+			return false;
+		if (variants == null) {
+			if (other.variants != null)
+				return false;
+		} else if (!variants.equals(other.variants))
 			return false;
 		if (yield == null) {
 			if (other.yield != null)
