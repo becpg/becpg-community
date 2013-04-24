@@ -86,6 +86,10 @@
 	background-image:  url(../images/filetypes/generic-controlPoint-16.png) ;
 }
 
+.node-header .node-path .folder-qa_workItemAnalysis {
+	background-image:  url(../images/filetypes/generic-workItemAnalysis-16.png) ;
+}
+
  .treeview  span.ygtvlabel.pjt-project,
  .treeview  span.ygtvlabel.bcpg-finishedProduct,
  .treeview  span.ygtvlabel.bcpg-packagingKit,
@@ -101,6 +105,7 @@
  .treeview  span.ygtvlabel.qa-nc,
  .treeview  span.ygtvlabel.qa-controlPlan,
  .treeview  span.ygtvlabel.qa-controlPoint,
+ .treeview  span.ygtvlabel.qa-workItemAnalysis,
  .treeview  span.ygtvlabel.ecm-changeOrder
   {
 	background-position:  left bottom;

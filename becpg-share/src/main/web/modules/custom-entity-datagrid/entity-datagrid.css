@@ -257,7 +257,7 @@
 }
 
 /* quality */
-.datagrid .sample {
+.datagrid .controlPoint {
 	background: url(../../components/images/quality/sample-16.png) no-repeat;
 	padding-left: 20px;
 }

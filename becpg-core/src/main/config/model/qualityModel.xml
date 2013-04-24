@@ -293,6 +293,9 @@
 		<!-- qa:qualityListItem -->
 		<type name="qa:qualityListItem">
 			<parent>bcpg:entityListItem</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 		
 		<!-- Work log -->
