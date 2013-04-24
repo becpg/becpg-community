@@ -2406,6 +2406,13 @@
 					<show id="cm:name" />
 					<show id="bcpg:ingType" />
 				</field-visibility>
+				<appearance>
+				<field id="bcpg:ingType">
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+				</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">

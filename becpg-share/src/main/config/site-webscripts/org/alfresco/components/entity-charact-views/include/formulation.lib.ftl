@@ -31,6 +31,7 @@
 				    dataUrl : Alfresco.constants.PROXY_URI + "${(args.dataUrl!"slingshot/datalists/data/node/")}",
 				    itemUrl : Alfresco.constants.PROXY_URI + "${(args.itemUrl!"slingshot/datalists/data/item/")}",
 			       usePagination: "${usePagination?string}",
+			       displayBottomPagination : false,
 			       useFilter: "${useFilter?string}",
 			       showCreateButton : "${showCreateButton?string}",
 			       sortable : true,
