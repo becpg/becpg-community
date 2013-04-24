@@ -249,6 +249,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 				if (nodeService.exists(dataItem.getProduct())) {
 					String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
+					String partCode = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_CODE);
+					String partERPCode = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_ERP_CODE);
 					String legalName = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);
 					List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(dataItem.getProduct(), BeCPGModel.ASSOC_SUPPLIERS);
 					String suppliers = "";
@@ -261,6 +263,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 					Element partElt = compoListElt.addElement(TAG_ENTITY);
 					partElt.addAttribute(BeCPGModel.ASSOC_COMPOLIST_PRODUCT.getLocalName(), partName);
+					partElt.addAttribute(BeCPGModel.PROP_CODE.getLocalName(), partCode);
+					partElt.addAttribute(BeCPGModel.PROP_ERP_CODE.getLocalName(), partERPCode);
 					partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), legalName);
 					partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(), suppliers);
 					partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), dataItem.getDepthLevel() == null ? VALUE_NULL : Integer.toString(dataItem.getDepthLevel()));
@@ -498,6 +502,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	private Element loadPackagingMaterial(PackagingListDataItem dataItem, Element packagingListElt) {
 		String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
+		String partCode = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_CODE);
+		String partERPCode = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_ERP_CODE);
 		String legalName = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);
 		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(dataItem.getProduct(), BeCPGModel.ASSOC_SUPPLIERS);
 		String suppliers = "";
@@ -510,6 +516,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		Element partElt = packagingListElt.addElement(TAG_ENTITY);
 		partElt.addAttribute(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), partName);
+		partElt.addAttribute(BeCPGModel.PROP_CODE.getLocalName(), partCode);
+		partElt.addAttribute(BeCPGModel.PROP_ERP_CODE.getLocalName(), partERPCode);
 		partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), legalName);
 		partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(), suppliers);
 		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_QTY.getLocalName(), toString(dataItem.getQty()));

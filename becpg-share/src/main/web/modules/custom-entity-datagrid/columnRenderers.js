@@ -7,7 +7,8 @@ if (beCPG.module.EntityDataGridRenderers) {
                   propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity",
                         "bcpg:resourceProduct", "cm:content_bcpg:costDetailsListSource",
                         "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct"
-                        , "ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem","ecm:culTargetItem", "ecm:cclSourceItem"],
+                        , "ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem","ecm:culTargetItem", "ecm:cclSourceItem",
+                        "qa:sdlControlPoint", "qa:slControlPoint"],
                   renderer : function(oRecord, data, label, scope) {
 
                      var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";

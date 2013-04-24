@@ -270,9 +270,6 @@ public class QualityControlServiceImpl implements QualityControlService {
 	
 	private void createWorkItemAnalysis(NodeRef qualityControlNodeRef, Map<NodeRef, WorkItemAnalysisData> wiaMap){
 		
-		//TODO multilangue
-		NodeRef workItemsNodeRef = repoService.createFolderByPath(qualityControlNodeRef, "WorkItemAnalysis", "Analyses");
-		
 		for(NodeRef authorityNodeRef : wiaMap.keySet()){
 			
 			WorkItemAnalysisData wiaData = wiaMap.get(authorityNodeRef);
@@ -284,9 +281,8 @@ public class QualityControlServiceImpl implements QualityControlService {
 			
 			wiaData.setName(name);
 			
-			// TODO manage update ? or create another work item Analyses - RD - 1 puis 2, etc...
-			
-			workItemAnalysisDAO.create(workItemsNodeRef, wiaData);
+			// TODO manage update ? or create another work item Analyses - RD - 1 puis 2, etc...			
+			workItemAnalysisDAO.create(qualityControlNodeRef, wiaData);
 		}
 	}
 }

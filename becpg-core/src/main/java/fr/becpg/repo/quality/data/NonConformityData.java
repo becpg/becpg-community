@@ -1,6 +1,6 @@
 package fr.becpg.repo.quality.data;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
@@ -11,7 +11,7 @@ public class NonConformityData extends BeCPGDataObject {
 	private String state;
 	private String comment;	
 	
-	List<WorkLogDataItem> workLog = new ArrayList<WorkLogDataItem>();
+	List<WorkLogDataItem> workLog = new LinkedList<WorkLogDataItem>();
 	
 	public String getState() {
 		return state;

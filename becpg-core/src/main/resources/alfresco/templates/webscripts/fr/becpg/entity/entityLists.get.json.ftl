@@ -70,7 +70,7 @@
          ],
          "type": "${shortQName(entity.type)}",
          "path": "${entityPath}"
-         <#if entity.hasAspect("bcpg:entityVariantAspect") >
+         <#if entity.hasAspect("bcpg:entityVariantAspect") && entity.childAssocs["bcpg:variants"]??>
          ,"variants" : [
          	 <#list entity.childAssocs["bcpg:variants"] as variant>
          	 	{

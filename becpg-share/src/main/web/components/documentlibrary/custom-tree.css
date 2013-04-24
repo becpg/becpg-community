@@ -66,9 +66,24 @@
 	background-image: url(../images/filetypes/generic-supplier-16.png) ;
 }
 
-
  .treeview  span.ygtvlabel.ecm-changeOrder {
 	background-image: url(../images/filetypes/generic-changeOrder-16.png) ;
+}
+
+.node-header .node-path .folder-qa_nc {
+	background-image:  url(../images/filetypes/generic-nc-16.png) ;
+}
+
+.node-header .node-path .folder-qa_qualityControl {
+	background-image:  url(../images/filetypes/generic-qualityControl-16.png) ;
+}
+
+.node-header .node-path .folder-qa_controlPlan {
+	background-image:  url(../images/filetypes/generic-controlPlan-16.png) ;
+}
+
+.node-header .node-path .folder-qa_controlPoint {
+	background-image:  url(../images/filetypes/generic-controlPoint-16.png) ;
 }
 
  .treeview  span.ygtvlabel.pjt-project,

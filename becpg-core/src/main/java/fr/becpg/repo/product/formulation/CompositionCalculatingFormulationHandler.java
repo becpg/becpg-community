@@ -48,12 +48,12 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			Double density = FormulationHelper.getDensity(formulatedProduct);
 			netWeight = qty * density;
 		}		
-		
-		Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));		
-		visitChildren(netWeight, netWeight, composite);
+					
+		// calculate on every item
+		visitChildren(netWeight, netWeight, CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL)));
 		
 		// Yield
-		Double qtyUsed = calculateQtyUsedBeforeProcess(composite);
+		Double qtyUsed = calculateQtyUsedBeforeProcess(CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)));
 		if(qtyUsed != null && qtyUsed != 0d){
 			formulatedProduct.setYield(100 * netWeight / qtyUsed);
 		}			
@@ -151,6 +151,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				// calculate children
 				qty += calculateQtyUsedBeforeProcess(component);
 			}else{
+				logger.info("###qty to add: " + FormulationHelper.getQty(component.getData(), nodeService));
 				qty += FormulationHelper.getQty(component.getData(), nodeService);
 			}
 		}

@@ -6,6 +6,7 @@ package fr.becpg.repo.web.scripts.admin;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
@@ -13,6 +14,7 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
@@ -95,6 +97,9 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		if (action == null || action.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
+		
+		// #378 : force to use server locale 
+		I18NUtil.setLocale(Locale.getDefault());
 
 		if (action.equals(ACTION_INIT_REPO)) {
 			logger.debug("Init repository");
