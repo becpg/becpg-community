@@ -51,6 +51,9 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	private ServiceRegistry serviceRegistry;
 
+	private static int DOCKBAR_SIZE = 6;
+	
+	
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -97,38 +100,33 @@ public class DockBarWebScript extends AbstractWebScript {
 
 			LinkedList<NodeRef> elements = new LinkedList<NodeRef>();
 
-			boolean addNodeRef = productNodeRef != null;
 
 			if (nodeRefs != null && nodeRefs.length() > 0) {
 				String[] splitted = nodeRefs.split(",");
 				for (String field : splitted) {
-					NodeRef nodeRef = new NodeRef(field);
-					elements.add(nodeRef);
-					if (nodeRef.equals(productNodeRef)) {
-						addNodeRef = false;
+					NodeRef el = new NodeRef(field);
+					if(!el.equals(productNodeRef)){
+						elements.add(el);
 					}
+					
 				}
 			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Entity NodeRef empty : " + productNodeRef != null);
-				logger.debug("Already added : " + addNodeRef);
-				if (addNodeRef) {
-					logger.debug("Subclass of product :"
+				logger.debug("Subclass of product :"
 							+ serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT));
-					logger.debug("Element.size(): " + elements.size());
-				}
+				logger.debug("Element.size(): " + elements.size());
 			}
 
 			if (productNodeRef != null) {
 
 				QName type = serviceRegistry.getNodeService().getType(productNodeRef);
 
-				if (addNodeRef
-						&& (serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_PRODUCT) || (serviceRegistry.getDictionaryService().isSubClass(type,
+				if ( (serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_PRODUCT) || (serviceRegistry.getDictionaryService().isSubClass(type,
 								BeCPGModel.TYPE_ENTITY_V2) && !serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_SYSTEM_ENTITY)))) {
-					if (elements.size() > 4) {
-						elements.remove(4);
+					if (elements.size() > DOCKBAR_SIZE - 1) {
+						elements.remove(DOCKBAR_SIZE - 1 );
 					}
 					elements.add(0, productNodeRef);
 
@@ -151,7 +149,7 @@ public class DockBarWebScript extends AbstractWebScript {
 
 			JSONObject ret = processResults(elements, metadataFields);
 			ret.put("page", 1);
-			ret.put("pageSize", 5);
+			ret.put("pageSize", DOCKBAR_SIZE);
 			ret.put("fullListSize", elements.size());
 
 			res.setContentType("application/json");
