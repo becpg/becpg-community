@@ -7,8 +7,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                   propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity",
                         "bcpg:resourceProduct", "cm:content_bcpg:costDetailsListSource",
                         "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct"
-                        , "ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem","ecm:culTargetItem", "ecm:cclSourceItem",
-                        "qa:sdlControlPoint", "qa:slControlPoint"],
+                        , "ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem","ecm:culTargetItem", "ecm:cclSourceItem"],
                   renderer : function(oRecord, data, label, scope) {
 
                      var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
@@ -101,19 +100,26 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : ["qa:sdlControlPoint", "qa:slControlPoint" ],
+        renderer : function(oRecord, data, label, scope) {
+        	var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
+        	return '<span class="sample"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
 
-   YAHOO.Bubbling
-         .fire(
-               "registerDataGridRenderer",
-               {
-                  propertyName : [ "qa:sdlControlPoint", "qa:slControlPoint", "qa:clCharacts" ],
-                  renderer : function(oRecord, data, label, scope) {
-                     var url = scope._buildCellUrl(data);
-                     return '<span class="sample"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+        }
 
-                  }
+     });
 
-               });
+   YAHOO.Bubbling.fire("registerDataGridRenderer",{
+          propertyName : ["qa:clCharacts" ],
+          renderer : function(oRecord, data, label, scope) {
+             var url = scope._buildCellUrl(data);
+             return '<span class="sample"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+
+          }
+
+    });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:cost", "bcpg:allergen", "bcpg:nut", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin",

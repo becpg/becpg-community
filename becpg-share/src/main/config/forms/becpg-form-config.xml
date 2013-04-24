@@ -3130,7 +3130,7 @@
 			</form>
 		</forms>
 	</config>
-	
+
 	<!-- bcpg:labelClaim type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:labelClaim">
 		<forms>
@@ -3142,12 +3142,52 @@
 					<show id="bcpg:labelClaimType"/>
 				</field-visibility>
 				<appearance>
+					<field id="cm:name" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
 				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="bcpg:labelClaim">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:labelClaimType"/>
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:labelClaimType"/>
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:labelClaimType"/>
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
@@ -4474,13 +4514,7 @@
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclIsClaimed" />					
-				</field-visibility>				
-				<appearance>		
-					<field id="bcpg:lclLabelClaim">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>
-				</appearance>
+				</field-visibility>
 			</form>
 
 			<!-- Data Grid view -->
@@ -4500,15 +4534,8 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
-					<show id="bcpg:lclIsClaimed" />			
+					<show id="bcpg:lclIsClaimed" />					
 				</field-visibility>
-				
-				<appearance>	
-					<field id="bcpg:lclLabelClaim">
-						<control
-							template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-					</field>			
-				</appearance>
 			</form>
 		</forms>
 	</config>

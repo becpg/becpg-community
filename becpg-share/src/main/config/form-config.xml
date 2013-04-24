@@ -117,8 +117,8 @@
 				</type>
 				<type name="association:pjt:taskList" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:pjt:taskLegend" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:bp:productCatalog" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />		
-								
+				<type name="association:bcpg:productCatalog" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />		
+				<type name="association:bcpg:labelClaim" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
          
             <type name="transitions" template="/org/alfresco/components/form/controls/workflow/transitions.ftl" />
             <type name="taskOwner" template="/org/alfresco/components/form/controls/workflow/taskowner.ftl" />

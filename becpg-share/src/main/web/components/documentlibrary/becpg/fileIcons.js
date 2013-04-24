@@ -61,6 +61,8 @@ if (!beCPG.util.getFileIcon) {
 	   "qa:controlPoint" : "controlPoint",
 	   "{http://www.bcpg.fr/model/quality/1.0}qualityControl" : "qualityControl",
 	   "qa:qualityControl" : "qualityControl",
+	   "{http://www.bcpg.fr/model/quality/1.0}workItemAnalysis" : "workItemAnalysis",
+	   "qa:workItemAnalysis" : "workItemAnalysis",	   
 	   "{http://www.bcpg.fr/model/becpg/1.0}systemEntity" : "systemEntity",
 	   "bcpg:systemEntity" : "systemEntity",
 	   "{http://www.bcpg.fr/model/becpg/1.0}finishedProduct" : "finishedProduct",
