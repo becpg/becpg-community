@@ -2,6 +2,7 @@ package fr.becpg.repo.quality.data;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -25,7 +26,7 @@ public class QualityControlData extends BeCPGDataObject {
 	NodeRef client;
 	NodeRef supplier;
 	
-	List<SamplingListDataItem> samplingList = new ArrayList<SamplingListDataItem>();
+	List<SamplingListDataItem> samplingList = new LinkedList<SamplingListDataItem>();
 
 
 	public List<NodeRef> getControlPlans() {

@@ -171,19 +171,18 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 					
 					
-					//Add variants
-					if(variantDataItem.getVariants()!=null){
-						if(newAllergenListDataItem.getVariants()!=null){
-							for(NodeRef variant : variantDataItem.getVariants()){
-								if(!newAllergenListDataItem.getVariants().contains(variant)){
-									newAllergenListDataItem.getVariants().add(variant);
-								}
-							}
-						} else {
-							newAllergenListDataItem.setVariants(variantDataItem.getVariants());
+					//Add variants if it adds an allergen
+					if(variantDataItem.getVariants()!=null && (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary())){
+						if(newAllergenListDataItem.getVariants()==null){
+							newAllergenListDataItem.setVariants(new ArrayList<NodeRef>());
 						}
+						
+						for(NodeRef variant : variantDataItem.getVariants()){
+							if(!newAllergenListDataItem.getVariants().contains(variant)){
+								newAllergenListDataItem.getVariants().add(variant);
+							}
+						}						
 					}
-		
 				}				
 			}
 		}

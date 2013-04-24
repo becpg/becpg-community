@@ -246,7 +246,7 @@
                                        instance.widgets.variantPicker.getMenu().addItems(menuItems);
 
                                        Alfresco.util.PopupManager.displayMessage({
-                                          text : instance.msg("message.new-variant.success")
+                                          text : instance.msg("message.create-variant.success")
                                        });
 
                                     },
@@ -260,7 +260,7 @@
                         onFailure : {
                            fn : function EntityDataGrid_onActionCreate_failure(response) {
                               Alfresco.util.PopupManager.displayMessage({
-                                 text : instance.msg("message.new-variant.failure")
+                                 text : instance.msg("message.create-variant.failure")
                               });
                            },
                            scope : this

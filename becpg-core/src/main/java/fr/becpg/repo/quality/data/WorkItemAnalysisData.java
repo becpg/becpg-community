@@ -1,6 +1,6 @@
 package fr.becpg.repo.quality.data;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
@@ -9,7 +9,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class WorkItemAnalysisData extends BeCPGDataObject {
 
 	
-	List<ControlListDataItem> controlList = new ArrayList<ControlListDataItem>();
+	List<ControlListDataItem> controlList = new LinkedList<ControlListDataItem>();
 	
 
 	public List<ControlListDataItem> getControlList() {

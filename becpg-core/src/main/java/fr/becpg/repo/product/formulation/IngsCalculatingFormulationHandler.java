@@ -311,7 +311,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 					
 					// Ionized
-					if(fil.getIsIonized() != null && fil.getIsIonized().isEmpty() && !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())){
+					if(fil.getIsIonized() != null && !fil.getIsIonized().isEmpty() && !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())){
 						continue; // check next rule
 					}
 					

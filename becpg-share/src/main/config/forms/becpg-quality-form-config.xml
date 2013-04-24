@@ -800,6 +800,8 @@
 					<show id="qa:clMethod" />
 					<show id="qa:clCharacts" />
 					<show id="qa:clValue" />
+					<show id="qa:clMini" />
+					<show id="qa:clMaxi" />
 					<show id="qa:clUnit" />
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />

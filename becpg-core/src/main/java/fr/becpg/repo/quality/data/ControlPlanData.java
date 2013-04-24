@@ -1,6 +1,6 @@
 package fr.becpg.repo.quality.data;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
@@ -8,7 +8,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 public class ControlPlanData extends BeCPGDataObject {
 
-	List<SamplingDefListDataItem> samplingDefList = new ArrayList<SamplingDefListDataItem>();
+	List<SamplingDefListDataItem> samplingDefList = new LinkedList<SamplingDefListDataItem>();
 
 
 	public List<SamplingDefListDataItem> getSamplingDefList() {
