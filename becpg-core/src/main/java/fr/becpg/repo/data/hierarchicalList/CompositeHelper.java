@@ -9,7 +9,7 @@ public class CompositeHelper {
 
 	private static Log logger = LogFactory.getLog(CompositeHelper.class);
 
-	public static <T extends CompositeDataItem> Composite<T> getHierarchicalCompoList(List<T> items) {
+	public static <T extends CompositeDataItem<T>> Composite<T> getHierarchicalCompoList(List<T> items) {
 
 		Composite<T> composite = new Composite<T>();
 		// loadChildren(composite, items);
@@ -22,7 +22,7 @@ public class CompositeHelper {
 
 	// TODO Compute by parent instead
 	@Deprecated
-	private static <T extends CompositeDataItem> int loadChildren(Composite<T> composite, int level, int startPos, List<T> items) {
+	private static <T extends CompositeDataItem<T>> int loadChildren(Composite<T> composite, int level, int startPos, List<T> items) {
 
 		int z_idx = startPos;
 

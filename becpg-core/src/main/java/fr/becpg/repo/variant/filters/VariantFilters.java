@@ -14,51 +14,53 @@ public class VariantFilters implements DataListFilter<ProductData> {
 
 	private Boolean isDefaultVariant;
 
-	public static VariantFilters DEFAULT_VARIANT = new VariantFilters(true);
-
 	public VariantFilters(NodeRef variantNodeRef) {
 		super();
 		this.variantNodeRef = variantNodeRef;
 	}
 
+	public static VariantFilters DEFAULT_VARIANT = new VariantFilters(true);
+
 	public VariantFilters(Boolean isDefaultVariant) {
 		super();
 		this.isDefaultVariant = isDefaultVariant;
+
 	}
 
 	@Override
-	public Predicate createPredicate(final ProductData data) {
+	public Predicate createPredicate(final ProductData entity) {
+
+		if (variantNodeRef == null) {
+			for (VariantData variant : entity.getVariants()) {
+				if (variant.getIsDefaultVariant()) {
+					this.variantNodeRef = variant.getNodeRef();
+					break;
+				}
+			}
+		}
 
 		return new Predicate() {
 
 			@Override
 			public boolean evaluate(Object obj) {
-				if (obj instanceof VariantDataItem) {
 
+				if (obj instanceof VariantDataItem) {
 					VariantDataItem item = ((VariantDataItem) obj);
-					if (item.getVariants() == null || item.getVariants().isEmpty()) {
-						if (isDefaultVariant == null || isDefaultVariant) {
-							return true;
-						}
-						return false;
-					}
 
 					if (isDefaultVariant != null) {
-						for (VariantData variant : data.getVariants()) {
-							if (isDefaultVariant.equals(variant.getIsDefaultVariant())) {
-								for (NodeRef nodeRef : item.getVariants()) {
-									if (nodeRef.equals(variant.getNodeRef())) {
-										return true;
-									}
-								}
-							}
-						}
-					} else if (variantNodeRef != null) {
-						for (NodeRef nodeRef : item.getVariants()) {
-							if (variantNodeRef.equals(nodeRef)) {
+
+						if (item.getVariants() == null || item.getVariants().isEmpty()) {
+							if (isDefaultVariant != null && isDefaultVariant) {
 								return true;
 							}
 						}
+
+						if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
+							return true;
+						}
+
+					} else if (variantNodeRef != null && item.getVariants().contains(variantNodeRef)) {
+						return true;
 					}
 					return false;
 				}

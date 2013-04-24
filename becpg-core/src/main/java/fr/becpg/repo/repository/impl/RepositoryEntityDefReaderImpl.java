@@ -22,6 +22,7 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
@@ -37,7 +38,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
+
 	@Override
 	public Map<QName, T> getEntityProperties(T entity) {
 		return readValueMap(entity, AlfProp.class, RepositoryEntity.class);
@@ -52,7 +53,6 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	public Map<QName, NodeRef> getSingleAssociations(T entity) {
 		return readValueMap(entity, AlfSingleAssoc.class, NodeRef.class);
 	}
-	
 
 	@Override
 	public Map<QName, T> getSingleEntityAssociations(T entity) {
@@ -66,16 +66,15 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	@Override
 	public <R> Map<QName, List<? extends RepositoryEntity>> getDataLists(R entity) {
-		return readValueMap(entity, DataList.class,  List.class);
+		return readValueMap(entity, DataList.class, List.class);
 
 	}
-	
+
 	@Override
 	public Map<QName, T> getDataListViews(T entity) {
 		return readValueMap(entity, DataListView.class, BaseObject.class);
 	}
-	
-	
+
 	@Override
 	public QName getType(Class<? extends RepositoryEntity> clazz) {
 		if (clazz.getAnnotation(AlfQname.class) != null) {
@@ -94,23 +93,23 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	}
 
 	@SuppressWarnings("unchecked")
-	private <R,Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
+	private <R, Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
 		Map<QName, R> ret = new HashMap<QName, R>();
 		try {
 			for (PropertyDescriptor pd : Introspector.getBeanInfo(entity.getClass()).getPropertyDescriptors()) {
 				Method readMethod = pd.getReadMethod();
 				if (readMethod != null) {
-					if (readMethod.isAnnotationPresent(annotationClass) && readMethod.isAnnotationPresent(AlfQname.class)) {
-						Object o = evaluateObject( pd.getPropertyType() ,PropertyUtils.getProperty(entity, pd.getName()));
-						QName qname  = readQName(readMethod);
-						if(o!=null){
-							if(returnType.isAssignableFrom(o.getClass())){
-								ret.put(qname,(R)returnType.cast(o) );
+					if (readMethod.isAnnotationPresent(annotationClass) && readMethod.isAnnotationPresent(AlfQname.class) && !readMethod.isAnnotationPresent(AlfReadOnly.class)) {
+						Object o = evaluateObject(pd.getPropertyType(), PropertyUtils.getProperty(entity, pd.getName()));
+						QName qname = readQName(readMethod);
+						if (o != null) {
+							if (returnType.isAssignableFrom(o.getClass())) {
+								ret.put(qname, (R) returnType.cast(o));
 							} else {
-								logger.debug("Cannot cast from :"+o.getClass().getName()+" to "+returnType.getName()+ " for "+qname);
+								logger.debug("Cannot cast from :" + o.getClass().getName() + " to " + returnType.getName() + " for " + qname);
 							}
 						} else {
-							ret.put(qname,null );
+							ret.put(qname, null);
 						}
 					}
 				}
@@ -122,13 +121,10 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	}
 
 	private Object evaluateObject(Class<?> propertyType, Object o) {
-		if(o!=null && Enum.class.isAssignableFrom(propertyType)){
+		if (o != null && Enum.class.isAssignableFrom(propertyType)) {
 			return o.toString();
 		}
 		return o;
 	}
-
-	
-
 
 }

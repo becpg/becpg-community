@@ -11,7 +11,7 @@ import java.util.List;
  * 
  * @param <T>
  */
-public class Composite<T extends CompositeDataItem> {
+public class Composite<T extends CompositeDataItem<T>> {
 
 	private T data;
 
