@@ -24,13 +24,13 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
-import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.quality.NonConformityService;
 
@@ -49,6 +49,7 @@ public class CreateNC extends BaseJavaDelegate {
 	private NodeService nodeService;
 	private FileFolderService fileFolderService;
 	private NonConformityService nonConformityService;
+	private AutoNumService autoNumService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -60,6 +61,10 @@ public class CreateNC extends BaseJavaDelegate {
 
 	public void setNonConformityService(NonConformityService nonConformityService) {
 		this.nonConformityService = nonConformityService;
+	}
+
+	public void setAutoNumService(AutoNumService autoNumService) {
+		this.autoNumService = autoNumService;
 	}
 
 	@Override
@@ -82,8 +87,11 @@ public class CreateNC extends BaseJavaDelegate {
 					NodeRef parentNodeRef = nonConformityService.getStorageFolder(productNodeRef);
 
 					// create nc
-					String ncName = GUID.generate();
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					// force name YYYY-NCCode, is there a better way ?
+					String ncName = Calendar.getInstance().get(Calendar.YEAR) + "-"
+							+ autoNumService.getAutoNumValue(QualityModel.TYPE_NC, BeCPGModel.PROP_CODE);
+					
+					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();					
 					properties.put(ContentModel.PROP_NAME, ncName);
 					properties.put(ContentModel.PROP_DESCRIPTION, (String) task.getVariable("bpm_workflowDescription"));
 					properties.put(QualityModel.PROP_NC_PRIORITY, (Integer) task.getVariable("bpm_priority"));
@@ -100,11 +108,6 @@ public class CreateNC extends BaseJavaDelegate {
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
 									QName.createValidLocalName(ncName)), QualityModel.TYPE_NC, properties)
 							.getChildRef();
-
-					// force name YYYY-NCCode, is there a better way ?
-					ncName = Calendar.getInstance().get(Calendar.YEAR) + "-"
-							+ nodeService.getProperty(ncNodeRef, BeCPGModel.PROP_CODE);
-					nodeService.setProperty(ncNodeRef, ContentModel.PROP_NAME, ncName);
 
 					// product
 					if (productNodeRef != null) {

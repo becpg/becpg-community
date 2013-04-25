@@ -99,5 +99,16 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+	<bean id="patch.bcpg.qualityEntityListsAspectPatch" class="fr.becpg.repo.admin.patch.QualityEntityListsAspectPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.qualityEntityListsAspectPatch</value></property>
+        <property name="description"><value>patch.bcpg.qualityEntityListsAspectPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10005</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
 	 
 </beans>

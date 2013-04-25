@@ -1,0 +1,9 @@
+PATH;/System/Characts/bcpg:entityLists/LabelClaims;;
+TYPE;bcpg:labelClaim;;
+COLUMNS;cm:name;bcpg:legalName;bcpg:labelClaimType
+VALUES;Sans BPA;Sans BPA;Santé
+VALUES;Sans huile de palme;Sans huile de palme;Santé
+VALUES;Faible valeur énergétique;Faible valeur énergétique;Nutritionnelle
+VALUES;Faible teneur en matières grasses;Faible teneur en matières grasses;Nutritionnelle
+VALUES;Faible teneur en sucres;Faible teneur en sucres;Nutritionnelle
+VALUES;Produit exempt de matières grasses de palme;Produit exempt de matières grasses de palme;Environnementale

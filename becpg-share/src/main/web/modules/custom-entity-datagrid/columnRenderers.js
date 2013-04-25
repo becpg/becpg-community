@@ -105,7 +105,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         propertyName : ["qa:sdlControlPoint", "qa:slControlPoint" ],
         renderer : function(oRecord, data, label, scope) {
         	var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
-        	return '<span class="sample"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+        	return '<span class="controlPoint"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
 
         }
 
