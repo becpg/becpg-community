@@ -155,6 +155,11 @@ public class QualityControlServiceImpl implements QualityControlService {
 				if(freq.equals("/lot")){
 					
 				}
+				else if(freq.equals("/heure")){
+					
+					freqInHour = 1;
+					samplesToTake = batchDuration / freqInHour + 1;					
+				}
 				else if(freq.equals("/4heures")){
 					
 					freqInHour = 4;

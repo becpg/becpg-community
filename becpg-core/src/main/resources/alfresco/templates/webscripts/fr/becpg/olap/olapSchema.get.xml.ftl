@@ -129,6 +129,38 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension type="StandardDimension" foreignKey="id"  name="Produits">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les produits li&#233;s" primaryKey="entity_id">
+				<View alias="products">
+						<SQL dialect="generic">
+							<![CDATA[
+							select
+								entity.id as id,
+								entity.entity_id as entity_noderef,
+								entity.entity_name as name,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
+								prop_entity.batch_id as batch_id,
+								prop_entity.entity_id as entity_id
+							from
+								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
+																			  LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+							where
+								prop_entity.prop_name="qa:product"
+								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
+							group by id
+							]]>
+						</SQL>
+					</View>		
+				<Level name="Famille" column="productHierarchy1" type="String"   >
+				</Level>
+				<Level name="Sous famille" column="productHierarchy2" type="String"   >
+				</Level>
+				<Level name="Produit" column="entity_noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
 	   <DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
 		<Measure name="Nombre de non conformit&#233;s" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />

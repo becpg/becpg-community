@@ -187,6 +187,7 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>rep:reportEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
@@ -194,12 +195,10 @@
 		<!-- Control Plan -->				
 		<type name="qa:controlPlan">
 			<parent>bcpg:entityV2</parent>
-			<properties>
-							
-			</properties>						
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
-				<aspect>bcpg:codeAspect</aspect>			
+				<aspect>bcpg:codeAspect</aspect>		
+				<aspect>bcpg:entityListsAspect</aspect>	
 			</mandatory-aspects>
 		</type>
 		
@@ -235,7 +234,8 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>qa:batchAspect</aspect>					
+				<aspect>qa:batchAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>					
 			</mandatory-aspects>
 		</type>
 		
@@ -263,6 +263,7 @@
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		
@@ -287,6 +288,7 @@
 			<parent>bcpg:entityV2</parent>				
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>	
 		
