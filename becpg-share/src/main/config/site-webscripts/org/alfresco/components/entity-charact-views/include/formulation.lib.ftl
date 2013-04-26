@@ -23,7 +23,8 @@
 			         }
 			      ]
 			   });
-		 new beCPG.module.EntityDataGrid('${dashletId}'<#if extra["itemType"]??>,true</#if>).setOptions(
+			   
+	   new beCPG.module.EntityDataGrid('${dashletId}'<#if extra["itemType"]??>,true</#if>).setOptions(
 			   {
 			       entityNodeRef: "${page.url.args.nodeRef!""}",
 			       siteId: "${page.url.templateArgs.site!""}",
@@ -42,12 +43,13 @@
 			       saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
 			       hiddenColumns : ["prop_bcpg_depthLevel"]
 			   }).setMessages(${messages});
-			   
+
 </@>
 	
 <div id="${dashletId}">
+<@uniqueIdDiv>
 	<div class="dashlet datagrid" id="${dashletId}-body" >
-		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"/>&nbsp;(<span id="${dashletId}-description"/>)</#if></div>
+		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
 			<div  class="toolbar datagrid-bar flat-button">
 			      <div class="left">
 			         <div class="item-select">
@@ -116,6 +118,7 @@
 			   </div>
 			</div>
 		</div>
+	</@>	
 </div>
 
 </#macro>
