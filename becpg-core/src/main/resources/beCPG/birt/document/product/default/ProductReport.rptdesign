@@ -1953,20 +1953,34 @@
             </list-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images" id="1771">
+            <property name="nullsOrdering">nulls lowest</property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">id</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">name</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">name</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">title</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">title</text-property>
                 </structure>
             </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">like</property>
+                    <expression name="expr" type="javascript">row["name"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"produit.%"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -2097,46 +2111,24 @@
         <style name="image" id="9"/>
         <style name="crosstab-cell" id="357">
             <property name="borderBottomColor">#CCCCCC</property>
-            <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">1pt</property>
-            <property name="borderLeftColor">#CCCCCC</property>
-            <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">1pt</property>
-            <property name="borderRightColor">#CCCCCC</property>
-            <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">1pt</property>
-            <property name="borderTopColor">#CCCCCC</property>
-            <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">1pt</property>
         </style>
         <style name="crosstab" id="358">
             <property name="borderBottomColor">#CCCCCC</property>
-            <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">1pt</property>
-            <property name="borderLeftColor">#CCCCCC</property>
-            <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">1pt</property>
-            <property name="borderRightColor">#CCCCCC</property>
-            <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">1pt</property>
-            <property name="borderTopColor">#CCCCCC</property>
-            <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">1pt</property>
         </style>
         <style name="NewStyle" id="487">
             <property name="backgroundColor">#BFBFBF</property>
         </style>
-        <style name="table" id="488">
-            <property name="borderBottomStyle">solid</property>
-            <property name="borderLeftStyle">solid</property>
-            <property name="borderRightStyle">solid</property>
-            <property name="borderTopStyle">solid</property>
-        </style>
+        <style name="table" id="488"/>
         <style name="Titre1" id="644">
             <property name="backgroundColor">#F2ECD2</property>
-            <property name="fontSize">14pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="color">#339966</property>
             <property name="textLineThrough">none</property>
             <property name="textOverline">none</property>
             <property name="textUnderline">none</property>
@@ -2161,8 +2153,6 @@
             </structure>
         </style>
         <style name="Titre2" id="653">
-            <property name="fontSize">14pt</property>
-            <property name="fontWeight">bold</property>
             <property name="fontStyle">italic</property>
             <property name="color">#008000</property>
             <property name="marginTop">15pt</property>
@@ -2174,14 +2164,13 @@
         </style>
         <style name="becpg-col-header" id="1479">
             <property name="fontWeight">bold</property>
-            <property name="color">#339966</property>
             <property name="textAlign">left</property>
         </style>
         <style name="becpg-chapter-header" id="1482">
-            <property name="backgroundColor">#F2ECD2</property>
-            <property name="fontSize">14pt</property>
+            <property name="backgroundColor">#E5E5E5</property>
+            <property name="fontSize">12pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#339966</property>
+            <property name="color">#000000</property>
             <property name="textAlign">center</property>
         </style>
         <style name="becpg-row-header" id="1483">
@@ -2189,32 +2178,28 @@
             <property name="color">#808080</property>
         </style>
         <style name="becpg-col-border" id="1500">
-            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftColor">#BFBFBF</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
         </style>
         <style name="becpg-row-border" id="1501">
-            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopColor">#BFBFBF</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
         </style>
         <style name="becpg-table" id="1502">
-            <property name="borderBottomColor">#339966</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderLeftColor">#339966</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
-            <property name="borderRightColor">#339966</property>
             <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">thin</property>
-            <property name="borderTopColor">#339966</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
         </style>
         <style name="becpg-group-header" id="1575">
-            <property name="backgroundColor">#669999</property>
-            <property name="color">#FFFFFF</property>
+            <property name="backgroundColor">#E6E6FA</property>
         </style>
     </styles>
     <page-setup>
@@ -2229,17 +2214,9 @@
                     <property name="style">becpg-table</property>
                     <property name="backgroundImageType">url</property>
                     <property name="borderBottomColor">#FFFFFF</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
                     <property name="borderLeftColor">#FFFFFF</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
                     <property name="borderRightColor">#FFFFFF</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
                     <property name="borderTopColor">#FFFFFF</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
                     <property name="pageBreakAfter">auto</property>
                     <property name="width">100%</property>
                     <column id="766">
@@ -2262,28 +2239,21 @@
                         </cell>
                         <cell id="772">
                             <property name="borderBottomColor">#FFFFFF</property>
-                            <property name="borderBottomStyle">solid</property>
                             <property name="borderBottomWidth">medium</property>
                             <property name="borderLeftColor">#FFFFFF</property>
-                            <property name="borderLeftStyle">solid</property>
                             <property name="borderLeftWidth">medium</property>
                             <property name="borderRightColor">#FFFFFF</property>
-                            <property name="borderRightStyle">solid</property>
                             <property name="borderRightWidth">medium</property>
                             <property name="borderTopColor">#FFFFFF</property>
-                            <property name="borderTopStyle">solid</property>
                             <property name="borderTopWidth">medium</property>
                             <property name="textAlign">center</property>
                             <label id="773">
                                 <property name="fontFamily">"arial"</property>
-                                <property name="fontWeight">bold</property>
                                 <property name="color">#999999</property>
                                 <property name="textAlign">center</property>
                                 <text-property name="text">Fiche technique</text-property>
                             </label>
                             <data id="775">
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#339966</property>
                                 <property name="whiteSpace">normal</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
@@ -2299,17 +2269,9 @@
                         </cell>
                         <cell id="776">
                             <property name="borderBottomColor">#FFFFFF</property>
-                            <property name="borderBottomStyle">solid</property>
-                            <property name="borderBottomWidth">thin</property>
                             <property name="borderLeftColor">#FFFFFF</property>
-                            <property name="borderLeftStyle">solid</property>
-                            <property name="borderLeftWidth">thin</property>
                             <property name="borderRightColor">#FFFFFF</property>
-                            <property name="borderRightStyle">solid</property>
-                            <property name="borderRightWidth">thin</property>
                             <property name="borderTopColor">#FFFFFF</property>
-                            <property name="borderTopStyle">solid</property>
-                            <property name="borderTopWidth">thin</property>
                             <grid id="777">
                                 <property name="borderTopStyle">none</property>
                                 <property name="width">3.25in</property>
@@ -2322,34 +2284,18 @@
                                 <row id="779">
                                     <cell id="780">
                                         <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
                                         <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
                                         <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
                                         <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
                                         <label id="1520">
                                             <text-property name="text">Modifié le</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1516">
                                         <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
                                         <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
                                         <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
                                         <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
                                         <data id="1522">
                                             <property name="whiteSpace">nowrap</property>
                                             <property name="dataSet">Product</property>
@@ -2368,34 +2314,18 @@
                                 <row id="783">
                                     <cell id="784">
                                         <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
                                         <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
                                         <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
                                         <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
                                         <label id="1521">
                                             <text-property name="text">Code</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1517">
                                         <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
                                         <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
                                         <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
                                         <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
                                         <data id="1523">
                                             <property name="whiteSpace">nowrap</property>
                                             <property name="dataSet">Product</property>
@@ -2416,17 +2346,9 @@
                                     <property name="textAlign">left</property>
                                     <cell id="924">
                                         <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
                                         <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
                                         <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
                                         <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
                                         <label id="925">
                                             <property name="fontFamily">"arial"</property>
                                             <property name="display">inline</property>
@@ -2435,30 +2357,19 @@
                                     </cell>
                                     <cell id="1518">
                                         <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">thin</property>
                                         <property name="borderLeftColor">#FFFFFF</property>
-                                        <property name="borderLeftStyle">solid</property>
-                                        <property name="borderLeftWidth">thin</property>
                                         <property name="borderRightColor">#FFFFFF</property>
-                                        <property name="borderRightStyle">solid</property>
-                                        <property name="borderRightWidth">thin</property>
                                         <property name="borderTopColor">#FFFFFF</property>
-                                        <property name="borderTopStyle">solid</property>
-                                        <property name="borderTopWidth">thin</property>
                                         <auto-text id="933">
-                                            <property name="color">#339966</property>
                                             <property name="display">inline</property>
                                             <property name="type">page-number</property>
                                         </auto-text>
                                         <text id="935">
-                                            <property name="color">#339966</property>
                                             <property name="display">inline</property>
                                             <property name="contentType">plain</property>
                                             <text-property name="content"><![CDATA[/]]></text-property>
                                         </text>
                                         <auto-text id="937">
-                                            <property name="color">#339966</property>
                                             <property name="display">inline</property>
                                             <property name="type">total-page</property>
                                         </auto-text>
@@ -2543,13 +2454,13 @@
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">title</property>
                         </data>
+                        <label id="2474"/>
                         <image id="2470">
                             <property name="backgroundColor">white</property>
                             <property name="height">2.435114503816794in</property>
                             <property name="width">3.236641221374046in</property>
                             <structure name="toc"/>
                             <property name="source">expr</property>
-                            <!-- <expression name="typeExpr" >"image/png"</expression> -->
                             <expression name="valueExpr">row["img"]</expression>
                         </image>
                     </cell>
@@ -2566,6 +2477,7 @@
             <property name="style">becpg-chapter-header</property>
             <text-property name="text">MÉTADONNÉES</text-property>
         </label>
+        <label id="2475"/>
         <grid id="1466">
             <property name="width">6.883928571428571in</property>
             <column id="1467">
@@ -2877,8 +2789,6 @@
                 <cell id="1352">
                     <label id="960">
                         <property name="style">becpg-chapter-header</property>
-                        <property name="backgroundColor">#F2ECD2</property>
-                        <property name="color">#339966</property>
                         <property name="marginTop">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <property name="paddingTop">1pt</property>
@@ -3018,7 +2928,6 @@
                 <cell id="1362">
                     <label id="655">
                         <property name="style">becpg-chapter-header</property>
-                        <property name="color">#339966</property>
                         <property name="marginTop">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <text-property name="text">CARACTÉRISTIQUES NUTRITIONNELLES</text-property>
@@ -3033,19 +2942,8 @@
             <row id="1365">
                 <cell id="1366">
                     <table id="693">
+                        <property name="style">becpg-table</property>
                         <property name="fontFamily">"Arial"</property>
-                        <property name="borderBottomColor">#339966</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">thin</property>
-                        <property name="borderLeftColor">#339966</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#339966</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
-                        <property name="borderTopColor">#339966</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">thin</property>
                         <property name="verticalAlign">top</property>
                         <property name="width">6.875in</property>
                         <property name="dataSet">NutList</property>
@@ -3081,14 +2979,14 @@
                         </column>
                         <column id="725">
                             <property name="width">0.9444444444444444in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="726">
                             <property name="width">1.1944444444444444in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <header>
                             <row id="694">
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#339966</property>
                                 <cell id="695">
                                     <label id="729">
                                         <property name="style">becpg-col-header</property>
@@ -3132,42 +3030,18 @@
                                 <row id="1123">
                                     <property name="fontWeight">normal</property>
                                     <property name="color">green</property>
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#CCCCCC</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <cell id="1124">
                                         <property name="colSpan">3</property>
                                         <property name="rowSpan">1</property>
-                                        <property name="borderBottomColor">#FFFFFF</property>
-                                        <property name="borderBottomStyle">solid</property>
-                                        <property name="borderBottomWidth">medium</property>
                                     </cell>
                                 </row>
                                 <row id="744">
                                     <property name="fontWeight">normal</property>
-                                    <property name="color">green</property>
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#CCCCCC</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <cell id="745">
                                         <property name="colSpan">3</property>
                                         <property name="rowSpan">1</property>
                                         <data id="754">
                                             <property name="style">becpg-group-header</property>
-                                            <property name="backgroundColor">#669999</property>
-                                            <property name="color">white</property>
                                             <property name="resultSetColumn">nutListGroup</property>
                                         </data>
                                     </cell>
@@ -3176,39 +3050,18 @@
                         </group>
                         <detail>
                             <row id="699">
+                                <property name="style">becpg-row-border</property>
                                 <property name="fontSize">8pt</property>
-                                <property name="borderTopColor">#CCCCCC</property>
-                                <property name="borderTopStyle">dashed</property>
-                                <property name="borderTopWidth">thin</property>
                                 <cell id="700">
-                                    <property name="borderLeftColor">#339966</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#CCCCCC</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <data id="730">
                                         <property name="style">becpg-row-header</property>
                                         <property name="fontSize">9pt</property>
-                                        <property name="fontWeight">bold</property>
                                         <property name="color">gray</property>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">nutListNut</property>
                                     </data>
                                 </cell>
                                 <cell id="701">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#CCCCCC</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <data id="758">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -3216,15 +3069,6 @@
                                     </data>
                                 </cell>
                                 <cell id="702">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#339966</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#CCCCCC</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <data id="760">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -3287,7 +3131,6 @@
                 <cell id="1374">
                     <label id="810">
                         <property name="style">becpg-chapter-header</property>
-                        <property name="color">#339966</property>
                         <text-property name="text">COÛTS</text-property>
                     </label>
                 </cell>
@@ -3300,19 +3143,8 @@
             <row id="1377">
                 <cell id="1378">
                     <table id="1260">
+                        <property name="style">becpg-table</property>
                         <property name="fontFamily">"Arial"</property>
-                        <property name="borderBottomColor">#009966</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">thin</property>
-                        <property name="borderLeftColor">#009966</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#009966</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
-                        <property name="borderTopColor">#009966</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">thin</property>
                         <property name="width">6.875in</property>
                         <property name="dataSet">CostList</property>
                         <list-property name="boundDataColumns">
@@ -3348,11 +3180,10 @@
                         </column>
                         <header>
                             <row id="1261">
+                                <property name="style">becpg-col-header</property>
                                 <cell id="1262">
                                     <label id="1283">
                                         <property name="style">becpg-col-header</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="color">#339966</property>
                                         <property name="paddingLeft">5pt</property>
                                         <property name="textAlign">left</property>
                                         <text-property name="text">Coût</text-property>
@@ -3361,16 +3192,12 @@
                                 <cell id="1263">
                                     <label id="1278">
                                         <property name="style">becpg-col-header</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="color">#339966</property>
                                         <text-property name="text">Valeur</text-property>
                                     </label>
                                 </cell>
                                 <cell id="1264">
                                     <label id="1280">
                                         <property name="style">becpg-col-header</property>
-                                        <property name="fontWeight">bold</property>
-                                        <property name="color">#339966</property>
                                         <text-property name="text">Unité</text-property>
                                     </label>
                                 </cell>
@@ -3379,26 +3206,16 @@
                         <detail>
                             <row id="1265">
                                 <property name="style">becpg-row-border</property>
-                                <property name="borderTopColor">#CCCCCC</property>
-                                <property name="borderTopStyle">solid</property>
-                                <property name="borderTopWidth">thin</property>
                                 <cell id="1266">
                                     <data id="1277">
                                         <property name="style">becpg-row-header</property>
                                         <property name="fontSize">9pt</property>
-                                        <property name="fontWeight">bold</property>
                                         <property name="color">gray</property>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">costListCost</property>
                                     </data>
                                 </cell>
                                 <cell id="1267">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="1279">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -3406,9 +3223,6 @@
                                     </data>
                                 </cell>
                                 <cell id="1268">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
                                     <data id="1281">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -3489,7 +3303,6 @@
                 <cell id="1386">
                     <label id="1223">
                         <property name="style">becpg-chapter-header</property>
-                        <property name="color">#339966</property>
                         <text-property name="text">ALLERGÈNES</text-property>
                     </label>
                 </cell>
@@ -3502,19 +3315,8 @@
             <row id="1389">
                 <cell id="1390">
                     <table id="1225">
+                        <property name="style">becpg-table</property>
                         <property name="fontFamily">"Arial"</property>
-                        <property name="borderBottomColor">#009966</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">thin</property>
-                        <property name="borderLeftColor">#009966</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#009966</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
-                        <property name="borderTopColor">#009966</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">thin</property>
                         <property name="width">6.875in</property>
                         <property name="dataSet">AllergenList</property>
                         <list-property name="boundDataColumns">
@@ -3568,14 +3370,14 @@ else
                         </column>
                         <column id="1249">
                             <property name="width">1.0089285714285714in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="1251">
                             <property name="width">3.1339285714285716in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <header>
                             <row id="1226">
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#339966</property>
                                 <cell id="1227">
                                     <label id="1228">
                                         <property name="style">becpg-col-header</property>
@@ -3585,9 +3387,6 @@ else
                                     </label>
                                 </cell>
                                 <cell id="1229">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
                                     <label id="1230">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
@@ -3596,12 +3395,6 @@ else
                                     </label>
                                 </cell>
                                 <cell id="1233">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <label id="1234">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
@@ -3613,15 +3406,12 @@ else
                         </header>
                         <detail>
                             <row id="1237">
-                                <property name="borderTopColor">#CCCCCC</property>
-                                <property name="borderTopStyle">solid</property>
-                                <property name="borderTopWidth">thin</property>
+                                <property name="style">becpg-row-border</property>
                                 <property name="whiteSpace">normal</property>
                                 <cell id="1238">
                                     <data id="1239">
                                         <property name="style">becpg-row-header</property>
                                         <property name="fontSize">9pt</property>
-                                        <property name="fontWeight">bold</property>
                                         <property name="color">gray</property>
                                         <property name="whiteSpace">normal</property>
                                         <structure name="toc"/>
@@ -3629,9 +3419,6 @@ else
                                     </data>
                                 </cell>
                                 <cell id="1240">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
                                     <data id="1241">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">normal</property>
@@ -3639,12 +3426,6 @@ else
                                     </data>
                                 </cell>
                                 <cell id="1244">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="1245">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">normal</property>
@@ -3725,10 +3506,6 @@ else
                 <cell id="1441">
                     <label id="854">
                         <property name="style">becpg-chapter-header</property>
-                        <property name="backgroundColor">#F2ECD2</property>
-                        <property name="fontSize">14pt</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="color">#339966</property>
                         <property name="marginTop">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">center</property>
@@ -3745,18 +3522,7 @@ else
             <row id="1444">
                 <cell id="1445">
                     <table id="884">
-                        <property name="borderBottomColor">#009966</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">thin</property>
-                        <property name="borderLeftColor">#009966</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#009966</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
-                        <property name="borderTopColor">#009966</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">thin</property>
+                        <property name="style">becpg-table</property>
                         <property name="width">6.875in</property>
                         <property name="dataSet">IngList</property>
                         <list-property name="boundDataColumns">
@@ -3802,17 +3568,18 @@ else
                         </column>
                         <column id="909">
                             <property name="width">0.7857142857142857in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="911">
                             <property name="width">1.9027777777777777in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="916">
                             <property name="width">1.7222222222222223in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <header>
                             <row id="885">
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#339966</property>
                                 <cell id="886">
                                     <label id="887">
                                         <property name="style">becpg-col-header</property>
@@ -3849,29 +3616,17 @@ else
                         </header>
                         <detail>
                             <row id="894">
-                                <property name="borderTopColor">#CCCCCC</property>
-                                <property name="borderTopStyle">solid</property>
-                                <property name="borderTopWidth">thin</property>
+                                <property name="style">becpg-row-border</property>
                                 <cell id="895">
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="918">
                                         <property name="style">becpg-row-header</property>
                                         <property name="fontSize">9pt</property>
-                                        <property name="fontWeight">bold</property>
                                         <property name="color">gray</property>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">ingListIng</property>
                                     </data>
                                 </cell>
                                 <cell id="897">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="919">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -3879,12 +3634,6 @@ else
                                     </data>
                                 </cell>
                                 <cell id="901">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="921">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">normal</property>
@@ -3892,9 +3641,6 @@ else
                                     </data>
                                 </cell>
                                 <cell id="914">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
                                     <data id="922">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">normal</property>
@@ -3974,10 +3720,9 @@ else
                     <row id="1715">
                         <cell id="1717">
                             <data id="1723">
-                                <property name="fontSize">14pt</property>
+                                <property name="fontSize">12pt</property>
                                 <property name="fontWeight">bold</property>
                                 <property name="fontStyle">italic</property>
-                                <property name="color">#339966</property>
                                 <property name="resultSetColumn">language</property>
                             </data>
                         </cell>
@@ -4054,9 +3799,6 @@ else
                 <cell id="1414">
                     <label id="969">
                         <property name="style">becpg-chapter-header</property>
-                        <property name="backgroundColor">#F2ECD2</property>
-                        <property name="fontSize">14pt</property>
-                        <property name="fontWeight">bold</property>
                         <property name="marginTop">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">center</property>
@@ -4066,25 +3808,12 @@ else
                 </cell>
             </row>
             <row id="1415">
-                <cell id="1416">
-                    <label id="1153"/>
-                </cell>
+                <cell id="1416"/>
             </row>
             <row id="1417">
                 <cell id="1418">
                     <table id="970">
-                        <property name="borderBottomColor">#339966</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">thin</property>
-                        <property name="borderLeftColor">#339966</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#339966</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
-                        <property name="borderTopColor">#339966</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">thin</property>
+                        <property name="style">becpg-table</property>
                         <property name="width">6.875in</property>
                         <property name="dataSet">microbioList</property>
                         <list-property name="boundDataColumns">
@@ -4118,17 +3847,18 @@ else
                         </column>
                         <column id="1000">
                             <property name="width">1.2767857142857142in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="1001">
                             <property name="width">1.3482142857142858in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="1002">
                             <property name="width">1.3839285714285714in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <header>
                             <row id="971">
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#339966</property>
                                 <cell id="972">
                                     <label id="973">
                                         <property name="style">becpg-col-header</property>
@@ -4138,12 +3868,6 @@ else
                                     </label>
                                 </cell>
                                 <cell id="974">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <label id="975">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
@@ -4152,12 +3876,6 @@ else
                                     </label>
                                 </cell>
                                 <cell id="976">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <label id="977">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
@@ -4177,26 +3895,17 @@ else
                         </header>
                         <detail>
                             <row id="982">
-                                <property name="borderTopColor">#CCCCCC</property>
-                                <property name="borderTopStyle">solid</property>
-                                <property name="borderTopWidth">thin</property>
+                                <property name="style">becpg-row-border</property>
                                 <cell id="983">
                                     <data id="1005">
                                         <property name="style">becpg-row-header</property>
                                         <property name="fontSize">9pt</property>
-                                        <property name="fontWeight">bold</property>
                                         <property name="color">gray</property>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">mblMicrobio</property>
                                     </data>
                                 </cell>
                                 <cell id="985">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="1006">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -4204,12 +3913,6 @@ else
                                     </data>
                                 </cell>
                                 <cell id="987">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="1008">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -4291,10 +3994,6 @@ else
                 <cell id="1424">
                     <label id="1009">
                         <property name="style">becpg-chapter-header</property>
-                        <property name="backgroundColor">#F2ECD2</property>
-                        <property name="fontSize">14pt</property>
-                        <property name="fontWeight">bold</property>
-                        <property name="color">#339966</property>
                         <property name="marginTop">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">center</property>
@@ -4311,18 +4010,7 @@ else
             <row id="1427">
                 <cell id="1428">
                     <table id="1010">
-                        <property name="borderBottomColor">#339966</property>
-                        <property name="borderBottomStyle">solid</property>
-                        <property name="borderBottomWidth">thin</property>
-                        <property name="borderLeftColor">#339966</property>
-                        <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#339966</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
-                        <property name="borderTopColor">#339966</property>
-                        <property name="borderTopStyle">solid</property>
-                        <property name="borderTopWidth">thin</property>
+                        <property name="style">becpg-table</property>
                         <property name="width">6.875in</property>
                         <property name="dataSet">physicoChemList</property>
                         <list-property name="boundDataColumns">
@@ -4362,20 +4050,22 @@ else
                         </column>
                         <column id="1035">
                             <property name="width">0.9464285714285714in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="1036">
                             <property name="width">1.0089285714285714in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="1037">
                             <property name="width">1.0357142857142858in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <column id="1042">
                             <property name="width">0.9732142857142857in</property>
+                            <property name="style">becpg-col-border</property>
                         </column>
                         <header>
                             <row id="1011">
-                                <property name="fontWeight">bold</property>
-                                <property name="color">#339966</property>
                                 <cell id="1012">
                                     <label id="1013">
                                         <property name="style">becpg-col-header</property>
@@ -4385,12 +4075,6 @@ else
                                     </label>
                                 </cell>
                                 <cell id="1014">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <label id="1015">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
@@ -4407,12 +4091,6 @@ else
                                     </label>
                                 </cell>
                                 <cell id="1018">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <label id="1019">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
@@ -4432,26 +4110,17 @@ else
                         </header>
                         <detail>
                             <row id="1020">
-                                <property name="borderTopColor">#CCCCCC</property>
-                                <property name="borderTopStyle">solid</property>
-                                <property name="borderTopWidth">thin</property>
+                                <property name="style">becpg-row-border</property>
                                 <cell id="1021">
                                     <data id="1044">
                                         <property name="style">becpg-row-header</property>
                                         <property name="fontSize">9pt</property>
-                                        <property name="fontWeight">bold</property>
                                         <property name="color">gray</property>
                                         <property name="whiteSpace">nowrap</property>
                                         <property name="resultSetColumn">pclPhysicoChem</property>
                                     </data>
                                 </cell>
                                 <cell id="1023">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="1045">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
@@ -4466,12 +4135,6 @@ else
                                     </data>
                                 </cell>
                                 <cell id="1027">
-                                    <property name="borderLeftColor">#CCCCCC</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#CCCCCC</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
                                     <data id="1047">
                                         <property name="fontSize">9pt</property>
                                         <property name="whiteSpace">nowrap</property>
