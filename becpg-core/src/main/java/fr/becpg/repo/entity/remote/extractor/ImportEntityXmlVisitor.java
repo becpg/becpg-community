@@ -327,8 +327,10 @@ public class ImportEntityXmlVisitor {
 	}
 
 	/*
-	 * We search for : 1° - TYPE/PATH/CODE/SAME NAME 2° - TYPE/PATH/SAME NAME 3°
-	 * - TYPE/SAME NAME
+	 * We search for : 
+	 * 1° - TYPE/PATH/CODE/SAME NAME 
+	 * 2° - TYPE/PATH/SAME NAME 
+	 * 3° - TYPE/SAME NAME
 	 */
 	private NodeRef findNode(String nodeRef, String code, String name, String path, QName type, QName currProp) {
 		if (nodeRef != null && nodeService.exists(new NodeRef(nodeRef))) {
@@ -354,7 +356,7 @@ public class ImportEntityXmlVisitor {
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_256);
 		if (!ret.isEmpty()) {
 			for (NodeRef node : ret) {
-				if (name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
+				if (nodeService.exists(node) && name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
 					logger.debug("Found node for query :" + runnedQuery);
 					return node;
 				}
