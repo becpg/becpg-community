@@ -53,9 +53,14 @@ public class ImportHelper{
 			
 			if(attribute instanceof PropertyDefinition){
 				
+				
 				PropertyDefinition propertyDef = (PropertyDefinition)attribute;
 				QName qName = propertyDef.getName();
 				QName dataType =propertyDef.getDataType().getName();				
+				
+				if("NULL".equals(values.get(pos))){
+					return "NULL";
+				}
 				
 				// MLText
 				if(dataType.isMatch(DataTypeDefinition.MLTEXT)){
