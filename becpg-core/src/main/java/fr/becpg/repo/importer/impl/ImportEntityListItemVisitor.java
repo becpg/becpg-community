@@ -162,7 +162,11 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			 nodeService.setType(entityListItemNodeRef, importContext.getType());
 			 
 			 for(Map.Entry<QName, Serializable> entry : entityListItemProperties.entrySet()){
-				 nodeService.setProperty(entityListItemNodeRef, entry.getKey(), entry.getValue()); 
+				 if(entry.getValue()!=null && "NULL".equals(entry.getValue())){
+					 nodeService.removeProperty(entityListItemNodeRef, entry.getKey());
+				 } else {
+					 nodeService.setProperty(entityListItemNodeRef, entry.getKey(), entry.getValue()); 
+				 }
 			 }			 
 		 }
 		 else{
