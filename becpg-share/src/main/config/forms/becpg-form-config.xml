@@ -777,6 +777,7 @@
 					<show id="pack:palletLayers" />
 					<show id="pack:palletDimensions" />
 					<show id="pack:palletBoxesPerLayer" />
+					<show id="pack:palletBoxesPerLastLayer" />
 					<show id="pack:palletBoxesPerPallet" />				
 					<show id="pack:palletNbOfIntercropping"/>
 					<show id="pack:palletHeight" />
@@ -847,7 +848,8 @@
 					<field id="pack:palletLayers" set="pallet" />
 					<field id="pack:palletDimensions" set="pallet" />
 					<field id="pack:palletBoxesPerLayer" set="pallet" />
-					<field id="pack:palletBoxesPerPallet" set="pallet" />			
+					<field id="pack:palletBoxesPerPallet" set="pallet" />		
+					<field id="pack:palletBoxesPerLastLayer" set="pallet" />			
 					<field id="pack:palletNbOfIntercropping" set="pallet" />		
 					<field id="pack:palletHeight" set="pallet" />		
 					<field id="pack:palletNbOfBoxes" set="pallet" />		
@@ -1033,6 +1035,7 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
+					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
@@ -1101,6 +1104,7 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:certificateDate" set="mainInfo" />
 					<field id="bcpg:suppliers" force="true" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
@@ -1307,10 +1311,12 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
+					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:suppliers" />
 					<show id="rep:reportTpls" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productMicrobioCriteria" />
+					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1361,6 +1367,7 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:certificateDate" set="mainInfo" />
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:productDensity" set="mainInfo" />

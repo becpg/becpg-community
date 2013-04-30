@@ -54,8 +54,13 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 
+						
+
+
 					<!-- bcpg:eanAspect -->
 					<show id="bcpg:eanCode" force="true" />
+					
+					<show id="bcpg:certificateDate" force="true" />
 					
 					<show id="bcpg:suppliers" force="true" />
 					<show id="bcpg:clients" force="true" />
@@ -102,6 +107,7 @@
 
 					<!-- bcpg:eanAspect -->
 					<field id="bcpg:eanCode" set="product-criteria" />
+					<field id="bcpg:certificateDate" set="product-criteria" />
 
 					<field id="bcpg:suppliers"  set="product-criteria">
 						<control

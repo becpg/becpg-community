@@ -2105,6 +2105,14 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:certificateDateAspect">
+			<properties>
+				<property name="bcpg:certificateDate">
+					<type>d:date</type>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:isDeletedAspect">
 			<properties>
