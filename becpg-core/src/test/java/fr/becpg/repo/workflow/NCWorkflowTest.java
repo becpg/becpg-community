@@ -115,7 +115,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		taskQuery.setProcessId(workflowInstanceId);
 		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
+		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 		assertEquals(1, workflowTasks.size());
 		return workflowTasks.get(0);
 	}
@@ -357,7 +357,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 					assocs.put(PROP_ASSIGNEE, assignees);
 				}
 
-				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
+				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 
 				for (WorkflowTask task : workflowTasks) {
 					if (taskName.equals(task.getName())) {

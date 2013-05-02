@@ -3,10 +3,8 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +98,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 */
 	@Override
 	protected void sort(List<NutListDataItem> nutList){
-			
+		
 		Collections.sort(nutList, new Comparator<NutListDataItem>(){
         	
 			final int BEFORE = -1;
@@ -140,7 +138,12 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
             		return EQUAL;
             	}            	
             }
-        });       
+        });  
+		
+		int i = 0;
+		for(NutListDataItem n : nutList){
+			n.setSort(i);
+		}
 	}
 	
 	@Override
@@ -149,11 +152,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return BeCPGModel.TYPE_NUTLIST;
 	}
 
-	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct){
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>(formulatedProduct.getNutList().size());
-		for(NutListDataItem n : formulatedProduct.getNutList()){
-			mandatoryCharacts.put(n.getCharactNodeRef(), new ArrayList<NodeRef>());
-		}
-		return mandatoryCharacts;
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType){		
+		return getMandatoryCharactsFromList(formulatedProduct.getNutList());
 	}
 }

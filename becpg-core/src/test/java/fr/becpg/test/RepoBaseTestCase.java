@@ -373,13 +373,23 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(packagingLevelsFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
+		
+		// ingTypes
+		NodeRef ingTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ING_TYPES);
+		String[] ingTypes = { "Epaississant"};
+		for (String ingType : ingTypes) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, ingType);
+			nodeService.createNode(ingTypesFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
+		
 		// allergenTypes
 		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ALLERGEN_TYPES);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, AllergenType.Major.toString());
 		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
-
 	}
 	
 	private void initTasks() {

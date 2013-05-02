@@ -171,7 +171,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		taskQuery.setProcessId(workflowInstanceId);
 		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
+		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 		assertEquals(1, workflowTasks.size());
 		return workflowTasks.get(0);
 	}
@@ -248,7 +248,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
 		properties.put(WorkflowModel.PROP_COMMENT, comment);
 
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
+		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 		
 		for (WorkflowTask task : workflowTasks) {
 			if (taskName.equals(task.getName())) {
@@ -269,7 +269,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		taskQuery.setProcessId(workflowInstanceId);
 		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 		
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
+		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 		
 		for(WorkflowTask task : workflowTasks){
 			

@@ -172,7 +172,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
 
 		for (Map.Entry<QName, T> prop : repositoryEntityDefReader.getEntityProperties(entity).entrySet()) {
-			if(!prop.getValue().isTransient()){
+			if(prop.getValue()==null || !prop.getValue().isTransient()){
 				properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
 			}
 		}
@@ -185,7 +185,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		//TODO manage child assocs
 		
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
-			if(!association.getValue().isTransient()){
+			if(association.getValue()==null || !association.getValue().isTransient()){
 				associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
 			}
 		}

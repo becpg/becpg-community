@@ -3355,6 +3355,7 @@
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
@@ -3456,6 +3457,7 @@
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />

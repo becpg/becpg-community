@@ -20,8 +20,8 @@ public class IngItem extends AbstractIng {
 	 * @param mlName the ml name
 	 * @param qty the qty
 	 */
-	public IngItem(NodeRef ing, MLText mlName, Double qty){
-		super(ing, mlName, qty);
+	public IngItem(NodeRef ing, MLText mlName, Double qty, String ingType){
+		super(ing, mlName, qty, ingType);
 	}
 
 	@Override

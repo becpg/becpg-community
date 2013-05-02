@@ -48,4 +48,8 @@ public interface Ing {
 	 * @return the qty
 	 */
 	public Double getQty();	
+	
+	public String getIngType();
+
+	public void setIngType(String ingType);
 }

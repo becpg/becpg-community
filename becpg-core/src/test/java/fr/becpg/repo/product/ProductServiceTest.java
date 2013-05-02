@@ -532,7 +532,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 			DeclarationType declType = DeclarationType.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE));
 			
-			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), WUSED_LEVEL, 
+			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), (CompoListDataItem)null, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 

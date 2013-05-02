@@ -60,11 +60,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		return isFormulated != null ? isFormulated.booleanValue() : false;
 	}
 	
-	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct){
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>(formulatedProduct.getPhysicoChemList().size());
-		for(PhysicoChemListDataItem p : formulatedProduct.getPhysicoChemList()){
-			mandatoryCharacts.put(p.getCharactNodeRef(), new ArrayList<NodeRef>());
-		}
-		return mandatoryCharacts;
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType){
+		return getMandatoryCharactsFromList(formulatedProduct.getPhysicoChemList());
 	}
 }

@@ -6,7 +6,6 @@ package fr.becpg.repo.web.scripts.product;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,9 +82,6 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
     /** The product dao. */
     private AlfrescoRepository<ProductData> alfrescoRepository;
     
-    /** The product dictionary service. */
-    private ProductDictionaryService productDictionaryService;
-    
     /** The transaction service. */
     private TransactionService transactionService;
     
@@ -142,7 +138,6 @@ public class CompareProductReportWebScriptTest extends BaseWebScriptTest{
 		fileFolderService = (FileFolderService) getServer().getApplicationContext().getBean("FileFolderService");
 		authenticationComponent = (AuthenticationComponent) getServer().getApplicationContext().getBean("authenticationComponent");
 		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
-		productDictionaryService = (ProductDictionaryService) getServer().getApplicationContext().getBean("productDictionaryService");
 		transactionService = (TransactionService) getServer().getApplicationContext().getBean("transactionService");
 		repositoryHelper = (Repository) getServer().getApplicationContext().getBean("repositoryHelper");
 		repoService = (RepoService) getServer().getApplicationContext().getBean("repoService");
@@ -227,7 +222,6 @@ private void initObjects(){
 			
 				/*-- Create raw materials --*/
 				logger.debug("/*-- Create raw materials --*/");
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				/*-- Raw material 1 --*/
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
@@ -314,8 +308,6 @@ private void initObjects(){
 										
 					//Create comparison product report
 					initTests();
-								
-					 Collection<QName> dataLists = productDictionaryService.getDataLists();
 					
 					logger.debug("createRawMaterial 1");
 					
@@ -349,11 +341,11 @@ private void initObjects(){
 					fp1.setAllergenList(allergenList);
 						
 					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 					fp1.getCompoListView().setCompoList(compoList);
 					
 					fpNodeRef = alfrescoRepository.create(folderNodeRef, fp1).getNodeRef();		
@@ -405,12 +397,12 @@ private void initObjects(){
 					workingCopy.setAllergenList(allergenList);
 					
 					compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-					compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
 					workingCopy.getCompoListView().setCompoList(compoList);
 					
 					alfrescoRepository.save(workingCopy);

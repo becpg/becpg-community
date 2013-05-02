@@ -62,6 +62,8 @@
 				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler"/>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
+					<property name="beCPGSearchService" ref="BeCPGSearchService" />
+					<property name="beCPGCacheService" ref="beCPGCacheService" />	
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
 				</bean>
@@ -78,7 +80,7 @@
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />								
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
