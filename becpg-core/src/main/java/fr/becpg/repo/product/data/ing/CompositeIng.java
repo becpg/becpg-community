@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class CompositeIng extends AbstractIng {
 	
 	/** The Constant RIGHT_PARENTHESES. */
 	public static final String RIGHT_PARENTHESES = ")";
+	
+	public static final String LABEL_ING_TYPE_SEPARATOR = " : ";
 	
 	/** The Constant QTY_FORMAT. */
 	public static final String  QTY_FORMAT = "0.00";
@@ -130,8 +133,8 @@ public class CompositeIng extends AbstractIng {
 	 * @param ing the nodeRef of the ing
 	 * @param mlName the ml name
 	 */
-	public CompositeIng(NodeRef ing, MLText mlName, Double qty){
-		super(ing, mlName, qty);
+	public CompositeIng(NodeRef ing, MLText mlName, Double qty, String ingType){
+		super(ing, mlName, qty, ingType);
 	}
 	
 	public Set<Locale> getLocales(){
@@ -160,33 +163,59 @@ public class CompositeIng extends AbstractIng {
 		Collections.sort(sortedIngList);
 		DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(locale);
 		df.applyPattern(QTY_FORMAT);
+		Map<String, List<AbstractIng>> sortedIngListByType = new LinkedHashMap<String, List<AbstractIng>>();
 		
 		for(AbstractIng ing : sortedIngList){
+			List<AbstractIng> subSortedList = sortedIngListByType.get(ing.getIngType());
 			
-			String qtyPerc = "";
-			String ingName = ing.getName(locale);
+			if(subSortedList == null){
+				subSortedList = new LinkedList<AbstractIng>(); 
+				sortedIngListByType.put(ing.getIngType(), subSortedList);
+			}
+			subSortedList.add(ing);
+		}
+		
+		for(Map.Entry<String, List<AbstractIng>> kv : sortedIngListByType.entrySet()){
 			
-			if(ing.getQty() != null && ing.getQty() != 0d){
-				//Double ingQty = (ing instanceof CompositeIng) ? ((CompositeIng)ing).getQtyUsed() : ing.getQty();
-				qtyPerc = SPACE + df.format(100 * ing.getQty() / getQtyRMUsed()) + SPACE + PERCENTAGE;
-			}						
+			boolean addLabelSeparator = true;
 			
-			if(ingName == null){
-				logger.warn("Ing '" + ing.getIng() + "' doesn't have a value for this locale '" + locale + "'.");
+			if(kv.getKey() != null){
+				
+				if(!ingredients.isEmpty()){
+					ingredients += RepoConsts.LABEL_SEPARATOR;
+				}
+				
+				ingredients += kv.getKey() + LABEL_ING_TYPE_SEPARATOR;
+				addLabelSeparator = false;
 			}
-			
-			if(!ingredients.isEmpty()){
-				ingredients += RepoConsts.LABEL_SEPARATOR;
-			}
-			if(ing instanceof IngItem){				
-				ingredients += ingName + qtyPerc;
-			}
-			else if(ing instanceof CompositeIng){
-				String subIngredients = ((CompositeIng)ing).getIngLabeling(locale);
-				ingredients += ingName + qtyPerc + SPACE + LEFT_PARENTHESES + subIngredients + RIGHT_PARENTHESES;
-			}
-			else{
-				logger.error("Unsupported ing type. Name: " + ing.getIng());
+								
+			for(AbstractIng ing : kv.getValue()){
+				
+				String qtyPerc = "";
+				String ingName = ing.getName(locale);
+				
+				if(ing.getQty() != null && ing.getQty() != 0d){
+					//Double ingQty = (ing instanceof CompositeIng) ? ((CompositeIng)ing).getQtyUsed() : ing.getQty();
+					qtyPerc = SPACE + df.format(100 * ing.getQty() / getQtyRMUsed()) + SPACE + PERCENTAGE;
+				}						
+				
+				if(ingName == null){
+					logger.warn("Ing '" + ing.getIng() + "' doesn't have a value for this locale '" + locale + "'.");
+				}
+				
+				if(!ingredients.isEmpty() && addLabelSeparator){
+					ingredients += RepoConsts.LABEL_SEPARATOR;
+				}
+				if(ing instanceof IngItem){				
+					ingredients += ingName + qtyPerc;
+				}
+				else if(ing instanceof CompositeIng){
+					String subIngredients = ((CompositeIng)ing).getIngLabeling(locale);
+					ingredients += ingName + qtyPerc + SPACE + LEFT_PARENTHESES + subIngredients + RIGHT_PARENTHESES;
+				}
+				else{
+					logger.error("Unsupported ing type. Name: " + ing.getIng());
+				}
 			}
 		}
 		

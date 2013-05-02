@@ -76,6 +76,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	// we don't know where is the node ? product may be in the Products folder
 	// or in the sites or somewhere else !
 	protected static final String QUERY_NODE_BY_TYPE = " +TYPE:\"%s\"";
+	
+	// we want to be able so update -ASPECT:\"bcpg:entityTplAspect\" so we don't use LuceneHelper.DEFAULT_IGNORE_QUERY
+	protected static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" "  
+			+ " -@cm\\:lockType:READ_ONLY_LOCK"
+			+ " -ASPECT:\"bcpg:compositeVersion\""
+			+ " -ASPECT:\"bcpg:hiddenFolder\"";
 
 	/** The Constant QUERY_XPATH_MAPPING. */
 	protected static final String QUERY_XPATH_MAPPING = "mapping";
@@ -900,7 +906,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryPath);
 
-			queryPath += LuceneHelper.DEFAULT_IGNORE_QUERY;
+			queryPath += DEFAULT_IGNORE_QUERY;
 
 			List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
@@ -979,7 +985,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()), value);
 
-			queryPath += LuceneHelper.DEFAULT_IGNORE_QUERY;
+			queryPath += DEFAULT_IGNORE_QUERY;
 
 			logger.debug("findPropertyTargetNodeByValue: " + queryPath);
 
@@ -1091,7 +1097,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				logger.debug("findTargetNodeByValue: " + queryPath);
 
-				queryPath.append(LuceneHelper.DEFAULT_IGNORE_QUERY);
+				queryPath.append(DEFAULT_IGNORE_QUERY);
 
 				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath.toString(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
@@ -1169,7 +1175,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
 
-		queryPath += LuceneHelper.DEFAULT_IGNORE_QUERY;
+		queryPath += DEFAULT_IGNORE_QUERY;
 
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 

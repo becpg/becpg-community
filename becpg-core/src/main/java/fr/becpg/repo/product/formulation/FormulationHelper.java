@@ -33,6 +33,8 @@ public class FormulationHelper {
 
 	public static final Double QTY_FOR_PIECE = 1d;
 	
+	public static final Double DEFAULT_YIELD = 100d;
+	
 	private static Log logger = LogFactory.getLog(FormulationHelper.class);
 	
 	/**
@@ -42,21 +44,33 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException 
 	 */
-	public static Double getQty(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{
-		if(compoListDataItem.getQty() == null){
-			logger.warn("Composition element doesn't have any quantity");
-		} 
+	public static Double getQty(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{				
+		return getQtyInKg(compoListDataItem.getQty(), compoListDataItem, nodeService);
+	}
+	
+	public static Double getQtySubFormula(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{				
+		return getQtyInKg(compoListDataItem.getQtySubFormula(), compoListDataItem, nodeService);
+	}
+	
+	public static Double getQtyAfterProcess(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{				
+		return getQtyInKg(compoListDataItem.getQtyAfterProcess(), compoListDataItem, nodeService);
+	}
+	
+	private static Double getQtyInKg(Double qty, CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{
 		
-		Double qty = compoListDataItem.getQty()!=null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY ;		
-		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
-		
-		if(compoListUnit == CompoListUnit.g || compoListUnit == CompoListUnit.mL){
-			qty = qty / 1000;
+		if(qty==null){
+			return DEFAULT_COMPONANT_QUANTITY;
 		}
-		
-		Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
-		
-		return qty * density;
+		else{
+			CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
+			
+			if(compoListUnit == CompoListUnit.g || compoListUnit == CompoListUnit.mL){
+				qty = qty / 1000;
+			}
+			
+			Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);			
+			return qty * density;
+		}				
 	}
 	
 	/**

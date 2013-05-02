@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity name="Assortiment 8 sushis" code="1023"
+<entity name="Assortiment 8 sushis" legalName="legalName" code="1023"
 	store-identifier="SpacesStore" productType="Produit fini" productQty="0.200"
-	productUnit="kg" productState="En développement" productEAN="8001456682"
-	modified="02/12/2010">
+	productHierarchy1="Famille" productHierarchy2="Sous-famille"
+	productUnit="kg" productState="En développement" productEAN="800145668245897"
+	modified="02/12/2010" productDensity="1" description="My description My description My description My description My description My description My description My description " 
+	clients="" useByDate="23">
 
 	<attributes>
 		<attribute set="Set1" name="Nom" value="Assortiment 8 sushis" />
@@ -12,6 +14,15 @@
 		<attribute set="aSet2" name="integer" value="12" />
 		<attribute set="aSet2" name="decimal" value="12.36" />
 	</attributes>
+	
+	<productComments-lines>
+		<productComments-line><![CDATA[commentaires]]></productComments-line>
+	</productComments-lines>
+	<description-lines>
+		<description-line><![CDATA[Descr 1]]></description-line>
+		<description-line><![CDATA[Descr 2]]></description-line>
+		<description-line><![CDATA[Descr 3]]></description-line>
+	</description-lines>
 	
 	<images>
 		<image id="img1" name="img1" title="img1 title"/>
@@ -24,6 +35,14 @@
 		<image id="img8" name="img_fab4" title="img_fab4 title" />
 		<image id="img8" name="produit.jpg" title="img produit" />		
 	</images>
+	
+	<plants>
+		<plant description="" plantTel="" modifier="philippe.quere"
+			locationAddress1="" creator="admin" modified="mar. 26 mars 2013 12:23:19"
+			locationCity="" locationAddress3="" locationCountry="" locationZip=""
+			name="PC thouars" title="" locationAddress2="" locale="fr_FR"
+			created="jeu. 21 mars 2013 14:45:43" plantApprovalNumbers="FR.79.329.004 CE" />
+	</plants>
 
 	<dataLists>
 
@@ -43,7 +62,7 @@
 			<dynamicCharact dynamicCharactTitle="title" dynamicCharactValue="value"/>
 		</dynamicCharactList>
 
-		<allergenList>
+		<allergenList allergens="Arachides et produits à base de d'arachide">
 			<allergen allergenListAllergen="Arachide" allergenType="Allergène majeur"
 				allergenListInVoluntary="false" allergenListVoluntary="true"
 				allergenListInVolSources=""
@@ -200,7 +219,7 @@
 			<microbio mblMicrobio="Arachide" mblValue="7" mblUnit="UFC/g"
 				mblMaxi="9" />
 			<microbio mblMicrobio="Salmonelle" mblValue="1" mblUnit="UFC/10g"
-				mblMaxi="1.9" />
+				mblMaxi="1.9" mblTextCriteria="Text criteria"/>
 		</microbioList>
 
 		<physicoChemList>

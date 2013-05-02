@@ -18,9 +18,6 @@
 			<column id="coutMP" dataListQName="bcpg:costList"
 				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
 				charactNodeRef="" charactName="Coût MP" type="Characteristic" />			
-			<column id="coutEmb" dataListQName="bcpg:costList"
-				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
-				charactNodeRef="" charactName="Coût Emb" type="Characteristic" />
 
 			<!-- nuts -->
 			<column id="nutEnergiekJ" dataListQName="bcpg:nutList"
@@ -52,6 +49,29 @@
 			<column id="nutAGsatures" dataListQName="bcpg:nutList"
 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
 				charactNodeRef="" charactName="AG saturés" type="Characteristic" />
+
+			<!-- files -->
+			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
+				type="File" />
+			<column id="img1Title" attribute="cm:title" path="Images/produit.jpg"
+				type="File" />
+
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:packagingMaterial">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns>
+
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+
+			<!-- costs -->
+	
+			<column id="coutEmb" dataListQName="bcpg:costList"
+				charactQName="bcpg:costListCost" attribute="bcpg:costListValue"
+				charactNodeRef="" charactName="Coût Emb" type="Characteristic" />
 
 			<!-- files -->
 			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"

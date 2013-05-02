@@ -151,34 +151,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		super();
 	}
 	
-	/**
-	 * Instantiates a new compo list data item.
-	 * @param nodeRef
-	 * @param depthLevel
-	 * @param qty
-	 * @param qtySubFormula
-	 * @param qtyAfterProcess
-	 * @param compoListUnit
-	 * @param lossPerc
-	 * @param yieldPerc
-	 * @param declType
-	 * @param product
-	 */
-	@Deprecated
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, DeclarationType declType, NodeRef product){
-		super();
-		this.nodeRef=nodeRef;
-		this.depthLevel=depthLevel;
-		this.qty=qty;
-		this.qtySubFormula=qtySubFormula;
-		this.qtyAfterProcess=qtyAfterProcess;
-		this.compoListUnit=compoListUnit;
-		this.lossPerc=lossPerc;
-		this.yieldPerc=yieldPerc;
-		this.declType=declType;
-		this.product=product;
-	}
-	
 	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, DeclarationType declType, NodeRef product){
 		super();
 		this.nodeRef=nodeRef;
@@ -192,33 +164,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		this.declType=declType;
 		this.product=product;
 	}
-	
-	/**
-	 * Instantiates a new compo list data item.
-	 * @param nodeRef
-	 * @param depthLevel
-	 * @param qty
-	 * @param qtySubFormula
-	 * @param compoListUnit
-	 * @param qtyLossPerc
-	 * @param declType
-	 * @param product
-	 */
-	@Deprecated
-	public CompoListDataItem(NodeRef nodeRef, Integer depthLevel, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
-		super();
-		this.nodeRef=nodeRef;
-		this.depthLevel=depthLevel;
-		this.qty=qty;
-		this.qtySubFormula=qtySubFormula;
-		this.qtyAfterProcess=qtyAfterProcess;
-		this.compoListUnit=compoListUnit;
-		this.lossPerc=lossPerc;
-		this.declType=declType;
-		this.product=product;
-	}
-	
-	
+
 	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
 		super();
 		this.nodeRef=nodeRef;

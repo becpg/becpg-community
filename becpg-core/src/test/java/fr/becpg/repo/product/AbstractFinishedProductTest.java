@@ -81,6 +81,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     
     protected NodeRef rawMaterial6NodeRef;
     
+    protected NodeRef rawMaterial7NodeRef;
+    
     /** The local s f11 node ref. */
     protected NodeRef localSF11NodeRef;
     
@@ -99,6 +101,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     /** The raw material14 node ref. */
     protected NodeRef rawMaterial14NodeRef;
     
+    protected NodeRef rawMaterialWaterNodeRef;
+    
     protected NodeRef packagingMaterial1NodeRef;
     protected NodeRef packagingMaterial2NodeRef;
     protected NodeRef packagingMaterial3NodeRef;
@@ -108,6 +112,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     
     /** The cost2. */
     protected NodeRef cost2;
+    
+    protected NodeRef fixedCost;
     
     protected NodeRef pkgCost1;
     
@@ -142,6 +148,10 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     
     /** The ing4. */
     protected NodeRef ing4;
+    
+    protected NodeRef ing5;
+    
+    protected NodeRef ingWater;
     
     /** The bio origin1. */
     protected NodeRef bioOrigin1;
@@ -188,7 +198,13 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "pkgCost2");			 					 				
 			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			pkgCost2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			pkgCost2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();						
+			properties.clear();				
+			properties.put(ContentModel.PROP_NAME, "fixedCost");			 					 				
+			properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+			properties.put(BeCPGModel.PROP_COSTFIXED, true);
+			fixedCost = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+			
 			//Nuts
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "nut1");
@@ -246,6 +262,23 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			mlName.addValue(Locale.FRENCH, "ing4 french");	
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ing4 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+			properties.clear();
+			properties.put(ContentModel.PROP_NAME, "ing5");
+			properties.put(BeCPGModel.PROP_ING_TYPE, "Epaississant");
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "ing5 default");
+			mlName.addValue(Locale.ENGLISH, "ing5 english");
+			mlName.addValue(Locale.FRENCH, "ing5 french");	
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+			ing5 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+			properties.clear();
+			properties.put(ContentModel.PROP_NAME, "eau");
+			mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "eau default");
+			mlName.addValue(Locale.ENGLISH, "eau english");
+			mlName.addValue(Locale.FRENCH, "eau french");	
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+			ingWater = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 			//Geo origins
 			properties.clear();
 			properties.put(ContentModel.PROP_NAME, "geoOrigin1");
@@ -495,8 +528,23 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			geoOrigins = new ArrayList<NodeRef>();
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 20d, geoOrigins, bioOrigins, false, false, ing2, false));
-			rawMaterial6.setIngList(ingList);			
+			rawMaterial6.setIngList(ingList);
 			rawMaterial6NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial6).getNodeRef();
+			
+			/*-- Raw material 7 --*/
+			RawMaterialData rawMaterial7 = new RawMaterialData();
+			rawMaterial7.setName("Raw material 7");
+			legalName = new MLText("Legal Raw material 7");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material 7");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material 7");
+			rawMaterial7.setLegalName(legalName);
+			rawMaterial7.setUnit(ProductUnit.kg);
+			rawMaterial7.setDensity(1d);			
+			//ingList : ing5
+			ingList = new ArrayList<IngListDataItem>();			
+			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ing5, false));
+			rawMaterial7.setIngList(ingList);
+			rawMaterial7NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial7).getNodeRef();
 			
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
@@ -603,6 +651,18 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 			ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, true, true, ing4, false));
 			rawMaterial14.setIngList(ingList);		
 			rawMaterial14NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial14).getNodeRef();
+			
+			/*-- Raw material Water --*/
+			RawMaterialData rawMaterialWater = new RawMaterialData();
+			rawMaterialWater.setName("Eau réseau");
+			legalName = new MLText("Legal Raw material Eau");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
+			rawMaterialWater.setLegalName(legalName);
+			ingList = new ArrayList<IngListDataItem>();
+			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
+			rawMaterialWater.setIngList(ingList);		
+			rawMaterialWaterNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterialWater).getNodeRef();
 			
 			/*-- Local semi finished product 11 --*/
 			LocalSemiFinishedProductData localSF11 = new LocalSemiFinishedProductData();

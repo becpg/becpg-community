@@ -470,7 +470,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				fpData.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				fpData.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 2d, null, null, CompoListUnit.kg, null, null, DeclarationType.Declare, rawMaterialNodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, null, null, CompoListUnit.kg, null, null, DeclarationType.Declare, rawMaterialNodeRef));
 				fpData.getCompoListView().setCompoList(compoList);
 				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, fpData).getNodeRef();
 

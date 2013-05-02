@@ -24,6 +24,8 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 	protected MLText mlName;	
 	
 	protected Double qty = 0d;
+	
+	protected String ingType;
 			
 	@Override
 	public NodeRef getIng() {
@@ -62,16 +64,26 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 		this.qty = qty;
 	}
 	
+	@Override
+	public String getIngType() {
+		return ingType;
+	}
+
+	public void setIngType(String ingType) {
+		this.ingType = ingType;
+	}
+
 	/**
 	 * Instantiates a new abstract ing.
 	 *
 	 * @param name the name
 	 * @param mlName the ml name
 	 */
-	public AbstractIng(NodeRef ing, MLText mlName, Double qty){
+	public AbstractIng(NodeRef ing, MLText mlName, Double qty, String ingType){
 		this.ing = ing;
 		this.mlName = mlName;
 		this.qty = qty;
+		this.ingType = ingType;
 	}
 	
 	/**
@@ -91,7 +103,9 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
+		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
 		result = prime * result + ((mlName == null) ? 0 : mlName.hashCode());
+		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		return result;
 	}
 
@@ -109,17 +123,27 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 				return false;
 		} else if (!ing.equals(other.ing))
 			return false;
+		if (ingType == null) {
+			if (other.ingType != null)
+				return false;
+		} else if (!ingType.equals(other.ingType))
+			return false;
 		if (mlName == null) {
 			if (other.mlName != null)
 				return false;
 		} else if (!mlName.equals(other.mlName))
+			return false;
+		if (qty == null) {
+			if (other.qty != null)
+				return false;
+		} else if (!qty.equals(other.qty))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "AbstractIng [ing=" + ing + ", mlName=" + mlName + "]";
+		return "AbstractIng [ing=" + ing + ", mlName=" + mlName + ", qty=" + qty + ", ingType=" + ingType + "]";
 	}
 	
 	
