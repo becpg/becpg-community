@@ -20,6 +20,8 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	protected Set<QName> aspects = new HashSet<QName>();
 	
+	protected boolean isTransient = false;
+	
 	
 	public BeCPGDataObject() {
 		super();
@@ -66,10 +68,20 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.aspects = aspects;
 	}
 
+	public boolean isTransient() {
+		return isTransient;
+	}
+
+	public void setTransient(boolean isTransient) {
+		this.isTransient = isTransient;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((aspects == null) ? 0 : aspects.hashCode());
+		result = prime * result + (isTransient ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((parentNodeRef == null) ? 0 : parentNodeRef.hashCode());
@@ -85,6 +97,13 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		if (getClass() != obj.getClass())
 			return false;
 		BeCPGDataObject other = (BeCPGDataObject) obj;
+		if (aspects == null) {
+			if (other.aspects != null)
+				return false;
+		} else if (!aspects.equals(other.aspects))
+			return false;
+		if (isTransient != other.isTransient)
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -102,6 +121,8 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 			return false;
 		return true;
 	}
+
+
 	
 	
 
