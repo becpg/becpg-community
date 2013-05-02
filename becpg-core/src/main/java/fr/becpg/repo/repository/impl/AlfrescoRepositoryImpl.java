@@ -104,6 +104,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Override
 	public T save(T entity) {
+		
+		if(entity.isTransient()){
+			return entity;
+		}
 
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 			if (entity.getNodeRef() == null) {
@@ -168,7 +172,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
 
 		for (Map.Entry<QName, T> prop : repositoryEntityDefReader.getEntityProperties(entity).entrySet()) {
-			properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
+			if(!prop.getValue().isTransient()){
+				properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
+			}
 		}
 		return properties;
 
@@ -179,7 +185,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		//TODO manage child assocs
 		
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
-			associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
+			if(!association.getValue().isTransient()){
+				associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
+			}
 		}
 		for (Map.Entry<QName, NodeRef> association : repositoryEntityDefReader.getSingleAssociations(entity).entrySet()) {
 			associationService.update(entity.getNodeRef(), association.getKey(), association.getValue());
@@ -274,8 +282,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
-					nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(dataListItem.getNodeRef());
+					if(!dataListItem.isTransient()){
+						nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(dataListItem.getNodeRef());
+					}
 				}
 
 				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();

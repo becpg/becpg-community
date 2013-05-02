@@ -19,4 +19,6 @@ public interface RepositoryEntity {
 	public Set<QName> getAspects();
 	public void setAspects(Set<QName> aspects);
 
+	public boolean isTransient();
+	
 }
