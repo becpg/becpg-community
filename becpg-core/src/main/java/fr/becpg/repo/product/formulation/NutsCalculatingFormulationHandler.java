@@ -141,6 +141,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
             	}            	
             }
         });       
+		
+		int i = 0;
+		for(NutListDataItem n : nutList){
+			n.setSort(i);
+		}
 	}
 	
 	@Override

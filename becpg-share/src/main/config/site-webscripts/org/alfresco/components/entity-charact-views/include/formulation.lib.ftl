@@ -43,8 +43,9 @@
 </@>
 	
 <div id="${dashletId}">
-	<div class="dashlet datagrid" id="${dashletId}-body" >
-		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"/>&nbsp;(<span id="${dashletId}-description"/>)</#if></div>
+	<@uniqueIdDiv>
+		<div class="dashlet datagrid" id="${dashletId}-body" >
+		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
 			<div  class="toolbar datagrid-bar flat-button">
 			      <div class="left">
 			         <div class="item-select">
@@ -113,6 +114,7 @@
 			   </div>
 			</div>
 		</div>
+	</@>
 </div>
 
 </#macro>
