@@ -4,15 +4,18 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"   >
 
+	<!-- Abstract bean -->
+	<bean id="beCPGBasePatch" abstract="true" class="fr.becpg.repo.admin.patch.AbstractBeCPGPatch" parent="basePatch">
+		<property name="repository" ref="repositoryHelper"/>
+		<property name="contentHelper" ref="contentHelper"/>		
+	</bean>
 	
-	<bean id="patch.bcpg.emailTemplatesPatch" class="fr.becpg.repo.admin.patch.EmailTemplatesPatch" parent="basePatch" >
+	<bean id="patch.bcpg.emailTemplatesPatch" class="fr.becpg.repo.admin.patch.EmailTemplatesPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.emailTemplatesPatch</value></property>
         <property name="description"><value>patch.bcpg.emailTemplatesPatch.description</value></property>
         <property name="fixesFromSchema"><value>0</value></property>
         <property name="fixesToSchema"><value>${version.schema}</value></property>
-        <property name="targetSchema"><value>10001</value></property>
-        <property name="contentHelper" ref="contentHelper"/>
-        <property name="repository" ref="repositoryHelper"/>
+        <property name="targetSchema"><value>10001</value></property>        
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
     </bean>
@@ -76,14 +79,13 @@
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
 	
-	<bean id="patch.bcpg.ecmPatch" class="fr.becpg.repo.admin.patch.ECMPatch" parent="basePatch" >
+	<bean id="patch.bcpg.ecmPatch" class="fr.becpg.repo.admin.patch.ECMPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.ecmPatch</value></property>
         <property name="description"><value>patch.bcpg.ecmPatch.description</value></property>
         <property name="fixesFromSchema"><value>0</value></property>
         <property name="fixesToSchema"><value>${version.schema}</value></property>
         <property name="targetSchema"><value>10003</value></property>
        <!--  <property name="initRepoVisitor" ref="initRepoVisitor"/> -->
-        <property name="repository" ref="repositoryHelper"/>
         <property name="beCPGSearchService" ref="beCPGSearchService"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>

@@ -161,13 +161,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 					// has been modified from UI ?
 					// then update qtySubFormula of components
 					Date compositeModifiedDate = (Date)nodeService.getProperty(component.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
-					boolean compositeYieldModified = false;
+					boolean compositeYieldModified = true;
 					for(Composite<CompoListDataItem> child : component.getChildren()){
 						Date childModifiedDate = (Date)nodeService.getProperty(child.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
 						logger.info("###compositeModifiedDate: " + compositeModifiedDate);
 						logger.info("###childModifiedDate: " + childModifiedDate);
-						if(compositeModifiedDate != null && compositeModifiedDate.after(childModifiedDate)){
-							compositeYieldModified = true;
+						if(compositeModifiedDate != null && compositeModifiedDate.before(childModifiedDate)){
+							compositeYieldModified = false;
 						}
 					}
 					Double dbYieldPerc = component.getData().getYieldPerc();

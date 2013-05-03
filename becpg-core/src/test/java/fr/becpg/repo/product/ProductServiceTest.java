@@ -462,21 +462,40 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 		logger.debug("testGetWUsedProduct");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
+		
+			}
+		}, false, true);
+		
+		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
 				LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		final NodeRef lSF2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF2).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, lSF2).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -489,7 +508,13 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				logger.debug("local semi finished 1: " + lSF1NodeRef);
 				logger.debug("local semi finished 2: " + lSF2NodeRef);
@@ -505,6 +530,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				CompoListDataItem wUsed0 = wUsedProducts.get(0);
 
 				assertEquals("check PF", finishedProductNodeRef, wUsed0.getProduct());
+				logger.info("###wUsed0.getDepthLevel(): " + wUsed0.getDepthLevel());
 				assertEquals("check PF level", new Integer(1), wUsed0.getDepthLevel());
 				assertEquals("check PF qty", 3d, wUsed0.getQty());
 				assertEquals("check PF qty sub formula", 0d, wUsed0.getQtySubFormula());

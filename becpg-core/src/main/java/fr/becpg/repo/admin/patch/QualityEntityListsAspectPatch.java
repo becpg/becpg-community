@@ -39,7 +39,7 @@ public class QualityEntityListsAspectPatch extends AbstractPatch {
 			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(entityQName)) +
 							LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS));
 			
-			List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch("query");
+			List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
 			logger.info("QualityEntityListAspectPatch bcpg:entityListsAspect, size: " + entityNodeRefs.size());
 			
 			for(NodeRef entityNodeRef : entityNodeRefs){
