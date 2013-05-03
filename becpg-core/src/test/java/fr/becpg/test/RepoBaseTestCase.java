@@ -229,17 +229,21 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 				 // As system user
                 AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
         
-                // products
-                NodeRef productsFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
-                if(productsFolder != null && nodeService.exists(productsFolder)){
-					nodeService.deleteNode(productsFolder);
-				}
+//                // products
+//                NodeRef productsFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
+//                if(productsFolder != null && nodeService.exists(productsFolder)){
+//					nodeService.deleteNode(productsFolder);
+//				}
                 
                 // products
-                List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT)) +
-						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)));
+                String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT)) +
+						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)) +
+						LuceneHelper.exclude(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, "Eau"));
+                logger.info("###query: " + query);
+                List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(query);
                 
 				for(NodeRef productNodeRef : productNodeRefs){
+					logger.info("### delete product: " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
 					if(nodeService.exists(productNodeRef)){
 						nodeService.deleteNode(productNodeRef);
 					}

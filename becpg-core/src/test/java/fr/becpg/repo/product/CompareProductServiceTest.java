@@ -495,7 +495,7 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	@Test
 	public void testStructComparison() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				logger.debug("createRawMaterial 1");
@@ -514,14 +514,20 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				// rawMaterial4NodeRef));
 				fp1.getCompoListView().setCompoList(compoList);
 
-				fp1NodeRef = alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		fp2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				logger.debug("createRawMaterial 1");
 
 				FinishedProductData fp2 = new FinishedProductData();
 				fp2.setName("FP 2");
 
-				compoList = new ArrayList<CompoListDataItem>();
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
@@ -530,7 +536,14 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.getCompoListView().setCompoList(compoList);
 
-				fp2NodeRef = alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
+				return alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+		
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 

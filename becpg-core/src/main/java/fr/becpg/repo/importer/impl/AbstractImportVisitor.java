@@ -694,7 +694,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					charactNodeRef = getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
 
 					if (charactNodeRef == null) {
-						throw new MappingException(I18NUtil.getMessage(MSG_ERROR_GET_NODEREF_CHARACT, assocDef.getTargetClass().getName(), charactName));
+						String error = I18NUtil.getMessage(MSG_ERROR_GET_NODEREF_CHARACT, assocDef.getTargetClass().getName(), charactName);
+						logger.error(error);
+						throw new MappingException(error);
 					}
 				} else {
 					throw new MappingException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_CHARACT, columnNode.asXML()));
@@ -901,6 +903,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			// +@cm\\:localName:%s
 			queryPath += LuceneHelper.getCondEqualValue(codeQName, (String) properties.get(codeQName), LuceneHelper.Operator.AND);
 			doQuery = true;
+		}
+		else{
+			logger.error("No keys defined in mapping, neither code property. codeQName: " + codeQName + " Properties: " + properties);
 		}
 
 		if (doQuery) {

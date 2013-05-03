@@ -76,7 +76,7 @@
 	<!-- INGREDIENTS LIST -->
 	<mapping name="bcpg:ingList">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:ingListIng" />
@@ -98,7 +98,7 @@
 	<!-- COMPOSITION LIST -->
 	<mapping name="bcpg:compoList">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:compoListProduct" />

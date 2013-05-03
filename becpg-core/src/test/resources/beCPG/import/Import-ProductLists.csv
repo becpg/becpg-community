@@ -38,7 +38,7 @@ VALUES;1000012015;MP3;;;Sea food;Fish;ToValidate
 ;;;;;;;
 PATH;/Temp/Products;;;;;;
 TYPE;bcpg:compoList;;;;;;
-MAPPING;Products;;;;;;
+MAPPING;TestProducts;;;;;;
 IMPORT_TYPE;EntityListItem;;;;;;
 COLUMNS;code;level;compoListProduct;compoListQty;compoListUnit;;
 VALUES;1000012012;1;1000012013;1;g;Saumon surgelé 80x20x4;

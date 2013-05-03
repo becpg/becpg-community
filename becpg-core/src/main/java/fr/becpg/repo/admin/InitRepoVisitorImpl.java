@@ -94,8 +94,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	public static final String GROUP_PRODUCT_REVIEWER = "ProductReviewer";
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
-	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
-	private static final String PRODUCT_REPORT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
+	public static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	public static final String PRODUCT_REPORT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";

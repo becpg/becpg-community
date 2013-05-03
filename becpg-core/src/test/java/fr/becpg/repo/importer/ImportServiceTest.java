@@ -34,6 +34,7 @@ import org.junit.Test;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -198,74 +199,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertEquals("Check english value", "Acerola1 english", mlText.getValue(Locale.ENGLISH));
 		assertEquals("Check french value", "Acerola1 french", mlText.getValue(Locale.FRENCH));
 	}
-	
-	/**
-	 * Adds the mapping file.
-	 */
-	private void addMappingFile(String mappingName, String mappingPath){
-					
-		logger.debug("/*-- Add mapping file --*/");
 		
-		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
-		if(systemFolder == null) 
-			systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-		
-		NodeRef exchangeFolder = repoService.getFolderByPath(systemFolder, RepoConsts.PATH_EXCHANGE);
-		if(exchangeFolder == null) 
-			exchangeFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_EXCHANGE, TranslateHelper.getTranslatedPath(RepoConsts.PATH_EXCHANGE));
-		
-		NodeRef importFolder = repoService.getFolderByPath(exchangeFolder, RepoConsts.PATH_IMPORT);
-		if(importFolder == null)			
-			importFolder = repoService.createFolderByPath(exchangeFolder, RepoConsts.PATH_IMPORT, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMPORT));
-		
-		NodeRef mappingFolder = repoService.getFolderByPath(importFolder, RepoConsts.PATH_MAPPING);
-		if(mappingFolder == null)			
-			mappingFolder = repoService.createFolderByPath(importFolder, RepoConsts.PATH_MAPPING, TranslateHelper.getTranslatedPath(RepoConsts.PATH_MAPPING));
-		
-		NodeRef productsMappingNodeRef = nodeService.getChildByName(mappingFolder, ContentModel.ASSOC_CONTAINS, mappingName);
-		if(productsMappingNodeRef != null){
-			nodeService.deleteNode(productsMappingNodeRef);
-		}
-				
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, mappingName);
-    	productsMappingNodeRef = nodeService.createNode(mappingFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();    	    	
-    	
-    	ContentWriter writer = contentService.getWriter(productsMappingNodeRef, ContentModel.PROP_CONTENT, true);
-    	String mappingFilePath = System.getProperty("user.dir" )  + mappingPath;
-    	
-    	logger.debug("Load birt file " + mappingFilePath);
-    	FileInputStream in = null;
-    	
-    	try{
-    		in = new FileInputStream(mappingFilePath);	    		
-    	}
-    	catch(FileNotFoundException e){
-    		logger.error("Failed to get user.dir", e);
-    	}
-    	
-    	assertNotNull("check input stream", in);
-    	
-    	String mimetype = mimetypeService.guessMimetype(mappingFilePath);	    	
-    	String encoding = "UTF-8"; 		    		    		        	    
-    	
-    	writer.setMimetype(mimetype);
-    	writer.setEncoding(encoding);
-    	
-    	logger.debug("mimetype : " + mimetype);
-    	logger.debug("encoding : " + encoding);
-    	
-    	writer.putContent(in);
-    	
-    	//check
-    	logger.debug("check mapping file. Path: " + nodeService.getPath(productsMappingNodeRef));
-    	ContentReader reader = contentService.getReader(productsMappingNodeRef, ContentModel.PROP_CONTENT);
-		InputStream inputStream = reader.getContentInputStream();
-		assertNotNull(inputStream);
-    	
-    	logger.debug("file writen.");		    
-	}
-	
 	/**
 	 * Test import products.
 	 * @throws Exception 
@@ -315,9 +249,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 					nodeService.deleteNode(siteFoldernode.get(0));
 				}			
 				
- 				addMappingFile("Products.xml", "/src/main/resources/beCPG/import/mapping/Products.xml");
- 				addMappingFile("TestProducts.xml", "/src/test/resources/beCPG/import/mapping/TestProducts.xml");
- 				
  				return null;
 
  			}},false,true);
@@ -347,9 +278,9 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	logger.debug("import.csv loaded");
  		    	writer.putContent(in);
  		
- 		    	logger.debug("Start import");
+ 		    	logger.debug("Start import"); 		    	
  				importService.importText(nodeRef, true, false);
- 				
+ 		    	
  				return null;
 
  			}},false,true);
@@ -628,13 +559,10 @@ public class ImportServiceTest extends RepoBaseTestCase {
  					fileFolderService.delete(productsNodeRef);    		
  				}
  				
- 				/*-- Add mapping file --*/
- 				addMappingFile("Products.xml", "/src/main/resources/beCPG/import/mapping/Products.xml");
- 				
  				/*-- Create file to import --*/
  		    	logger.debug("create file to import");
  		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
- 		    	properties.put(ContentModel.PROP_NAME, "Import-Products.csv");
+ 		    	properties.put(ContentModel.PROP_NAME, "Import-ProductLists.csv");
  		    	
  		    	NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
  		    	if(nodeRef != null){
@@ -649,7 +577,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  		    	writer.putContent(in);
  		    	
 	    		logger.debug("Start import");
- 				importService.importText(nodeRef, true, false);
+	    		importService.importText(nodeRef, true, false);
  	 			
  				return null;
 
@@ -692,6 +620,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				ProductData productData = alfrescoRepository.findOne(product1NodeRef); 				 			
  				
  				/*-- check productLists --*/
+ 				logger.info("###productData.getCompoListView().getCompoList().size(): " + productData.getCompoListView().getCompoList().size());
  				assertEquals("compoList should exist", (int)3, productData.getCompoListView().getCompoList().size()); 				
  				String [] rmNames = {"MP1","MP2", "MP3"};
  				double [] qtyValues = {1.0d, 2.0d, 3.2d};
