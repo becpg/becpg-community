@@ -169,11 +169,11 @@
 }
 
 .project-list .project-cancel-link {
-	background-image: url( ../images/remove-icon-16.png );
+	background-image: url("../images/remove-icon-16.png");
 }
 
 .project-list .project-view-link {
-	background-image: url( ../images/workflow-16.png );
+	background-image: url("../images/workflow-16.png");
 }
 
 .project-list .project-cancel-link a,.project-list .project-view-link a
@@ -218,7 +218,7 @@
 	cursor: pointer;
 	padding: 2px 0 1px 24px;
 	text-decoration: none;
-	background: url( ../images/task-16.png ) no-repeat;
+	background: url("../images/task-16.png") no-repeat;
 	min-height: 20px;
 	padding: 2px 0 1px 24px;
 	margin-left: 5px;
@@ -232,24 +232,24 @@
 
 .project-list span.delivrable-status-Completed,.project-list span.delivrable-status-Closed
 	{
-	background-image: url( ../images/complete-16.png );
+	background: url("../images/complete-16.png") no-repeat;
 }
 
 .project-list span.delivrable-status-Planned {
-	background-image: url( ../images/workflow-16.png );
+	background: url("../images/workflow-16.png") no-repeat;
 }
 
 .project-list span.delivrable-status-InProgress {
-	background-image: url( ../images/job-running-16.png );
+	background: url("../images/job-running-16.png") no-repeat;
 }
 
 .project-list .more-deliverable a.show-more {
-    background-repeat: no-repeat;
-    border: 1px solid transparent;
-    display: block;
-    min-height: 16px;
-    padding-left: 24px;
-    background-position: top left;
+	background-repeat: no-repeat;
+	border: 1px solid transparent;
+	display: block;
+	min-height: 16px;
+	padding-left: 24px;
+	background-position: top left;
 }
 
 .project-list span.doc-file {
@@ -259,86 +259,87 @@
 }
 
 .project-list span.advancement-done {
-	background: url( ../images/states/valid-16.png ) no-repeat;
+	background: url("../images/states/valid-16.png") no-repeat;
 	padding-left: 24px;
 }
 
 .project-list span.overdue-negative {
-	background: url( ./images/overdue-negative-16.png ) no-repeat;
+	background: url("./images/overdue-negative-16.png") no-repeat;
 	padding-left: 24px;
 }
 
 .project-list span.overdue-0to9 {
-	background: url( ./images/overdue-0to9-16.png ) no-repeat;
+	background: url("./images/overdue-0to9-16.png") no-repeat;
 	padding-left: 24px;
 }
 
 .project-list span.overdue-10to19 {
-	background: url( ./images/overdue-10to19-16.png ) no-repeat;
+	background: url("./images/overdue-10to19-16.png") no-repeat;
 	padding-left: 24px;
 }
 
 .project-list span.overdue-20to29 {
-	background: url( ./images/overdue-20to29-16.png ) no-repeat;
+	background: url("./images/overdue-20to29-16.png") no-repeat;
 	padding-left: 24px;
 }
 
 .project-list span.overdue-30plus {
-	background: url( ./images/overdue-30plus-16.png ) no-repeat;
+	background: url("./images/overdue-30plus-16.png") no-repeat;
 	padding-left: 24px;
 }
 
 .project-list span.overdue-negative-32 {
-	background: url( ./images/overdue-negative.png ) no-repeat;
+	background: url("./images/overdue-negative.png") no-repeat;
 	padding-left: 40px;
 	height: 40px;
 	display: inline-block;
 }
 
 .project-list span.overdue-0to9-32 {
-	background: url( ./images/overdue-0to9.png ) no-repeat;
+	background: url("./images/overdue-0to9.png") no-repeat;
 	padding-left: 40px;
 	height: 40px;
 	display: inline-block;
 }
 
 .project-list span.overdue-10to19-32 {
-	background: url( ./images/overdue-10to19.png ) no-repeat;
+	background: url("./images/overdue-10to19.png") no-repeat;
 	padding-left: 40px;
 	height: 40px;
 	display: inline-block;
 }
 
 .project-list span.overdue-20to29-32 {
-	background: url( ./images/overdue-20to29.png ) no-repeat;
+	background: url("./images/overdue-20to29.png") no-repeat;
 	padding-left: 40px;
 	height: 40px;
 	display: inline-block;
 }
 
 .project-list span.overdue-30plus-32 {
-	background: url( ./images/overdue-30plus.png ) no-repeat;
+	background: url("./images/overdue-30plus.png") no-repeat;
 	padding-left: 40px;
 	height: 40px;
 	display: inline-block;
 }
 
 /* Forms */
-.form-container .form-fields{
-   border-bottom: medium none;
-   padding: 1em;
+.form-container .form-fields {
+	border-bottom: medium none;
+	padding: 1em;
 }
 
 /* Details Form */
-.form-container .edit-dataitem a{
-   background: transparent url(../images/edit-metadata-16.png) no-repeat 12px 4px;
-   padding-left: 32px;
+.form-container .edit-dataitem a {
+	background: transparent url("../images/edit-metadata-16.png") no-repeat
+		12px 4px;
+	padding-left: 32px;
 }
 
-.form-container .yui-u{
-	margin-left:0px;
+.form-container .yui-u {
+	margin-left: 0px;
 }
-	
+
 .alfresco-share .yui-panel .bd .form-container .yui-u.first {
-    text-align: left;
+	text-align: left;
 }

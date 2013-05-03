@@ -172,7 +172,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
 
 		for (Map.Entry<QName, T> prop : repositoryEntityDefReader.getEntityProperties(entity).entrySet()) {
-			if(prop.getValue()==null || !prop.getValue().isTransient()){
+			if(prop.getValue() == null || !prop.getValue().isTransient()){
 				properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
 			}
 		}
@@ -282,7 +282,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
-					if(!dataListItem.isTransient()){
+					if(dataListItem!=null && !dataListItem.isTransient()){
 						nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(dataListItem.getNodeRef());
 					}

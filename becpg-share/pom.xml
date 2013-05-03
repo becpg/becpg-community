@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.5.0</version>
+		<version>1.5.2</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -34,13 +34,13 @@
         	
 		<!-- Addons -->
 		
-<!-- 		<dependency> -->
-<!-- 		  <groupId>de.fme</groupId> -->
-<!-- 		  <artifactId>jsconsole</artifactId> -->
-<!-- 		  <version>0.5.1</version> -->
-<!-- 		  <scope>runtime</scope> -->
-<!-- 		  <classifier>share</classifier> -->
-<!-- 		</dependency> -->
+ 		<dependency> 
+		  <groupId>de.fme</groupId>
+		  <artifactId>jsconsole</artifactId>
+		  <version>0.5.1</version>
+		  <scope>runtime</scope>
+		  <classifier>share</classifier>
+		</dependency> 
         
 	</dependencies>
 	<properties>
