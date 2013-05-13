@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.SearchService;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.FileFilterMode;
@@ -80,7 +81,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 
 		for (NodeRef nodeRef : results) {
-			ret.getItems().add(extract(nodeRef, metadataFields, props));
+			if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
+				ret.getItems().add(extract(nodeRef, metadataFields, props));
+			} 
 		}
 
 		ret.setFullListSize(pagination.getFullListSize());
