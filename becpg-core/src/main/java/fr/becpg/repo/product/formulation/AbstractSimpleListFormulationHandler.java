@@ -238,7 +238,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 	
 	/**
-	 * Sort costs by name.
+	 * Sort by name.
 	 *
 	 * @param costList the cost list
 	 * @return the list
@@ -250,11 +250,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
             @Override
 			public int compare(T c1, T c2){
             	
-            	String costName1 = (String)nodeService.getProperty(c1.getCharactNodeRef(), ContentModel.PROP_NAME);
-            	String costName2 = (String)nodeService.getProperty(c2.getCharactNodeRef(), ContentModel.PROP_NAME);
+            	String name1 = (String)nodeService.getProperty(c1.getCharactNodeRef(), ContentModel.PROP_NAME);
+            	String name2 = (String)nodeService.getProperty(c2.getCharactNodeRef(), ContentModel.PROP_NAME);
             	
             	// increase
-                return costName1.compareTo(costName2);                
+                return name1.compareTo(name2);                
             }
 
         });  
@@ -262,6 +262,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		int i=1;
 		for(T sl : simpleList){
 			sl.setSort(i);
+			i++;
 		}
 	}
 }

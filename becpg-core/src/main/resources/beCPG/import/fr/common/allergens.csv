@@ -269,7 +269,7 @@ VALUES;F384;Poisson blanc;Minor;Salanx cuvieri;Poisson blanc;Whitefish;
 VALUES;FX1;Céréales contenant du gluten et produits à base de ces céréales;Major;Céréales contenant du gluten et produits à base de ces céréales;Céréales contenant du gluten et produits à base de ces céréales;Cereals containing gluten and products made from these grains;F4,F5,F6,F7,F79,F124
 VALUES;FX2;Crustacés et produits à base de crustacés;Major;Crustacés et produits à base de crustacés;Crustacés et produits à base de crustacés;Crustaceans and crustacean products;F23,F24,F80,F304,F320
 VALUES;FX3;Oeuf et produit à base d'oeuf;Major;Oeuf et produit à base d'oeuf;Oeuf et produit à base d'oeuf;Egg and egg-based product;F1,F75,F76,F77,F232,F233,F245
-VALUES;FX4;Arachides et produits à base de d'arachide;Major;Arachides et produits à base de d'arachide;Arachides et produits à base de d'arachide;Peanuts and products containing peanut;F13
+VALUES;FX4;Arachides et produits à base d'arachide;Major;Arachides et produits à base d'arachide;Arachides et produits à base d'arachide;Peanuts and products containing peanut;F13
 VALUES;FX5;Soja et produits à base de soja;Major;Soja et produits à base de soja;Soja et produits à base de soja;Soybeans and soy products;F14
 VALUES;FX6;Lait et produit à base de (dont lactose);Major;Lait et produit à base de (dont lactose);Lait et produit à base de (dont lactose);And milk-based product (including lactose);F2,F78,F81,F82,F231,F236,F300,F325
 VALUES;FX7;Fruits à Coque* (noix noisettes);Major;Fruits à Coque* (noix noisettes);Fruits à Coque* (noix noisettes);* Nuts (walnuts hazelnuts);F17,F18,F20,F201,F202,F203,F253,F256

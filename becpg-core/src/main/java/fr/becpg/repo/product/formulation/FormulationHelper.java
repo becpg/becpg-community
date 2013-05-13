@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -17,6 +19,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
 /**
  * The Class FormulationHelper.

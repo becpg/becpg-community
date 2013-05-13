@@ -4,19 +4,25 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -35,9 +41,15 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	private static Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	protected NodeService nodeService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	@Override
@@ -88,6 +100,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 		
 		formulatedProduct.getAllergenList().retainAll(retainNodes);
+		
+		//sort
+		sort(formulatedProduct.getAllergenList());
+				
 		return true;
 	}
 
@@ -197,5 +213,66 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			}
 		}
 		return null;		
+	}
+	
+	/**
+	 * Sort allergens by type and name.
+	 *
+	 * @param costList the cost list
+	 * @return the list
+	 */
+	protected void sort(List<AllergenListDataItem> allergenList){
+			
+		Collections.sort(allergenList, new Comparator<AllergenListDataItem>(){
+			
+			final int BEFORE = -1;
+    	    final int EQUAL = 0;
+    	    final int AFTER = 1;	
+        	
+            @Override
+			public int compare(AllergenListDataItem a1, AllergenListDataItem a2){
+            	
+            	int comp = EQUAL;
+            	String type1 = (String)nodeService.getProperty(a1.getAllergen(), BeCPGModel.PROP_ALLERGEN_TYPE);
+            	String type2 = (String)nodeService.getProperty(a2.getAllergen(), BeCPGModel.PROP_ALLERGEN_TYPE);
+            	
+            	if(type1 == null){
+            		logger.warn("AllergenType is null for " + a1.getAllergen());            		
+            	}
+            	else if(type2 == null){
+            		logger.warn("AllergenType is null for " + a2.getAllergen());            		
+            	}
+            	else{
+            		
+            		comp = type1.compareTo(type2);
+            		
+            		if(EQUAL == comp){
+            			
+            			String allergenName1 = (String)nodeService.getProperty(a1.getAllergen(), ContentModel.PROP_NAME);
+                    	String allergenName2 = (String)nodeService.getProperty(a2.getAllergen(), ContentModel.PROP_NAME);
+                    	
+                    	comp = allergenName1.compareTo(allergenName2);  
+            		}
+            		else{
+            			
+            			if(AllergenType.Major.toString().equals(type1)){
+            				comp = BEFORE;
+            			}
+            			else{
+            				comp = AFTER;
+            			}
+            		}
+            	}            	
+            	
+            	return comp;
+            }
+
+        });  
+		
+		int i=1;
+		for(AllergenListDataItem al : allergenList){
+			al.setSort(i);
+			i++;
+		}
 	}
 }
