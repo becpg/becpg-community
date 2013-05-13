@@ -203,8 +203,13 @@ public class CompositeIng extends AbstractIng {
 					logger.warn("Ing '" + ing.getIng() + "' doesn't have a value for this locale '" + locale + "'.");
 				}
 				
-				if(!ingredients.isEmpty() && addLabelSeparator){
-					ingredients += RepoConsts.LABEL_SEPARATOR;
+				if(!ingredients.isEmpty()){
+					if(addLabelSeparator){
+						ingredients += RepoConsts.LABEL_SEPARATOR;
+					}
+					else{
+						addLabelSeparator = true;
+					}
 				}
 				if(ing instanceof IngItem){				
 					ingredients += ingName + qtyPerc;
