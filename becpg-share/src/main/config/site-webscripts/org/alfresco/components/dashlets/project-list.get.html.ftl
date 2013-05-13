@@ -15,8 +15,8 @@
    <@uniqueIdDiv>
 		<#include "../../include/alfresco-macros.lib.ftl" />
 		<#assign el=args.htmlid?html>
-		<#assign prefFilter = preferences.filter!"Valid">
-		<#assign prefSimpleView = preferences.simpleView!true>
+		<#assign prefFilter = preferences.filter!"InProgress">
+		<#assign prefSimpleView = preferences.simpleView!false>
 		<script type="text/javascript">//<![CDATA[
 		(function()
 		{
