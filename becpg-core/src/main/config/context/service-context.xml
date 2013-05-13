@@ -302,18 +302,17 @@
 		<property name="permissionService" ref="permissionService"/>
 	</bean>
 
-
-   <bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor">
+	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor">
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="services" ref="ServiceRegistry" />
 		<property name="permissionService" ref="permissionService" />
-		<property name="advSearchService" ref="advSearchService" />
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="fileFolderService" ref="fileFolderService"/>
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="namespaceService" ref="namespaceService"/>
-		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
+		<property name="fileFolderService" ref="FileFolderService" />
+		<property name="advSearchService" ref="AdvSearchService" />
 	</bean>
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
@@ -390,6 +389,7 @@
 	<bean id="BeCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="SearchService" />
 		<property name="namespaceService" ref="NamespaceService" />
+		<property name="defaultSearchTemplate" value="${beCPG.defaultSearchTemplate}"/>
 	</bean>
 	
 	

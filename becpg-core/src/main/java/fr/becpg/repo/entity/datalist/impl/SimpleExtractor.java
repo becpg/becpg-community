@@ -80,7 +80,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 
 		for (NodeRef nodeRef : results) {
-			ret.getItems().add(extract(nodeRef, metadataFields, props));
+			if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
+				ret.getItems().add(extract(nodeRef, metadataFields, props));
+			} 
 		}
 
 		ret.setFullListSize(pagination.getFullListSize());
