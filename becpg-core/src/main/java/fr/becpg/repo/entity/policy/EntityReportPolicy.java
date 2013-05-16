@@ -4,12 +4,15 @@
 package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.ContentServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -37,7 +40,8 @@ import fr.becpg.repo.report.entity.EntityReportService;
 public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy{
+		NodeServicePolicies.OnUpdatePropertiesPolicy,
+		ContentServicePolicies.OnContentUpdatePolicy{
 
 	
 	/** The logger. */
@@ -98,7 +102,20 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		policyComponent.bindClassBehaviour(
 				NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this,
-						"onUpdateProperties"));		
+						"onUpdateProperties"));	
+		
+		// report Tpl policies
+		
+		policyComponent.bindAssociationBehaviour(
+				NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
+				ReportModel.TYPE_REPORT, ReportModel.ASSOC_REPORT_TPL, new JavaBehaviour(this,
+						"onDeleteAssociation"));
+		
+//		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ReportModel.TYPE_REPORT_TPL,  new JavaBehaviour(this,
+//				"beforeDeleteNode"));
+		
+		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, ReportModel.TYPE_REPORT_TPL,  new JavaBehaviour(this,
+				"onContentUpdate", NotificationFrequency.TRANSACTION_COMMIT));
 	}
 	
 	@Override
@@ -110,7 +127,19 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		
-		onUpdateProduct(assocRef.getSourceRef());
+		if(ReportModel.ASSOC_REPORT_TPL.equals(assocRef.getTypeQName())){			
+			if(!nodeService.hasAspect(assocRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)){
+				
+				if (logger.isDebugEnabled()) {
+					logger.debug("Policy delete report " + assocRef.getSourceRef() + " - name: "
+							+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
+				}
+				nodeService.deleteNode(assocRef.getSourceRef());
+			}			
+		}
+		else{
+			onUpdateProduct(assocRef.getSourceRef());
+		}		
 	}
 
 	private void onUpdateProduct(NodeRef entityNodeRef){
@@ -244,4 +273,27 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
         }
 	}
 
+	@Override
+	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
+		
+		if(nodeService.exists(nodeRef)){			
+			
+			List<AssociationRef> reportAssocRefs = nodeService.getSourceAssocs(nodeRef,
+					ReportModel.ASSOC_REPORT_TPL);
+			
+			logger.debug("Policy onContentUpdate reportTpl " + nodeRef + " - reports to generate: " + reportAssocRefs.size());
+			
+			for (AssociationRef reportAssocRef : reportAssocRefs) {
+				
+				List<AssociationRef> entityAssocRefs = nodeService.getSourceAssocs(reportAssocRef.getSourceRef(),
+						ReportModel.ASSOC_REPORTS);
+				
+				if(!entityAssocRefs.isEmpty()){
+					NodeRef entityNodeRef = entityAssocRefs.get(0).getSourceRef();
+					Runnable runnable = new ProductReportGenerator(entityNodeRef, AuthenticationUtil.getSystemUserName());
+					threadExecuter.execute(runnable);
+				}			
+			}
+		}		
+	}
 }

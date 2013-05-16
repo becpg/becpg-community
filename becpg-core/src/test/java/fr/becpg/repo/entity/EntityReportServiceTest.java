@@ -22,7 +22,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -49,32 +49,12 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	@Resource 
 	private EntityReportService entityReportService;
 	
-	/** The sf node ref. */
-	private NodeRef sfNodeRef;
+	/** The PF node ref. */
+	private NodeRef pfNodeRef;
 	private Date createdDate;	
 	
-
-//	/*
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
-//	 */
-//	@Override
-//	public void setUp() throws Exception {
-//		super.setUp();
-//
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-//			@Override
-//			public NodeRef execute() throws Throwable {
-//
-//				deleteReportTpls();
-//
-//				return null;
-//
-//			}
-//		}, false, true);
-//
-//	}
+	NodeRef defaultReportTplNodeRef = null;
+	NodeRef otherReportTplNodeRef = null;
 	
 	private void initReports(){
 		
@@ -83,7 +63,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				for(NodeRef n : reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "*")){
+				for(NodeRef n : reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "*")){
 					nodeService.deleteNode(n);
 				}
 
@@ -94,8 +74,8 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
-				reportTplService.createTplRptDesign(productReportTplFolder, "report SF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, false, true);
+				reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
+						ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, false, true);
 				
 				return null;
 
@@ -116,26 +96,26 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 		
 		initReports();
 
-		assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT).size());
+		assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT).size());
 
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				// create SF
-				SemiFinishedProductData sfData = new SemiFinishedProductData();
-				sfData.setName("SF");
+				// create PF
+				FinishedProductData pfData = new FinishedProductData();
+				pfData.setName("PF");
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
 				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
 				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
 				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
 				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
-				sfData.setAllergenList(allergenList);
+				pfData.setAllergenList(allergenList);
 
-				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();				
+				pfNodeRef = alfrescoRepository.create(testFolderNodeRef, pfData).getNodeRef();				
 				createdDate = new Date();				
-				entityReportService.generateReport(sfNodeRef);
+				entityReportService.generateReport(pfNodeRef);
 
 				return null;
 			}
@@ -146,11 +126,10 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 				
 				// check report Tpl
-				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
+				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT);
 				assertEquals("check system templates", 2, reportTplNodeRefs.size());
 				
-				NodeRef defaultReportTplNodeRef = null;
-				NodeRef otherReportTplNodeRef = null;
+				
 				for(NodeRef reportTplNodeRef : reportTplNodeRefs){
 					if(Boolean.TRUE.equals(nodeService.getProperty(reportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT))){
 						defaultReportTplNodeRef = reportTplNodeRef;
@@ -163,21 +142,21 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				assertNotNull(otherReportTplNodeRef);						
 				
 				// check reports in generated, its name
-				Date generatedDate = (Date)nodeService.getProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+				Date generatedDate = (Date)nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 				createdDate.before(generatedDate);
-				List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(sfNodeRef, ReportModel.ASSOC_REPORTS);
+				List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
 				assertEquals(2, reportNodeRefs.size());
 				
 				checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs);
 
-				// rename SF
-				nodeService.setProperty(sfNodeRef, ContentModel.PROP_NAME, "SF renamed");
-				entityReportService.generateReport(sfNodeRef);
+				// rename PF
+				nodeService.setProperty(pfNodeRef, ContentModel.PROP_NAME, "PF renamed");
+				entityReportService.generateReport(pfNodeRef);
 				
 				// check reports in generated, its name
-				Date generatedDate2 = (Date)nodeService.getProperty(sfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+				Date generatedDate2 = (Date)nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 				generatedDate.before(generatedDate2);
-				List<NodeRef> reportNodeRefs2 = associationService.getTargetAssocs(sfNodeRef, ReportModel.ASSOC_REPORTS);
+				List<NodeRef> reportNodeRefs2 = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
 				assertEquals(2, reportNodeRefs2.size());
 				
 				checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs2);							
@@ -190,35 +169,61 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
-				NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
+				FinishedProductData pfData = (FinishedProductData) alfrescoRepository.findOne(pfNodeRef);
+				NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
 				
 				// change nothing
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);				
-				assertFalse(entityService.hasDataListModified(sfNodeRef));
+				assertFalse(entityService.hasDataListModified(pfNodeRef));
 				
 				// change something
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);				
-				assertTrue(entityService.hasDataListModified(sfNodeRef));
+				assertTrue(entityService.hasDataListModified(pfNodeRef));
 				return null;
 
 			}
 		});
+		
+		// Delete report tpl -> report should be deleted
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				
+				logger.info("Delete report Tpl");
+				nodeService.deleteNode(otherReportTplNodeRef);
+				
+				// check report Tpl
+				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT);
+				assertEquals("check system templates", 1, reportTplNodeRefs.size());
+				
+				// check other report is deleted
+				List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
+				assertEquals(1, reportNodeRefs.size());
+				
+				boolean isDefault = !((String)nodeService.getProperty(reportNodeRefs.get(0), ContentModel.PROP_NAME)).contains("report PF 2");
+				assertTrue(isDefault);
+				
+				return null;
+
+			}
+		});
+		
+		
 
 	}
 	
 	private void checkReportNames(NodeRef defaultReportTplNodeRef, NodeRef otherReportTplNodeRef, List<NodeRef>reportNodeRefs){
 		
-		boolean isDefault = !((String)nodeService.getProperty(reportNodeRefs.get(0), ContentModel.PROP_NAME)).contains("report SF 2");
+		boolean isDefault = !((String)nodeService.getProperty(reportNodeRefs.get(0), ContentModel.PROP_NAME)).contains("report PF 2");
 		NodeRef defaultReportNodeRef = isDefault ? reportNodeRefs.get(0) : reportNodeRefs.get(1);
 		NodeRef otherReportNodeRef = isDefault ? reportNodeRefs.get(1) : reportNodeRefs.get(0);
 		
 		String defaultReportName = String.format("%s - %s", 
-				nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
+				nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME), 
 				nodeService.getProperty(defaultReportTplNodeRef, ContentModel.PROP_NAME));
 		
 		String otherReportName = String.format("%s - %s", 
-						nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME), 
+						nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME), 
 						nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
 		
 		assertEquals(defaultReportName , nodeService.getProperty(defaultReportNodeRef, ContentModel.PROP_NAME));
@@ -246,40 +251,40 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				NodeRef productReportTplFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
-				// create SF
-				SemiFinishedProductData sfData = new SemiFinishedProductData();
-				sfData.setName("SF");
+				// create PF
+				FinishedProductData pfData = new FinishedProductData();
+				pfData.setName("PF");
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
 				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
 				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
 				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
 				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
-				sfData.setAllergenList(allergenList);
+				pfData.setAllergenList(allergenList);
 
-				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
+				pfNodeRef = alfrescoRepository.create(testFolderNodeRef, pfData).getNodeRef();
 
-				QName typeQName = nodeService.getType(sfNodeRef);
+				QName typeQName = nodeService.getType(pfNodeRef);
 				assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
-				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user").size());
+				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user").size());
 
 				// add a user template
 				reportTplService.createTplRptDesign(productReportTplFolder, "user tpl", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, false, true, true);
+						ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, false, true, true);
 
-				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user").size());
+				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user").size());
 
 				// add a user template
 				NodeRef userTpl2NodeRef = reportTplService.createTplRptDesign(productReportTplFolder, "user tpl 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
-						ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, false, false, true);
+						ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, false, false, true);
 
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "u*").size());
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user*").size());
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user tpl 2").size());
-				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "\"user tpl 2\"")
+				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "u*").size());
+				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user*").size());
+				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
+				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "\"user tpl 2\"")
 						.size());
 				assertEquals("check user templates", userTpl2NodeRef,
-						reportTplService.getUserReportTemplate(ReportType.Document, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, "user tpl 2"));
+						reportTplService.getUserReportTemplate(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user tpl 2"));
 
 				return null;
 

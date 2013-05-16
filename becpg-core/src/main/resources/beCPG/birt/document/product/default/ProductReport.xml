@@ -3,6 +3,7 @@
 	store-identifier="SpacesStore" productType="Produit fini" productQty="0.200"
 	productHierarchy1="Famille" productHierarchy2="Sous-famille"
 	productUnit="kg" productState="En développement" productEAN="800145668245897"
+	plants="Site1, Site2"
 	modified="02/12/2010" productDensity="1" description="My description My description My description My description My description My description My description My description " 
 	clients="" useByDate="23">
 
@@ -117,7 +118,7 @@
 		</ingList>
 
 		<nutList>
-			<nut nutListValue="5.6495" nutListUnit="g/100g" nutListGroup="Groupe 1"
+			<nut nutListValue="5.649556" nutListUnit="g/100g" nutListGroup="Groupe 1"
 				nutListNut="Protides" groupLevel="1" />
 			<nut nutListValue="" nutListUnit="g/100g" nutListGroup="Groupe 1"
 				nutListNut="Lipides" groupLevel="1" />
@@ -222,17 +223,31 @@
 				mblMaxi="1.9" mblTextCriteria="Text criteria"/>
 		</microbioList>
 
-		<physicoChemList>
-			<physicoChem pclPhysicoChem="Poids" pclValue="4" pclUnit="kg"
-				pclMaxi="5" pclMini="3" />
-			<physicoChem pclPhysicoChem="Taux de matière grasse"
-				pclValue="10" pclUnit="%" pclMaxi="12" pclMini="" />
-			<physicoChem pclPhysicoChem="Test" pclValue="4" pclUnit="kg"
-				pclMaxi="5" pclMini="3" />
-			<physicoChem pclPhysicoChem="Longuer" pclValue="0.3"
-				pclUnit="m" pclMaxi="0.34" pclMini="0.29" />
-		</physicoChemList>
-
+		<packagingList>
+			<entity packagingListProduct="Film Aertop laize 500" code="E55" erpCode="4707" suppliers="PROMATEC" packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Primaire"
+				packagingListIsMaster="false" itemType="bcpg:packagingMaterial" tare="52.0" tareUnit="g/m2" />
+			<entity packagingListProduct="Etiquette VOLAE entier" code="E96" erpCode="5117" suppliers="ATLANT ETIQ" packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Primaire"
+				packagingListIsMaster="false" itemType="bcpg:packagingMaterial" />
+			<entity packagingListProduct="Buvard blanc EF 1500 60x75" code="E9" erpCode="5263" suppliers="GLOBAL PLASTICS" packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Primaire"
+				packagingListIsMaster="false" itemType="bcpg:packagingMaterial" length="75.0" width="60.0" height="" />
+			<entity packagingListProduct="Barquette 2 alvéoles rouge" code="E281" erpCode="5562" suppliers="PLASTOBREIZ" packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Primaire"
+				packagingListIsMaster="true" itemType="bcpg:packagingMaterial" tare="16.23" tareUnit="g" length="230.0" width="147.0" height="25.0" />
+			<entity packagingListProduct="Etiquette blanche colis" code="E179" erpCode="6147" suppliers="ATLANT ETIQ" packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Secondaire"
+				packagingListIsMaster="false" itemType="bcpg:packagingMaterial" />
+			<entity packagingListProduct="Petite Poids-Prix Bizerba neutre" code="E147" erpCode="8183" suppliers="ATLANT ETIQ" packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Primaire"
+				packagingListIsMaster="false" itemType="bcpg:packagingMaterial" tare="0.6" tareUnit="g" />
+			<entity packagingListProduct="Colis - 7158"  legalName="Palettisation europe (800 x 1200 mm)" code="KE9" suppliers="" packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Secondaire" packagingListIsMaster="true" itemType="bcpg:packagingKit"
+				tare="210.0" tareUnit="g" palletBoxesPerLayer="13" palletLayers="8" palletBoxesPerPallet="104" palletHeight="1905">
+				<dataLists>
+					<packagingList>
+						<entity packagingListProduct="Petit plateau 400 x 300" code="E121" erpCode="7158" suppliers="EUROPAC (MONDI)" packagingListQty="1.0" packagingListUnit="P" packagingListPkgLevel="Secondaire"
+							packagingListIsMaster="true" itemType="bcpg:packagingMaterial" tare="210.0" tareUnit="g" length="400.0" width="300.0" height="135.0" />
+						<entity packagingListProduct="Palette europe (800 x 1200 mm)"  code="E315" erpCode="" suppliers="" packagingListQty="1.0" packagingListUnit="P" packagingListPkgLevel="Primaire"
+							packagingListIsMaster="false" itemType="bcpg:packagingMaterial" length="1000.0" width="1200.0" height="" />
+					</packagingList>
+				</dataLists>
+			</entity>
+		</packagingList>
 
 
 
