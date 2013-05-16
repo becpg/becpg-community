@@ -86,7 +86,9 @@
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" />
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />

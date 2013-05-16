@@ -30,6 +30,7 @@ import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfReadOnly;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
@@ -45,6 +46,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private String title;
 	private SystemState state = SystemState.ToValidate;
 	private ProductUnit unit = ProductUnit.kg;
+	private NodeRef entityTplRef;
 
 	/*
 	 * Transformable properties
@@ -163,6 +165,16 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:entityTplRef")
+	public NodeRef getEntityTplRef() {
+		return entityTplRef;
+	}
+
+	public void setEntityTplRef(NodeRef entityTplRef) {
+		this.entityTplRef = entityTplRef;
 	}
 
 	@AlfProp
