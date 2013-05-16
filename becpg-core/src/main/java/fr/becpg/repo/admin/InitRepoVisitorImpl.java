@@ -799,9 +799,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 				ClassDefinition classDef = dictionaryService.getClass(productType);
 				String reportPath = Locale.getDefault().equals(Locale.FRENCH) ? PRODUCT_REPORT_PATH : PRODUCT_REPORT_EN_PATH;
-				NodeRef compareProductFolderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef,
+				NodeRef folderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef,
 						classDef.getTitle(), classDef.getTitle());
-				reportTplService.createTplRptDesign(compareProductFolderNodeRef, classDef.getTitle(),
+				reportTplService.createTplRptDesign(folderNodeRef, classDef.getTitle(),
 						reportPath, ReportType.Document, ReportFormat.PDF, productType, true, true, false);
 			} catch (Exception e) {
 				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);

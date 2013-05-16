@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -31,12 +32,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitRepoVisitorImpl;
-import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
-import fr.becpg.report.client.ReportFormat;
 
 /**
  * Override alfresco email template
@@ -49,14 +47,19 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 
 	private ReportTplService reportTplService;
 
+	private DictionaryService dictionaryService;
+	
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
+	}
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 
 	@Override
 	protected String applyInternal() throws Exception {
 
-		// TODO:
 		// - add messages in properties files
 		// - product reports : remove for RM, packaging and update for FP and
 		// SF, add product report for FP and SF
@@ -64,28 +67,39 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		// - update icons file
 		// - update Mapping files
 
+		logger.info("Apply ResourcesPatch1");
+		
+		removeProductReports();
+		updateProductClientReports();
+		updateIconsFiles();
+		updateMappingFiles();
+		
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	private void removeProductReports() {
 
 		QName[] productTypes = { BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT,
-				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_RESOURCEPRODUCT };
+				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_RESOURCEPRODUCT,
+				BeCPGModel.TYPE_SEMIFINISHEDPRODUCT};
+		
+		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Reports/cm:ProductReportTemplates");
 
 		for (QName productType : productTypes) {
 
-			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document,
-					productType);
-
-			for (NodeRef reportTplNodeRef : reportTplNodeRefs) {
-				nodeService.deleteNode(reportTplNodeRef);
-			}
+			ClassDefinition classDef = dictionaryService.getClass(productType);
+			
+			NodeRef reportFolderNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
+			if(reportFolderNodeRef != null){
+				logger.debug("Delete report folder for type " + classDef.getTitle());
+				nodeService.deleteNode(reportFolderNodeRef);
+			}			
 		}
 	}
 	
 	private void updateProductClientReports() {
 
-		QName[] productTypes = { BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, BeCPGModel.TYPE_FINISHEDPRODUCT};
+		QName[] productTypes = { BeCPGModel.TYPE_FINISHEDPRODUCT};
 
 		for (QName productType : productTypes) {
 

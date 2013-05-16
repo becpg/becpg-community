@@ -112,5 +112,17 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+	<bean id="patch.bcpg.resourcesPatch1" class="fr.becpg.repo.admin.patch.ResourcesPatch1" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.resourcesPatch1</value></property>
+        <property name="description"><value>patch.bcpg.resourcesPatch1.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10006</value></property>
+        <property name="reportTplService" ref="reportTplService"/>
+        <property name="dictionaryService" ref="dictionaryService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>	
 	 
 </beans>
