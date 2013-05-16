@@ -1,5 +1,7 @@
 package fr.becpg.repo.product.formulation;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.EvaluationContext;
@@ -13,6 +15,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * Use Spring EL to parse formula and compute value
@@ -24,9 +27,17 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
+	
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
+		
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
+		
+		copyTemplateDynamicCharactLists(productData);
 
 		ExpressionParser parser = new SpelExpressionParser();
 		EvaluationContext context = new StandardEvaluationContext(productData);
@@ -66,4 +77,40 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		
 	}
 
+	/**
+	 * Copy missing item from template
+	 * @param formulatedProduct
+	 * @param simpleListDataList
+	 */
+	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
+
+		ProductData templateProductData = alfrescoRepository.findOne(formulatedProduct.getEntityTplRef());
+
+		copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(),
+				formulatedProduct.getCompoListView().getDynamicCharactList());
+		copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(),
+				formulatedProduct.getPackagingListView().getDynamicCharactList());
+		copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(),
+				formulatedProduct.getProcessListView().getDynamicCharactList());
+	}
+	
+	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList){
+		
+		for(DynamicCharactListItem sourceItem : sourceList){
+			if(sourceItem.getTitle() != null){
+				boolean isFound = false;
+				for(DynamicCharactListItem targetItem : targetList){
+					if(sourceItem.getTitle().equals(targetItem.getTitle())){
+						targetItem.setFormula(sourceItem.getFormula());
+						isFound = true;
+						break;
+					}
+				}
+				if(!isFound){
+					targetList.add(sourceItem);
+				}
+			}
+			
+		}
+	}
 }

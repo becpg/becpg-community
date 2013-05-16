@@ -76,7 +76,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
-		logger.debug("formulateSimpleList");			
+		logger.debug("formulateSimpleList");	
+		
+		copyProductTemplateList(formulatedProduct, simpleListDataList);
 
 		if(simpleListDataList != null){			
 			for(SimpleListDataItem sl : simpleListDataList){
@@ -264,5 +266,33 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			sl.setSort(i);
 			i++;
 		}
+	}
+	
+	/**
+	 * Copy missing item from template
+	 * @param formulatedProduct
+	 * @param simpleListDataList
+	 */
+	protected void copyProductTemplateList(ProductData formulatedProduct, List<T> simpleListDataList){
+		
+		if(formulatedProduct.getEntityTplRef() !=null){
+		
+			List<T> templateSimpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getEntityTplRef(), getDataListVisited(), getDataListVisited());
+			
+			for(T tsl : templateSimpleListDataList){
+				if(tsl.getCharactNodeRef() != null){
+					boolean isFound = false;
+					for(T sl : simpleListDataList){
+						if(tsl.getCharactNodeRef().equals(sl.getCharactNodeRef())){
+							isFound = true;
+							break;
+						}
+					}
+					if(!isFound){
+						simpleListDataList.add(tsl);
+					}
+				}			
+			}
+		}		
 	}
 }
