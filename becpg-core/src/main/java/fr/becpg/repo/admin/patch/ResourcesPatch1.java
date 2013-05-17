@@ -85,16 +85,18 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		
 		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Reports/cm:ProductReportTemplates");
 
-		for (QName productType : productTypes) {
+		if(folderNodeRef != null){
+			for (QName productType : productTypes) {
 
-			ClassDefinition classDef = dictionaryService.getClass(productType);
-			
-			NodeRef reportFolderNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
-			if(reportFolderNodeRef != null){
-				logger.debug("Delete report folder for type " + classDef.getTitle());
-				nodeService.deleteNode(reportFolderNodeRef);
-			}			
-		}
+				ClassDefinition classDef = dictionaryService.getClass(productType);
+				
+				NodeRef reportFolderNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
+				if(reportFolderNodeRef != null){
+					logger.debug("Delete report folder for type " + classDef.getTitle());
+					nodeService.deleteNode(reportFolderNodeRef);
+				}			
+			}
+		}		
 	}
 	
 	private void updateProductClientReports() {
@@ -123,19 +125,13 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Icons");
 		if (folderNodeRef != null) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
-		}
-		else{
-			logger.error("Failed to find icons folder");
-		}
+		}		
 	}
 
 	private void updateMappingFiles(){
 		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping");
 		if (folderNodeRef != null) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
-		}
-		else{
-			logger.error("Failed to find mapping folder");
-		}
+		}		
 	}
 }
