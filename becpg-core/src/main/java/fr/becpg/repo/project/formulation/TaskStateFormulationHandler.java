@@ -137,13 +137,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							+ nextTask.getNodeRef());
 					nextTask.setCompletionPercent(taskCompletionPercent);
 					
-					// task may be reopened so 
-					if(nextTask.getWorkflowInstance() != null && 
-						!nextTask.getWorkflowInstance().isEmpty() && 
-						!projectWorkflowService.isWorkflowActive(nextTask)){
-						
-						nextTask.setWorkflowInstance("");
-					}
+					// check workflow instance (task may be reopened) and workflow properties
+					projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
 										
 					// workflow (task may have been set as InProgress with UI)
 					if ((nextTask.getWorkflowInstance() == null ||  nextTask.getWorkflowInstance().isEmpty()) &&

@@ -42,6 +42,7 @@
             }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.project.SubmitTask"/>
       </extensionElements>
     </userTask>
     <endEvent id="endevent1" name="End"></endEvent>

@@ -3,6 +3,7 @@ package fr.becpg.repo.project.impl;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.service.cmr.activities.ActivityService;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -18,10 +19,12 @@ import fr.becpg.repo.project.ProjectActivityService;
 public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	private static String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
+	private static String PAGE_PROJECT = "entity-details?nodeRef=%s";
 
 	public static String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
 	public static String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";
 	public static String DELIVERABLE_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".deliverable-state";
+	public static String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
 	
 	private static Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
 
@@ -91,6 +94,25 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	private NodeRef getProjectNodeRef(NodeRef listItemNodeRef) {
 		return entityListDAO.getEntity(listItemNodeRef);
+	}
+
+	@Override
+	public void postProjectCommentCreatedActivity(NodeRef projectNodeRef, String comment) {
+
+		if (projectNodeRef != null && comment != null) {
+			try {
+				JSONObject data = new JSONObject();
+				data.put(PostLookup.JSON_PAGE, String.format(PAGE_PROJECT, projectNodeRef));
+				data.put(PostLookup.JSON_NODEREF, projectNodeRef);
+				data.put("title", nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
+
+				activityService.postActivity(COMMENT_CREATED_ACTIVITY,
+						attributeExtractorService.extractSiteId(projectNodeRef), "comments", data.toString());
+
+			} catch (JSONException e) {
+				logger.error(e, e);
+			}
+		}
 	}
 
 }
