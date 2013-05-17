@@ -905,7 +905,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			doQuery = true;
 		}
 		else{
-			logger.error("No keys defined in mapping, neither code property. codeQName: " + codeQName + " Properties: " + properties);
+			if(logger.isDebugEnabled()){
+				logger.debug("No keys defined in mapping, neither code property. codeQName: " + codeQName + " Properties: " + properties);
+			}			
 		}
 
 		if (doQuery) {
