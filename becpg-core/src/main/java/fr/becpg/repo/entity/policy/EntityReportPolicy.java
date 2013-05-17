@@ -28,8 +28,10 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * Generate documents when product properties are updated.
@@ -57,7 +59,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	/** The entityReportService **/
 	private EntityReportService entityReportService;
 	
-
+	private BeCPGSearchService beCPGSearchService;
+	
 	/**
 	 * Sets the transaction service.
 	 *
@@ -80,6 +83,10 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
+	}
+
+	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
+		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	/**
@@ -276,24 +283,43 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
 		
-		if(nodeService.exists(nodeRef)){			
+		if(nodeService.exists(nodeRef)){
+			Boolean isSystem = (Boolean)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
 			
-			List<AssociationRef> reportAssocRefs = nodeService.getSourceAssocs(nodeRef,
-					ReportModel.ASSOC_REPORT_TPL);
-			
-			logger.debug("Policy onContentUpdate reportTpl " + nodeRef + " - reports to generate: " + reportAssocRefs.size());
-			
-			for (AssociationRef reportAssocRef : reportAssocRefs) {
+			if(isSystem != null && isSystem){
+				QName classType = (QName)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
 				
-				List<AssociationRef> entityAssocRefs = nodeService.getSourceAssocs(reportAssocRef.getSourceRef(),
-						ReportModel.ASSOC_REPORTS);
+				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) +
+								LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY));
 				
-				if(!entityAssocRefs.isEmpty()){
-					NodeRef entityNodeRef = entityAssocRefs.get(0).getSourceRef();
+				List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
+				
+				for(NodeRef entityNodeRef : entityNodeRefs){
 					Runnable runnable = new ProductReportGenerator(entityNodeRef, AuthenticationUtil.getSystemUserName());
 					threadExecuter.execute(runnable);
-				}			
+				}
 			}
-		}		
+		}			
+		
+//		
+//		if(nodeService.exists(nodeRef)){			
+//			
+//			List<AssociationRef> reportAssocRefs = nodeService.getSourceAssocs(nodeRef,
+//					ReportModel.ASSOC_REPORT_TPL);
+//			
+//			logger.debug("Policy onContentUpdate reportTpl " + nodeRef + " - reports to generate: " + reportAssocRefs.size());
+//			
+//			for (AssociationRef reportAssocRef : reportAssocRefs) {
+//				
+//				List<AssociationRef> entityAssocRefs = nodeService.getSourceAssocs(reportAssocRef.getSourceRef(),
+//						ReportModel.ASSOC_REPORTS);
+//				
+//				if(!entityAssocRefs.isEmpty()){
+//					NodeRef entityNodeRef = entityAssocRefs.get(0).getSourceRef();
+//					Runnable runnable = new ProductReportGenerator(entityNodeRef, AuthenticationUtil.getSystemUserName());
+//					threadExecuter.execute(runnable);
+//				}			
+//			}
+//		}		
 	}
 }

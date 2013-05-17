@@ -48,7 +48,7 @@
 	<dataLists>
 
 		<compoList>
-			<entity itemType="bcpg:localSemiFinishedProduct" depthLevel="1" compoListProduct="Phase 1" legalName="legal name 1" compoListQtySubFormula="30" compoListQtyAfterProcess="12" compoListQty="3" compoListUnit="kg"/>
+			<entity itemType="bcpg:localSemiFinishedProduct" erpCode="125665" depthLevel="1" compoListProduct="Phase 1" legalName="legal name 1" compoListQtySubFormula="30.12236" compoListQtyAfterProcess="12" compoListQty="3.2555" compoListUnit="kg"/>
 			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product1" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"  suppliers="supplier1, supplier2" />
 			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product2" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg" suppliers="supplier1, The HallStar Company"/>
 			<entity itemType="bcpg:rawMaterial" depthLevel="2" compoListProduct="product3" legalName="legal name 1" compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"/>
@@ -242,7 +242,7 @@
 					<packagingList>
 						<entity packagingListProduct="Petit plateau 400 x 300" code="E121" erpCode="7158" suppliers="EUROPAC (MONDI)" packagingListQty="1.0" packagingListUnit="P" packagingListPkgLevel="Secondaire"
 							packagingListIsMaster="true" itemType="bcpg:packagingMaterial" tare="210.0" tareUnit="g" length="400.0" width="300.0" height="135.0" />
-						<entity packagingListProduct="Palette europe (800 x 1200 mm)"  code="E315" erpCode="" suppliers="" packagingListQty="1.0" packagingListUnit="P" packagingListPkgLevel="Primaire"
+						<entity packagingListProduct="Palette europe (800 x 1200 mm)"  code="E315" erpCode="" suppliers="" packagingListQty="1.0" packagingListUnit="P" packagingListPkgLevel="Tertiaire"
 							packagingListIsMaster="false" itemType="bcpg:packagingMaterial" length="1000.0" width="1200.0" height="" />
 					</packagingList>
 				</dataLists>
