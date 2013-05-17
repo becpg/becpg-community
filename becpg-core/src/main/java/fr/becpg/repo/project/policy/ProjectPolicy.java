@@ -48,7 +48,6 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 @Service
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy,
-		NodeServicePolicies.OnDeleteNodePolicy,
 		CopyServicePolicies.OnCopyNodePolicy{
 
 	/** The logger. */
@@ -89,10 +88,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 						"onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));
-		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onDeleteNode"));
+				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));		
 		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
 				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "getCopyCallback"));
@@ -237,18 +233,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			} catch (FormulateException e) {
 				logger.error(e,e);
 			}
-		}
-	}
-
-	@Override
-	public void onDeleteNode(ChildAssociationRef childAssoc, boolean isNodeArchived) {
-		
-		logger.debug("Project policy delete");
-				
-		// cancel project even if it is still in trash
-		if(isNodeArchived){			
-			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, childAssoc.getChildRef().getId());
-			projectService.cancel(archivedNodeRef);
 		}
 	}
 	
