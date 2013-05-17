@@ -28,6 +28,7 @@ public class AssociationServiceImpl implements AssociationService {
 		// nodeService.setAssociations(nodeRef, qName, assocNodeRefs);
 		
 		List<AssociationRef> dbAssocNodeRefs = nodeService.getTargetAssocs(nodeRef, qName);
+		List<NodeRef> dbTargetNodeRefs = new ArrayList<NodeRef>();
 
 		if (dbAssocNodeRefs != null) {
 			// remove from db
@@ -37,7 +38,7 @@ public class AssociationServiceImpl implements AssociationService {
 				} else if (!assocNodeRefs.contains(assocRef.getTargetRef())) {
 					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
 				} else {
-					assocNodeRefs.remove(assocRef.getTargetRef());// already in
+					dbTargetNodeRefs.add(assocRef.getTargetRef());// already in
 																	// db
 				}
 			}
@@ -46,7 +47,7 @@ public class AssociationServiceImpl implements AssociationService {
 		// add nodes that are not in db
 		if (assocNodeRefs != null) {
 			for (NodeRef n : assocNodeRefs) {
-				if (nodeService.exists(n)) {
+				if (!dbTargetNodeRefs.contains(n) && nodeService.exists(n)) {
 					nodeService.createAssociation(nodeRef, n, qName);
 				}
 			}
