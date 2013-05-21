@@ -272,7 +272,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(new NodeRef(entityNodeRef)), itemType) == SecurityService.WRITE_ACCESS;
 			}
 			
-			if(dataListName.equals("WUsed")){
+			if(dataListName!=null && dataListName.equals("WUsed")){
 				hasWriteAccess = false;
 			}
 			

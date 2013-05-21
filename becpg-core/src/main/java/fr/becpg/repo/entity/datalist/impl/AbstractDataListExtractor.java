@@ -17,6 +17,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
+import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
@@ -33,6 +34,22 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	protected PermissionService permissionService;
 
 	protected AdvSearchService advSearchService;
+	
+	private DataListExtractorFactory dataListExtractorFactory;
+	
+	private boolean isDefaultExtractor = false;
+	
+	public boolean isDefaultExtractor() {
+		return isDefaultExtractor;
+	}
+
+	public void setDefaultExtractor(boolean isDefaultExtractor) {
+		this.isDefaultExtractor = isDefaultExtractor;
+	}
+
+	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
+		this.dataListExtractorFactory = dataListExtractorFactory;
+	}
 
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
@@ -76,6 +93,11 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_CONTAINER = "container";
 
 	private static Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
+	
+	
+	public void init(){
+		dataListExtractorFactory.registerExtractor(this);
+	}
 
 	public Map<String, Object> extract(final NodeRef nodeRef, List<String> metadataFields, Map<String, Object> props) {
 

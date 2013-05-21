@@ -92,6 +92,9 @@ public class WUsedExtractor extends MultiLevelExtractor {
 	}
 	
 
-	
+	@Override
+	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
+		return !dataListFilter.isSimpleItem() && dataListName!=null && dataListName.equals("WUsed");
+	}
 
 }

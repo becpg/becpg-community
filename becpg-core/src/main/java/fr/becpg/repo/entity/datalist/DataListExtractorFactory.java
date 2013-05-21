@@ -6,5 +6,7 @@ public interface DataListExtractorFactory {
 
 	DataListExtractor getExtractor(DataListFilter dataListFilter,String dataListName);
 
+	void registerExtractor(DataListExtractor extractor);
+
 	
 }
