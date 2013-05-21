@@ -84,14 +84,16 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
 
-		ProductData templateProductData = alfrescoRepository.findOne(formulatedProduct.getEntityTplRef());
+		if(formulatedProduct.getEntityTplRef() != null){
+			ProductData templateProductData = alfrescoRepository.findOne(formulatedProduct.getEntityTplRef());
 
-		copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(),
-				formulatedProduct.getCompoListView().getDynamicCharactList());
-		copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(),
-				formulatedProduct.getPackagingListView().getDynamicCharactList());
-		copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(),
-				formulatedProduct.getProcessListView().getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(),
+					formulatedProduct.getCompoListView().getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(),
+					formulatedProduct.getPackagingListView().getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(),
+					formulatedProduct.getProcessListView().getDynamicCharactList());
+		}		
 	}
 	
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList){

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -26,6 +27,7 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -200,7 +202,8 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	/** The ings. */
 	protected List<NodeRef> ings = new ArrayList<NodeRef>();
-
+	protected NodeRef ingWater;
+	
 	/** The nuts. */
 	protected List<NodeRef> nuts = new ArrayList<NodeRef>();
 	
@@ -239,11 +242,9 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
                 String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT)) +
 						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)) +
 						LuceneHelper.exclude(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, "Eau"));
-                logger.info("###query: " + query);
                 List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(query);
                 
 				for(NodeRef productNodeRef : productNodeRefs){
-					logger.info("### delete product: " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
 					if(nodeService.exists(productNodeRef)){
 						nodeService.deleteNode(productNodeRef);
 					}
@@ -268,10 +269,9 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					// Delete initialyzed repo
 					deleteSystemFolder();
 					// Init repo for test
-					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
-	
+					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());										
 					org.junit.Assert.assertEquals(4, entitySystemService.getSystemEntities().size());
-	
+					
 					initConstraints();
 					initTasks();
 					return true;
@@ -291,6 +291,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					initCharacteristics();
 					initEntityTemplates();
 					initHierarchyLists();
+					initSystemProducts();
 					// reset dictionary to reload constraints on list_values
 					dictionaryDAO.reset();
 					return null;
@@ -486,7 +487,20 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 				ings.add(fileInfo.getNodeRef());
 			}
 		}
-
+		
+		ingWater = nodeService.getChildByName(ingFolder, ContentModel.ASSOC_CONTAINS, "eau");
+		
+		if(ingWater == null){
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, "eau");
+			MLText mlName = new MLText();
+			mlName.addValue(Locale.getDefault(), "eau default");
+			mlName.addValue(Locale.ENGLISH, "eau english");
+			mlName.addValue(Locale.FRENCH, "eau french");	
+			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+			ingWater = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();	
+		}
+		
 		// nuts
 		NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_NUTS);
 		List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
@@ -530,6 +544,27 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		for (FileInfo fileInfo : taskLegendsFileInfo) {
 			taskLegends.add(fileInfo.getNodeRef());
 		}
+	}
+	
+	private void initSystemProducts(){
+		
+		NodeRef contextTestFolderNodeRef = BeCPGTestHelper.createContextTestFolder(repoBaseTestCase);
+		
+		/*-- Raw material Water --*/
+		NodeRef rawMaterialWaterNodeRef = nodeService.getChildByName(contextTestFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Eau réseau");
+		
+		if(rawMaterialWaterNodeRef == null){
+			RawMaterialData rawMaterialWater = new RawMaterialData();
+			rawMaterialWater.setName("Eau réseau");
+			MLText legalName = new MLText("Legal Raw material Eau");
+			legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
+			legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
+			rawMaterialWater.setLegalName(legalName);
+			List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
+			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
+			rawMaterialWater.setIngList(ingList);		
+			alfrescoRepository.create(contextTestFolderNodeRef, rawMaterialWater).getNodeRef();
+		}		
 	}
 
 	/**

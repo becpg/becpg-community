@@ -33,19 +33,33 @@ public class BeCPGTestHelper {
 	
 	/** The PAT h_ testfolder. */
 	private static String PATH_TESTFOLDER = "TestFolder";
+	private static String PATH_CONTEXT_TEST_FOLDER = "ContextTestFolder";
 	
 	public static String PRODUCT_NAME = "Finished Product";
 	
-	public static NodeRef createTestFolder(RepoBaseTestCase repoBaseTestCase){
-		
-		NodeRef folderNodeRef = repoBaseTestCase.nodeService.getChildByName(repoBaseTestCase.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-		if(folderNodeRef != null)
-		{
-		
-			repoBaseTestCase.fileFolderService.delete(folderNodeRef);    		
-		}			
-		return  repoBaseTestCase.fileFolderService.create(repoBaseTestCase.repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
+	public static NodeRef createTestFolder(RepoBaseTestCase repoBaseTestCase) {
+		return createTestFolder(repoBaseTestCase, PATH_TESTFOLDER, true);
+	}
 
+	public static NodeRef createContextTestFolder(RepoBaseTestCase repoBaseTestCase) {
+		return createTestFolder(repoBaseTestCase, PATH_CONTEXT_TEST_FOLDER, false);
+	}
+
+	public static NodeRef createTestFolder(RepoBaseTestCase repoBaseTestCase, String folderName, boolean deleteExistingFolder) {
+
+		NodeRef folderNodeRef = repoBaseTestCase.nodeService.getChildByName(
+				repoBaseTestCase.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, folderName);
+		if (deleteExistingFolder && folderNodeRef != null) {
+			repoBaseTestCase.fileFolderService.delete(folderNodeRef);
+			folderNodeRef = null;
+		}
+		
+		if(folderNodeRef == null){
+			folderNodeRef = repoBaseTestCase.fileFolderService.create(repoBaseTestCase.repositoryHelper.getCompanyHome(),
+					folderName, ContentModel.TYPE_FOLDER).getNodeRef();
+		}
+		
+		return folderNodeRef;
 	}
 	
 	

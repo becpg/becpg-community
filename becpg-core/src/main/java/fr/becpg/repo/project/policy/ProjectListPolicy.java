@@ -143,7 +143,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		
 		if(KEY_DELETED_TASK_LIST_ITEM.equals(key)){
 			for (NodeRef taskListItemNodeRef : pendingNodes) {
-				deleteTaskWorkflow(taskListItemNodeRef);
+				if(nodeService.exists(taskListItemNodeRef)){
+					deleteTaskWorkflow(taskListItemNodeRef);
+				}				
 			}
 		}
 		else{
@@ -232,7 +234,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
 			projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState);
 			
-			if (beforeState.equals(DeliverableState.Completed.toString())
+			if (beforeState !=null && afterState != null 
+					&& beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
 
 				// re-open deliverable and disable policy to avoid every dl are re-opened
