@@ -94,4 +94,15 @@
 		<property name="nodeService" ref="nodeService" />		
 	</bean>
 
+	<!-- DataList Extractor -->
+	
+	 <bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="abstractDataListExtractor">
+		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
+		<property name="fileFolderService" ref="FileFolderService"/>
+	</bean>
+	
+
 </beans>

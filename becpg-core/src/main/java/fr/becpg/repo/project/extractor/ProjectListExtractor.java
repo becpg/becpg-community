@@ -1,4 +1,4 @@
-package fr.becpg.repo.entity.datalist.impl;
+package fr.becpg.repo.project.extractor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,10 +32,11 @@ import fr.becpg.repo.entity.datalist.DataListSortRegistry;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
+import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 @Service
-public class SimpleExtractor extends AbstractDataListExtractor {
+public class ProjectListExtractor extends AbstractDataListExtractor {
 
 	private FileFolderService fileFolderService;
 
@@ -47,7 +48,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	
 	private DataListSortRegistry dataListSortRegistry;
 	
-	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
+	private static Log logger = LogFactory.getLog(ProjectListExtractor.class);
 	
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
@@ -178,7 +179,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
-		return false;
+		return dataListName!=null && dataListName.equals("projectList");
 	}
 
 }
