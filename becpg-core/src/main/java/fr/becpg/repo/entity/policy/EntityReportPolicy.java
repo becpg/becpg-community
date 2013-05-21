@@ -285,12 +285,12 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 		
 		if(nodeService.exists(nodeRef)){
 			Boolean isSystem = (Boolean)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
+			QName classType = (QName)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
 			
-			if(isSystem != null && isSystem){
-				QName classType = (QName)nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
+			if(isSystem != null && isSystem && classType != null){
 				
 				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) +
-								LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY));
+								LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY));				
 				
 				List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
 				
@@ -300,26 +300,5 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements
 				}
 			}
 		}			
-		
-//		
-//		if(nodeService.exists(nodeRef)){			
-//			
-//			List<AssociationRef> reportAssocRefs = nodeService.getSourceAssocs(nodeRef,
-//					ReportModel.ASSOC_REPORT_TPL);
-//			
-//			logger.debug("Policy onContentUpdate reportTpl " + nodeRef + " - reports to generate: " + reportAssocRefs.size());
-//			
-//			for (AssociationRef reportAssocRef : reportAssocRefs) {
-//				
-//				List<AssociationRef> entityAssocRefs = nodeService.getSourceAssocs(reportAssocRef.getSourceRef(),
-//						ReportModel.ASSOC_REPORTS);
-//				
-//				if(!entityAssocRefs.isEmpty()){
-//					NodeRef entityNodeRef = entityAssocRefs.get(0).getSourceRef();
-//					Runnable runnable = new ProductReportGenerator(entityNodeRef, AuthenticationUtil.getSystemUserName());
-//					threadExecuter.execute(runnable);
-//				}			
-//			}
-//		}		
 	}
 }
