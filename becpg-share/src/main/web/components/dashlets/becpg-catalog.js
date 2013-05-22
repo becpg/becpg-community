@@ -367,7 +367,7 @@
 
                            var charactsUrl = beCPG.util.entityCharactURL(recordSiteName, record.nodeRef,
                                  record.nodeType), documentsUrl = beCPG.util.entityDocumentsURL(recordSiteName,
-                                 record.location.path, record.location.file);
+                                 record.location.path, record.location.file, true);
 
                            /* Favourite / Charact / Download */
                            desc += '<div class="detail detail-social">';

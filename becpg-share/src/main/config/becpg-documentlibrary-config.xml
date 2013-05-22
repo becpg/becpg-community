@@ -324,9 +324,10 @@
 
 
 			
-			<action id="entity-view-documents" type="pagelink"
+			<action id="entity-view-documents" type="javascript"
 				label="actions.entity.view-documents" >
-				<param name="page">documentlibrary?path={location.path}/{displayName}</param>	
+				<param name="function">onActionShowDocs</param>
+				<!-- <param name="page">documentlibrary?path={location.path}/{displayName}</param>	 -->
 			</action>
 			
 			<!-- View original (of a Working Copy pair) -->
