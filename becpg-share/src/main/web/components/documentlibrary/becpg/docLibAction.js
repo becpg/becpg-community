@@ -161,5 +161,17 @@
 	   	
 	   }
 	});
+	
+	YAHOO.Bubbling.fire("registerAction", {
+       actionName : "onActionShowDocs",
+       fn : function onActionShowCharact(p_record) {
+
+        var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
+       
+        window.location.href = beCPG.util.entityDocumentsURL(recordSiteName, p_record.location.path, p_record.location.file);
+        
+        
+       }
+    });
 
 })();
