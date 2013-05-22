@@ -201,10 +201,10 @@ public class BeCPGSystemFolderMigrator {
 			List<String> hierachies1 = getExistingHierachies1(entry.getKey());
 			NodeRef dataListNodeRef = getCharactDataList(hierarchiesNodeRef, entry.getKey());
 			for (String hierarchy1 : hierachies1) {
-				NodeRef hierarchy1NodeRef = hierarchyService.createHierarchy1(dataListNodeRef, hierarchy1);
+				NodeRef hierarchy1NodeRef = hierarchyService.createRootHierarchy(dataListNodeRef, hierarchy1);
 				List<String> hierachies2 = getExistingHierachies2(entry.getKey(), hierarchy1);
 				for (String hierarchy2 : hierachies2) {
-					NodeRef hierarchy2NodeRef  = hierarchyService.createHierarchy2(dataListNodeRef, hierarchy1NodeRef, hierarchy2);
+					NodeRef hierarchy2NodeRef  = hierarchyService.createHierarchy(dataListNodeRef, hierarchy1NodeRef, hierarchy2);
 					migrateProduct(hierarchiesNodeRef, entry.getValue(),hierarchy1,hierarchy2,hierarchy1NodeRef,hierarchy2NodeRef);
 				}
 			}
@@ -509,20 +509,20 @@ public class BeCPGSystemFolderMigrator {
 		NodeRef hierarchyNodeRef = null;
 		
 		if(parentHierarchyNodeRef == null){
-			hierarchyNodeRef = hierarchyService.getHierarchy1(productType, hierarchy);			
+			hierarchyNodeRef = hierarchyService.getRootHierarchy(productType, hierarchy);			
 		}
 		else{
-			hierarchyNodeRef = hierarchyService.getHierarchy2(productType, parentHierarchyNodeRef, hierarchy);			
+			hierarchyNodeRef = hierarchyService.getHierarchy(productType, parentHierarchyNodeRef, hierarchy);			
 		}
 		
 		// create deleted hierarchy
 		if(hierarchyNodeRef == null){
 			
 			if(parentHierarchyNodeRef == null){
-				hierarchyNodeRef = hierarchyService.createHierarchy1(dataListNodeRef, hierarchy);
+				hierarchyNodeRef = hierarchyService.createRootHierarchy(dataListNodeRef, hierarchy);
 			}
 			else{
-				hierarchyNodeRef = hierarchyService.createHierarchy2(dataListNodeRef, parentHierarchyNodeRef, hierarchy);
+				hierarchyNodeRef = hierarchyService.createHierarchy(dataListNodeRef, parentHierarchyNodeRef, hierarchy);
 			}			
 			nodeService.setProperty(hierarchyNodeRef, BeCPGModel.PROP_IS_DELETED, true);
 		}

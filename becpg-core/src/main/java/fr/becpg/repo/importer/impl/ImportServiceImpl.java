@@ -439,7 +439,7 @@ public class ImportServiceImpl implements ImportService {
 				for(String path : arrPath)
 					paths.add(path);	
 				
-				NodeRef parentNodeRef = repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), paths);				
+				NodeRef parentNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), paths);				
 				importContext.setParentNodeRef(parentNodeRef);																
 			} else if(prefix.equals(PFX_DOCS_BASE_PATH)){
 				

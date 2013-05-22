@@ -51,6 +51,7 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
+import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -76,11 +77,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	// we don't know where is the node ? product may be in the Products folder
 	// or in the sites or somewhere else !
 	protected static final String QUERY_NODE_BY_TYPE = " +TYPE:\"%s\"";
-	
-	// we want to be able so update -ASPECT:\"bcpg:entityTplAspect\" so we don't use LuceneHelper.DEFAULT_IGNORE_QUERY
-	protected static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" "  
-			+ " -@cm\\:lockType:READ_ONLY_LOCK"
-			+ " -ASPECT:\"bcpg:compositeVersion\""
+
+	// we want to be able so update -ASPECT:\"bcpg:entityTplAspect\" so we don't
+	// use LuceneHelper.DEFAULT_IGNORE_QUERY
+	protected static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" " + " -@cm\\:lockType:READ_ONLY_LOCK" + " -ASPECT:\"bcpg:compositeVersion\""
 			+ " -ASPECT:\"bcpg:hiddenFolder\"";
 
 	/** The Constant QUERY_XPATH_MAPPING. */
@@ -134,6 +134,16 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	/** The Constant QUERY_ATTR_GET_CHARACT_NAME. */
 	protected static final String QUERY_ATTR_GET_CHARACT_NAME = "@charactName";
+
+	/**
+	 * Hierarchy
+	 */
+
+	private static final String QUERY_XPATH_COLUMNS_HIERARCHY = "columns/column[@type='Hierarchy']";
+
+	private static final String QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE = "@parentLevelAttribute";
+
+	private static final String QUERY_ATTR_GET_PARENT_LEVEL = "@parentLevel";
 
 	protected static final String CACHE_KEY = "cKey%s-%s";
 
@@ -272,7 +282,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 			}
 
-			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(), properties).getChildRef();
+			
+			
+			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(), ImportHelper.cleanProperties(properties)).getChildRef();
 		} else if (importContext.isDoUpdate()) {
 
 			if (logger.isDebugEnabled()) {
@@ -281,7 +293,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			nodeService.setType(nodeRef, importContext.getType());
 
 			for (Map.Entry<QName, Serializable> entry : properties.entrySet()) {
-				nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
+				 if(entry.getValue()!=null && ImportHelper.NULL_VALUE.equals(entry.getValue())){		
+					 nodeService.removeProperty(nodeRef, entry.getKey());
+				 } else  {
+					 nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
+				 }
+				 
 			}
 		} else {
 			logger.info("Update mode is not enabled so no update is done.");
@@ -317,17 +334,23 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);
 
-			if (attributeMapping instanceof AttributeMapping) {
+			if (attributeMapping instanceof AttributeMapping || attributeMapping instanceof HierarchyMapping) {
 				ClassAttributeDefinition column = attributeMapping.getAttribute();
 
 				if (column instanceof PropertyDefinition) {
 					PropertyDefinition propDef = (PropertyDefinition) column;
 					Serializable value = null;
 					QName dataType = propDef.getDataType().getName();
-					if (dataType.isMatch(DataTypeDefinition.NODE_REF)) {
-						value = findPropertyTargetNodeByValue(importContext, propDef, values.get(z_idx), properties);
+
+					if (ImportHelper.NULL_VALUE.equalsIgnoreCase(values.get(z_idx))) {
+						value = ImportHelper.NULL_VALUE;
 					} else {
-						value = ImportHelper.loadPropertyValue(importContext, values, z_idx);
+
+						if (dataType.isMatch(DataTypeDefinition.NODE_REF)) {
+							value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
+						} else {
+							value = ImportHelper.loadPropertyValue(importContext, values, z_idx);
+						}
 					}
 
 					if (value != null) {
@@ -335,6 +358,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					}
 				}
 			}
+
 		}
 
 		return properties;
@@ -433,7 +457,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						}
 
 						logger.debug("creates folders" + pathFolders);
-						targetFolderNodeRef = repoService.createFolderByPaths(nodeRef, pathFolders);
+						targetFolderNodeRef = repoService.getOrCreateFolderByPaths(nodeRef, pathFolders);
 					} else {
 						targetFolderNodeRef = nodeRef;
 					}
@@ -727,6 +751,41 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				classMapping.getColumns().add(attributeMapping);
 			}
 
+			// hierachies
+			columnNodes = mappingNode.selectNodes(QUERY_XPATH_COLUMNS_HIERARCHY);
+			for (Node columnNode : columnNodes) {
+				QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
+
+				ClassAttributeDefinition attributeDef = dictionaryService.getProperty(attribute);
+				if (attributeDef == null) {
+
+					attributeDef = dictionaryService.getAssociation(attribute);
+					if (attributeDef == null) {
+						throw new MappingException(I18NUtil.getMessage(MSG_ERROR_MAPPING_ATTR_FAILED, typeQName, attribute));
+					}
+				}
+
+				ClassAttributeDefinition parentLevelAttributeDef = null;
+
+				if (columnNode.valueOf(QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE) != null && !columnNode.valueOf(QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE).isEmpty()) {
+					attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE), namespaceService);
+
+					parentLevelAttributeDef = dictionaryService.getProperty(attribute);
+					if (parentLevelAttributeDef == null) {
+
+						parentLevelAttributeDef = dictionaryService.getAssociation(attribute);
+						if (parentLevelAttributeDef == null) {
+							throw new MappingException(I18NUtil.getMessage(MSG_ERROR_MAPPING_ATTR_FAILED, typeQName, attribute));
+						}
+					}
+				}
+
+				AbstractAttributeMapping attributeMapping = new HierarchyMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef,
+						columnNode.valueOf(QUERY_ATTR_GET_PARENT_LEVEL) != null && !columnNode.valueOf(QUERY_ATTR_GET_PARENT_LEVEL).isEmpty() ? columnNode
+								.valueOf(QUERY_ATTR_GET_PARENT_LEVEL) : null, parentLevelAttributeDef);
+				classMapping.getColumns().add(attributeMapping);
+			}
+
 		}
 
 		return importContext;
@@ -813,12 +872,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			// calculate mappedColumns
 			List<String> mappedColumns = new ArrayList<String>();
-			if (classMapping != null){
-				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()){
+			if (classMapping != null) {
+				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()) {
 					mappedColumns.add(attrMapping.getId());
-				}					
+				}
 			}
-				
+
 			String error = I18NUtil.getMessage(MSG_ERROR_COLUMNS_DO_NOT_RESPECT_MAPPING, importContext.getType(), (classMapping != null), unknownColumns, mappedColumns);
 			logger.error(error);
 			throw new MappingException(error);
@@ -891,9 +950,15 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					queryPath += LuceneHelper.getCondPath(importContext.getPath(), Operator.AND);
 					doQuery = true;
 				} else if (properties.get(attribute) != null) {
-					// +@cm\\:localName:%s
-					queryPath += LuceneHelper.getCondEqualValue(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null,
-							LuceneHelper.Operator.AND);
+
+					if (ImportHelper.NULL_VALUE.equals(properties.get(attribute))) {
+						queryPath += LuceneHelper.getCondIsNullValue(attribute, LuceneHelper.Operator.AND);
+					} else {
+					
+						// +@cm\\:localName:%s
+						queryPath += LuceneHelper.getCondEqualValue(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null,
+								LuceneHelper.Operator.AND);
+					}
 					doQuery = true;
 				}
 			}
@@ -903,11 +968,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			// +@cm\\:localName:%s
 			queryPath += LuceneHelper.getCondEqualValue(codeQName, (String) properties.get(codeQName), LuceneHelper.Operator.AND);
 			doQuery = true;
-		}
-		else{
-			if(logger.isDebugEnabled()){
+		} else {
+			if (logger.isDebugEnabled()) {
 				logger.debug("No keys defined in mapping, neither code property. codeQName: " + codeQName + " Properties: " + properties);
-			}			
+			}
 		}
 
 		if (doQuery) {
@@ -978,19 +1042,31 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * to a property of type nodeRef
 	 * 
 	 * @param importContext
+	 * @param attributeMapping
 	 * @param propDef
+	 * @param attributeMapping
 	 * @param value
 	 * @param properties
 	 * @return
 	 * @throws ImporterException
 	 */
-	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties)
-			throws ImporterException {
-		QName propName = propDef.getName();
+	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, AbstractAttributeMapping attributeMapping, String value,
+			Map<QName, Serializable> properties) throws ImporterException {
 
-		if (propName.equals(BeCPGModel.PROP_PARENT_LEVEL)) {
+		if (attributeMapping instanceof HierarchyMapping) {
+			String queryPath = "";
+			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null && !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
+				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
+				if (parentHierachyNodeRef != null) {
+					queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, LuceneHelper.encodePath(importContext.getPath()), parentHierachyNodeRef, value);
+				} else {
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, properties));
+				}
+			} else {
 
-			String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()), value);
+				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()), value);
+
+			}
 
 			queryPath += DEFAULT_IGNORE_QUERY;
 
@@ -1004,17 +1080,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				return ret.get(0);
 			} else if (ret.size() > 1) {
 				for (NodeRef n : ret) {
-					if (value.equals(nodeService.getProperty(n, RemoteHelper.getPropName(BeCPGModel.TYPE_LINKED_VALUE)))) {
+					if (value.equals(nodeService.getProperty(n, RemoteHelper.getPropName(importContext.getType())))) {
 						return n;
 					}
 				}
 			}
 
-			logger.error(" linked value parent : " + queryPath + " not found ");
+			logger.error(" Hierachy value parent : " + queryPath + " not found ");
 			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 		}
 
 		return findTargetNodeByValue(importContext, propDef.getDataType().getName(), value);
+
 	}
 
 	/**

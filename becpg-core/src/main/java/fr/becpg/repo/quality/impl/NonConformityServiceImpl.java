@@ -36,7 +36,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 		// calculate dest node
 		if (productNodeRef != null) {
 
-			destFolderNodeRef = repoService.createFolderByPath(productNodeRef, RepoConsts.PATH_NC,
+			destFolderNodeRef = repoService.getOrCreateFolderByPath(productNodeRef, RepoConsts.PATH_NC,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_NC));
 		}
 
@@ -47,7 +47,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 			paths.add(RepoConsts.PATH_QUALITY);
 			paths.add(RepoConsts.PATH_NC);
 
-			destFolderNodeRef = repoService.createFolderByPaths(repositoryHelper.getCompanyHome(), paths);
+			destFolderNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), paths);
 		}
 
 		return destFolderNodeRef;

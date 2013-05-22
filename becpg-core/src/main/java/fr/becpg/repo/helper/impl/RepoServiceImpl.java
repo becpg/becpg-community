@@ -85,13 +85,13 @@ public class RepoServiceImpl implements RepoService {
 	 * @see fr.becpg.repo.helper.RepoService#createFolderByPaths(org.alfresco.service.cmr.repository.NodeRef, java.util.List)
 	 */
 	@Override
-	public NodeRef createFolderByPaths(NodeRef parentNodeRef, List<String> paths) {			    
+	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths) {			    
 		
     	for(String folderName : paths){
     		
     		if(folderName.equals("") == false){    				    		    		
     			
-    			parentNodeRef = createFolderByPath(parentNodeRef, folderName, folderName);    		
+    			parentNodeRef = getOrCreateFolderByPath(parentNodeRef, folderName, folderName);    		
     		}
     	}
 		
@@ -102,7 +102,7 @@ public class RepoServiceImpl implements RepoService {
 	 * @see fr.becpg.repo.helper.RepoService#createFolderByPath(org.alfresco.service.cmr.repository.NodeRef, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public NodeRef createFolderByPath(NodeRef parentNodeRef, String path, String name) {
+	public NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name) {
 		
 		NodeRef folderNodeRef = getFolderByPath(parentNodeRef, path);
 		

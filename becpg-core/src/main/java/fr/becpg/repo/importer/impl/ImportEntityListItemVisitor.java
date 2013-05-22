@@ -153,7 +153,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 					 ContentModel.ASSOC_CONTAINS, 
 					 ContentModel.ASSOC_CHILDREN, 
 					 importContext.getType(), 
-					 entityListItemProperties).getChildRef();	
+					 ImportHelper.cleanProperties(entityListItemProperties)).getChildRef();	
 			 
 		 }
 		 else if(importContext.isDoUpdate()){
@@ -162,7 +162,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			 nodeService.setType(entityListItemNodeRef, importContext.getType());
 			 
 			 for(Map.Entry<QName, Serializable> entry : entityListItemProperties.entrySet()){
-				 if(entry.getValue()!=null && "NULL".equals(entry.getValue())){
+				 if(entry.getValue()!=null && ImportHelper.NULL_VALUE.equals(entry.getValue())){
 					 nodeService.removeProperty(entityListItemNodeRef, entry.getKey());
 				 } else {
 					 nodeService.setProperty(entityListItemNodeRef, entry.getKey(), entry.getValue()); 

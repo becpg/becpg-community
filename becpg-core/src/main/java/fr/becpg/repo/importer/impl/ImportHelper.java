@@ -9,8 +9,10 @@ import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.encoding.CharactersetFinder;
 import org.alfresco.encoding.GuessEncodingCharsetFinder;
@@ -34,6 +36,10 @@ public class ImportHelper{
 	/** The Constant MLTEXT_SEPARATOR. */
 	public static final String MLTEXT_SEPARATOR 		= "_";
 
+	public static String NULL_VALUE = "NULL";
+	
+	
+	
 	
 	/**
 	 * Load the property according to the property type.
@@ -58,8 +64,8 @@ public class ImportHelper{
 				QName qName = propertyDef.getName();
 				QName dataType =propertyDef.getDataType().getName();				
 				
-				if("NULL".equals(values.get(pos))){
-					return "NULL";
+				if(NULL_VALUE.equalsIgnoreCase(values.get(pos))){
+					return NULL_VALUE;
 				}
 				
 				// MLText
@@ -200,6 +206,17 @@ public class ImportHelper{
 			return defaultCharset;
 		}
 		return charset;
+	}
+
+	public static Map<QName, Serializable> cleanProperties(Map<QName, Serializable> properties) {
+		for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<QName, Serializable> entry = (Map.Entry<QName, Serializable>) iterator.next();
+			if(entry.getValue()!=null && ImportHelper.NULL_VALUE.equals(entry.getValue())){
+				 iterator.remove();
+			 }
+		}
+		
+		return properties;
 	}
 
 }

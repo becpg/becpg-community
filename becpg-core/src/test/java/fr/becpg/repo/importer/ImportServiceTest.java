@@ -3,8 +3,6 @@
  */
 package fr.becpg.repo.importer;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -19,7 +17,6 @@ import javax.annotation.Resource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -34,7 +31,6 @@ import org.junit.Test;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -710,11 +706,11 @@ public class ImportServiceTest extends RepoBaseTestCase {
 
 		/*-- Check hierarchies --*/
 		logger.debug("Check hierarchies");
-		NodeRef hierarchy1USDA = hierarchyService.getHierarchy1(BeCPGModel.TYPE_RAWMATERIAL, "USDA");
+		NodeRef hierarchy1USDA = hierarchyService.getRootHierarchy(BeCPGModel.TYPE_RAWMATERIAL, "USDA");
 		assertNotNull(hierarchy1USDA);
-		NodeRef hierarchy2Dairy = hierarchyService.getHierarchy2(BeCPGModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Dairy and Egg Products");
+		NodeRef hierarchy2Dairy = hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Dairy and Egg Products");
 		assertNotNull(hierarchy2Dairy);
-		NodeRef hierarchy2Spices = hierarchyService.getHierarchy2(BeCPGModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Spices and Herbs");	
+		NodeRef hierarchy2Spices = hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Spices and Herbs");	
 		assertNotNull(hierarchy2Spices);
 		
 		// check unicity

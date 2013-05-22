@@ -799,7 +799,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 				ClassDefinition classDef = dictionaryService.getClass(productType);
 				String reportPath = Locale.getDefault().equals(Locale.FRENCH) ? PRODUCT_REPORT_PATH : PRODUCT_REPORT_EN_PATH;
-				NodeRef folderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef,
+				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
 						classDef.getTitle(), classDef.getTitle());
 				reportTplService.createTplRptDesign(folderNodeRef, classDef.getTitle(),
 						reportPath, ReportType.Document, ReportFormat.PDF, productType, true, true, false);
@@ -816,7 +816,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		try {
 
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_NC);
-			NodeRef qualityFolderNodeRef = repoService.createFolderByPath(qualityReportTplsNodeRef,
+			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef,
 					classDef.getTitle(), classDef.getTitle());
 			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(),
 					NC_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_NC, true, true, false);

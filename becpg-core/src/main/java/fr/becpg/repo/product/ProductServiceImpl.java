@@ -144,42 +144,20 @@ public class ProductServiceImpl implements ProductService {
     	ProductData productData = alfrescoRepository.findOne(productNodeRef);
     	
     	// products
-		NodeRef productsNodeRef = repoService.createFolderByPath(containerNodeRef, RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+		NodeRef productsNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
 		
 		// product type		
 		SystemProductType systemProductType = SystemProductType.valueOf(nodeService.getType(productNodeRef));
 		String productTypeFolderName = productDictionaryService.getFolderName(systemProductType);
-		NodeRef productTypeNodeRef = repoService.createFolderByPath(productsNodeRef, systemProductType.toString(), productTypeFolderName);
+		NodeRef productTypeNodeRef = repoService.getOrCreateFolderByPath(productsNodeRef, systemProductType.toString(), productTypeFolderName);
 		
-		// hierarchy 1
-		if(productData.getHierarchy1() != null){
-			
-			String name = HierarchyHelper.getHierachyName(productData.getHierarchy1(), nodeService);
-			if(name!=null){
-				NodeRef hierarchy1NodeRef = repoService.createFolderByPath(productTypeNodeRef,name, name);
 
-				// hierarchy 2				
-				if(productData.getHierarchy2() != null){
-					name = HierarchyHelper.getHierachyName(productData.getHierarchy2(), nodeService);
-					if(name!=null){
-						destinationNodeRef = repoService.createFolderByPath(hierarchy1NodeRef,name, name);
-					}
-					else{
-						logger.debug("Cannot create folder for productHierarchy2 since hierarchyName is null. productHierarchy2: " + productData.getHierarchy2());
-					}					
-	    		}
-				else{
-					logger.debug("Cannot classify product since it doesn't have a productHierarchy2.");
-				}
-			}
-			else{
-				logger.debug("Cannot create folder for productHierarchy1 since hierarchyName is null. productHierarchy1: " + productData.getHierarchy1());
-			}
+		if(productData.getHierarchy2()!=null){
+			destinationNodeRef = getOrCreateHierachyFolder( productData.getHierarchy2(),productTypeNodeRef);
+		} else{
+			logger.debug("Cannot classify product since it doesn't have a productHierarchy2.");
 		}
-		else{
-			logger.debug("Cannot classify product since it doesn't have a productHierarchy1.");
-		}
-		
+
 		if(destinationNodeRef != null){
 
 			// classify product
@@ -192,6 +170,26 @@ public class ProductServiceImpl implements ProductService {
 			logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
 		}
     }
+
+	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
+		NodeRef destinationNodeRef = null;
+		
+		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
+		if(parent != null ){
+			parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);		
+		}
+		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
+		if(name!=null){
+			destinationNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef,name, name);
+		}
+		else{
+			if(logger.isDebugEnabled()){
+				logger.debug("Cannot create folder for productHierarchy since hierarchyName is null. productHierarchy: " + hierarchyNodeRef);
+			}
+		}		
+		
+		return destinationNodeRef;
+	}
 
 
 }

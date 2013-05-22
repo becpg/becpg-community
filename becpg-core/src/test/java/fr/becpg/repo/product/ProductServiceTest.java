@@ -36,6 +36,7 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -104,7 +105,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	private WUsedListService wUsedListService;
 
 
-	
 	/**
 	 * Test create product.
 	 */
@@ -136,15 +136,15 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Add report template --*/
-				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+				NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplsFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+				NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+				NodeRef productReportTplsFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
 				QName productType = BeCPGModel.TYPE_RAWMATERIAL;
 				ClassDefinition classDef = dictionaryService.getClass(productType);
-				NodeRef productReportTplFolder = repoService.createFolderByPath(productReportTplsFolder, classDef.getTitle(), classDef.getTitle());
+				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(productReportTplsFolder, classDef.getTitle(), classDef.getTitle());
 				reportTplService.createTplRptDesign(productReportTplFolder, classDef.getTitle(), "beCPG/birt/document/product/default/ProductReport.rptdesign",
 						ReportType.Document, ReportFormat.PDF, productType, true, true, true);
 
@@ -171,12 +171,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertNotNull("Input stream should not be null", in);
 
 				OutputStream out = new FileOutputStream(new File("/tmp/becpg_product_report.pdf"));
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
+
+				IOUtils.copy( in, out);
+				
 				in.close();
 				out.close();
 
@@ -502,9 +499,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterialNodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
@@ -564,7 +561,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
 										compoListUnit, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
-										null, 
 										declType, 
 										kv.getValue().getEntityNodeRef());
 			
