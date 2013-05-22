@@ -13,6 +13,9 @@
 		<columns>
 
 			<column id="code" attribute="bcpg:erpCode" type="Attribute" />
+			
+			<column id="hierarchy1"  type="Hierarchy" attribute="bcpg:productHierarchy1"   />
+			<column id="hierarchy2"  type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="hierarchy1" parentLevelAttribute="bcpg:parentLevel" />
 
 			<!-- costs -->
 			<column id="coutMP" dataListQName="bcpg:costList"

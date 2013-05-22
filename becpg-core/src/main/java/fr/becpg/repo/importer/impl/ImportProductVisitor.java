@@ -13,18 +13,18 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.config.mapping.AbstractAttributeMapping;
+import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.hierarchy.HierarchyService;
 
 // TODO: Auto-generated Javadoc
@@ -36,9 +36,6 @@ import fr.becpg.repo.product.hierarchy.HierarchyService;
  */
 public class ImportProductVisitor extends ImportEntityListAspectVisitor implements ImportVisitor {
 
-	/** The PAT h_ produc t_ folder. */
-	private static String PATH_PRODUCT_FOLDER = "./cm:Products/cm:%s/cm:%s/cm:%s";
-
 	protected static final String MSG_ERROR_PRODUCTHIERARCHY1_EMPTY = "import_service.error.err_producthierarchy1_empty";
 	protected static final String MSG_ERROR_PRODUCTHIERARCHY2_EMPTY = "import_service.error.err_producthierarchy2_empty";
 	protected static final String MSG_ERROR_UNKNOWN_PRODUCTTYPE = "import_service.error.err_unknown_producttype";
@@ -48,8 +45,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	private Repository repositoryHelper;
 
 	private HierarchyService hierarchyService;
-	
-	
+
 	private static Log logger = LogFactory.getLog(ImportProductVisitor.class);
 
 	public void setRepositoryHelper(Repository repositoryHelper) {
@@ -93,34 +89,28 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 					SystemProductType systemProductType = SystemProductType.valueOf(type);
 					if (!systemProductType.equals(SystemProductType.Unknown)) {
 
-						// hierarchy 1
-						NodeRef hierarchy1 = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-						if (hierarchy1 != null ) {
+						// TODO change by unique hierachy field
+						// hierarchy
+						NodeRef hierarchy = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+						if (hierarchy != null) {
 
-							// hierarchy 2
-							NodeRef hierarchy2 = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-							if (hierarchy2 != null ) {
+							// look for path where product should be
+							// stored
+							String path = hierarchyService.getHierarchyPath(hierarchy, systemProductType);
 
-								// look for path where product should be
-								// stored
-								String path = String.format(PATH_PRODUCT_FOLDER, systemProductType, ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy1,nodeService)), ISO9075.encode(HierarchyHelper.getHierachyName(hierarchy2,nodeService)));
+							List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
 
-								List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
-
-								if (!nodes.isEmpty()) {
-									nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);
-								}
-
-							} else {
-								throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
+							if (!nodes.isEmpty()) {
+								nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);
 							}
 
 						} else {
-							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
+							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
 						}
+
 					} else {
 						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_PRODUCTTYPE, nodeService.getType(nodeRef)));
-					}					
+					}
 				}
 
 				// Check if product exists in Import folder
@@ -146,13 +136,14 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				nodeColumnKeys = new ArrayList<QName>();
 				nodeColumnKeys.add(BeCPGModel.PROP_CODE);
 			}
-			
+
 			for (QName qName : nodeColumnKeys) {
 
 				Serializable value = properties.get(qName);
 				Serializable dbvalue = nodeService.getProperty(nodeRef, qName);
 				// Philippe: remove test !((String) value).isEmpty()
-				// otherwise we update an existing product that we shouldn't (value.isEmpty && dbvalue is not)
+				// otherwise we update an existing product that we shouldn't
+				// (value.isEmpty && dbvalue is not)
 				if (value != null && dbvalue != null && !value.equals(dbvalue)) {
 
 					logger.error(I18NUtil.getMessage(MSG_ERROR_OVERRIDE_EXISTING_ONE, value, dbvalue));
@@ -165,30 +156,28 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	}
 
 	@Override
-	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, String value, Map<QName, Serializable> properties) throws ImporterException {
-		QName propName = propDef.getName();
+	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, AbstractAttributeMapping attributeMapping, String value,
+			Map<QName, Serializable> properties) throws ImporterException {
 
-		if (propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY1) || propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY2)) {
-
+		if (attributeMapping instanceof HierarchyMapping) {
 			NodeRef hierarchyNodeRef = null;
-			if (propName.equals(BeCPGModel.PROP_PRODUCT_HIERARCHY2)) {
-				// nodeRef found before (hierarchy1 must be before hierarchy2 in import file)
-				NodeRef hierachy1NodeRef = (NodeRef) properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-				if (hierachy1NodeRef != null) {					 
-					hierarchyNodeRef = hierarchyService.getHierarchy2(importContext.getType(), hierachy1NodeRef, value);
-		
+			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null && !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
+				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
+				if (parentHierachyNodeRef != null) {
+					hierarchyNodeRef = hierarchyService.getHierarchy(importContext.getType(), parentHierachyNodeRef, value);
 				} else {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
 				}
 			} else {
-				hierarchyNodeRef = hierarchyService.getHierarchy1(importContext.getType(), value);
-			}			
-
-			if(hierarchyNodeRef == null){
-				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
-			}			
+				hierarchyNodeRef = hierarchyService.getRootHierarchy(importContext.getType(), value);
+			}
+			if (hierarchyNodeRef == null) {
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
+			}
 			return hierarchyNodeRef;
 		}
-		return super.findPropertyTargetNodeByValue(importContext, propDef, value, properties);
+
+		return super.findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, value, properties);
+
 	}
 }

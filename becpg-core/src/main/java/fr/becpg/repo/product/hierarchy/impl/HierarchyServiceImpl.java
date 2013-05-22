@@ -10,10 +10,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.product.hierarchy.HierarchyHelper;
@@ -46,7 +48,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 	}
 
 	@Override
-	public NodeRef getHierarchy1(QName type, String value) {
+	public NodeRef getRootHierarchy(QName type, String value) {
 		
 		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, 
 				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(type,namespaceService)),
@@ -56,36 +58,36 @@ public class HierarchyServiceImpl implements HierarchyService{
 	}
 
 	@Override
-	public NodeRef getHierarchy2(QName type, NodeRef hierachy1NodeRef, String value) {
+	public NodeRef getHierarchy(QName type, NodeRef parentNodeRef, String value) {
 		
 		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, 
-				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(type,namespaceService)), hierachy1NodeRef.toString(),
+				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(type,namespaceService)), parentNodeRef.toString(),
 				value);
 		
 		return getHierarchyByQuery(queryPath, value);
 	}
 	
 	@Override
-	public NodeRef createHierarchy1(NodeRef dataListNodeRef, String hierachy1) {
+	public NodeRef createRootHierarchy(NodeRef dataListNodeRef, String hierachy1) {
 		
-		return createHierarchy2(dataListNodeRef, null, hierachy1);
+		return createHierarchy(dataListNodeRef, null, hierachy1);
 	}
 
 	@Override
-	public NodeRef createHierarchy2(NodeRef dataListNodeRef, NodeRef hierachy1NodeRef, String hierachy2) {
+	public NodeRef createHierarchy(NodeRef dataListNodeRef, NodeRef parentHierachy, String hierachy) {
 		
-		logger.debug("createHierarchy, hierarchy1 : " + hierachy1NodeRef + " - hierarchy2: " + hierachy2);
+		logger.debug("createHierarchy, parent hierarchy : " + parentHierachy + " - hierarchy: " + hierachy);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(BeCPGModel.PROP_LKV_VALUE, hierachy2);
-		if (hierachy1NodeRef != null) {
-			properties.put(BeCPGModel.PROP_PARENT_LEVEL, hierachy1NodeRef);
+		properties.put(BeCPGModel.PROP_LKV_VALUE, hierachy);
+		if (parentHierachy != null) {
+			properties.put(BeCPGModel.PROP_PARENT_LEVEL, parentHierachy);
 		}
 
-		NodeRef entityNodeRef = nodeService.getChildByName(dataListNodeRef, ContentModel.ASSOC_CONTAINS, hierachy2);
+		NodeRef entityNodeRef = nodeService.getChildByName(dataListNodeRef, ContentModel.ASSOC_CONTAINS, hierachy);
 
 		if (entityNodeRef == null) {
 			entityNodeRef = nodeService.createNode(dataListNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(hierachy2)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(hierachy)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
 		}
 
 		return entityNodeRef;
@@ -107,5 +109,29 @@ public class HierarchyServiceImpl implements HierarchyService{
 		}	
 		
 		return null;
+	}
+	
+
+	@Override
+	public String getHierarchyPath(NodeRef hierarchyNodeRef, SystemProductType systemProductType) {
+		
+		StringBuilder  path = new StringBuilder();
+		
+		path.append("./cm:"+RepoConsts.PATH_PRODUCTS);
+		 
+		appendNamePath(path, hierarchyNodeRef);
+		
+		
+		return path.toString();
+	}
+
+	private void appendNamePath(StringBuilder path, NodeRef hierarchyNodeRef) {
+		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
+		if(parent!=null){
+			appendNamePath(path,parent);
+		}
+		path.append("/cm:");
+		path.append(ISO9075.encode(HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService)));
+		
 	}	
 }

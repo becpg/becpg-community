@@ -31,4 +31,8 @@ public class HierarchyHelper {
 		}
 		return null;
 	}
+
+	public static NodeRef getParentHierachy(NodeRef hierarchyNodeRef, NodeService nodeService) {
+		return (NodeRef) nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+	}
 }

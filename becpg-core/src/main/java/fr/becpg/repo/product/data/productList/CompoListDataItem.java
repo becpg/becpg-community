@@ -151,20 +151,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		super();
 	}
 	
-	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, Double yieldPerc, DeclarationType declType, NodeRef product){
-		super();
-		this.nodeRef=nodeRef;
-		this.parent=parent;
-		this.qty=qty;
-		this.qtySubFormula=qtySubFormula;
-		this.qtyAfterProcess=qtyAfterProcess;
-		this.compoListUnit=compoListUnit;
-		this.lossPerc=lossPerc;
-		this.yieldPerc=yieldPerc;
-		this.declType=declType;
-		this.product=product;
-	}
-
 	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
 		super();
 		this.nodeRef=nodeRef;
@@ -177,12 +163,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		this.declType=declType;
 		this.product=product;
 		if(parent == null){
-			depthLevel = 0;
+			depthLevel = 1;
 		} else {
 			depthLevel = parent.getDepthLevel() + 1;
 		}
-		
 	}
+
 	
 	/**
 	 * Copy constructor

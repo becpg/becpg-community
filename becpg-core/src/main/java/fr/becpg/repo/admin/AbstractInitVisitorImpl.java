@@ -120,7 +120,7 @@ public abstract class AbstractInitVisitorImpl {
 	    	logger.debug("Create folder, path: " + folderPath + " - translatedName: " + folderName);	    		    	
 	    	//logger.debug("QName: " + QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, folderPath));
 	    	
-	    	folderNodeRef = repoService.createFolderByPath(parentNodeRef, folderPath, folderName);
+	    	folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);
 	    	
 	    	visitRules(folderNodeRef, folderPath);
 	    	visitWF(folderNodeRef, folderPath);	    	

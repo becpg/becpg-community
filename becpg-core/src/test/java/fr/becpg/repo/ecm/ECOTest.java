@@ -505,8 +505,8 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
 				finishedProduct3.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);

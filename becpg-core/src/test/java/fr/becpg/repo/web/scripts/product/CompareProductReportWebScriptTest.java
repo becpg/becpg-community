@@ -35,7 +35,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -276,9 +275,9 @@ private void initObjects(){
 	 */
 	private void initTests() throws IOException{
 		
-		NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-	   	NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-	   	NodeRef compareReportFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
+		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+	   	NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+	   	NodeRef compareReportFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
 	   	
 	   	// compare report
 		reportTplService.createTplRptDesign(compareReportFolder, 

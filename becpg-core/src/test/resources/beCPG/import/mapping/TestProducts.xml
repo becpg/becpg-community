@@ -9,6 +9,10 @@
 		<columns>
 
 			<column id="code" attribute="bcpg:code" type="Attribute" />
+			
+			<column id="hierarchy1"  type="Hierarchy" attribute="bcpg:productHierarchy1"   />
+			<column id="hierarchy2"  type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1" />
+	
 
 			<!-- costs -->
 			<column id="coutMP" dataListQName="bcpg:costList"
