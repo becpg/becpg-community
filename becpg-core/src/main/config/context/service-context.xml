@@ -76,6 +76,11 @@
 		<property name="nodeService" ref="nodeService" />
 	</bean>
 
+	<bean id="commentsService" class="fr.becpg.repo.helper.CommentsService">
+		<property name="contentService" ref="contentService"/>
+		<property name="nodeService" ref="nodeService"/>
+	</bean>
+
 	<!-- List values plugins -->
 
 
@@ -114,6 +119,7 @@
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="importNodeVisitor" ref="importNodeVisitor" />
 		<property name="importProductVisitor" ref="importProductVisitor" />
+		<property name="importCommentsVisitor" ref="importCommentsVisitor"/>
 		<property name="importEntityListAspectVisitor" ref="importEntityListAspectVisitor" />
 		<property name="importEntityListItemVisitor" ref="importEntityListItemVisitor" />
 		<property name="dictionaryService" ref="dictionaryService" />
@@ -141,6 +147,11 @@
 		parent="parentImportVisitor">
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="hierarchyService" ref="hierarchyService" />
+	</bean>
+	
+	<bean id="importCommentsVisitor" class="fr.becpg.repo.importer.impl.ImportCommentsVisitor"
+		parent="parentImportVisitor">
+		<property name="commentsService" ref="commentsService" />
 	</bean>
 
 	<bean id="importEntityListAspectVisitor"
