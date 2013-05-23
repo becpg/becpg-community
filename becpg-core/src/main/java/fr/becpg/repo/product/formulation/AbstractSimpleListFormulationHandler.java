@@ -289,6 +289,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						}
 					}
 					if(!isFound){
+						tsl.setNodeRef(null);
+						tsl.setParentNodeRef(null);
 						simpleListDataList.add(tsl);
 					}
 				}			
