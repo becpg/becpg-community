@@ -22,8 +22,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.workflow.WorkflowInstance;
-import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +33,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
@@ -68,9 +67,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	
 	private ProjectActivityService projectActivityService;
 	
-	private WorkflowService workflowService;
-	
 	private NodeArchiveService nodeArchiveService;
+	
+	private ProjectWorkflowService projectWorkflowService;
 	
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
@@ -92,12 +91,12 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		this.projectActivityService = projectActivityService;
 	}
 
-	public void setWorkflowService(WorkflowService workflowService) {
-		this.workflowService = workflowService;
-	}
-
 	public void setNodeArchiveService(NodeArchiveService nodeArchiveService) {
 		this.nodeArchiveService = nodeArchiveService;
+	}
+
+	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
+		this.projectWorkflowService = projectWorkflowService;
 	}
 
 	/**
@@ -123,6 +122,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_PREV_TASKS, new JavaBehaviour(this,
 						"onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
+				ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.ASSOC_DL_TASK, new JavaBehaviour(this,
+						"onCreateAssociation"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
@@ -143,8 +145,10 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		
 		if(KEY_DELETED_TASK_LIST_ITEM.equals(key)){
 			for (NodeRef taskListItemNodeRef : pendingNodes) {
-				if(nodeService.exists(taskListItemNodeRef)){
-					deleteTaskWorkflow(taskListItemNodeRef);
+				NodeRef archivedNodeRef = nodeArchiveService.getArchivedNode(taskListItemNodeRef);
+				if(nodeService.exists(archivedNodeRef)){					
+					// delete workflow
+					projectWorkflowService.deleteWorkflowTask(archivedNodeRef);
 				}				
 			}
 		}
@@ -252,7 +256,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			formulateProject = true;
 		}
 		
-		if(isPropChanged(before, after, ProjectModel.PROP_TL_TASK_NAME)){
+		if(isPropChanged(before, after, ProjectModel.PROP_DL_DESCRIPTION)){
 			formulateProject = true;
 		}
 		
@@ -272,7 +276,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 	
-	private void queueListItem(NodeRef listItemNodeRef){
+	private void queueListItem(NodeRef listItemNodeRef){		
 		NodeRef projectNodeRef =  entityListDAO.getEntity(listItemNodeRef);
 		if(projectNodeRef != null){
 			queueNode(projectNodeRef);
@@ -280,11 +284,10 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	}
 
 	@Override
-	public void onDeleteAssociation(AssociationRef assocRef) {
+	public void onDeleteAssociation(AssociationRef assocRef) {		
 		if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)){
 			setPermission(assocRef, false);
-		}
-		
+		}			
 		queueListItem(assocRef.getSourceRef());
 	}
 
@@ -372,23 +375,12 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		logger.debug("ProjectList policy delete type: " + projectListType + " nodeRef: " + nodeRef);
 
 		// we need to do it at the end
-		if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {
+		if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {	
+			projectService.deleteTask(nodeRef);		
 			queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
 		}
 		
 		// we need to queue item before delete
-		queueListItem(nodeRef);	
-	}
-
-	private void deleteTaskWorkflow(NodeRef nodeRef) {
-
-		NodeRef archivedNodeRef = nodeArchiveService.getArchivedNode(nodeRef);
-		String workflowInstanceId = (String) nodeService.getProperty(archivedNodeRef, ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
-		if (workflowInstanceId != null && !workflowInstanceId.isEmpty()) {
-			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);
-			if (workflowInstance != null) {
-				workflowService.deleteWorkflow(workflowInstanceId);
-			}
-		}
+		queueListItem(nodeRef);
 	}
 }
