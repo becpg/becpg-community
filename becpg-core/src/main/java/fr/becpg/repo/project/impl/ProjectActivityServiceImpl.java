@@ -3,7 +3,6 @@ package fr.becpg.repo.project.impl;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.service.cmr.activities.ActivityService;
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;

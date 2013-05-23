@@ -5,7 +5,6 @@ package fr.becpg.repo.workflow.jbpm.productvalidation;
 
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -13,8 +12,6 @@ import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.jbpm.JBPMNode;
 import org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -47,9 +44,6 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-	
 	/** The repository helper. */
 	private Repository repositoryHelper;
 	
@@ -63,7 +57,6 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
 		
 		productService = (ProductService) factory.getBean("productService");
 		nodeService = (NodeService)factory.getBean("nodeService");
-		fileFolderService = (FileFolderService)factory.getBean("fileFolderService");
 		repositoryHelper = (Repository)factory.getBean("repositoryHelper");
 		dictionaryService = (DictionaryService)factory.getBean("dictionaryService");
 	}
