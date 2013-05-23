@@ -108,7 +108,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						break;
 					}
 				}
-				if(!isFound){
+				if(!isFound){		
+					sourceItem.setNodeRef(null);
+					sourceItem.setParentNodeRef(null);
 					targetList.add(sourceItem);
 				}
 			}
