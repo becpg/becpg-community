@@ -5,9 +5,11 @@ package fr.becpg.repo.admin;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -94,8 +96,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	public static final String GROUP_PRODUCT_REVIEWER = "ProductReviewer";
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
-	public static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
-	public static final String PRODUCT_REPORT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
+	public static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	public static final String PRODUCT_REPORT_CLIENT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
+	public static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";	
+	public static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
+	public static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
@@ -789,24 +794,36 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
-		QName[] productTypes = { BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT,
-				BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, BeCPGModel.TYPE_FINISHEDPRODUCT,
-				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_RESOURCEPRODUCT};
+		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME);
+		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME);
+		
+		try {
 
-		for (QName productType : productTypes) {
-
-			try {
-
-				ClassDefinition classDef = dictionaryService.getClass(productType);
-				String reportPath = Locale.getDefault().equals(Locale.FRENCH) ? PRODUCT_REPORT_PATH : PRODUCT_REPORT_EN_PATH;
-				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
-						classDef.getTitle(), classDef.getTitle());
-				reportTplService.createTplRptDesign(folderNodeRef, classDef.getTitle(),
-						reportPath, ReportType.Document, ReportFormat.PDF, productType, true, true, false);
-			} catch (Exception e) {
-				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);
-			}
-
+			// finishedProduct
+			ClassDefinition classDef = dictionaryService.getClass(BeCPGModel.TYPE_FINISHEDPRODUCT);
+			
+			NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
+					classDef.getTitle(), classDef.getTitle());
+			reportTplService.createTplRptDesign(folderNodeRef, productReportClientName,
+							Locale.getDefault().equals(Locale.FRENCH) ? PRODUCT_REPORT_CLIENT_PATH : PRODUCT_REPORT_CLIENT_EN_PATH, 
+							ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, true, false);
+			
+			reportTplService.createTplRptDesign(folderNodeRef, productReportProductionName,
+							PRODUCT_REPORT_PRODUCTION_PATH, 
+							ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, false, false);
+			
+			// semiFinishedProduct
+			classDef = dictionaryService.getClass(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
+			
+			folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
+					classDef.getTitle(), classDef.getTitle());
+			
+			reportTplService.createTplRptDesign(folderNodeRef, productReportProductionName,
+					PRODUCT_REPORT_PRODUCTION_PATH, 
+					ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, false);
+			
+		} catch (Exception e) {
+			logger.error("Failed to create product report.", e);
 		}
 		
 		// quality report templates
