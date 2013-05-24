@@ -160,7 +160,6 @@ public class ProjectServiceImpl implements ProjectService {
 		
 //		// delete dl (not the document associated to dl -> user must delete them)
 //		List<AssociationRef> dlAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_DL_TASK);
-//		logger.debug("###deleteTask dlAssociationRefs " + dlAssociationRefs.size());
 //		for(AssociationRef dlAssociationRef : dlAssociationRefs){
 //			nodeService.deleteNode(dlAssociationRef.getSourceRef());
 //		}			
