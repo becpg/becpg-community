@@ -268,7 +268,9 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 			if (isSystem != null && isSystem && classType != null) {
 
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) + LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY));
+				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) + 
+								LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY)) +
+								LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
 
 				List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
 
