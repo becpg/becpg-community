@@ -389,7 +389,7 @@
 											+ '-actions-'
 											+ oRecord.getId()
 											+ '" class="action-set simple" >'
-											+ '<div class="onActionEdit"><a title="Modifier"  class="action-link" href="" rel="edit"><span>Modifier</span></a></div>'
+											+ '<div class="onActionEdit"><a title="'+scope.msg("action.modify")+'"  class="action-link" href="" rel="edit"><span>'+scope.msg("action.modify")+'</span></a></div>'
 											+ '</div>';
 								}
 							};
@@ -916,6 +916,9 @@
 								this.getDataTable()._oCellEditor = null;
 							};
 
+							editor.LABEL_CANCEL = this.msg("button.cancel");
+							editor.LABEL_SAVE = this.msg("button.save");
+							
 							return editor;
 						},
 
@@ -1254,9 +1257,9 @@
 						 * @protected
 						 */
 						_setupPropsPicker : function BulkEdit__setupDataTable(columns) {
-							var containerEl = Dom.get(this.id + "-itemProps-container");
+							var containerEl = Dom.get(this.id + "-itemProps-container"),
+							     html = "";
 							if (containerEl != null) {
-								containerEl.innerHTML = "<ul>";
 								var inc = 0;
 								var colCount = 0;
 								for ( var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
@@ -1274,7 +1277,7 @@
 										colCount = Math.floor(inc / 5);
 										className += "column-" + colCount;
 
-										containerEl.innerHTML += '<li class="' + className
+										html += '<li class="' + className
 												+ '"><input id="propSelected-' + i
 												+ '" type="checkbox" name="propChecked" value="' + propName
 												+ '" /><label for="propSelected-' + i + '" >' + propLabel
@@ -1282,7 +1285,8 @@
 										inc++;
 									}
 								}
-								containerEl.innerHTML += "</ul>";
+								 
+								 containerEl.innerHTML = "<ul style=\"width:"+((colCount+1)*20)+"em;\">"+html+"</ul>";
 
 								this.selectedFields = Selector.query('input[type="checkbox"]', containerEl);
 							}
@@ -1632,7 +1636,6 @@
 						 */
 						_updateBulkEdit : function BulkEdit__updateBulkEdit(p_obj) {
 							p_obj = p_obj || {};
-							Alfresco.logger.debug("BulkEdit__updateBulkEdit: ", p_obj.filter);
 							var successFilter = YAHOO.lang.merge({}, p_obj.filter !== undefined ? p_obj.filter
 									: this.currentFilter), loadingMessage = null, timerShowLoadingMessage = null, me = this, params = {
 								filter : successFilter
@@ -1641,8 +1644,6 @@
 							// Clear the current document list if the data
 							// webscript is taking too long
 							var fnShowLoadingMessage = function BulkEdit_fnShowLoadingMessage() {
-								Alfresco.logger
-										.debug("BulkEdit__uDG_fnShowLoadingMessage: slow data webscript detected.");
 								// Check the timer still exists. This is to
 								// prevent IE firing the event after we
 								// cancelled it. Which is "useful".
@@ -1697,7 +1698,6 @@
 							var successHandler = function BulkEdit__uDG_successHandler(sRequest, oResponse, oPayload) {
 								destroyLoaderMessage();
 
-								Alfresco.logger.debug("currentFilter was:", this.currentFilter, "now:", successFilter);
 								this.currentFilter = successFilter;
 								this.currentPage = p_obj.page || 1;
 								this.widgets.dataTable.onDataReturnInitializeTable.call(this.widgets.dataTable,
@@ -1947,13 +1947,13 @@
 															+ new Alfresco.util.NodeRef(item.nodeRef).uri,
 													dataObj : this._buildBulkEditParams(),
 													successCallback : {
-														fn : function DataGrid_onActionEdit_refreshSuccess(response) {
+														fn : function DataGrid_onActionEdit_refreshSuccess(resp) {
 
 															// Fire
 															// "itemUpdated"
 															// event
 															Bubbling.fire("dataItemUpdated", {
-																item : response.json.item
+																item : resp.json.item
 															});
 
 															// recall edit for
@@ -1963,7 +1963,7 @@
 
 															if (checkBoxEl && checkBoxEl.checked) {
 																var recordFound = scope._findNextItemByParameter(
-																		response.json.item.nodeRef, "nodeRef");
+																      resp.json.item.nodeRef, "nodeRef");
 																if (recordFound != null) {
 																	scope.onActionEdit(recordFound);
 																}
@@ -1979,7 +1979,7 @@
 														scope : this
 													},
 													failureCallback : {
-														fn : function DataGrid_onActionEdit_refreshFailure(response) {
+														fn : function DataGrid_onActionEdit_refreshFailure(resp) {
 															Alfresco.util.PopupManager.displayMessage({
 																text : this.msg("message.details.failure")
 															});
@@ -1991,7 +1991,7 @@
 											scope : this
 										},
 										onFailure : {
-											fn : function DataGrid_onActionEdit_failure(response) {
+											fn : function DataGrid_onActionEdit_failure(resp) {
 												Alfresco.util.PopupManager.displayMessage({
 													text : this.msg("message.details.failure")
 												});
