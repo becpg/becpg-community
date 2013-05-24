@@ -121,6 +121,7 @@
         <property name="targetSchema"><value>10006</value></property>
         <property name="reportTplService" ref="reportTplService"/>
         <property name="dictionaryService" ref="dictionaryService"/>
+        <property name="repoService" ref="repoService" />
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>	
