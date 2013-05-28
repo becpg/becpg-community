@@ -53,7 +53,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	NodeServicePolicies.OnDeleteAssociationPolicy,
 	CopyServicePolicies.OnCopyNodePolicy,
 	NodeServicePolicies.OnCreateNodePolicy,
-	NodeServicePolicies.BeforeDeleteNodePolicy{
+	NodeServicePolicies.BeforeDeleteNodePolicy,
+	NodeServicePolicies.OnDeleteNodePolicy{
 
 	private static String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
 	
@@ -136,10 +137,15 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onCreateNode"));		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, 
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onCreateNode"));
+		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onDeleteNode"));
 		
 	}
 
@@ -152,10 +158,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		
 		if(KEY_DELETED_TASK_LIST_ITEM.equals(key)){
 			for (NodeRef taskListItemNodeRef : pendingNodes) {
-				NodeRef archivedNodeRef = nodeArchiveService.getArchivedNode(taskListItemNodeRef);
-				if(nodeService.exists(archivedNodeRef)){					
+				if(nodeService.exists(taskListItemNodeRef)){					
 					// delete workflow
-					projectWorkflowService.deleteWorkflowTask(archivedNodeRef);
+					projectWorkflowService.deleteWorkflowTask(taskListItemNodeRef);
 				}				
 			}
 		}
@@ -361,23 +366,29 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			return resetProperties(classQName, properties);
 		}
 	}
-
+	
 	@Override
-	public void beforeDeleteNode(NodeRef nodeRef) {
-
-		QName projectListType = nodeService.getType(nodeRef);
-		logger.debug("ProjectList policy delete type: " + projectListType + " nodeRef: " + nodeRef);
-
-		// we need to do it at the end
-		if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {	
-			projectService.deleteTask(nodeRef);		
-			queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
-		}
-		
-		// we need to queue item before delete
-		queueListItem(nodeRef);
+	public void beforeDeleteNode(NodeRef nodeRef) {		
+		// we need to queue item before delete in order to have WUsed
+		queueListItem(nodeRef);		
 	}
+	
+	@Override
+	public void onDeleteNode(ChildAssociationRef childRef, boolean isArchived) {
+		
+		if(isArchived){			
+			NodeRef nodeRef = nodeArchiveService.getArchivedNode(childRef.getChildRef());
+			QName projectListType = nodeService.getType(nodeRef);
+			logger.debug("ProjectList policy delete type: " + projectListType + " nodeRef: " + nodeRef);
 
+			// we need to do it at the end
+			if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {	
+				projectService.deleteTask(nodeRef);		
+				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
+			}			
+		}	
+	}
+	
 	@Override
 	public void onCreateNode(ChildAssociationRef childRef) {
 		

@@ -2,6 +2,7 @@ package fr.becpg.repo.project.impl;
 
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -161,6 +162,7 @@ public class ProjectServiceImpl implements ProjectService {
 //		// delete dl (not the document associated to dl -> user must delete them)
 //		List<AssociationRef> dlAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_DL_TASK);
 //		for(AssociationRef dlAssociationRef : dlAssociationRefs){
+//			logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " + dlAssociationRef.getSourceRef());
 //			nodeService.deleteNode(dlAssociationRef.getSourceRef());
 //		}			
 	}

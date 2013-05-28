@@ -1166,7 +1166,11 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			if (taskNodeRef != null && taskNodeRef.equals(taskListDataItemNodeRef)) {
 				assertEquals(workflowDescription, workflowTask.getProperties().get(WorkflowModel.PROP_WORKFLOW_DESCRIPTION));
 				assertEquals(dueDate, workflowTask.getProperties().get(WorkflowModel.PROP_DUE_DATE));
-				assertEquals(assignees, workflowTask.getProperties().get(WorkflowModel.ASSOC_ASSIGNEES));
+				if(assignees.size() == 1){					
+					assertEquals(nodeService.getProperty(assignees.get(0), ContentModel.PROP_USERNAME), workflowTask.getProperties().get(ContentModel.PROP_OWNER));
+				}else{
+					assertEquals(assignees, workflowTask.getProperties().get(WorkflowModel.ASSOC_POOLED_ACTORS));
+				}				
 			}
 		}
 	}
