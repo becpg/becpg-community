@@ -19,6 +19,7 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -51,6 +52,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	NodeServicePolicies.OnCreateAssociationPolicy,
 	NodeServicePolicies.OnDeleteAssociationPolicy,
 	CopyServicePolicies.OnCopyNodePolicy,
+	NodeServicePolicies.OnCreateNodePolicy,
 	NodeServicePolicies.BeforeDeleteNodePolicy{
 
 	private static String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
@@ -129,6 +131,11 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "getCopyCallback"));
+		// action duplicate use createNode API
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, 
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onCreateNode"));		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, 
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
@@ -343,7 +350,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
         }
         
 		@Override
-		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {				
+		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
 			return true;
 		}
 
@@ -351,20 +358,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
 				Map<QName, Serializable> properties) {		
 			
-			if(ProjectModel.TYPE_TASK_LIST.equals(classQName)){
-				properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
-				properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
-				if(properties.containsKey(ProjectModel.PROP_TL_STATE)){
-					properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
-				}
-			}
-			else if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)){
-				if(properties.containsKey(ProjectModel.PROP_DL_STATE)){
-					properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
-				}
-			}
-			
-			return properties;
+			return resetProperties(classQName, properties);
 		}
 	}
 
@@ -382,5 +376,31 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		
 		// we need to queue item before delete
 		queueListItem(nodeRef);
+	}
+
+	@Override
+	public void onCreateNode(ChildAssociationRef childRef) {
+		
+		// action duplicate use createNode API
+		nodeService.setProperties(childRef.getChildRef(), 
+				resetProperties(nodeService.getType(childRef.getChildRef()), nodeService.getProperties(childRef.getChildRef())));
+	}
+	
+	private Map<QName, Serializable> resetProperties(QName classQName, Map<QName, Serializable> properties){
+		
+		if(ProjectModel.TYPE_TASK_LIST.equals(classQName)){
+			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
+			if(properties.containsKey(ProjectModel.PROP_TL_STATE)){
+				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
+			}
+		}
+		else if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)){
+			if(properties.containsKey(ProjectModel.PROP_DL_STATE)){
+				properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
+			}
+		}
+		
+		return properties;
 	}
 }
