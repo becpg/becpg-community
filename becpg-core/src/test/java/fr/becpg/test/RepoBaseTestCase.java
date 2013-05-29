@@ -369,15 +369,6 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(nutTypesFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
-		// packagingLevels
-		NodeRef packagingLevelsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_PACKAGING_LEVELS);
-		String[] packagingLevels = { "Primaire", "Secondaire", "Tertiaire" };
-		for (String packagingLevel : packagingLevels) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, packagingLevel);
-			nodeService.createNode(packagingLevelsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
-		}
 		
 		// ingTypes
 		NodeRef ingTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ING_TYPES);

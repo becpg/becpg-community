@@ -9,9 +9,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -187,5 +189,24 @@ public class FormulationHelper {
 		value = value != null ? value : 0d;		
 		totalValue += qtyUsed * value / netWeight;		
 		return totalValue;
+	}
+	
+	public static Double getTareInKg(NodeRef packagingNodeRef, NodeService nodeService){
+		
+		Double tare = (Double)nodeService.getProperty(packagingNodeRef, PackModel.PROP_TARE);
+		String strTareUnit = (String)nodeService.getProperty(packagingNodeRef, PackModel.PROP_TARE_UNIT);
+		if(tare == null || strTareUnit == null){
+			return DEFAULT_COMPONANT_QUANTITY;
+		}
+		else{
+			
+			TareUnit tareUnit = TareUnit.parse(strTareUnit);
+			
+			if(tareUnit == TareUnit.g || tareUnit == TareUnit.gPerm2){
+				tare = tare / 1000;
+			}
+			
+			return tare;
+		}				
 	}
 }

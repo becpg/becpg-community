@@ -36,6 +36,7 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.variant.model.VariantData;
 
 public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
 
@@ -379,5 +380,26 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			}
 		}
 		
+	}	
+	
+	protected String extractNames(List<NodeRef> nodeRefs){
+		String value = VALUE_NULL;
+		for(NodeRef nodeRef : nodeRefs){
+			if (!value.isEmpty()) {
+				value += RepoConsts.LABEL_SEPARATOR;
+			}
+			value += (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		}		
+		return value;
 	}
+	
+	protected String extractTargetNames(List<AssociationRef> assocRefs){
+		List<NodeRef> nodeRefs = new ArrayList<NodeRef>(assocRefs.size());
+		for(AssociationRef assocRef : assocRefs){
+			nodeRefs.add(assocRef.getTargetRef());
+		}
+		return extractNames(nodeRefs);
+	}
+	
+	
 }

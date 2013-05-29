@@ -260,18 +260,13 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:packagingLevel"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
+		<constraint name="bcpg:packagingLevel" type="LIST">
+			<parameter name="allowedValues">
 				<list>
-					<value>/System/Lists/bcpg:entityLists/PackagingLevels</value>
+					<value>Primary</value>
+					<value>Secondary</value>
+					<value>Tertiary</value>
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>cm:name</value>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:reqTypes" type="LIST">

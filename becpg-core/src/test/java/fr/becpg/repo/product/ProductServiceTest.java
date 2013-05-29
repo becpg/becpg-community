@@ -56,6 +56,7 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -598,14 +599,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished Product 1");
 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
-				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", true, packagingMaterialNodeRef));
+				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
 				finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
 				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
-				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", true, packagingMaterialNodeRef));
+				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
 				finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 				NodeRef finishedProductNodeRef2 = alfrescoRepository.create(testFolderNodeRef, finishedProduct2).getNodeRef();
 
@@ -644,11 +645,12 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());			
 			PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));							
+			PackagingLevel packagingLevel = PackagingLevel.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL));
 			
 			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(), 									
 						(Double)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
 						packagingListUnit, 
-						(String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), true, 
+						packagingLevel, true, 
 						kv.getValue().getEntityNodeRef());
 			
 			wUsedList.add(packagingListDataItem);
