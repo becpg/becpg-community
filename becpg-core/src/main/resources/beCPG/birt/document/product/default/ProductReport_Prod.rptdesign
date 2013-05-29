@@ -878,27 +878,43 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">allergenListAllergen</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">allergenListAllergen</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">allergenListInVoluntary</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">allergenListInVoluntary</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">allergenListVoluntary</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">allergenListVoluntary</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">allergenListInVolSources</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">allergenListInVolSources</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">allergenListVolSources</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">allergenListVolSources</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">allergenType</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">allergenType</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">variants</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">variants</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">isDefaultVariant</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -910,6 +926,7 @@
                     </simple-property-list>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -942,6 +959,16 @@
                         <property name="name">allergenType</property>
                         <property name="dataType">string</property>
                     </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">variants</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">isDefaultVariant</property>
+                        <property name="dataType">string</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">DataXml</property>
@@ -951,49 +978,71 @@
                     <property name="name">allergenListAllergen</property>
                     <property name="nativeName">allergenListAllergen</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">allergenListInVoluntary</property>
                     <property name="nativeName">allergenListInVoluntary</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">allergenListVoluntary</property>
                     <property name="nativeName">allergenListVoluntary</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">allergenListInVolSources</property>
                     <property name="nativeName">allergenListInVolSources</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">allergenListVolSources</property>
                     <property name="nativeName">allergenListVolSources</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">allergenType</property>
                     <property name="nativeName">allergenType</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">variants</property>
+                    <property name="nativeName">variants</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">isDefaultVariant</property>
+                    <property name="nativeName">isDefaultVariant</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList/allergen]#:#{allergenListAllergen;STRING;/@allergenListAllergen},{allergenListInVoluntary;STRING;/@allergenListInVoluntary},{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVolSources;STRING;/@allergenListInVolSources},{allergenListVolSources;STRING;/@allergenListVolSources},{allergenType;STRING;/@allergenType}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList/allergen]#:#{allergenListAllergen;STRING;/@allergenListAllergen},{allergenListInVoluntary;STRING;/@allergenListInVoluntary},{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVolSources;STRING;/@allergenListInVolSources},{allergenListVolSources;STRING;/@allergenListVolSources},{allergenType;STRING;/@allergenType},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>1.0</Version>
+  <Version>2.0</Version>
   <design:ResultSets derivedMetaData="true">
     <design:resultSetDefinitions>
       <design:resultSetColumns>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>allergenListAllergen</design:name>
-            <design:position>1</design:position>
+            <design:identifier>
+              <design:name>allergenListAllergen</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1006,8 +1055,10 @@
         </design:resultColumnDefinitions>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>allergenListInVoluntary</design:name>
-            <design:position>2</design:position>
+            <design:identifier>
+              <design:name>allergenListInVoluntary</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1020,8 +1071,10 @@
         </design:resultColumnDefinitions>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>allergenListVoluntary</design:name>
-            <design:position>3</design:position>
+            <design:identifier>
+              <design:name>allergenListVoluntary</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1034,8 +1087,10 @@
         </design:resultColumnDefinitions>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>allergenListSources</design:name>
-            <design:position>4</design:position>
+            <design:identifier>
+              <design:name>allergenListSources</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -2121,12 +2176,24 @@
                 <structure>
                     <property name="columnName">erpCode</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">erpCode</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">suppliers</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">suppliers</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">variants</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">variants</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">isDefaultVariant</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -2170,6 +2237,16 @@
                     <structure>
                         <property name="position">8</property>
                         <property name="name">suppliers</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">variants</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">isDefaultVariant</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -2232,8 +2309,22 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">variants</property>
+                    <property name="nativeName">variants</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">isDefaultVariant</property>
+                    <property name="nativeName">isDefaultVariant</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoList/entity]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoList/entity]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3000,22 +3091,36 @@
                 <structure>
                     <property name="columnName">tareUnit</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">tareUnit</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">length</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">length</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">width</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">width</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">height</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">height</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">variants</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">variants</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">isDefaultVariant</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -3093,6 +3198,16 @@
                     <structure>
                         <property name="position">13</property>
                         <property name="name">height</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">variants</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">isDefaultVariant</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -3190,8 +3305,22 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">variants</property>
+                    <property name="nativeName">variants</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">isDefaultVariant</property>
+                    <property name="nativeName">isDefaultVariant</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList/entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;BIGDECIMAL;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{erpCode;STRING;/@erpCode},{tareUnit;STRING;/@tareUnit},{length;STRING;/@length},{width;STRING;/@width},{height;STRING;/@height}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList/entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;BIGDECIMAL;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{erpCode;STRING;/@erpCode},{tareUnit;STRING;/@tareUnit},{length;STRING;/@length},{width;STRING;/@width},{height;STRING;/@height},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3325,14 +3454,913 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packSecondLevelMaster" id="2397">
-            <list-property name="computedColumns">
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images_palet" id="2460">
+            <list-property name="columnHints">
                 <structure>
-                    <property name="name">pmDimensions</property>
-                    <expression name="expression">BirtMath.round(row["length"],0) + "x" + BirtMath.round(row["width"],0) + "x" + BirtMath.round(row["height"],0)</expression>
-                    <property name="dataType">string</property>
+                    <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">name</text-property>
+                    <property name="analysisColumn">name</property>
+                </structure>
+                <structure>
+                    <property name="columnName">title</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">title</text-property>
+                    <property name="analysisColumn">title</property>
+                </structure>
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">id</text-property>
+                    <property name="analysisColumn">id</property>
                 </structure>
             </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">like</property>
+                    <expression name="expr" type="javascript">row["name"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"img_palet%"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{name;STRING;/@name},{title;STRING;/@title},{id;STRING;/@id}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>title</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>title</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="allergenList2" id="2486">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">allergens</property>
+                    <text-property name="heading">allergens</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">allergens</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">allergens</property>
+                    <property name="nativeName">allergens</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList]#:#{allergens;STRING;/@allergens}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>allergens</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>allergens</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="description" id="2565">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">description-line</property>
+                    <property name="analysis">attribute</property>
+                    <text-property name="heading">description-line</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">description-line</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">description-line</property>
+                    <property name="nativeName">description-line</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/description-lines/description-line]#:#{description-line;STRING;}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>description-line</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>description-line</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images_fab" id="2823">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">name</text-property>
+                    <property name="analysisColumn">name</property>
+                </structure>
+                <structure>
+                    <property name="columnName">title</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">title</text-property>
+                    <property name="analysisColumn">title</property>
+                </structure>
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">id</text-property>
+                    <property name="analysisColumn">id</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">like</property>
+                    <expression name="expr" type="javascript">row["name"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"img_fab%"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{name;STRING;/@name},{title;STRING;/@title},{id;STRING;/@id}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>title</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>title</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images" id="1771">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">title</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">title</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">like</property>
+                    <expression name="expr" type="javascript">row["name"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"produit.%"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">title</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">title</property>
+                    <property name="nativeName">title</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{name;STRING;/@name},{title;STRING;/@title}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>id</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>id</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>title</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>title</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packagingLevelMesures" id="2713">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">tarePkgLevel1</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">tarePkgLevel1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeightPkgLevel1</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">netWeightPkgLevel1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">grossWeightPkgLevel1</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">grossWeightPkgLevel1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">tarePkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">tarePkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeightPkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">netWeightPkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">grossWeightPkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">grossWeightPkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">tarePkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">tarePkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeightPkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">netWeightPkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">grossWeightPkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">grossWeightPkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nbProductsPkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nbProductsPkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nbProductsPkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nbProductsPkgLevel3</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">tarePkgLevel1</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">netWeightPkgLevel1</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">grossWeightPkgLevel1</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">tarePkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">netWeightPkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">grossWeightPkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">tarePkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">netWeightPkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">grossWeightPkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">nbProductsPkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">nbProductsPkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">tarePkgLevel1</property>
+                    <property name="nativeName">tarePkgLevel1</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">netWeightPkgLevel1</property>
+                    <property name="nativeName">netWeightPkgLevel1</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">grossWeightPkgLevel1</property>
+                    <property name="nativeName">grossWeightPkgLevel1</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">tarePkgLevel2</property>
+                    <property name="nativeName">tarePkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">netWeightPkgLevel2</property>
+                    <property name="nativeName">netWeightPkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">grossWeightPkgLevel2</property>
+                    <property name="nativeName">grossWeightPkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">tarePkgLevel3</property>
+                    <property name="nativeName">tarePkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">netWeightPkgLevel3</property>
+                    <property name="nativeName">netWeightPkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">grossWeightPkgLevel3</property>
+                    <property name="nativeName">grossWeightPkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">nbProductsPkgLevel2</property>
+                    <property name="nativeName">nbProductsPkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">nbProductsPkgLevel3</property>
+                    <property name="nativeName">nbProductsPkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList]#:#{tarePkgLevel1;DOUBLE;/@tarePkgLevel1},{netWeightPkgLevel1;DOUBLE;/@netWeightPkgLevel1},{grossWeightPkgLevel1;DOUBLE;/@grossWeightPkgLevel1},{tarePkgLevel2;DOUBLE;/@tarePkgLevel2},{netWeightPkgLevel2;DOUBLE;/@netWeightPkgLevel2},{grossWeightPkgLevel2;DOUBLE;/@grossWeightPkgLevel2},{tarePkgLevel3;DOUBLE;/@tarePkgLevel3},{netWeightPkgLevel3;DOUBLE;/@netWeightPkgLevel3},{grossWeightPkgLevel3;DOUBLE;/@grossWeightPkgLevel3},{nbProductsPkgLevel2;DOUBLE;/@nbProductsPkgLevel2},{nbProductsPkgLevel3;DOUBLE;/@nbProductsPkgLevel3}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>tarePkgLevel1</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>tarePkgLevel1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>netWeightPkgLevel1</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>netWeightPkgLevel1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>grossWeightPkgLevel1</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>grossWeightPkgLevel1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>tarePkgLevel2</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>tarePkgLevel2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>netWeightPkgLevel2</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>netWeightPkgLevel2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>grossWeightPkgLevel2</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>grossWeightPkgLevel2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>tarePkgLevel3</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>tarePkgLevel3</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>netWeightPkgLevel3</design:name>
+              <design:position>8</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>netWeightPkgLevel3</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>grossWeightPkgLevel3</design:name>
+              <design:position>9</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>grossWeightPkgLevel3</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packFirstLevel" id="2986">
+            <property name="nullsOrdering">nulls lowest</property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">itemType</property>
@@ -3377,29 +4405,18 @@
                     <property name="analysisColumn">packagingListPkgLevel</property>
                 </structure>
                 <structure>
+                    <property name="columnName">pmDimensions</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">pmDimensions</text-property>
+                    <property name="analysisColumn">pmDimensions</property>
+                </structure>
+                <structure>
                     <property name="columnName">tare</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">tare</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">packagingListIsMaster</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">packagingListIsMaster</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">length</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">length</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">width</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">width</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">height</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">height</text-property>
+                    <property name="analysisColumn">tare</property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -3407,21 +4424,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Secondaire"</value>
-                    </simple-property-list>
-                </structure>
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["packagingListIsMaster"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"true"</value>
-                    </simple-property-list>
-                </structure>
-                <structure>
-                    <property name="operator">eq</property>
-                    <expression name="expr" type="javascript">row["itemType"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"bcpg:packagingMaterial"</value>
+                        <value>"Primaire"</value>
                     </simple-property-list>
                 </structure>
             </list-property>
@@ -3460,32 +4463,12 @@
                     </structure>
                     <structure>
                         <property name="position">7</property>
-                        <property name="name">tare</property>
+                        <property name="name">pmDimensions</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">8</property>
-                        <property name="name">packagingListIsMaster</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">9</property>
-                        <property name="name">length</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">10</property>
-                        <property name="name">width</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
-                        <property name="name">height</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
-                        <property name="name">pmDimensions</property>
+                        <property name="name">tare</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -3536,41 +4519,20 @@
                 </structure>
                 <structure>
                     <property name="position">7</property>
-                    <property name="name">tare</property>
-                    <property name="nativeName">tare</property>
+                    <property name="name">pmDimensions</property>
+                    <property name="nativeName">pmDimensions</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
-                    <property name="name">packagingListIsMaster</property>
-                    <property name="nativeName">packagingListIsMaster</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">9</property>
-                    <property name="name">length</property>
-                    <property name="nativeName">length</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">10</property>
-                    <property name="name">width</property>
-                    <property name="nativeName">width</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
-                    <property name="name">height</property>
-                    <property name="nativeName">height</property>
+                    <property name="name">tare</property>
+                    <property name="nativeName">tare</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList/entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3689,11 +4651,281 @@
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packFirstLevelMaster" id="2456">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">pmDimensions</property>
+                    <expression name="expression">(row["length"]!=""? BirtMath.round(row["length"],0) + "x" :  "") + (row["width"]!="" ? BirtMath.round(row["width"],0) + "x"  :  "") +(row["height"]!="" ?   BirtMath.round(row["height"],0)  :  "")</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">itemType</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">itemType</text-property>
+                    <property name="analysisColumn">itemType</property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListProduct</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">packagingListProduct</text-property>
+                    <property name="analysisColumn">packagingListProduct</property>
+                </structure>
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">legalName</text-property>
+                    <property name="analysisColumn">legalName</property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListQty</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">packagingListQty</text-property>
+                    <property name="analysisColumn">packagingListQty</property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListUnit</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">packagingListUnit</text-property>
+                    <property name="analysisColumn">packagingListUnit</property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListPkgLevel</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">packagingListPkgLevel</text-property>
+                    <property name="analysisColumn">packagingListPkgLevel</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tare</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">tare</text-property>
+                    <property name="analysisColumn">tare</property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListIsMaster</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">packagingListIsMaster</text-property>
+                    <property name="analysisColumn">packagingListIsMaster</property>
+                </structure>
+                <structure>
+                    <property name="columnName">length</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">length</text-property>
+                    <property name="analysisColumn">length</property>
+                </structure>
+                <structure>
+                    <property name="columnName">width</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">width</text-property>
+                    <property name="analysisColumn">width</property>
+                </structure>
+                <structure>
+                    <property name="columnName">height</property>
+                    <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">height</text-property>
+                    <property name="analysisColumn">height</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"Primaire"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["packagingListIsMaster"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"true"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">itemType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">packagingListProduct</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">legalName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">packagingListQty</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">packagingListUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">packagingListPkgLevel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">tare</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">packagingListIsMaster</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">length</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">width</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">height</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">pmDimensions</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">itemType</property>
+                    <property name="nativeName">itemType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">packagingListProduct</property>
+                    <property name="nativeName">packagingListProduct</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">packagingListQty</property>
+                    <property name="nativeName">packagingListQty</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">packagingListUnit</property>
+                    <property name="nativeName">packagingListUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">packagingListPkgLevel</property>
+                    <property name="nativeName">packagingListPkgLevel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">tare</property>
+                    <property name="nativeName">tare</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">packagingListIsMaster</property>
+                    <property name="nativeName">packagingListIsMaster</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">length</property>
+                    <property name="nativeName">length</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">width</property>
+                    <property name="nativeName">width</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">height</property>
+                    <property name="nativeName">height</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>tare</design:name>
-              <design:position>8</design:position>
+              <design:name>itemType</design:name>
+              <design:position>1</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
@@ -3701,7 +4933,103 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>tare</design:label>
+            <design:label>itemType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>packagingListProduct</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>packagingListProduct</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>legalName</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>legalName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>packagingListQty</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>packagingListQty</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>packagingListUnit</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>packagingListUnit</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>packagingListPkgLevel</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>packagingListPkgLevel</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>pmDimensions</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>pmDimensions</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -4174,11 +5502,11 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packFirstLevelMaster" id="2456">
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packSecondLevelMaster" id="2397">
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">pmDimensions</property>
-                    <expression name="expression">BirtMath.round(row["length"],0) + "x" + BirtMath.round(row["width"],0) + "x" + BirtMath.round(row["height"],0)</expression>
+                    <expression name="expression">(row["length"]!=""? BirtMath.round(row["length"],0) + "x" :  "") + (row["width"]!="" ? BirtMath.round(row["width"],0) + "x"  :  "") +(row["height"]!="" ?   BirtMath.round(row["height"],0)  :  "")</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
@@ -4227,38 +5555,33 @@
                 </structure>
                 <structure>
                     <property name="columnName">tare</property>
-                    <property name="analysis">measure</property>
+                    <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">tare</text-property>
-                    <property name="analysisColumn">tare</property>
                 </structure>
                 <structure>
                     <property name="columnName">packagingListIsMaster</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">packagingListIsMaster</text-property>
-                    <property name="analysisColumn">packagingListIsMaster</property>
                 </structure>
                 <structure>
                     <property name="columnName">length</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">length</text-property>
-                    <property name="analysisColumn">length</property>
                 </structure>
                 <structure>
                     <property name="columnName">width</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">width</text-property>
-                    <property name="analysisColumn">width</property>
                 </structure>
                 <structure>
                     <property name="columnName">height</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">height</text-property>
-                    <property name="analysisColumn">height</property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -4266,7 +5589,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Primaire"</value>
+                        <value>"Secondaire"</value>
                     </simple-property-list>
                 </structure>
                 <structure>
@@ -4274,6 +5597,13 @@
                     <expression name="expr" type="javascript">row["packagingListIsMaster"]</expression>
                     <simple-property-list name="value1">
                         <value>"true"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["itemType"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"bcpg:packagingMaterial"</value>
                     </simple-property-list>
                 </structure>
             </list-property>
@@ -4313,7 +5643,7 @@
                     <structure>
                         <property name="position">7</property>
                         <property name="name">tare</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">8</property>
@@ -4390,8 +5720,8 @@
                     <property name="position">7</property>
                     <property name="name">tare</property>
                     <property name="nativeName">tare</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
@@ -4422,7 +5752,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4541,110 +5871,11 @@
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images_palet" id="2460">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">name</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">name</text-property>
-                    <property name="analysisColumn">name</property>
-                </structure>
-                <structure>
-                    <property name="columnName">title</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">title</text-property>
-                    <property name="analysisColumn">title</property>
-                </structure>
-                <structure>
-                    <property name="columnName">id</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">id</text-property>
-                    <property name="analysisColumn">id</property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">like</property>
-                    <expression name="expr" type="javascript">row["name"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"img_palet%"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">title</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">id</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">title</property>
-                    <property name="nativeName">title</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">id</property>
-                    <property name="nativeName">id</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{name;STRING;/@name},{title;STRING;/@title},{id;STRING;/@id}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
-              <design:name>name</design:name>
-              <design:position>1</design:position>
+              <design:name>tare</design:name>
+              <design:position>8</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
@@ -4652,23 +5883,7 @@
             <design:nullability>Unknown</design:nullability>
           </design:attributes>
           <design:usageHints>
-            <design:label>name</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>title</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>title</design:label>
+            <design:label>tare</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -4687,144 +5902,8 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="allergenList2" id="2486">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">allergens</property>
-                    <text-property name="heading">allergens</text-property>
-                </structure>
-            </list-property>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">allergens</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">allergens</property>
-                    <property name="nativeName">allergens</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList]#:#{allergens;STRING;/@allergens}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>allergens</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>allergens</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="description" id="2565">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">description-line</property>
-                    <property name="analysis">attribute</property>
-                    <text-property name="heading">description-line</text-property>
-                </structure>
-            </list-property>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">description-line</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">description-line</property>
-                    <property name="nativeName">description-line</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/description-lines/description-line]#:#{description-line;STRING;}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>description-line</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>description-line</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packThirdLevel" id="2588">
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packThirdLevel" id="2676">
             <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">nbFinishedProductThirdLevel</property>
-                    <expression name="expression">row["packagingListQty"]*row["palletBoxesPerPallet"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-            </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">itemType</property>
@@ -4978,11 +6057,6 @@
                     <structure>
                         <property name="position">12</property>
                         <property name="name">palletHeight</property>
-                        <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">nbFinishedProductThirdLevel</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -5254,279 +6328,6 @@
           </design:attributes>
           <design:usageHints>
             <design:label>palletBoxesPerPallet</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images_fab" id="2823">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">name</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">name</text-property>
-                    <property name="analysisColumn">name</property>
-                </structure>
-                <structure>
-                    <property name="columnName">title</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">title</text-property>
-                    <property name="analysisColumn">title</property>
-                </structure>
-                <structure>
-                    <property name="columnName">id</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">id</text-property>
-                    <property name="analysisColumn">id</property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">like</property>
-                    <expression name="expr" type="javascript">row["name"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"img_fab%"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">title</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">id</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">title</property>
-                    <property name="nativeName">title</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">id</property>
-                    <property name="nativeName">id</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{name;STRING;/@name},{title;STRING;/@title},{id;STRING;/@id}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>name</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>name</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>title</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>title</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images" id="1771">
-            <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">id</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">id</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">name</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">name</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">title</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">title</text-property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">like</property>
-                    <expression name="expr" type="javascript">row["name"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"produit.%"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">id</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">title</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">id</property>
-                    <property name="nativeName">id</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">title</property>
-                    <property name="nativeName">title</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{name;STRING;/@name},{title;STRING;/@title}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>id</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>id</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>name</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>name</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>title</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>title</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -6330,7 +7131,7 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
         <label id="2638"/>
         <table id="2890">
             <property name="style">becpg-table</property>
-            <property name="width">6.885496183206107in</property>
+            <property name="width">6.870229007633588in</property>
             <property name="dataSet">CompoList</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -6375,6 +7176,12 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                     <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">variants</property>
+                    <text-property name="displayName">variants</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["variants"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="2973">
                 <property name="width">0.48854961832061067in</property>
@@ -6384,23 +7191,27 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2906">
-                <property name="width">3.198473282442748in</property>
+                <property name="width">2.7709923664122136in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2979">
-                <property name="width">0.6412213740458015in</property>
+                <property name="width">0.648854961832061in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2945">
-                <property name="width">0.6564885496183206in</property>
+                <property name="width">0.6183206106870229in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2969">
-                <property name="width">0.5954198473282443in</property>
+                <property name="width">0.4961832061068702in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2983">
-                <property name="width">0.5419847328244275in</property>
+                <property name="width">0.5801526717557252in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3001">
+                <property name="width">0.5038167938931297in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <header>
@@ -6439,6 +7250,11 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                     <cell id="2980">
                         <label id="2984">
                             <text-property name="text">Unité</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2999">
+                        <label id="3002">
+                            <text-property name="text">Variantes</text-property>
                         </label>
                     </cell>
                 </row>
@@ -6499,6 +7315,11 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                         <data id="2902">
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListUnit</property>
+                        </data>
+                    </cell>
+                    <cell id="3000">
+                        <data id="3003">
+                            <property name="resultSetColumn">variants</property>
                         </data>
                     </cell>
                 </row>
@@ -6590,24 +7411,34 @@ value = value + " x " + dataSetRow["height"];
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
+                <structure>
+                    <property name="name">variants</property>
+                    <text-property name="displayName">variants</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["variants"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="2787">
                 <property name="width">0.7633587786259542in</property>
             </column>
             <column id="2718">
-                <property name="width">3.267175572519084in</property>
+                <property name="width">2.8625954198473282in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2720">
-                <property name="width">0.8091603053435115in</property>
+                <property name="width">0.8473282442748091in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2936">
-                <property name="width">1.3358778625954197in</property>
+                <property name="width">1.0381679389312977in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2721">
-                <property name="width">0.7099236641221374in</property>
+                <property name="width">0.7480916030534351in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="2996">
+                <property name="width">0.6259541984732825in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <header>
@@ -6636,6 +7467,11 @@ value = value + " x " + dataSetRow["height"];
                     <cell id="2707">
                         <label id="2728">
                             <text-property name="text">Tare</text-property>
+                        </label>
+                    </cell>
+                    <cell id="2994">
+                        <label id="2997">
+                            <text-property name="text">Variantes</text-property>
                         </label>
                     </cell>
                 </row>
@@ -6674,198 +7510,409 @@ value = value + " x " + dataSetRow["height"];
                             <property name="resultSetColumn">tare</property>
                         </data>
                     </cell>
+                    <cell id="2995">
+                        <property name="style">becpg-data</property>
+                        <data id="2998">
+                            <property name="resultSetColumn">variants</property>
+                        </data>
+                    </cell>
                 </row>
             </detail>
         </table>
         <label id="2791"/>
-        <table id="2497">
+        <grid id="2314">
             <property name="style">becpg-table</property>
             <property name="width">100%</property>
-            <property name="dataSet">packThirdLevel</property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">itemType</property>
-                    <text-property name="displayName">itemType</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListProduct</property>
-                    <text-property name="displayName">packagingListProduct</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">legalName</property>
-                    <text-property name="displayName">legalName</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListQty</property>
-                    <text-property name="displayName">packagingListQty</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListQty"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListUnit</property>
-                    <text-property name="displayName">packagingListUnit</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListUnit"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListPkgLevel</property>
-                    <text-property name="displayName">packagingListPkgLevel</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListPkgLevel"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">pmDimensions</property>
-                    <text-property name="displayName">pmDimensions</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">tare</property>
-                    <text-property name="displayName">tare</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["tare"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletLayers</property>
-                    <text-property name="displayName">palletLayers</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletLayers"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletBoxesPerLayer</property>
-                    <text-property name="displayName">palletBoxesPerLayer</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletBoxesPerLayer"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletBoxesPerPallet</property>
-                    <text-property name="displayName">palletBoxesPerPallet</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">nbFinishedProductThirdLevel</property>
-                    <text-property name="displayName">nbFinishedProductThirdLevel</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["nbFinishedProductThirdLevel"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletHeight</property>
-                    <text-property name="displayName">palletHeight</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletHeight"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-            </list-property>
-            <column id="2522"/>
-            <column id="2523">
+            <column id="2757">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2524">
+            <column id="2316">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2525">
+            <column id="2317">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2526">
+            <column id="2318">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2527">
+            <column id="2319">
                 <property name="style">becpg-col-border</property>
             </column>
-            <detail>
-                <row id="2545">
-                    <property name="style">becpg-col-header</property>
-                    <cell id="2546">
-                        <property name="colSpan">6</property>
-                        <property name="rowSpan">1</property>
-                        <data id="2445">
-                            <structure name="stringFormat">
-                                <property name="category">></property>
-                                <property name="pattern">></property>
-                            </structure>
-                            <property name="resultSetColumn">legalName</property>
-                        </data>
-                    </cell>
-                </row>
-                <row id="2553">
-                    <property name="style">becpg-col-header</property>
-                    <property name="fontWeight">normal</property>
-                    <cell id="2554">
-                        <label id="2446">
-                            <text-property name="text">Nombre emb/couche</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2555">
-                        <label id="2447">
-                            <text-property name="text">Nombre 
-couche/palette</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2556">
-                        <label id="2448">
-                            <text-property name="text">Nombre 
-emb/palette </text-property>
-                        </label>
-                    </cell>
-                    <cell id="2557">
-                        <label id="2449">
-                            <text-property name="text">Nombre UVC/palette</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2558">
-                        <label id="2450">
-                            <text-property name="text">Poids brut 
+            <column id="2763">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="2321">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="2322">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <row id="2323">
+                <property name="style">becpg-col-header</property>
+                <cell id="2753">
+                    <property name="colSpan">5</property>
+                    <property name="rowSpan">1</property>
+                    <label id="2992">
+                        <text-property name="text">CONDITIONNEMENT UVC</text-property>
+                    </label>
+                </cell>
+                <cell id="2759">
+                    <property name="colSpan">3</property>
+                    <property name="rowSpan">1</property>
+                    <label id="2993">
+                        <text-property name="text">COLIS</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="2370">
+                <property name="style">becpg-row-border</property>
+                <property name="fontWeight">normal</property>
+                <cell id="2755">
+                    <label id="2758">
+                        <text-property name="text">SPCB</text-property>
+                    </label>
+                </cell>
+                <cell id="2372">
+                    <label id="2390">
+                        <text-property name="text">Dimension (Lxlxh) en mm</text-property>
+                    </label>
+                </cell>
+                <cell id="2373">
+                    <label id="2391">
+                        <text-property name="text">Tare en g</text-property>
+                    </label>
+                </cell>
+                <cell id="2374">
+                    <label id="2392">
+                        <text-property name="text">Poids net 
 env en kg</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2559">
-                        <label id="2451">
-                            <text-property name="text">Hauteur maxi
+                    </label>
+                </cell>
+                <cell id="2375">
+                    <label id="2393">
+                        <text-property name="text">Poids brut 
+env en kg</text-property>
+                    </label>
+                </cell>
+                <cell id="2761">
+                    <label id="2764">
+                        <text-property name="text">PCB</text-property>
+                    </label>
+                </cell>
+                <cell id="2377">
+                    <label id="2395">
+                        <text-property name="text">Dimension (Lxlxh) en mm</text-property>
+                    </label>
+                </cell>
+                <cell id="2378">
+                    <label id="2396">
+                        <text-property name="text">Poids brut
+env en kg</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="2361">
+                <property name="style">becpg-row-border</property>
+                <cell id="2756">
+                    <data id="2508">
+                        <property name="dataSet">Product</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">productQty</property>
+                                <text-property name="displayName">SPCB</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"]</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">productQty</property>
+                    </data>
+                </cell>
+                <cell id="2363">
+                    <data id="2767">
+                        <property name="dataSet">packFirstLevelMaster</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">pmDimensions</property>
+                                <text-property name="displayName">pmDimensions</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">pmDimensions</property>
+                    </data>
+                </cell>
+                <cell id="2364">
+                    <data id="2766">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">tarePkgLevel1</property>
+                                <text-property name="displayName">tarePkgLevel1</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">tarePkgLevel1</property>
+                    </data>
+                </cell>
+                <cell id="2365">
+                    <data id="2684">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">Product</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">productQty</property>
+                                <text-property name="displayName">productQty</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["productQty"] * dataSetRow["productDensity"]</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">productQty</property>
+                    </data>
+                </cell>
+                <cell id="2366">
+                    <data id="2714">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">grossWeightPkgLevel1</property>
+                                <text-property name="displayName">grossWeightPkgLevel1</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">grossWeightPkgLevel1</property>
+                    </data>
+                </cell>
+                <cell id="2762">
+                    <data id="2765">
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nbProductsPkgLevel2</property>
+                                <text-property name="displayName">nbProductsPkgLevel2</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nbProductsPkgLevel2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nbProductsPkgLevel2</property>
+                    </data>
+                </cell>
+                <cell id="2368">
+                    <data id="2455">
+                        <property name="dataSet">packSecondLevelMaster</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">pmDimensions</property>
+                                <text-property name="displayName">pmDimensions</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">pmDimensions</property>
+                    </data>
+                </cell>
+                <cell id="2369">
+                    <data id="2751">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">grossWeightPkgLevel2</property>
+                                <text-property name="displayName">grossWeightPkgLevel2</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">grossWeightPkgLevel2</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
+        <label id="2991"/>
+        <grid id="2716">
+            <property name="style">becpg-table</property>
+            <column id="2717"/>
+            <column id="2987">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="2719">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="2988">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="2989">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="2990">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <row id="2723">
+                <cell id="2724">
+                    <property name="colSpan">6</property>
+                    <property name="rowSpan">1</property>
+                    <data id="2744">
+                        <property name="fontWeight">bold</property>
+                        <property name="textAlign">center</property>
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">legalName</property>
+                                <text-property name="displayName">legalName</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">legalName</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="2730">
+                <property name="style">becpg-row-border</property>
+                <cell id="2731">
+                    <label id="2446">
+                        <text-property name="text">Nombre emb/couche</text-property>
+                    </label>
+                </cell>
+                <cell id="2732">
+                    <label id="2447">
+                        <text-property name="text">Nombre 
+couche/palette</text-property>
+                    </label>
+                </cell>
+                <cell id="2733">
+                    <label id="2448">
+                        <text-property name="text">Nombre 
+emb/palette </text-property>
+                    </label>
+                </cell>
+                <cell id="2734">
+                    <label id="2449">
+                        <text-property name="text">Nombre UVC/palette</text-property>
+                    </label>
+                </cell>
+                <cell id="2735">
+                    <label id="2450">
+                        <text-property name="text">Poids brut 
+env en kg</text-property>
+                    </label>
+                </cell>
+                <cell id="2736">
+                    <label id="2451">
+                        <text-property name="text">Hauteur maxi
 en m</text-property>
-                        </label>
-                    </cell>
-                </row>
-                <row id="2506">
-                    <property name="style">becpg-data</property>
-                    <cell id="2507">
-                        <data id="2435">
-                            <property name="style">becpg-data</property>
-                            <property name="resultSetColumn">palletBoxesPerLayer</property>
-                        </data>
-                    </cell>
-                    <cell id="2508">
-                        <data id="2436">
-                            <property name="style">becpg-data</property>
-                            <property name="resultSetColumn">palletLayers</property>
-                        </data>
-                    </cell>
-                    <cell id="2509">
-                        <data id="2437">
-                            <property name="style">becpg-data</property>
-                            <property name="resultSetColumn">palletBoxesPerPallet</property>
-                        </data>
-                    </cell>
-                    <cell id="2510">
-                        <data id="2483">
-                            <property name="style">becpg-data</property>
-                            <property name="resultSetColumn">nbFinishedProductThirdLevel</property>
-                        </data>
-                    </cell>
-                    <cell id="2511"/>
-                    <cell id="2512">
-                        <data id="2589">
-                            <property name="resultSetColumn">palletHeight</property>
-                        </data>
-                    </cell>
-                </row>
-            </detail>
-        </table>
+                    </label>
+                </cell>
+            </row>
+            <row id="2737">
+                <property name="style">becpg-row-border</property>
+                <cell id="2738">
+                    <data id="2747">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletBoxesPerLayer</property>
+                                <text-property name="displayName">palletBoxesPerLayer</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletBoxesPerLayer"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletBoxesPerLayer</property>
+                    </data>
+                </cell>
+                <cell id="2739">
+                    <data id="2748">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletLayers</property>
+                                <text-property name="displayName">palletLayers</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletLayers"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletLayers</property>
+                    </data>
+                </cell>
+                <cell id="2740">
+                    <data id="2749">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletBoxesPerPallet</property>
+                                <text-property name="displayName">palletBoxesPerPallet</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletBoxesPerPallet</property>
+                    </data>
+                </cell>
+                <cell id="2741">
+                    <data id="2752">
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nbProductsPkgLevel3</property>
+                                <text-property name="displayName">nbProductsPkgLevel3</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nbProductsPkgLevel3"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nbProductsPkgLevel3</property>
+                    </data>
+                </cell>
+                <cell id="2742">
+                    <data id="2745">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">grossWeightPkgLevel3</property>
+                                <text-property name="displayName">grossWeightPkgLevel3</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel3"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">grossWeightPkgLevel3</property>
+                    </data>
+                </cell>
+                <cell id="2743">
+                    <data id="2746">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletHeight</property>
+                                <text-property name="displayName">palletHeight</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletHeight"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletHeight</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
         <label id="2305"/>
         <grid id="2441">
             <column id="2461"/>

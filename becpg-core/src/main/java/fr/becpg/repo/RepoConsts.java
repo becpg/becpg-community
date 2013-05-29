@@ -50,7 +50,6 @@ public class RepoConsts {
 	public static final String PATH_ALLERGEN_TYPES = "AllergenTypes";
 	public static final String PATH_NUT_GROUPS = "NutGroups";
 	public static final String PATH_NUT_TYPES = "NutTypes";
-	public static final String PATH_PACKAGING_LEVELS = "PackagingLevels";
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_NUTS = "Nuts";
 	public static final String PATH_INGS = "Ings";

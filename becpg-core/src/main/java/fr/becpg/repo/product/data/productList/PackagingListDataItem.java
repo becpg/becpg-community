@@ -18,7 +18,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
 
-	private String pkgLevel;
+	private PackagingLevel pkgLevel;
 
 	private Boolean isMaster;
 
@@ -46,11 +46,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListPkgLevel")
-	public String getPkgLevel() {
+	public PackagingLevel getPkgLevel() {
 		return pkgLevel;
 	}
 
-	public void setPkgLevel(String pkgLevel) {
+	public void setPkgLevel(PackagingLevel pkgLevel) {
 		this.pkgLevel = pkgLevel;
 	}
 
@@ -90,7 +90,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	 * @param pkgLevel
 	 * @param product
 	 */
-	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, String pkgLevel, Boolean isMaster, NodeRef product) {
+	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster, NodeRef product) {
 
 		setNodeRef(nodeRef);
 		setQty(qty);

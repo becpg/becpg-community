@@ -4126,13 +4126,6 @@
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packThirdLevel" id="2676">
             <property name="nullsOrdering">nulls lowest</property>
-            <list-property name="computedColumns">
-                <structure>
-                    <property name="name">nbFinishedProductThirdLevel</property>
-                    <expression name="expression">row["packagingListQty"]*row["palletBoxesPerPallet"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-            </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">itemType</property>
@@ -4286,11 +4279,6 @@
                     <structure>
                         <property name="position">12</property>
                         <property name="name">palletHeight</property>
-                        <property name="dataType">integer</property>
-                    </structure>
-                    <structure>
-                        <property name="position">13</property>
-                        <property name="name">nbFinishedProductThirdLevel</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -4562,6 +4550,378 @@
           </design:attributes>
           <design:usageHints>
             <design:label>palletBoxesPerPallet</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packagingLevelMesures" id="2713">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">tarePkgLevel1</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">tarePkgLevel1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeightPkgLevel1</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">netWeightPkgLevel1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">grossWeightPkgLevel1</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">grossWeightPkgLevel1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">tarePkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">tarePkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeightPkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">netWeightPkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">grossWeightPkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">grossWeightPkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">tarePkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">tarePkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeightPkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">netWeightPkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">grossWeightPkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">grossWeightPkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nbProductsPkgLevel2</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nbProductsPkgLevel2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nbProductsPkgLevel3</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nbProductsPkgLevel3</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">tarePkgLevel1</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">netWeightPkgLevel1</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">grossWeightPkgLevel1</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">tarePkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">netWeightPkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">grossWeightPkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">tarePkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">netWeightPkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">grossWeightPkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">nbProductsPkgLevel2</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">nbProductsPkgLevel3</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">tarePkgLevel1</property>
+                    <property name="nativeName">tarePkgLevel1</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">netWeightPkgLevel1</property>
+                    <property name="nativeName">netWeightPkgLevel1</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">grossWeightPkgLevel1</property>
+                    <property name="nativeName">grossWeightPkgLevel1</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">tarePkgLevel2</property>
+                    <property name="nativeName">tarePkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">netWeightPkgLevel2</property>
+                    <property name="nativeName">netWeightPkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">grossWeightPkgLevel2</property>
+                    <property name="nativeName">grossWeightPkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">tarePkgLevel3</property>
+                    <property name="nativeName">tarePkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">netWeightPkgLevel3</property>
+                    <property name="nativeName">netWeightPkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">grossWeightPkgLevel3</property>
+                    <property name="nativeName">grossWeightPkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">nbProductsPkgLevel2</property>
+                    <property name="nativeName">nbProductsPkgLevel2</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">nbProductsPkgLevel3</property>
+                    <property name="nativeName">nbProductsPkgLevel3</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList]#:#{tarePkgLevel1;DOUBLE;/@tarePkgLevel1},{netWeightPkgLevel1;DOUBLE;/@netWeightPkgLevel1},{grossWeightPkgLevel1;DOUBLE;/@grossWeightPkgLevel1},{tarePkgLevel2;DOUBLE;/@tarePkgLevel2},{netWeightPkgLevel2;DOUBLE;/@netWeightPkgLevel2},{grossWeightPkgLevel2;DOUBLE;/@grossWeightPkgLevel2},{tarePkgLevel3;DOUBLE;/@tarePkgLevel3},{netWeightPkgLevel3;DOUBLE;/@netWeightPkgLevel3},{grossWeightPkgLevel3;DOUBLE;/@grossWeightPkgLevel3},{nbProductsPkgLevel2;DOUBLE;/@nbProductsPkgLevel2},{nbProductsPkgLevel3;DOUBLE;/@nbProductsPkgLevel3}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>tarePkgLevel1</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>tarePkgLevel1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>netWeightPkgLevel1</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>netWeightPkgLevel1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>grossWeightPkgLevel1</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>grossWeightPkgLevel1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>tarePkgLevel2</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>tarePkgLevel2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>netWeightPkgLevel2</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>netWeightPkgLevel2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>grossWeightPkgLevel2</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>grossWeightPkgLevel2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>tarePkgLevel3</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>tarePkgLevel3</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>netWeightPkgLevel3</design:name>
+              <design:position>8</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>netWeightPkgLevel3</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>grossWeightPkgLevel3</design:name>
+              <design:position>9</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>grossWeightPkgLevel3</design:label>
             <design:formattingHints/>
           </design:usageHints>
         </design:resultColumnDefinitions>
@@ -4993,34 +5353,6 @@
                                         </structure>
                                     </list-property>
                                     <property name="resultSetColumn">productEAN</property>
-                                </data>
-                            </cell>
-                        </row>
-                        <row id="2544">
-                            <cell id="2545">
-                                <label id="2503">
-                                    <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Poids net :</text-property>
-                                </label>
-                            </cell>
-                            <cell id="2546">
-                                <data id="2508">
-                                    <property name="dataSet">Product</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">productQty</property>
-                                            <text-property name="displayName">productQty</text-property>
-                                            <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "P"){
-dataSetRow["productDensity"] + " kg"
-}
-else{
-dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
-}</expression>
-                                            <property name="dataType">string</property>
-                                            <property name="allowExport">true</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">productQty</property>
                                 </data>
                             </cell>
                         </row>
@@ -6025,6 +6357,9 @@ dataSetRow["mblMaxi"]
         <grid id="2314">
             <property name="style">becpg-table</property>
             <property name="width">100%</property>
+            <column id="2757">
+                <property name="style">becpg-col-border</property>
+            </column>
             <column id="2316">
                 <property name="style">becpg-col-border</property>
             </column>
@@ -6037,6 +6372,9 @@ dataSetRow["mblMaxi"]
             <column id="2319">
                 <property name="style">becpg-col-border</property>
             </column>
+            <column id="2763">
+                <property name="style">becpg-col-border</property>
+            </column>
             <column id="2321">
                 <property name="style">becpg-col-border</property>
             </column>
@@ -6045,8 +6383,8 @@ dataSetRow["mblMaxi"]
             </column>
             <row id="2323">
                 <property name="style">becpg-col-header</property>
-                <cell id="2324">
-                    <property name="colSpan">4</property>
+                <cell id="2753">
+                    <property name="colSpan">5</property>
                     <property name="rowSpan">1</property>
                     <label id="2359">
                         <property name="style">becpg-col-header</property>
@@ -6054,8 +6392,8 @@ dataSetRow["mblMaxi"]
                         <text-property name="text">CONDITIONNEMENT UVC</text-property>
                     </label>
                 </cell>
-                <cell id="2329">
-                    <property name="colSpan">2</property>
+                <cell id="2759">
+                    <property name="colSpan">3</property>
                     <property name="rowSpan">1</property>
                     <label id="2360">
                         <property name="style">becpg-col-header</property>
@@ -6066,8 +6404,8 @@ dataSetRow["mblMaxi"]
             </row>
             <row id="2332">
                 <property name="style">becpg-row-border</property>
-                <cell id="2333">
-                    <property name="colSpan">4</property>
+                <cell id="2754">
+                    <property name="colSpan">5</property>
                     <property name="rowSpan">1</property>
                     <table id="2379">
                         <property name="borderBottomColor">#FFFFFF</property>
@@ -6100,13 +6438,9 @@ dataSetRow["packagingListProduct"]
                             </row>
                         </detail>
                     </table>
-                    <label id="2488">
-                        <property name="fontStyle">italic</property>
-                        <text-property name="text">Agréés contact alimentaire</text-property>
-                    </label>
                 </cell>
-                <cell id="2338">
-                    <property name="colSpan">2</property>
+                <cell id="2760">
+                    <property name="colSpan">3</property>
                     <property name="rowSpan">1</property>
                     <table id="2680">
                         <property name="borderBottomColor">#FFFFFF</property>
@@ -6282,9 +6616,26 @@ dataSetRow["packagingListProduct"]
                     </table>
                 </cell>
             </row>
-            <row id="2370">
-                <property name="style">becpg-col-header</property>
+            <row id="2768">
+                <property name="style">becpg-row-border</property>
                 <property name="fontWeight">normal</property>
+                <cell id="2769">
+                    <property name="colSpan">8</property>
+                    <property name="rowSpan">1</property>
+                    <label id="2488">
+                        <property name="fontStyle">italic</property>
+                        <text-property name="text">(*) Agréé contact alimentaire</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="2370">
+                <property name="style">becpg-row-border</property>
+                <property name="fontWeight">normal</property>
+                <cell id="2755">
+                    <label id="2758">
+                        <text-property name="text">SPCB</text-property>
+                    </label>
+                </cell>
                 <cell id="2372">
                     <label id="2390">
                         <text-property name="text">Dimension (Lxlxh) en mm</text-property>
@@ -6307,6 +6658,11 @@ env en kg</text-property>
 env en kg</text-property>
                     </label>
                 </cell>
+                <cell id="2761">
+                    <label id="2764">
+                        <text-property name="text">PCB</text-property>
+                    </label>
+                </cell>
                 <cell id="2377">
                     <label id="2395">
                         <text-property name="text">Dimension (Lxlxh) en mm</text-property>
@@ -6321,76 +6677,25 @@ env en kg</text-property>
             </row>
             <row id="2361">
                 <property name="style">becpg-row-border</property>
-                <cell id="2363">
-                    <data id="2457">
-                        <property name="dataSet">packFirstLevelMaster</property>
+                <cell id="2756">
+                    <data id="2508">
+                        <property name="dataSet">Product</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">itemType</property>
-                                <text-property name="displayName">itemType</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
+                                <property name="name">productQty</property>
+                                <text-property name="displayName">SPCB</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"]</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
-                            <structure>
-                                <property name="name">packagingListProduct</property>
-                                <text-property name="displayName">packagingListProduct</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">legalName</property>
-                                <text-property name="displayName">legalName</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">packagingListQty</property>
-                                <text-property name="displayName">packagingListQty</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["packagingListQty"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">packagingListUnit</property>
-                                <text-property name="displayName">packagingListUnit</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["packagingListUnit"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">packagingListPkgLevel</property>
-                                <text-property name="displayName">packagingListPkgLevel</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["packagingListPkgLevel"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">tare</property>
-                                <text-property name="displayName">tare</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["tare"]</expression>
-                                <property name="dataType">float</property>
-                            </structure>
-                            <structure>
-                                <property name="name">packagingListIsMaster</property>
-                                <text-property name="displayName">packagingListIsMaster</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["packagingListIsMaster"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">length</property>
-                                <text-property name="displayName">length</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["length"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">width</property>
-                                <text-property name="displayName">width</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["width"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">height</property>
-                                <text-property name="displayName">height</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["height"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">productQty</property>
+                    </data>
+                </cell>
+                <cell id="2363">
+                    <data id="2767">
+                        <property name="dataSet">packFirstLevelMaster</property>
+                        <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">pmDimensions</property>
                                 <text-property name="displayName">pmDimensions</text-property>
@@ -6402,34 +6707,74 @@ env en kg</text-property>
                     </data>
                 </cell>
                 <cell id="2364">
-                    <data id="2683">
-                        <property name="dataSet">packFirstLevelMaster</property>
+                    <data id="2766">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">tare</property>
-                                <text-property name="displayName">tare</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["tare"]</expression>
+                                <property name="name">tarePkgLevel1</property>
+                                <text-property name="displayName">tarePkgLevel1</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <property name="resultSetColumn">tare</property>
+                        <property name="resultSetColumn">tarePkgLevel1</property>
                     </data>
                 </cell>
                 <cell id="2365">
                     <data id="2684">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
                         <property name="dataSet">Product</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">productQty</property>
                                 <text-property name="displayName">productQty</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productQty"]</expression>
+                                <expression name="expression" type="javascript">dataSetRow["productQty"] * dataSetRow["productDensity"]</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <property name="resultSetColumn">productQty</property>
                     </data>
                 </cell>
-                <cell id="2366"/>
+                <cell id="2366">
+                    <data id="2714">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">grossWeightPkgLevel1</property>
+                                <text-property name="displayName">grossWeightPkgLevel1</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel1"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">grossWeightPkgLevel1</property>
+                    </data>
+                </cell>
+                <cell id="2762">
+                    <data id="2765">
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nbProductsPkgLevel2</property>
+                                <text-property name="displayName">nbProductsPkgLevel2</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nbProductsPkgLevel2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nbProductsPkgLevel2</property>
+                    </data>
+                </cell>
                 <cell id="2368">
                     <data id="2455">
                         <property name="dataSet">packSecondLevelMaster</property>
@@ -6444,202 +6789,194 @@ env en kg</text-property>
                         <property name="resultSetColumn">pmDimensions</property>
                     </data>
                 </cell>
-                <cell id="2369"/>
+                <cell id="2369">
+                    <data id="2751">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">grossWeightPkgLevel2</property>
+                                <text-property name="displayName">grossWeightPkgLevel2</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel2"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">grossWeightPkgLevel2</property>
+                    </data>
+                </cell>
             </row>
         </grid>
         <label id="2712"/>
-        <table id="2686">
+        <grid id="2716">
             <property name="style">becpg-table</property>
-            <property name="width">100%</property>
-            <property name="dataSet">packThirdLevel</property>
-            <list-property name="visibility">
-                <structure>
-                    <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
-                </structure>
-            </list-property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">itemType</property>
-                    <text-property name="displayName">itemType</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListProduct</property>
-                    <text-property name="displayName">packagingListProduct</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">legalName</property>
-                    <text-property name="displayName">legalName</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListQty</property>
-                    <text-property name="displayName">packagingListQty</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListQty"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListUnit</property>
-                    <text-property name="displayName">packagingListUnit</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListUnit"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">packagingListPkgLevel</property>
-                    <text-property name="displayName">packagingListPkgLevel</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListPkgLevel"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">pmDimensions</property>
-                    <text-property name="displayName">pmDimensions</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">tare</property>
-                    <text-property name="displayName">tare</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["tare"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletLayers</property>
-                    <text-property name="displayName">palletLayers</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletLayers"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletBoxesPerLayer</property>
-                    <text-property name="displayName">palletBoxesPerLayer</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletBoxesPerLayer"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletBoxesPerPallet</property>
-                    <text-property name="displayName">palletBoxesPerPallet</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">nbFinishedProductThirdLevel</property>
-                    <text-property name="displayName">nbFinishedProductThirdLevel</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["nbFinishedProductThirdLevel"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">palletHeight</property>
-                    <text-property name="displayName">palletHeight</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["palletHeight"]</expression>
-                    <property name="dataType">integer</property>
-                </structure>
-            </list-property>
-            <column id="2705"/>
-            <column id="2706">
+            <column id="2717"/>
+            <column id="2718">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2707">
+            <column id="2719">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2708">
+            <column id="2720">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2709">
+            <column id="2721">
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2710">
+            <column id="2722">
                 <property name="style">becpg-col-border</property>
             </column>
-            <detail>
-                <row id="2687">
-                    <property name="style">becpg-col-header</property>
-                    <cell id="2688">
-                        <property name="colSpan">6</property>
-                        <property name="rowSpan">1</property>
-                        <data id="2445">
-                            <property name="style">becpg-col-header</property>
-                            <structure name="stringFormat">
-                                <property name="category">></property>
-                                <property name="pattern">></property>
+            <row id="2723">
+                <cell id="2724">
+                    <property name="colSpan">6</property>
+                    <property name="rowSpan">1</property>
+                    <data id="2744">
+                        <property name="fontWeight">bold</property>
+                        <property name="textAlign">center</property>
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">legalName</property>
+                                <text-property name="displayName">legalName</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                <property name="dataType">string</property>
                             </structure>
-                            <property name="textAlign">center</property>
-                            <property name="resultSetColumn">legalName</property>
-                        </data>
-                    </cell>
-                </row>
-                <row id="2689">
-                    <property name="style">becpg-row-border</property>
-                    <property name="fontWeight">normal</property>
-                    <cell id="2690">
-                        <label id="2446">
-                            <text-property name="text">Nombre emb/couche</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2691">
-                        <label id="2447">
-                            <text-property name="text">Nombre 
+                        </list-property>
+                        <property name="resultSetColumn">legalName</property>
+                    </data>
+                </cell>
+            </row>
+            <row id="2730">
+                <property name="style">becpg-row-border</property>
+                <cell id="2731">
+                    <label id="2446">
+                        <text-property name="text">Nombre emb/couche</text-property>
+                    </label>
+                </cell>
+                <cell id="2732">
+                    <label id="2447">
+                        <text-property name="text">Nombre 
 couche/palette</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2556">
-                        <label id="2448">
-                            <text-property name="text">Nombre 
+                    </label>
+                </cell>
+                <cell id="2733">
+                    <label id="2448">
+                        <text-property name="text">Nombre 
 emb/palette </text-property>
-                        </label>
-                    </cell>
-                    <cell id="2692">
-                        <label id="2449">
-                            <text-property name="text">Nombre UVC/palette</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2693">
-                        <label id="2450">
-                            <text-property name="text">Poids brut 
+                    </label>
+                </cell>
+                <cell id="2734">
+                    <label id="2449">
+                        <text-property name="text">Nombre UVC/palette</text-property>
+                    </label>
+                </cell>
+                <cell id="2735">
+                    <label id="2450">
+                        <text-property name="text">Poids brut 
 env en kg</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2694">
-                        <label id="2451">
-                            <text-property name="text">Hauteur maxi
+                    </label>
+                </cell>
+                <cell id="2736">
+                    <label id="2451">
+                        <text-property name="text">Hauteur maxi
 en m</text-property>
-                        </label>
-                    </cell>
-                </row>
-                <row id="2506">
-                    <property name="style">becpg-row-border</property>
-                    <cell id="2696">
-                        <data id="2435">
-                            <property name="resultSetColumn">palletBoxesPerLayer</property>
-                        </data>
-                    </cell>
-                    <cell id="2697">
-                        <data id="2436">
-                            <property name="resultSetColumn">palletLayers</property>
-                        </data>
-                    </cell>
-                    <cell id="2698">
-                        <data id="2437">
-                            <property name="resultSetColumn">palletBoxesPerPallet</property>
-                        </data>
-                    </cell>
-                    <cell id="2699">
-                        <data id="2483">
-                            <property name="resultSetColumn">nbFinishedProductThirdLevel</property>
-                        </data>
-                    </cell>
-                    <cell id="2511"/>
-                    <cell id="2512">
-                        <data id="2700">
-                            <property name="resultSetColumn">palletHeight</property>
-                        </data>
-                    </cell>
-                </row>
-            </detail>
-        </table>
+                    </label>
+                </cell>
+            </row>
+            <row id="2737">
+                <property name="style">becpg-row-border</property>
+                <cell id="2738">
+                    <data id="2747">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletBoxesPerLayer</property>
+                                <text-property name="displayName">palletBoxesPerLayer</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletBoxesPerLayer"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletBoxesPerLayer</property>
+                    </data>
+                </cell>
+                <cell id="2739">
+                    <data id="2748">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletLayers</property>
+                                <text-property name="displayName">palletLayers</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletLayers"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletLayers</property>
+                    </data>
+                </cell>
+                <cell id="2740">
+                    <data id="2749">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletBoxesPerPallet</property>
+                                <text-property name="displayName">palletBoxesPerPallet</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletBoxesPerPallet</property>
+                    </data>
+                </cell>
+                <cell id="2741">
+                    <data id="2752">
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">nbProductsPkgLevel3</property>
+                                <text-property name="displayName">nbProductsPkgLevel3</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nbProductsPkgLevel3"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">nbProductsPkgLevel3</property>
+                    </data>
+                </cell>
+                <cell id="2742">
+                    <data id="2745">
+                        <structure name="numberFormat">
+                            <property name="category">Fixed</property>
+                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                        </structure>
+                        <property name="dataSet">packagingLevelMesures</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">grossWeightPkgLevel3</property>
+                                <text-property name="displayName">grossWeightPkgLevel3</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["grossWeightPkgLevel3"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">grossWeightPkgLevel3</property>
+                    </data>
+                </cell>
+                <cell id="2743">
+                    <data id="2746">
+                        <property name="dataSet">packThirdLevel</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">palletHeight</property>
+                                <text-property name="displayName">palletHeight</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["palletHeight"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                        </list-property>
+                        <property name="resultSetColumn">palletHeight</property>
+                    </data>
+                </cell>
+            </row>
+        </grid>
     </body>
     <list-property name="images">
         <structure>
