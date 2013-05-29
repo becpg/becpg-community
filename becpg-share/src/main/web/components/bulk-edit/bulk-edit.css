@@ -7,7 +7,8 @@
 .bulk-edit .bulk-edit-props-container{
 	 margin-left: 1em;
 	 padding: 10px;
-	 height: 10em;
+	 height: 11em;
+	 overflow-x: auto;
 }
 
 
