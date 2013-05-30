@@ -272,7 +272,7 @@
                         desc = '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/help-docs-bw-32.png" />';
                      } else {
                         var thumbName = record.fileName, recordSiteName = $isValueSet(record.location.site) ? record.location.site
-                              : null, extn = name.substring(name.lastIndexOf(".")), nodeRef = new Alfresco.util.NodeRef(
+                              : null, extn = thumbName.substring(thumbName.lastIndexOf(".")), nodeRef = new Alfresco.util.NodeRef(
                               record.nodeRef), docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName,
                               record.nodeRef, record.itemType);
 

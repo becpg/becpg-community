@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -110,7 +111,7 @@ public class RepoServiceImpl implements RepoService {
 			logger.debug("Create folder : " + name);
 			
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-	    	properties.put(ContentModel.PROP_NAME, name);	    		    	
+	    	properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanFolderName(name));	    		    	
 	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
 	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(path)), 

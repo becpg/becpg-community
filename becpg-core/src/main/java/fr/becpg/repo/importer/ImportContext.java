@@ -27,6 +27,8 @@ public class ImportContext {
 	/** The parent node ref. */
 	private NodeRef parentNodeRef;	
 	
+	
+	private NodeRef entityNodeRef;	
 
 	/** The type. */
 	private QName type;
@@ -258,6 +260,15 @@ public class ImportContext {
 
 	public List<String[]> getLines() {
 		return lines;
+	}
+
+	
+	public NodeRef getEntityNodeRef() {
+		return entityNodeRef;
+	}
+
+	public void setEntityNodeRef(NodeRef entityNodeRef) {
+		this.entityNodeRef = entityNodeRef;
 	}
 
 	/**

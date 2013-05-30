@@ -282,9 +282,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				assocName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 			}
 
-			
-			
-			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(), ImportHelper.cleanProperties(properties)).getChildRef();
+			nodeRef = nodeService.createNode(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, assocName, importContext.getType(),
+					ImportHelper.cleanProperties(properties)).getChildRef();
 		} else if (importContext.isDoUpdate()) {
 
 			if (logger.isDebugEnabled()) {
@@ -293,12 +292,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			nodeService.setType(nodeRef, importContext.getType());
 
 			for (Map.Entry<QName, Serializable> entry : properties.entrySet()) {
-				 if(entry.getValue()!=null && ImportHelper.NULL_VALUE.equals(entry.getValue())){		
-					 nodeService.removeProperty(nodeRef, entry.getKey());
-				 } else  {
-					 nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
-				 }
-				 
+				if (entry.getValue() != null && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
+					nodeService.removeProperty(nodeRef, entry.getKey());
+				} else {
+					nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
+				}
+
 			}
 		} else {
 			logger.info("Update mode is not enabled so no update is done.");
@@ -326,6 +325,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @throws ParseException
 	 * @throws ImporterException
 	 */
+	@SuppressWarnings("unchecked")
 	protected Map<QName, Serializable> getNodePropertiesToImport(ImportContext importContext, List<String> values) throws ParseException, ImporterException {
 
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -347,10 +347,32 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					} else {
 
 						if (dataType.isMatch(DataTypeDefinition.NODE_REF)) {
-							value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
+							if (propDef.isMultiValued()) {
+
+								value = null;
+
+								String[] arrValue = values.get(z_idx).split(RepoConsts.MULTI_VALUES_SEPARATOR);
+
+								for (String v : arrValue) {
+									if (!v.isEmpty()) {
+										NodeRef nodeRef = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, v, properties);
+										if(nodeRef!=null){
+											if(value==null){
+												value= new ArrayList<NodeRef>();
+											}
+											((List<NodeRef>) value).add(nodeRef);
+										}
+									}
+								}
+
+							} else {
+
+								value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
+							}
 						} else {
 							value = ImportHelper.loadPropertyValue(importContext, values, z_idx);
 						}
+
 					}
 
 					if (value != null) {
@@ -398,14 +420,17 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					for (AssociationRef assocRef : assocRefs) {
 						NodeRef targetRef = assocRef.getTargetRef();
 						if (targetRefs.contains(targetRef)) {
+							logger.debug("Assoc already present");
 							targetRefs.remove(targetRef);
 						} else {
+							logger.debug("Remove assocs :"+ assocDef.getName());
 							nodeService.removeAssociation(nodeRef, targetRef, assocDef.getName());
 						}
 					}
 
 					// add new associations, the rest
 					for (NodeRef targetRef : targetRefs) {
+						logger.debug("Add assocs :"+ assocDef.getName());
 						nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
 					}
 				}
@@ -954,7 +979,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					if (ImportHelper.NULL_VALUE.equals(properties.get(attribute))) {
 						queryPath += LuceneHelper.getCondIsNullValue(attribute, LuceneHelper.Operator.AND);
 					} else {
-					
+
 						// +@cm\\:localName:%s
 						queryPath += LuceneHelper.getCondEqualValue(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null,
 								LuceneHelper.Operator.AND);

@@ -227,6 +227,11 @@
 							 * Parent nodeRef
 							 */
 							nodeRef : null,
+							
+							/**
+							 * Display thumbnail column
+							 */
+							showThumbnails : false,
 						},
 
 						/**
@@ -356,6 +361,48 @@
 								}
 							};
 						},
+						/**
+                         * Returns selector custom datacell formatter
+                         * 
+                         * @method fnRenderCellSelected
+                         */
+                        fnRenderCellThumbnail : function BulkEdit_fnRenderCellThumbnail() {
+                 
+                            /**
+                             * Selector custom datacell formatter
+                             * 
+                             * @method renderCellSelected
+                             * @param elCell
+                             *            {object}
+                             * @param oRecord
+                             *            {object}
+                             * @param oColumn
+                             *            {object}
+                             * @param oData
+                             *            {object|string}
+                             */
+                            return function BulkEdit_function_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
+                               var columnWidth = 100, record = oRecord.getData(), desc = "";
+
+                               record.jsNode = {};
+                               record.jsNode.type = record.nodeType;
+
+                               var thumbName = record.itemData["prop_cm_name"].value, nodeRef = new Alfresco.util.NodeRef(
+                                        record.nodeRef), extn = thumbName.substring(thumbName.lastIndexOf("."));
+
+                                desc = '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri + '/content/thumbnails/doclib?c=queue&ph=true" alt="' + extn + '" title="' + $html(thumbName) + '" /></span>';
+                               
+                               
+
+                               oColumn.width = columnWidth;
+
+                               Dom.setStyle(elCell, "width", oColumn.width + "px");
+                               Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+
+                               elCell.innerHTML = desc;
+                            };
+                        },
+						
 						/**
 						 * Returns actions custom datacell formatter
 						 * 
@@ -1043,6 +1090,13 @@
 										disabled : true,
 										value : "export"
 									});
+							
+							this.widgets.showThumbnailsButton = Alfresco.util.createYUIButton(this, "show-thumbnails",
+                                  this.onShowThumbnails, {
+   							         type:"checkbox",  
+   							         value:this.options.showThumbnails,  
+   							         checked:this.options.showThumbnails 
+                                  });
 
 							// Assume no list chosen for now
 							Dom.removeClass(this.id + "-selectTypeMessage", "hidden");
@@ -1308,6 +1362,17 @@
 								formatter : this.fnRenderCellSelected(),
 								width : 16
 							} ];
+							
+							if(this.options.showThumbnails){
+							   columnDefinitions.push({
+							         key : "thumbnail",
+		                             label : "",
+		                             sortable : false,
+		                             formatter : this.fnRenderCellThumbnail(),
+		                             width : 100  } 
+							   
+							   );
+							}
 
 							var column;
 							for ( var i = 0, ii = this.dataTableColumn.length; i < ii; i++) {
@@ -1339,6 +1404,12 @@
 								} else if (keyB == "nodeRef") {
 									return 1;
 								}
+								
+								if (keyA == "thumbnail") {
+                                   return -1;
+                                } else if (keyB == "thumbnail") {
+                                   return 1;
+                                }
 
 								if (keyA == "prop_cm_name" && keyB != "prop_bcpg_code") {
 									return -1;
@@ -1797,6 +1868,10 @@
 							window.location = Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/export.csv?"
 									+ this._buildDataParamsUrl() + "&fields=" + fields;
 						},
+						onShowThumbnails : function BulkEdit_onShowThumbnails() {
+						  this.options.showThumbnails = ! this.options.showThumbnails;
+                          this.onBulkEditShow.call(this);
+                       },
 
 						onEditSelected : function BulkEdit_onEditSelected() {
 
