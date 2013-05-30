@@ -11,7 +11,6 @@
 	 overflow-x: auto;
 }
 
-
 .bulk-edit .bulk-edit-props-container  li {
     line-height: 2em;
   }
@@ -79,6 +78,11 @@
    float: right;
 }
 
+
+.bulk-edit .bulk-edit-bar .show-thumbnails {
+    float: right;
+}
+
 .bulk-edit .bulk-edit-bar .paginator
 {
    float: left;
@@ -132,6 +136,13 @@
    background: url(../images/filetypes/xls-file-16.png) no-repeat 12px 4px;
    padding-left: 24px;
 }
+
+.bulk-edit .show-thumbnails span.first-child
+{
+   background: url(../images/filetypes/jpeg-file-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 
 
 /* Data Table */

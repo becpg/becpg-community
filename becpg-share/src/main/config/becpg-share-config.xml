@@ -145,6 +145,8 @@
 			<itemType name="bcpg:supplier" />
 			<itemType name="bcpg:client" />
 
+			<itemType name="cm:content" />
+
 			<itemType name="ext1:customType" />
 		</itemTypes>
 	</config>

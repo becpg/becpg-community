@@ -156,11 +156,13 @@
 
 	<bean id="importEntityListAspectVisitor"
 		class="fr.becpg.repo.importer.impl.ImportEntityListAspectVisitor"
-		parent="parentImportVisitor" />
+		parent="parentImportVisitor" >
+	</bean>	
 
 	<bean id="importEntityListItemVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListItemVisitor"
 		parent="parentImportVisitor">
 		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="associationService" ref="associationService"/>
 	</bean>
 
 

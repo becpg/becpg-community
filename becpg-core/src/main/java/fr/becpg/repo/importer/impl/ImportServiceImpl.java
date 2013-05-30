@@ -37,6 +37,7 @@ import org.dom4j.io.SAXReader;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -373,7 +374,7 @@ public class ImportServiceImpl implements ImportService {
 
 		while (importContext.getImportIndex() < lastIndex && (arrStr = importContext.readLine()) != null) {
 
-			String prefix = ImportHelper.cleanValue(arrStr[COLUMN_PREFIX]);
+			String prefix = PropertiesHelper.cleanValue(arrStr[COLUMN_PREFIX]);
 
 			if (prefix.equals(PFX_PATH)) {
 
@@ -519,7 +520,7 @@ public class ImportServiceImpl implements ImportService {
 					List<String> values = new ArrayList<String>(arrStr.length);
 					for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
 
-						String value = ImportHelper.cleanValue(arrStr[z_idx]);
+						String value = PropertiesHelper.cleanValue(arrStr[z_idx]);
 						values.add(value);
 
 						if (!value.isEmpty()) {

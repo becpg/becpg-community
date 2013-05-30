@@ -1,6 +1,6 @@
 <alfresco-config>
 
-		<config evaluator="model-type" condition="sec:aclGroup">
+	<config evaluator="model-type" condition="sec:aclGroup">
 		<forms>
 			<form id="bulk-edit">
 				<field-visibility>
@@ -9,7 +9,18 @@
 					<show id="sec:nodeAspects" />
 				</field-visibility>
 			</form>
-			
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="cm:content">
+		<forms>
+			<form id="bulk-edit">
+				<field-visibility>
+					<show id="cm:name" />
+					<show force="true" id="cm:title" />
+					<show force="true" id="cm:description" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	

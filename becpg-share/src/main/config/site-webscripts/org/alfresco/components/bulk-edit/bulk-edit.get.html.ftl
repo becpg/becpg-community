@@ -54,7 +54,7 @@
 			      </div>
 			      <div id="${el}-itemProps-container" class="bulk-edit-props-container"></div>
 			   </div>
-			   <div id="${el}-bulk-editBar" class="yui-ge bulk-edit-bar flat-button theme-bg-color-3">
+			   <div id="${el}-bulk-editBar" class="yui-gc bulk-edit-bar flat-button theme-bg-color-3">
 			      <div class="yui-u first align-center">
 			         <div class="item-select">
 			            <button id="${el}-itemSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select")}</button>
@@ -75,19 +75,26 @@
 				               </span>
 				            </span>
 				      </div>
-			         <div id="${el}-paginatorTop" class="paginator"></div>
+				      <div id="${el}-paginatorTop" class="paginator"></div>
 			      </div>
 			      <div class="yui-u align-right">
-			    	 <div class="items-per-page" style="visibility:hidden;">
+			    	   <div class="items-per-page" style="visibility:hidden;">
 			            <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
 			         </div>
-			           <div class="export-csv">
+			         <div class="export-csv">
 			            <span id="${el}-export-csv" class="yui-button yui-push-button">
 			               <span class="first-child">
 			                  <button type="button">${msg('button.exportCSV')}</button>
 			               </span>
 			            </span>
 			         </div>
+			          <div class="show-thumbnails"> 
+				            <span id="${el}-show-thumbnails" class="yui-button yui-checkbox-button">
+				               <span class="first-child">
+				                  <button type="button" >${msg("button.show-thumbnails")}</button>
+				               </span>
+				            </span>
+				      </div>
 			      </div>
 			   </div>
 			

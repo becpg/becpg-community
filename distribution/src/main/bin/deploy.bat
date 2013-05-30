@@ -19,20 +19,11 @@ rmdir /S /Q %SERVER%\webapps\alfresco
 xcopy %SERVER%\webapps\alfresco.war.setup %SERVER%\webapps\alfresco.war
 
 
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\alfresco-core-patch-*.amp %SERVER%\webapps\alfresco.war -force -
-nobackup 
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\becpg-controls-core-*.amp  %SERVER%\webapps\alfresco.war -force -
-nobackup
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\becpg-designer-core-*.amp  %SERVER%\webapps\alfresco.war -force -
-nobackup
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\becpg-core-*.amp %SERVER%\webapps\alfresco.war -force -nobackup
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\alfresco-googledocs-repo-*.amp %SERVER%\webapps\alfresco.war -
-force -nobackup
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\alfresco-core-patch-*.amp %SERVER%\webapps\alfresco.war -force -nobackup 
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\becpg-controls-core-*.amp  %SERVER%\webapps\alfresco.war -force -nobackup
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\becpg-designer-core-*.amp  %SERVER%\webapps\alfresco.war -force -nobackup
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\becpg-core-*.amp %SERVER%\webapps\alfresco.war -force -nobackup
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\alfresco-googledocs-repo-*.amp %SERVER%\webapps\alfresco.war -force -nobackup
 
 
 @echo "**********************************************************"
@@ -43,17 +34,10 @@ del /Q %SERVER%\webapps\share.war
 rmdir /S /Q %SERVER%\webapps\share
 xcopy %SERVER%\webapps\share.war.setup %SERVER%\webapps\share.war
 
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\becpg-controls-share-*.amp %SERVER%\webapps\share.war -force -
-nobackup 
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\becpg-designer-share-*.amp %SERVER%\webapps\share.war -force -
-nobackup 
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\becpg-share-*.amp %SERVER%\webapps\share.war -force -nobackup 
-"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  
-amps\alfresco-googledocs-share-*.amp %SERVER%\webapps\share.war -force 
--nobackup 
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\becpg-controls-share-*.amp %SERVER%\webapps\share.war -force -nobackup 
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\becpg-designer-share-*.amp %SERVER%\webapps\share.war -force -nobackup 
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\becpg-share-*.amp %SERVER%\webapps\share.war -force -nobackup 
+"%JAVA_HOME%\bin\java" -jar "%DEPLOY_ROOT%\alfresco-mmt.jar" install  amps\alfresco-googledocs-share-*.amp %SERVER%\webapps\share.war -force -nobackup 
 
 rmdir /S /Q %SERVER%/temp/*
 rmdir /S /Q %SERVER%/work/*

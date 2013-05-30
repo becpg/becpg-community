@@ -24,6 +24,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.importer.ImportContext;
 
 /**
@@ -120,7 +121,7 @@ public class ImportHelper{
 					
 					// clean name
 					if(qName.getLocalName().equals(ContentModel.PROP_NAME.getLocalName()))
-						value = cleanName((String)value);
+						value = PropertiesHelper.cleanName((String)value);
 				}
 				// Date
 				else if(dataType.isMatch(DataTypeDefinition.DATE) || dataType.isMatch(DataTypeDefinition.DATETIME)){
@@ -173,26 +174,7 @@ public class ImportHelper{
 		return value;		
 	 }
 	
-	/**
-	 * remove invalid characters.
-	 *
-	 * @param name the name
-	 * @return the string
-	 */
-	public static String cleanName(String name) {
-		/*(.*[\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$) */
-		return name!=null? name.replaceAll("([\"*\\><?/:|])", "-").trim(): null;
-	}	
 	
-	/**
-	 * remove invalid characters (trim).
-	 *
-	 * @param value the value
-	 * @return the string
-	 */
-	public static String cleanValue(String value) {		
-		return value!=null? value.trim(): null;		
-	}
 	
 	
 	public static Charset guestCharset(InputStream is, String readerCharset){
