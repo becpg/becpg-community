@@ -537,7 +537,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_TARE)) {
 			
 			// Sum tare			
-			if(dataItem.getPkgLevel() != null && dataItem.getVariants().contains(defaultVariantNodeRef)){
+			if(dataItem.getPkgLevel() != null && dataItem.getVariants() !=null && dataItem.getVariants().contains(defaultVariantNodeRef)){
 				
 				Double tare = FormulationHelper.getQty(dataItem) * FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
 				
