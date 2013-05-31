@@ -14,7 +14,7 @@ public class PropertiesHelper {
 	}	
 	
 	public static String cleanFolderName(String name) {
-		return cleanName(name).replaceAll(".","-");
+		return cleanName(name).replaceAll("\\.","-");
 	}	
 	
 	

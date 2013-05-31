@@ -122,7 +122,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
-		return !dataListFilter.isSimpleItem() && dataListFilter.getDataType()!=null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_COMPOLIST);
+		return !dataListFilter.isSimpleItem() && dataListFilter.getDataType()!=null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_COMPOLIST)
+				 && !dataListName.equals("WUsed");
 	}
 
 }
