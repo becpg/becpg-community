@@ -384,7 +384,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 				Element organoElt = organoListElt.addElement(TAG_ORGANO);
 				organoElt.addAttribute(BeCPGModel.ASSOC_ORGANOLIST_ORGANO.getLocalName(), organo);
-				organoElt.addAttribute(BeCPGModel.PROP_ORGANOLIST_VALUE.getLocalName(), dataItem.getValue());
+				//organoElt.addAttribute(BeCPGModel.PROP_ORGANOLIST_VALUE.getLocalName(), dataItem.getValue());
+				Element cDATAElt = organoElt.addElement(BeCPGModel.PROP_ORGANOLIST_VALUE.getLocalName());
+				cDATAElt.addCDATA(dataItem.getValue());				
 			}
 		}
 
@@ -455,15 +457,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				plantElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
 			}
 		}		
-	}
-
-	@Override
-	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
-
-		//if (attrKV.getKey().getName().equals(ContentModel.PROP_DESCRIPTION) || attrKV.getKey().getName().equals(BeCPGModel.PROP_PRODUCT_COMMENTS)) {
-		if(attrKV.getValue() != null && attrKV.getValue().contains(System.getProperty(LINE_SEPARATOR))){
-			extractMultiLines(entityElt, attrKV, attrKV.getKey().getName());
-		}
 	}
 	
 	private void loadPackaging(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef){			
@@ -569,7 +562,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			partElt.addAttribute(PackModel.PROP_PALLET_HEIGHT.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_HEIGHT)));
 			
 			// product per box and boxes per pallet
-			if(dataItem.getVariants().contains(defaultVariantNodeRef)){
+			if(dataItem.getVariants() != null && dataItem.getVariants().contains(defaultVariantNodeRef)){
 				packagingData.setProductPerBoxes(dataItem.getQty().intValue());
 				packagingData.setBoxesPerPallet((Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
 			}			
