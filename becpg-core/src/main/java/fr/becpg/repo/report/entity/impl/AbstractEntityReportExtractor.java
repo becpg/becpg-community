@@ -36,7 +36,6 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
-import fr.becpg.repo.variant.model.VariantData;
 
 public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
 
@@ -55,10 +54,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String ATTR_SET = "set";
 	protected static final String ATTR_NAME = "name";
 	protected static final String ATTR_VALUE = "value";
-	protected static final String LINE_SEPARATOR = "line.separator";
-	private static final String TAG_SUFFIX_LINES = "-lines";
-	private static final String TAG_SUFFIX_LINE = "-line";
-
+	
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
 	
@@ -139,48 +135,15 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		Document document = DocumentHelper.createDocument();
 		Element entityElt = document.addElement(TAG_ENTITY);
 
-		Element attributesElt = entityElt.addElement(TAG_ATTRIBUTES);
-
 		// add attributes at <product/> tag
 		Map<ClassAttributeDefinition, String> attributes = loadNodeAttributes(entityNodeRef);
 
 		for (Map.Entry<ClassAttributeDefinition, String> attrKV : attributes.entrySet()) {
 
-			entityElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
-			
-			loadMultiLinesAttributes(attrKV, entityElt);
+			Element cDATAElt = entityElt.addElement(attrKV.getKey().getName().getLocalName());
+			cDATAElt.addCDATA(attrKV.getValue());			
 		}
 
-		// add attributes at <product><attributes/></product> and group them by
-		// set
-		Map<String, List<String>> fieldsBySets = getFieldsBySets(entityNodeRef, REPORT_FORM_CONFIG_PATH);
-
-		// set
-		for (Map.Entry<String, List<String>> kv : fieldsBySets.entrySet()) {
-
-			// field
-			for (String fieldId : kv.getValue()) {
-
-				// look for value
-				Map.Entry<ClassAttributeDefinition, String> attrKV = null;
-				for (Map.Entry<ClassAttributeDefinition, String> a : attributes.entrySet()) {
-
-					if (a.getKey().getName().getPrefixString().equals(fieldId)) {
-						attrKV = a;
-						break;
-					}
-				}
-
-				if (attrKV != null) {
-
-					Element attributeElt = attributesElt.addElement(TAG_ATTRIBUTE);
-					attributeElt.addAttribute(ATTR_SET, kv.getKey());
-					attributeElt.addAttribute(ATTR_NAME, attrKV.getKey().getTitle());
-					attributeElt.addAttribute(ATTR_VALUE, attrKV.getValue());
-				}
-			}
-		}
-		
 		// render target assocs (plants...special cases)
 		loadTargetAssocs(entityNodeRef, entityElt);				
 		
@@ -292,19 +255,6 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		
 		return values;
 	}	
-
-	protected void extractMultiLines(Element entityElt, Map.Entry<ClassAttributeDefinition, String> kv, QName property){
-		
-		Element linesElt = entityElt.addElement(property.getLocalName() + TAG_SUFFIX_LINES);
-		if(kv.getValue() != null){
-			String[] textLines = kv.getValue().split(System.getProperty(LINE_SEPARATOR));
-
-			for (String textLine : textLines) {
-				Element lineElt = linesElt.addElement(property.getLocalName() + TAG_SUFFIX_LINE);
-				lineElt.addCDATA(textLine);
-			}
-		}
-	}
 
 	@SuppressWarnings("unchecked")
 	protected Map<String, List<String>> getFieldsBySets(NodeRef nodeRef, String reportFormConfigPath){
