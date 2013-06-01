@@ -16,8 +16,10 @@ import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -32,6 +34,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
@@ -48,9 +51,13 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy,
 	NodeServicePolicies.OnCreateAssociationPolicy,
 	NodeServicePolicies.OnDeleteAssociationPolicy,
-	CopyServicePolicies.OnCopyNodePolicy{
+	CopyServicePolicies.OnCopyNodePolicy,
+	NodeServicePolicies.OnCreateNodePolicy,
+	NodeServicePolicies.BeforeDeleteNodePolicy,
+	NodeServicePolicies.OnDeleteNodePolicy{
 
-	/** The logger. */
+	private static String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
+	
 	private static Log logger = LogFactory.getLog(ProjectListPolicy.class);
 
 	private ProjectService projectService;
@@ -62,6 +69,10 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	private EntityListDAO entityListDAO;
 	
 	private ProjectActivityService projectActivityService;
+	
+	private NodeArchiveService nodeArchiveService;
+	
+	private ProjectWorkflowService projectWorkflowService;
 	
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
@@ -81,6 +92,14 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
+	}
+
+	public void setNodeArchiveService(NodeArchiveService nodeArchiveService) {
+		this.nodeArchiveService = nodeArchiveService;
+	}
+
+	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
+		this.projectWorkflowService = projectWorkflowService;
 	}
 
 	/**
@@ -106,29 +125,61 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
 				ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_PREV_TASKS, new JavaBehaviour(this,
 						"onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
+				ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.ASSOC_DL_TASK, new JavaBehaviour(this,
+						"onCreateAssociation"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
 				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
 				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "getCopyCallback"));
+		// action duplicate use createNode API
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, 
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onCreateNode"));		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, 
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onCreateNode"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
+				ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
+				ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onDeleteNode"));
+		
 	}
 
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-		for (NodeRef projectNodeRef : pendingNodes) {
-			if(nodeService.exists(projectNodeRef)){
-				try {
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-					projectService.formulate(projectNodeRef);
-				} catch (FormulateException e) {
-					logger.error(e,e);
-				} finally {
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-				}
-			}			
+		if(logger.isDebugEnabled()){
+			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
 		}
+		
+		if(KEY_DELETED_TASK_LIST_ITEM.equals(key)){
+			for (NodeRef taskListItemNodeRef : pendingNodes) {
+				if(nodeService.exists(taskListItemNodeRef)){					
+					// delete workflow
+					projectWorkflowService.deleteWorkflowTask(taskListItemNodeRef);
+				}				
+			}
+		}
+		else{
+			for (NodeRef projectNodeRef : pendingNodes) {
+				if(nodeService.exists(projectNodeRef)){
+					try {
+						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+						projectService.formulate(projectNodeRef);
+					} catch (FormulateException e) {
+						logger.error(e,e);
+					} finally {
+						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+					}
+				}			
+			}
+		}		
 	}
 
 	@Override
@@ -176,7 +227,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION)
 				|| isPropChanged(before, after, ProjectModel.PROP_TL_START)
-				|| isPropChanged(before, after, ProjectModel.PROP_TL_END)){
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_END)
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_TASK_NAME)){
 			
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
@@ -190,18 +242,16 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	public void onUpdatePropertiesDeliverableList(NodeRef nodeRef, Map<QName, Serializable> before,
 			Map<QName, Serializable> after) {
 
-		String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
-		String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
+		boolean formulateProject = false;				
 
-		if (beforeState != null && afterState != null && !afterState.equals(beforeState)) {
+		if (isPropChanged(before, after, ProjectModel.PROP_DL_STATE)) {
 			
+			String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
+			String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
 			projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState);
 			
-			if (beforeState.equals(DeliverableState.InProgress.toString())
-					&& afterState.equals(DeliverableState.Completed.toString())) {
-				logger.debug("submit deliverable: " + nodeRef);
-				queueListItem(nodeRef);
-			} else if (beforeState.equals(DeliverableState.Completed.toString())
+			if (beforeState !=null && afterState != null 
+					&& beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
 
 				// re-open deliverable and disable policy to avoid every dl are re-opened
@@ -213,9 +263,17 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				finally{
 					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				}
-				
-				queueListItem(nodeRef);
 			}
+			
+			formulateProject = true;
+		}
+		
+		if(isPropChanged(before, after, ProjectModel.PROP_DL_DESCRIPTION)){
+			formulateProject = true;
+		}
+		
+		if(formulateProject){
+			queueListItem(nodeRef);
 		}
 	}
 	
@@ -230,14 +288,19 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 	
-	private void queueListItem(NodeRef listItemNodeRef){
+	private void queueListItem(NodeRef listItemNodeRef){		
 		NodeRef projectNodeRef =  entityListDAO.getEntity(listItemNodeRef);
-		queueNode(projectNodeRef);
+		if(projectNodeRef != null){
+			queueNode(projectNodeRef);
+		}		
 	}
 
 	@Override
-	public void onDeleteAssociation(AssociationRef assocRef) {
-		setPermission(assocRef, false);
+	public void onDeleteAssociation(AssociationRef assocRef) {		
+		if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)){
+			setPermission(assocRef, false);
+		}			
+		queueListItem(assocRef.getSourceRef());
 	}
 
 	@Override
@@ -245,9 +308,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)){
 			setPermission(assocRef, true);
 		}
-		else if(assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_PREV_TASKS)){
-			queueListItem(assocRef.getSourceRef());
-		}								
+		
+		queueListItem(assocRef.getSourceRef());
 	}
 	
 	private void setPermission(AssociationRef assocRef, boolean allow){
@@ -293,7 +355,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
         }
         
 		@Override
-		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {				
+		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
 			return true;
 		}
 
@@ -301,20 +363,55 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
 				Map<QName, Serializable> properties) {		
 			
-			if(ProjectModel.TYPE_TASK_LIST.equals(classQName)){
-				properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
-				properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
-				if(properties.containsKey(ProjectModel.PROP_TL_STATE)){
-					properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
-				}
-			}
-			else if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)){
-				if(properties.containsKey(ProjectModel.PROP_DL_STATE)){
-					properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
-				}
-			}
-			
-			return properties;
+			return resetProperties(classQName, properties);
 		}
+	}
+	
+	@Override
+	public void beforeDeleteNode(NodeRef nodeRef) {		
+		// we need to queue item before delete in order to have WUsed
+		queueListItem(nodeRef);		
+	}
+	
+	@Override
+	public void onDeleteNode(ChildAssociationRef childRef, boolean isArchived) {
+		
+		if(isArchived){			
+			NodeRef nodeRef = nodeArchiveService.getArchivedNode(childRef.getChildRef());
+			QName projectListType = nodeService.getType(nodeRef);
+			logger.debug("ProjectList policy delete type: " + projectListType + " nodeRef: " + nodeRef);
+
+			// we need to do it at the end
+			if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {	
+				projectService.deleteTask(nodeRef);		
+				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
+			}			
+		}	
+	}
+	
+	@Override
+	public void onCreateNode(ChildAssociationRef childRef) {
+		
+		// action duplicate use createNode API
+		nodeService.setProperties(childRef.getChildRef(), 
+				resetProperties(nodeService.getType(childRef.getChildRef()), nodeService.getProperties(childRef.getChildRef())));
+	}
+	
+	private Map<QName, Serializable> resetProperties(QName classQName, Map<QName, Serializable> properties){
+		
+		if(ProjectModel.TYPE_TASK_LIST.equals(classQName)){
+			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
+			if(properties.containsKey(ProjectModel.PROP_TL_STATE)){
+				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
+			}
+		}
+		else if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)){
+			if(properties.containsKey(ProjectModel.PROP_DL_STATE)){
+				properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
+			}
+		}
+		
+		return properties;
 	}
 }

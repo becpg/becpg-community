@@ -18,10 +18,12 @@ import fr.becpg.repo.project.ProjectActivityService;
 public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	private static String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
+	private static String PAGE_PROJECT = "entity-details?nodeRef=%s";
 
 	public static String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
 	public static String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";
 	public static String DELIVERABLE_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".deliverable-state";
+	public static String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
 	
 	private static Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
 
@@ -60,7 +62,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 		postStateChangeActivity(PROJECT_STATE_ACTIVITY,(String)nodeService.getProperty(projectNodeRef,ContentModel.PROP_NAME), projectNodeRef, beforeState, afterState, false);
 
 	}
-
+	
 	@Override
 	public void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef, String beforeState, String afterState) {
 		postStateChangeActivity(DELIVERABLE_STATE_ACTIVITY,(String)nodeService.getProperty(deliverableNodeRef,ProjectModel.PROP_DL_DESCRIPTION), deliverableNodeRef, beforeState, afterState, true);
@@ -68,7 +70,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 	}
 
 	private void postStateChangeActivity(String activityType,String title, NodeRef itemNodeRef, String beforeState, String afterState, boolean isItem) {
-		if (itemNodeRef != null) {
+		if (itemNodeRef != null && beforeState!=null && afterState!=null) {
 			try {
 				JSONObject data = new JSONObject();
 				if (isItem) {
@@ -91,6 +93,25 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	private NodeRef getProjectNodeRef(NodeRef listItemNodeRef) {
 		return entityListDAO.getEntity(listItemNodeRef);
+	}
+
+	@Override
+	public void postProjectCommentCreatedActivity(NodeRef projectNodeRef, String comment) {
+
+		if (projectNodeRef != null && comment != null) {
+			try {
+				JSONObject data = new JSONObject();
+				data.put(PostLookup.JSON_PAGE, String.format(PAGE_PROJECT, projectNodeRef));
+				data.put(PostLookup.JSON_NODEREF, projectNodeRef);
+				data.put("title", nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
+
+				activityService.postActivity(COMMENT_CREATED_ACTIVITY,
+						attributeExtractorService.extractSiteId(projectNodeRef), "comments", data.toString());
+
+			} catch (JSONException e) {
+				logger.error(e, e);
+			}
+		}
 	}
 
 }

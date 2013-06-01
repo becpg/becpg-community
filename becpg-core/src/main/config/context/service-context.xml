@@ -76,6 +76,11 @@
 		<property name="nodeService" ref="nodeService" />
 	</bean>
 
+	<bean id="commentsService" class="fr.becpg.repo.helper.CommentsService">
+		<property name="contentService" ref="contentService"/>
+		<property name="nodeService" ref="nodeService"/>
+	</bean>
+
 	<!-- List values plugins -->
 
 
