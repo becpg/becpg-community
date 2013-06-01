@@ -21,7 +21,6 @@ import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
@@ -48,10 +46,10 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 @Service
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy,
-		NodeServicePolicies.OnDeleteNodePolicy,
 		CopyServicePolicies.OnCopyNodePolicy{
 
-	/** The logger. */
+	private static String KEY_INIT_DL_CONTENT = "ProjectPolicy.InitDLContent";
+	
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
 
 	private EntityListDAO entityListDAO;
@@ -89,10 +87,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 						"onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));
-		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onDeleteNode"));
+				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));		
 		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
 				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "getCopyCallback"));
@@ -110,28 +105,21 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			
 			NodeRef projectTplNodeRef = assocRef.getTargetRef();
 			
-			if(logger.isDebugEnabled()){
-				logger.debug("Entity template is '" + nodeService.getProperty(projectTplNodeRef, ContentModel.PROP_NAME) + 
-						" - isDefault " + nodeService.getProperty(projectTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT));
-			}			
-			
 			// copy folders
 			// already done by entity policy
 			
-			// copy datalist from Tpl to project
-			if(logger.isDebugEnabled()){
-				logger.debug("copy datalists from template " + nodeService.getProperty(projectTplNodeRef, ContentModel.PROP_NAME));
-			}
-			
+			// copy datalist from Tpl to project			
 			Collection<QName> dataLists = new ArrayList<QName>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);			
 			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, false);
-
-			initializeNodeRefsAfterCopy(projectNodeRef);
-
+			
+			// we wait files are copied by entity policy
+			queueNode(KEY_INIT_DL_CONTENT, assocRef.getSourceRef());
+			
 			// initialize
-			queueNode(projectNodeRef);		
+			queueNode(projectNodeRef);
+							
 		} else if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {
 			
 			NodeRef entityNodeRef = assocRef.getTargetRef();
@@ -140,7 +128,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			nodeService.addAspect(entityNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT, null);
 			associationService.update(entityNodeRef, ProjectModel.ASSOC_PROJECT, projectNodeRef);
 		}
-	}
+	}	
 	
 	// TODO : do it in a generic way
 	public void initializeNodeRefsAfterCopy(NodeRef projectNodeRef){
@@ -185,6 +173,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			if(folderNodeRef != null){
 				NodeRef newDocumentNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, 
 						(String)nodeService.getProperty(documentNodeRef, ContentModel.PROP_NAME));
+				logger.debug("Update dlContent with doc " + newDocumentNodeRef);
 				associationService.update(listItem, ProjectModel.ASSOC_DL_CONTENT, newDocumentNodeRef);
 			}
 			
@@ -228,28 +217,24 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-		for (NodeRef nodeRef : pendingNodes) {
-			try {
-				if(nodeService.exists(nodeRef) && isNotLocked(nodeRef)){
-					logger.debug("Project policy formulate");
-					projectService.formulate(nodeRef);
-				}				
-			} catch (FormulateException e) {
-				logger.error(e,e);
+		if(KEY_INIT_DL_CONTENT.equals(key)){
+			for (NodeRef nodeRef : pendingNodes) {
+				initializeNodeRefsAfterCopy(nodeRef);	
 			}
 		}
-	}
-
-	@Override
-	public void onDeleteNode(ChildAssociationRef childAssoc, boolean isNodeArchived) {
-		
-		logger.debug("Project policy delete");
-				
-		// cancel project even if it is still in trash
-		if(isNodeArchived){			
-			NodeRef archivedNodeRef = new NodeRef(RepoConsts.ARCHIVE_STORE, childAssoc.getChildRef().getId());
-			projectService.cancel(archivedNodeRef);
+		else{
+			for (NodeRef nodeRef : pendingNodes) {
+				try {
+					if(nodeService.exists(nodeRef) && isNotLocked(nodeRef)){
+						logger.debug("Project policy formulate");
+						projectService.formulate(nodeRef);
+					}				
+				} catch (FormulateException e) {
+					logger.error(e,e);
+				}
+			}
 		}
+		
 	}
 	
 	@Override

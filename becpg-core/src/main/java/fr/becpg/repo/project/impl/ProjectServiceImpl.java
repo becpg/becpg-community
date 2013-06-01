@@ -2,6 +2,7 @@ package fr.becpg.repo.project.impl;
 
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -135,5 +136,35 @@ public class ProjectServiceImpl implements ProjectService {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {			
 			formulationService.formulate(projectNodeRef);			
 		}
-	}	
+	}
+
+	@Override
+	public void deleteTask(NodeRef taskListNodeRef) {
+		
+		// update prevTasks assoc of next tasks		
+		List<NodeRef> deleteTaskPrevTaskNodeRefs = associationService.getTargetAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
+		List<AssociationRef> nextTaskAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
+		
+		for(AssociationRef nextTaskAssociationRef : nextTaskAssociationRefs){
+			
+			List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(), ProjectModel.ASSOC_TL_PREV_TASKS);
+			if(nextTaskAssociationRefs.contains(taskListNodeRef)){
+				nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
+			}			
+			
+			for(NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs){
+				nextTaskPrevTaskNodeRefs.add(deleteTaskPrevTaskNodeRef);
+			}
+			
+			associationService.update(nextTaskAssociationRef.getSourceRef(), nextTaskAssociationRef.getTypeQName(), nextTaskPrevTaskNodeRefs);
+		}
+		
+//		// delete dl (not the document associated to dl -> user must delete them)
+//		List<AssociationRef> dlAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_DL_TASK);
+//		for(AssociationRef dlAssociationRef : dlAssociationRefs){
+//			logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " + dlAssociationRef.getSourceRef());
+//			nodeService.deleteNode(dlAssociationRef.getSourceRef());
+//		}			
+	}
+	
 }

@@ -9,5 +9,7 @@ public interface ProjectActivityService {
 	void postProjectStateChangeActivity(NodeRef projectNodeRef,String beforeState,String afterState);
 	
 	void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef,String beforeState,String afterState);
+	
+	void postProjectCommentCreatedActivity(NodeRef projectNodeRef,String comment);
 
 }

@@ -1,7 +1,6 @@
 package fr.becpg.repo.project.impl;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,8 @@ import org.alfresco.service.cmr.workflow.WorkflowInstance;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
+import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
+import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,10 +65,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		
 		String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
 		Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
-		
+
 		if (taskListDataItem.getEnd() != null) {			
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
 		}
+
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());
@@ -161,4 +163,94 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		
 	}
 
+	/**
+	 * Check workflow instance and properties
+	 */
+	@Override
+	public void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem,
+			List<DeliverableListDataItem> nextDeliverables) {
+		 
+		if(taskListDataItem.getWorkflowInstance() != null && 
+			!taskListDataItem.getWorkflowInstance().isEmpty()){
+			
+			// task may be reopened so
+			if(!isWorkflowActive(taskListDataItem)){				
+				taskListDataItem.setWorkflowInstance("");
+			}
+			else{
+				//check workflow properties
+				WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
+				taskQuery.setProcessId(taskListDataItem.getWorkflowInstance());
+				taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
+
+				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
+				
+				if(!workflowTasks.isEmpty()){
+					
+					String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
+					
+					for (WorkflowTask workflowTask : workflowTasks) {
+						NodeRef taskNodeRef  = (NodeRef)workflowTask.getProperties().get(ProjectModel.ASSOC_WORKFLOW_TASK);			
+						if (taskNodeRef != null && taskNodeRef.equals(taskListDataItem.getNodeRef())) {
+							
+							logger.debug("check task" + taskListDataItem.getTaskName());							
+							Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+							
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription, workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DESCRIPTION, workflowDescription, workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd(), workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(), workflowTask.getProperties(), properties);
+							//properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources(), workflowTask.getProperties(), properties);							
+														
+							if(taskListDataItem.getResources().size() == 0){
+								workflowService.cancelWorkflow(workflowTask.getId());
+								return;
+							}
+							if(taskListDataItem.getResources().size() == 1){
+								String userName = (String)nodeService.getProperty(taskListDataItem.getResources().get(0), ContentModel.PROP_USERNAME);
+								properties = getWorkflowTaskNewProperties(ContentModel.PROP_OWNER, userName, workflowTask.getProperties(), properties);
+							}
+							else{
+								//assocs.put(WorkflowModel.ASSOC_ASSIGNEES, taskListDataItem.getResources());
+								properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS, (Serializable)taskListDataItem.getResources(), workflowTask.getProperties(), properties);
+								if(properties.containsKey(WorkflowModel.ASSOC_POOLED_ACTORS)){									
+									properties.put(ContentModel.PROP_OWNER, null);
+								}
+							}
+							
+							if(!properties.isEmpty()){
+								if(logger.isDebugEnabled()){
+									logger.debug("update task " + taskListDataItem.getTaskName() + " props " + properties);
+								}								
+								workflowService.updateTask(workflowTask.getId(), properties, null, null);
+							}													
+						}
+					}
+				}
+			}			
+		}		
+	}
+	
+	private Map<QName, Serializable> getWorkflowTaskNewProperties(QName propertyQName, 
+			Serializable value, Map<QName, Serializable> dbProperties, 
+			Map<QName, Serializable> newProperties){
+		
+		Serializable dbValue = dbProperties.get(propertyQName);
+		if((dbValue == null && value != null) || (dbValue != null && value == null) || !value.equals(dbValue)){
+			newProperties.put(propertyQName, value);
+		}
+		return newProperties;
+	}
+
+	@Override
+	public void deleteWorkflowTask(NodeRef taskListNodeRef) {
+		
+		String workflowInstanceId = (String) nodeService.getProperty(taskListNodeRef, ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+		if (workflowInstanceId != null && !workflowInstanceId.isEmpty()) {
+			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);
+			if (workflowInstance != null) {
+				workflowService.deleteWorkflow(workflowInstanceId);
+			}
+		}		
+	}
 }
