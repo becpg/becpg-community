@@ -421,6 +421,16 @@ public interface BeCPGModel {
 	// contactList
 	static final QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI,
 			"contactList");
+	
+	// labelClaimList
+	static final QName TYPE_LABELCLAIMLIST = QName.createQName(BECPG_URI,
+			"labelClaimList");
+	static final QName PROP_LCL_TYPE = QName.createQName(BECPG_URI,
+			"lclType");
+	static final QName PROP_LCL_IS_CLAIMED = QName.createQName(BECPG_URI,
+			"lclIsClaimed");	
+	static final QName ASSOC_LCL_LABELCLAIM = QName.createQName(BECPG_URI,
+			"lclLabelClaim");
 		
 	// allergen
 	/** The Constant TYPE_ALLERGEN. */
@@ -723,6 +733,9 @@ public interface BeCPGModel {
 	 * approvalNumber
 	 */
 	static final QName TYPE_APPROVAL_NUMBER = QName.createQName(BECPG_URI, "approvalNumber");
+	
+	static final QName TYPE_LABEL_CLAIM = QName.createQName(BECPG_URI, "labelClaim");
+	static final QName PROP_LABEL_CLAIM_TYPE = QName.createQName(BECPG_URI, "labelClaimType");
 	
 	/**
 	 * legalName aspect

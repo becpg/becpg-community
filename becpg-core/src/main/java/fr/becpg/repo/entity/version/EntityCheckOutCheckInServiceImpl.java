@@ -4,18 +4,25 @@
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.lock.UnableToReleaseLockException;
 import org.alfresco.service.cmr.repository.AspectMissingException;
+import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -23,6 +30,7 @@ import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -316,7 +324,8 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
             }            
             
             //copy properties
-    		copyService.copy(workingCopyNodeRef, entityNodeRef);
+    		copyService.copy(workingCopyNodeRef, entityNodeRef);    		
+    		copyResidualProperties(workingCopyNodeRef, entityNodeRef);
     		
     		//create new version
             entityVersionService.createVersion(entityNodeRef, properties);
@@ -327,7 +336,7 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
     		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>(){
                 @Override
 				public Void doWork() throws Exception
-                {      
+                {                      	
                 	entityListDAO.copyDataLists(workingCopyNodeRef, finalEntityNodeRef, true);
                 	return null;
                 	
@@ -392,4 +401,149 @@ public class EntityCheckOutCheckInServiceImpl extends CheckOutCheckInServiceImpl
             throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
         }
     }
+    
+    private void copyResidualProperties(NodeRef sourceCopy, NodeRef targetCopy){
+    	
+		/*
+		 * Extending DefaultCopyBehaviourCallback doesn't work since we must implement it for every aspect
+		 */
+		
+		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(sourceCopy, RegexQNamePattern.MATCH_ALL);
+		List<AssociationRef> targetAssocRefs = nodeService.getTargetAssocs(targetCopy, RegexQNamePattern.MATCH_ALL);
+		
+		List<ChildAssociationRef> sourceChildAssocRefs = nodeService.getChildAssocs(sourceCopy);
+		List<ChildAssociationRef> targetChildAssocRefs = nodeService.getChildAssocs(targetCopy);
+		
+		// don't copy/remove theses assocs
+		List<QName> assocs = new ArrayList<QName>(0);
+		//assocs.add(ReportModel.ASSOC_REPORTS);
+		
+		List<QName> childAssocs = new ArrayList<QName>(2);
+		childAssocs.add(ContentModel.ASSOC_CHILDREN);
+		childAssocs.add(BeCPGModel.ASSOC_ENTITYLISTS);
+		childAssocs.add(RenditionModel.ASSOC_RENDITION);
+		childAssocs.add(RuleModel.ASSOC_RULE_FOLDER);
+		childAssocs.add(RuleModel.ASSOC_ACTION);
+		
+		
+		/*
+		 * Copy
+		 */
+		
+		for(AssociationRef sourceAssocRef : sourceAssocRefs){
+			
+			logger.debug("sourceAssocRef.getTypeQName() : " + sourceAssocRef.getTypeQName());
+					
+			if(!assocs.contains(sourceAssocRef.getTypeQName())){
+				boolean addAssoc = true;
+				if(sourceAssocRef.getTargetRef() != null){
+					for(AssociationRef targetAssocRef : targetAssocRefs){
+						if(sourceAssocRef.getTargetRef().equals(targetAssocRef.getTargetRef()) &&
+								sourceAssocRef.getTypeQName().equals(targetAssocRef.getTypeQName())){
+							addAssoc = false;
+							break;
+						}
+					}
+				}
+				
+				if(addAssoc){
+					logger.debug("Add association sourceRef : " + targetCopy + " sourceRef: " + sourceAssocRef.getTargetRef() + " assocType: " + sourceAssocRef.getTypeQName());
+					nodeService.createAssociation(targetCopy, sourceAssocRef.getTargetRef(), sourceAssocRef.getTypeQName());
+				}
+			}						
+		}
+		
+		for(ChildAssociationRef sourceChildAssocRef : sourceChildAssocRefs){
+			
+			logger.debug("sourceChildAssocRef.getTypeQName() : " + sourceChildAssocRef.getTypeQName());
+			
+			if(!childAssocs.contains(sourceChildAssocRef.getTypeQName())){
+				boolean addAssoc = true;
+				if(sourceChildAssocRef.getChildRef()!= null){
+					for(ChildAssociationRef targetChildAssocRef : targetChildAssocRefs){
+						if(sourceChildAssocRef.getChildRef().equals(targetChildAssocRef.getChildRef()) &&
+							sourceChildAssocRef.getTypeQName().equals(targetChildAssocRef.getTypeQName())){
+							addAssoc = false;
+							break;
+						}
+					}
+				}
+				
+				if(addAssoc){
+					logger.debug("Add association sourceRef : " + sourceCopy + " sourceRef: " + sourceChildAssocRef.getChildRef() + " assocType: " + sourceChildAssocRef.getTypeQName());
+					nodeService.addChild(targetCopy, sourceChildAssocRef.getChildRef(), sourceChildAssocRef.getTypeQName(), sourceChildAssocRef.getQName());
+				}	
+			}				
+		}
+		
+		/*
+		 * Remove removed assoc
+		 */
+		
+		for(AssociationRef targetAssocRef : targetAssocRefs){
+			
+			if(!assocs.contains(targetAssocRef.getTypeQName())){
+				boolean removeAssoc = true;
+				if(targetAssocRef.getTargetRef() != null){
+					for(AssociationRef sourceAssocRef : sourceAssocRefs){
+						if(targetAssocRef.getTargetRef().equals(sourceAssocRef.getTargetRef()) &&
+								targetAssocRef.getTypeQName().equals(sourceAssocRef.getTypeQName())){
+							removeAssoc = false;
+							break;
+						}
+					}
+				}
+				
+				if(removeAssoc){
+					logger.debug("Remove association sourceRef : " + targetCopy + " targetRef: " + targetAssocRef.getTargetRef() + " assocType: " + targetAssocRef.getTypeQName());
+					nodeService.removeAssociation(targetCopy, targetAssocRef.getTargetRef(), targetAssocRef.getTypeQName());
+				}
+			}						
+		}
+		
+		for(ChildAssociationRef targetChildAssocRef : targetChildAssocRefs){
+			
+			if(!childAssocs.contains(targetChildAssocRef.getTypeQName())){
+				boolean removeAssoc = true;
+				if(targetChildAssocRef.getChildRef()!= null){
+					for(ChildAssociationRef sourceChildAssocRef : sourceChildAssocRefs){
+						if(targetChildAssocRef.getChildRef().equals(sourceChildAssocRef.getChildRef()) &&
+								targetChildAssocRef.getTypeQName().equals(sourceChildAssocRef.getTypeQName())){
+							removeAssoc = false;
+							break;
+						}
+					}
+				}
+				
+				if(removeAssoc){
+					logger.debug("Remove association sourceRef : " + targetCopy + " targetRef: " + targetChildAssocRef.getChildRef() + " assocType: " + targetChildAssocRef.getTypeQName());
+					nodeService.removeChildAssociation(targetChildAssocRef);
+				}	
+			}				
+		}
+		
+		/*
+		 * Remove Aspects that have been removed on working copy
+		 */
+		
+		Set<QName> aspects = nodeService.getAspects(targetCopy);
+		for(QName aspect : aspects){
+			
+			if(!aspect.isMatch(ContentModel.ASPECT_OWNABLE) && !nodeService.hasAspect(sourceCopy, aspect)){
+				logger.debug("Remove aspect : " + aspect + " on node " + targetCopy);
+				nodeService.removeAspect(targetCopy, aspect);
+			}
+		}	
+		
+		/*
+		 * Remove props that have been removed on working copy
+		 */
+		Map<QName, Serializable> props = nodeService.getProperties(targetCopy);
+		for(Map.Entry<QName, Serializable> prop : props.entrySet()){
+			if(prop.getValue() != null && nodeService.getProperty(sourceCopy, prop.getKey()) == null){
+				logger.debug("Remove property : " + prop.getKey() + " on node " + targetCopy);
+				nodeService.removeProperty(targetCopy, prop.getKey());
+			}
+		}
+	}
 }

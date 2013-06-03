@@ -1,6 +1,7 @@
 package fr.becpg.repo.report.entity.impl;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -28,6 +30,8 @@ import org.springframework.core.io.ClassPathResource;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionData;
 import fr.becpg.repo.helper.PropertyService;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 
@@ -36,10 +40,11 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 	private static Log logger = LogFactory.getLog(AbstractEntityReportExtractor.class);
 	
+	private static final String TAG_VERSIONS = "versions";
+	private static final String TAG_VERSION = "version";
 	
-
-	/** The Constant VALUE_NULL. */
-	protected static final String VALUE_NULL = "";
+	protected static final String VALUE_NULL = "";	
+	protected static final String FORMAT_DATE = "dd/MM/yyyy";
 	
 	private static final String VALUE_PERSON = "%s %s";
 	
@@ -62,7 +67,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	
 	protected EntityService entityService;
 
-	
+	protected EntityVersionService entityVersionService;
 
 	/**
 	 * @param nodeService the nodeService to set
@@ -101,9 +106,13 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
+	
 
-	
-	
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
+	}
+
+
 	/**
 	 * Load node attributes.
 	 *
@@ -243,5 +252,21 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return fieldsBySets;
 	}
 
+	protected void loadVersions(NodeRef entityNodeRef, Element entityElt) {
+		
+		List<VersionData> versions = entityVersionService.getVersionHistoryWithProperties(entityNodeRef);
+		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
+		
+		for(VersionData version : versions){
+			Element versionElt = versionsElt.addElement(TAG_VERSION);
+			versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getLabel());			
+			versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
+			versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), version.getCreatorUserName());
+			
+			// date dd/MM/yy
+			SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE);
+			versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), (String)dateFormat.format(version.getCreatedDate()));
+		}
+	}
 	
 }

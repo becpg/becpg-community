@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -86,6 +88,8 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 	
 	private NamespaceService namespaceService;
 	
+	private AssociationService associationService;
+	
 	/** The costs. */
 	private List<NodeRef> costs = new ArrayList<NodeRef>();
 	
@@ -109,6 +113,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
         entityListDAO = (EntityListDAO)appCtx.getBean("entityListDAO");
         productService = (ProductService)appCtx.getBean("productService");
         namespaceService = (NamespaceService)appCtx.getBean("namespaceService");
+        associationService = (AssociationService)appCtx.getBean("associationService");
     }
     
     
@@ -437,7 +442,7 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				//Check out
 				NodeRef workingCopyNodeRef = entityCheckOutCheckInService.checkout(rawMaterialNodeRef);				
 				
-				//Check in
+				//Check in				
 				NodeRef newRawMaterialNodeRef = null;
 				
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
@@ -450,6 +455,93 @@ public class ProductVersionServiceTest  extends RepoBaseTestCase{
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				expected = "/app:company_home/cm:Products/cm:ToValidate/cm:RawMaterial/cm:Frozen/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
+				
+			return null;
+			
+			}},false,true);
+	}
+	
+	/**
+	 * Test check out check in.
+	 */
+	public void testCheckOutCheckInAssociations(){
+		
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			@Override
+			public NodeRef execute() throws Throwable {
+				
+				/*-- create folders and raw material --*/
+				NodeRef folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
+				if(folderNodeRef != null)
+				{
+					fileFolderService.delete(folderNodeRef);    		
+				}			
+				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();					
+				NodeRef rawMaterialNodeRef = createRawMaterial(folderNodeRef,"MP test report");
+				
+				// suppliers
+				String []supplierNames = {"Supplier1", "Supplier2", "Supplier3"};
+				List<NodeRef> supplierNodeRefs = new LinkedList<NodeRef>();
+				for(String supplierName : supplierNames){
+					NodeRef supplierNodeRef = null;
+					NodeRef entityFolder = nodeService.getChildByName(folderNodeRef,
+							ContentModel.ASSOC_CONTAINS, supplierName);
+					if(entityFolder != null){
+						supplierNodeRef = nodeService.getChildByName(entityFolder,
+								ContentModel.ASSOC_CONTAINS, supplierName);
+					}
+					
+					if(supplierNodeRef == null){
+						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						properties.put(ContentModel.PROP_NAME, supplierName);
+						supplierNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+					}
+					
+					supplierNodeRefs.add(supplierNodeRef);
+				}
+				
+				
+				associationService.update(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
+				
+				//Check out
+				NodeRef workingCopyNodeRef = entityCheckOutCheckInService.checkout(rawMaterialNodeRef);			
+				
+				// add new Supplier
+				associationService.update(workingCopyNodeRef, BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs);
+				
+				// check-in
+				logger.info("###checkin1");
+				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				entityCheckOutCheckInService.checkin(workingCopyNodeRef, versionProperties);				
+				
+				// check
+				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				assertEquals("", 3, targetNodeRefs.size());				
+				
+			return rawMaterialNodeRef;
+			
+			}},false,true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			@Override
+			public NodeRef execute() throws Throwable {				
+				
+				//Check out
+				NodeRef workingCopyNodeRef = entityCheckOutCheckInService.checkout(rawMaterialNodeRef);						
+				
+				// remove Suppliers
+				associationService.update(workingCopyNodeRef, BeCPGModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
+				
+				// check-in
+				logger.info("###checkin2");
+				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				entityCheckOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+				
+				// check
+				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				assertEquals(0, targetNodeRefs.size());
 				
 			return null;
 			

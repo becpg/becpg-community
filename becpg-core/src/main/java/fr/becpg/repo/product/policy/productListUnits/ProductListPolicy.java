@@ -38,6 +38,9 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 		
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
 				BeCPGModel.TYPE_NUTLIST, BeCPGModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(this, "onCreateAssociation"));
+		
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
+				BeCPGModel.TYPE_LABELCLAIMLIST, BeCPGModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
 				
 	}
 	
@@ -113,6 +116,12 @@ public class ProductListPolicy implements NodeServicePolicies.OnCreateAssociatio
 			// nutListGroup
 			String nutGroup = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_NUTGROUP);
 			nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_GROUP, nutGroup);
+		}
+		else if(type.equals(BeCPGModel.TYPE_LABELCLAIMLIST)){
+			
+			// labelClaimType
+			String labelClaimType = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_LABEL_CLAIM_TYPE);
+			nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_LCL_TYPE, labelClaimType);
 		}
 		
 	}

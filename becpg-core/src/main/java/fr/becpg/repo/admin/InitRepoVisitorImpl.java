@@ -219,6 +219,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PLANTS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_CERTIFICATIONS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_APPROVALNUMBERS);
+		visitFolder(charactsNodeRef, RepoConsts.PATH_LABELCLAIMS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_PROCESSSTEPS);
 		visitFolder(charactsNodeRef, RepoConsts.PATH_VARIANT_CHARACTS);
 
@@ -407,6 +408,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = BeCPGModel.TYPE_CERTIFICATION;
 		} else if (folderName == RepoConsts.PATH_APPROVALNUMBERS) {
 			specialiseType = BeCPGModel.TYPE_APPROVAL_NUMBER;
+		} else if (folderName == RepoConsts.PATH_LABELCLAIMS) {
+			specialiseType = BeCPGModel.TYPE_LABEL_CLAIM;
 		} else if (folderName == RepoConsts.PATH_PROCESSSTEPS) {
 			specialiseType = MPMModel.TYPE_PROCESSSTEP;
 		} else if (folderName == RepoConsts.PATH_VARIANT_CHARACTS) {

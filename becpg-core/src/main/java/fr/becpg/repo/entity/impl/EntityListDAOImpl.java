@@ -37,7 +37,9 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class EntityListDAOImpl implements EntityListDAO{	
 	
-	private static final String QUERY_PARENT = " +PARENT:\"%s\" +TYPE:\"%s\" +@bcpg\\:isManualListItem:true";
+	private static final String QUERY_LIST_ITEMS = " +PARENT:\"%s\" +TYPE:\"%s\"";
+	
+	private static final String QUERY_MANUAL_LIST_ITEMS = " +PARENT:\"%s\" +TYPE:\"%s\" +@bcpg\\:isManualListItem:true";
 	
 	private static Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 	
@@ -253,6 +255,12 @@ public class EntityListDAOImpl implements EntityListDAO{
     @Override
 	public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName){
 		
-		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_PARENT, listNodeRef, listQName));
+		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_MANUAL_LIST_ITEMS, listNodeRef, listQName));
+	}
+    
+    @Override
+	public List<NodeRef> getLinks(NodeRef listNodeRef, QName listQName){
+		
+		return beCPGSearchService.unProtLuceneSearch(String.format(QUERY_LIST_ITEMS, listNodeRef, listQName));
 	}
 }

@@ -74,4 +74,6 @@ public interface EntityListDAO {
      * @return
      */
     public List<NodeRef> getManualLinks(NodeRef listNodeRef, QName listQName);
+    
+    public List<NodeRef> getLinks(NodeRef listNodeRef, QName listQName);
 }
