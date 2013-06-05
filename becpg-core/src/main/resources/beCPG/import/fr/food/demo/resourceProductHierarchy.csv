@@ -1,3 +1,4 @@
+MAPPING;Default;
 PATH;/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
 COLUMNS;bcpg:lkvValue;
@@ -12,7 +13,7 @@ VALUES;Personnes;
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Vêtements et Sécurité;Peau
 VALUES;Vêtements et Sécurité;Tête 
 VALUES;Vêtements et Sécurité;Corps

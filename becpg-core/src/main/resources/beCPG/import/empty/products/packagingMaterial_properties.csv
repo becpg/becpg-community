@@ -1,0 +1,10 @@
+PATH;/Temp/Products;;;;;;;;;;;
+TYPE;bcpg:packagingMaterial;;;;;;;m/m2/P;;;;
+MAPPING;Products;;;;;;;;;;;
+COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState;bcpg:productUnit;bcpg:erpCode;bcpg:eanCode;bcpg:suppliers;bcpg:entityTplRef
+VALUES;Boite;Boite;;;Boite;PF;ToValidate;P;ERP code composant1;;F18;Emballage
+VALUES;Etiquette;Etiquette;;;Etiquettes;Autocollantes;ToValidate;P;ERP code composant2;;F19,F18;Emballage
+VALUES;Film;Film;;;Films;Thermoformable;ToValidate;m2;ERP code composant3;;F19;Emballage
+VALUES;Colis;Colis;;;Colis;Carton;ToValidate;P;ERP code composant4;;F19;Emballage
+VALUES;Intercallaire;Intercallaire;;;Intercallaire;Intercallaire;ToValidate;P;ERP code composant5;;F19;Emballage
+VALUES;Palette;Palette;;;Palette;Recyclable;ToValidate;P;ERP code composant6;;F19;Emballage

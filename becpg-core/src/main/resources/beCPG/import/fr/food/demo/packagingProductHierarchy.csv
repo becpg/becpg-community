@@ -14,7 +14,7 @@ VALUES;Briques;
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Barquettes;Barquettes plastiques
 VALUES;Carton;Recyclable
 VALUES;Palette;Recyclable
@@ -35,5 +35,5 @@ VALUES;Palettisation;
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Palettisation;Palettisation

@@ -1,6 +1,6 @@
-"PATH";"/System/Characts/bcpg:entityLists/Costs";
-"TYPE";"bcpg:cost";
-"COLUMNS";"cm:name";"bcpg:costCurrency"
-"VALUES";"Coût MP";"€"
-"VALUES";"Coût Emb";"€"
-"VALUES";"Coût Transfo";"€"
+PATH;/System/Characts/bcpg:entityLists/Costs;
+TYPE;bcpg:cost;
+COLUMNS;cm:name;bcpg:costCurrency
+VALUES;Coût MP;€
+VALUES;Coût Emb;€
+VALUES;Coût Production;€
