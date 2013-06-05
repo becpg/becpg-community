@@ -11,3 +11,7 @@ VALUES;Pourcentage de corps étrangers;%
 VALUES;Solubilité;-
 VALUES;Point de congélation;°C
 VALUES;Matière sèche;%
+VALUES;Extrait sec;%
+VALUES;Matière grasse;%
+VALUES;Pouvoir sucrant;%
+VALUES;Température de cuve;°C
