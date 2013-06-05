@@ -44,7 +44,7 @@
                 </structure>
                 <structure>
                     <property name="columnName">productPrice</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productPrice</text-property>
                 </structure>
@@ -80,19 +80,13 @@
                 </structure>
                 <structure>
                     <property name="columnName">productQty</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productQty</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">productEAN</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">productEAN</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">productDensity</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productDensity</text-property>
                 </structure>
@@ -128,13 +122,14 @@
                 </structure>
                 <structure>
                     <property name="columnName">useByDate</property>
-                    <property name="analysis">dimension</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">useByDate</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productComments</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productComments</text-property>
                 </structure>
             </list-property>
@@ -154,7 +149,7 @@
                     <structure>
                         <property name="position">3</property>
                         <property name="name">productPrice</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
@@ -184,50 +179,45 @@
                     <structure>
                         <property name="position">9</property>
                         <property name="name">productQty</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">10</property>
-                        <property name="name">productEAN</property>
-                        <property name="dataType">string</property>
+                        <property name="name">productDensity</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">11</property>
-                        <property name="name">productDensity</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">12</property>
                         <property name="name">description</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
+                        <property name="position">12</property>
                         <property name="name">clients</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">14</property>
+                        <property name="position">13</property>
                         <property name="name">productHierarchy1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">15</property>
+                        <property name="position">14</property>
                         <property name="name">productHierarchy2</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">16</property>
+                        <property name="position">15</property>
                         <property name="name">legalName</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">17</property>
+                        <property name="position">16</property>
                         <property name="name">useByDate</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">17</property>
                         <property name="name">productComments</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -253,8 +243,8 @@
                     <property name="position">3</property>
                     <property name="name">productPrice</property>
                     <property name="nativeName">productPrice</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
@@ -295,74 +285,67 @@
                     <property name="position">9</property>
                     <property name="name">productQty</property>
                     <property name="nativeName">productQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
-                    <property name="name">productEAN</property>
-                    <property name="nativeName">productEAN</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="name">productDensity</property>
+                    <property name="nativeName">productDensity</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
-                    <property name="name">productDensity</property>
-                    <property name="nativeName">productDensity</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">12</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">13</property>
+                    <property name="position">12</property>
                     <property name="name">clients</property>
                     <property name="nativeName">clients</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">14</property>
+                    <property name="position">13</property>
                     <property name="name">productHierarchy1</property>
                     <property name="nativeName">productHierarchy1</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">15</property>
+                    <property name="position">14</property>
                     <property name="name">productHierarchy2</property>
                     <property name="nativeName">productHierarchy2</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">16</property>
+                    <property name="position">15</property>
                     <property name="name">legalName</property>
                     <property name="nativeName">legalName</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">17</property>
+                    <property name="position">16</property>
                     <property name="name">useByDate</property>
                     <property name="nativeName">useByDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
                 </structure>
                 <structure>
-                    <property name="position">18</property>
+                    <property name="position">17</property>
                     <property name="name">productComments</property>
                     <property name="nativeName">productComments</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;STRING;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;STRING;/productQty},{productEAN;STRING;/productEAN},{productDensity;STRING;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;STRING;/useByDate},{productComments;STRING;/productComments}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1067,6 +1050,25 @@
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">RUNNINGCOUNT</property>
                 </structure>
+                <structure>
+                    <property name="name">displayValue</property>
+                    <expression name="expression">if(dataSetRow["mblTextCriteria"] != null &amp;&amp; dataSetRow["mblTextCriteria"] != ""){
+dataSetRow["mblTextCriteria"]
+}
+else if(dataSetRow["mblMaxi"] == -1){
+"Absence"
+}
+else if(dataSetRow["mblMaxi"] != null &amp;&amp; dataSetRow["mblMaxi"] != ""){
+dataSetRow["mblMaxi"] + " " + dataSetRow["mblUnit"]
+}
+else if(dataSetRow["mblValue"] == -1){
+"Absence"
+}
+else if(dataSetRow["mblValue"] != null &amp;&amp; dataSetRow["mblValue"] != ""){
+dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -1096,6 +1098,7 @@
                 <structure>
                     <property name="columnName">mblTextCriteria</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">mblTextCriteria</text-property>
                 </structure>
             </list-property>
@@ -1131,6 +1134,11 @@
                         <property name="position">6</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">displayValue</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1262,25 +1270,31 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">pclPhysicoChem</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">pclPhysicoChem</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclValue</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">pclValue</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclUnit</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">pclUnit</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclMaxi</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">pclMaxi</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclMini</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">pclMini</text-property>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -1291,7 +1305,7 @@
                     <structure>
                         <property name="position">2</property>
                         <property name="name">pclValue</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">3</property>
@@ -1301,12 +1315,12 @@
                     <structure>
                         <property name="position">4</property>
                         <property name="name">pclMaxi</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
                         <property name="name">pclMini</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1323,8 +1337,8 @@
                     <property name="position">2</property>
                     <property name="name">pclValue</property>
                     <property name="nativeName">pclValue</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
@@ -1337,28 +1351,30 @@
                     <property name="position">4</property>
                     <property name="name">pclMaxi</property>
                     <property name="nativeName">pclMaxi</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">pclMini</property>
                     <property name="nativeName">pclMini</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemList/physicoChem]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;STRING;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMaxi;STRING;/@pclMaxi},{pclMini;STRING;/@pclMini}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemList/physicoChem]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>1.0</Version>
+  <Version>2.0</Version>
   <design:ResultSets derivedMetaData="true">
     <design:resultSetDefinitions>
       <design:resultSetColumns>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>pclPhysicoChem</design:name>
-            <design:position>1</design:position>
+            <design:identifier>
+              <design:name>pclPhysicoChem</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1371,8 +1387,10 @@
         </design:resultColumnDefinitions>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>pclValue</design:name>
-            <design:position>2</design:position>
+            <design:identifier>
+              <design:name>pclValue</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1385,8 +1403,10 @@
         </design:resultColumnDefinitions>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>pclUnit</design:name>
-            <design:position>3</design:position>
+            <design:identifier>
+              <design:name>pclUnit</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1399,8 +1419,10 @@
         </design:resultColumnDefinitions>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>pclMaxi</design:name>
-            <design:position>4</design:position>
+            <design:identifier>
+              <design:name>pclMaxi</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1413,8 +1435,10 @@
         </design:resultColumnDefinitions>
         <design:resultColumnDefinitions>
           <design:attributes>
-            <design:name>pclMini</design:name>
-            <design:position>5</design:position>
+            <design:identifier>
+              <design:name>pclMini</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
             <design:precision>-1</design:precision>
             <design:scale>-1</design:scale>
@@ -1564,17 +1588,29 @@
                 <structure>
                     <property name="columnName">language</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">language</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">illGrp</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">illGrp</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">illValue</property>
                     <property name="analysis">attribute</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">illValue</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">not-like</property>
+                    <expression name="expr" type="javascript">row["language"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"%ru%"</value>
+                    </simple-property-list>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -2410,7 +2446,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Primaire"</value>
+                        <value>"Primary"</value>
                     </simple-property-list>
                 </structure>
             </list-property>
@@ -2744,7 +2780,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Primaire"</value>
+                        <value>"Primary"</value>
                     </simple-property-list>
                 </structure>
                 <structure>
@@ -3127,7 +3163,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Secondaire"</value>
+                        <value>"Secondary"</value>
                     </simple-property-list>
                 </structure>
                 <structure>
@@ -3575,7 +3611,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Secondaire"</value>
+                        <value>"Secondary"</value>
                     </simple-property-list>
                 </structure>
                 <structure>
@@ -4337,16 +4373,19 @@
                 <structure>
                     <property name="columnName">tarePkgLevel1</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">tarePkgLevel1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">netWeightPkgLevel1</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">netWeightPkgLevel1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">grossWeightPkgLevel1</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">grossWeightPkgLevel1</text-property>
                 </structure>
                 <structure>
@@ -4932,8 +4971,9 @@
                                                 <structure>
                                                     <property name="name">modified</property>
                                                     <text-property name="displayName">modified</text-property>
-                                                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["modified"],17)</expression>
                                                     <property name="dataType">string</property>
+                                                    <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
                                             <property name="resultSetColumn">modified</property>
@@ -5759,6 +5799,7 @@ dataSetRow["allergens"]
                 <cell id="2067">
                     <table id="2069">
                         <property name="style">becpg-table</property>
+                        <property name="pageBreakInside">avoid</property>
                         <property name="dataSet">microbioList</property>
                         <list-property name="boundDataColumns">
                             <structure>
@@ -5800,6 +5841,12 @@ dataSetRow["mblMaxi"]
                                 <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
                                 <property name="dataType">integer</property>
                             </structure>
+                            <structure>
+                                <property name="name">displayValue</property>
+                                <text-property name="displayName">displayValue</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["displayValue"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <list-property name="filter">
                             <structure>
@@ -5824,23 +5871,10 @@ dataSetRow["mblMaxi"]
                                     </data>
                                 </cell>
                                 <cell id="2075">
-                                    <grid id="2097">
-                                        <column id="2098"/>
-                                        <column id="2099"/>
-                                        <row id="2100">
-                                            <cell id="2101">
-                                                <data id="2103">
-                                                    <property name="textAlign">right</property>
-                                                    <property name="resultSetColumn">mblValue</property>
-                                                </data>
-                                            </cell>
-                                            <cell id="2102">
-                                                <data id="2104">
-                                                    <property name="resultSetColumn">mblUnit</property>
-                                                </data>
-                                            </cell>
-                                        </row>
-                                    </grid>
+                                    <data id="2776">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">displayValue</property>
+                                    </data>
                                 </cell>
                             </row>
                         </detail>
@@ -5890,6 +5924,12 @@ dataSetRow["mblMaxi"]
                                 <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
                                 <property name="dataType">integer</property>
                             </structure>
+                            <structure>
+                                <property name="name">displayValue</property>
+                                <text-property name="displayName">displayValue</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["displayValue"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <list-property name="filter">
                             <structure>
@@ -5914,23 +5954,10 @@ dataSetRow["mblMaxi"]
                                     </data>
                                 </cell>
                                 <cell id="2087">
-                                    <grid id="2109">
-                                        <column id="2110"/>
-                                        <column id="2111"/>
-                                        <row id="2112">
-                                            <cell id="2113">
-                                                <data id="2115">
-                                                    <property name="textAlign">right</property>
-                                                    <property name="resultSetColumn">mblValue</property>
-                                                </data>
-                                            </cell>
-                                            <cell id="2114">
-                                                <data id="2116">
-                                                    <property name="resultSetColumn">mblUnit</property>
-                                                </data>
-                                            </cell>
-                                        </row>
-                                    </grid>
+                                    <data id="2777">
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">displayValue</property>
+                                    </data>
                                 </cell>
                             </row>
                         </detail>
@@ -5950,6 +5977,7 @@ dataSetRow["mblMaxi"]
         <label id="2569"/>
         <table id="1010">
             <property name="style">becpg-table</property>
+            <property name="pageBreakInside">avoid</property>
             <property name="width">6.875in</property>
             <property name="dataSet">physicoChemList</property>
             <list-property name="boundDataColumns">
@@ -6067,6 +6095,11 @@ dataSetRow["mblMaxi"]
                     <cell id="1023">
                         <data id="1045">
                             <property name="fontSize">9pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
+                            <property name="textAlign">center</property>
                             <property name="whiteSpace">nowrap</property>
                             <property name="resultSetColumn">pclValue</property>
                         </data>
@@ -6074,6 +6107,7 @@ dataSetRow["mblMaxi"]
                     <cell id="1025">
                         <data id="1046">
                             <property name="fontSize">9pt</property>
+                            <property name="textAlign">center</property>
                             <property name="whiteSpace">nowrap</property>
                             <property name="resultSetColumn">pclUnit</property>
                         </data>
@@ -6081,6 +6115,11 @@ dataSetRow["mblMaxi"]
                     <cell id="1027">
                         <data id="1047">
                             <property name="fontSize">9pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
+                            <property name="textAlign">center</property>
                             <property name="whiteSpace">nowrap</property>
                             <property name="resultSetColumn">pclMini</property>
                         </data>
@@ -6088,6 +6127,11 @@ dataSetRow["mblMaxi"]
                     <cell id="1040">
                         <data id="1048">
                             <property name="fontSize">9pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
+                            <property name="textAlign">center</property>
                             <property name="whiteSpace">nowrap</property>
                             <property name="resultSetColumn">pclMaxi</property>
                         </data>
@@ -6103,6 +6147,7 @@ dataSetRow["mblMaxi"]
         <label id="2679"/>
         <grid id="2314">
             <property name="style">becpg-table</property>
+            <property name="pageBreakInside">avoid</property>
             <property name="width">100%</property>
             <column id="2757">
                 <property name="style">becpg-col-border</property>
@@ -6378,6 +6423,7 @@ dataSetRow["packagingListProduct"]
             <row id="2370">
                 <property name="style">becpg-row-border</property>
                 <property name="fontWeight">normal</property>
+                <property name="textAlign">center</property>
                 <cell id="2755">
                     <label id="2758">
                         <text-property name="text">SPCB</text-property>
@@ -6424,6 +6470,7 @@ env en kg</text-property>
             </row>
             <row id="2361">
                 <property name="style">becpg-row-border</property>
+                <property name="textAlign">center</property>
                 <cell id="2756">
                     <data id="2508">
                         <property name="dataSet">Product</property>
@@ -6431,7 +6478,12 @@ env en kg</text-property>
                             <structure>
                                 <property name="name">productQty</property>
                                 <text-property name="displayName">SPCB</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"]</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "P"){
+dataSetRow["productQty"]
+}
+else{
+"1"
+}</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -6464,8 +6516,9 @@ env en kg</text-property>
                             <structure>
                                 <property name="name">tarePkgLevel1</property>
                                 <text-property name="displayName">tarePkgLevel1</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"]</expression>
+                                <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"] * 1000</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <property name="resultSetColumn">tarePkgLevel1</property>
@@ -6559,6 +6612,7 @@ env en kg</text-property>
         <label id="2712"/>
         <grid id="2716">
             <property name="style">becpg-table</property>
+            <property name="pageBreakInside">avoid</property>
             <column id="2717"/>
             <column id="2718">
                 <property name="style">becpg-col-border</property>
@@ -6597,6 +6651,7 @@ env en kg</text-property>
             </row>
             <row id="2730">
                 <property name="style">becpg-row-border</property>
+                <property name="textAlign">center</property>
                 <cell id="2731">
                     <label id="2446">
                         <text-property name="text">Nombre emb/couche</text-property>
@@ -6634,6 +6689,7 @@ en m</text-property>
             </row>
             <row id="2737">
                 <property name="style">becpg-row-border</property>
+                <property name="textAlign">center</property>
                 <cell id="2738">
                     <data id="2747">
                         <property name="dataSet">packThirdLevel</property>

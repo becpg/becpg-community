@@ -45,10 +45,8 @@
                 </structure>
                 <structure>
                     <property name="columnName">productPrice</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">productPrice</text-property>
-                    <property name="analysisColumn">productPrice</property>
                 </structure>
                 <structure>
                     <property name="columnName">productUnit</property>
@@ -87,17 +85,8 @@
                 </structure>
                 <structure>
                     <property name="columnName">productQty</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">productQty</text-property>
-                    <property name="analysisColumn">productQty</property>
-                </structure>
-                <structure>
-                    <property name="columnName">productEAN</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">productEAN</text-property>
-                    <property name="analysisColumn">productEAN</property>
                 </structure>
                 <structure>
                     <property name="columnName">versionLabel</property>
@@ -150,10 +139,8 @@
                 </structure>
                 <structure>
                     <property name="columnName">eanCode</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">eanCode</text-property>
-                    <property name="analysisColumn">eanCode</property>
                 </structure>
                 <structure>
                     <property name="columnName">useByDate</property>
@@ -221,6 +208,7 @@
                 <structure>
                     <property name="columnName">plants</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">plants</text-property>
                 </structure>
             </list-property>
@@ -240,7 +228,7 @@
                     <structure>
                         <property name="position">3</property>
                         <property name="name">productPrice</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
@@ -270,105 +258,100 @@
                     <structure>
                         <property name="position">9</property>
                         <property name="name">productQty</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">10</property>
-                        <property name="name">productEAN</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">11</property>
                         <property name="name">versionLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">12</property>
+                        <property name="position">11</property>
                         <property name="name">productHierarchy1</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
+                        <property name="position">12</property>
                         <property name="name">productHierarchy2</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">14</property>
+                        <property name="position">13</property>
                         <property name="name">trademark</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">15</property>
+                        <property name="position">14</property>
                         <property name="name">clients</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">16</property>
+                        <property name="position">15</property>
                         <property name="name">created</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">17</property>
+                        <property name="position">16</property>
                         <property name="name">description</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">17</property>
                         <property name="name">eanCode</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">19</property>
+                        <property name="position">18</property>
                         <property name="name">useByDate</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">20</property>
+                        <property name="position">19</property>
                         <property name="name">startEffectivity</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">21</property>
+                        <property name="position">20</property>
                         <property name="name">productComments</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">22</property>
+                        <property name="position">21</property>
                         <property name="name">pvTransmitterDepartment</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">23</property>
+                        <property name="position">22</property>
                         <property name="name">pvCallerActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">24</property>
+                        <property name="position">23</property>
                         <property name="name">pvTransmitterActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
+                        <property name="position">24</property>
                         <property name="name">pvQualityApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">26</property>
+                        <property name="position">25</property>
                         <property name="name">pvProductionApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">27</property>
+                        <property name="position">26</property>
                         <property name="name">legalName</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">28</property>
+                        <property name="position">27</property>
                         <property name="name">productDensity</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">29</property>
+                        <property name="position">28</property>
                         <property name="name">plants</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -394,8 +377,8 @@
                     <property name="position">3</property>
                     <property name="name">productPrice</property>
                     <property name="nativeName">productPrice</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
@@ -436,151 +419,144 @@
                     <property name="position">9</property>
                     <property name="name">productQty</property>
                     <property name="nativeName">productQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
-                    <property name="name">productEAN</property>
-                    <property name="nativeName">productEAN</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">11</property>
                     <property name="name">versionLabel</property>
                     <property name="nativeName">versionLabel</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">12</property>
+                    <property name="position">11</property>
                     <property name="name">productHierarchy1</property>
                     <property name="nativeName">productHierarchy1</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">13</property>
+                    <property name="position">12</property>
                     <property name="name">productHierarchy2</property>
                     <property name="nativeName">productHierarchy2</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">14</property>
+                    <property name="position">13</property>
                     <property name="name">trademark</property>
                     <property name="nativeName">trademark</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">15</property>
+                    <property name="position">14</property>
                     <property name="name">clients</property>
                     <property name="nativeName">clients</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">16</property>
+                    <property name="position">15</property>
                     <property name="name">created</property>
                     <property name="nativeName">created</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">17</property>
+                    <property name="position">16</property>
                     <property name="name">description</property>
                     <property name="nativeName">description</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">18</property>
+                    <property name="position">17</property>
                     <property name="name">eanCode</property>
                     <property name="nativeName">eanCode</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
                 </structure>
                 <structure>
-                    <property name="position">19</property>
+                    <property name="position">18</property>
                     <property name="name">useByDate</property>
                     <property name="nativeName">useByDate</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">20</property>
+                    <property name="position">19</property>
                     <property name="name">startEffectivity</property>
                     <property name="nativeName">startEffectivity</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">21</property>
+                    <property name="position">20</property>
                     <property name="name">productComments</property>
                     <property name="nativeName">productComments</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">22</property>
+                    <property name="position">21</property>
                     <property name="name">pvTransmitterDepartment</property>
                     <property name="nativeName">pvTransmitterDepartment</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">23</property>
+                    <property name="position">22</property>
                     <property name="name">pvCallerActor</property>
                     <property name="nativeName">pvCallerActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">24</property>
+                    <property name="position">23</property>
                     <property name="name">pvTransmitterActor</property>
                     <property name="nativeName">pvTransmitterActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">25</property>
+                    <property name="position">24</property>
                     <property name="name">pvQualityApprovalActor</property>
                     <property name="nativeName">pvQualityApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">26</property>
+                    <property name="position">25</property>
                     <property name="name">pvProductionApprovalActor</property>
                     <property name="nativeName">pvProductionApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">27</property>
+                    <property name="position">26</property>
                     <property name="name">legalName</property>
                     <property name="nativeName">legalName</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">28</property>
+                    <property name="position">27</property>
                     <property name="name">productDensity</property>
                     <property name="nativeName">productDensity</property>
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
-                    <property name="position">29</property>
+                    <property name="position">28</property>
                     <property name="name">plants</property>
                     <property name="nativeName">plants</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/@code},{productCurrency;STRING;/@productCurrency},{productPrice;STRING;/@productPrice},{productUnit;STRING;/@productUnit},{productType;STRING;/@productType},{name;STRING;/@name},{productState;STRING;/@productState},{modified;STRING;/@modified},{productQty;STRING;/@productQty},{productEAN;STRING;/@productEAN},{versionLabel;STRING;/@versionLabel},{productHierarchy1;STRING;/@productHierarchy1},{productHierarchy2;STRING;/@productHierarchy2},{trademark;STRING;/@trademark},{clients;STRING;/@clients},{created;STRING;/@created},{description;STRING;/@description},{eanCode;STRING;/@eanCode},{useByDate;STRING;/@useByDate},{startEffectivity;STRING;/@startEffectivity},{productComments;STRING;/@productComments},{pvTransmitterDepartment;STRING;/@pvTransmitterDepartment},{pvCallerActor;STRING;/@pvCallerActor},{pvTransmitterActor;STRING;/@pvTransmitterActor},{pvQualityApprovalActor;STRING;/@pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/@pvProductionApprovalActor},{legalName;STRING;/@legalName},{productDensity;DOUBLE;/@productDensity},{plants;STRING;/@plants}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;STRING;/created},{description;STRING;/description},{eanCode;INT;/eanCode},{useByDate;STRING;/useByDate},{startEffectivity;STRING;/startEffectivity},{productComments;STRING;/productComments},{pvTransmitterDepartment;STRING;/pvTransmitterDepartment},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3024,6 +3000,25 @@
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packFirstAndSecondLevel" id="2313">
             <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">pmDimensions</property>
+                    <expression name="expression">value = "";
+if(dataSetRow["length"]!=null &amp;&amp; dataSetRow["length"]!=""){
+value = BirtMath.round(dataSetRow["length"],0);
+}
+if(dataSetRow["width"]!=null &amp;&amp; dataSetRow["width"]!=""){
+if(value != ""){
+value = value + "x";
+}
+value = value + BirtMath.round(dataSetRow["width"],0);
+}
+if(dataSetRow["height"]!=null &amp;&amp; dataSetRow["height"]!=""){
+value = value + "x" + BirtMath.round(dataSetRow["height"],0);
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">itemType</property>
@@ -3068,13 +3063,6 @@
                     <property name="analysisColumn">packagingListPkgLevel</property>
                 </structure>
                 <structure>
-                    <property name="columnName">pmDimensions</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">pmDimensions</text-property>
-                    <property name="analysisColumn">pmDimensions</property>
-                </structure>
-                <structure>
                     <property name="columnName">tare</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
@@ -3115,11 +3103,13 @@
                 <structure>
                     <property name="columnName">variants</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">variants</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">isDefaultVariant</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
             </list-property>
@@ -3128,7 +3118,7 @@
                     <property name="operator">ne</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Tertiaire"</value>
+                        <value>"Tertiary"</value>
                     </simple-property-list>
                 </structure>
             </list-property>
@@ -3167,47 +3157,47 @@
                     </structure>
                     <structure>
                         <property name="position">7</property>
-                        <property name="name">pmDimensions</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">8</property>
                         <property name="name">tare</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">9</property>
+                        <property name="position">8</property>
                         <property name="name">erpCode</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">10</property>
+                        <property name="position">9</property>
                         <property name="name">tareUnit</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">11</property>
+                        <property name="position">10</property>
                         <property name="name">length</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">12</property>
+                        <property name="position">11</property>
                         <property name="name">width</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
+                        <property name="position">12</property>
                         <property name="name">height</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">14</property>
+                        <property name="position">13</property>
                         <property name="name">variants</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">15</property>
+                        <property name="position">14</property>
                         <property name="name">isDefaultVariant</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">pmDimensions</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -3258,69 +3248,62 @@
                 </structure>
                 <structure>
                     <property name="position">7</property>
-                    <property name="name">pmDimensions</property>
-                    <property name="nativeName">pmDimensions</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">8</property>
                     <property name="name">tare</property>
                     <property name="nativeName">tare</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">9</property>
+                    <property name="position">8</property>
                     <property name="name">erpCode</property>
                     <property name="nativeName">erpCode</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">10</property>
+                    <property name="position">9</property>
                     <property name="name">tareUnit</property>
                     <property name="nativeName">tareUnit</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">11</property>
+                    <property name="position">10</property>
                     <property name="name">length</property>
                     <property name="nativeName">length</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">12</property>
+                    <property name="position">11</property>
                     <property name="name">width</property>
                     <property name="nativeName">width</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">13</property>
+                    <property name="position">12</property>
                     <property name="name">height</property>
                     <property name="nativeName">height</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">14</property>
+                    <property name="position">13</property>
                     <property name="name">variants</property>
                     <property name="nativeName">variants</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">15</property>
+                    <property name="position">14</property>
                     <property name="name">isDefaultVariant</property>
                     <property name="nativeName">isDefaultVariant</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList/entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;BIGDECIMAL;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{erpCode;STRING;/@erpCode},{tareUnit;STRING;/@tareUnit},{length;STRING;/@length},{width;STRING;/@width},{height;STRING;/@height},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList/entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;BIGDECIMAL;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{erpCode;STRING;/@erpCode},{tareUnit;STRING;/@tareUnit},{length;STRING;/@length},{width;STRING;/@width},{height;STRING;/@height},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4424,7 +4407,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Primaire"</value>
+                        <value>"Primary"</value>
                     </simple-property-list>
                 </structure>
             </list-property>
@@ -4758,7 +4741,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Primaire"</value>
+                        <value>"Primary"</value>
                     </simple-property-list>
                 </structure>
                 <structure>
@@ -5141,7 +5124,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Secondaire"</value>
+                        <value>"Secondary"</value>
                     </simple-property-list>
                 </structure>
                 <structure>
@@ -5589,7 +5572,7 @@
                     <property name="operator">eq</property>
                     <expression name="expr" type="javascript">row["packagingListPkgLevel"]</expression>
                     <simple-property-list name="value1">
-                        <value>"Secondaire"</value>
+                        <value>"Secondary"</value>
                     </simple-property-list>
                 </structure>
                 <structure>
@@ -6609,8 +6592,9 @@
                                                 <structure>
                                                     <property name="name">modified</property>
                                                     <text-property name="displayName">modified</text-property>
-                                                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["modified"],17)</expression>
                                                     <property name="dataType">string</property>
+                                                    <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
                                             <property name="resultSetColumn">modified</property>
@@ -6924,34 +6908,6 @@
                                 </data>
                             </cell>
                         </row>
-                        <row id="2544">
-                            <cell id="2870">
-                                <label id="2503">
-                                    <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Poids net :</text-property>
-                                </label>
-                            </cell>
-                            <cell id="2871">
-                                <data id="2872">
-                                    <property name="dataSet">Product</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">productQty</property>
-                                            <text-property name="displayName">productQty</text-property>
-                                            <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "P"){
-dataSetRow["productDensity"] + " kg"
-}
-else{
-dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
-}</expression>
-                                            <property name="dataType">string</property>
-                                            <property name="allowExport">true</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">productQty</property>
-                                </data>
-                            </cell>
-                        </row>
                         <row id="2550">
                             <cell id="2551">
                                 <label id="2873">
@@ -6998,43 +6954,26 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                         </row>
                         <row id="2875">
                             <cell id="2876">
-                                <property name="colSpan">2</property>
+                                <property name="colSpan">1</property>
                                 <property name="rowSpan">1</property>
                                 <label id="2877">
                                     <property name="style">becpg-row-header</property>
                                     <text-property name="text">Description :</text-property>
                                 </label>
                             </cell>
-                        </row>
-                        <row id="2878">
-                            <cell id="2879">
-                                <property name="colSpan">2</property>
-                                <property name="rowSpan">1</property>
-                                <table id="2668">
-                                    <property name="borderBottomColor">#FFFFFF</property>
-                                    <property name="borderLeftColor">#FFFFFF</property>
-                                    <property name="borderRightColor">#FFFFFF</property>
-                                    <property name="borderTopColor">#FFFFFF</property>
-                                    <property name="dataSet">description</property>
+                            <cell id="3005">
+                                <data id="3006">
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">description-line</property>
-                                            <text-property name="displayName">description-line</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["description-line"]</expression>
+                                            <property name="name">description</property>
+                                            <text-property name="displayName">description</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["description"]</expression>
                                             <property name="dataType">string</property>
                                         </structure>
                                     </list-property>
-                                    <column id="2573"/>
-                                    <detail>
-                                        <row id="2669">
-                                            <cell id="2570">
-                                                <data id="2575">
-                                                    <property name="resultSetColumn">description-line</property>
-                                                </data>
-                                            </cell>
-                                        </row>
-                                    </detail>
-                                </table>
+                                    <property name="resultSetColumn">description</property>
+                                </data>
                             </cell>
                         </row>
                     </grid>
@@ -7131,6 +7070,7 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
         <label id="2638"/>
         <table id="2890">
             <property name="style">becpg-table</property>
+            <property name="pageBreakInside">avoid</property>
             <property name="width">6.870229007633588in</property>
             <property name="dataSet">CompoList</property>
             <list-property name="boundDataColumns">
@@ -7207,11 +7147,11 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2983">
-                <property name="width">0.5801526717557252in</property>
+                <property name="width">0.4732824427480916in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3001">
-                <property name="width">0.5038167938931297in</property>
+                <property name="width">0.6106870229007634in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <header>
@@ -7264,6 +7204,7 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                     <property name="style">becpg-row-border</property>
                     <cell id="2971">
                         <data id="2975">
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">depthLevel</property>
                         </data>
                     </cell>
@@ -7319,6 +7260,7 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
                     </cell>
                     <cell id="3000">
                         <data id="3003">
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">variants</property>
                         </data>
                     </cell>
@@ -7333,6 +7275,7 @@ dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
         <label id="2792"/>
         <table id="2702">
             <property name="style">becpg-table</property>
+            <property name="pageBreakInside">avoid</property>
             <property name="width">6.885496183206107in</property>
             <property name="dataSet">packFirstAndSecondLevel</property>
             <list-property name="boundDataColumns">
@@ -7391,7 +7334,16 @@ dataSetRow["tare"] + " " + row["tareUnit"]
                 <structure>
                     <property name="name">length</property>
                     <text-property name="displayName">length</text-property>
-                    <expression name="expression" type="javascript">value = dataSetRow["length"]+" x " + dataSetRow["width"];
+                    <expression name="expression" type="javascript">value = "";
+if(dataSetRow["length"]!=null &amp;&amp; dataSetRow["length"]!=""){
+value = dataSetRow["length"];
+}
+if(dataSetRow["width"]!=null &amp;&amp; dataSetRow["width"]!=""){
+if(value != ""){
+value = value + " x ";
+}
+value = value + dataSetRow["width"];
+}
 if(dataSetRow["height"]!=null &amp;&amp; dataSetRow["height"]!=""){
 value = value + " x " + dataSetRow["height"];
 }</expression>
@@ -7500,8 +7452,8 @@ value = value + " x " + dataSetRow["height"];
                     </cell>
                     <cell id="2934">
                         <property name="style">becpg-data</property>
-                        <data id="2820">
-                            <property name="resultSetColumn">length</property>
+                        <data id="3007">
+                            <property name="resultSetColumn">pmDimensions</property>
                         </data>
                     </cell>
                     <cell id="2712">
@@ -7522,6 +7474,7 @@ value = value + " x " + dataSetRow["height"];
         <label id="2791"/>
         <grid id="2314">
             <property name="style">becpg-table</property>
+            <property name="pageBreakInside">avoid</property>
             <property name="width">100%</property>
             <column id="2757">
                 <property name="style">becpg-col-border</property>
@@ -7567,6 +7520,7 @@ value = value + " x " + dataSetRow["height"];
             <row id="2370">
                 <property name="style">becpg-row-border</property>
                 <property name="fontWeight">normal</property>
+                <property name="textAlign">center</property>
                 <cell id="2755">
                     <label id="2758">
                         <text-property name="text">SPCB</text-property>
@@ -7613,14 +7567,20 @@ env en kg</text-property>
             </row>
             <row id="2361">
                 <property name="style">becpg-row-border</property>
+                <property name="textAlign">center</property>
                 <cell id="2756">
-                    <data id="2508">
+                    <data id="3004">
                         <property name="dataSet">Product</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">productQty</property>
                                 <text-property name="displayName">SPCB</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"]</expression>
+                                <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "P"){
+dataSetRow["productQty"]
+}
+else{
+"1"
+}</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -7748,6 +7708,7 @@ env en kg</text-property>
         <label id="2991"/>
         <grid id="2716">
             <property name="style">becpg-table</property>
+            <property name="pageBreakInside">avoid</property>
             <column id="2717"/>
             <column id="2987">
                 <property name="style">becpg-col-border</property>
@@ -7786,6 +7747,7 @@ env en kg</text-property>
             </row>
             <row id="2730">
                 <property name="style">becpg-row-border</property>
+                <property name="textAlign">center</property>
                 <cell id="2731">
                     <label id="2446">
                         <text-property name="text">Nombre emb/couche</text-property>
@@ -7823,6 +7785,7 @@ en m</text-property>
             </row>
             <row id="2737">
                 <property name="style">becpg-row-border</property>
+                <property name="textAlign">center</property>
                 <cell id="2738">
                     <data id="2747">
                         <property name="dataSet">packThirdLevel</property>
@@ -8488,6 +8451,5 @@ en m</text-property>
                 INz+eedOOOOdurHTjjjho1//2Q==
             </property>
         </structure>
-        
     </list-property>
 </report>
