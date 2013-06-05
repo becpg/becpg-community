@@ -351,5 +351,14 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return extractNames(nodeRefs);
 	}
 	
-	
+	protected String extractAspects(NodeRef nodeRef){
+		String value = VALUE_NULL;
+		for(QName aspect : nodeService.getAspects(nodeRef)){
+			if (!value.isEmpty()) {
+				value += RepoConsts.LABEL_SEPARATOR;
+			}
+			value += aspect.toPrefixString();
+		}		
+		return value;
+	}
 }

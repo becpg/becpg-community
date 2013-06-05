@@ -138,10 +138,11 @@ public class ProjectHelper {
 		int totalWork = 0;
 		int workDone = 0;
 		for (TaskListDataItem p : projectData.getTaskList()) {
-			if (p.getDuration() != null) {
-				totalWork += p.getDuration();
+			Integer duration = p.getDuration() != null ? p.getDuration() : calculateTaskDuration(p.getStart(), p.getEnd());
+			if (duration != null) {
+				totalWork += duration;
 				if (TaskState.Completed.equals(p.getState()) || TaskState.Cancelled.equals(p.getState())) {
-					workDone += p.getDuration();
+					workDone += duration;
 				}
 			}
 		}
