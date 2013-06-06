@@ -1,16 +1,17 @@
 /*
  * 
  */
-package fr.becpg.repo.workflow.jbpm.productvalidation;
+package fr.becpg.repo.workflow.activiti.product;
 
 import java.util.List;
 
+import org.activiti.engine.delegate.DelegateExecution;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
-import org.alfresco.repo.workflow.jbpm.JBPMNode;
-import org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler;
+import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
+import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -19,58 +20,52 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jbpm.graph.exe.ExecutionContext;
-import org.springframework.beans.factory.BeanFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.ProductService;
 
 /**
- * The Class ApproveActionHandler.
+ * 
+ * @author matthieu
  *
- * @author querephi
  */
-public class ApproveActionHandler extends JBPMSpringActionHandler{
+public class ValidateProduct extends BaseJavaDelegate {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -3925326230084907429L;
+	private static Log logger = LogFactory.getLog(ValidateProduct.class);
 
-	private static Log logger = LogFactory.getLog(ApproveActionHandler.class);
-	
-	/** The product service. */
 	private ProductService productService;
-	
-	/** The node service. */
 	private NodeService nodeService;
-	
-	/** The repository helper. */
 	private Repository repositoryHelper;
-	
 	private DictionaryService dictionaryService;
 	
-	/* (non-Javadoc)
-	 * @see org.alfresco.repo.workflow.jbpm.JBPMSpringActionHandler#initialiseHandler(org.springframework.beans.factory.BeanFactory)
-	 */
-	@Override
-	protected void initialiseHandler(BeanFactory factory) {
-		
-		productService = (ProductService) factory.getBean("productService");
-		nodeService = (NodeService)factory.getBean("nodeService");
-		repositoryHelper = (Repository)factory.getBean("repositoryHelper");
-		dictionaryService = (DictionaryService)factory.getBean("dictionaryService");
+	
+	public void setProductService(ProductService productService) {
+		this.productService = productService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jbpm.graph.def.ActionHandler#execute(org.jbpm.graph.exe.ExecutionContext)
-	 */
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+	public void setRepositoryHelper(Repository repositoryHelper) {
+		this.repositoryHelper = repositoryHelper;
+	}
+
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
+
+
 	@Override
-	public void execute(ExecutionContext executionContext) throws Exception {
+	public void execute(final DelegateExecution task) throws Exception {
+
+		 final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
+
 		
-		logger.debug("start ApproveActionHandler");
-		
-		final JBPMNode jBPMNode = (JBPMNode) executionContext.getContextInstance().getVariable("bpm_package");		
-		final NodeRef pkgNodeRef = jBPMNode.getNodeRef();		
+	  logger.debug("start ApproveActionHandler");
 		
 		RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
         {
@@ -103,5 +98,4 @@ public class ApproveActionHandler extends JBPMSpringActionHandler{
         
         logger.debug("end ApproveActionHandler");
 	}
-
 }

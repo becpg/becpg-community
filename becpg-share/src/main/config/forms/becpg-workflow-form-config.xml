@@ -196,20 +196,28 @@
 	<!-- *********************************************************** -->   
 
 	<!-- Product Validation Workflow Definition -->
-	<config evaluator="string-compare" condition="jbpm$bcpgwf:productValidationWF">
+	<config evaluator="string-compare" condition="activiti$productValidationWF">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="bpm:workflowDescription" />
+					<show id="bcpgwf:pvTransmitterComment" />			
+					<show id="bcpgwf:pvCallerActor" />
+					<show id="bcpgwf:pvQualityApprovalActor" />
+					<show id="bcpgwf:pvProductionApprovalActor" />
+					<show id="bcpgwf:pvRDApprovalActor" />
 					<show id="bpm:workflowDueDate" />
 					<show id="bpm:workflowPriority" />
 					<show id="packageItems" />
 					<show id="bcpgwf:notifyAssignee" />
-					<show id="bcpgwf:notifyMe" />					              
+					<show id="bcpgwf:notifyMe" />
+					<show id="bcpgwf:notifyUsers" />					
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.general" />
 					<set id="info" appearance=""
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="intervenants" appearance="title" label="Intervenants" 
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 					<set id="other" appearance="title" label-id="workflow.set.other" />
@@ -219,6 +227,15 @@
 							<control-param name="style">width: 95%</control-param>
 						</control>
 					</field>
+					<field id="bcpgwf:pvTransmitterComment" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:pvCallerActor" set="intervenants" />
+					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" />
+					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" />
+					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" />
 					<field id="bpm:workflowDueDate" label-id="workflow.field.due"
 						set="info" />
 					<field id="bpm:workflowPriority" label-id="workflow.field.priority"
@@ -229,7 +246,8 @@
 					<field id="packageItems" set="items" />
 					
 					<field id="bcpgwf:notifyAssignee" set="other" />
-					<field id="bcpgwf:notifyMe" set="other" />               
+					<field id="bcpgwf:notifyMe" set="other" />
+					<field id="bcpgwf:notifyUsers" set="other" />
 				</appearance>
 			</form>
 		</forms>
@@ -239,8 +257,13 @@
 		<forms>
 			<form id="workflow-details">
 				<field-visibility>					
+					<show id="bcpgwf:pvCallerActor" />
+					<show id="bcpgwf:pvQualityApprovalActor" />
+					<show id="bcpgwf:pvProductionApprovalActor" />
+					<show id="bcpgwf:pvRDApprovalActor" />
 					<show id="bcpgwf:notifyAssignee" />
-					<show id="bcpgwf:notifyMe" />               
+					<show id="bcpgwf:notifyMe" />
+					<show id="bcpgwf:notifyUsers" />               
 					<show id="packageItems" />
 				</field-visibility>
 				<appearance>
@@ -248,7 +271,8 @@
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 
 					<field id="bcpgwf:notifyMe" />
-               <field id="bcpgwf:notifyAssignee"/>
+               		<field id="bcpgwf:notifyAssignee"/>
+               		<field id="bcpgwf:notifyUsers" />
 					<field id="packageItems" set="items" />
 				</appearance>
 			</form>
@@ -257,10 +281,13 @@
 				<field-visibility>
 					<show id="message" />
 					<show id="taskOwner" />
+					<show id="bcpgwf:pvCallerActor" />
+					<show id="bcpgwf:pvQualityApprovalActor" />
+					<show id="bcpgwf:pvProductionApprovalActor" />
+					<show id="bcpgwf:pvRDApprovalActor" />
 					<show id="bpm:workflowPriority" />
 					<show id="bpm:workflowDueDate" />
-					<show id="bpm:taskId" />
-					<show id="bpm:status" />
+					<show id="bpm:taskId" />					
 					<show id="packageItems" />
 					<show id="bcpgwf:notifyAssignee" />
 					<show id="bcpgwf:notifyMe" />               
@@ -276,6 +303,10 @@
 					<field id="message">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
+					<field id="bcpgwf:pvCallerActor" set="info" />
+					<field id="bcpgwf:pvQualityApprovalActor" set="info" />
+					<field id="bcpgwf:pvProductionApprovalActor" set="info" />
+					<field id="bcpgwf:pvRDApprovalActor" set="info" />
 					<field id="taskOwner" set="info" />
 					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -288,7 +319,12 @@
 					<field id="bpm:workflowDueDate" set="info" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bpm:status" set="progress" />
+					<field id="bpm:status" set="progress" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Not Yet Started|Non démarré,In Progress|En cours,On Hold|En attente,Cancelled|Annulé,Completed|Terminé</control-param>
+						</control>
+					</field>
 					<field id="packageItems" set="items" />
 					
 					<field id="bcpgwf:notifyAssignee" set="other" />
@@ -298,18 +334,19 @@
 		</forms>
 	</config>
 
-	<config evaluator="task-type" condition="bcpgwf:doProductValidationTask">
+	<config evaluator="task-type" condition="bcpgwf:doProductValidationQualityTask">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="message" />
+					<show id="bcpgwf:pvTransmitterComment" />
 					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />
-					<show id="bpm:status" />
+					<show id="bpm:taskId" />					
 					<show id="packageItems" />
-					<show id="bpm:comment" />
+					<show id="bcpgwf:reviewQualityApproval"/>
+					<show id="bcpgwf:reviewQualityComment"/>
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
@@ -323,6 +360,9 @@
 					<field id="message">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
+					<field id="bcpgwf:pvTransmitterComment">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>					
 					<field id="taskOwner" set="info" />
 					<field id="bpm:taskId" set="info">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -334,9 +374,146 @@
 					<field id="bpm:dueDate" set="info" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bpm:status" set="progress" />
+					<field id="bpm:status" set="progress" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Not Yet Started|Non démarré,In Progress|En cours,On Hold|En attente,Cancelled|Annulé,Completed|Terminé</control-param>
+						</control>
+					</field>
 					<field id="packageItems" set="items" />
-					<field id="bpm:comment" label-id="workflow.field.comment"
+					<field id="bcpgwf:reviewQualityApproval" set="response" mandatory="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewQualityComment" label-id="workflow.field.comment"
+						set="response">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="transitions" set="response" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="task-type" condition="bcpgwf:doProductValidationProductionTask">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="message" />
+					<show id="bcpgwf:pvTransmitterComment" />
+					<show id="taskOwner" />
+					<show id="bpm:priority" />
+					<show id="bpm:dueDate" />
+					<show id="bpm:taskId" />					
+					<show id="packageItems" />
+					<show id="bcpgwf:reviewProductionApproval"/>
+					<show id="bcpgwf:reviewProductionComment"/>			
+					<show id="transitions" />
+				</field-visibility>
+				<appearance>
+					<set id="" appearance="title" label-id="workflow.set.task.info" />
+					<set id="info" appearance=""
+						template="/org/alfresco/components/form/3-column-set.ftl" />
+					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
+					<set id="items" appearance="title" label-id="workflow.set.items" />
+					<set id="response" appearance="title" label-id="workflow.set.response" />
+
+					<field id="message">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvTransmitterComment">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="taskOwner" set="info" />
+					<field id="bpm:taskId" set="info">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bpm:priority" set="info" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="bpm:dueDate" set="info" label-id="workflow.field.due">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bpm:status" set="progress" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Not Yet Started|Non démarré,In Progress|En cours,On Hold|En attente,Cancelled|Annulé,Completed|Terminé</control-param>
+						</control>
+					</field>
+					<field id="packageItems" set="items" />
+					<field id="bcpgwf:reviewProductionApproval" set="response" mandatory="true" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewProductionComment" label-id="workflow.field.comment"
+						set="response">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="transitions" set="response" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="task-type" condition="bcpgwf:doProductValidationRDTask">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="message" />
+					<show id="bcpgwf:pvTransmitterComment" />
+					<show id="taskOwner" />
+					<show id="bpm:priority" />
+					<show id="bpm:dueDate" />
+					<show id="bpm:taskId" />					
+					<show id="packageItems" />
+					<show id="bcpgwf:reviewRDApproval"/>
+					<show id="bcpgwf:reviewRDComment"/>			
+					<show id="transitions" />
+				</field-visibility>
+				<appearance>
+					<set id="" appearance="title" label-id="workflow.set.task.info" />
+					<set id="info" appearance=""
+						template="/org/alfresco/components/form/3-column-set.ftl" />
+					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
+					<set id="items" appearance="title" label-id="workflow.set.items" />
+					<set id="response" appearance="title" label-id="workflow.set.response" />
+
+					<field id="message">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvTransmitterComment">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="taskOwner" set="info" />
+					<field id="bpm:taskId" set="info">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bpm:priority" set="info" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="bpm:dueDate" set="info" label-id="workflow.field.due">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bpm:status" set="progress" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Not Yet Started|Non démarré,In Progress|En cours,On Hold|En attente,Cancelled|Annulé,Completed|Terminé</control-param>
+						</control>
+					</field>
+					<field id="packageItems" set="items" />
+					<field id="bcpgwf:reviewRDApproval" set="response" mandatory="true" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewRDComment" label-id="workflow.field.comment"
 						set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -346,8 +523,69 @@
 		</forms>
 	</config>
 
+	<config evaluator="task-type" condition="bcpgwf:doProductValidationCallerTask">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="message" />
+					<show id="bcpgwf:pvTransmitterComment" />
+					<show id="taskOwner" />
+					<show id="bpm:priority" />
+					<show id="bpm:dueDate" />
+					<show id="bpm:taskId" />					
+					<show id="packageItems" />
+					<show id="bcpgwf:reviewCallerApproval"/>
+					<show id="bcpgwf:reviewCallerComment"/>			
+					<show id="transitions" />
+				</field-visibility>
+				<appearance>
+					<set id="" appearance="title" label-id="workflow.set.task.info" />
+					<set id="info" appearance=""
+						template="/org/alfresco/components/form/3-column-set.ftl" />
+					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
+					<set id="items" appearance="title" label-id="workflow.set.items" />
+					<set id="response" appearance="title" label-id="workflow.set.response" />
 
-
+					<field id="message">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvTransmitterComment">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="taskOwner" set="info" />
+					<field id="bpm:taskId" set="info">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bpm:priority" set="info" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="bpm:dueDate" set="info" label-id="workflow.field.due">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bpm:status" set="progress" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Not Yet Started|Non démarré,In Progress|En cours,On Hold|En attente,Cancelled|Annulé,Completed|Terminé</control-param>
+						</control>
+					</field>
+					<field id="packageItems" set="items" />
+					<field id="bcpgwf:reviewCallerApproval" set="response" mandatory="true" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewCallerComment" label-id="workflow.field.comment"
+						set="response">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="transitions" set="response" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+		
 	<config evaluator="task-type" condition="bcpgwf:approveProductTask">
 		<forms>
 			<form>
@@ -356,15 +594,28 @@
 					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />
-					<show id="bpm:status" />
+					<show id="bpm:taskId" />					
+					<show id="bcpgwf:pvQualityApprovalActor" />					
+					<show id="bcpgwf:reviewQualityApproval" />	
+					<show id="bcpgwf:reviewQualityComment"/>									
+					<show id="bcpgwf:pvProductionApprovalActor" />					
+					<show id="bcpgwf:reviewProductionApproval" />					
+					<show id="bcpgwf:reviewProductionComment"/>
+					<show id="bcpgwf:pvRDApprovalActor" />
+					<show id="bcpgwf:reviewRDApproval" />					
+					<show id="bcpgwf:reviewRDComment"/>
+					<show id="bcpgwf:pvCallerActor" />
+					<show id="bcpgwf:reviewCallerApproval" />					
+					<show id="bcpgwf:reviewCallerComment"/>
 					<show id="packageItems" />
-					<show id="bpm:comment" />
+					<show id="bcpgwf:pvTransmitterComment" />
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
 					<set id="info" appearance=""
+						template="/org/alfresco/components/form/3-column-set.ftl" />
+					<set id="intervenants" appearance="title" label="Intervenants" 
 						template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
@@ -384,10 +635,56 @@
 					<field id="bpm:dueDate" set="info" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bpm:status" set="progress" />
+					<field id="bpm:status" set="progress" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Not Yet Started|Non démarré,In Progress|En cours,On Hold|En attente,Cancelled|Annulé,Completed|Terminé</control-param>
+						</control>
+					</field>
+					
+					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" read-only="true"/>											
+					<field id="bcpgwf:reviewQualityApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>	
+						</control>
+					</field>					
+					<field id="bcpgwf:reviewQualityComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" read-only="true"/>
+					<field id="bcpgwf:reviewProductionApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewProductionComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" read-only="true"/>
+					<field id="bcpgwf:reviewRDApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewRDComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvCallerActor" set="intervenants" read-only="true"/>
+					<field id="bcpgwf:reviewCallerApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewCallerComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					
 					<field id="packageItems" set="items" />
-					<field id="bpm:comment" label-id="workflow.field.comment"
-						set="response">
+					<field id="bcpgwf:pvTransmitterComment" set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="transitions" set="response" />
@@ -404,19 +701,33 @@
 					<show id="taskOwner" />
 					<show id="bpm:priority" />
 					<show id="bpm:dueDate" />
-					<show id="bpm:taskId" />
-					<show id="bpm:status" />
+					<show id="bpm:taskId" />					
+					<show id="bcpgwf:pvQualityApprovalActor" />					
+					<show id="bcpgwf:reviewQualityApproval" />	
+					<show id="bcpgwf:reviewQualityComment"/>									
+					<show id="bcpgwf:pvProductionApprovalActor" />
+					<show id="bcpgwf:reviewProductionApproval" />					
+					<show id="bcpgwf:reviewProductionComment"/>
+					<show id="bcpgwf:pvRDApprovalActor" />
+					<show id="bcpgwf:reviewRDApproval" />					
+					<show id="bcpgwf:reviewRDComment"/>
+					<show id="bcpgwf:pvCallerActor" />
+					<show id="bcpgwf:reviewCallerApproval" />					
+					<show id="bcpgwf:reviewCallerComment" />
 					<show id="packageItems" />
-					<show id="bpm:comment" />
+					<show id="bcpgwf:pvTransmitterComment" />
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
 					<set id="" appearance="title" label-id="workflow.set.task.info" />
 					<set id="info" appearance=""
+						template="/org/alfresco/components/form/3-column-set.ftl" />					
+					<set id="intervenants" appearance="title" label="Intervenants" 
 						template="/org/alfresco/components/form/3-column-set.ftl" />
 					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
 					<set id="items" appearance="title" label-id="workflow.set.items" />
 					<set id="response" appearance="title" label-id="workflow.set.response" />
+					
 
 					<field id="message">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -432,10 +743,56 @@
 					<field id="bpm:dueDate" set="info" label-id="workflow.field.due">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bpm:status" set="progress" />
+					<field id="bpm:status" set="progress" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Not Yet Started|Non démarré,In Progress|En cours,On Hold|En attente,Cancelled|Annulé,Completed|Terminé</control-param>
+						</control>
+					</field>
+					
+					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" />											
+					<field id="bcpgwf:reviewQualityApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>	
+						</control>
+					</field>					
+					<field id="bcpgwf:reviewQualityComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" />
+					<field id="bcpgwf:reviewProductionApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewProductionComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" />
+					<field id="bcpgwf:reviewRDApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewRDComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bcpgwf:pvCallerActor" set="intervenants" />
+					<field id="bcpgwf:reviewCallerApproval" set="intervenants" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,Approved|Validé,Rejected|Refusé</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:reviewCallerComment" set="intervenants">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					
 					<field id="packageItems" set="items" />
-					<field id="bpm:comment" label-id="workflow.field.comment"
-						set="response">
+					<field id="bcpgwf:pvTransmitterComment" set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="transitions" set="response" />
@@ -443,5 +800,6 @@
 			</form>
 		</forms>
 	</config>
+
 
 </alfresco-config>

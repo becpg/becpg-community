@@ -40,9 +40,7 @@ public enum SystemGroup {
 	
 	/** The Purchasing mgr. */
 	PurchasingMgr,
-	
-	/** The Product reviewer. */
-	ProductReviewer,
+
 	
 	/** The RD. */
 	Trade,

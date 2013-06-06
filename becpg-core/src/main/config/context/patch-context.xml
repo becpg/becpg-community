@@ -39,11 +39,6 @@
 						<prop key="mimetype">text/xml</prop>
 					</props>
 					<props>
-						<prop key="engineId">jbpm</prop>
-						<prop key="location">alfresco/module/${pom.artifactId}/workflow/product_validation_processdefinition.xml</prop>
-						<prop key="mimetype">text/xml</prop>
-					</props>
-					<props>
 						<prop key="engineId">activiti</prop>
 						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-adhoc.bpmn</prop>
 						<prop key="mimetype">text/xml</prop>
@@ -54,16 +49,6 @@
 						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn</prop>
 						<prop key="mimetype">text/xml</prop>
 					</props>	
-					<props>
-						<prop key="engineId">activiti</prop>
-						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-adhoc.bpmn</prop>
-						<prop key="mimetype">text/xml</prop>
-					</props>				
-					<props>
-						<prop key="engineId">activiti</prop>
-						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop>
-						<prop key="mimetype">text/xml</prop>
-					</props>
             </list>
         </property>
     </bean> 
@@ -158,5 +143,34 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+		<bean id="patch.bcpg.redeployWfProductValidation" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployWfProductValidation</value></property>
+        <property name="description"><value>patch.bcpg.redeployWfProductValidation.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10009</value></property>
+        <property name="workflowDefinitions">
+            <list>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean> 
+	
+	 <bean id="patch.bcpg.removeProductValidationWorkflowPatch" class="fr.becpg.repo.admin.patch.RemoveProductValidationWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.removeProductValidationWorkflowPatch</value></property>
+        <property name="description"><value>patch.bcpg.removeProductValidationWorkflowPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10010</value></property>
+        <property name="workflowService" ref="WorkflowService"/>
+        <property name="authorityService" ref="authorityService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean> 
 	
 </beans>

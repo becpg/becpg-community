@@ -123,7 +123,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (datatype != null) {
 			ftsQuery = "TYPE:\"" + datatype + "\" AND (" + ftsQuery + ")" ;
 		} else {
-			ftsQuery += " AND (-TYPE:\"cm:thumbnail\" -TYPE:\"cm:failedThumbnail\" -TYPE:\"cm:rating\" -TYPE:\"bcpg:entityListItem\" -TYPE:\"systemfolder\" )";
+			ftsQuery += "  AND (-TYPE:\"cm:thumbnail\" -TYPE:\"cm:failedThumbnail\" -TYPE:\"cm:rating\" -TYPE:\"bcpg:entityListItem\" -TYPE:\"systemfolder\" )";
+			ftsQuery += " TYPE:\"" + BeCPGModel.TYPE_PRODUCT + "\"^4";
+			
 		}
 
 		// extract data type for this search - advanced search query is type
