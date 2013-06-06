@@ -320,8 +320,20 @@ var g; // gantt var
                      if (now.getTime() > dates.end.getTime()) {
                         return "overdue-20to29";
                      }
+                     
 
                      return "overdue-negative";
+                  },
+                  getTaskAdvancement :  function PL_getTaskAdvancement(task) {
+
+                     if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
+                        return this.msg("overdue.complete");
+                     }
+                     var dates = this.extractDates(task), now = new Date();
+                     
+                     return Math.floor((now.getTime() - dates.end.getTime())/( 24 * 60 * 60 * 1000))+this.msg("overdue.day") ;
+                     
+                   
                   },
                   getOverdueClass : function PL_getOverdueClass(oRecord, size) {
                      var percent = 0, overdue = oRecord.getData("itemData")["prop_pjt_projectOverdue"], dates = this
@@ -436,7 +448,7 @@ var g; // gantt var
                   },
 
                   getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, full, start) {
-                     var ret = '<span class="' + this.getTaskAdvancementClass(task) + '">';
+                     var ret = '<span class="' + this.getTaskAdvancementClass(task) + '" title="'+this.getTaskAdvancement(task)+'">';
 
                      if (full) {
                         ret += '<div class="projectStatus" style="background-color:#' + this.getTaskColor(task) + '" ></div>';
