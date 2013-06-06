@@ -274,10 +274,10 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 				List<NodeRef> variants = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
 				boolean isDefault = false;
 				String name = value;
-//				if(value.split("|").length>1){
-//					name = value.split("|")[0];
-//					isDefault = Boolean.parseBoolean(value.split("|")[1]);
-//				}
+				if(value.contains("|")){
+					name = value.split("\\|")[0];
+					isDefault = Boolean.parseBoolean(value.split("\\|")[1]);
+				}
 				
 				for(NodeRef variant : variants){
 					if(nodeService.getProperty(variant, ContentModel.PROP_NAME).equals(name)){

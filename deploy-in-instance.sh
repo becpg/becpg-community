@@ -40,3 +40,6 @@ if [ "$ans" = "y" ]; then
 	rm -rf becpg-olap-*
 fi
 
+
+cd $INSTANCE_DIR/../deploy/addons
+./deploy.sh $SERVER

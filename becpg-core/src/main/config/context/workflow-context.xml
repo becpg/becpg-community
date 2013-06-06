@@ -13,8 +13,8 @@
 					<prop key="redeploy">false</prop>
 				</props>
 				<props>
-					<prop key="engineId">jbpm</prop>
-					<prop key="location">alfresco/module/${pom.artifactId}/workflow/product_validation_processdefinition.xml</prop>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">false</prop>
 				</props>
@@ -59,5 +59,7 @@
 			</list>
 		</property>
 	</bean>
+
+
 
 </beans>

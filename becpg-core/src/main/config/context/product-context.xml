@@ -58,4 +58,15 @@
 		<property name="nodeService" ref="nodeService" />
 	</bean>
 
+	
+	<!-- Workflow -->
+	<bean id="ValidateProduct" parent="baseJavaDelegate"
+		class="fr.becpg.repo.workflow.activiti.product.ValidateProduct">
+		<property name="nodeService" ref="nodeService" />
+		<property name="productService" ref="productService" />
+		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="dictionaryService" ref="dictionaryService" />
+	</bean>
+
+
 </beans>

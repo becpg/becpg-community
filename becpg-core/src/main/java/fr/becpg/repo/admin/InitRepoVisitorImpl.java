@@ -5,11 +5,9 @@ package fr.becpg.repo.admin;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -92,8 +90,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	/** The Constant GROUP_PURCHASING_MGR. */
 	public static final String GROUP_PURCHASING_MGR = "PurchasingMgr";
 
-	/** The Constant GROUP_PRODUCT_REVIEWER. */
-	public static final String GROUP_PRODUCT_REVIEWER = "ProductReviewer";
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	public static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
@@ -908,8 +904,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.RDMgr.toString(), SystemGroup.Quality.toString(), SystemGroup.QualityUser.toString(),
 				SystemGroup.QualityMgr.toString(), SystemGroup.Purchasing.toString(),
 				SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
-				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(),
-				SystemGroup.ProductReviewer.toString(), NPDGroup.NPD.toString(),
+			   SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString()
+			   , NPDGroup.NPD.toString(),
 				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
 				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
 				NPDGroup.ValidateFaisability.toString(), NPDGroup.FaisabilityAssignersGroup.toString() };

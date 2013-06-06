@@ -6,16 +6,29 @@
 		<import uri="http://www.alfresco.org/model/dictionary/1.0"
 			prefix="d" />
 		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 	</imports>
 
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/workflow/1.0" prefix="bcpgwf" />
 	</namespaces>
 
+  <constraints>
+		<constraint name="bcpgwf:approvalDecision" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Approved</value>
+					<value>Rejected</value>					
+				</list>
+			</parameter>
+		</constraint>
+	</constraints>
+
 	<types>
 	
 		<!--                               -->
-      <!--  Adhoc Tasks -->               
+      <!--  Adhoc Tasks 					  -->               
       <!--                               -->
       
       <type name="bcpgwf:submitAdhocTask">
@@ -53,48 +66,273 @@
 			<parent>bpm:startTask</parent>
 			<mandatory-aspects>
             <aspect>bcpgwf:notificationAspect</aspect>
+            <aspect>bcpgwf:productValidationAspect</aspect>
+            <aspect>bcpgwf:productValidationCommentAspect</aspect>
          </mandatory-aspects>
 		</type>
 
-		<type name="bcpgwf:doProductValidationTask">
-			<parent>bpm:workflowTask</parent>
+		<type name="bcpgwf:doProductValidationQualityTask">
+			<parent>bpm:workflowTask</parent>			
 			<overrides>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
 				</property>
 			</overrides>
+			<mandatory-aspects>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewQualityApprovalAspect</aspect>
+			</mandatory-aspects>
 		</type>
+		
+		<type name="bcpgwf:doProductValidationProductionTask">
+			<parent>bpm:workflowTask</parent>			
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewProductionApprovalAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="bcpgwf:doProductValidationRDTask">
+			<parent>bpm:workflowTask</parent>			
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewRDApprovalAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="bcpgwf:doProductValidationCallerTask">
+			<parent>bpm:workflowTask</parent>			
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewCallerApprovalAspect</aspect>
+			</mandatory-aspects>
+		</type>
+																
 
 		<type name="bcpgwf:approveProductTask">
 			<parent>bpm:workflowTask</parent>
 			<mandatory-aspects>
-				<aspect>bpm:assignee</aspect>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewQualityApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewProductionApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewRDApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewCallerApprovalAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
 		<type name="bcpgwf:rejectProductTask">
 			<parent>bpm:workflowTask</parent>
 			<mandatory-aspects>
-				<aspect>bpm:assignee</aspect>
+				<aspect>bcpgwf:productValidationAspect</aspect>
+				<aspect>bcpgwf:productValidationCommentAspect</aspect>
+				<aspect>bcpgwf:reviewQualityApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewProductionApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewRDApprovalAspect</aspect>
+				<aspect>bcpgwf:reviewCallerApprovalAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
 		
 	</types>
 	
 	<aspects>
-	
+		
 		<aspect name="bcpgwf:notificationAspect">
 			 <properties>
             <property name="bcpgwf:notifyMe">
                <type>d:boolean</type>
-               <default>false</default>
+               <default>true</default>
             </property>
             <property name="bcpgwf:notifyAssignee">
                <type>d:boolean</type>
-               <default>false</default>
-            </property>
+               <default>true</default>
+            </property>     
          </properties>
+         <associations>
+				<association name="bcpgwf:notifyUsers">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>											
+			</associations>
 		</aspect>
+		
+		<aspect name="bcpgwf:reviewQualityApprovalAspect">
+			<properties>								
+				<property name="bcpgwf:reviewQualityApproval">
+               <type>d:text</type>
+               <constraints>
+						<constraint ref="bcpgwf:approvalDecision" />
+					</constraints>
+            </property> 
+            <property name="bcpgwf:reviewQualityComment">
+               <type>d:text</type>
+               <constraints>
+                   <constraint ref="bpm:allowedDescriptionLength"/>
+               </constraints>
+            </property>		               			
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpgwf:reviewProductionApprovalAspect">
+			<properties>													
+             <property name="bcpgwf:reviewProductionApproval">
+               <type>d:text</type>
+               <constraints>
+						<constraint ref="bcpgwf:approvalDecision" />
+					</constraints>
+            </property>
+            <property name="bcpgwf:reviewProductionComment">
+               <type>d:text</type>
+               <constraints>
+                   <constraint ref="bpm:allowedDescriptionLength"/>
+               </constraints>               
+            </property>             			
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpgwf:reviewRDApprovalAspect">
+			<properties>													
+             <property name="bcpgwf:reviewRDApproval">
+               <type>d:text</type>
+               <constraints>
+						<constraint ref="bcpgwf:approvalDecision" />
+					</constraints>
+            </property>
+            <property name="bcpgwf:reviewRDComment">
+               <type>d:text</type>
+               <constraints>
+                   <constraint ref="bpm:allowedDescriptionLength"/>
+               </constraints>               
+            </property>             			
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpgwf:reviewCallerApprovalAspect">
+			<properties>													
+             <property name="bcpgwf:reviewCallerApproval">
+               <type>d:text</type>
+               <constraints>
+						<constraint ref="bcpgwf:approvalDecision" />
+					</constraints>
+            </property>
+            <property name="bcpgwf:reviewCallerComment">
+               <type>d:text</type>
+               <constraints>
+                   <constraint ref="bpm:allowedDescriptionLength"/>
+               </constraints>               
+            </property>             			
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpgwf:productValidationCommentAspect">
+			<properties>				
+				<property name="bcpgwf:pvTransmitterComment">
+					<type>d:text</type>
+					<constraints>
+	                  <constraint ref="bpm:allowedDescriptionLength"/>
+	              </constraints>
+				</property>
+			</properties>		
+		</aspect>
+		
+		<aspect name="bcpgwf:productValidationAspect">
+		   <properties>
+		   	<property name="bcpgwf:pvValidationDate">
+					<type>d:date</type>
+				</property>
+		   </properties>
+			<associations>
+				<association name="bcpgwf:pvCallerActor">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+				<association name="bcpgwf:pvQualityApprovalActor">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpgwf:pvProductionApprovalActor">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpgwf:pvRDApprovalActor">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+			</associations>			
+		</aspect>	
+		
+		<aspect name="bcpgwf:approvalActors">
+            <associations>
+
+                <association name="bcpgwf:approvalActors">
+                    <source>
+                        <mandatory>false</mandatory>
+                        <many>false</many>
+                    </source>
+                    <target>
+                        <class>cm:person</class>
+                        <mandatory>false</mandatory>
+                        <many>true</many>
+                    </target>
+                </association>
+
+            </associations>
+        </aspect>
 		
 	</aspects>
 

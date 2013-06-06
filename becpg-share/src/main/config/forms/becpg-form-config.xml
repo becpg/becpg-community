@@ -129,6 +129,7 @@
 					<show id="cm:created" for-mode="view" />
 					<show id="cm:modifier" for-mode="view" />
 					<show id="cm:modified" for-mode="view" />
+					
 
 					<!-- GS1 -->
 					<show id="gs1:height" for-mode="edit" />
@@ -182,7 +183,8 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="effectivity" appearance="bordered-panel" label-id="becpg.forms.set.effectivity.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
-
+					 <set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab"/>
 
 					<set id="publicationTab" label-id="becpg.forms.set.publication.label" />
 					<set appearance="bordered-panel" id="mesuresPanel"
@@ -309,7 +311,8 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field> 
-
+					
+					
 					<!-- GS1 -->
 
 
@@ -4843,6 +4846,33 @@
 					<set id="template" label-id="becpg.forms.set.template.label" />
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config condition="bcpgwf:productValidationAspect" evaluator="aspect" >
+		<forms>
+			<form>
+				<field-visibility>
+				   <show id="bcpgwf:pvValidationDate" for-mode="view" />
+					<show id="bcpgwf:pvCallerActor" for-mode="view" />
+					<show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
+				</field-visibility>
+				<appearance>
+				   <set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpgwf:pvValidationDate" set="productValidation" >
+						<control template="/org/alfresco/components/form/controls/date.ftl" >
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:pvCallerActor" set="productValidation" />
+					<field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
 				</appearance>
 			</form>
 		</forms>

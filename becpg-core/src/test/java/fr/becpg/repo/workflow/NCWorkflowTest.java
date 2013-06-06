@@ -110,15 +110,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		executeNonConformityAdhoc();
 	}
 
-	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {
-		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
-		taskQuery.setProcessId(workflowInstanceId);
-		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
-
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
-		assertEquals(1, workflowTasks.size());
-		return workflowTasks.get(0);
-	}
 
 	private void executeNonConformityWF(final boolean needPrevAction) {
 

@@ -121,7 +121,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 			searchQuery += " +PATH:\"" + getPath(nodeRef) + "//*\"";
 			if (itemType != null && !itemType.isEmpty()) {
 				searchQuery += " +TYPE:\"" + itemType + "\"";
-			}
+			} 
 		}
 		
 		QName datatype = null;
