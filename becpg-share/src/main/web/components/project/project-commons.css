@@ -1,0 +1,182 @@
+.project-list .project-cancel-link,.project-list .project-view-link {
+	background: no-repeat scroll 4px 1px;
+	border: 1px solid transparent;
+	padding-left: 30px;
+}
+
+.project-list .project-cancel-link {
+	background-image: url("../images/remove-icon-16.png");
+}
+
+.project-list .project-view-link {
+	background-image: url("../images/workflow-16.png");
+}
+
+.project-list .project-cancel-link a,.project-list .project-view-link a
+	{
+	min-height: 2em;
+	cursor: pointer;
+	color: #2B6EB5;
+	outline-color: invert;
+	outline-width: medium;
+	text-decoration: none;
+}
+
+.project-list.project-task a {
+	cursor: pointer;
+}
+
+.project-list .project-cancel-link-over,.project-list .project-view-link-over
+	{
+	background-color: #FFF;
+	border: 1px solid #2B6EB5;
+	cursor: pointer;
+}
+
+.project-list span.task-legend {
+	width: 14px;
+	height: 14px;
+	border: 1px solid;
+	border-radius: 5px;
+	margin-right: 5px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.project-list table a.folder-link {
+	cursor: pointer;
+	padding-left: 24px;
+	text-decoration: none;
+	background: url("../images/folder-up-16.png") no-repeat;
+	display: inline-block;
+	height: 16px;
+}
+
+.project-list table a.task-link {
+	cursor: pointer;
+	padding-left: 24px;
+	text-decoration: none;
+	background: url("../images/task-16.png") no-repeat;
+	margin-left: 5px;
+	display: inline-block;
+	height: 16px;
+	vertical-align: middle;
+}
+
+.project-list span.delivrable-status {
+	background-repeat: no-repeat;
+	padding-left: 24px;
+}
+
+.project-list span.delivrable-status-Completed,.project-list span.delivrable-status-Closed
+	{
+	background: url("../images/complete-16.png") no-repeat;
+}
+
+.project-list span.delivrable-status-Planned {
+	background: url("../images/workflow-16.png") no-repeat;
+}
+
+.project-list span.delivrable-status-InProgress {
+	background: url("../images/job-running-16.png") no-repeat;
+}
+
+.project-list .more-deliverable a.show-more {
+	background-repeat: no-repeat;
+	border: 1px solid transparent;
+	display: block;
+	padding-left: 24px;
+	background-position: top left;
+}
+
+.project-list span.doc-file {
+	padding-right: 4px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.project-list span.advancement-done {
+	 background: url("./images/advancement-done-16.png") no-repeat scroll 0px 0px transparent;
+    display: inline-block;
+    height: 16px;
+    padding-left: 24px;
+}
+
+.project-list span.overdue-negative {
+	background: url("./images/overdue-negative-16.png") no-repeat;
+	display: inline-block;
+	padding-left: 24px;
+	height: 16px;
+}
+
+.project-list span.advancement-done-32 {
+	background: url("./images/advancement-done-32.png") no-repeat scroll 0px 0px transparent;
+	display: inline-block;
+	height: 32px;
+	padding-left: 40px;
+}
+
+.project-list span.overdue-0to9 {
+	background: url("./images/overdue-0to9-16.png") no-repeat;
+	display: inline-block;
+	padding-left: 24px;
+	height: 16px;
+}
+
+.project-list span.overdue-10to19 {
+	background: url("./images/overdue-10to19-16.png") no-repeat;
+	display: inline-block;
+	padding-left: 24px;
+	height: 16px;
+}
+
+.project-list span.overdue-20to29 {
+	background: url("./images/overdue-20to29-16.png") no-repeat;
+	display: inline-block;
+	padding-left: 24px;
+	height: 16px;
+}
+
+.project-list span.overdue-30plus {
+	background: url("./images/overdue-30plus-16.png") no-repeat;
+	display: inline-block;
+	padding-left: 24px;
+	height: 16px;
+}
+
+.project-list span.overdue-negative-32 {
+	background: url("./images/overdue-negative.png") no-repeat scroll 0 -4px transparent;
+	display: inline-block;
+	padding-left: 40px;
+	height: 32px;
+}
+
+.project-list span.overdue-0to9-32 {
+	background: url("./images/overdue-0to9.png") no-repeat;
+	display: inline-block;
+	padding-left: 40px;
+	height: 32px;
+}
+
+.project-list span.overdue-10to19-32 {
+	background: url("./images/overdue-10to19.png") no-repeat;
+	display: inline-block;;
+	padding-left: 40px;
+	padding-left: 40px;
+	height: 32px;
+	height: 32px;
+}
+
+.project-list span.overdue-20to29-32 {
+	background: url("./images/overdue-20to29.png") no-repeat;
+	display: inline-block;
+	padding-left: 40px;
+	height: 32px;
+}
+
+.project-list span.overdue-30plus-32 {
+	background: url("./images/overdue-30plus.png") no-repeat;
+	display: inline-block;
+	padding-left: 40px;
+	height: 32px;
+}

@@ -78,6 +78,7 @@ public class AssociationServiceImpl implements AssociationService {
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
 		return assocRefs != null && !assocRefs.isEmpty() ? assocRefs.get(0).getTargetRef() : null;
 	}
+	
 
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
@@ -89,6 +90,18 @@ public class AssociationServiceImpl implements AssociationService {
 
 		return listItems;
 	}
+	
+	@Override
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName) {
+		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qName);
+		List<NodeRef> listItems = new ArrayList<NodeRef>(assocRefs.size());
+		for (AssociationRef assocRef : assocRefs) {
+			listItems.add(assocRef.getSourceRef());
+		}
+
+		return listItems;
+	}
+
 
 	@Override
 	public NodeRef getChildAssoc(NodeRef nodeRef, QName qName) {

@@ -1,91 +1,92 @@
 package fr.becpg.repo.project.extractor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.alfresco.query.PagingRequest;
-import org.alfresco.query.PagingResults;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.FileFilterMode;
-import org.alfresco.util.FileFilterMode.Client;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
-import fr.becpg.repo.entity.datalist.DataListSortRegistry;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
-import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
-import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.LuceneHelper;
 
 @Service
-public class ProjectListExtractor extends AbstractDataListExtractor {
+public class ProjectListExtractor extends SimpleExtractor {
 
-	private FileFolderService fileFolderService;
+	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.documents.favourites";
+	private static final String PROP_IS_FAVOURITE = "isFavourite";
+	
+	private static final String VIEW_FAVOURITES = "favourites";
+	private static final String VIEW_TASKS = "tasks";
+	private static final String VIEW_MY_TASKS = "my-tasks";
 
-	private DictionaryService dictionaryService;
+
+	private PersonService personService;
+
+	private AssociationService associationService;
+
+	private PreferenceService preferenceService;
 	
-	private EntityListDAO entityListDAO;
-	
-	private NamespaceService namespaceService;
-	
-	private DataListSortRegistry dataListSortRegistry;
 	
 	private static Log logger = LogFactory.getLog(ProjectListExtractor.class);
-	
 
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
+
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
 	}
 
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
+
+	public void setPreferenceService(PreferenceService preferenceService) {
+		this.preferenceService = preferenceService;
 	}
 
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	public void setDataListSortRegistry(DataListSortRegistry dataListSortRegistry) {
-		this.dataListSortRegistry = dataListSortRegistry;
-	}
 
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
+
+		List<NodeRef> favorites = getFavorites();
 		
-		List<NodeRef> results = getListNodeRef(dataListFilter, pagination );
-		
+		List<NodeRef> results = getListNodeRef(dataListFilter, pagination,favorites);
+
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
+		
+		
 
 		for (NodeRef nodeRef : results) {
-			//Right check not necessary
-			if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
-				ret.getItems().add(extract(nodeRef, metadataFields, props));
-			} 
+			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+				
+				Map<String, Object> extracted = extract(nodeRef, metadataFields, props);
+				if(favorites.contains(nodeRef)){
+					extracted.put(PROP_IS_FAVOURITE,true);
+				} else {
+					extracted.put(PROP_IS_FAVOURITE,false);
+				}
+				
+				ret.getItems().add(extracted);
+			}
 		}
 
 		ret.setFullListSize(pagination.getFullListSize());
@@ -93,93 +94,84 @@ public class ProjectListExtractor extends AbstractDataListExtractor {
 		return ret;
 	}
 
-	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
-	
-		List<NodeRef> results = new ArrayList<NodeRef>();
+	private List<NodeRef> getFavorites() {
 
-		if (dataListFilter.isAllFilter()) {
+		Map<String, Serializable> preferences =  preferenceService.getPreferences(AuthenticationUtil.getFullyAuthenticatedUser());
+        
+        String favorites = (String) preferences.get(PREF_FOLDER_FAVOURITES);
 
-			Collection<QName> qnames = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
-
-			if(logger.isDebugEnabled()){
-				logger.debug("DataType to filter :"+dataListFilter.getDataType());
-			}
-			
-			Set<QName> ignoreTypeQNames = new HashSet<QName>(qnames.size());
-			for (QName qname : qnames) {
-				if (!qname.equals(dataListFilter.getDataType())) {
-					if(logger.isDebugEnabled()){
-						logger.debug("Add to ignore :"+qname);
-					}
-					ignoreTypeQNames.add(qname);
-				}
-			}
-
-			int skipOffset = (pagination.getPage()-1) * pagination.getPageSize();
-			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
-
-			PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
-			pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-
-			PagingResults<FileInfo> pageOfNodeInfos = null;
-			FileFilterMode.setClient(Client.script);
-			try {
-
-				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getParentNodeRef(), true, false, null, ignoreTypeQNames, dataListFilter.getSortProps(namespaceService), pageRequest);
-			} finally {
-				FileFilterMode.clearClient();
-			}
-
-			results = pagination.paginate(pageOfNodeInfos);
-
-		} else {
-
-			results = advSearchService.queryAdvSearch(dataListFilter.getSearchQuery(), SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(),
-					dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), pagination.getMaxResults());
-			
-			if(dataListFilter.getSortId() != null){
-				DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
-				if(plugin != null){
-					plugin.sort(results);
-				}
-			}					
-
-			results = pagination.paginate(results);
-
+		List<NodeRef> ret = new ArrayList<>();
+        
+		if(logger.isDebugEnabled()){
+			logger.debug("Favourites: "+favorites);
 		}
+		
+		if(favorites!=null){
+			for(String favorite : favorites.split(",")){
+				ret.add(new NodeRef(favorite));
+			}
+		}
+		return ret;
+	}
+
+	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination, List<NodeRef> favorites) {
+
+		List<NodeRef> results = new ArrayList<NodeRef>();		
+		
+		//pjt:project
+		QName dataType = dataListFilter.getDataType();
+		String query = dataListFilter.getSearchQuery();
+		Map<String, Boolean> sortMap = dataListFilter.getSortMap();
+		
+		if(VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())){
+			dataType = ProjectModel.TYPE_TASK_LIST;
+			query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));
+			sortMap = new HashMap<>();
+			sortMap.put(ProjectModel.PROP_TL_START.toString(), true);
+			sortMap.put(ProjectModel.PROP_TL_END.toString(), true);
+			sortMap.put(ProjectModel.PROP_TL_TASK_NAME.toString(), true);
+			
+		}
+		
+		results = advSearchService.queryAdvSearch(query, SearchService.LANGUAGE_LUCENE, dataType, dataListFilter.getCriteriaMap(),
+				sortMap , pagination.getMaxResults());
+		
+		//Always should return project
+        if(VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())){
+        	 if(VIEW_MY_TASKS.equals(dataListFilter.getFilterId())){
+        		 logger.debug("Keep only tasks for  "+AuthenticationUtil.getFullyAuthenticatedUser());
+        		 NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+        		 if(logger.isDebugEnabled()){
+        			 logger.debug("Retain : "+associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+        		 }
+        		 results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+        	 }
+		}
+		
+        if(VIEW_FAVOURITES.equals(dataListFilter.getFilterId()) ){
+        	logger.debug("Keep only favorites");
+        	results.retainAll(favorites);
+        }
+        
+        
+
+		if (dataListFilter.getSortId() != null) {
+			DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
+			if (plugin != null) {
+				plugin.sort(results);
+			}
+		}
+
+		results = pagination.paginate(results);
+
 		return results;
 	}
 
-	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, final Map<String, Object> props) {
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, metadataFields, false, new AttributeExtractorService.DataListCallBack() {
-			
-			@Override
-			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<String> metadataFields) {
-				
-				List<Map<String, Object>> ret = new ArrayList<Map<String,Object>>();
-				
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-				NodeRef listNodeRef =   entityListDAO.getList(listContainerNodeRef, dataListQname);
-				if(listNodeRef!=null){
-					List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
-				
-					for (NodeRef nodeRef : results) {
-						if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
-						  ret.add(extract(nodeRef, metadataFields, props));
-						}
-					}
-				}
 
-				
-				return ret;
-			}
-		});
-	}
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
-		return dataListName!=null && dataListName.equals("projectList");
+		return dataListName != null && dataListName.equals("projectList");
 	}
 
 }

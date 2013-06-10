@@ -17,6 +17,22 @@ function getFilters()
    return filters;
 }
 
+function getViews()
+{
+   var myConfig = new XML(config.script),
+      views = [];
+
+   for each (var xmlFilter in myConfig..view)
+   {
+      views.push(
+      {
+         type: xmlFilter.@type.toString(),
+         parameters: xmlFilter.@parameters.toString()
+      });
+   }
+   return views;
+}
+
 /* Max Items */
 function getMaxItems()
 {
@@ -32,4 +48,5 @@ function getMaxItems()
 
 model.preferences = AlfrescoUtil.getPreferences("org.alfresco.share.project.catalog.dashlet");
 model.filters = getFilters();
+model.views = getViews();
 model.maxItems = getMaxItems();
