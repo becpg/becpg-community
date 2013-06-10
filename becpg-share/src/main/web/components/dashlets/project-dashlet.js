@@ -274,7 +274,17 @@
                    */
                   getParameters : function ProjectDashlet_getParameters() {
 
-                     var isTask = this.widgets.view.value.indexOf("task") > -1;
+                     var isTask = this.widgets.view.value.indexOf("task") > -1, sort = "cm:name";
+
+                     if (isTask) {
+                        if (this.widgets.filter.value == "InProgress") {
+                           sort = "pjt:tlEnd|true";
+                        } else if (this.widgets.filter.value == "Planned") {
+                           sort = "pjt:tlStart|true";
+                        } else {
+                           sort = "pjt:tlEnd|false";
+                        }
+                     }
 
                      var req = 'fts(';
 
@@ -310,6 +320,7 @@
                      var request = {
                         fields : fields[isTask ? 'task' : "project"],
                         page : this.currentPage,
+                        sort : sort,
                         queryExecutionId : this.queryExecutionId,
                         filter : {
                            filterId : this.widgets.view.value,
@@ -350,7 +361,7 @@
 
                   _cleanSearchText : function ProjectDashlet__cleanSearchText() {
                      var searchText = this.getSearchText();
-                     if (searchText.indexOf("*")>0 &&  searchText.replace(/\*/g, "").length < 3) {
+                     if (searchText.indexOf("*") > 0 && searchText.replace(/\*/g, "").length < 3) {
                         this.searchTerm = null;
                      } else {
                         this.searchTerm = searchText;
@@ -459,8 +470,24 @@
                         desc += '<div class="empty"><h3>' + record.title + '</h3>';
                         desc += '<span>' + record.description + '</span></div>';
                      } else {
-
+                        
+                     
                         var isTask = this.widgets.view.value.indexOf("task") > -1;
+                        
+                        var dates = this.extractDates(record,null,isTask), end = dates.due;
+
+                        dateLine += (dates.start ? Alfresco.util.formatDate(dates.start, "longDate") : scope
+                              .msg("label.none"));
+
+                        if (dates.end != null) {
+                           end = dates.end;
+                        }
+
+                        dateLine += " - ";
+
+                        dateLine += (dates.start ? Alfresco.util.formatDate(end, "longDate") : scope
+                              .msg("label.none"));
+
 
                         if (isTask) {
                            if (!this.options.simpleView) {
@@ -473,17 +500,7 @@
                                     record.itemData["dt_pjt_project"].nodeRef, false, null, false) + '</h3>';
                            }
 
-                           if (record.itemData["prop_pjt_tlStart"]) {
-                              dateLine += record.itemData["prop_pjt_tlStart"].displayValue;
-                           }
 
-                           if (record.itemData["prop_pjt_tlEnd"]) {
-                              if (dateLine.length > 0) {
-                                 dateLine += " - ";
-                              }
-
-                              dateLine += record.itemData["prop_pjt_tlEnd"].displayValue;
-                           }
                            desc += '<div class="detail">';
                            desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';
                            desc += '<span class="project">';
@@ -498,26 +515,9 @@
 
                         } else {
 
-                           var /* id = this.id + '-metadata-' + oRecord.getId(), */recordSiteName = record.site != null ? record.site.shortName
-                                 : null;
+                           var recordSiteName = record.site != null ? record.site.shortName : null;
 
-                           if (record.itemData["prop_pjt_projectStartDate"]) {
-                              dateLine += record.itemData["prop_pjt_projectStartDate"].displayValue;
-                           }
-
-                           if (record.itemData["prop_pjt_projectCompletionDate"]) {
-                              if (dateLine.length > 0) {
-                                 dateLine += " - ";
-                              }
-
-                              dateLine += record.itemData["prop_pjt_projectCompletionDate"].displayValue;
-                           } else if (record.itemData["prop_pjt_projectDueDate"]) {
-                              if (dateLine.length > 0) {
-                                 dateLine += " - ";
-                              }
-
-                              dateLine += record.itemData["prop_pjt_projectDueDate"].displayValue;
-                           }
+                          
 
                            if (this.options.simpleView) {
 
