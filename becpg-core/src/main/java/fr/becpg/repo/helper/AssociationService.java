@@ -13,4 +13,5 @@ public interface AssociationService {
 	List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName);
 	NodeRef getChildAssoc(NodeRef nodeRef, QName qName);
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
+	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName);
 }

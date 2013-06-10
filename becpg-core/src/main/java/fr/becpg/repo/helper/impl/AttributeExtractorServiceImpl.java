@@ -294,7 +294,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						logger.debug("Field :"+ fieldQname+" is a dataList");
 					}
 					ret.put("dt_"+dlField.replaceFirst(":", "_"), callback.extractDataListField( nodeRef, fieldQname, dLFields));
-
+				}
+				
+				if(dictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2) && callback!=null){
+					if(logger.isDebugEnabled()){
+						logger.debug("Field :"+ fieldQname+" is an entity");
+					}
+					ret.put("dt_"+dlField.replaceFirst(":", "_"), callback.extractEntityField( nodeRef, fieldQname, dLFields));
 				}
 
 			} else {
@@ -487,7 +493,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		String metadata = "";
 		if (type.equals(ContentModel.TYPE_PERSON)) {
-			metadata = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME);
+			metadata = getPersonDisplayName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
 		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
 			metadata = "container";
 		} else {

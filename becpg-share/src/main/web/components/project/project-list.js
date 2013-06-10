@@ -16,7 +16,6 @@ var g; // gantt var
     */
    var $html = Alfresco.util.encodeHTML;
 
-   var TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
 
    /**
     * DocumentList constructor.
@@ -63,7 +62,6 @@ var g; // gantt var
                    */
                   taskLegends : [],
 
-                  cache : [],
 
                   /**
                    * Fired by YUI when parent element is available for scripting. Initial History Manager event
@@ -98,7 +96,7 @@ var g; // gantt var
 
                                        this.taskLegends.push(taskLegend);
 
-                                       html += '<div class="projectStatus" style="background-color:#' + taskLegend.color + '" ></div><span>' + taskLegend.label + '</span>&nbsp;';
+                                       html += '<span class="task-legend" style="background-color:#' + taskLegend.color + '" ></span><span>' + taskLegend.label + '</span>&nbsp;';
                                     }
 
                                     Dom.get(this.id + "-legend").innerHTML = html;
@@ -122,19 +120,13 @@ var g; // gantt var
                   initDataTable : function PL_initDataTable() {
                      beCPG.component.ProjectList.superclass.onReady.call(this);
 
-                     var me = this;
+                    
                      this.populateDataGrid();
 
-                     var fnOnShowTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
-                        var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
-                        if (owner !== null) {
-                           me.onActionShowTask.call(me, owner.className, owner);
-                        }
-                        return true;
-                     };
-                     YAHOO.Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
+                     this.initTaskHandlers();
+                     
+                  
                   },
-
                  
                   initGantt : function PL_initGantt() {
 
@@ -152,17 +144,17 @@ var g; // gantt var
                               var oData = oRecord.getData();
                               var projectId = oData.nodeRef;
 
-                              var title = '<span class="' + this.getOverdueClass(oRecord) + '">' + this
-                                    .getProjectTitle(oRecord) + '</span>';
+                              var title = '<span class="' + this.getOverdueClass(oData) + '">' + this
+                                    .getProjectTitle(oData) + '</span>';
 
-                              var initiator = oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue;
+                              var initiator = oRecord.getData("itemData")["assoc_pjt_projectManager"].metadata;
                                  
                               if( initiator && initiator!=null && initiator.length>0) {
                                  initiator = '<span class="resource-title">' + initiator + '</span>';
                               }
                               var percent = oRecord.getData("itemData")["prop_pjt_completionPercent"].value;
 
-                              var dates = this.extractDates(oRecord);
+                              var dates = this.extractDates(oData);
 
                               g.AddTaskItem(new JSGantt.TaskItem(projectId, title, dates.start, dates.due, 'FFBC00',
                                     '', 0, initiator, percent, 1, 1, 1));
@@ -192,12 +184,12 @@ var g; // gantt var
                                  var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
                                  var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
 
-                                 var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
+                                 var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].metadata + '</span>')
                                        : null;
 
                                  var tdates = this.cache[taskId];
                                  if (!tdates) {
-                                    tdates = this.extractDates(task, start);
+                                    tdates = this.extractDates(task, start,true);
                                     this.cache[taskId] = tdates;
                                  }
 
@@ -219,17 +211,6 @@ var g; // gantt var
                      };
                      this.cache = [];
                      this.extraAfterDataGridUpdate.push(fnDrawGantt);
-
-                  },
-
-                  getTaskColor : function PL_getTaskColor(task) {
-                     var id = task["itemData"]["assoc_pjt_tlTaskLegend"][0].value;
-
-                     for (i in this.taskLegends) {
-                        if (this.taskLegends[i].id == id) {
-                           return this.taskLegends[i].color;
-                        }
-                     }
 
                   },
 
@@ -304,204 +285,8 @@ var g; // gantt var
                            }
                         });
                      }
-                  },
-
-                  getTaskAdvancementClass : function PL_getAdvancementClass(task) {
-
-                     if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
-                        return "advancement-done";
-                     }
-
-                     var dates = this.extractDates(task), now = new Date();
-
-                     if (now.getTime() == dates.end.getTime()) {
-                        return "overdue-0to9";
-                     }
-                     if (now.getTime() > dates.end.getTime()) {
-                        return "overdue-20to29";
-                     }
-                     
-
-                     return "overdue-negative";
-                  },
-                  getTaskAdvancement :  function PL_getTaskAdvancement(task) {
-
-                     if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
-                        return this.msg("overdue.complete");
-                     }
-                     var dates = this.extractDates(task), now = new Date();
-                     
-                     return Math.floor((now.getTime() - dates.end.getTime())/( 24 * 60 * 60 * 1000))+this.msg("overdue.day") ;
-                     
-                   
-                  },
-                  getOverdueClass : function PL_getOverdueClass(oRecord, size) {
-                     var percent = 0, overdue = oRecord.getData("itemData")["prop_pjt_projectOverdue"], dates = this
-                           .extractDates(oRecord), suffix = size != null ? "-" + size : "";
-
-                     if (overdue.value != null && dates.start != null && dates.due != null) {
-                        percent = 100 * (overdue.value / (dates.due.getTime() - dates.start.getTime())) * 24 * 60 * 60 * 1000;
-                     }
-
-                     if (percent > 30) {
-                        return "overdue-30plus" + suffix;
-                     }
-                     if (percent > 20) {
-                        return "overdue-20to29" + suffix;
-                     }
-                     if (percent > 10) {
-                        return "overdue-10to19" + suffix;
-                     }
-                     if (percent > 0) {
-                        return "overdue-0to9" + suffix;
-                     }
-
-                     return "overdue-negative" + suffix;
-                  },
-                  extractDates : function(oRecord, start) {
-
-                     var startDate = null, endDate = null, dueDate = null;
-
-                     if (oRecord["itemData"]) {
-                        startDate = oRecord["itemData"]["prop_pjt_tlStart"].value;
-                        endDate = oRecord["itemData"]["prop_pjt_tlEnd"].value;
-
-                        endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
-                        startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : this
-                              .resetDate(start);
-
-                        if (endDate == null) {
-                           var duration = oRecord["itemData"]["prop_pjt_tlDuration"].value;
-                           if (duration == null) {
-                              var tlIsMilestone = oRecord["itemData"]["prop_pjt_tlIsMilestone"].value;
-                              if (tlIsMilestone) {
-                                 duration = 1;
-                              } else {
-                                 duration = 0;
-                              }
-                           }
-
-                           endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
-
-                        }
-
-                        return {
-                           start : startDate,
-                           end : endDate
-                        };
-
-                     }
-
-                     startDate = oRecord.getData("itemData")["prop_pjt_projectStartDate"].value;
-                     endDate = oRecord.getData("itemData")["prop_pjt_projectCompletionDate"].value;
-                     dueDate = oRecord.getData("itemData")["prop_pjt_projectDueDate"].value;
-
-                     startDate = startDate != null ? this.resetDate(Alfresco.util.fromISO8601(startDate)) : new Date();
-                     endDate = endDate != null ? this.resetDate(Alfresco.util.fromISO8601(endDate)) : null;
-                     dueDate = dueDate != null ? this.resetDate(Alfresco.util.fromISO8601(dueDate)) : this
-                           .computeDueDate(startDate, oRecord);
-                     return {
-                        start : startDate,
-                        end : endDate,
-                        due : dueDate
-                     };
-
-                  },
-                  computeDueDate : function(start, oRecord) {
-                     var taskList = oRecord.getData("itemData")["dt_pjt_taskList"];
-                     var ret = start;
-                     for (j in taskList) {
-                        var task = taskList[j];
-                        var taskId = task.nodeRef;
-
-                        var tdates = this.cache[taskId];
-                        if (!tdates) {
-                           for ( var z in task["itemData"]["assoc_pjt_tlPrevTasks"]) {
-                              var precTaskId = task["itemData"]["assoc_pjt_tlPrevTasks"][z].value;
-
-                              if (this.cache[precTaskId] != null && this.cache[precTaskId].end != null && this.cache[precTaskId].end
-                                    .getTime() > start.getTime()) {
-                                 start = this.cache[precTaskId].end;
-                              }
-
-                           }
-
-                           tdates = this.extractDates(task, start);
-                           this.cache[taskId] = tdates;
-                        }
-
-                        ret = tdates.end;
-
-                     }
-                     return ret;
-                  },
-
-                  resetDate : function PL_resetDate(date) {
-                     if (date == null) {
-                        date = new Date();
-                     }
-
-                     date.setHours(0);
-                     date.setMinutes(0);
-                     date.setSeconds(0);
-                     return date;
-                  },
-
-                  getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, full, start) {
-                     var ret = '<span class="' + this.getTaskAdvancementClass(task) + '" title="'+this.getTaskAdvancement(task)+'">';
-
-                     if (full) {
-                        ret += '<div class="projectStatus" style="background-color:#' + this.getTaskColor(task) + '" ></div>';
-                     }
-
-                     ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-                           .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue + ' (' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%)</a></span>';
-
-                     if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value) {
-                        ret += '<a class="task-link" title="' + this.msg("link.title.open-workflow") + '" href="' + Alfresco.constants.URL_PAGECONTEXT + 'workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value + '&referrer=project-list&myWorkflowsLinkBack=true' + '" >&nbsp;</a>';
-                     }
-
-                     ret += "</span>";
-
-                     return ret;
-                  },
-                  getDeliverableTitle : function PL_getDeliverableTitle(deliverable, entityNodeRef) {
-
-                     var ret = '<span class="delivrable-status delivrable-status-' + deliverable["itemData"]["prop_pjt_dlState"].value + '">';
-
-                     var contents = deliverable["itemData"]["assoc_pjt_dlContent"];
-
-                     if (contents.length > 0) {
-                        ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' + this
-                              ._buildCellUrl(contents[0]) + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
-                              .getFileIcon(contents[0].displayValue, "cm:content", 16) + '" /></a></span>';
-                     }
-
-                     ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-                           .msg("link.title.deliverable-edit") + '" >' + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
-
-                     return ret;
-                  },
-                  getProjectTitle : function PL_getProjectTitle(oRecord) {
-                     var url = null, urlFolder = null, version = "";
-
-                     var title = oRecord.getData("itemData")["prop_cm_name"].displayValue;
-                     var code = oRecord.getData("itemData")["prop_bcpg_code"].displayValue;
-
-                     var oData = oRecord.getData();
-                     url = beCPG.util.entityCharactURL(oData.siteId, oData.nodeRef);
-                     urlFolder = beCPG.util.entityDocumentsURL(oData.siteId, oData.path, title);
-
-                     if (oData.version && oData.version !== "") {
-                        version = '<span class="document-version">' + oData.version + '</span>';
-                     }
-
-                     return '<span class="project-title"><a class="folder-link" href="' + urlFolder + '" title="' + this
-                           .msg("link.title.open-folder") + '">&nbsp;</a><a class="theme-color-1" href="' + url + '" title="' + this
-                           .msg("link.title.open-project") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + '</a></span>' + version;
                   }
                }
-
                , true);
 
 })();

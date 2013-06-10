@@ -1,13 +1,18 @@
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
+   <#include "../form/form.css.ftl"/>
+  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-commons.css" group="project-list" />
   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dashlets/project-list.css" group="project-list" />
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
+    <#include "../form/form.js.ftl"/>
+    <@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="project-list"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="project-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/dashlets/becpg-catalog.js"  group="project-list"></@script>
+   <@script type="text/javascript" src="${url.context}/res/components/project/project-commons.js"  group="project-list"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/dashlets/project-dashlet.js"  group="project-list"></@script>
 </@>
 
 
@@ -16,15 +21,17 @@
 		<#include "../../include/alfresco-macros.lib.ftl" />
 		<#assign el=args.htmlid?html>
 		<#assign prefFilter = preferences.filter!"InProgress">
+		<#assign prefView = preferences.view!"projects">
 		<#assign prefSimpleView = preferences.simpleView!false>
 		<script type="text/javascript">//<![CDATA[
 		(function()
 		{
-		   new beCPG.dashlet.BeCPGCatalog("${el}").setOptions(
+		   new beCPG.dashlet.ProjectDashlet("${el}").setOptions(
 		   {
-		   	catalogType : "project",
 		      filter: "${prefFilter?js_string}",
+		      view:"${prefView?js_string}",
 		      validFilters: [<#list filters as filter>"${filter.type?js_string}"<#if filter_has_next>,</#if></#list>],
+		      validViews: [<#list views as view>"${view.type?js_string}"<#if view_has_next>,</#if></#list>],
 		      simpleView: ${prefSimpleView?string?js_string},
 		      maxItems: ${maxItems?c}
 		   }).setMessages(${messages});
@@ -65,7 +72,17 @@
 			            </ul>
 			         </div>
 			      </div>
-		         <span class="align-left yui-button yui-menu-button" id="${el}-filters">
+		         <span class="align-left yui-button yui-menu-button" id="${el}-views">
+		            <span class="first-child">
+		               <button type="button" tabindex="0"></button>
+		            </span>
+		         </span>
+		         <select id="${el}-views-menu">
+		         <#list views as view>
+		            <option value="${view.type?html}">${msg("view." + view.type)}</option>
+		         </#list>
+		         </select>
+		          <span class="align-left yui-button yui-menu-button" id="${el}-filters">
 		            <span class="first-child">
 		               <button type="button" tabindex="0"></button>
 		            </span>
@@ -87,6 +104,7 @@
 		               </span>
 		            </span>
 		         </div>
+		         <div id="${el}-paginator" class="align-right paginator"></div>
 		         <div class="clear"></div>
 		      </div>
 		   </div>
