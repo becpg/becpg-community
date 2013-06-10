@@ -92,6 +92,7 @@
 		            <option value="${filter.type?html}">${msg("filter." + filter.type)}</option>
 		         </#list>
 		         </select>
+		         <div id="${el}-paginator" class="paginator"></div>
 		         <div id="${el}-simpleDetailed" class="align-right simple-detailed yui-buttongroup inline">
 		            <span class="yui-button yui-radio-button simple-view<#if prefSimpleView> yui-button-checked yui-radio-button-checked</#if>">
 		               <span class="first-child">
@@ -104,7 +105,6 @@
 		               </span>
 		            </span>
 		         </div>
-		         <div id="${el}-paginator" class="align-right paginator"></div>
 		         <div class="clear"></div>
 		      </div>
 		   </div>

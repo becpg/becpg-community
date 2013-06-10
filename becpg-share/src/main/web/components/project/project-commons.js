@@ -8,6 +8,7 @@
    beCPG.component.ProjectCommons.prototype = {
 
       cache : [],
+   
 
       onActionShowTask : function PL_onActionShowTask(className) {
 
@@ -138,9 +139,9 @@
                   .resetDate(start);
 
             if (endDate == null) {
-               var duration = oRecord["itemData"]["prop_pjt_tlDuration"].value;
+               var duration = record["itemData"]["prop_pjt_tlDuration"].value;
                if (duration == null) {
-                  var tlIsMilestone = oRecord["itemData"]["prop_pjt_tlIsMilestone"].value;
+                  var tlIsMilestone = record["itemData"]["prop_pjt_tlIsMilestone"].value;
                   if (tlIsMilestone) {
                      duration = 1;
                   } else {
@@ -218,7 +219,7 @@
          var ret = '<span class="' + this.getTaskAdvancementClass(task) + (large ? "-32" : "") + '" title="' + this
                .getTaskAdvancement(task) + '">';
 
-         if (full) {
+         if (full && this.taskLegends) {
             ret += '<span class="task-legend" style="background-color:#' + this.getTaskColor(task) + '" ></span>';
          }
 

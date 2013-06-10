@@ -121,20 +121,14 @@ public class ProjectListExtractor extends SimpleExtractor {
 		//pjt:project
 		QName dataType = dataListFilter.getDataType();
 		String query = dataListFilter.getSearchQuery();
-		Map<String, Boolean> sortMap = dataListFilter.getSortMap();
 		
 		if(VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())){
 			dataType = ProjectModel.TYPE_TASK_LIST;
-			query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));
-			sortMap = new HashMap<>();
-			sortMap.put(ProjectModel.PROP_TL_START.toString(), true);
-			sortMap.put(ProjectModel.PROP_TL_END.toString(), true);
-			sortMap.put(ProjectModel.PROP_TL_TASK_NAME.toString(), true);
-			
+			query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));	
 		}
 		
 		results = advSearchService.queryAdvSearch(query, SearchService.LANGUAGE_LUCENE, dataType, dataListFilter.getCriteriaMap(),
-				sortMap , pagination.getMaxResults());
+				dataListFilter.getSortMap() , pagination.getMaxResults());
 		
 		//Always should return project
         if(VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())){
