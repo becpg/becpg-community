@@ -135,8 +135,8 @@ public class ProductWUsedWebScriptTest extends BaseWebScriptTest{
 	 				FinishedProductData finishedProduct = new FinishedProductData();
 	 				finishedProduct.setName("Finished Product");
 	 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(); 				
-	 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
-	 				compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+	 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
+	 				compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 					finishedProduct.getCompoListView().setCompoList(compoList); 				
 					Collection<QName> dataLists = new ArrayList<QName>();		
 					dataLists.add(BeCPGModel.TYPE_COMPOLIST);

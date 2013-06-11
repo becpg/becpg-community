@@ -655,6 +655,7 @@
 					<mandatory>true</mandatory>
 					<index enabled="false"/>
 				</property>
+				<!-- @Deprecated - TODO : patch -->
 				<property name="bcpg:compoListQtyAfterProcess">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -974,6 +975,12 @@
 					<mandatory>false</mandatory>
 					<index enabled="false"/>
 				</property>
+				<property name="bcpg:illManualValue">
+					<title>Etiquette retravaillée</title>
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>				
 			</properties>
 			<associations>
 				<association name="bcpg:illGrp">

@@ -1,17 +1,17 @@
-PATH;/System/Characts/bcpg:entityLists/PhysicoChems;
-TYPE;bcpg:physicoChem;
-COLUMNS;cm:name;bcpg:physicoChemUnit
-VALUES;Conductivité;-
-VALUES;Granulométrie;-
-VALUES;Gras sur sec;-
-VALUES;Humidité;-
-VALUES;pH;-
-VALUES;Point de fusion;°C
-VALUES;Pourcentage de corps étrangers;%
-VALUES;Solubilité;-
-VALUES;Point de congélation;°C
-VALUES;Matière sèche;%
-VALUES;Extrait sec;%
-VALUES;Matière grasse;%
-VALUES;Pouvoir sucrant;%
-VALUES;Température de cuve;°C
+PATH;/System/Characts/bcpg:entityLists/PhysicoChems;;
+TYPE;bcpg:physicoChem;;
+COLUMNS;cm:name;bcpg:physicoChemUnit;bcpg:isDeleted
+VALUES;Conductivité;-;false
+VALUES;Granulométrie;-;false
+VALUES;Gras sur sec;-;false
+VALUES;Humidité;-;false
+VALUES;pH;-;false
+VALUES;Point de fusion;°C;false
+VALUES;Pourcentage de corps étrangers;%;false
+VALUES;Solubilité;-;false
+VALUES;Point de congélation;°C;false
+VALUES;Matière sèche;%;false
+VALUES;Extrait sec;%;false
+VALUES;Matière grasse;%;false
+VALUES;Pouvoir sucrant;%;false
+VALUES;Température de cuve;°C;false

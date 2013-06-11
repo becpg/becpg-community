@@ -616,7 +616,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
  				ProductData productData = alfrescoRepository.findOne(product1NodeRef); 				 			
  				
  				/*-- check productLists --*/
- 				logger.info("###productData.getCompoListView().getCompoList().size(): " + productData.getCompoListView().getCompoList().size());
  				assertEquals("compoList should exist", (int)3, productData.getCompoListView().getCompoList().size()); 				
  				String [] rmNames = {"MP1","MP2", "MP3"};
  				double [] qtyValues = {1.0d, 2.0d, 3.2d};

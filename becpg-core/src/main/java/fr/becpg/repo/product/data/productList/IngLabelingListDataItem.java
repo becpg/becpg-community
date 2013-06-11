@@ -22,6 +22,8 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	
 	private MLText value;
 	
+	private MLText manualValue;
+	
 
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:illGrp")
@@ -44,6 +46,18 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	
 	public void setValue(MLText value) {
 		this.value = value;
+	}
+	
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname="bcpg:illManualValue")
+	public MLText getManualValue() {
+		return manualValue;
+	}
+
+	
+	public void setManualValue(MLText manualValue) {
+		this.manualValue = manualValue;
 	}
 	
 	

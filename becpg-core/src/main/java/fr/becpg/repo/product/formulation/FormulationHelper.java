@@ -46,31 +46,38 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException 
 	 */
-	public static Double getQty(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{				
-		return getQtyInKg(compoListDataItem.getQty(), compoListDataItem, nodeService);
+	public static Double getQty(CompoListDataItem compoListDataItem) throws FormulateException{
+		return compoListDataItem.getQty();
 	}
 	
 	public static Double getQtySubFormula(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{				
 		return getQtyInKg(compoListDataItem.getQtySubFormula(), compoListDataItem, nodeService);
 	}
 	
-	public static Double getQtyAfterProcess(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{				
-		return getQtyInKg(compoListDataItem.getQtyAfterProcess(), compoListDataItem, nodeService);
-	}
-	
 	private static Double getQtyInKg(Double qty, CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException{
 		
 		if(qty==null){
-			return DEFAULT_COMPONANT_QUANTITY;
+			return null;
 		}
 		else{
 			CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
+			Double density = DEFAULT_DENSITY;
 			
-			if(compoListUnit == CompoListUnit.g || compoListUnit == CompoListUnit.mL){
-				qty = qty / 1000;
+			logger.info("av qty " + qty);
+			
+			if(compoListUnit != null){
+				if(compoListUnit.equals(CompoListUnit.g) || compoListUnit.equals(CompoListUnit.mL)){
+					logger.info("qty / 1000");
+					qty = qty / 1000;
+				}
+				
+				if(!compoListUnit.equals(CompoListUnit.g) && !compoListUnit.equals(CompoListUnit.kg) && !compoListUnit.equals(CompoListUnit.Perc)){
+					density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
+				}			
 			}
 			
-			Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);			
+			logger.info("ap qty " + qty);
+						
 			return qty * density;
 		}				
 	}
@@ -82,12 +89,11 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException 
 	 */
-	public static Double getQtyWithLost(CompoListDataItem compoListDataItem, NodeService nodeService, Double parentLossRatio) throws FormulateException{
+	public static Double getQtyWithLost(CompoListDataItem compoListDataItem, Double parentLossRatio) throws FormulateException{
 		
-		Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
 		Double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
 		
-		return qty * FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);		
+		return compoListDataItem.getQty() * FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);		
 	}
 	
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) throws FormulateException{

@@ -1,3 +1,4 @@
+MAPPING;Default;
 PATH;/System/ProjectLists/bcpg:entityLists/project_Hierarchy;
 TYPE;bcpg:linkedValue;
 COLUMNS;bcpg:lkvValue;
@@ -12,7 +13,7 @@ VALUES;Construction;
 ;;
 PATH;/System/ProjectLists/bcpg:entityLists/project_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Restauration;Pain
 VALUES;Restauration;Sandwich
 VALUES;Restauration;Pâtisserie
