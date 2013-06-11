@@ -7,7 +7,7 @@
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="project-list" />
 
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
-	
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-commons.css" group="project-list" />
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-list.css" group="project-list" />
 </@>
 

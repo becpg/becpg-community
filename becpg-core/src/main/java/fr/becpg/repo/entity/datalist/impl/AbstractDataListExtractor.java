@@ -10,6 +10,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -73,14 +75,15 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 	public static final String PROP_NODE = "nodeRef";
 	public static final String PROP_TAGS = "tags";
-	public static final String PROP_DISPLAYNAME = "displayName";
-	public static final String PROP_NAME = "name";
+//	public static final String PROP_DISPLAYNAME = "displayName";
+//	public static final String PROP_NAME = "name";
 	public static final String PROP_TITLE = "title";
-	public static final String PROP_DESCRIPTION = "description";
-	public static final String PROP_MODIFIER = "modifiedByUser";
+	public static final String PROP_SHORTNAME = "shortName";
+//	public static final String PROP_DESCRIPTION = "description";
+//	public static final String PROP_MODIFIER = "modifiedByUser";
 	public static final String PROP_MODIFIED = "modifiedOn";
 	public static final String PROP_CREATED = "createdOn";
-	public static final String PROP_CREATOR = "createdByUser";
+//	public static final String PROP_CREATOR = "createdByUser";
 	public static final String PROP_PATH = "path";
 	public static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
 	public static final String PROP_CREATOR_DISPLAY = "createdBy";
@@ -89,8 +92,12 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_PERMISSIONS = "permissions";
 	public static final String PROP_ACTIONLABELS = "actionLabels";
 	public static final String PROP_ACCESSRIGHT = "accessRight";
-	public static final String PROP_SITE = "siteId";
+	public static final String PROP_SITE = "site";
+	@Deprecated
+	public static final String PROP_SITE_ID = "siteId";
 	public static final String PROP_CONTAINER = "container";
+	public static final String PROP_TYPE = "itemType";
+	public static final String PROP_VERSION = "version";
 
 	private static Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 	
@@ -113,7 +120,12 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			Map<String, Object> ret = new HashMap<String, Object>();
 
 			ret.put(PROP_NODE, nodeRef);
-
+		
+			if(nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)){
+				ret.put(PROP_VERSION, nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
+			}
+			
+			ret.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
 			ret.put(PROP_CREATED, attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
 
 			String creator = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR);
@@ -164,10 +176,19 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			}
 			ret.put(PROP_PATH, retPath);
 
-			if (siteId != null) {
-				ret.put(PROP_SITE, siteId);
+			SiteService siteService = services.getSiteService();
+			
+			
+			SiteInfo site = null;
+			if(siteId!=null){
+				site = siteService.getSite(siteId);
+				Map<String, Object> siteData = new HashMap<String, Object>();
+				siteData.put(PROP_SHORTNAME, siteId);
+				siteData.put(PROP_TITLE, site.getTitle());
+				ret.put(PROP_SITE, siteData);
+				ret.put(PROP_SITE_ID, siteId);
 			}
-
+			
 			return ret;
 
 		} finally {
@@ -183,5 +204,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	}
 
 	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<String, Object> props);
+	
+	
 
 }

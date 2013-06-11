@@ -174,12 +174,9 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		QName dataType = QName.createQName(itemType, namespaceService);
 		dataListFilter.setDataType(dataType);
 
-		String sort = req.getParameter(PARAM_SORT);
-		Map<String, Boolean> sortMap = WebscriptHelper.extractSortMap(sort,namespaceService);		
-		String sortId = req.getParameter(PARAM_SORT_ID);
-		
-		dataListFilter.setSortMap(sortMap);
-		dataListFilter.setSortId(sortId);
+		//Sort param
+		dataListFilter.setSortMap(WebscriptHelper.extractSortMap(req.getParameter(PARAM_SORT),namespaceService));
+		dataListFilter.setSortId(req.getParameter(PARAM_SORT_ID));
 		
 		//Site filter 
 		dataListFilter.setSiteId(req.getParameter(PARAM_SITE));
@@ -246,11 +243,17 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			} else {
 				Integer page = getNumParameter(req, PARAM_PAGE);
 			
-				if(page==null && json != null && json.has("page")) {
-					page = (Integer) json.get("page");
+				if(page==null && json != null && json.has(PARAM_PAGE)) {
+					page = (Integer) json.get(PARAM_PAGE);
 				}
 				pagination.setPage(page);
 			}
+			
+	        if (json!=null && json.has(PARAM_SORT)) {
+				
+				dataListFilter.setSortMap(WebscriptHelper.extractSortMap((String)json.get(PARAM_SORT),namespaceService));
+			}
+
 
 
 			if (filterId.equals(DataListFilter.FORM_FILTER) && filterData != null) {
@@ -266,7 +269,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 					metadataFields.add(((String) jsonFields.get(i)).replace("_", ":"));
 				}
 			}
-
+			
+		
 			boolean hasWriteAccess = true;
 			if (entityNodeRef != null) {
 				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(new NodeRef(entityNodeRef)), itemType) == SecurityService.WRITE_ACCESS;

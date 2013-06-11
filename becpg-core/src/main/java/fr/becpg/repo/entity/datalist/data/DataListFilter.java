@@ -51,6 +51,8 @@ public class DataListFilter {
 	
 	private boolean allFilter = false;
 	
+	private String filterId = ALL_FILTER;
+	
 	private String sortId = null;
 	
 	public DataListFilter() {
@@ -80,7 +82,9 @@ public class DataListFilter {
 		return entityNodeRef;
 	}
 
-	
+	public String getFilterId() {
+		return filterId;
+	}
 
 	public Map<String, String> getCriteriaMap() {
 		return criteriaMap;
@@ -215,7 +219,7 @@ public class DataListFilter {
 		
 		if (filterId != null) {
 			
-			
+			this.filterId = filterId;
 
 			if (filterId.equals("recentlyAdded") || filterId.equals("recentlyModified") || filterId.equals("recentlyCreatedByMe") || filterId.equals("recentlyModifiedByMe")) {
 				boolean onlySelf = (filterId.indexOf("ByMe")) > 0 ? true : false;
@@ -258,13 +262,13 @@ public class DataListFilter {
 				filterQuery += "+PATH:\"/cm:taggable/cm:" + ISO9075.encode(filterData) + "/member\"";
 			}  else if (filterId.equals(ALL_FILTER)) {
 				allFilter = true;
-			}  else if(params!=null) {
+			} else if(filterId.equals(FTS_FILTER)){
+				filterQuery += " "+filterData;
+			} else if(params!=null) {
 				Matcher ma = ftsQueryPattern.matcher(params);
 				if(ma.matches()){
 					filterQuery += " "+ma.group(1);
 				}
-			} else if(filterId.equals(FTS_FILTER)){
-				filterQuery += " "+filterData;
 			}
 		}
 

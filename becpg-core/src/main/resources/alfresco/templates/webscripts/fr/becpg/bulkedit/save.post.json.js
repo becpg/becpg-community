@@ -10,7 +10,12 @@ if(node!=null && field.contains("prop_")){
 	if(isMultiple == true){
 		toSave = value.split(",");
 	}
-	node.properties[field.replace("prop_","").replace("_",":")] =  	toSave;
+   if(toSave != null){
+    	node.properties[field.replace("prop_","").replace("_",":")] =  	toSave;
+   } else {
+      delete node.properties[field.replace("prop_","").replace("_",":")];
+   }
+	
 	node.save();
 	
 }

@@ -1,6 +1,6 @@
 
 <@markup id="css" >
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-list.css" group="project-list" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-commons.css" group="project-list" />
 </@>
 
 <@markup id="js">
