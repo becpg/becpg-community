@@ -163,8 +163,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				
 		if(totalQty != 0){
 			for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){
+				// qtyPerc
 				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getIng());
-				ingListDataItem.setQtyPerc(100 * totalQtyIng / totalQty);				
+				ingListDataItem.setQtyPerc(100 * totalQtyIng / totalQty);
+				
+				// add detailable aspect
+				if(!ingListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
+					ingListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+				}
 			}
 		}
 		
@@ -244,7 +250,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 			
 			//Calculate qty
-			Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
+			Double qty = FormulationHelper.getQty(compoListDataItem);
 			Double qtyIng = ingListDataItem.getQtyPerc();
 						
 			if(qty != null && qtyIng != null){
@@ -510,11 +516,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		CompoListDataItem compoListDataItem =  compoList.get(parentIndex);
 		NodeRef grpNodeRef = compoListDataItem.getProduct();	
 		MLText mlText = (MLText)mlNodeService.getProperty(grpNodeRef, BeCPGModel.PROP_PRODUCT_LEGALNAME);
-		Double qtyUsed = FormulationHelper.getQty(compoListDataItem, mlNodeService);
+		Double qtyUsed = FormulationHelper.getQty(compoListDataItem);
 		CompositeIng compositeIng = new CompositeIng(grpNodeRef, mlText, qtyUsed, null);		
 		
 		if(logger.isDebugEnabled()){
-			logger.debug("New compositeIng " + compositeIng.getName(Locale.getDefault()));
+			logger.debug("New compositeIng " + compositeIng.getName(Locale.getDefault()) + " qtyUsed: " + qtyUsed);
 		}		
 		
 		int startIndex = parentIndex;
@@ -552,7 +558,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		CompositeIng compositeIng = parentIng;
 		
 		//Calculate qtyRMUsed
-		Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
+		Double qty = FormulationHelper.getQty(compoListDataItem);
 		addQtyRMUsed(compoListDataItem, compositeIng, mlNodeService);
 		
 		//OMIT, DETAIL
@@ -564,7 +570,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			MLText mlText =  (MLText)mlNodeService.getProperty(compoListDataItem.getProduct(), BeCPGModel.PROP_LEGAL_NAME);
 			compositeIng = new CompositeIng(compoListDataItem.getProduct(), mlText, qty, null);
 			compositeIng.setQtyRMUsed(qty);
-			parentIng.add(compositeIng, isDeclared);					
+			parentIng.add(compositeIng, isDeclared);	
+			
+			logger.debug("Add detailed ing : " + mlText.getDefaultValue() + " qty: " + qty);
 		}		
 		
 		if(ingList != null){
@@ -634,7 +642,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	
 	private void addQtyRMUsed(CompoListDataItem compoListDataItem, CompositeIng compositeIng, NodeService nodeService) throws FormulateException{
 		
-		Double qty = FormulationHelper.getQty(compoListDataItem, nodeService);
+		Double qty = FormulationHelper.getQty(compoListDataItem);
 		Double qtyRMUsed = compositeIng.getQtyRMUsed();
 		qtyRMUsed += qty;
 		compositeIng.setQtyRMUsed(qtyRMUsed);

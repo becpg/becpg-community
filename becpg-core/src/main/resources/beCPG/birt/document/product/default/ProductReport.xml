@@ -107,7 +107,7 @@
 				variants="Usine1" isDefaultVariant="true" />
 			<entity itemType="bcpg:rawMaterial" depthLevel="2"
 				compoListProduct="product6" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"
+				compoListQtySubFormula="30" compoListQty="3" compoListUnit="Perc"
 				variants="Usine2" isDefaultVariant="false" />
 		</compoList>
 
@@ -145,7 +145,7 @@
 
 		<ingLabelingList>
 			<ingLabeling language="fr" illGrp="Pâte"
-				illValue="Blé farine, Eau, Crème, Sel fin, Ferments lactiques, Ferrocyanure de sodium" />
+				illValue="Blé farine, Eau, Crème, Sel fin, Ferments lactiques, Ferrocyanure de sodium" illManualValue="Etiquette retravaillée"/>
 			<ingLabeling language="en" illGrp="Paste"
 				illValue="Wheat flour, Water, Cream, Salt, Lactic, Sodium ferrocyanide" />
 			<ingLabeling language="russe" illGrp="вставлять"

@@ -20,9 +20,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	
 	private Double qty = 0d;
 		
-	private Double qtySubFormula = null;
-	
-	private Double qtyAfterProcess = null;
+	private Double qtySubFormula = null;	
 	
 	private CompoListUnit compoListUnit = CompoListUnit.Unknown;
 	
@@ -75,16 +73,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	public void setQtySubFormula(Double qtySubFormula) {
 		this.qtySubFormula = qtySubFormula;
 	}
-	@AlfProp
-	@AlfQname(qname="bcpg:compoListQtyAfterProcess")	
-	public Double getQtyAfterProcess() {
-		return qtyAfterProcess;
-	}
-
-	public void setQtyAfterProcess(Double qtyAfterProcess) {
-		this.qtyAfterProcess = qtyAfterProcess;
-	}
-
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:compoListUnit")
 	public CompoListUnit getCompoListUnit() {
@@ -151,13 +140,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		super();
 	}
 	
-	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, Double qtyAfterProcess, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
+	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, CompoListUnit compoListUnit, Double lossPerc, DeclarationType declType, NodeRef product){
 		super();
 		this.nodeRef=nodeRef;
 		this.parent=parent;
 		this.qty=qty;
 		this.qtySubFormula=qtySubFormula;
-		this.qtyAfterProcess=qtyAfterProcess;
 		this.compoListUnit=compoListUnit;
 		this.lossPerc=lossPerc;
 		this.declType=declType;
@@ -180,7 +168,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		this.depthLevel=c.depthLevel;
 		this.qty=c.qty;
 		this.qtySubFormula=c.qtySubFormula;
-		this.qtyAfterProcess=c.qtyAfterProcess;
 		this.compoListUnit=c.compoListUnit;
 		this.lossPerc=c.lossPerc;
 		this.declType=c.declType;
@@ -205,7 +192,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
-		result = prime * result + ((qtyAfterProcess == null) ? 0 : qtyAfterProcess.hashCode());
 		result = prime * result + ((qtySubFormula == null) ? 0 : qtySubFormula.hashCode());
 		result = prime * result + ((yieldPerc == null) ? 0 : yieldPerc.hashCode());
 		return result;
@@ -249,11 +235,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 				return false;
 		} else if (!qty.equals(other.qty))
 			return false;
-		if (qtyAfterProcess == null) {
-			if (other.qtyAfterProcess != null)
-				return false;
-		} else if (!qtyAfterProcess.equals(other.qtyAfterProcess))
-			return false;
 		if (qtySubFormula == null) {
 			if (other.qtySubFormula != null)
 				return false;
@@ -269,7 +250,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 
 	@Override
 	public String toString() {
-		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", qtyAfterProcess=" + qtyAfterProcess + ", compoListUnit="
+		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", compoListUnit="
 				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product + ", parent=" + parent + "]";
 	}
 

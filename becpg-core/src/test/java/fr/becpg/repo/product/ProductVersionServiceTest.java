@@ -237,7 +237,6 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
 				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
-				logger.info("###getVersionLabel(newRawMaterial): " + getVersionLabel(newRawMaterial));
 				assertEquals("Check version", "2.0", getVersionLabel(newRawMaterial));
 				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
 				
@@ -261,8 +260,6 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
 
 					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
-					logger.info("###vCostListDataItem.getValue(): " + vCostListDataItem.getValue());
-					logger.info("###costListDataItem.getValue() + valueAdded: " + costListDataItem.getValue());
 					assertEquals("Check cost value", (costListDataItem.getValue() + valueAdded), vCostListDataItem.getValue());
 					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
 				}
@@ -425,7 +422,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				productService.classifyProduct(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				String expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Frozen/cm:Fish/";
+				String expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				// Check out
@@ -443,7 +440,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				assertEquals("Check state new version", SystemState.ToValidate.toString(), nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE));
 
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Frozen/cm:Fish/";
+				expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				return null;
@@ -470,7 +467,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				fpData.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				fpData.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, null, null, CompoListUnit.kg, null, DeclarationType.Declare, rawMaterialNodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, null, CompoListUnit.kg, null, DeclarationType.Declare, rawMaterialNodeRef));
 				fpData.getCompoListView().setCompoList(compoList);
 				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, fpData).getNodeRef();
 

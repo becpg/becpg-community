@@ -252,6 +252,7 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_ILL_VALUE. */
 	QName PROP_ILL_VALUE = QName.createQName(BECPG_URI, "illValue");
+	QName PROP_ILL_MANUAL_VALUE = QName.createQName(BECPG_URI, "illManualValue");
 
 	// microbioList
 	/** The Constant TYPE_MICROBIOLIST. */

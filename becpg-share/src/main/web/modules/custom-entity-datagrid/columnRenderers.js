@@ -201,7 +201,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                      for( var j in variants) {
                         for( var i in scope.entity.variants) {
                            if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
-                              isInDefault = true
+                              isInDefault = true;
                               break;
                            }
                         }
@@ -217,4 +217,34 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                });
 
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	      propertyName : "bcpg:compoListQty",
+	      renderer : function(oRecord, data, label, scope) {
+
+	    	  var qty = "";
+	    	  if(data.value != null){
+	    		  var unit = "";
+	    		  if(data.value < 0.0001){
+		    		  qty = data.value * 1000000;
+		    		  unit = " mg";
+		    	  }
+		    	  else if(data.value < 0.1){
+		    		  qty = data.value * 1000;
+		    		  unit = " g";
+		    	  }	
+		    	  else if(data.value > 1000){
+		    		  qty = data.value / 1000;
+		    		  unit = " t";	    		  
+		    	  }
+		    	  else{
+		    		  qty = data.value;
+		    		  unit = " kg";
+		    	  }
+	    		  
+	    		  qty = parseFloat(qty.toPrecision(5)) + unit;
+	    	  }
+
+	         return Alfresco.util.encodeHTML(qty);
+	      }
+	   });
 }

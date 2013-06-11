@@ -254,17 +254,17 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 
-				CompoListDataItem compo1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+				CompoListDataItem compo1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
 
 				compoList.add(compo1);
-				compoList.add(new CompoListDataItem(null, compo1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compo1, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, compo1, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compo1, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 
-				CompoListDataItem compo2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+				CompoListDataItem compo2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
 
 				compoList.add(compo2);
-				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
@@ -505,8 +505,8 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
 				finishedProduct3.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);

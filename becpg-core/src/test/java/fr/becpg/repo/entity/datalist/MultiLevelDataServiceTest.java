@@ -88,12 +88,12 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 				finishedProduct.setName("Finished Product");
 				
 				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
-				CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
-				CompoListDataItem child1 =new CompoListDataItem(null,parent1, 1d, 4d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
-				CompoListDataItem child12 =new CompoListDataItem(null,child1, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-				CompoListDataItem parent2 =new CompoListDataItem(null,(CompoListDataItem) null, 1d, 4d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
-				CompoListDataItem child2 =new CompoListDataItem(null, parent2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
-				CompoListDataItem child21 =new CompoListDataItem(null, parent2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
+				CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
+				CompoListDataItem child1 =new CompoListDataItem(null,parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
+				CompoListDataItem child12 =new CompoListDataItem(null,child1, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+				CompoListDataItem parent2 =new CompoListDataItem(null,(CompoListDataItem) null, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
+				CompoListDataItem child2 =new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
+				CompoListDataItem child21 =new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
 				
 				compoList.add(parent1);
 				compoList.add(child1);

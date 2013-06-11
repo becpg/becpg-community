@@ -263,7 +263,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), dataItem.getDepthLevel() == null ? VALUE_NULL : Integer.toString(dataItem.getDepthLevel()));
 					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY.getLocalName(), toString(dataItem.getQty()));
 					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA.getLocalName(), toString(dataItem.getQtySubFormula()));
-					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS.getLocalName(), toString(dataItem.getQtyAfterProcess()));
 					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_UNIT.getLocalName(), dataItem.getCompoListUnit() == null ? VALUE_NULL : dataItem.getCompoListUnit().toString());
 					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_YIELD_PERC.getLocalName(), toString(dataItem.getYieldPerc()));
 					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_LOSS_PERC.getLocalName(), toString(dataItem.getLossPerc()));
@@ -338,15 +337,15 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					if (!locales.contains(locale.getLanguage())) {
 
 						locales.add(locale.getLanguage());
-						String groupName = grpMLText != null ? grpMLText.getValue(locale) : VALUE_NULL;
 
 						Element ingLabelingElt = ingListElt.addElement(TAG_INGLABELING);
 						ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-						ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), groupName);
-						ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue().getValue(locale));
+						ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpMLText != null ? grpMLText.getValue(locale) : VALUE_NULL);
+						ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL);
+						ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_MANUAL_VALUE.getLocalName(), dataItem.getManualValue() != null  ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("ill, locale: " + locale + " - group: " + groupName + " - value: " + dataItem.getValue().getValue(locale));
+							logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
 						}
 					}
 				}

@@ -2112,10 +2112,8 @@
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">depthLevel</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">depthLevel</text-property>
-                    <property name="analysisColumn">depthLevel</property>
                 </structure>
                 <structure>
                     <property name="columnName">compoListProduct</property>
@@ -2144,12 +2142,6 @@
                     <property name="analysisColumn">compoListUnit</property>
                 </structure>
                 <structure>
-                    <property name="columnName">compoListQtyAfterProcess</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">compoListQtyAfterProcess</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">erpCode</property>
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
@@ -2164,11 +2156,13 @@
                 <structure>
                     <property name="columnName">variants</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">variants</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">isDefaultVariant</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
             </list-property>
@@ -2178,7 +2172,7 @@
                     <structure>
                         <property name="position">1</property>
                         <property name="name">depthLevel</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">integer</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
@@ -2202,26 +2196,21 @@
                     </structure>
                     <structure>
                         <property name="position">6</property>
-                        <property name="name">compoListQtyAfterProcess</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">7</property>
                         <property name="name">erpCode</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">8</property>
+                        <property name="position">7</property>
                         <property name="name">suppliers</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">9</property>
+                        <property name="position">8</property>
                         <property name="name">variants</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">10</property>
+                        <property name="position">9</property>
                         <property name="name">isDefaultVariant</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -2233,8 +2222,8 @@
                     <property name="position">1</property>
                     <property name="name">depthLevel</property>
                     <property name="nativeName">depthLevel</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
@@ -2266,41 +2255,34 @@
                 </structure>
                 <structure>
                     <property name="position">6</property>
-                    <property name="name">compoListQtyAfterProcess</property>
-                    <property name="nativeName">compoListQtyAfterProcess</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">7</property>
                     <property name="name">erpCode</property>
                     <property name="nativeName">erpCode</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">8</property>
+                    <property name="position">7</property>
                     <property name="name">suppliers</property>
                     <property name="nativeName">suppliers</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">9</property>
+                    <property name="position">8</property>
                     <property name="name">variants</property>
                     <property name="nativeName">variants</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">10</property>
+                    <property name="position">9</property>
                     <property name="name">isDefaultVariant</property>
                     <property name="nativeName">isDefaultVariant</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoList/entity]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoList/entity]#:#{depthLevel;INT;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6894,17 +6876,17 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                 </label>
                             </cell>
                             <cell id="2868">
-                                <data id="2869">
+                                <data id="3008">
                                     <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">productEAN</property>
-                                            <text-property name="displayName">productEAN</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["productEAN"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="name">eanCode</property>
+                                            <text-property name="displayName">eanCode</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
+                                            <property name="dataType">integer</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">productEAN</property>
+                                    <property name="resultSetColumn">eanCode</property>
                                 </data>
                             </cell>
                         </row>
@@ -7083,8 +7065,9 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 <structure>
                     <property name="name">compoListQty</property>
                     <text-property name="displayName">compoListQty</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["compoListQty"]</expression>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQty"] + " kg";</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">compoListUnit</property>
@@ -7101,14 +7084,9 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 <structure>
                     <property name="name">compoListQtySubFormula</property>
                     <text-property name="displayName">compoListQtySubFormula</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["compoListQtySubFormula"]</expression>
+                    <expression name="expression" type="javascript">dataSetRow["compoListQtySubFormula"] + " " + (dataSetRow["compoListUnit"]  == "Perc" ? "%" : dataSetRow["compoListUnit"])</expression>
                     <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">compoListQtyAfterProcess</property>
-                    <text-property name="displayName">compoListQtyAfterProcess</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["compoListQtyAfterProcess"]</expression>
-                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">depthLevel</property>
@@ -7138,16 +7116,8 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 <property name="width">0.648854961832061in</property>
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="2945">
-                <property name="width">0.6183206106870229in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
             <column id="2969">
                 <property name="width">0.4961832061068702in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
-            <column id="2983">
-                <property name="width">0.4732824427480916in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3001">
@@ -7174,22 +7144,12 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                     </cell>
                     <cell id="2976">
                         <label id="2985">
-                            <text-property name="text">Qté av transfo</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2942">
-                        <label id="2948">
-                            <text-property name="text">Qté ap transfo</text-property>
+                            <text-property name="text">Qté MeO</text-property>
                         </label>
                     </cell>
                     <cell id="2966">
                         <label id="2917">
-                            <text-property name="text">Qté recette</text-property>
-                        </label>
-                    </cell>
-                    <cell id="2980">
-                        <label id="2984">
-                            <text-property name="text">Unité</text-property>
+                            <text-property name="text">Qté</text-property>
                         </label>
                     </cell>
                     <cell id="2999">
@@ -7231,16 +7191,6 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                             <property name="resultSetColumn">compoListQtySubFormula</property>
                         </data>
                     </cell>
-                    <cell id="2943">
-                        <data id="2956">
-                            <structure name="numberFormat">
-                                <property name="category">Fixed</property>
-                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
-                            </structure>
-                            <property name="textAlign">center</property>
-                            <property name="resultSetColumn">compoListQtyAfterProcess</property>
-                        </data>
-                    </cell>
                     <cell id="2967">
                         <data id="2900">
                             <property name="style">becpg-data</property>
@@ -7250,12 +7200,6 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                             </structure>
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListQty</property>
-                        </data>
-                    </cell>
-                    <cell id="2981">
-                        <data id="2902">
-                            <property name="textAlign">center</property>
-                            <property name="resultSetColumn">compoListUnit</property>
                         </data>
                     </cell>
                     <cell id="3000">

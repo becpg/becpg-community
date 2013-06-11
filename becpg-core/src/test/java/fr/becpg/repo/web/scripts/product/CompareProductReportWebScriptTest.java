@@ -340,11 +340,11 @@ private void initObjects(){
 					fp1.setAllergenList(allergenList);
 						
 					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 					fp1.getCompoListView().setCompoList(compoList);
 					
 					fpNodeRef = alfrescoRepository.create(folderNodeRef, fp1).getNodeRef();		
@@ -396,12 +396,12 @@ private void initObjects(){
 					workingCopy.setAllergenList(allergenList);
 					
 					compoList = new ArrayList<CompoListDataItem>();
-					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-					compoList.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-					compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+					compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
 					workingCopy.getCompoListView().setCompoList(compoList);
 					
 					alfrescoRepository.save(workingCopy);

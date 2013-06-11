@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.formulation;
 
-import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -81,8 +80,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 					
 		// calculate on every item
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
-		visitQtyChildren(formulatedProduct, netWeight, netWeight, compositeAll);
-		visitYieldChildren(formulatedProduct, netWeight, netWeight, compositeAll);
+		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
+		visitYieldChildren(formulatedProduct, netWeight, compositeAll);
 		
 		// Yield
 		Double qtyUsed = calculateQtyUsedBeforeProcess(CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)));
@@ -93,47 +92,42 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return true;
 	}
 	
-	private void visitQtyChildren(ProductData formulatedProduct, Double parentQty, Double qtyAfterProcess, Composite<CompoListDataItem> composite) throws FormulateException{				
+	private void visitQtyChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException{				
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
 			// qty and sub formula qty are defined and not equal to 0
-			if(parentQty != null && qtyAfterProcess != null && !qtyAfterProcess.equals(0d)){
+			if(parentQty != null && !parentQty.equals(0d)){
 				
-				Double qtySubFormula = component.getData().getQtySubFormula();
-				logger.debug("qtySubFormula: " + qtySubFormula + " qtyAfterProcess: " + qtyAfterProcess + " parentQty: " + parentQty);
+				Double qtySubFormula = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
+				logger.debug("qtySubFormula: " + qtySubFormula + " parentQty: " + parentQty);
 				if(qtySubFormula != null){
 					
 					Double qty = null;
 					// take in account percentage
 					if(component.getData().getCompoListUnit() != null && 
 							component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){
-						qty = qtySubFormula * qtyAfterProcess / 100;
+						qtySubFormula = qtySubFormula * parentQty / 100;
 					}
-					else{
-											
-						Double qtyComponent = qtySubFormula * parentQty / qtyAfterProcess;
-						Double yield = FormulationHelper.DEFAULT_YIELD;
+					
+					// Take in account yield that is defined on component	
+					Double yield = FormulationHelper.DEFAULT_YIELD;					
+					if(component.isLeaf() && component.getData().getYieldPerc() != null && component.getData().getYieldPerc() != 0d){
 						
-						// Yield that is defined on component
-						if(component.isLeaf() && component.getData().getYieldPerc() != null){
-							
-							yield = component.getData().getYieldPerc();							
-							Double qtyWater = qtyComponent * (1 - FormulationHelper.DEFAULT_YIELD / yield);
-							logger.info("###qtyWater: " + qtyWater);							
-							CompoListDataItem waterCompoListDataItem = new CompoListDataItem(null, 
-													composite.getData(), 
-													qtyWater, null, null, 
-													component.getData().getCompoListUnit(), 
-													component.getData().getLossPerc(), 
-													DeclarationType.Declare, 
-													getWaterRawMaterial());
-							
-							waterCompoListDataItem.setTransient(true);
-							formulatedProduct.getCompoListView().getCompoList().add(waterCompoListDataItem);
-						}
-						qty = qtyComponent * 100 / yield;
-					}					
+						yield = component.getData().getYieldPerc();							
+						Double qtyWater = qtySubFormula * (1 - FormulationHelper.DEFAULT_YIELD / yield);							
+						CompoListDataItem waterCompoListDataItem = new CompoListDataItem(null, 
+												composite.getData(), 
+												qtyWater, null,
+												component.getData().getCompoListUnit(), 
+												component.getData().getLossPerc(), 
+												DeclarationType.Declare, 
+												getWaterRawMaterial());
+						
+						waterCompoListDataItem.setTransient(true);
+						formulatedProduct.getCompoListView().getCompoList().add(waterCompoListDataItem);
+					}
+					qty = qtySubFormula * 100 / yield;			
 					
 					component.getData().setQty(qty);									
 				}
@@ -146,7 +140,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				if(component.getData().getCompoListUnit() != null && 
 						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
 					
-					visitQtyChildren(formulatedProduct, parentQty, qtyAfterProcess, component);
+					visitQtyChildren(formulatedProduct, parentQty, component);
 					
 					// no yield but calculate % of composite
 					Double compositePerc = 0d;
@@ -158,39 +152,38 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				}
 				else{			
 					
-					// has been modified from UI ?
-					// then update qtySubFormula of components
-					Date compositeModifiedDate = (Date)nodeService.getProperty(component.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
-					boolean compositeYieldModified = true;
-					for(Composite<CompoListDataItem> child : component.getChildren()){
-						Date childModifiedDate = (Date)nodeService.getProperty(child.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
-						logger.info("###compositeModifiedDate: " + compositeModifiedDate);
-						logger.info("###childModifiedDate: " + childModifiedDate);
-						if(compositeModifiedDate != null && compositeModifiedDate.before(childModifiedDate)){
-							compositeYieldModified = false;
-						}
-					}
-					Double dbYieldPerc = component.getData().getYieldPerc();
-					Double calcultedYieldPerc = calculateYield(component);
-					if(compositeYieldModified && dbYieldPerc != null && dbYieldPerc != 0d && !calcultedYieldPerc.equals(dbYieldPerc)){
+//					// has been modified from UI ?
+//					// then update qtySubFormula of components
+//					Date compositeModifiedDate = (Date)nodeService.getProperty(component.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
+//					boolean compositeYieldModified = true;
+//					for(Composite<CompoListDataItem> child : component.getChildren()){
+//						Date childModifiedDate = (Date)nodeService.getProperty(child.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
+//						logger.info("###compositeModifiedDate: " + compositeModifiedDate);
+//						logger.info("###childModifiedDate: " + childModifiedDate);
+//						if(compositeModifiedDate != null && compositeModifiedDate.before(childModifiedDate)){
+//							compositeYieldModified = false;
+//						}
+//					}
+//					Double dbYieldPerc = component.getData().getYieldPerc();
+//					Double calcultedYieldPerc = calculateYield(component);
+//					if(compositeYieldModified && dbYieldPerc != null && dbYieldPerc != 0d && !calcultedYieldPerc.equals(dbYieldPerc)){
+//					
+//						Double ratio =  calcultedYieldPerc / dbYieldPerc;
+//						for(Composite<CompoListDataItem> child : component.getChildren()){
+//							Double dbQtySubFormula = child.getData().getQtySubFormula();
+//							Double qtySubFormula = dbQtySubFormula != null ? dbQtySubFormula * ratio : null;
+//							logger.debug("Yield has been modified from UI, dbQtySubFormula: " + dbQtySubFormula + " qtySubFormula: " + qtySubFormula);
+//							child.getData().setQtySubFormula(qtySubFormula);
+//						}
+//					}
 					
-						Double ratio =  calcultedYieldPerc / dbYieldPerc;
-						for(Composite<CompoListDataItem> child : component.getChildren()){
-							Double dbQtySubFormula = child.getData().getQtySubFormula();
-							Double qtySubFormula = dbQtySubFormula != null ? dbQtySubFormula * ratio : null;
-							logger.debug("Yield has been modified from UI, dbQtySubFormula: " + dbQtySubFormula + " qtySubFormula: " + qtySubFormula);
-							child.getData().setQtySubFormula(qtySubFormula);
-						}
-					}
-					
-					Double afterProcess = component.getData().getQtyAfterProcess() != null ?component.getData().getQtyAfterProcess() : component.getData().getQtySubFormula();
-					visitQtyChildren(formulatedProduct, component.getData().getQty(), afterProcess,component);					
+					visitQtyChildren(formulatedProduct, component.getData().getQty(),component);					
 				}				
 			}			
 		}
 	}
 
-	private void visitYieldChildren(ProductData formulatedProduct, Double parentQty, Double qtyAfterProcess, Composite<CompoListDataItem> composite) throws FormulateException{				
+	private void visitYieldChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException{				
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
@@ -201,12 +194,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				if(component.getData().getCompoListUnit() != null && 
 						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
 					
-					visitYieldChildren(formulatedProduct, parentQty, qtyAfterProcess, component);
+					visitYieldChildren(formulatedProduct, parentQty, component);
 					component.getData().setYieldPerc(null);
 				}
 				else{
-					Double afterProcess = component.getData().getQtyAfterProcess() != null ?component.getData().getQtyAfterProcess() : component.getData().getQtySubFormula();
-					visitYieldChildren(formulatedProduct, component.getData().getQty(), afterProcess,component);
+					visitYieldChildren(formulatedProduct, component.getData().getQty(),component);
 					
 					// Yield				
 					component.getData().setYieldPerc(calculateYield(component));
@@ -223,17 +215,23 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		Double qtyUsed = 0d;				
 		for(Composite<CompoListDataItem> component : composite.getChildren()){
 			
-			Double qty = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
+			Double qty = FormulationHelper.getQty(component.getData());
 			if(qty != null){
-				qtyUsed += qty;
+				// water can be taken in account on Raw Material
+				Double yield = component.isLeaf() && component.getData().getYieldPerc() != null ? component.getData().getYieldPerc() : FormulationHelper.DEFAULT_YIELD;
+				qtyUsed += qty * yield / 100;
 			}
 		}
 		
 		// qty after process
-		Double qtyAfterProcess = FormulationHelper.getQtyAfterProcess(composite.getData(), nodeService);
-		logger.debug("qtyAfterProcess: " + qtyAfterProcess + " - qtyUsed: " + qtyUsed);
-		if(qtyAfterProcess != 0 && qtyUsed != 0){
+		Double qtyAfterProcess = FormulationHelper.getQtySubFormula(composite.getData(), nodeService);		
+		if(qtyAfterProcess != null && qtyAfterProcess != 0 && qtyUsed != 0){
 			yieldPerc = qtyAfterProcess / qtyUsed * 100;
+		}
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("component: " + nodeService.getProperty(composite.getData().getProduct(),  ContentModel.PROP_NAME) + 
+					" qtyAfterProcess: " + qtyAfterProcess + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
 		}
 		
 		return yieldPerc;
@@ -249,7 +247,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				// calculate children
 				qty += calculateQtyUsedBeforeProcess(component);
 			}else{
-				qty += FormulationHelper.getQty(component.getData(), nodeService);
+				qty += FormulationHelper.getQty(component.getData());
 			}
 		}
 		

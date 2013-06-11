@@ -574,7 +574,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		logger.debug("Create MP");
 		RawMaterialData rawMaterial = new RawMaterialData();
 		rawMaterial.setName(name);
-		rawMaterial.setHierarchy1(HIERARCHY1_FROZEN_REF);
+		rawMaterial.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 		rawMaterial.setHierarchy2(HIERARCHY2_FISH_REF);
 
 		// Allergens

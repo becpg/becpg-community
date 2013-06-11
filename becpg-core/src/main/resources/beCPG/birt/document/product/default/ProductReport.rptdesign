@@ -132,6 +132,11 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">productComments</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">eanCode</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">eanCode</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -219,6 +224,11 @@
                     <structure>
                         <property name="position">17</property>
                         <property name="name">productComments</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">eanCode</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -344,8 +354,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">eanCode</property>
+                    <property name="nativeName">eanCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1603,6 +1620,11 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">illValue</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">illManualValue</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">illManualValue</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -1631,6 +1653,11 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                         <property name="name">illValue</property>
                         <property name="dataType">string</property>
                     </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">illManualValue</property>
+                        <property name="dataType">string</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">DataXml</property>
@@ -1656,8 +1683,15 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">illManualValue</property>
+                    <property name="nativeName">illManualValue</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingList/ingLabeling]#:#{language;STRING;/@language},{illGrp;STRING;/@illGrp},{illValue;STRING;/@illValue}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingList/ingLabeling]#:#{language;STRING;/@language},{illGrp;STRING;/@illGrp},{illValue;STRING;/@illValue},{illManualValue;STRING;/@illManualValue}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5146,17 +5180,17 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 </label>
                             </cell>
                             <cell id="2497">
-                                <data id="2507">
+                                <data id="2778">
                                     <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">productEAN</property>
-                                            <text-property name="displayName">productEAN</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["productEAN"]</expression>
+                                            <property name="name">eanCode</property>
+                                            <text-property name="displayName">eanCode</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["eanCode"]</expression>
                                             <property name="dataType">string</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">productEAN</property>
+                                    <property name="resultSetColumn">eanCode</property>
                                 </data>
                             </cell>
                         </row>
@@ -5726,8 +5760,14 @@ dataSetRow["allergens"]
                 <structure>
                     <property name="name">illValue</property>
                     <text-property name="displayName">illValue</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["illValue"]</expression>
+                    <expression name="expression" type="javascript">if(dataSetRow["illManualValue"] != null &amp;&amp; dataSetRow["illManualValue"] != ""){
+dataSetRow["illManualValue"]
+}
+else{
+dataSetRow["illValue"]
+}</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">Count</property>

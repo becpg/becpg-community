@@ -85,15 +85,15 @@ public abstract class AbstractListValuePluginTest extends RepoBaseTestCase {
 		finishedProduct.setQty(2d);
 		finishedProduct.setUnitPrice(12.4d);
 		List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-		CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+		CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
 
 		compoList.add(item);
-		compoList.add(new CompoListDataItem(null, item, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-		compoList.add(new CompoListDataItem(null, item, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-		item = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+		compoList.add(new CompoListDataItem(null, item, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+		compoList.add(new CompoListDataItem(null, item, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+		item = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
 
 		compoList.add(item);
-		compoList.add(new CompoListDataItem(null, item, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+		compoList.add(new CompoListDataItem(null, item, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 		finishedProduct.getCompoListView().setCompoList(compoList);
 
 		finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();

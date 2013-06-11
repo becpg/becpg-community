@@ -500,9 +500,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
@@ -528,7 +528,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				CompoListDataItem wUsed0 = wUsedProducts.get(0);
 
 				assertEquals("check PF", finishedProductNodeRef, wUsed0.getProduct());
-				logger.info("###wUsed0.getDepthLevel(): " + wUsed0.getDepthLevel());
 				assertEquals("check PF level", new Integer(1), wUsed0.getDepthLevel());
 				assertEquals("check PF qty", 3d, wUsed0.getQty());
 				assertEquals("check PF qty sub formula", 0d, wUsed0.getQtySubFormula());
@@ -559,7 +558,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), (CompoListDataItem)null, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
-										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
 										compoListUnit, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
 										declType, 
@@ -617,13 +615,13 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				for (PackagingListDataItem packagingListDataItem : wUsedProducts) {
 
 					if (packagingListDataItem.getProduct().equals(finishedProductNodeRef1)) {
-						assertEquals("check qty", 1d, packagingListDataItem.getQty());
-						assertEquals("check qty", PackagingListUnit.P, packagingListDataItem.getPackagingListUnit());
-						assertEquals("check qty", "Primaire", packagingListDataItem.getPkgLevel());
+						assertEquals(1d, packagingListDataItem.getQty());
+						assertEquals(PackagingListUnit.P, packagingListDataItem.getPackagingListUnit());
+						assertEquals(PackagingLevel.Primary, packagingListDataItem.getPkgLevel());
 					} else if (packagingListDataItem.getProduct().equals(finishedProductNodeRef2)) {
-						assertEquals("check qty", 8d, packagingListDataItem.getQty());
-						assertEquals("check qty", PackagingListUnit.PP, packagingListDataItem.getPackagingListUnit());
-						assertEquals("check qty", "Secondaire", packagingListDataItem.getPkgLevel());
+						assertEquals(8d, packagingListDataItem.getQty());
+						assertEquals(PackagingListUnit.PP, packagingListDataItem.getPackagingListUnit());
+						assertEquals(PackagingLevel.Secondary, packagingListDataItem.getPkgLevel());
 					}
 				}
 

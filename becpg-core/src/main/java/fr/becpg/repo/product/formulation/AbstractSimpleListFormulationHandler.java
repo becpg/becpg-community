@@ -88,6 +88,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					sl.setMini(null);
 					sl.setMaxi(null);
 				}
+				
+				// add detailable aspect
+				if(!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
+					sl.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+				}				
 			}
 		}
 				
@@ -106,7 +111,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, BeCPGModel.TYPE_RAWMATERIAL);
 			
 			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
-				Double qty = FormulationHelper.getQty(compoItem, nodeService);
+				Double qty = FormulationHelper.getQty(compoItem);
 				
 				if(qty != null){
 					visitPart(compoItem.getProduct(), simpleListDataList, qty, netWeight, mandatoryCharacts);

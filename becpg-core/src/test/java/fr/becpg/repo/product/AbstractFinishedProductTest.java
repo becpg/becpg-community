@@ -147,9 +147,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     /** The ing4. */
     protected NodeRef ing4;
     
-    protected NodeRef ing5;
-    
-    protected NodeRef ingWater;
+    protected NodeRef ing5;    
     
     /** The bio origin1. */
     protected NodeRef bioOrigin1;
@@ -283,14 +281,6 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					mlName.addValue(Locale.FRENCH, "ing5 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 					ing5 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "eau");
-					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "eau default");
-					mlName.addValue(Locale.ENGLISH, "eau english");
-					mlName.addValue(Locale.FRENCH, "eau french");	
-					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ingWater = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 					//Geo origins
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "geoOrigin1");

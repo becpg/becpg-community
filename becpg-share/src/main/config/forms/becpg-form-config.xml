@@ -3355,7 +3355,6 @@
 				<field-visibility>
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
-					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
@@ -3424,9 +3423,8 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
-					<show id="bcpg:compoListQtyAfterProcess" />
-					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListQty" />					
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
@@ -3457,7 +3455,6 @@
 				<field-visibility>
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
-					<show id="bcpg:compoListQtyAfterProcess" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
@@ -3912,7 +3909,7 @@
 				<field-visibility>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
-					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:illManualValue" />
 				</field-visibility>
 
 				<appearance>
@@ -3925,7 +3922,7 @@
 					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
-					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:illManualValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
@@ -3941,7 +3938,7 @@
 				<field-visibility>
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
-					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:illManualValue" />
 				</field-visibility>
 
 				<appearance>
