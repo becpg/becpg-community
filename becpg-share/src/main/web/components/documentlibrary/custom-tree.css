@@ -25,7 +25,6 @@
 	background-image: url(../images/filetypes/generic-nc-16.png) ;
 }
 
-
  .treeview  span.ygtvlabel.qa-controlPlan {
 	background-image: url(../images/filetypes/generic-controlPlan-16.png) ;
 }
@@ -70,25 +69,6 @@
 	background-image: url(../images/filetypes/generic-changeOrder-16.png) ;
 }
 
-.node-header .node-path .folder-qa_nc {
-	background-image:  url(../images/filetypes/generic-nc-16.png) ;
-}
-
-.node-header .node-path .folder-qa_qualityControl {
-	background-image:  url(../images/filetypes/generic-qualityControl-16.png) ;
-}
-
-.node-header .node-path .folder-qa_controlPlan {
-	background-image:  url(../images/filetypes/generic-controlPlan-16.png) ;
-}
-
-.node-header .node-path .folder-qa_controlPoint {
-	background-image:  url(../images/filetypes/generic-controlPoint-16.png) ;
-}
-
-.node-header .node-path .folder-qa_workItemAnalysis {
-	background-image:  url(../images/filetypes/generic-workItemAnalysis-16.png) ;
-}
 
  .treeview  span.ygtvlabel.pjt-project,
  .treeview  span.ygtvlabel.bcpg-finishedProduct,
@@ -101,12 +81,14 @@
  .treeview  span.ygtvlabel.bcpg-supplier,
  .treeview  span.ygtvlabel.bcpg-productSpecification,
  .treeview  span.ygtvlabel.bcpg-productMicrobioCriteria,
+ .treeview  span.ygtvlabel.bcpg-semiFinishedProduct,
  .treeview  span.ygtvlabel.qa-qualityControl,
  .treeview  span.ygtvlabel.qa-nc,
  .treeview  span.ygtvlabel.qa-controlPlan,
  .treeview  span.ygtvlabel.qa-controlPoint,
  .treeview  span.ygtvlabel.qa-workItemAnalysis,
- .treeview  span.ygtvlabel.ecm-changeOrder
+ .treeview  span.ygtvlabel.ecm-changeOrder,
+ .treeview  span.ygtvlabel.bcpg-localSemiFinishedProduct
   {
 	background-position:  left bottom;
 	background-repeat: no-repeat;
