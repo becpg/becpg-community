@@ -51,3 +51,24 @@
 	background-image: url(../images/filetypes/generic-supplier-16.png);
 }
 
+.toolbar .breadcrumb .qa_nc {
+	background-image:  url(../images/filetypes/generic-nc-16.png) ;
+}
+
+.toolbar .breadcrumb .qa_qualityControl {
+	background-image:  url(../images/filetypes/generic-qualityControl-16.png) ;
+}
+
+
+.toolbar .breadcrumb .qa_workItemAnalysis {
+	background-image:  url(../images/filetypes/generic-workItemAnalysis-16.png) ;
+}
+
+.toolbar .breadcrumb .qa_controlPlan {
+	background-image:  url(../images/filetypes/generic-controlPlan-16.png) ;
+}
+
+.toolbar .breadcrumb .qa_controlPoint {
+	background-image:  url(../images/filetypes/generic-controlPoint-16.png) ;
+}
+
