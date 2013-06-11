@@ -97,11 +97,11 @@
 	<!-- DataList Extractor -->
 	
 	 <bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="abstractDataListExtractor">
-		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="personService" ref="personService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="namespaceService" ref="namespaceService"/>
+		<property name="associationService" ref="associationService"/>
 		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
-		<property name="fileFolderService" ref="FileFolderService"/>
+		<property name="preferenceService" ref="preferenceService"/>
 	</bean>
 	
 

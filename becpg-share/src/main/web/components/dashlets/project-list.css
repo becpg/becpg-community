@@ -14,6 +14,7 @@
    margin-right: 0;
 }
 
+
 .project-list .simple-detailed .simple-view span.first-child
 {
    background-image: url(../documentlibrary/images/simple-view-off-16.png);
@@ -100,4 +101,63 @@
 .project-list  div.search-box input.faded
 {
    opacity: 0.5;
+}
+
+/**
+Details
+*/
+
+
+.project-list .simple-doclist .detail {
+	 margin-left: 7px;
+}
+.project-list .task-resources li {
+	display: inline;
+	padding:5px;
+}
+
+.project-list div.paginator {
+	  float: left;
+    margin: 2px 0 0 0;
+}
+
+.project-list .task-resources img {
+	margin:5px;
+}
+
+.project-list div.project-manager {
+	float:right;
+}
+
+.project-list .simple-doclist .detail span.project-date {
+	  color:  #1155CC;
+    font-style: italic;
+}
+
+
+.project-list .simple-doclist .detail span.hierachy {	
+	font-weight: bold;
+	 padding:10px;
+}
+
+.project-list .simple-doclist .detail span.project {	
+	font-weight: bold;
+	 padding:10px;
+}
+
+.project-list .simple-doclist .detail a:hover{
+	text-decoration: none;
+}
+
+.project-list .simple-doclist h3 a:hover{
+	text-decoration: none;
+}
+
+.project-list .simple-doclist .detail span.item-social a:hover{
+	text-decoration: underline;
+}
+
+.project-list img.priority {
+	margin-right:5px;
+}
 }

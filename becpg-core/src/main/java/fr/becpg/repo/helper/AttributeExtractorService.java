@@ -22,6 +22,8 @@ public interface AttributeExtractorService {
 
 		List<Map<String,Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<String> metadataFields);
 
+		Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname, List<String> metadataFields);
+
 	}
 
 	public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);

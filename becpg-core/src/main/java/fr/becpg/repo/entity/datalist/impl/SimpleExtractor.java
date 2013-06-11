@@ -45,7 +45,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	
 	private NamespaceService namespaceService;
 	
-	private DataListSortRegistry dataListSortRegistry;
+	protected DataListSortRegistry dataListSortRegistry;
 	
 	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
 	
@@ -172,6 +172,17 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 				
 				return ret;
+			}
+			
+			@Override
+			public Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname, List<String> metadataFields) {
+	
+				NodeRef entityNodeRef = entityListDAO.getEntity(entityListNodeRef);
+				if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
+					return  extract(entityNodeRef, metadataFields, props);
+				}
+				
+				return  new HashMap<String, Object>();
 			}
 		});
 	}
