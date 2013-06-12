@@ -88,6 +88,7 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
 				</bean>
 			</list>
 		</property>

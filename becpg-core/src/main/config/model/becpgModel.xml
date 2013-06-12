@@ -299,6 +299,18 @@
 				</list>
 			</parameter>
 		</constraint>
+			<constraint name="bcpg:dynamicCharactColumns" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>bcpg_dynamicCharactColumn1</value>
+					<value>bcpg_dynamicCharactColumn2</value>
+					<value>bcpg_dynamicCharactColumn3</value>
+					<value>bcpg_dynamicCharactColumn4</value>
+					<value>bcpg_dynamicCharactColumn5</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -1457,6 +1469,12 @@
 					<type>d:any</type>
 					<index enabled="false"/>
 				</property>
+				<property name="bcpg:dynamicCharactColumn">
+					<type>d:text</type>
+					<constraints>
+					  <constraint ref="bcpg:dynamicCharactColumns"/>
+					</constraints>
+				</property>
 				<property name="bcpg:dynamicCharactGroupColor">
 					<type>d:text</type>
 					<default>000000</default>
@@ -2138,6 +2156,32 @@
 		
 		<aspect name="bcpg:systemFolderAspect">
 			
+		</aspect>
+		
+		
+		<aspect name="bcpg:dynamicCharactColumnsAspect">
+			<properties>
+				<property name="bcpg:dynamicCharactColumn1">
+					<type>d:any</type>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:dynamicCharactColumn2">
+					<type>d:any</type>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:dynamicCharactColumn3">
+					<type>d:any</type>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:dynamicCharactColumn4">
+					<type>d:any</type>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:dynamicCharactColumn5">
+					<type>d:any</type>
+					<index enabled="false"/>
+				</property>
+			</properties>
 		</aspect>
 		
 		<!-- ALF-8143 -->

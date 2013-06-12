@@ -70,6 +70,11 @@
 }
 
 
+ .treeview  span.ygtvlabel.sec-aclGroup {
+	background-image: url(../images/filetypes/generic-aclGroup-16.png) ;
+}
+
+
  .treeview  span.ygtvlabel.pjt-project,
  .treeview  span.ygtvlabel.bcpg-finishedProduct,
  .treeview  span.ygtvlabel.bcpg-packagingKit,
@@ -88,7 +93,8 @@
  .treeview  span.ygtvlabel.qa-controlPoint,
  .treeview  span.ygtvlabel.qa-workItemAnalysis,
  .treeview  span.ygtvlabel.ecm-changeOrder,
- .treeview  span.ygtvlabel.bcpg-localSemiFinishedProduct
+ .treeview  span.ygtvlabel.bcpg-localSemiFinishedProduct,
+ .treeview  span.ygtvlabel.sec-aclGroup
   {
 	background-position:  left bottom;
 	background-repeat: no-repeat;

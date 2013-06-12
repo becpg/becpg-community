@@ -31,28 +31,17 @@
 				</list>
 			</parameter>
 		</constraint>
-
-	   <constraint name="sec:nodeTypeConstraint"
-			type="fr.becpg.repo.security.constraint.DynPropsConstraint">
-			<parameter name="constraintType">
-				<value>NODE_TYPE</value>
-			</parameter>
-		</constraint>
-
 	</constraints>
 
 	<types>
 
 		<!-- ACL Object -->
 		<type name="sec:aclGroup">
-			<parent>cm:content</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="sec:nodeType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="sec:nodeTypeConstraint" />
-					</constraints>
 				</property>
 			</properties>
 			<mandatory-aspects>

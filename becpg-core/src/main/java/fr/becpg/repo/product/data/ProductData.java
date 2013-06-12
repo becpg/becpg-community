@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -441,6 +442,12 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.packagingListView = packagingListView;
 	}
 
+	
+
+	public List<AbstractProductDataView> getViews() {
+		return Arrays.asList(compoListView, packagingListView, processListView);
+	}
+	
 	/**
 	 * Instantiates a new product data.
 	 */
@@ -638,5 +645,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 			return false;
 		return true;
 	}
+
 
 }
