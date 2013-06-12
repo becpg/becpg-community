@@ -12,7 +12,7 @@
 	<breakEven>0</breakEven>
 	<productHierarchy2>Quiches individuelles</productHierarchy2>
 	<legalName>Quiche lorraine</legalName>
-	<eanCode></eanCode>
+	<eanCode>14554545454</eanCode>
 	<modified>ven. 31 mai 2013 13:02:43</modified>
 	<modifier>admin</modifier>
 	<plants>beCPG Montrouge</plants>
@@ -53,6 +53,12 @@
 	<initialVersion>Vrai</initialVersion>
 	<unitPrice>7</unitPrice>
 	<name>Quiche lorraineMDD 200g</name>
+	<pvValidationDate>ven. 31 mai 2013 13:02:50</pvValidationDate>
+	<pvCallerActor>Caller</pvCallerActor>
+	<pvQualityApprovalActor>Qual</pvQualityApprovalActor>
+	<pvProductionApprovalActor>Prod</pvProductionApprovalActor>
+	<pvRDApprovalActor>RD</pvRDApprovalActor>
+	
 
 	<images>
 		<image id="img1" name="img1" title="img1 title" />

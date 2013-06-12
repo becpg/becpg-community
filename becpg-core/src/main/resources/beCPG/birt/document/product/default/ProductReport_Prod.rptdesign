@@ -46,6 +46,7 @@
                 <structure>
                     <property name="columnName">productPrice</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productPrice</text-property>
                 </structure>
                 <structure>
@@ -86,6 +87,7 @@
                 <structure>
                     <property name="columnName">productQty</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productQty</text-property>
                 </structure>
                 <structure>
@@ -140,6 +142,7 @@
                 <structure>
                     <property name="columnName">eanCode</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">eanCode</text-property>
                 </structure>
                 <structure>
@@ -164,22 +167,10 @@
                     <property name="analysisColumn">productComments</property>
                 </structure>
                 <structure>
-                    <property name="columnName">pvTransmitterDepartment</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">pvTransmitterDepartment</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">pvCallerActor</property>
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvCallerActor</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">pvTransmitterActor</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">pvTransmitterActor</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pvQualityApprovalActor</property>
@@ -192,6 +183,16 @@
                     <property name="analysis">attribute</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvProductionApprovalActor</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">pvValidationDate</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">pvValidationDate</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">pvRDApprovalActor</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">pvRDApprovalActor</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">legalName</property>
@@ -317,27 +318,27 @@
                     </structure>
                     <structure>
                         <property name="position">21</property>
-                        <property name="name">pvTransmitterDepartment</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">22</property>
                         <property name="name">pvCallerActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">23</property>
-                        <property name="name">pvTransmitterActor</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">24</property>
+                        <property name="position">22</property>
                         <property name="name">pvQualityApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">25</property>
+                        <property name="position">23</property>
                         <property name="name">pvProductionApprovalActor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
+                        <property name="name">pvValidationDate</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">25</property>
+                        <property name="name">pvRDApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -501,36 +502,36 @@
                 </structure>
                 <structure>
                     <property name="position">21</property>
-                    <property name="name">pvTransmitterDepartment</property>
-                    <property name="nativeName">pvTransmitterDepartment</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">22</property>
                     <property name="name">pvCallerActor</property>
                     <property name="nativeName">pvCallerActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">23</property>
-                    <property name="name">pvTransmitterActor</property>
-                    <property name="nativeName">pvTransmitterActor</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">24</property>
+                    <property name="position">22</property>
                     <property name="name">pvQualityApprovalActor</property>
                     <property name="nativeName">pvQualityApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">25</property>
+                    <property name="position">23</property>
                     <property name="name">pvProductionApprovalActor</property>
                     <property name="nativeName">pvProductionApprovalActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">24</property>
+                    <property name="name">pvValidationDate</property>
+                    <property name="nativeName">pvValidationDate</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">25</property>
+                    <property name="name">pvRDApprovalActor</property>
+                    <property name="nativeName">pvRDApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
@@ -556,7 +557,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;STRING;/created},{description;STRING;/description},{eanCode;INT;/eanCode},{useByDate;STRING;/useByDate},{startEffectivity;STRING;/startEffectivity},{productComments;STRING;/productComments},{pvTransmitterDepartment;STRING;/pvTransmitterDepartment},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;STRING;/created},{description;STRING;/description},{eanCode;INT;/eanCode},{useByDate;STRING;/useByDate},{startEffectivity;STRING;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;STRING;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6545,12 +6546,12 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                             <property name="borderTopColor">#FFFFFF</property>
                             <grid id="777">
                                 <property name="borderTopStyle">none</property>
-                                <property name="width">3.25in</property>
+                                <property name="width">3.2442748091603053in</property>
                                 <column id="778">
-                                    <property name="width">0.7678571428571429in</property>
+                                    <property name="width">1.015267175572519in</property>
                                 </column>
                                 <column id="1519">
-                                    <property name="width">2.482142857142857in</property>
+                                    <property name="width">2.2290076335877864in</property>
                                 </column>
                                 <row id="779">
                                     <cell id="780">
@@ -6583,6 +6584,36 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                         </data>
                                     </cell>
                                 </row>
+                                <row id="3010">
+                                    <cell id="3011">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <label id="3013">
+                                            <text-property name="text">Validé le :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="3012">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <data id="3014">
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">pvValidationDate</property>
+                                                    <text-property name="displayName">pvValidationDate</text-property>
+                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["pvValidationDate"],17)</expression>
+                                                    <property name="dataType">string</property>
+                                                    <property name="allowExport">true</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">pvValidationDate</property>
+                                        </data>
+                                    </cell>
+                                </row>
                                 <row id="783">
                                     <cell id="784">
                                         <property name="borderBottomColor">#FFFFFF</property>
@@ -6590,7 +6621,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <label id="1521">
-                                            <text-property name="text">Code :</text-property>
+                                            <text-property name="text">Code beCPG :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1517">
@@ -6674,39 +6705,40 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                             <label id="2306">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Service demandeur</text-property>
+                                <text-property name="text">Demandeur</text-property>
                             </label>
                         </cell>
                         <cell id="1952">
                             <label id="1960">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Service rédacteur</text-property>
+                                <text-property name="text">Rédacteur</text-property>
                             </label>
                         </cell>
                         <cell id="1953">
                             <label id="1961">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Service production</text-property>
+                                <text-property name="text">Resp. production</text-property>
                             </label>
                         </cell>
                         <cell id="1954">
                             <label id="1962">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Service qualité</text-property>
+                                <text-property name="text">Resp. qualité</text-property>
                             </label>
                         </cell>
                         <cell id="2695">
                             <label id="2699">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Service R&amp;D</text-property>
+                                <text-property name="text">Resp. R&amp;D</text-property>
                             </label>
                         </cell>
                     </row>
                     <row id="1955">
+                        <property name="style">becpg-row-border</property>
                         <cell id="1956">
                             <data id="1967">
                                 <property name="style">becpg-data</property>
@@ -6724,23 +6756,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                 <property name="resultSetColumn">pvCallerActor</property>
                             </data>
                         </cell>
-                        <cell id="1957">
-                            <data id="1964">
-                                <property name="style">becpg-data</property>
-                                <property name="fontWeight">normal</property>
-                                <property name="textAlign">center</property>
-                                <property name="dataSet">Product</property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">pvTransmitterActor</property>
-                                        <text-property name="displayName">pvTransmitterActor</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["pvTransmitterActor"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                </list-property>
-                                <property name="resultSetColumn">pvTransmitterActor</property>
-                            </data>
-                        </cell>
+                        <cell id="1957"/>
                         <cell id="1958">
                             <data id="1966">
                                 <property name="style">becpg-data</property>
@@ -6775,7 +6791,21 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                 <property name="resultSetColumn">pvQualityApprovalActor</property>
                             </data>
                         </cell>
-                        <cell id="2697"/>
+                        <cell id="2697">
+                            <data id="3009">
+                                <property name="textAlign">center</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">pvRDApprovalActor</property>
+                                        <text-property name="displayName">pvRDApprovalActor</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["pvRDApprovalActor"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">pvRDApprovalActor</property>
+                            </data>
+                        </cell>
                     </row>
                 </grid>
             </page-footer>
