@@ -176,6 +176,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
 			}
 		}
+		
+		if(entity.getExtraProperties()!=null){
+			properties.putAll(entity.getExtraProperties());
+		}
+		
 		return properties;
 
 	}

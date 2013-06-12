@@ -1,6 +1,9 @@
 package fr.becpg.repo.repository.model;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -19,6 +22,8 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	protected String name;
 	
 	protected Set<QName> aspects = new HashSet<QName>();
+	
+	protected Map<QName,Serializable> extraProperties = new HashMap<QName,Serializable>();
 	
 	protected boolean isTransient = false;
 	
@@ -68,6 +73,14 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.aspects = aspects;
 	}
 
+	public Map<QName, Serializable> getExtraProperties() {
+		return extraProperties;
+	}
+
+	public void setExtraProperties(Map<QName, Serializable> extraProperties) {
+		this.extraProperties = extraProperties;
+	}
+
 	public boolean isTransient() {
 		return isTransient;
 	}
@@ -81,6 +94,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((aspects == null) ? 0 : aspects.hashCode());
+		result = prime * result + ((extraProperties == null) ? 0 : extraProperties.hashCode());
 		result = prime * result + (isTransient ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
@@ -101,6 +115,11 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 			if (other.aspects != null)
 				return false;
 		} else if (!aspects.equals(other.aspects))
+			return false;
+		if (extraProperties == null) {
+			if (other.extraProperties != null)
+				return false;
+		} else if (!extraProperties.equals(other.extraProperties))
 			return false;
 		if (isTransient != other.isTransient)
 			return false;

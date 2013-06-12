@@ -108,10 +108,20 @@
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
-					<show id="mpm:plRateProduct" />					
+					<show id="mpm:plRateProduct" />		
+				   <show id="bcpg:dynamicCharactColumn1" force="true" />
+					<show id="bcpg:dynamicCharactColumn2" force="true" />
+					<show id="bcpg:dynamicCharactColumn3" force="true" />
+					<show id="bcpg:dynamicCharactColumn4" force="true" />
+					<show id="bcpg:dynamicCharactColumn5" force="true"/>
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:variantIds" label="" ></field>
+					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn1" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn2" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
 				</appearance>
 			</form>
 		</forms>

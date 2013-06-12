@@ -140,6 +140,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1","nutList.?[nut.toString() == '"+nut1+"' ][0].value = 4d" ));
 				
 				
+				//DynamicColumn
+				
+				DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1","entity.costList[0].value + dataListItem.qty" );
+				dynCol.setColumnName("bcpg:dynamicCharactColumn1");
+				
+				
+				dynamicCharactListItems.add(dynCol);
+				
+				
 				finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 				
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
