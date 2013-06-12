@@ -199,8 +199,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
 			logger.debug("We want to get datalist for current ACL entity");
 			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
-			QName aclTypeQname = DefaultTypeConverter.INSTANCE.convert(QName.class, aclType);
-			model.put(MODEL_KEY_ACL_TYPE, aclTypeQname.toPrefixString(namespaceService));
+			QName aclTypeQname = QName.createQName( aclType, namespaceService);
+			model.put(MODEL_KEY_ACL_TYPE, aclType);
 
 			NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
 			if (templateNodeRef != null) {

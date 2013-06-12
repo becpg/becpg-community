@@ -57,11 +57,17 @@
       return url;
 
    };
+   
 
    beCPG.util.entityDetailsURL = function(siteId, pNodeRef, type) {
       var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
-
-      return $siteURL("entity-details?nodeRef=" + nodeRef.toString(), {
+      
+      var containerType = "entity";
+      if(type=="document" || type =="folder"){
+         containerType=type;
+      }
+      
+      return $siteURL(containerType+"-details?nodeRef=" + nodeRef.toString(), {
          site : siteId
       });
 
