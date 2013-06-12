@@ -35,6 +35,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
 		
+		logger.debug("Formulate project " + projectData.getNodeRef());
+		
 		// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
 		if(ProjectState.Planned.equals(projectData.getProjectState()) && 
 				projectData.getStartDate() != null && 
@@ -42,6 +44,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				projectData.getStartDate().before(new Date())){
 			projectData.setProjectState(ProjectState.InProgress);
 		}
+		
+		// even if project is not in Progress, we visit it because a task can start the project (manual task or task that has startdate < NOW)
+		visitTask(projectData, null);
 		
 		// first tasks to manage Project state
 		if(ProjectState.Planned.equals(projectData.getProjectState())){
@@ -55,11 +60,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				}			
 			}
 		}
-		
-		if(ProjectState.InProgress.equals(projectData.getProjectState()) ){
-			visitTask(projectData, null);
-		}		
-		
+				
 		// is project completed ?
 		if(ProjectHelper.areTasksDone(projectData)){
 			projectData.setCompletionDate(new Date());

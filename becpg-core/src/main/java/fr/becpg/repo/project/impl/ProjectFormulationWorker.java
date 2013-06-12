@@ -57,7 +57,7 @@ public class ProjectFormulationWorker {
         		
         		String queryPlanned = LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT) +
         				LuceneHelper.getCondEqualValue(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString(), LuceneHelper.Operator.AND) + 
-        				LuceneHelper.getCondMinMax(ProjectModel.PROP_PROJECT_START_DATE, ISO8601DateFormat.format(new Date()), "MAX", LuceneHelper.Operator.AND);
+        				LuceneHelper.getCondMinMax(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()), LuceneHelper.Operator.AND);
         		
         		String query = "(" + queryInProgress + ") OR (" + queryPlanned + ")";
         		logger.debug("ProjectFormulationWorker: " + query);        		
