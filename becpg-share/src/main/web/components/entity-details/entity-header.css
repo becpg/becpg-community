@@ -82,6 +82,12 @@
 }
 
 
+.node-header .node-path .folder-sec_aclGroup {
+	background-image:  url(../images/filetypes/generic-aclGroup-16.png), url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+
+
 .node-header .node-path .folder-pjt_project,
 .node-header .node-path .folder-bcpg_finishedProduct,
 .node-header .node-path .folder-bcpg_packagingKit,
@@ -100,6 +106,7 @@
 .node-header .node-path .folder-qa_qualityContrl,
 .node-header .node-path .folder-qa_controlPlan,
 .node-header .node-path .folder-qa_controlPoint,
+.node-header .node-path .folder-sec_aclGroup,
 .node-header .node-path .folder-qa_workItemAnalysis {
 	background-position:  7px bottom,left;
 	background-repeat: not-repeat ;

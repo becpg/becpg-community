@@ -241,8 +241,7 @@
          var contents = deliverable["itemData"]["assoc_pjt_dlContent"];
 
          if (contents.length > 0) {
-            ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' + this
-                  ._buildCellUrl(contents[0]) + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+            ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' +  beCPG.util.entityDetailsURL(contents[0].siteId,contents[0].nodeRef, "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
                   .getFileIcon(contents[0].displayValue, "cm:content", 16) + '" /></a></span>';
          }
 
@@ -253,6 +252,7 @@
 
          return ret;
       },
+      
 
       getPriorityImg : function PL_getPriorityImg(record, large) {
          var priority = record.itemData["prop_pjt_projectPriority"].value, priorityMap = {
