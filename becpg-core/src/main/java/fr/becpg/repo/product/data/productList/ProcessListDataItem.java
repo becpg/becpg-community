@@ -12,7 +12,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 
 @AlfType
 @AlfQname(qname = "mpm:processList")
-public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem {
+public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 	
 	private Double qty = 0d;	
 	private Double qtyResource = 0d;
@@ -162,6 +162,12 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem {
 		setResource(p.getResource());
 	}
 
+
+	@Override
+	public CompositionDataItem createCopy() {
+		return new ProcessListDataItem(this);
+	}
+	
 	@Override
 	public String toString() {
 		return "ProcessListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", qtyResource=" + qtyResource + ", rateResource=" + rateResource + ", yield=" + yield
@@ -246,6 +252,8 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem {
 			return false;
 		return true;
 	}
+
+
 	
 	
 	

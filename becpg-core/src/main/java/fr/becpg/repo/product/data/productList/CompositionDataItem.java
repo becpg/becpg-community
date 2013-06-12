@@ -14,6 +14,8 @@ public interface CompositionDataItem extends RepositoryEntity, Cloneable  {
 
 	void setQty(Double d);
 
+	//TODO try to remove
+	@Deprecated
 	CompositionDataItem createCopy();
 
 
