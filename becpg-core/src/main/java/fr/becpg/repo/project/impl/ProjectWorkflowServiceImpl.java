@@ -197,8 +197,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 							Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 							
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription, workflowTask.getProperties(), properties);
-							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DESCRIPTION, workflowDescription, workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DESCRIPTION, workflowDescription, workflowTask.getProperties(), properties);							
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd(), workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DUE_DATE, taskListDataItem.getEnd(), workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(), workflowTask.getProperties(), properties);
 							//properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources(), workflowTask.getProperties(), properties);							
 														
