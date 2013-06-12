@@ -2,6 +2,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.List;
 
+import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
@@ -17,7 +18,11 @@ public class PackagingListView extends AbstractProductDataView {
 		return packagingList;
 	}
 	
-	
+	@Override
+	public List<? extends CompositionDataItem> getMainDataList() {
+		return getPackagingList();
+	}
+
 
 	public void setPackagingList(List<PackagingListDataItem> packagingList) {
 		this.packagingList = packagingList;

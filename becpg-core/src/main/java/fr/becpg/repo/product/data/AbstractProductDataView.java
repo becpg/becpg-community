@@ -2,6 +2,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.List;
 
+import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -12,6 +13,8 @@ public abstract class AbstractProductDataView extends BaseObject {
 
 	protected List<ReqCtrlListDataItem> reqCtrlList;
 	protected List<DynamicCharactListItem> dynamicCharactList;
+	
+	public abstract List<? extends CompositionDataItem> getMainDataList();
 
 	@DataList
 	@AlfQname(qname="bcpg:reqCtrlList")

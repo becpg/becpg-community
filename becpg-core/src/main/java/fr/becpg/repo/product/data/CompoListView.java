@@ -2,6 +2,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.List;
 
+import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
@@ -16,6 +17,10 @@ public class CompoListView extends AbstractProductDataView {
 		return compoList;
 	}
 
+	@Override
+	public List<? extends CompositionDataItem> getMainDataList() {
+		return getCompoList();
+	}
 
 	public void setCompoList(List<CompoListDataItem> compoList) {
 		this.compoList = compoList;
@@ -52,6 +57,8 @@ public class CompoListView extends AbstractProductDataView {
 	public String toString() {
 		return "CompoListView [compoList=" + compoList + "]";
 	}
+
+
 	
 
 

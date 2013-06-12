@@ -2,6 +2,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.List;
 
+import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.DataList;
@@ -15,6 +16,12 @@ public class ProcessListView extends AbstractProductDataView {
 	@AlfQname(qname="mpm:processList")
 	public List<ProcessListDataItem> getProcessList() {
 		return processList;
+	}
+
+	
+	@Override
+	public List<? extends CompositionDataItem> getMainDataList() {
+		return getProcessList();
 	}
 	
 	public void setProcessList(List<ProcessListDataItem> processList) {

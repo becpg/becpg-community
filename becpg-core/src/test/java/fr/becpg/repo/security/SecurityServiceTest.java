@@ -1,7 +1,6 @@
 package fr.becpg.repo.security;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -9,17 +8,19 @@ import javax.annotation.Resource;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
-import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.security.constraint.DynPropsConstraint;
+import fr.becpg.repo.listvalue.ListValueEntry;
+import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.listvalue.SecurityListValuePlugin;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -40,12 +41,15 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 	private static Log logger = LogFactory.getLog(SecurityServiceTest.class);
 
 	@Resource
-	private BeCPGDao<ACLGroupData> aclGroupDao;
+	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
 	@Resource
 	private SecurityService securityService;
 
 	@Resource
-	private DynPropsConstraint dynPropsConstraint;
+	SecurityListValuePlugin securityListValuePlugin;
+	
+	@Resource
+	NamespaceService namespaceService;
 	
 	
 	private void createUsers(){
@@ -84,31 +88,32 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		
 		ACLGroupData aclGroupData = new ACLGroupData();
 		aclGroupData.setName("Test ACL");
-		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY.toString());
+		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY.toPrefixString(namespaceService));
 		
 		
 		
-		aclGroupData.setNodeAspects(Arrays.asList(new String[]{BeCPGModel.ASPECT_CLIENTS.toString(),BeCPGModel.ASPECT_CODE.toString()}));
+		//aclGroupData.setNodeAspects(Arrays.asList(new String[]{BeCPGModel.ASPECT_CLIENTS.toString(),BeCPGModel.ASPECT_CODE.toString()}));
 		
 		
-		List<String> groups = new ArrayList<String>();
-		groups.add(grp3);
+		List<NodeRef> groups = new ArrayList<NodeRef>();
+		groups.add(authorityService.getAuthorityNodeRef(grp3));
 		List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
 
-		acls.add(new ACLEntryDataItem(null, "cm:name",
+		
+		acls.add(new ACLEntryDataItem( "cm:name",
 				PermissionModel.READ_ONLY, groups));
 
-		groups = new ArrayList<String>();
-		groups.add(grp1);
+		groups = new ArrayList<NodeRef>();
+		groups.add(authorityService.getAuthorityNodeRef(grp1));
 
-		acls.add(new ACLEntryDataItem(null, "sec:propName",
+		acls.add(new ACLEntryDataItem("sec:propName",
 				PermissionModel.READ_WRITE, groups));
 
-		acls.add(new ACLEntryDataItem(null, "sec:aclPermission",
+		acls.add(new ACLEntryDataItem("sec:aclPermission",
 				PermissionModel.READ_ONLY, groups));
 
 		aclGroupData.setAcls(acls);
-		aclGroupDao.create(testFolderNodeRef, aclGroupData);
+		alfrescoRepository.create(testFolderNodeRef, aclGroupData);
 
 	}
 
@@ -176,25 +181,13 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 	
 	@Test
 	public void testConstainst(){
-		dynPropsConstraint.setConstraintType(DynPropsConstraint.TYPE_NODE);
-		List<String> types =  dynPropsConstraint.getAllowedValues();
+		ListValuePage types =  securityListValuePlugin.suggest("aclType", "*", 1, 25, null);
 		assertNotNull(types);
-		assertTrue(types.size()>0);
+		assertTrue(types.getFullListSize()>0);
 		
 		if(logger.isDebugEnabled()){
-			for(String type : dynPropsConstraint.getAllowedValues()){
+			for(ListValueEntry type : types.getResults()){
 				logger.debug("Type : "+type);
-			}
-		}
-		
-		dynPropsConstraint.setConstraintType(DynPropsConstraint.ASPECT_NODE);
-		List<String> aspects =  dynPropsConstraint.getAllowedValues();
-		assertNotNull(aspects);
-		assertTrue(aspects.size()>0);
-		
-		if(logger.isDebugEnabled()){
-			for(String aspect : dynPropsConstraint.getAllowedValues()){
-				logger.debug("aspect : "+aspect);
 			}
 		}
 		

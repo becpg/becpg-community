@@ -6,8 +6,9 @@ if (beCPG.module.EntityDataGridRenderers) {
                {
                   propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity",
                         "bcpg:resourceProduct", "cm:content_bcpg:costDetailsListSource",
-                        "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct"
-                        , "ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem","ecm:culTargetItem", "ecm:cclSourceItem"],
+                        "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct",
+                        "ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem",
+                        "ecm:culTargetItem", "ecm:cclSourceItem" ],
                   renderer : function(oRecord, data, label, scope) {
 
                      var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
@@ -100,26 +101,32 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : ["qa:sdlControlPoint", "qa:slControlPoint" ],
-        renderer : function(oRecord, data, label, scope) {
-        	var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
-        	return '<span class="controlPoint"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
 
-        }
+   YAHOO.Bubbling
+         .fire("registerDataGridRenderer",
+               {
+                  propertyName : [ "qa:sdlControlPoint", "qa:slControlPoint" ],
+                  renderer : function(oRecord, data, label, scope) {
+                     var url = beCPG.util.entityCharactURL(data.siteId, data.value);
+                     return '<span class="controlPoint"><a href="' + url + '">' + Alfresco.util
+                           .encodeHTML(data.displayValue) + '</a></span>';
 
-     });
+                  }
 
-   YAHOO.Bubbling.fire("registerDataGridRenderer",{
-          propertyName : ["qa:clCharacts" ],
-          renderer : function(oRecord, data, label, scope) {
-             var url = scope._buildCellUrl(data);
-             return '<span class="sample"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+               });
 
-          }
+   YAHOO.Bubbling
+         .fire(
+               "registerDataGridRenderer",
+               {
+                  propertyName : [ "qa:clCharacts" ],
+                  renderer : function(oRecord, data, label, scope) {
+                     var url = scope._buildCellUrl(data);
+                     return '<span class="sample"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
 
-    });
+                  }
+
+               });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:cost", "bcpg:allergen", "bcpg:nut", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin",
@@ -175,6 +182,21 @@ if (beCPG.module.EntityDataGridRenderers) {
                });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:dynamicCharactColumn",
+      renderer : function(oRecord, data, label, scope) {
+
+         if (data.value && data.value.length > 0) {
+            YAHOO.Bubbling.fire("columnRenamed", {
+               columnId : "prop_"+data.value,
+               label : oRecord.getData("itemData")["prop_bcpg_dynamicCharactTitle"].value
+            });
+         }
+
+         return null;
+      }
+   });
+
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "pjt:slScreening",
       renderer : function(oRecord, data, label, scope) {
 
@@ -182,69 +204,80 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
    });
 
-   YAHOO.Bubbling
-         .fire(
-               "registerDataGridRenderer",
-               {
-                  propertyName : "bcpg:variantIds",
-                  renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-                     var variants = data.value, isInDefault = !variants || variants.length < 1;
-                     
-                     Dom.setStyle(elCell, "width", "16px");
-                     Dom.setStyle(elCell.parentNode, "width", "16px");
-                     Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-                      
-                     if(isInDefault){
-                        return "<span  class='variant-common'>&nbsp;</span>";
-                     }
-                     
-                     for( var j in variants) {
-                        for( var i in scope.entity.variants) {
-                           if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
-                              isInDefault = true;
-                              break;
-                           }
-                        }
-                     }
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:variantIds",
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+         var variants = data.value, isInDefault = !variants || variants.length < 1;
 
-                     if (isInDefault) {
-                        return "<span title=\""+data.displayValue+"\" class='variant-default'>&nbsp;</span>";
-                     }
+         if (data.value) {
+            if (scope.afterRenderShowColumns.indexOf(oColumn) == -1){
+               scope.afterRenderShowColumns.push(oColumn);
+            }
+            Dom.setStyle(elCell, "width", "16px");
+            Dom.setStyle(elCell.parentNode, "width", "16px");
+         }
+         if (isInDefault) {
+            return "<span  class='variant-common'>&nbsp;</span>";
+         }
 
-                     return "<span title=\""+data.displayValue+"\" class='variant'>&nbsp;</span>";
+         for ( var j in variants) {
+            for ( var i in scope.entity.variants) {
+               if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
+                  isInDefault = true;
+                  break;
+               }
+            }
+         }
 
-                  }
+         if (isInDefault) {
+            return "<span title=\"" + data.displayValue + "\" class='variant-default'>&nbsp;</span>";
+         }
 
-               });
+         return "<span title=\"" + data.displayValue + "\" class='variant'>&nbsp;</span>";
+
+      }
+
+   });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : "bcpg:compoListQty",
-	      renderer : function(oRecord, data, label, scope) {
+      propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3",
+            "bcpg:dynamicCharactColumn4", "bcpg:dynamicCharactColumn5" ],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+         if (data.value) {
+            if (scope.afterRenderShowColumns.indexOf(oColumn) == -1)
+               scope.afterRenderShowColumns.push(oColumn);
+         }
+         return data.value;
 
-	    	  var qty = "";
-	    	  if(data.value != null){
-	    		  var unit = "";
-	    		  if(data.value < 0.0001){
-		    		  qty = data.value * 1000000;
-		    		  unit = " mg";
-		    	  }
-		    	  else if(data.value < 0.1){
-		    		  qty = data.value * 1000;
-		    		  unit = " g";
-		    	  }	
-		    	  else if(data.value > 1000){
-		    		  qty = data.value / 1000;
-		    		  unit = " t";	    		  
-		    	  }
-		    	  else{
-		    		  qty = data.value;
-		    		  unit = " kg";
-		    	  }
-	    		  
-	    		  qty = parseFloat(qty.toPrecision(5)) + unit;
-	    	  }
+      }
 
-	         return Alfresco.util.encodeHTML(qty);
-	      }
-	   });
+   });
+
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:compoListQty",
+      renderer : function(oRecord, data, label, scope) {
+
+         var qty = "";
+         if (data.value != null) {
+            var unit = "";
+            if (data.value < 0.0001) {
+               qty = data.value * 1000000;
+               unit = " mg";
+            } else if (data.value < 0.1) {
+               qty = data.value * 1000;
+               unit = " g";
+            } else if (data.value > 1000) {
+               qty = data.value / 1000;
+               unit = " t";
+            } else {
+               qty = data.value;
+               unit = " kg";
+            }
+
+            qty = parseFloat(qty.toPrecision(5)) + unit;
+         }
+
+         return Alfresco.util.encodeHTML(qty);
+      }
+   });
 }
