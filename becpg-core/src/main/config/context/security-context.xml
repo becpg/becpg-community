@@ -50,6 +50,12 @@
             <ref bean="securityService"/>
         </property>
     </bean>
+    
+    <!-- AOP -->
+   <bean class="fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice" id="securityMethodBeforeAdvice">
+     <property name="namespaceService" ref="namespaceService" />
+     <property name="securityService" ref="securityService" />
+   </bean>
    
  
 </beans>

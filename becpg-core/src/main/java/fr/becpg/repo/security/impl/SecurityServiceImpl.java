@@ -106,12 +106,11 @@ public class SecurityServiceImpl implements SecurityService {
 						if (permissionModel.isReadOnly() && isInGroup(permissionModel)) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
-						} else if (permissionModel.isReadOnly() && ret == SecurityService.WRITE_ACCESS) {
+						} else if (permissionModel.isReadOnly()) {
 							ret = SecurityService.NONE_ACCESS;
-
 						}
 
-						if (permissionModel.isWrite() && !isInGroup(permissionModel)) {
+						if (permissionModel.isWrite() && !isInGroup(permissionModel) && ret != SecurityService.NONE_ACCESS) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
 						} else if (permissionModel.isWrite()) {
@@ -119,7 +118,8 @@ public class SecurityServiceImpl implements SecurityService {
 							// return we cannot get better
 						}
 					}
-				}
+
+				} 
 
 				return ret;
 			}

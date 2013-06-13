@@ -19,7 +19,6 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -74,8 +73,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 	/** The Constant MODEL_KEY_NAME_LISTS. */
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
-
-	private static final String MODEL_KEY_NAME_EDITABLE_LISTS = "editableLists";
 
 	/** The Constant MODEL_HAS_WRITE_PERMISSION. */
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
@@ -186,7 +183,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		logger.debug("entityListsWebScript executeImpl()");
 
 		List<NodeRef> listsNodeRef = new ArrayList<NodeRef>();
-		List<NodeRef> editableListsNodeRef = new ArrayList<NodeRef>();
 		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
@@ -313,21 +309,11 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 				int access_mode = securityService.computeAccessMode(nodeType, dataListType);
 
-				switch (access_mode) {
-				case SecurityService.NONE_ACCESS:
+				if( SecurityService.NONE_ACCESS == access_mode){
 					if (logger.isTraceEnabled()) {
 						logger.trace("Don't display dataList:" + dataListType);
 					}
 					it.remove();
-					break;
-				case SecurityService.WRITE_ACCESS:
-					if (logger.isTraceEnabled()) {
-						logger.trace("editable dataList:" + dataListType);
-					}
-					editableListsNodeRef.add(temp);
-					break;
-				default:
-					break;
 				}
 			}
 		}
@@ -343,7 +329,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
 		model.put(MODEL_WUSED_LIST, wUsedList);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
-		model.put(MODEL_KEY_NAME_EDITABLE_LISTS, editableListsNodeRef);
 
 		return model;
 	}

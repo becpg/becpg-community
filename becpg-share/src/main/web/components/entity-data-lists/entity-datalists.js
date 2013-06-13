@@ -331,18 +331,17 @@
                                     elDelete.onclick = fnDeleteOnClick(list.name, false);
                                  }
                                  elLink = document.createElement("a");
-                                 // ### beCPG : isEditaleList ?
-                                 if (list.editableList) {
-                                    elLink.className = "filter-link-editable-list";
-                                 } else {
-                                    elLink.className = "filter-link";
-                                 }
                                  elLink.title = list.description;
                                  // ### beCPG : change url to entity-data-lists
                                  // and add the nodeRef reference
                                  // elLink.href = "data-lists?list=" +
                                  // $html(list.name);
                                  elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef=" + $html(this.options.entityNodeRef);
+                                 
+                                 if(list.state && list.state.length>0){
+                                    elLink.className = list.state;
+                                 }
+                                 
                                  elText = document.createTextNode(list.title);
 
                                  // Build the DOM structure with the new

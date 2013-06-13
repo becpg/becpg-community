@@ -7,6 +7,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -14,6 +15,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
@@ -21,6 +23,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
 /**
  * Use Spring EL to parse formula and compute value
@@ -37,12 +40,18 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private NamespaceService namespaceService;
 
+	private SecurityMethodBeforeAdvice securityMethodBeforeAdvice;
+
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+
+	public void setSecurityMethodBeforeAdvice(SecurityMethodBeforeAdvice securityMethodBeforeAdvice) {
+		this.securityMethodBeforeAdvice = securityMethodBeforeAdvice;
 	}
 
 	public class FormulaFormulationContext {
@@ -75,13 +84,21 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		copyTemplateDynamicCharactLists(productData);
 
 		ExpressionParser parser = new SpelExpressionParser();
-		EvaluationContext context = new StandardEvaluationContext(productData);
+		EvaluationContext context = new StandardEvaluationContext(createSecurityProxy(productData));
 
 		for (AbstractProductDataView view : productData.getViews()) {
 			computeFormula(productData, parser, context, view);
 		}
 
 		return true;
+	}
+
+	private Object createSecurityProxy(ProductData productData) {
+		ProxyFactory factory = new ProxyFactory();
+		factory.setTarget(productData);
+		factory.addAdvice(securityMethodBeforeAdvice);
+		return (ProductData) factory.getProxy();
+
 	}
 
 	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
@@ -103,12 +120,15 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 						dynamicCharactListItem.setValue(null);
 					} else {
-
 						dynamicCharactListItem.setValue(exp.getValue(context));
 						logger.debug("Value :" + dynamicCharactListItem.getValue());
 					}
 				} catch (Exception e) {
-					dynamicCharactListItem.setValue("#Error");
+					if (e.getCause() != null && e.getCause().getCause() instanceof BeCPGAccessDeniedException) {
+						dynamicCharactListItem.setValue("#Access denied");
+					} else {
+						dynamicCharactListItem.setValue("#Error");
+					}
 					logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
 				}
 			}

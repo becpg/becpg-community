@@ -362,6 +362,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	}
 
 	@SafeVarargs
+	@AlfQname(qname = "bcpg:compoList")
 	public final List<CompoListDataItem> getCompoList( DataListFilter<ProductData>... filters) {
 		if (compoListView != null && compoListView.getCompoList() != null) {
 			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
@@ -391,6 +392,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	}
 
 	@SafeVarargs
+	@AlfQname(qname = "mpm:processList")
 	public final List<ProcessListDataItem> getProcessList(DataListFilter<ProductData>... filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
 			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
@@ -420,6 +422,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	}
 
 	@SafeVarargs
+	@AlfQname(qname = "bcpg:packagingList")
 	public final List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
 			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
