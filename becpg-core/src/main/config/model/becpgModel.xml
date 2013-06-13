@@ -38,6 +38,14 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:entityDataListStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>ToValidate</value>
+					<value>Valid</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:productUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -1944,6 +1952,20 @@
 				</child-association>
 			</associations>
 		</aspect>
+		
+			<aspect name="bcpg:entityDataListStateAspect">
+				<properties>
+				   <property name="bcpg:entityDataListState">
+				      <type>d:text</type>
+				      <mandatory>false</mandatory>
+				      <constraints>
+				      	<constraint ref="bcpg:entityDataListStates"></constraint>
+				      </constraints>
+				   </property>
+				</properties>
+			</aspect>
+		
+		
 		
 		<aspect name="bcpg:hiddenFolder">
 		</aspect>

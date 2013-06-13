@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Entity DataList State Change</shortname>
+  <description>Handles state changed of dataList</description>
+  <url>/becpg/entitylist/node/{store_type}/{store_id}/{id}?state={state}</url>
+  <format default="json" />
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <lifecycle>internal</lifecycle>
+</webscript>

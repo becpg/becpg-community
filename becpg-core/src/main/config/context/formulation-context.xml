@@ -89,6 +89,7 @@
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
+					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 				</bean>
 			</list>
 		</property>

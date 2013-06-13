@@ -143,7 +143,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//DynamicColumn
 				
 				DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1","entity.costList[0].value + dataListItem.qty" );
-				dynCol.setColumnName("bcpg:dynamicCharactColumn1");
+				dynCol.setColumnName("bcpg_dynamicCharactColumn1");
 				
 				
 				dynamicCharactListItems.add(dynCol);
