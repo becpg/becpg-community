@@ -82,14 +82,28 @@
             return "advancement-done";
          }
 
-         var dates = this.extractDates(task, null, true), now = new Date();
-
-         if (now.getTime() == dates.end.getTime()) {
-            return "overdue-0to9";
-         }
-         if (now.getTime() > dates.end.getTime()) {
-            return "overdue-20to29";
-         }
+         var dates = this.extractDates(task, null, true), now = this.resetDate(new Date()), duration = task["itemData"]["prop_pjt_tlDuration"].value, percent = 0, delay = 0;
+         
+         delay = Math.floor((now.getTime() - dates.end.getTime()) / (24 * 60 * 60 * 1000));
+         
+         if (delay > 0) {
+        	 
+        	 // if duration is 4d, 2 days later is 50%
+        	 if (delay > 3){
+        		 percent = 100 * delay / duration; 
+        		 if (percent > 45) {
+            		 return "overdue-45plus";
+                 }
+                 if (percent > 30) {
+                    return "overdue-30to45";
+                 }
+                 if (percent > 15) {
+                    return "overdue-15to29";
+                 }
+        	 }
+        	 
+             return "overdue-0to14";
+         }         
 
          return "overdue-negative";
       },
@@ -98,7 +112,7 @@
          if (task["itemData"]["prop_pjt_tlState"].value == "Completed") {
             return this.msg("overdue.complete");
          }
-         var dates = this.extractDates(task, null, true), now = new Date();
+         var dates = this.extractDates(task, null, true), now = this.resetDate(new Date());
 
          return Math.floor((now.getTime() - dates.end.getTime()) / (24 * 60 * 60 * 1000)) + this.msg("overdue.day");
 
@@ -111,17 +125,17 @@
             percent = 100 * (overdue.value / (dates.due.getTime() - dates.start.getTime())) * 24 * 60 * 60 * 1000;
          }
 
+         if (percent > 45) {
+            return "overdue-45plus" + suffix;
+         }
          if (percent > 30) {
-            return "overdue-30plus" + suffix;
+            return "overdue-30to45" + suffix;
          }
-         if (percent > 20) {
-            return "overdue-20to29" + suffix;
-         }
-         if (percent > 10) {
-            return "overdue-10to19" + suffix;
+         if (percent > 15) {
+            return "overdue-15to29" + suffix;
          }
          if (percent > 0) {
-            return "overdue-0to9" + suffix;
+            return "overdue-0to14" + suffix;
          }
 
          return "overdue-negative" + suffix;

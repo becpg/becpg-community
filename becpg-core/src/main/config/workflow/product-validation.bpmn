@@ -198,6 +198,7 @@
     <userTask id="approveProductTask" name="Approve Product  Task" activiti:assignee="${initiator.properties.userName}" activiti:formKey="bcpgwf:approveProductTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+        	 <activiti:field name="runAs"><activiti:string>admin</activiti:string></activiti:field>
           <activiti:field name="script">
             <activiti:string>if (bcpgwf_notifyMe) {
 			                var mail = actions.create("mail");
@@ -228,8 +229,8 @@
 		             		if(product.isSubType("bcpg:product"))
 		             		{
 		             			             		
-			             		var assocNames =  ["bcpgwf:pvCallerActor","bcpgwf:pvRDApprovalActor","bcpgwf:pvQualityApprovalActor","bcpgwf:pvProductionApprovalActor"];
-				             	var assocActors = [bcpgwf_pvCallerActor,bcpgwf_pvRDApprovalActor,bcpgwf_pvQualityApprovalActor,bcpgwf_pvProductionApprovalActor];
+			             		var assocNames =  ["bcpgwf:pvCallerActor","bcpgwf:pvRDApprovalActor","bcpgwf:pvQualityApprovalActor","bcpgwf:pvProductionApprovalActor","bcpgwf:pvTransmitterActor"];
+				             	var assocActors = [bcpgwf_pvCallerActor,bcpgwf_pvRDApprovalActor,bcpgwf_pvQualityApprovalActor,bcpgwf_pvProductionApprovalActor, initiator];
 									for (var j = 0; j &lt; assocNames.length; j++)
 									{
 										var assocName = assocNames[j];

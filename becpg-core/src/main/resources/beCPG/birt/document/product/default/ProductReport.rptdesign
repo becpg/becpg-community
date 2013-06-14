@@ -141,26 +141,36 @@
                 <structure>
                     <property name="columnName">pvValidationDate</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvValidationDate</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pvCallerActor</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvCallerActor</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">pvTransmitterActor</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">pvTransmitterActor</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pvQualityApprovalActor</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvQualityApprovalActor</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pvProductionApprovalActor</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvProductionApprovalActor</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pvRDApprovalActor</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvRDApprovalActor</text-property>
                 </structure>
             </list-property>
@@ -269,16 +279,21 @@
                     </structure>
                     <structure>
                         <property name="position">21</property>
-                        <property name="name">pvQualityApprovalActor</property>
+                        <property name="name">pvTransmitterActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">22</property>
-                        <property name="name">pvProductionApprovalActor</property>
+                        <property name="name">pvQualityApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">23</property>
+                        <property name="name">pvProductionApprovalActor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">24</property>
                         <property name="name">pvRDApprovalActor</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -428,27 +443,34 @@
                 </structure>
                 <structure>
                     <property name="position">21</property>
+                    <property name="name">pvTransmitterActor</property>
+                    <property name="nativeName">pvTransmitterActor</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">22</property>
                     <property name="name">pvQualityApprovalActor</property>
                     <property name="nativeName">pvQualityApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">22</property>
+                    <property name="position">23</property>
                     <property name="name">pvProductionApprovalActor</property>
                     <property name="nativeName">pvProductionApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">23</property>
+                    <property name="position">24</property>
                     <property name="name">pvRDApprovalActor</property>
                     <property name="nativeName">pvRDApprovalActor</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;STRING;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;STRING;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5273,7 +5295,21 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 <property name="resultSetColumn">pvCallerActor</property>
                             </data>
                         </cell>
-                        <cell id="1957"/>
+                        <cell id="1957">
+                            <data id="3016">
+                                <property name="textAlign">center</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">pvTransmitterActor</property>
+                                        <text-property name="displayName">pvTransmitterActor</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["pvTransmitterActor"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">pvTransmitterActor</property>
+                            </data>
+                        </cell>
                         <cell id="1958">
                             <data id="1966">
                                 <property name="style">becpg-data</property>

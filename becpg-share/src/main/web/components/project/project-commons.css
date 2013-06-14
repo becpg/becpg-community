@@ -116,29 +116,29 @@
 	padding-left: 40px;
 }
 
-.project-list span.overdue-0to9 {
-	background: url("./images/overdue-0to9-16.png") no-repeat;
+.project-list span.overdue-0to14 {
+	background: url("./images/overdue-0to14-16.png") no-repeat;
 	display: inline-block;
 	padding-left: 24px;
 	height: 16px;
 }
 
-.project-list span.overdue-10to19 {
-	background: url("./images/overdue-10to19-16.png") no-repeat;
+.project-list span.overdue-15to29 {
+	background: url("./images/overdue-15to29-16.png") no-repeat;
 	display: inline-block;
 	padding-left: 24px;
 	height: 16px;
 }
 
-.project-list span.overdue-20to29 {
-	background: url("./images/overdue-20to29-16.png") no-repeat;
+.project-list span.overdue-30to45 {
+	background: url("./images/overdue-30to45-16.png") no-repeat;
 	display: inline-block;
 	padding-left: 24px;
 	height: 16px;
 }
 
-.project-list span.overdue-30plus {
-	background: url("./images/overdue-30plus-16.png") no-repeat;
+.project-list span.overdue-45plus {
+	background: url("./images/overdue-45plus-16.png") no-repeat;
 	display: inline-block;
 	padding-left: 24px;
 	height: 16px;
@@ -151,15 +151,15 @@
 	height: 32px;
 }
 
-.project-list span.overdue-0to9-32 {
-	background: url("./images/overdue-0to9.png") no-repeat;
+.project-list span.overdue-0to14-32 {
+	background: url("./images/overdue-0to14.png") no-repeat;
 	display: inline-block;
 	padding-left: 40px;
 	height: 32px;
 }
 
-.project-list span.overdue-10to19-32 {
-	background: url("./images/overdue-10to19.png") no-repeat;
+.project-list span.overdue-15to29-32 {
+	background: url("./images/overdue-15to29.png") no-repeat;
 	display: inline-block;;
 	padding-left: 40px;
 	padding-left: 40px;
@@ -167,15 +167,15 @@
 	height: 32px;
 }
 
-.project-list span.overdue-20to29-32 {
-	background: url("./images/overdue-20to29.png") no-repeat;
+.project-list span.overdue-30to45-32 {
+	background: url("./images/overdue-30to45.png") no-repeat;
 	display: inline-block;
 	padding-left: 40px;
 	height: 32px;
 }
 
-.project-list span.overdue-30plus-32 {
-	background: url("./images/overdue-30plus.png") no-repeat;
+.project-list span.overdue-45plus-32 {
+	background: url("./images/overdue-45plus.png") no-repeat;
 	display: inline-block;
 	padding-left: 40px;
 	height: 32px;

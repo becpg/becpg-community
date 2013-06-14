@@ -114,8 +114,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 		// ReportModel.TYPE_REPORT_TPL, new JavaBehaviour(this,
 		// "beforeDeleteNode"));
 
-		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, ReportModel.TYPE_REPORT_TPL, new JavaBehaviour(this, "onContentUpdate",
-				NotificationFrequency.TRANSACTION_COMMIT));
+//		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, ReportModel.TYPE_REPORT_TPL, new JavaBehaviour(this, "onContentUpdate",
+//				NotificationFrequency.TRANSACTION_COMMIT));
 	}
 
 	@Override

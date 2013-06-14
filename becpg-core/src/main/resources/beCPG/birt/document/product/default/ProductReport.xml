@@ -55,6 +55,7 @@
 	<name>Quiche lorraineMDD 200g</name>
 	<pvValidationDate>ven. 31 mai 2013 13:02:50</pvValidationDate>
 	<pvCallerActor>Caller</pvCallerActor>
+	<pvTransmitterActor>Transmitter</pvTransmitterActor>
 	<pvQualityApprovalActor>Qual</pvQualityApprovalActor>
 	<pvProductionApprovalActor>Prod</pvProductionApprovalActor>
 	<pvRDApprovalActor>RD</pvRDApprovalActor>
