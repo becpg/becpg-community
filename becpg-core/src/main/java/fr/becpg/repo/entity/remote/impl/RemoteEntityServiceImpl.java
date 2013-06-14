@@ -36,6 +36,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class RemoteEntityServiceImpl implements RemoteEntityService {
 
+	
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;

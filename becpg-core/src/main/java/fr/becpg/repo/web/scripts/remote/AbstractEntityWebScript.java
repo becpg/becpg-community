@@ -2,10 +2,7 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +12,14 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -141,9 +146,10 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
+	
 		final String callBack = req.getParameter(PARAM_CALLBACK);
-		final String user = req.getParameter(PARAM_CALLBACK_USER);
-		final String password = req.getParameter(PARAM_CALLBACK_PASSWORD);
+		final String user = req.getParameter(PARAM_CALLBACK_USER)!=null ?  req.getParameter(PARAM_CALLBACK_USER) : "admin";
+		final String password = req.getParameter(PARAM_CALLBACK_PASSWORD)!=null ?  req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
 		
 		if (callBack != null && callBack.length() > 0) {
 			return new EntityProviderCallBack() {
@@ -153,37 +159,41 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 					try {
 						logger.debug("EntityProviderCallBack call : " + callBack + "?nodeRef=" + nodeRef.toString());
 
-						if (user != null && user.length() > 0
-								&& password != null && password.length() > 0){
-							logger.debug("Set authentication for callback");
-							Authenticator.setDefault (new Authenticator() {
-							    protected PasswordAuthentication getPasswordAuthentication() {
-							        return new PasswordAuthentication (user, password.toCharArray());
-							    }
-							});
-
-						}  else {
-							logger.debug("Set default authentication for callback");
-							Authenticator.setDefault (new Authenticator() {
-							    protected PasswordAuthentication getPasswordAuthentication() {
-							        return new PasswordAuthentication ("admin", "becpg".toCharArray());
-							    }
-							});
-						}
+						HttpClient httpClient = new DefaultHttpClient();
 						
-						URL  entityUrl =  new URL(callBack + "?nodeRef=" + nodeRef.toString());
-						URL  dataUrl  =  new URL(callBack + "/data?nodeRef=" + nodeRef.toString());
+						Header authHeader = null;
+						
+							logger.debug("Set authentication for callback ");
+							authHeader = BasicScheme.authenticate(
+									 new UsernamePasswordCredentials(user, password),
+									 "UTF-8", false);
+
+						HttpGet entityUrl = new HttpGet(callBack + "?nodeRef=" + nodeRef.toString());
+						
+						entityUrl.addHeader(authHeader);
+			
+						
 						InputStream entityStream = null;
 						InputStream dataStream = null;
 						
 						try {
-							entityStream = entityUrl.openStream();
+							
+							HttpResponse httpResponse = httpClient.execute(entityUrl);
+							HttpEntity responseEntity = httpResponse.getEntity();
+							
+							
+							entityStream = responseEntity.getContent();
 							 
 							NodeRef entityNodeRef =  remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
 							
 							if(remoteEntityService.containsData(entityNodeRef)){
 							
-								dataStream = dataUrl.openStream();
+								
+								HttpGet dataUrl = new HttpGet(callBack + "/data?nodeRef=" + nodeRef.toString());
+								dataUrl.addHeader(authHeader);
+								httpResponse = httpClient.execute(dataUrl);
+								responseEntity = httpResponse.getEntity();
+								dataStream = responseEntity.getContent();
 								remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
 							
 							}
