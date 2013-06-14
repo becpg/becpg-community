@@ -338,7 +338,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
-			res.getWriter().write(ret.toString(3));
+			ret.write(res.getWriter());
 
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON",e);

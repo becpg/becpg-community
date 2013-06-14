@@ -1,7 +1,5 @@
 package fr.becpg.repo.product.data.productList;
 
-import org.alfresco.service.cmr.repository.NodeRef;
-
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -20,6 +18,8 @@ public class DynamicCharactListItem extends BeCPGDataObject {
 	private String groupColor;
 
 	private String columnName;
+	
+	private String errorLog;
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:dynamicCharactTitle")
@@ -29,6 +29,17 @@ public class DynamicCharactListItem extends BeCPGDataObject {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:dynamicCharactErrorLog")
+	public String getErrorLog() {
+		return errorLog;
+	}
+
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
 	}
 
 	@AlfProp
@@ -75,37 +86,20 @@ public class DynamicCharactListItem extends BeCPGDataObject {
 		super();
 	}
 
-	public DynamicCharactListItem(NodeRef nodeRef, String dynamicCharactTitle, String dynamicCharactFormula, Object dynamicCharactValue, String dynamicCharactGroupColor,
-			String dynamicCharactColumn) {
-		super();
-		this.nodeRef = nodeRef;
-		this.title = dynamicCharactTitle;
-		this.formula = dynamicCharactFormula;
-		this.value = dynamicCharactValue;
-		this.groupColor = dynamicCharactGroupColor;
-		this.columnName = dynamicCharactColumn;
-	}
-
+	
 	public DynamicCharactListItem(String dynamicCharactTitle, String dynamicCharactFormula) {
 		super();
 		this.title = dynamicCharactTitle;
 		this.formula = dynamicCharactFormula;
 	}
 
-	public DynamicCharactListItem(DynamicCharactListItem copy) {
-		this.nodeRef = copy.nodeRef;
-		this.name = copy.name;
-		this.formula = copy.formula;
-		this.value = copy.value;
-		this.groupColor = copy.groupColor;
-		this.columnName = copy.columnName;
-	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((columnName == null) ? 0 : columnName.hashCode());
+		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
 		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
 		result = prime * result + ((groupColor == null) ? 0 : groupColor.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -126,6 +120,11 @@ public class DynamicCharactListItem extends BeCPGDataObject {
 			if (other.columnName != null)
 				return false;
 		} else if (!columnName.equals(other.columnName))
+			return false;
+		if (errorLog == null) {
+			if (other.errorLog != null)
+				return false;
+		} else if (!errorLog.equals(other.errorLog))
 			return false;
 		if (formula == null) {
 			if (other.formula != null)
@@ -152,7 +151,8 @@ public class DynamicCharactListItem extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", groupColor=" + groupColor + ", columnName=" + columnName + "]";
+		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", groupColor=" + groupColor + ", columnName=" + columnName + ", errorLog="
+				+ errorLog + "]";
 	}
 
 }

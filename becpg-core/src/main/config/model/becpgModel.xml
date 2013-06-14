@@ -1473,6 +1473,10 @@
 					<mandatory>true</mandatory>
 					<index enabled="false"/>
 				</property>
+				<property name="bcpg:dynamicCharactErrorLog">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
 				<property name="bcpg:dynamicCharactValue">
 					<type>d:any</type>
 					<index enabled="false"/>
