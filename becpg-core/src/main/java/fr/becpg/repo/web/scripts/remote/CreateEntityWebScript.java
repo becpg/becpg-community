@@ -19,11 +19,8 @@ public class CreateEntityWebScript extends AbstractEntityWebScript {
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-
-		
 		logger.debug("Create entity");
 		try {
-			
 			NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(null, req.getContent().getInputStream(), getFormat(req), getEntityProviderCallback(req));
 			sendOKStatus(entityNodeRef, resp);
 		} catch (BeCPGException e) {
