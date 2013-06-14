@@ -4605,11 +4605,13 @@
 					<show id="bcpg:dynamicCharactGroupColor" />
 					<show id="bcpg:dynamicCharactTitle" />
 					<show id="bcpg:dynamicCharactColumn" />
+					<show id="bcpg:dynamicCharactErrorLog" />
 					<show id="bcpg:dynamicCharactValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactGroupColor" label-id="becpg.forms.set.grp.label" />
 				   <field id="bcpg:dynamicCharactColumn" label="hidden" />
+				   <field id="bcpg:dynamicCharactErrorLog" label="hidden" />
 				</appearance>
 			</form>
 

@@ -154,18 +154,29 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
 
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "bcpg:dynamicCharactValue",
-      renderer : function(oRecord, data, label, scope) {
-         var color = oRecord.getData("itemData")["prop_bcpg_dynamicCharactGroupColor"].value;
-         if (!color) {
-            color = "000000";
-         }
-         return '<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+   YAHOO.Bubbling
+         .fire(
+               "registerDataGridRenderer",
+               {
+                  propertyName : "bcpg:dynamicCharactValue",
+                  renderer : function(oRecord, data, label, scope) {
+                     if (data.value != null) {
+                        var error = oRecord.getData("itemData")["prop_bcpg_dynamicCharactErrorLog"].value;
+                        if (error == null) {
+                           var color = oRecord.getData("itemData")["prop_bcpg_dynamicCharactGroupColor"].value;
+                           if (!color) {
+                              color = "000000";
+                           }
+                           return '<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+                        }
 
-      }
+                        return '<span class="dyna' + data.value.replace("#", "") + '" title="' + Alfresco.util
+                              .encodeHTML(error) + '">' + Alfresco.util.encodeHTML(error.substring(0, 7)) + '</span>';
+                     }
+                     return data.displayValue;
+                  }
 
-   });
+               });
 
    YAHOO.Bubbling
          .fire(
@@ -185,9 +196,9 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : "bcpg:dynamicCharactColumn",
       renderer : function(oRecord, data, label, scope) {
 
-         if (data.value && data.value.length > 0) {
+         if (data.value != null && data.value.length > 0) {
             YAHOO.Bubbling.fire("columnRenamed", {
-               columnId : "prop_"+data.value,
+               columnId : "prop_" + data.value,
                label : oRecord.getData("itemData")["prop_bcpg_dynamicCharactTitle"].value
             });
          }
@@ -209,13 +220,19 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          var variants = data.value, isInDefault = !variants || variants.length < 1;
 
-         if (data.value) {
-            if (scope.afterRenderShowColumns.indexOf(oColumn) == -1){
-               scope.afterRenderShowColumns.push(oColumn);
+         if (data.value != null) {
+
+            if (oColumn.hidden) {
+               scope.widgets.dataTable.showColumn(oColumn);
+               Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
             }
+            // if (scope.afterRenderShowColumns.indexOf(oColumn) == -1) {
+            // scope.afterRenderShowColumns.push(oColumn);
+            // }
             Dom.setStyle(elCell, "width", "16px");
             Dom.setStyle(elCell.parentNode, "width", "16px");
          }
+
          if (isInDefault) {
             return "<span  class='variant-common'>&nbsp;</span>";
          }
@@ -243,9 +260,14 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3",
             "bcpg:dynamicCharactColumn4", "bcpg:dynamicCharactColumn5" ],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-         if (data.value) {
-            if (scope.afterRenderShowColumns.indexOf(oColumn) == -1)
-               scope.afterRenderShowColumns.push(oColumn);
+         if (data.value != null) {
+            // if (scope.afterRenderShowColumns.indexOf(oColumn) == -1) {
+            // scope.afterRenderShowColumns.push(oColumn);
+            // }
+            if (oColumn.hidden) {
+               scope.widgets.dataTable.showColumn(oColumn);
+               Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+            }
          }
          return data.value;
 

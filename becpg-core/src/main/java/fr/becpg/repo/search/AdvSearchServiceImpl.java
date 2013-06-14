@@ -124,7 +124,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			ftsQuery = "TYPE:\"" + datatype + "\" AND (" + ftsQuery + ")" ;
 		} else {
 			ftsQuery += "  AND (-TYPE:\"cm:thumbnail\" -TYPE:\"cm:failedThumbnail\" -TYPE:\"cm:rating\" -TYPE:\"bcpg:entityListItem\" -TYPE:\"systemfolder\" )";
-			ftsQuery += " TYPE:\"" + BeCPGModel.TYPE_PRODUCT + "\"^4";
+//			ftsQuery += " TYPE:\"" + BeCPGModel.TYPE_PRODUCT + "\"^4";
 			
 		}
 

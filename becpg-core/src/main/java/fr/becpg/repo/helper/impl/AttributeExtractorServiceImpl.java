@@ -384,11 +384,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if (isSearch) {
 				tmp.put("type", type);
+				tmp.put("label", attribute.getTitle());
 			} else if (type != null) {
 				tmp.put("metadata", extractMetadata(type, nodeRef));
 			}
-			tmp.put("version", nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
-			tmp.put("label", attribute.getTitle());
+			if(nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)){
+				tmp.put("version", nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
+			}
 			tmp.put("displayValue", displayName);
 			tmp.put("value",formatValue(value));
 			

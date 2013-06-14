@@ -123,12 +123,15 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						dynamicCharactListItem.setValue(exp.getValue(context));
 						logger.debug("Value :" + dynamicCharactListItem.getValue());
 					}
+					dynamicCharactListItem.setErrorLog(null);
 				} catch (Exception e) {
 					if (e.getCause() != null && e.getCause().getCause() instanceof BeCPGAccessDeniedException) {
-						dynamicCharactListItem.setValue("#Access denied");
+						dynamicCharactListItem.setValue("#AccessDenied");
 					} else {
 						dynamicCharactListItem.setValue("#Error");
 					}
+					dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
+					
 					logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
 				}
 			}
