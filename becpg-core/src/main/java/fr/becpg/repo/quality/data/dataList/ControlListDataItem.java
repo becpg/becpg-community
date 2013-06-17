@@ -5,9 +5,16 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-public class ControlListDataItem {
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+@AlfType
+@AlfQname(qname = "qa:controlList")
+public class ControlListDataItem extends BeCPGDataObject{
 
-	NodeRef nodeRef;
 	String type;
 	Double mini;
 	Double maxi;
@@ -19,15 +26,9 @@ public class ControlListDataItem {
 	String state;		
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<NodeRef>();
-		
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	
+	@AlfProp
+	@AlfQname(qname = "qa:clType")
 	public String getType() {
 		return type;
 	}
@@ -36,6 +37,8 @@ public class ControlListDataItem {
 		this.type = type;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clMini")
 	public Double getMini() {
 		return mini;
 	}
@@ -44,6 +47,8 @@ public class ControlListDataItem {
 		this.mini = mini;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clMaxi")
 	public Double getMaxi() {
 		return maxi;
 	}
@@ -52,6 +57,8 @@ public class ControlListDataItem {
 		this.maxi = maxi;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clRequired")
 	public Boolean getRequired() {
 		return required;
 	}
@@ -60,6 +67,8 @@ public class ControlListDataItem {
 		this.required = required;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clSampleId")
 	public String getSampleId() {
 		return sampleId;
 	}
@@ -68,6 +77,8 @@ public class ControlListDataItem {
 		this.sampleId = sampleId;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clValue")
 	public Double getValue() {
 		return value;
 	}
@@ -76,6 +87,8 @@ public class ControlListDataItem {
 		this.value = value;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clTarget")
 	public Double getTarget() {
 		return target;
 	}
@@ -84,6 +97,8 @@ public class ControlListDataItem {
 		this.target = target;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clUnit")
 	public String getUnit() {
 		return unit;
 	}
@@ -92,6 +107,8 @@ public class ControlListDataItem {
 		this.unit = unit;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:clState")
 	public String getState() {
 		return state;
 	}
@@ -100,6 +117,8 @@ public class ControlListDataItem {
 		this.state = state;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:clMethod")
 	public NodeRef getMethod() {
 		return method;
 	}
@@ -108,12 +127,24 @@ public class ControlListDataItem {
 		this.method = method;
 	}
 
+	@AlfMultiAssoc
+	@AlfQname(qname = "qa:clCharacts")
 	public List<NodeRef> getCharacts() {
 		return characts;
 	}
 
 	public void setCharacts(List<NodeRef> characts) {
 		this.characts = characts;
+	}
+	
+	
+
+	public ControlListDataItem() {
+		super();
+	}
+
+	public ControlListDataItem(NodeRef nodeRef, String name) {
+		super(nodeRef, name);
 	}
 
 	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit, String state,  NodeRef method, List<NodeRef> characts){
@@ -148,4 +179,97 @@ public class ControlListDataItem {
 		setMethod(controlDefListDataItem.getMethod());
 		setCharacts(controlDefListDataItem.getCharacts());
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((characts == null) ? 0 : characts.hashCode());
+		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
+		result = prime * result + ((required == null) ? 0 : required.hashCode());
+		result = prime * result + ((sampleId == null) ? 0 : sampleId.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ControlListDataItem other = (ControlListDataItem) obj;
+		if (characts == null) {
+			if (other.characts != null)
+				return false;
+		} else if (!characts.equals(other.characts))
+			return false;
+		if (maxi == null) {
+			if (other.maxi != null)
+				return false;
+		} else if (!maxi.equals(other.maxi))
+			return false;
+		if (method == null) {
+			if (other.method != null)
+				return false;
+		} else if (!method.equals(other.method))
+			return false;
+		if (mini == null) {
+			if (other.mini != null)
+				return false;
+		} else if (!mini.equals(other.mini))
+			return false;
+		if (required == null) {
+			if (other.required != null)
+				return false;
+		} else if (!required.equals(other.required))
+			return false;
+		if (sampleId == null) {
+			if (other.sampleId != null)
+				return false;
+		} else if (!sampleId.equals(other.sampleId))
+			return false;
+		if (state == null) {
+			if (other.state != null)
+				return false;
+		} else if (!state.equals(other.state))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "ControlListDataItem [type=" + type + ", mini=" + mini + ", maxi=" + maxi + ", required=" + required + ", sampleId=" + sampleId + ", value=" + value + ", target="
+				+ target + ", unit=" + unit + ", state=" + state + ", method=" + method + ", characts=" + characts + "]";
+	}
+	
+	
 }
