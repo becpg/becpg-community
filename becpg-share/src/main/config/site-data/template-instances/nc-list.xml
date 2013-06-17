@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<template-instance>
+   <template-type>org/alfresco/nc-list</template-type>
+   <components>
+   
+   	 <!-- Title -->
+      <component>
+         <region-id>title</region-id>
+          <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if in site: Site title -->
+                  <evaluation id="site">
+                     <evaluators>
+                        <evaluator type="site.component.evaluator"/>
+                     </evaluators>
+                     <url>/components/title/collaboration-title</url>
+                  </evaluation>
+                  <!-- otherwise: Repository title -->
+                  <evaluation id="repo">
+                     <url>/components/title/simple-title</url>
+                     <properties>
+                        <title>header.nc-list.description</title>
+                     </properties>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+         
+      </component>
+     
+
+      <!-- Site Navigation -->
+      <component>
+         <region-id>navigation</region-id>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if in site: Site navigation -->
+                  <evaluation id="site">
+                     <evaluators>
+                        <evaluator type="site.component.evaluator"/>
+                     </evaluators>
+                     <url>/components/navigation/collaboration-navigation</url>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+      </component>
+   
+   
+
+      <!-- All Filter -->
+      <component>
+         <region-id>all-filter</region-id>
+         <url>/components/project/filter/all</url>
+         <properties>
+            <mode>ncs</mode>
+         </properties>
+      </component>
+
+      <!-- Due Filter -->
+      <component>
+         <region-id>due-filter</region-id>
+         <url>/components/workflow/filter/due</url>
+      </component>
+
+      <!-- Started Filter -->
+      <component>
+         <region-id>started-filter</region-id>
+         <url>/components/workflow/filter/started</url>
+      </component>
+
+      <!-- Priority Filter -->
+      <component>
+         <region-id>priority-filter</region-id>
+         <url>/components/workflow/filter/priority</url>
+      </component>
+      
+      
+      <!-- Tags Filter -->
+      <component>
+         <region-id>tags</region-id>
+         <url>/components/tag-filter</url>
+         <properties>
+         	<container>ncs</container>
+         </properties>
+      </component>
+		
+
+      <component>
+         <region-id>toolbar</region-id>
+         <url>/components/entity-data-lists/entity-toolbar</url>
+      </component>
+
+
+      <!-- project List -->
+      <component>
+         <region-id>list</region-id>
+         <url>/components/quality/nc-list</url>
+         <properties>
+         	<pagination>true</pagination>
+				<filter>true</filter>
+         </properties>
+      </component>
+   </components>
+</template-instance>
