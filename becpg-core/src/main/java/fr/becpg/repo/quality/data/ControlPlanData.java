@@ -4,13 +4,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+@AlfType
+@AlfQname(qname = "qa:controlPlan")
 public class ControlPlanData extends BeCPGDataObject {
 
+	
 	List<SamplingDefListDataItem> samplingDefList = new LinkedList<SamplingDefListDataItem>();
 
 
+	@DataList
+	@AlfQname(qname = "qa:samplingDefList")
 	public List<SamplingDefListDataItem> getSamplingDefList() {
 		return samplingDefList;
 	}

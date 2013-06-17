@@ -18,7 +18,7 @@ public class NodeRefTokenFilter extends Tokenizer{
         this.lowerCase = lowerCase;
     }
 
-    @Override
+	@Override
     public Token next() throws IOException
     {
         if (readInput)

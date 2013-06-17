@@ -4,13 +4,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-public class ControlPointData extends BeCPGDataObject{
+@AlfType
+@AlfQname(qname = "qa:controlPoint")
+public class ControlPointData extends BeCPGDataObject {
 
 	List<ControlDefListDataItem> controlDefList = new LinkedList<ControlDefListDataItem>();
 
-
+	@DataList
+	@AlfQname(qname = "qa:controlDefList")
 	public List<ControlDefListDataItem> getControlDefList() {
 		return controlDefList;
 	}
@@ -48,7 +54,5 @@ public class ControlPointData extends BeCPGDataObject{
 	public String toString() {
 		return "ControlPointData [controlDefList=" + controlDefList + "]";
 	}
-		
-	
-	
+
 }

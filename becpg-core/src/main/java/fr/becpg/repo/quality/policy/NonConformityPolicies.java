@@ -13,11 +13,12 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.quality.NonConformityService;
 import fr.becpg.repo.quality.data.NonConformityData;
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 public class NonConformityPolicies implements NodeServicePolicies.OnUpdatePropertiesPolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
@@ -25,16 +26,20 @@ public class NonConformityPolicies implements NodeServicePolicies.OnUpdateProper
 	private static Log logger = LogFactory.getLog(NonConformityPolicies.class);
 
 	private PolicyComponent policyComponent;
-	private BeCPGDao<NonConformityData> nonConformityDAO;
+	
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
 	private NonConformityService nonConformityService;
 
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
 	}
-
-	public void setNonConformityDAO(BeCPGDao<NonConformityData> nonConformityDAO) {
-		this.nonConformityDAO = nonConformityDAO;
+	
+	
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
+
 
 	public void setNonConformityService(NonConformityService nonConformityService) {
 		this.nonConformityService = nonConformityService;
@@ -74,7 +79,7 @@ public class NonConformityPolicies implements NodeServicePolicies.OnUpdateProper
 		
 		if(addWorkLog){
 
-			NonConformityData ncData = nonConformityDAO.find(nodeRef);
+			NonConformityData ncData = (NonConformityData) alfrescoRepository.findOne(nodeRef);
 
 			if (ncData.getWorkLog() == null) {
 				ncData.setWorkLog(new ArrayList<WorkLogDataItem>(1));
@@ -86,7 +91,7 @@ public class NonConformityPolicies implements NodeServicePolicies.OnUpdateProper
 			// reset comment
 			ncData.setComment(null);
 
-			nonConformityDAO.update(nodeRef, ncData);
+			alfrescoRepository.save(ncData);
 		}
 
 	}
