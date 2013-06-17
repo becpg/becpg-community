@@ -35,6 +35,22 @@ var g; // gantt var
        * Decoupled event listeners
        */
       YAHOO.Bubbling.on("filterChanged", this.onFilterChanged, this);
+      
+      this.setOptions( {
+         sortable : false,
+         usePagination: true,
+         useFilter: true,
+         itemType : "pjt:project",
+         list: "projectList",
+         groupBy : "prop_pjt_projectHierarchy2",
+         sortId : "ProjectList",
+         groupFormater : function(args, record){
+          return record.getData("itemData")["prop_pjt_projectHierarchy1"].displayValue + " - " + record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue;
+         },
+         hiddenColumns : ["prop_pjt_projectHierarchy1", "prop_pjt_projectHierarchy2", "prop_bcpg_code", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"],
+         formWidth : "65em"
+         
+      });
 
       return this;
    };
@@ -70,7 +86,7 @@ var g; // gantt var
                    * @method onReady
                    */
                   onReady : function PL_onReady() {
-
+                
                      var url = Alfresco.constants.PROXY_URI + "becpg/project/info" + (this.options.siteId != null && this.options.siteId.length > 0 ? "?site=" + this.options.siteId
                            : "");
 

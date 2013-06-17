@@ -22,7 +22,7 @@
 
 <@markup id="widgets">
    	<@inlineScript group="formulation-view">
-		      Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
+		    Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
 		</@>
   		<@createWidgets group="formulation-view"/>
 </@>

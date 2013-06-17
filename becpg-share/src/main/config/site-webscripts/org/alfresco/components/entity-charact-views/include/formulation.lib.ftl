@@ -1,6 +1,6 @@
 <#include "../../../modules/entity-datagrid/include/entity-datagrid.lib.ftl" />
 
-<#macro dataGridDashlet dashletId dashletName usePagination=true useFilter=true showCreateButton=false extra...>
+<#macro dataGridDashlet dashletId dashletName usePagination=true useFilter=true extra...>
 <@inlineScript group="formulation-view">
 	
 
@@ -34,14 +34,14 @@
 			       usePagination: "${usePagination?string}",
 			       displayBottomPagination : false,
 			       useFilter: "${useFilter?string}",
-			       showCreateButton : "${showCreateButton?string}",
 			       sortable : true,
 			       sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
 			       <#if extra["itemType"]??>
 			       	itemType : "${extra["itemType"]?string}",
 			       </#if>
 			       saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
-			       hiddenColumns : ["prop_bcpg_depthLevel"]
+			       hiddenColumns : ["prop_bcpg_depthLevel"],
+			       initHistoryManager : false
 			   }).setMessages(${messages});
 
 </@>

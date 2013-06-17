@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page>
+   <title>Non conformity List</title>
+   <title-id>header.nc-list.label</title-id>
+   <description>Non conformity list</description>
+   <description-id>header.nc-list.description</description-id>
+   <template-instance>nc-list</template-instance>
+   <authentication>user</authentication>
+</page>
