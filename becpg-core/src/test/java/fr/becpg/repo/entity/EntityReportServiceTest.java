@@ -96,7 +96,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 		
 		initReports();
 
-		assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT).size());
+		assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT).size());
 
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -127,14 +127,15 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				
 				// check report Tpl
 				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT);
-				assertEquals("check system templates", 2, reportTplNodeRefs.size());
+				assertEquals("check system templates", 3, reportTplNodeRefs.size());
 				
 				
 				for(NodeRef reportTplNodeRef : reportTplNodeRefs){
+					String name = (String)nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_NAME);
 					if(Boolean.TRUE.equals(nodeService.getProperty(reportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT))){
 						defaultReportTplNodeRef = reportTplNodeRef;
 					}
-					else{
+					else if(name.contains("report PF 2")){
 						otherReportTplNodeRef = reportTplNodeRef;
 					}
 				}
@@ -145,7 +146,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				Date generatedDate = (Date)nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 				createdDate.before(generatedDate);
 				List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-				assertEquals(2, reportNodeRefs.size());
+				assertEquals(3, reportNodeRefs.size());
 				
 				checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs);
 
@@ -157,7 +158,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				Date generatedDate2 = (Date)nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 				generatedDate.before(generatedDate2);
 				List<NodeRef> reportNodeRefs2 = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-				assertEquals(2, reportNodeRefs2.size());
+				assertEquals(3, reportNodeRefs2.size());
 				
 				checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs2);							
 				return null;
@@ -194,14 +195,20 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				
 				// check report Tpl
 				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT);
-				assertEquals("check system templates", 1, reportTplNodeRefs.size());
+				assertEquals("check system templates", 2, reportTplNodeRefs.size());
 				
 				// check other report is deleted
 				List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-				assertEquals(1, reportNodeRefs.size());
+				assertEquals(2, reportNodeRefs.size());
 				
-				boolean isDefault = !((String)nodeService.getProperty(reportNodeRefs.get(0), ContentModel.PROP_NAME)).contains("report PF 2");
-				assertTrue(isDefault);
+				boolean hasReportPF2Name = false;
+				for(NodeRef n : reportNodeRefs){
+					String reportName = (String)nodeService.getProperty(n, ContentModel.PROP_NAME);
+					if(reportName.contains("report PF 2")){
+						hasReportPF2Name = true;
+					}
+				}
+				assertFalse(hasReportPF2Name);
 				
 				return null;
 
@@ -214,10 +221,6 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 	
 	private void checkReportNames(NodeRef defaultReportTplNodeRef, NodeRef otherReportTplNodeRef, List<NodeRef>reportNodeRefs){
 		
-		boolean isDefault = !((String)nodeService.getProperty(reportNodeRefs.get(0), ContentModel.PROP_NAME)).contains("report PF 2");
-		NodeRef defaultReportNodeRef = isDefault ? reportNodeRefs.get(0) : reportNodeRefs.get(1);
-		NodeRef otherReportNodeRef = isDefault ? reportNodeRefs.get(1) : reportNodeRefs.get(0);
-		
 		String defaultReportName = String.format("%s - %s", 
 				nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME), 
 				nodeService.getProperty(defaultReportTplNodeRef, ContentModel.PROP_NAME));
@@ -226,8 +229,17 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 						nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME), 
 						nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
 		
-		assertEquals(defaultReportName , nodeService.getProperty(defaultReportNodeRef, ContentModel.PROP_NAME));
-		assertEquals(otherReportName , nodeService.getProperty(otherReportNodeRef, ContentModel.PROP_NAME));
+		int checks=0;
+		for(NodeRef reportNodeRef : reportNodeRefs){
+			String reportName = (String)nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+			if(reportName.equals(defaultReportName)){
+				checks++;
+			}
+			else if(reportName.equals(otherReportName)){
+				checks++;
+			}
+		}
+		assertEquals(2, checks);
 	}
 
 	/**
@@ -264,7 +276,7 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				pfNodeRef = alfrescoRepository.create(testFolderNodeRef, pfData).getNodeRef();
 
 				QName typeQName = nodeService.getType(pfNodeRef);
-				assertEquals("check system templates", 2, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
+				assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
 				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user").size());
 
