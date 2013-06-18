@@ -1,22 +1,13 @@
 <@markup id="css" >
-   <#-- CSS Dependencies -->
-   <#include "../form/form.css.ftl"/>
-   <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="entity-datagrid" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="entity-datagrid" />
+	<#include "./include/entity-datagrid.css.ftl"/>
+	
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-charact-views/formulation-view.css" group="formulation-view" />
 </@>
 
 <@markup id="js">
-   <#-- JavaScript Dependencies -->
-   <#include "../form/form.js.ftl"/>
-	
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/columnRenderers.js" group="entity-datagrid"></@script>
-	
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="entity-datagrid"></@script>
-	
+   <#include "./include/entity-datagrid.js.ftl"/>
+   
+   <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
 	<@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/formulation-view.js" group="formulation-view"></@script>
 </@>
 

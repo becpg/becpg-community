@@ -53,17 +53,12 @@
       <!-- All Filter -->
       <component>
          <region-id>all-filter</region-id>
-         <url>/components/project/filter/all</url>
+         <url>/components/quality/filter/all</url>
          <properties>
             <mode>ncs</mode>
          </properties>
       </component>
 
-      <!-- Due Filter -->
-      <component>
-         <region-id>due-filter</region-id>
-         <url>/components/workflow/filter/due</url>
-      </component>
 
       <!-- Started Filter -->
       <component>

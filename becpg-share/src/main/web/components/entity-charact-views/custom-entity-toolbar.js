@@ -1,14 +1,11 @@
 (function() {
    if (beCPG.component.EntityDataListToolbar) {
       
-      
-      
-      
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "eco-calculate-wused",
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList" || asset.name === "wUsedList") && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "replacementList" || asset.name === "wUsedList") && entity!=null && entity.userAccess.edit;
          },
          fn : function(instance) {
 
@@ -50,7 +47,7 @@
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "eco-do-simulation",
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList" || asset.name === "calculatedCharactList") && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "replacementList" || asset.name === "calculatedCharactList") && entity!=null && entity.userAccess.edit;
          },
          fn : function(instance) {
 
@@ -93,7 +90,7 @@
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "eco-apply",
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList") && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "replacementList") && entity!=null && entity.userAccess.edit;
          },
          fn : function(instance) {
 
@@ -139,7 +136,7 @@
                   {
                      actionName : "formulate",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity.userAccess.edit;
+                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity!=null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -185,7 +182,7 @@
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "import",
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "compoList") && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "compoList") && entity!=null && entity.userAccess.edit;
          },
          fn : function(instance) {
             var actionUrl = Alfresco.constants.PROXY_URI + "becpg/remote/import";
@@ -306,7 +303,7 @@
          actionName : "view-details",
          right : true,
          evaluate : function(datalistMeta, entity) {
-            return entity.type != "bcpg:systemEntity";
+            return entity!=null && entity.type != "bcpg:systemEntity";
          },
          fn : function(instance) {
 
@@ -325,7 +322,7 @@
          actionName : "view-documents",
          right : true,
          evaluate : function(datalistMeta, entity) {
-            return entity.type != "bcpg:systemEntity";
+            return  entity!=null && entity.type != "bcpg:systemEntity";
          },
          fn : function(instance) {
 
@@ -347,9 +344,7 @@
          right: true,
          actionName : "datalist-state",
          evaluate : function(asset, entity) {
-            
-           return asset.state !== null;
-          
+           return  entity!=null && asset.state !== null;
          },
          createWidget : function(containerDiv, instance) {
             

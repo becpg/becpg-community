@@ -26,7 +26,9 @@ function main()
        sortUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node",
        itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/",
-       forceLoad : true
+     //  forceLoad : true,
+       hiddenColumns : ["prop_bcpg_code", "prop_qa_ncType", "prop_qa_ncPriority"],
+       formWidth : "65em"
       }
    };
     

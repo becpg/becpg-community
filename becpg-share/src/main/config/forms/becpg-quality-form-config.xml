@@ -22,11 +22,11 @@
 					<show id="qa:ncComment" />
 
 					<!-- batch -->
-					<show id="qa:batchId" />
-					<show id="qa:orderId" />
+					<show id="qa:batchId" force="true" />
+					<show id="qa:orderId" force="true" />
 					<show id="bcpg:clients" force="true" />
 					<show id="bcpg:suppliers" force="true" />
-					<show id="qaommentomment" />
+					<show id="qa:batchComment" force="true" />
 
 					<!-- Product -->
 					<show id="qa:product" force="true" />
@@ -97,7 +97,7 @@
 					<show id="bcpg:code" />
 					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
-					<show id="cm:description" />
+					<show id="cm:description" force="true" />
 					<show id="qa:ncCost" />
 					<show id="qa:ncQuantityNc" />
 					<show id="qa:ncQuantityNcUnit" />
@@ -107,14 +107,14 @@
 					<show id="qa:ncComment" />
 
 					<!-- batch -->
-					<show id="qa:batchId" />
-					<show id="qa:orderId" />
-					<show id="bcpg:clients" />
-					<show id="bcpg:suppliers" />
-					<show id="qa:batchComment" />
+					<show id="qa:batchId" force="true" />
+					<show id="qa:orderId" force="true" />
+					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:suppliers" force="true" />
+					<show id="qa:batchComment" force="true" />
 
 					<!-- Product -->
-					<show id="qa:product" />
+					<show id="qa:product" force="true" />
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
@@ -174,73 +174,46 @@
 				<field-visibility>
 
 					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:code" />
-					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
-					<show id="cm:description" force="true" />
-					<show id="qa:ncCost" />
-					<show id="qa:ncQuantityNc" />
-					<show id="qa:ncQuantityNcUnit" />
-					<show id="qa:ncCreationStep" />
-					<show id="qa:ncDetectionStep" />
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="qa:ncType" />
 					<show id="qa:ncState" />
-					<show id="qa:ncComment" />
-
+					
 					<!-- batch -->
-					<show id="qa:batchId" force="true" />
-					<show id="qa:orderId" force="true" />
+					<show id="qa:batchId" force="true"/>
 					<show id="bcpg:clients" force="true" />
 					<show id="bcpg:suppliers" force="true" />
-					<show id="qa:batchComment" force="true" />
-
+					
+					
 					<!-- Product -->
 					<show id="qa:product" force="true"/>
 
 					<!-- auditable -->
-					<show id="cm:creator"  />
+					<show id="cm:creator"   />
 					<show id="cm:created"  />
-					<show id="cm:modifier"  />
-					<show id="cm:modified"  />
 
 				</field-visibility>
-
+            <appearance>
+            	<field id="cm:creator" label="Emetteur" />
+            	<field id="cm:created" label="Date saisie" />
+            </appearance>
 			</form>
 			<form id="filter">
 				<field-visibility>
 
 					<!-- mainInfo -->
-					<show id="cm:name" />
-					<show id="bcpg:code" />
-					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
-					<show id="cm:description" />
-					<show id="qa:ncCost" />
-					<show id="qa:ncQuantityNc" />
-					<show id="qa:ncQuantityNcUnit" />
-					<show id="qa:ncCreationStep" />
-					<show id="qa:ncDetectionStep" />
+					<show id="cm:name" />
+					
 					<show id="qa:ncState" />
-					<show id="qa:ncComment" />
-
+					
 					<!-- batch -->
-					<show id="qa:batchId" />
-					<show id="qa:orderId" />
-					<show id="bcpg:clients" />
-					<show id="bcpg:suppliers" />
-					<show id="qa:batchComment" />
-
-					<!-- Product -->
-					<show id="qa:product" />
-
-					<!-- auditable -->
-					<show id="cm:creator" for-mode="view" />
-					<show id="cm:created" for-mode="view" />
-					<show id="cm:modifier" for-mode="view" />
-					<show id="cm:modified" for-mode="view" />
+					<show id="qa:batchId" force="true" />
+					<show id="qa:orderId" force="true" />
+					
 
 				</field-visibility>
-
 			</form>
 		</forms>
 	</config>
@@ -257,7 +230,7 @@
 					<show id="bcpg:code" />
 					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
-					<show id="cm:description" />
+					<show id="cm:description" force="true"/>
 					<show id="qa:ncCost" />
 					<show id="qa:ncQuantityNc" />
 					<show id="qa:ncQuantityNcUnit" />
@@ -267,14 +240,14 @@
 					<show id="qa:ncComment" />
 
 					<!-- batch -->
-					<show id="qa:batchId" />
-					<show id="qa:orderId" />
-					<show id="bcpg:clients" />
-					<show id="bcpg:suppliers" />
-					<show id="qa:batchComment" />
+					<show id="qa:batchId" force="true"/>
+					<show id="qa:orderId" force="true"/>
+					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:suppliers" force="true" />
+					<show id="qa:batchComment" force="true" />
 
 					<!-- Product -->
-					<show id="qa:product" />
+					<show id="qa:product" force="true" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -286,7 +259,7 @@
 				<appearance>
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />
 					<field id="cm:name" set="mainInfo" />
-					<field id="bcpg:code" set="mainInfo" />
+					<field id="bcpg:code" set="mainInfo" read-only="true"  />
 					<field id="qa:ncType" set="mainInfo" />
 					<field id="qa:ncState" set="mainInfo" />
 					<field id="qa:ncPriority" set="mainInfo">
