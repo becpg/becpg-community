@@ -2,7 +2,6 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.List;
 
-import org.alfresco.repo.admin.patch.AbstractPatch;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

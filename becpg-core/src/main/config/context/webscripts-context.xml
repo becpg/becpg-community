@@ -170,6 +170,8 @@
 		<property name="tenantAdminService" ref="tenantAdminService"/>
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="migrationService" ref="migrationService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="transactionService" ref="TransactionService" />
 	</bean>
 
 

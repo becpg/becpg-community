@@ -20,7 +20,6 @@
 package fr.becpg.repo.admin.patch;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -130,67 +129,43 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		
 		if(folderNodeRef != null){
 			
-			QName [] productTypes = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_RAWMATERIAL};
-			Boolean [] defaultReport = {true, true};
-			int i =0;
+			updateReport(folderNodeRef, productReportClientName, BeCPGModel.TYPE_FINISHEDPRODUCT, InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_PATH, true);
+			updateReport(folderNodeRef, productReportClientName, BeCPGModel.TYPE_RAWMATERIAL, InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_PATH, true);
 			
-			for(QName productType : productTypes){
-				ClassDefinition classDef = dictionaryService.getClass(productType);			
-				NodeRef reportFolderNodeRef = repoService.getOrCreateFolderByPath(folderNodeRef, classDef.getTitle(), classDef.getTitle());			
-				NodeRef defaultReportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
-				
-				String productReportClientPath = Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE) ? InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_PATH : InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_EN_PATH;
-				
-				if(defaultReportNodeRef != null){
-					nodeService.setProperty(defaultReportNodeRef, ContentModel.PROP_NAME, productReportClientName);				
-					contentHelper.addFilesResources(defaultReportNodeRef, productReportClientPath, true);
-				}
-				else{
-					try {
-						reportTplService.createTplRptDesign(reportFolderNodeRef, productReportClientName,
-								productReportClientPath, 
-								ReportType.Document, ReportFormat.PDF, productType, true, defaultReport[i], false);
-					} catch (IOException e) {
-						logger.error("Failed to add production report template", e);
-					}
-				}
-				i++;
-			}
-			
-			QName [] productTypes2 = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT};
-			Boolean [] defaultReport2 = {false, true};
-			i =0;
-			
-			for(QName productType : productTypes2){
-				ClassDefinition classDef = dictionaryService.getClass(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
-				NodeRef reportFolderNodeRef = repoService.getOrCreateFolderByPath(folderNodeRef, classDef.getTitle(), classDef.getTitle());
-				NodeRef reportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, productReportProductionName);
-						
-				if(reportNodeRef == null){				
-					try {
-						reportTplService.createTplRptDesign(reportFolderNodeRef, productReportProductionName,
-								InitRepoVisitorImpl.PRODUCT_REPORT_PRODUCTION_PATH, 
-								ReportType.Document, ReportFormat.PDF, productType, true, defaultReport2[i], false);
-					} catch (IOException e) {
-						logger.error("Failed to add production report template", e);
-					}
-				}
-				i++;
-			}			
+			updateReport(folderNodeRef, productReportProductionName, BeCPGModel.TYPE_FINISHEDPRODUCT, InitRepoVisitorImpl.PRODUCT_REPORT_PRODUCTION_PATH, false);
+			updateReport(folderNodeRef, productReportProductionName, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, InitRepoVisitorImpl.PRODUCT_REPORT_PRODUCTION_PATH, true);				
 		}			
 	}
 	
-	private void updateIconsFiles(){
+	private void updateReport(NodeRef folderNodeRef, String reportName, QName productType, String path, boolean isDefault){
+		ClassDefinition classDef = dictionaryService.getClass(productType);			
+		NodeRef reportFolderNodeRef = repoService.getOrCreateFolderByPath(folderNodeRef, classDef.getTitle(), classDef.getTitle());			
+		NodeRef reportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
+		
+		if(reportNodeRef != null){
+			nodeService.setProperty(reportNodeRef, ContentModel.PROP_NAME, reportName);
+		}
+		
+		try {
+			reportTplService.createTplRptDesign(reportFolderNodeRef, reportName,
+					path, ReportType.Document, ReportFormat.PDF, 
+					productType, true, isDefault, true);
+		} catch (IOException e) {
+			logger.error("Failed to add production report template", e);
+		}
+	}
+	
+	private void updateIconsFiles(){		
 		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Icons");
 		if (folderNodeRef != null) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png", true);
 		}		
 	}
 
-	private void updateMappingFiles(){
+	private void updateMappingFiles(){		
 		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping");
 		if (folderNodeRef != null) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml", true);
 		}		
 	}	
 }
