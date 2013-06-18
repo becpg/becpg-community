@@ -26,7 +26,10 @@
           </#if>
          <#if col.mandatory??>
          "mandatory": ${col.mandatory?string},
-          </#if>
+         </#if>
+         <#if col.readOnly??>
+        	"readOnly": ${col.readOnly?string},
+         </#if>
          <#if col.repeating??>
          "repeating": ${col.repeating?string},
           </#if>

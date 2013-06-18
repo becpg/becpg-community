@@ -241,6 +241,8 @@ function getColumns(itemType, list) {
                      columns[j].label = formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId
                            : formConfig.fields[fieldId].label;
                   }
+                  
+                  columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
 
                   ret.push(columns[j]);
                }
