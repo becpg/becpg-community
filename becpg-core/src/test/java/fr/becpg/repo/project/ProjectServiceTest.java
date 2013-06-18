@@ -1139,6 +1139,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				projectService.formulate(projectNodeRef);
 				
 				// check workflow props
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				TaskListDataItem taskListDataItemDB = projectData.getTaskList().get(0);
 				assertEquals(taskListDataItem.getTaskName(), taskListDataItemDB.getTaskName());
 				assertEquals(taskListDataItem.getDuration(), taskListDataItemDB.getDuration());

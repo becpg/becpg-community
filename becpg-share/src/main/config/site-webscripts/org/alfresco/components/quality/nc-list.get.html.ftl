@@ -12,13 +12,12 @@
    <#include "../form/form.js.ftl"/>
 	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="nc-list"></@script>
 	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/columnRenderers.js" group="nc-list"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/quality/columnRenderers.js" group="nc-list"></@script>
 	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="nc-list"></@script>
 	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="nc-list"></@script>
 	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="nc-list"></@script>
 	
-	<@script type="text/javascript" src="${url.context}/res/yui/swf/swf.js" group="nc-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/yui/charts/charts.js" group="nc-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="nc-list"></@script>
+	
 </@>
 
 

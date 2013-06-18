@@ -173,7 +173,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                         return '<span class="dyna' + data.value.replace("#", "") + '" title="' + Alfresco.util
                               .encodeHTML(error) + '">' + Alfresco.util.encodeHTML(error.substring(0, 7)) + '</span>';
                      }
-                     return data.displayValue;
+                     return Alfresco.util.encodeHTML(data.displayValue);
                   }
 
                });
