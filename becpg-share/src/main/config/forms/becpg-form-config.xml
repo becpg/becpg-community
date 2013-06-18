@@ -4458,6 +4458,10 @@
 					<show id="bcpg:rclReqMessage" />
 					<show id="bcpg:rclSources" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:rclReqType" read-only="true" ></field>
+					<field id="bcpg:rclReqMessage" read-only="true" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>

@@ -683,6 +683,9 @@
 					<show id="pjt:slScore" />
 					<show id="pjt:slScreening" />
             </field-visibility>
+            <appearance>
+            	<field id="pjt:slScreening" read-only="true" ></field>
+            </appearance>
          </form>
 		</forms>
 	</config>
