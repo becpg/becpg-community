@@ -40,8 +40,17 @@
 					<value>Ouvert</value>			
 				</list>
 			</parameter>
-		</constraint>		
+		</constraint>
+				
 		<constraint name="qa:ncType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Claim</value>
+					<value>NonConformity</value>
+				</list>
+			</parameter>
+		</constraint>		
+		<constraint name="qa:ncClassification" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value></value>

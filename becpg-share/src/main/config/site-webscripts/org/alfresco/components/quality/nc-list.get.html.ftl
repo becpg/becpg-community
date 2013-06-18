@@ -1,28 +1,26 @@
 
 <@markup id="css" >
-   <#-- CSS Dependencies -->
-   <#include "../form/form.css.ftl"/>
-   <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="nc-list" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="nc-list" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="nc-list" />
+   <#include "../entity-charact-views/include/entity-datagrid.css.ftl"/>
+   
+	<@link href="${url.context}/res/css/fixForm.css" group="nc-list" />
+	<@link href="${url.context}/res/components/quality/nc-list.css" group="nc-list" />
+	<@link href="${url.context}/res/components/comments/comments-list.css" group="comments"/>
 </@>
 
 <@markup id="js">
-   <#-- JavaScript Dependencies -->
-   <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="nc-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/columnRenderers.js" group="nc-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/quality/columnRenderers.js" group="nc-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="nc-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="nc-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="nc-list"></@script>
-	
-	
+   <#include "../entity-charact-views/include/entity-datagrid.js.ftl"/>
+   
+	<@script type="text/javascript" src="${url.context}/res/components/quality/nc-list.js" group="nc-list"></@script>
+	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
 </@>
+
 
 
 <@markup id="widgets">
   	   <@createWidgets group="nc-list"/>
+  	   <@inlineScript group="nc-list">
+   		YAHOO.Bubbling.fire("activeDataListChanged", {dataList:{name:"ncList", itemType:"qa:nc"}});
+		</@>
 </@>
 
 
@@ -35,9 +33,9 @@
 		<![endif]-->
 		<input id="yui-history-field" type="hidden" />
 		<div id="toolbar-contribs-${el}" style="display:none;">
-			<@dataGridToolbar  toolbarId=el />
+			<@dataGridToolbar toolbarId=el />
 		</div> 
-		<@entityDataGrid/>
-		</@>
+		<@entityDataGrid showDataListTitle=false/>
+	</@>
 </@>
 

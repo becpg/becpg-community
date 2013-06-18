@@ -1,24 +1,17 @@
 
 <@markup id="css" >
-   <#-- CSS Dependencies -->
-   <#include "../form/form.css.ftl"/>
-   <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="entity-datagrid" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="entity-datagrid" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datagrid" />
+   <#include "./include/entity-datagrid.css.ftl"/>
+   
+	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datagrid" />
 </@>
 
 <@markup id="js">
-   <#-- JavaScript Dependencies -->
-   <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/columnRenderers.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="entity-datagrid"></@script>
+  <#include "./include/entity-datagrid.js.ftl"/>
 	
-	<@script type="text/javascript" src="${url.context}/res/yui/swf/swf.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/yui/charts/charts.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datagrid"></@script>
+	<@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
+	<@script src="${url.context}/res/yui/swf/swf.js" group="entity-datagrid"></@script>
+	<@script src="${url.context}/res/yui/charts/charts.js" group="entity-datagrid"></@script>
+	<@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datagrid"></@script>
 </@>
 
 

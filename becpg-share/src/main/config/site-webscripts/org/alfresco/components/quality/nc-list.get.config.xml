@@ -2,13 +2,12 @@
    <actionSetToolbar>
       <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
       <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
-     <!--  <action type="action-link" id="onActionUp" permission="sort" label="menu.selected-items.up" />
-      <action type="action-link" id="onActionDown" permission="sort" label="menu.selected-items.down" /> -->
    </actionSetToolbar>
    <actionSetDataGrid>
       <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
+      <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
    </actionSetDataGrid>
     <filters-parameters>
       <!--
@@ -24,15 +23,10 @@
           * {-7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days back
           * {+7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days forward
       -->
-      <filter id="ncs"      data="*"      		  parameters="fts(+@pjt\:projectState:&quot;{data}&quot;)"/>
-      <filter id="due"           data="today"        parameters="fts(+@pjt\:projectDueDate:[{-1d} TO {0d}])"/>
-      <filter id="due"           data="tomorrow"     parameters="fts(+@pjt\:projectDueDate:[{0d} TO {1d}])"/>
-      <filter id="due"           data="next7Days"    parameters="fts(+@pjt\:projectDueDate:[{0d} TO {8d}])"/>
-      <filter id="due"           data="overdue"      parameters="fts(+@pjt\:projectDueDate:[MIN TO {0d}])"/>
-      <filter id="due"           data="noDate"       parameters="fts(+TYPE:pjt\:project AND +ISNULL:pjt\:projectDueDate)"/>
-      <filter id="started"       data="last7Days"    parameters="fts(+@pjt\:projectStartDate:[{-7d} TO MAX])"/>
-      <filter id="started"       data="last14Days"   parameters="fts(+@pjt\:projectStartDate:[{-14d} TO MAX])"/>
-      <filter id="started"       data="last28Days"   parameters="fts(+@pjt\:projectStartDate:[{-28d} TO MAX])"/>
-      <filter id="priority"      data="*"            parameters="fts(+@pjt\:projectPriority:{data})"/>
+      <filter id="ncs"           data="*"      		  parameters="fts(+@qa\:ncType:&quot;{data}&quot;)"/>
+      <filter id="started"       data="last7Days"    parameters="fts(+@cm\:created:[{-7d} TO MAX])"/>
+      <filter id="started"       data="last14Days"   parameters="fts(+@cm\:created:[{-14d} TO MAX])"/>
+      <filter id="started"       data="last28Days"   parameters="fts(+@cm\:created:[{-28d} TO MAX])"/>
+      <filter id="priority"      data="*"            parameters="fts(+@qa\:ncPriority:{data})"/>
    </filters-parameters>
 </config>
