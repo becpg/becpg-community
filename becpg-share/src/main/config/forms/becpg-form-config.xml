@@ -3437,6 +3437,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:compoListQty" read-only="true" ></field>
 					<field id="bcpg:dynamicCharactColumn1" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn2" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
@@ -3742,6 +3743,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:costListUnit" read-only="true" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -4162,6 +4164,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:nutListUnit" read-only="true" ></field>
+					<field id="bcpg:nutListGroup" read-only="true" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -4273,6 +4277,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:pclUnit" read-only="true" ></field>
 				</appearance>
 			</form>
 		</forms>
@@ -4562,6 +4567,9 @@
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclIsClaimed" />	
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:lclType" read-only="true" ></field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
