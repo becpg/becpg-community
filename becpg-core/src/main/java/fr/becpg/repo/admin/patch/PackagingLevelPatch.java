@@ -56,10 +56,11 @@ public class PackagingLevelPatch extends AbstractBeCPGPatch {
 			}			
 		}
 		
-		// delete list
-		NodeRef packagingLevelList = searchFolder("/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels");
-		if(packagingLevelList != null){
-			nodeService.deleteNode(packagingLevelList);
+		// delete list (may return several results)
+		//NodeRef packagingLevelList = searchFolder("/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels");
+		List<NodeRef> listNodeRefs = beCPGSearchService.luceneSearch("+PATH:\"/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels\"");
+		for(NodeRef listNodeRef : listNodeRefs){
+			nodeService.deleteNode(listNodeRef);
 		}
 		
 		return I18NUtil.getMessage(MSG_SUCCESS);
