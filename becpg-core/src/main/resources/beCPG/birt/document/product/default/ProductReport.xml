@@ -70,7 +70,8 @@
 		<image id="img6" name="img_fab2" title="img_fab2 title" />
 		<image id="img7" name="img_fab3" title="img_fab3 title" />
 		<image id="img8" name="img_fab4" title="img_fab4 title" />
-		<image id="img8" name="produit.jpg" title="img produit" />
+		<image id="img9" name="produit.jpg" title="img produit" />
+		<image id="img10" name="product.jpg" title="img product" />
 	</images>
 
 	<plants>
