@@ -1,7 +1,9 @@
 package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -35,6 +37,9 @@ import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
+	
+	public static final int DYN_COLUMN_SIZE = 5;
+	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
@@ -104,6 +109,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
 
 		if (view.getDynamicCharactList() != null) {
+			
+			Set<QName> nullDynColumnNames = new HashSet<QName>(DYN_COLUMN_SIZE);
+			for(int i=1 ; i<=DYN_COLUMN_SIZE ; i++){
+				nullDynColumnNames.add(QName.createQName(DYN_COLUMN_NAME + i, namespaceService));
+			}
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
 				try {
@@ -112,6 +122,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 					if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
+						if(nullDynColumnNames.contains(columnName)){
+							nullDynColumnNames.remove(columnName);
+						}						
 						for (CompositionDataItem dataListItem : view.getMainDataList()) {
 							EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(productData, dataListItem));
 							Object value = exp.getValue(dataContext);
@@ -135,7 +148,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
 				}
 			}
-
+			
+			// remove null columns
+			for(QName nullDynColumnName : nullDynColumnNames){				
+				for (CompositionDataItem dataListItem : view.getMainDataList()) {
+					dataListItem.getExtraProperties().put(nullDynColumnName, null);
+				}
+			}			
 		}
 
 	}

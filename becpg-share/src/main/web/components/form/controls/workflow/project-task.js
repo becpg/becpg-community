@@ -2,9 +2,9 @@
    /**
     * YUI Library aliases
     */
-   var Dom = YAHOO.util.Dom;
-
-   var TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
+   var Dom = YAHOO.util.Dom, 
+   			Bubbling = YAHOO.Bubbling, 
+   			TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
    /**
     * ProjectTask constructor.
     * 
@@ -86,13 +86,13 @@
                               task.entityNodeRef);
                         if (!this.options.readOnly) {
                            var fnOnShowTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
-                              var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+                              var owner = Bubbling.getOwnerByTagName(args[1].anchor, "span");
                               if (owner !== null) {
                                  me.onActionShowTask.call(me, owner.className, owner);
                               }
                               return true;
                            };
-                           YAHOO.Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
+                           Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
                         }
                      }
                   },

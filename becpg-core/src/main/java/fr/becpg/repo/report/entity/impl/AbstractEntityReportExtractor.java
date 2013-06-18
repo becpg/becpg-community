@@ -54,6 +54,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String ATTR_SET = "set";
 	protected static final String ATTR_NAME = "name";
 	protected static final String ATTR_VALUE = "value";
+	protected static final String ATTR_ITEM_TYPE = "itemType";	
+	protected static final String ATTR_ASPECTS = "aspects";
 	
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
@@ -145,7 +147,13 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		}
 
 		// render target assocs (plants...special cases)
-		loadTargetAssocs(entityNodeRef, entityElt);				
+		loadTargetAssocs(entityNodeRef, entityElt);		
+		
+		Element aspectsElt = entityElt.addElement(ATTR_ASPECTS);
+		aspectsElt.addCDATA(extractAspects(entityNodeRef));
+		
+		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
+		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).getPrefixString());
 		
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);

@@ -619,6 +619,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(RepoConsts.PATH_ALLERGEN_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_NUT_GROUPS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_NUT_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_NUT_FACTS_METHODS,BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -794,28 +795,37 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		try {
 
-			// finishedProduct
-			ClassDefinition classDef = dictionaryService.getClass(BeCPGModel.TYPE_FINISHEDPRODUCT);
+			QName [] productTypes = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_RAWMATERIAL};
+			Boolean [] defaultReport = {true, true};
+			int i = 0;
 			
-			NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
-					classDef.getTitle(), classDef.getTitle());
-			reportTplService.createTplRptDesign(folderNodeRef, productReportClientName,
-							Locale.getDefault().equals(Locale.FRENCH) ? PRODUCT_REPORT_CLIENT_PATH : PRODUCT_REPORT_CLIENT_EN_PATH, 
-							ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, true, false);
+			for(QName productType : productTypes){
+				
+				ClassDefinition classDef = dictionaryService.getClass(productType);
+				
+				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
+						classDef.getTitle(), classDef.getTitle());
+				reportTplService.createTplRptDesign(folderNodeRef, productReportClientName,
+								Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE) ? PRODUCT_REPORT_CLIENT_PATH : PRODUCT_REPORT_CLIENT_EN_PATH, 
+								ReportType.Document, ReportFormat.PDF, productType, true, defaultReport[i], false);				
+				i++;
+			}
 			
-			reportTplService.createTplRptDesign(folderNodeRef, productReportProductionName,
-							PRODUCT_REPORT_PRODUCTION_PATH, 
-							ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, false, false);
+			QName [] productTypes2 = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT};
+			Boolean [] defaultReport2 = {false, true};
+			i = 0;
 			
-			// semiFinishedProduct
-			classDef = dictionaryService.getClass(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
-			
-			folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
-					classDef.getTitle(), classDef.getTitle());
-			
-			reportTplService.createTplRptDesign(folderNodeRef, productReportProductionName,
-					PRODUCT_REPORT_PRODUCTION_PATH, 
-					ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, false);
+			for(QName productType : productTypes2){
+				ClassDefinition classDef = dictionaryService.getClass(productType);
+				
+				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
+						classDef.getTitle(), classDef.getTitle());
+				
+				reportTplService.createTplRptDesign(folderNodeRef, productReportProductionName,
+						PRODUCT_REPORT_PRODUCTION_PATH, 
+						ReportType.Document, ReportFormat.PDF, productType, true, defaultReport2[i], false);				
+				i++;
+			}			
 			
 		} catch (Exception e) {
 			logger.error("Failed to create product report.", e);

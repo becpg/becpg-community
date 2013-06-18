@@ -106,7 +106,8 @@
         <property name="targetSchema"><value>10006</value></property>
         <property name="reportTplService" ref="reportTplService"/>
         <property name="dictionaryService" ref="dictionaryService"/>
-        <property name="repoService" ref="repoService" />
+        <property name="repoService" ref="repoService" />  
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />      
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>	
@@ -172,5 +173,17 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean> 
+	
+	<bean id="patch.bcpg.nutFactsMethodsPatch" class="fr.becpg.repo.admin.patch.NutFactsMethodsPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.nutFactsMethodsPatch</value></property>
+        <property name="description"><value>patch.bcpg.nutFactsMethodsPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>100011</value></property>
+        <property name="entitySystemService" ref="entitySystemService" />
+        <property name="importService" ref="importService" />
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>	
 	
 </beans>
