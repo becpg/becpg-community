@@ -97,8 +97,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				// - previous task are done
 				if (TaskState.Planned.equals(nextTask.getState()) && ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
 					// manual date -> we wait the date 
-					// task start automatically if startDate are after projectStartDate
-					if(!nextTask.getStart().equals(ProjectHelper.removeTime(projectData.getStartDate())) &&
+					// don't start task automatically if startDate is equal to projectStartDate and projectState == Planned
+					if((nextTask.getStart().before(ProjectHelper.removeTime(projectData.getStartDate())) || 
+							ProjectState.InProgress.equals(projectData.getProjectState())) &&
 							(nextTask.getManualDate() == null || nextTask.getStart().before(new Date()))){
 						logger.debug("Start task since we are after planned startDate.");
 						ProjectHelper.setTaskStartDate(nextTask, new Date());

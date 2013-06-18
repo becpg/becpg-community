@@ -41,18 +41,18 @@
 }
 
 
-.yui-skin-lightTheme div.flat-button  span.yui-checkbox-button-checked {
+div.flat-button  span.yui-checkbox-button-checked {
 	 background: none repeat scroll 0 0 transparent;
 }
 
 
-.yui-skin-lightTheme .datalist-toolbar div.flat-button .stateCkeckbox  span.yui-checkbox-button
+.datalist-toolbar div.flat-button .stateCkeckbox  span.yui-checkbox-button
 {
-   background: url(../images/job-cancelled-16.png) no-repeat 4px 4px;
+   background: url(../images/job-running-16.png) no-repeat 4px 4px;
 }
 
 
-.yui-skin-lightTheme .datalist-toolbar div.flat-button  .stateCkeckbox span.yui-checkbox-button.yui-checkbox-button-checked 
+.datalist-toolbar div.flat-button  .stateCkeckbox span.yui-checkbox-button.yui-checkbox-button-checked 
 {
    background: url(../images/job-success-16.png) no-repeat 4px 4px;
 }

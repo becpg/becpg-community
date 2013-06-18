@@ -585,6 +585,7 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<!-- ______________________________________ CLIENT ______________________________________ -->
@@ -602,6 +603,7 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<!-- ______________________________________ PLANT ______________________________________ -->

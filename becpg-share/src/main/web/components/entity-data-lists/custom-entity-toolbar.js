@@ -363,6 +363,7 @@
             
             var stateCkeckbox = new YAHOO.widget.Button({ 
                type: "checkbox", 
+               title: instance.msg("button.datalist-state.description"),
                value: instance.datalistMeta.state, 
                container:divEl , 
                disabled : !instance.entity.userAccess.edit,
