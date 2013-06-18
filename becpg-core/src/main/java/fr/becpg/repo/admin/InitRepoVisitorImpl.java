@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,7 +92,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	public static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
-	public static final String PRODUCT_REPORT_CLIENT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
 	public static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";	
 	public static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
 	public static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
@@ -806,7 +804,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
 						classDef.getTitle(), classDef.getTitle());
 				reportTplService.createTplRptDesign(folderNodeRef, productReportClientName,
-								Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE) ? PRODUCT_REPORT_CLIENT_PATH : PRODUCT_REPORT_CLIENT_EN_PATH, 
+								PRODUCT_REPORT_CLIENT_PATH, 
 								ReportType.Document, ReportFormat.PDF, productType, true, defaultReport[i], false);				
 				i++;
 			}
