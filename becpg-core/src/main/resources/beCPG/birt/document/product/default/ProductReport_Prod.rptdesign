@@ -3836,26 +3836,26 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 <structure>
                     <property name="columnName">id</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">id</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">name</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">name</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">title</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">title</text-property>
                 </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
-                    <property name="operator">like</property>
-                    <expression name="expr" type="javascript">row["name"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"produit.%"</value>
-                    </simple-property-list>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">BirtStr.indexOf("produit.", row["name"], 0) == 0 || BirtStr.indexOf("product.", row["name"], 0) == 0</expression>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -7074,13 +7074,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                         <column id="2889"/>
                         <header>
                             <row id="2881">
-                                <cell id="2882">
-                                    <data id="2883">
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">center</property>
-                                        <property name="resultSetColumn">title</property>
-                                    </data>
-                                </cell>
+                                <cell id="2882"/>
                             </row>
                         </header>
                         <detail>
@@ -7088,6 +7082,11 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                 <property name="pageBreakInside">avoid</property>
                                 <cell id="2885">
                                     <property name="textAlign">center</property>
+                                    <data id="2883">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">title</property>
+                                    </data>
                                     <image id="2886">
                                         <property name="backgroundColor">white</property>
                                         <property name="height">1.8396946564885497in</property>
