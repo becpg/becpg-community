@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.admin.InitRepoVisitorImpl;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -51,7 +53,9 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 
 	private DictionaryService dictionaryService;
 	
-	private RepoService repoService;
+	private RepoService repoService;	
+	
+	protected BehaviourFilter policyBehaviourFilter;
 	
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
@@ -63,6 +67,10 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
+	}
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	@Override
@@ -78,16 +86,23 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		logger.info("Apply ResourcesPatch1");
 		
 		removeProductReports();
-		updateProductClientReports();
 		updateIconsFiles();
 		updateMappingFiles();
+		
+		try{
+			policyBehaviourFilter.disableBehaviour(ReportModel.TYPE_REPORT_TPL);
+			updateProductReports();
+		}
+		finally{
+			policyBehaviourFilter.enableBehaviour(ReportModel.TYPE_REPORT_TPL);
+		}
 		
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	private void removeProductReports() {
 
-		QName[] productTypes = { BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT,
+		QName[] productTypes = { BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT,
 				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_RESOURCEPRODUCT};
 		
 		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Reports/cm:ProductReportTemplates");
@@ -106,7 +121,7 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		}		
 	}
 	
-	private void updateProductClientReports() {
+	private void updateProductReports() {
 
 		String productReportClientName = I18NUtil.getMessage("path.productreportclienttemplate");
 		String productReportProductionName = I18NUtil.getMessage("path.productreportproductiontemplate");
@@ -114,53 +129,54 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		NodeRef folderNodeRef = searchFolder("/app:company_home/cm:System/cm:Reports/cm:ProductReportTemplates");
 		
 		if(folderNodeRef != null){
-			// finished Product
-			ClassDefinition classDef = dictionaryService.getClass(BeCPGModel.TYPE_FINISHEDPRODUCT);			
-			NodeRef reportFolderNodeRef = repoService.getOrCreateFolderByPath(folderNodeRef, classDef.getTitle(), classDef.getTitle());			
-			NodeRef defaultReportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
 			
-			String productReportClientPath = Locale.getDefault().equals(Locale.FRENCH) ? InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_PATH : InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_EN_PATH;
+			QName [] productTypes = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_RAWMATERIAL};
+			Boolean [] defaultReport = {true, true};
+			int i =0;
 			
-			if(defaultReportNodeRef != null){
-				nodeService.setProperty(defaultReportNodeRef, ContentModel.PROP_NAME, productReportClientName);				
-				contentHelper.addFilesResources(defaultReportNodeRef, productReportClientPath, true);
-			}
-			else{
-				try {
-					reportTplService.createTplRptDesign(reportFolderNodeRef, productReportClientName,
-							productReportClientPath, 
-							ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, true, false);
-				} catch (IOException e) {
-					logger.error("Failed to add production report template", e);
+			for(QName productType : productTypes){
+				ClassDefinition classDef = dictionaryService.getClass(productType);			
+				NodeRef reportFolderNodeRef = repoService.getOrCreateFolderByPath(folderNodeRef, classDef.getTitle(), classDef.getTitle());			
+				NodeRef defaultReportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
+				
+				String productReportClientPath = Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE) ? InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_PATH : InitRepoVisitorImpl.PRODUCT_REPORT_CLIENT_EN_PATH;
+				
+				if(defaultReportNodeRef != null){
+					nodeService.setProperty(defaultReportNodeRef, ContentModel.PROP_NAME, productReportClientName);				
+					contentHelper.addFilesResources(defaultReportNodeRef, productReportClientPath, true);
 				}
-			}
-			
-			try {
-				reportTplService.createTplRptDesign(reportFolderNodeRef, productReportProductionName,
-						InitRepoVisitorImpl.PRODUCT_REPORT_PRODUCTION_PATH, 
-						ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, false, false);
-			} catch (IOException e) {
-				logger.error("Failed to add production report template", e);
-			}
-			
-			// semi finished
-			classDef = dictionaryService.getClass(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
-			reportFolderNodeRef = repoService.getOrCreateFolderByPath(folderNodeRef, classDef.getTitle(), classDef.getTitle());
-			defaultReportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
-					
-			if(defaultReportNodeRef != null){
-				nodeService.setProperty(defaultReportNodeRef, ContentModel.PROP_NAME, productReportProductionName);
-				contentHelper.addFilesResources(defaultReportNodeRef, InitRepoVisitorImpl.PRODUCT_REPORT_PRODUCTION_PATH, true);
-			}
-			else{
-				try {
-					reportTplService.createTplRptDesign(reportFolderNodeRef, productReportProductionName,
-							InitRepoVisitorImpl.PRODUCT_REPORT_PRODUCTION_PATH, 
-							ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, true, true, false);
-				} catch (IOException e) {
-					logger.error("Failed to add production report template", e);
+				else{
+					try {
+						reportTplService.createTplRptDesign(reportFolderNodeRef, productReportClientName,
+								productReportClientPath, 
+								ReportType.Document, ReportFormat.PDF, productType, true, defaultReport[i], false);
+					} catch (IOException e) {
+						logger.error("Failed to add production report template", e);
+					}
 				}
+				i++;
 			}
+			
+			QName [] productTypes2 = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT};
+			Boolean [] defaultReport2 = {false, true};
+			i =0;
+			
+			for(QName productType : productTypes2){
+				ClassDefinition classDef = dictionaryService.getClass(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
+				NodeRef reportFolderNodeRef = repoService.getOrCreateFolderByPath(folderNodeRef, classDef.getTitle(), classDef.getTitle());
+				NodeRef reportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, productReportProductionName);
+						
+				if(reportNodeRef == null){				
+					try {
+						reportTplService.createTplRptDesign(reportFolderNodeRef, productReportProductionName,
+								InitRepoVisitorImpl.PRODUCT_REPORT_PRODUCTION_PATH, 
+								ReportType.Document, ReportFormat.PDF, productType, true, defaultReport2[i], false);
+					} catch (IOException e) {
+						logger.error("Failed to add production report template", e);
+					}
+				}
+				i++;
+			}			
 		}			
 	}
 	
@@ -176,5 +192,5 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		if (folderNodeRef != null) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
 		}		
-	}
+	}	
 }

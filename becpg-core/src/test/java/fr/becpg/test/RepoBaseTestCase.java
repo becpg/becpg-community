@@ -369,6 +369,15 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(nutTypesFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
+		// nutFactsMethods
+		NodeRef nutFactsMethodsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_FACTS_METHODS);
+		String[] nutFactsMethods = { "Formulation", "CIQUAL", "USDA" };
+		for (String nutFactsMethod : nutFactsMethods) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, nutFactsMethod);
+			nodeService.createNode(nutFactsMethodsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
 		
 		// ingTypes
 		NodeRef ingTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ING_TYPES);

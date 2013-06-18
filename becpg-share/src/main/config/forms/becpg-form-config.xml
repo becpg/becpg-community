@@ -4135,6 +4135,7 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -4156,6 +4157,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListGroup" />
+					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
@@ -4174,7 +4176,8 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
-					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:isManualListItem" force="true" />					
 				</field-visibility>
 
 				<appearance>
