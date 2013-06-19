@@ -11,6 +11,7 @@ VALUES;Pots;
 VALUES;Opercules;
 VALUES;Etiquettes;
 VALUES;Briques;
+VALUES;Intercallaire;
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy;
 TYPE;bcpg:linkedValue;
@@ -26,7 +27,7 @@ VALUES;Pots;Verres
 VALUES;Opercules;Opercules 
 VALUES;Briques;Briques cartons
 VALUES;Briques;Briques plastiques
-;;
+VALUES;Intercallaire;Intercallaire
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy;
 TYPE;bcpg:linkedValue;

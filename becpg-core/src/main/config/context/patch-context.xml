@@ -107,7 +107,8 @@
         <property name="reportTplService" ref="reportTplService"/>
         <property name="dictionaryService" ref="dictionaryService"/>
         <property name="repoService" ref="repoService" />  
-        <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />      
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter" />    
+        <property name="versionService" ref="versionService" />
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>	

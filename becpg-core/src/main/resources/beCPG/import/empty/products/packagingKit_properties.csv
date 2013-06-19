@@ -3,5 +3,5 @@ TYPE;bcpg:packagingKit;;;;;;;;;;;;;
 MAPPING;Products;;;;;;;;;;;;;
 #;;;;;;;;m/m2/P;;Nombre de couches / palette;Nombre d'emb / couche;Nombre d'emb / dernière couche;Nombre d'emb / palette;Hauteur pallette (mm)
 COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState;bcpg:productUnit;bcpg:erpCode;pack:palletLayers;pack:palletBoxesPerLayer;pack:palletBoxesPerLastLayer;pack:palletBoxesPerPallet;pack:palletHeight
-VALUES;Kit Caisse N 264 - Pallette Euro;Palettisation Caisse 264 – Palette europe;;;Palettisation;Palettisation;ToValidate;P;ERP code PackKit1;;;;;
+VALUES;Kit Caisse N 264 - Pallette Euro;Palettisation Caisse 264 – Palette europe;;;Palettisation;Palettisation;ToValidate;P;ERP code PackKit1;13;4;;52;1905
 VALUES;Kit Caisse N 264 – Grande Palette ;Palettisation Caisse 264 – Grande palette;;;Palettisation;Palettisation;ToValidate;P;ERP code PackKit2;;;;;
