@@ -5,7 +5,7 @@ COLUMNS;bcpg:lkvValue;
 VALUES;Barquettes;
 VALUES;Carton;
 VALUES;Palette;
-VALUES;Film;
+VALUES;Films;
 VALUES;Boite;
 VALUES;Pots;
 VALUES;Opercules;
@@ -19,7 +19,7 @@ COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Barquettes;Barquettes plastiques
 VALUES;Carton;Recyclable
 VALUES;Palette;Recyclable
-VALUES;Film;Thermoformable
+VALUES;Films;Thermoformable
 VALUES;Boite;PF
 VALUES;Etiquettes;Autocollantes
 VALUES;Pots;Plastiques
