@@ -59,7 +59,7 @@
 	<pvQualityApprovalActor>Qual</pvQualityApprovalActor>
 	<pvProductionApprovalActor>Prod</pvProductionApprovalActor>
 	<pvRDApprovalActor>RD</pvRDApprovalActor>
-	<itemType>bcpg:finishedProduct1</itemType>
+	<itemType>bcpg:finishedProduct</itemType>
 
 	<images>
 		<image id="img1" name="img1" title="img1 title" />

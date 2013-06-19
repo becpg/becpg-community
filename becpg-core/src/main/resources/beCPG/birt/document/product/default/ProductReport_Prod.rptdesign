@@ -7619,8 +7619,9 @@ else{
                             <structure>
                                 <property name="name">tarePkgLevel1</property>
                                 <text-property name="displayName">tarePkgLevel1</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"]</expression>
+                                <expression name="expression" type="javascript">dataSetRow["tarePkgLevel1"] * 1000</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <property name="resultSetColumn">tarePkgLevel1</property>

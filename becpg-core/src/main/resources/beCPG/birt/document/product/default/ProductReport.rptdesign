@@ -6508,7 +6508,7 @@ dataSetRow["mblMaxi"]
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">row["itemType"]!="bcpg:finishedProduct"</expression>
+                    <expression name="valueExpr" type="javascript">BirtStr.indexOf("finishedProduct",row["itemType"],0) == -1</expression>
                 </structure>
             </list-property>
             <list-property name="boundDataColumns">
