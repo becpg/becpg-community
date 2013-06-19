@@ -56,7 +56,7 @@ public class PackagingLevelPatch extends AbstractBeCPGPatch {
 			}			
 		}
 		
-		// delete list (may return several results)
+		// delete list (may return several results due to List of values and Listes of values)
 		//NodeRef packagingLevelList = searchFolder("/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels");
 		List<NodeRef> listNodeRefs = beCPGSearchService.luceneSearch("+PATH:\"/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels\"");
 		for(NodeRef listNodeRef : listNodeRefs){

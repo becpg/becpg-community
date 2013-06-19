@@ -23,9 +23,13 @@ import java.io.IOException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +60,8 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 	
 	protected BehaviourFilter policyBehaviourFilter;
 	
+	protected VersionService versionService;
+	
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
@@ -70,6 +76,10 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
 	}
 
 	@Override
@@ -143,7 +153,22 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		NodeRef reportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, classDef.getTitle());
 		
 		if(reportNodeRef != null){
-			nodeService.setProperty(reportNodeRef, ContentModel.PROP_NAME, reportName);
+			nodeService.setProperty(reportNodeRef, ContentModel.PROP_NAME, reportName);			
+		}
+		else{
+			reportNodeRef = nodeService.getChildByName(reportFolderNodeRef, ContentModel.ASSOC_CONTAINS, reportName);
+			if(reportNodeRef != null){
+								
+				// fix cm:versionLabel
+				VersionHistory versionHistory = versionService.getVersionHistory(reportNodeRef);
+				if(nodeService.getProperty(reportNodeRef, ContentModel.PROP_VERSION_LABEL) == null && versionHistory!=null){					
+					Version headVersion = versionHistory.getHeadVersion();
+					if(headVersion != null && headVersion.getVersionLabel() != null){
+						logger.info("fix reportTpl " + reportNodeRef + " name " + reportName + ", set version " + headVersion.getVersionLabel());
+						nodeService.setProperty(reportNodeRef, ContentModel.PROP_VERSION_LABEL, headVersion.getVersionLabel());
+					}						
+				}				
+			}
 		}
 		
 		try {
