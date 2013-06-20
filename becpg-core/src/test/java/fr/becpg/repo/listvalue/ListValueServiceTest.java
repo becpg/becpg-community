@@ -42,7 +42,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 	@Test
 	public void testSuggestSupplier() {
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef supplierNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				authenticationComponent.setSystemUserAsCurrentUser();
@@ -51,9 +51,14 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				logger.debug("create temp supplier 1");
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Supplier 1");
-				NodeRef supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+				return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
-
+			}
+		}, false, true);	
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
 				// suggest supplier 1
 				String[] arrClassNames = { "bcpg:supplier" };
 				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames, null).getResults();

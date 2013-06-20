@@ -15,12 +15,16 @@ import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
+import org.alfresco.util.GUID;
 import org.alfresco.util.PropertyCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,13 +33,20 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import com.google.common.collect.Lists;
+
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.migration.impl.BeCPGSystemFolderMigrator;
 import fr.becpg.repo.migration.impl.EntityFolderMigrator;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -72,6 +83,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String PARAM_SOURCE_PROP = "sourceProp";
 	private static final String PARAM_TARGET_PROP = "targetProp";
 
+	private static final String ACTION_ADD_NUT_FACTS_METHODS = "addNutFactsMethods";
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 
@@ -101,6 +114,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private NamespaceService namespaceService;	
 	
 	private MigrationService migrationService;
+	
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	protected TransactionService transactionService;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -152,6 +169,14 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 	public void setMigrationService(MigrationService migrationService) {
 		this.migrationService = migrationService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
 	}
 
 	public void doMigrateEntityFolderInMt() {
@@ -282,6 +307,44 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			else{
 				logger.error("Missing param for action " + action + " classQName " + classQName + " sourceProp " + sourceProp + " targetProp " + targetProp);
 			}
+		} else if(ACTION_ADD_NUT_FACTS_METHODS.equals(action)){
+			
+			String [] supplierNames = {"Table Ciqual 2012", "Table USDA"};
+			String [] nutFactsMethods = {"CIQUAL 2012", "USDA"};
+			
+			for(int i=0 ; i<supplierNames.length ; i++){
+				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_SUPPLIER)) +
+						LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, supplierNames[i]));
+				
+				final String nutFactsMethod = nutFactsMethods[i];
+				List<NodeRef> results = beCPGSearchService.luceneSearch(query);
+				if(!results.isEmpty()){					
+					NodeRef supplierNodeRef = results.get(0);
+					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(supplierNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+					logger.info("Migrate table " + supplierNames[i] + " size: " + assocRefs.size());
+					
+					for (final List<AssociationRef> batchList : Lists.partition(assocRefs, 50)) {
+						transactionService.getRetryingTransactionHelper().doInTransaction(
+								new RetryingTransactionCallback<Boolean>() {
+									public Boolean execute() throws Exception {
+
+										for(AssociationRef assocRef : batchList){
+											ProductData productData = alfrescoRepository.findOne(assocRef.getSourceRef());						
+											for(NutListDataItem n : productData.getNutList()){
+												n.setMethod(nutFactsMethod);
+											}						
+											alfrescoRepository.save(productData);
+										}
+										
+										return true;
+									}
+								}, false, true);
+					}
+					
+					
+				}
+			}			
+			
 		} else {
 			logger.error("Unknown action" + action);
 		}

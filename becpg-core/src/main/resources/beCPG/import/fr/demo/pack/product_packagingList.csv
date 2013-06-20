@@ -1,0 +1,14 @@
+STOP_ON_FIRST_ERROR;false;;;;;
+IMPORT_TYPE;EntityListItem;;;;;
+PATH;/Temp/Products;;;;;
+TYPE;bcpg:packagingList;;;;;
+MAPPING;Products;;;;;
+#;;;;m/m2/P/PP (PP: Par pièce, 4 PP → 4 produits dans 1 emballage);Primary/Secondary/Tertiary;Indique quel est le composant le plus grand par niveau (barquette/carton)
+COLUMNS;bcpg:erpCode;bcpg:packagingListProduct;bcpg:packagingListQty;bcpg:packagingListUnit;bcpg:packagingListPkgLevel;bcpg:packagingListIsMaster
+VALUES;ERP code PackKit1;ERP code composant4;1;P;Secondary;true
+VALUES;ERP code PackKit1;ERP code composant5;4;P;Tertiary;false
+VALUES;ERP code PackKit1;ERP code composant6;1;P;Tertiary;false
+VALUES;ERP code 1;ERP code composant1;1;P;Primary;true
+VALUES;ERP code 1;ERP code composant2;1;P;Primary;false
+VALUES;ERP code 1;ERP code composant3;0,03;m2;Primary;false
+VALUES;ERP code 1;ERP code PackKit1;4;PP;Secondary;false

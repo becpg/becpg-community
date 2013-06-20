@@ -28,6 +28,8 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 	private String group;
 	
+	private String method;
+	
 	private NodeRef nut;
 	
 			
@@ -85,12 +87,22 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		this.group = group;
 	}
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListMethod")
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:nutListNut")
 	public NodeRef getNut() {
 		return nut;
 	}
-	
+
 	@Override
 	public NodeRef getCharactNodeRef() {
 		return getNut();

@@ -100,7 +100,7 @@ public class ImportServiceImpl implements ImportService {
 	// "import_service.error.err_unknown_type";
 
 	/** The Constant SEPARATOR. */
-	private static final char SEPARATOR = ';';
+	public static final char SEPARATOR = ';';
 
 	private static final int COLUMN_PREFIX = 0;
 	private static final int COLUMN_MAPPING = 1;
@@ -319,7 +319,8 @@ public class ImportServiceImpl implements ImportService {
 	 * @throws ParseException
 	 *             the parse exception
 	 */
-	private List<String> importCSV(ImportContext importContext) throws IOException, ImporterException, ParseException, Exception {
+	@Override
+	public List<String> importCSV(ImportContext importContext) throws IOException, ImporterException, ParseException, Exception {
 
 		logger.debug("importFile");
 

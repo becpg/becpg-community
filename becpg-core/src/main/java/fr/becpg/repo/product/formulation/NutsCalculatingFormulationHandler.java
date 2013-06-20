@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -36,6 +37,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	/** The Constant UNIT_PER100ML. */
 	public static final String UNIT_PER100ML = "/100mL";
 	
+	public static final String NUT_FORMULATED = I18NUtil.getMessage("message.formulate.nut.formulated");
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 	
@@ -56,6 +59,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				
 				n.setGroup((String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTGROUP));				
 				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTUNIT)));
+				
+				if(isCharactFormulated(n)){
+					n.setMethod(NUT_FORMULATED);
+				}
 			}		
 		}
 		

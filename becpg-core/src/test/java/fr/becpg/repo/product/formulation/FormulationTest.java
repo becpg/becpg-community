@@ -225,7 +225,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
 						checks++;
-					}
+					}					
+					assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());
 				}
 				assertEquals(2, checks);
 				
