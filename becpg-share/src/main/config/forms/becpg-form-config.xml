@@ -3437,6 +3437,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:compoListQty" read-only="true" ></field>
 					<field id="bcpg:dynamicCharactColumn1" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn2" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>

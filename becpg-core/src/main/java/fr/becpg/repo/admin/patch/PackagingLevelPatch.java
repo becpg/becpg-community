@@ -2,7 +2,6 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.List;
 
-import org.alfresco.repo.admin.patch.AbstractPatch;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,10 +56,11 @@ public class PackagingLevelPatch extends AbstractBeCPGPatch {
 			}			
 		}
 		
-		// delete list
-		NodeRef packagingLevelList = searchFolder("/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels");
-		if(packagingLevelList != null){
-			nodeService.deleteNode(packagingLevelList);
+		// delete list (may return several results due to List of values and Listes of values)
+		//NodeRef packagingLevelList = searchFolder("/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels");
+		List<NodeRef> listNodeRefs = beCPGSearchService.luceneSearch("+PATH:\"/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:PackagingLevels\"");
+		for(NodeRef listNodeRef : listNodeRefs){
+			nodeService.deleteNode(listNodeRef);
 		}
 		
 		return I18NUtil.getMessage(MSG_SUCCESS);

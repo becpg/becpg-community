@@ -64,10 +64,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	protected static final String TAG_DYNAMICCHARACT = "dynamicCharact";
 
-	protected static final String ATTR_ITEM_TYPE = "itemType";
-	
-	protected static final String ATTR_ASPECTS = "aspects";
-
 	/** The Constant TAG_COSTLIST. */
 	protected static final String TAG_COSTLIST = "costList";
 
@@ -391,30 +387,42 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// MicrobioList
+		Map<NodeRef, MicrobioListDataItem> microbioMap = new HashMap<NodeRef, MicrobioListDataItem>();
+		if (productData.getMicrobioList() != null) {
+			for (MicrobioListDataItem dataItem : productData.getMicrobioList()) {
+				microbioMap.put(dataItem.getMicrobio(), dataItem);
+			}
+		}
+		
 		List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
 		if (!microbioAssocRefs.isEmpty()) {
 			NodeRef productMicrobioCriteriaNodeRef = microbioAssocRefs.get(0).getTargetRef();
 
 			if (productMicrobioCriteriaNodeRef != null) {
-
 				ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
-
+				
 				if (pmcData.getMicrobioList() != null) {
-
-					Element organoListElt = dataListsElt.addElement(TAG_MICROBIOLIST);
-
 					for (MicrobioListDataItem dataItem : pmcData.getMicrobioList()) {
-
-						String microbio = nodeService.getProperty(dataItem.getMicrobio(), ContentModel.PROP_NAME).toString();
-
-						Element microbioElt = organoListElt.addElement(TAG_MICROBIO);
-						microbioElt.addAttribute(BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO.getLocalName(), microbio);
-						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_VALUE.getLocalName(), toString(dataItem.getValue()));
-						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_UNIT.getLocalName(), dataItem.getUnit());
-						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_MAXI.getLocalName(), toString(dataItem.getMaxi()));
-						microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA.getLocalName(), dataItem.getTextCriteria());
+						if(!microbioMap.containsKey(dataItem.getMicrobio())){
+							microbioMap.put(dataItem.getMicrobio(), dataItem);
+						}
 					}
 				}
+			}
+		}		
+		
+		if(!microbioMap.isEmpty()){
+			Element organoListElt = dataListsElt.addElement(TAG_MICROBIOLIST);
+			for (MicrobioListDataItem dataItem : microbioMap.values()) {
+
+				String microbio = nodeService.getProperty(dataItem.getMicrobio(), ContentModel.PROP_NAME).toString();
+
+				Element microbioElt = organoListElt.addElement(TAG_MICROBIO);
+				microbioElt.addAttribute(BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO.getLocalName(), microbio);
+				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_VALUE.getLocalName(), toString(dataItem.getValue()));
+				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_UNIT.getLocalName(), dataItem.getUnit());
+				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_MAXI.getLocalName(), toString(dataItem.getMaxi()));
+				microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA.getLocalName(), dataItem.getTextCriteria());
 			}
 		}
 

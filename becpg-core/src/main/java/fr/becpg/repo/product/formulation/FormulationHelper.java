@@ -63,11 +63,8 @@ public class FormulationHelper {
 			CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
 			Double density = DEFAULT_DENSITY;
 			
-			logger.info("av qty " + qty);
-			
 			if(compoListUnit != null){
 				if(compoListUnit.equals(CompoListUnit.g) || compoListUnit.equals(CompoListUnit.mL)){
-					logger.info("qty / 1000");
 					qty = qty / 1000;
 				}
 				
@@ -76,8 +73,6 @@ public class FormulationHelper {
 				}			
 			}
 			
-			logger.info("ap qty " + qty);
-						
 			return qty * density;
 		}				
 	}

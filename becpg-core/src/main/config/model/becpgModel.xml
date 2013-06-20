@@ -140,6 +140,20 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:nutListMethods"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/NutFactsMethods</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:allergenType" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -1166,6 +1180,13 @@
 					<index enabled="false"/>
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
+					</constraints>
+				</property>
+				<property name="bcpg:nutListMethod">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
 				</property>
 			</properties>

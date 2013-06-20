@@ -223,7 +223,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 					if(overrideTpl){
 						logger.debug("override report Tpl, name: " + tplName);
 						
-						nodeService.setProperties(reportTplNodeRef, properties);
+						nodeService.addProperties(reportTplNodeRef, properties);
 					}
 					else{
 						return reportTplNodeRef;
