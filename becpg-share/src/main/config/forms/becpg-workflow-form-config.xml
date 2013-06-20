@@ -232,10 +232,22 @@
 							<control-param name="style">width: 95%</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:pvCallerActor" set="intervenants" />
-					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" />
-					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" />
-					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" />
+					<field id="bcpgwf:pvCallerActor" set="intervenants" />						
+					<field id="bcpgwf:pvQualityApprovalActor" set="intervenants" >
+						<control template="/org/alfresco/components/form/controls/authority.ftl">
+							<control-param name="extraParams">group=GROUP_QualityMgr</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:pvProductionApprovalActor" set="intervenants" >
+						<control template="/org/alfresco/components/form/controls/authority.ftl">
+							<control-param name="extraParams">group=GROUP_ProductionMgr</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:pvRDApprovalActor" set="intervenants" >
+						<control template="/org/alfresco/components/form/controls/authority.ftl">
+							<control-param name="extraParams">group=GROUP_RDMgr</control-param>
+						</control>
+					</field>
 					<field id="bpm:workflowDueDate" label-id="workflow.field.due"
 						set="info" />
 					<field id="bpm:workflowPriority" label-id="workflow.field.priority"
