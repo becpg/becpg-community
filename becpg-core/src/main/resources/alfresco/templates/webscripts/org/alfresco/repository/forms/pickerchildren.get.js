@@ -8,6 +8,7 @@ function main()
       argsMaxResults = args['size'],
       argsXPath = args['xpath'],
       argsRootNode = args['rootNode'],
+      argsGroup = args['group'],
       pathElements = url.service.split("/"),
       parent = null,
       rootNode = companyhome,
@@ -185,8 +186,15 @@ function main()
       else if (url.templateArgs.type == "authority")
       {
          if (argsSelectableType == "cm:person")
-         {
-            findUsers(argsSearchTerm, maxResults, results);
+         {       
+        	 	if (argsGroup != null && argsGroup != "")
+        	 	{
+        	 		findUsersInGroup(argsSearchTerm, maxResults, results, argsGroup);
+        	 	}
+        	 	else
+        	 	{
+		      	findUsers(argsSearchTerm, maxResults, results);
+        	 	}
          }
          else if (argsSelectableType == "cm:authorityContainer")
          {
@@ -262,6 +270,59 @@ function findUsers(searchTerm, maxResults, results)
          item: createPersonResult(user.person),
          selectable: true 
       });
+   }
+}
+
+function findUsersInGroup(searchTerm, maxResults, results, groupName)
+{
+   var group, usersInGroup,
+	usersInGroupSearched = [],
+	searchResults = [];
+   
+   group = people.getGroup(groupName);
+   
+   if(group != null)
+   {
+   	usersInGroup = people.getMembers(group, false);
+   	
+//   	if(searchTerm == "*")
+//	   {   	
+//	   	// create person object for each result
+//	      for each(var user in usersInGroup)
+//	      {
+//	         if (logger.isLoggingEnabled())
+//	            logger.log("found user = " + user.userName);
+//	         
+//	         // add to results
+//	         results.push(
+//	         {
+//	            item: user,
+//	            selectable: true 
+//	         });
+//	      }
+//	   }
+//	   else
+//	   {
+	   	findUsers(searchTerm, maxResults, searchResults)
+	   	
+	   	if(usersInGroup.length > 0)
+   		{
+	   		for each(var user in searchResults)
+		      {
+		      	for each(var userInGroup in usersInGroup)
+		         {
+		      		if(userInGroup.nodeRef == user.item.nodeRef)
+		      		{
+		      			results.push(user);
+		      		}
+		         }
+		      }
+   		}
+	   	else{
+	   		results.push.apply(results,searchResults);
+	   	}
+	   	
+//   	}
    }
 }
 
