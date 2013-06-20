@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>NC List</shortname>
+  <description>Component for displaying non-conformities</description>
+  <url>/components/quality/nc-list</url>
+</webscript>

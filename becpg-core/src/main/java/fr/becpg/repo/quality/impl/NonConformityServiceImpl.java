@@ -56,6 +56,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 	@Override
 	public void classifyNC(NodeRef ncNodeRef, NodeRef productNodeRef) {
 
+		logger.debug("Classify NC");
 		NodeRef destFolderNodeRef = getStorageFolder(productNodeRef);
 		repoService.moveNode(ncNodeRef, destFolderNodeRef);				
 	}

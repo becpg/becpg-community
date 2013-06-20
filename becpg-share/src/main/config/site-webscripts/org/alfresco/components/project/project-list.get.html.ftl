@@ -1,34 +1,34 @@
-
-
 <@markup id="css" >
-   <#-- CSS Dependencies -->
-	<#include "../form/form.css.ftl"/>
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="project-list" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="project-list" />
+   <#include "../entity-charact-views/include/entity-datagrid.css.ftl"/>
 
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-commons.css" group="project-list" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-list.css" group="project-list" />
+	<@link href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
+	<@link href="${url.context}/res/components/project/project-commons.css" group="project-list" />
+	<@link href="${url.context}/res/components/project/project-list.css" group="project-list" />
+	<@link href="${url.context}/res/css/fixForm.css" group="project-list" />
+	<@link href="${url.context}/res/components/comments/comments-list.css" group="comments"/>
 </@>
 
 <@markup id="js">
-   <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="project-list" />
-	<@script type="text/javascript" src="${url.context}/res/components/project/columnRenderers.js" group="project-list" />
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
+	<@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="project-list" />
+	<@script src="${url.context}/res/components/project/columnRenderers.js" group="project-list" />
+	<@script src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
+	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="project-list"></@script>
 	
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/groupeddatatable.js" group="project-list" />
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="project-list" />
+	<@script src="${url.context}/res/modules/entity-datagrid/groupeddatatable.js" group="project-list" />
+	<@script src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="project-list" />
 	
-	<@script type="text/javascript" src="${url.context}/res/components/workflow/workflow-actions.js" group="project-list" />
+	<@script src="${url.context}/res/components/workflow/workflow-actions.js" group="project-list" />
 	
-	<@script type="text/javascript" src="${url.context}/res/components/project/jsgantt.js" group="project-list" />
-	<@script type="text/javascript" src="${url.context}/res/components/project/project-commons.js" group="project-list" />
-	<@script type="text/javascript" src="${url.context}/res/components/project/project-list.js" group="project-list" />
-
+	<@script src="${url.context}/res/components/project/jsgantt.js" group="project-list" />
+	<@script src="${url.context}/res/components/project/project-commons.js" group="project-list" />
+	<@script src="${url.context}/res/components/project/project-list.js" group="project-list" />
+	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
 </@>
 
+<@markup id="widgets">
+  	<@createWidgets group="project-list"/>
+</@>
 
 <@markup id="html">
    <@uniqueIdDiv>
@@ -120,74 +120,7 @@
 			      </div>      
 			   </div>
 		</div>
-		
-		
-		<script type="text/javascript">//<![CDATA[
-		(function() {
-		
-		
-			new beCPG.component.ProjectList("${el}", "${view}").setOptions(
-			   {
-			      siteId: "${page.url.templateArgs.site!""}",
-			      <#if page.url.templateArgs.site??>
-			      	extraDataParams: "&repo=false&container=documentLibrary",
-			      </#if>
-			      usePagination: true,
-			      useFilter: true,
-			      itemType : "pjt:project",
-			      filterParameters : 
-						 [<#list filterParameters as filterParameter>
-						   {
-						      id: "${filterParameter.id?js_string}",
-						      "data": "${filterParameter.data?js_string}",
-						      "parameters": "${filterParameter.parameters?js_string}"
-						   }<#if filterParameter_has_next>,</#if>
-						</#list>]
-					,
-				   list: "projectList",
-				   sortable : false,
-					sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
-				   dataUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node",
-				   itemUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/item/node/",
-				   groupBy : "prop_pjt_projectHierarchy2",
-				   sortId : "ProjectList",
-				   groupFormater : function(args, record){
-				    return record.getData("itemData")["prop_pjt_projectHierarchy1"].displayValue + " - " + record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue;
-				   },
-				   hiddenColumns : ["prop_pjt_projectHierarchy1", "prop_pjt_projectHierarchy2", "prop_bcpg_code", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"],
-				   formWidth : "65em"
-			   }).setMessages(${messages});
-		
-			
-		
-		   
-		    
-		    // Initialize the browser history management library
-		    YAHOO.Bubbling.on("dataGridReady", function (layer, args){
-				  try {
-					      YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
-				      } catch (e2) {
-					      	/*
-								* The only exception that gets thrown here is when the
-								* browser is not supported (Opera, or not A-grade)
-								*/
-					        Alfresco.logger.error(this.name + ": Couldn't initialize HistoryManager.", e2);
-					        var obj = args[1];
-			              if ((obj !== null) && (obj.entityDataGridModule !== null))
-			              {
-							     obj.entityDataGridModule.onHistoryManagerReady();
-							  }
-					}
-					//Toolbar contribs
-					var controls = YAHOO.util.Dom.getChildren("toolbar-contribs-${el}")
-				   for(var el in controls){
-				   	(new  YAHOO.util.Element("toolbar-contribs")).appendChild(controls[el]);
-				   }
-				});
-		  
-		})();
-		//]]>
-		</script>
+
 </@>
 </@>
 

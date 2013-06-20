@@ -16,9 +16,7 @@
   	<@createWidgets group="entity-toolbar"/>
 </@>
 
-<@markup id="custom-js">
-	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/custom-entity-toolbar.js" group="entity-toolbar"/>
-</@>
+
 
 <@markup id="html">
    <@uniqueIdDiv>

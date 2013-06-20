@@ -4,15 +4,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+@AlfType
+@AlfQname(qname = "qa:nc")
 public class NonConformityData extends BeCPGDataObject {
 
 	private String state;
-	private String comment;	
-	
+	private String comment;
+
 	List<WorkLogDataItem> workLog = new LinkedList<WorkLogDataItem>();
-	
+
+	@AlfProp
+	@AlfQname(qname = "qa:ncState")
 	public String getState() {
 		return state;
 	}
@@ -21,6 +29,8 @@ public class NonConformityData extends BeCPGDataObject {
 		this.state = state;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:ncComment")
 	public String getComment() {
 		return comment;
 	}
@@ -28,7 +38,9 @@ public class NonConformityData extends BeCPGDataObject {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
+
+	@DataList
+	@AlfQname(qname = "qa:workLog")
 	public List<WorkLogDataItem> getWorkLog() {
 		return workLog;
 	}
@@ -36,15 +48,15 @@ public class NonConformityData extends BeCPGDataObject {
 	public void setWorkLog(List<WorkLogDataItem> workLog) {
 		this.workLog = workLog;
 	}
-	
-	public NonConformityData(){
-		
+
+	public NonConformityData() {
+
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((workLog == null) ? 0 : workLog.hashCode());
@@ -55,7 +67,7 @@ public class NonConformityData extends BeCPGDataObject {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -82,6 +94,5 @@ public class NonConformityData extends BeCPGDataObject {
 	public String toString() {
 		return "NonConformityData [state=" + state + ", comment=" + comment + ", workLog=" + workLog + "]";
 	}
-	
-	
+
 }

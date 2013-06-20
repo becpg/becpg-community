@@ -8,16 +8,23 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+@AlfType
+@AlfQname(qname = "qa:qualityControl")
 public class QualityControlData extends BeCPGDataObject {
 
-	
-	List<NodeRef>controlPlans = new ArrayList<NodeRef>();
+	List<NodeRef> controlPlans = new ArrayList<NodeRef>();
 	Integer samplesCounter;
 	String state;
-	
-	// batchAspect	
+
+	// batchAspect
 	String batchId;
 	String orderId;
 	Date batchStart;
@@ -25,10 +32,11 @@ public class QualityControlData extends BeCPGDataObject {
 	NodeRef product;
 	NodeRef client;
 	NodeRef supplier;
-	
+
 	List<SamplingListDataItem> samplingList = new LinkedList<SamplingListDataItem>();
 
-
+	@AlfMultiAssoc
+	@AlfQname(qname = "qa:qcControlPlans")
 	public List<NodeRef> getControlPlans() {
 		return controlPlans;
 	}
@@ -36,7 +44,9 @@ public class QualityControlData extends BeCPGDataObject {
 	public void setControlPlans(List<NodeRef> controlPlans) {
 		this.controlPlans = controlPlans;
 	}
-	
+
+	@AlfProp
+	@AlfQname(qname = "qa:qcSamplesCounter")
 	public Integer getSamplesCounter() {
 		return samplesCounter;
 	}
@@ -45,6 +55,8 @@ public class QualityControlData extends BeCPGDataObject {
 		this.samplesCounter = samplesCounter;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:qcState")
 	public String getState() {
 		return state;
 	}
@@ -53,6 +65,8 @@ public class QualityControlData extends BeCPGDataObject {
 		this.state = state;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:batchId")
 	public String getBatchId() {
 		return batchId;
 	}
@@ -61,6 +75,8 @@ public class QualityControlData extends BeCPGDataObject {
 		this.batchId = batchId;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:orderId")
 	public String getOrderId() {
 		return orderId;
 	}
@@ -68,7 +84,9 @@ public class QualityControlData extends BeCPGDataObject {
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
-	
+
+	@AlfProp
+	@AlfQname(qname = "qa:batchStart")
 	public Date getBatchStart() {
 		return batchStart;
 	}
@@ -77,6 +95,8 @@ public class QualityControlData extends BeCPGDataObject {
 		this.batchStart = batchStart;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:batchDuration")
 	public Integer getBatchDuration() {
 		return batchDuration;
 	}
@@ -85,6 +105,8 @@ public class QualityControlData extends BeCPGDataObject {
 		this.batchDuration = batchDuration;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:product")
 	public NodeRef getProduct() {
 		return product;
 	}
@@ -93,6 +115,8 @@ public class QualityControlData extends BeCPGDataObject {
 		this.product = product;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:clients")
 	public NodeRef getClient() {
 		return client;
 	}
@@ -101,6 +125,8 @@ public class QualityControlData extends BeCPGDataObject {
 		this.client = client;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:suppliers")
 	public NodeRef getSupplier() {
 		return supplier;
 	}
@@ -109,12 +135,22 @@ public class QualityControlData extends BeCPGDataObject {
 		this.supplier = supplier;
 	}
 
+	@DataList
+	@AlfQname(qname = "qa:samplingList")
 	public List<SamplingListDataItem> getSamplingList() {
 		return samplingList;
 	}
 
 	public void setSamplingList(List<SamplingListDataItem> samplingList) {
 		this.samplingList = samplingList;
+	}
+
+	public QualityControlData() {
+		super();
+	}
+
+	public QualityControlData(NodeRef nodeRef, String name) {
+		super(nodeRef, name);
 	}
 
 	@Override
@@ -207,8 +243,6 @@ public class QualityControlData extends BeCPGDataObject {
 		} else if (!supplier.equals(other.supplier))
 			return false;
 		return true;
-	}		
-	
-	
-	
+	}
+
 }

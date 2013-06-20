@@ -28,10 +28,11 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.quality.NonConformityService;
 import fr.becpg.repo.quality.data.NonConformityData;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.test.BeCPGTestHelper;
 
 public class NCWorkflowTest extends AbstractWorkflowTest {
@@ -47,6 +48,11 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	private static final QName ASSOC_CHECK_ACTOR = QName.createQName(NC_URI, "checkActor");
 	private static final QName ASSOC_PRODUCT = QName.createQName(NC_URI, "product");
 
+
+	@Resource
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NCWorkflowTest.class);
 
@@ -57,8 +63,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	private NodeRef rawMaterial2NodeRef;
 	
 	private String workflowInstanceId = null;
-	@Resource
-	private BeCPGDao<NonConformityData> nonConformityDAO;
+
 	@Resource
 	private NonConformityService nonConformityService;
 
@@ -371,7 +376,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				NonConformityData ncData = nonConformityDAO.find(ncNodeRef);
+				NonConformityData ncData = (NonConformityData)alfrescoRepository.findOne(ncNodeRef);
 				assertNotNull(ncData.getWorkLog());
 				assertEquals(workLogSize, ncData.getWorkLog().size());
 				assertEquals(state, ncData.getState());
