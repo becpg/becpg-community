@@ -83,16 +83,25 @@ public class CreateNC extends BaseJavaDelegate {
 					if (node != null) {
 						productNodeRef = node.getNodeRef();
 					}
+					
+					String ncType = (String) task.getVariable("ncwf_ncType");
+					
+					if(ncType == null){
+						ncType = QualityModel.NC_TYPE_NONCONFORMITY;
+					}
+					
+					
 
 					NodeRef parentNodeRef = nonConformityService.getStorageFolder(productNodeRef);
 
 					// create nc
 					// force name YYYY-NCCode, is there a better way ?
-					String ncName = Calendar.getInstance().get(Calendar.YEAR) + "-"
+					String ncName = Calendar.getInstance().get(Calendar.YEAR) + "-" + (QualityModel.NC_TYPE_CLAIM.equals(ncType)?"RC-":"NC-") 
 							+ autoNumService.getAutoNumValue(QualityModel.TYPE_NC, BeCPGModel.PROP_CODE);
 					
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();					
 					properties.put(ContentModel.PROP_NAME, ncName);
+					properties.put(QualityModel.PROP_NC_TYPE, ncType);
 					properties.put(ContentModel.PROP_DESCRIPTION, (String) task.getVariable("bpm_workflowDescription"));
 					properties.put(QualityModel.PROP_NC_PRIORITY, (Integer) task.getVariable("bpm_priority"));
 
