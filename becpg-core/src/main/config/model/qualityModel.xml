@@ -542,6 +542,53 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		<aspect name="qa:claimAspect">
+			<properties>
+				<property name="qa:claimSource">
+				   <title>Source de la remontée</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<constraints>
+						<constraint ref="qa:claimSources" />
+					</constraints>		
+				</property>
+				<property name="qa:claimClientOther">
+				   <title>Client autre</title>
+					<type>d:text</type>
+				</property>
+				<property name="qa:claimTradeContactCheck">
+				   <title>Le produit a-t-il été vu par le commercial?</title>
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>					
+				</property>
+				<property name="qa:claimAskedFollow">
+					<title>Suivi demandé</title>
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:claimSources" />
+					</constraints>						
+				</property>
+			</properties>
+			<associations>
+				<association name="qa:claimTradeContact">
+						<title>Contact commercial</title>
+						<source>
+							<mandatory>false</mandatory>
+							<many>true</many>
+						</source>
+						<target>
+							<class>cm:person</class>
+							<mandatory>false</mandatory>
+							<many>false</many>
+						</target>
+					</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:clients</aspect>
+			</mandatory-aspects>
+		</aspect>
+		
 
 		<!-- Control List Aspect -->		
 		<aspect name="qa:controlListAspect">
