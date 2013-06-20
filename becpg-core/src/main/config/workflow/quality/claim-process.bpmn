@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.bcpg.fr/model/workflow/1.0">
+  <process id="claimProcess" name="Claim Process" isExecutable="true">
+    <documentation>Place documentation for the 'claim-process' process here.</documentation>
+    <startEvent id="startClaimProcess" name="Saisie réclamation" activiti:formKey="ncwf:claimStartTask"></startEvent>
+    <sequenceFlow id="startFlow" sourceRef="startClaimProcess" targetRef="initialiseNCTask">
+      <extensionElements>
+        <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string>execution.setVariable('qa_claimResponseActor',null);
+	               execution.setVariable('qa_claimTreatmentActor',null);</activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+    <serviceTask id="initialiseNCTask" name="Initialisation réclamation" activiti:delegateExpression="${CreateNC}"></serviceTask>
+    <sequenceFlow id="toAnalysisFlow1" sourceRef="initialiseNCTask" targetRef="analysisTask"></sequenceFlow>
+    <userTask id="enteringClaimTask" name="Saisie réclamation" activiti:assignee="${initiator.properties.userName}" activiti:candidateUsers="initiator" activiti:formKey="ncwf:claimStartTask"></userTask>
+    <userTask id="analysisTask" name="Orientation réclamation" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:claimAnalysisTask">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>execution.setVariable('ncwf_needPrevAction', task.getVariable('ncwf_needPrevAction'));
+execution.setVariable('ncwf_corrActionActor', task.getVariable('ncwf_corrActionActor'));
+execution.setVariable('ncwf_checkActor', task.getVariable('ncwf_checkActor'));</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="toDispatchTreatmentGateway" sourceRef="endOrientationGateway" targetRef="dispatchTreatmentGateway"></sequenceFlow>
+    <inclusiveGateway id="dispatchTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
+    <sequenceFlow id="toTreatmentFlow" name="Si acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="treatementTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimTreatmentActor!=null }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="toClassificationFlow" name="Dans tous les cas" sourceRef="dispatchTreatmentGateway" targetRef="classificationTask"></sequenceFlow>
+    <sequenceFlow id="toResponseWithoutTraitementFlow" name="Si acteur réponse et pas d'acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimResponseTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimTreatmentActor == null &&  qa_claimResponseActor!=null }]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="treatementTask" name="Traitement" activiti:assignee="${qa_claimTreatmentActor.properties.userName}" activiti:formKey="ncwf:claimTreatmentTask">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="toValidateTreatement1" sourceRef="treatementTask" targetRef="validateTreatementGateway"></sequenceFlow>
+    <userTask id="claimResponseTask" name="Réponse" activiti:assignee="${qa_claimResponseActor.properties.userName}" activiti:formKey="ncwf:claimResponseTask"></userTask>
+    <sequenceFlow id="toResponseFlow" name="Si acteur réponse ou refus" sourceRef="validateTreatementGateway" targetRef="claimResponseTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimResponseActor!=null }]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="validateTreatementGateway" name="Exclusive Gateway"></exclusiveGateway>
+    <userTask id="claimClosingTask" name="Clôture réclamation" activiti:assignee="${initiator.properties.userName}" activiti:formKey="ncwf:claimClosingTask">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>for (var i = 0; i &lt; bpm_package.children.length; i++)
+{
+var nc = bpm_package.children[i];
+task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
+}</activiti:string>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:claimClassificationTask"></userTask>
+    <inclusiveGateway id="inclusivegateway2" name="Inclusive Gateway"></inclusiveGateway>
+    <sequenceFlow id="toNotificationTask1" sourceRef="validateTreatementGateway" targetRef="inclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="toValidateTreatement2" sourceRef="claimResponseTask" targetRef="validateTreatementGateway"></sequenceFlow>
+    <sequenceFlow id="toNotificationFlow" sourceRef="inclusivegateway2" targetRef="claimClosingTask"></sequenceFlow>
+    <sequenceFlow id="toNotificationTask1" sourceRef="classificationTask" targetRef="inclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="backToAnalysisFlow1" name="Refus ou demande complémentaire" sourceRef="validateTreatementGateway" targetRef="analysisTask"></sequenceFlow>
+    <sequenceFlow id="toAnalysisFlow2" sourceRef="enteringClaimTask" targetRef="analysisTask"></sequenceFlow>
+    <exclusiveGateway id="endOrientationGateway" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow59" sourceRef="analysisTask" targetRef="endOrientationGateway"></sequenceFlow>
+    <sequenceFlow id="flow60" name="Refus ou demande complémentaire" sourceRef="endOrientationGateway" targetRef="enteringClaimTask"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow61" sourceRef="claimClosingTask" targetRef="exclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="backToTreatementFlow1" name="Refus ou demande complémentaire" sourceRef="exclusivegateway2" targetRef="validateTreatementGateway"></sequenceFlow>
+    <sequenceFlow id="backToTraitementFlow3" name="Refus ou demande complémentaire" sourceRef="validateTreatementGateway" targetRef="treatementTask"></sequenceFlow>
+    <sequenceFlow id="toEndFlow" sourceRef="exclusivegateway2" targetRef="endevent1"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow62" sourceRef="exclusivegateway2" targetRef="classificationTask"></sequenceFlow>
+    <textAnnotation id="textannotation1">
+      <text>Assigné au groupe Orientation réclamation </text>
+    </textAnnotation>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_claimProcess">
+    <bpmndi:BPMNPlane bpmnElement="claimProcess" id="BPMNPlane_claimProcess">
+      <bpmndi:BPMNShape bpmnElement="analysisTask" id="BPMNShape_analysisTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="186.0" y="319.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="claimClosingTask" id="BPMNShape_claimClosingTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="780.0" y="319.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="967.0" y="329.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="initialiseNCTask" id="BPMNShape_initialiseNCTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="-30.0" y="319.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startClaimProcess" id="BPMNShape_startClaimProcess">
+        <omgdc:Bounds height="35.0" width="35.0" x="-160.0" y="329.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="treatementTask" id="BPMNShape_treatementTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="427.0" y="230.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="classificationTask" id="BPMNShape_classificationTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="505.0" y="399.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="claimResponseTask" id="BPMNShape_claimResponseTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="650.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="inclusivegateway2" id="BPMNShape_inclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="682.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="textannotation1" id="BPMNShape_textannotation1">
+        <omgdc:Bounds height="50.0" width="100.0" x="131.0" y="252.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="validateTreatementGateway" id="BPMNShape_validateTreatementGateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="569.0" y="237.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="910.0" y="326.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="enteringClaimTask" id="BPMNShape_enteringClaimTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="24.0" y="425.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endOrientationGateway" id="BPMNShape_endOrientationGateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="310.0" y="326.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="dispatchTreatmentGateway" id="BPMNShape_dispatchTreatmentGateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="370.0" y="326.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="toDispatchTreatmentGateway" id="BPMNEdge_toDispatchTreatmentGateway">
+        <omgdi:waypoint x="350.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="370.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow59" id="BPMNEdge_flow59">
+        <omgdi:waypoint x="291.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="310.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow60" id="BPMNEdge_flow60">
+        <omgdi:waypoint x="330.0" y="366.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="492.0"></omgdi:waypoint>
+        <omgdi:waypoint x="102.0" y="492.0"></omgdi:waypoint>
+        <omgdi:waypoint x="76.0" y="480.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="39.0" width="100.0" x="-86.0" y="-2.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow61" id="BPMNEdge_flow61">
+        <omgdi:waypoint x="885.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="910.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toResponseWithoutTraitementFlow" id="BPMNEdge_toResponseWithoutTraitementFlow">
+        <omgdi:waypoint x="390.0" y="326.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="650.0" y="137.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="52.0" width="100.0" x="-49.0" y="2.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="startFlow" id="BPMNEdge_startFlow">
+        <omgdi:waypoint x="-125.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="-30.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toTreatmentFlow" id="BPMNEdge_toTreatmentFlow">
+        <omgdi:waypoint x="390.0" y="326.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="427.0" y="257.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="93.0" x="-49.0" y="22.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toClassificationFlow" id="BPMNEdge_toClassificationFlow">
+        <omgdi:waypoint x="390.0" y="366.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="426.0"></omgdi:waypoint>
+        <omgdi:waypoint x="505.0" y="426.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="83.0" x="-59.0" y="-39.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toResponseFlow" id="BPMNEdge_toResponseFlow">
+        <omgdi:waypoint x="589.0" y="237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="702.0" y="165.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="39.0" width="100.0" x="-44.0" y="-11.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toEndFlow" id="BPMNEdge_toEndFlow">
+        <omgdi:waypoint x="950.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="967.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toNotificationFlow" id="BPMNEdge_toNotificationFlow">
+        <omgdi:waypoint x="722.0" y="350.0"></omgdi:waypoint>
+        <omgdi:waypoint x="780.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toValidateTreatement1" id="BPMNEdge_toValidateTreatement1">
+        <omgdi:waypoint x="532.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="569.0" y="257.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toNotificationTask1" id="BPMNEdge_toNotificationTask1">
+        <omgdi:waypoint x="610.0" y="426.0"></omgdi:waypoint>
+        <omgdi:waypoint x="704.0" y="426.0"></omgdi:waypoint>
+        <omgdi:waypoint x="702.0" y="370.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toValidateTreatement2" id="BPMNEdge_toValidateTreatement2">
+        <omgdi:waypoint x="702.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="703.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="609.0" y="257.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="backToAnalysisFlow1" id="BPMNEdge_backToAnalysisFlow1">
+        <omgdi:waypoint x="589.0" y="237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="588.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="588.0" y="65.0"></omgdi:waypoint>
+        <omgdi:waypoint x="238.0" y="65.0"></omgdi:waypoint>
+        <omgdi:waypoint x="238.0" y="319.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="39.0" width="100.0" x="58.0" y="-45.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="backToTreatementFlow1" id="BPMNEdge_backToTreatementFlow1">
+        <omgdi:waypoint x="930.0" y="326.0"></omgdi:waypoint>
+        <omgdi:waypoint x="930.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="799.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="609.0" y="257.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="39.0" width="100.0" x="-19.0" y="0.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="backToTraitementFlow3" id="BPMNEdge_backToTraitementFlow3">
+        <omgdi:waypoint x="589.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="588.0" y="319.0"></omgdi:waypoint>
+        <omgdi:waypoint x="485.0" y="319.0"></omgdi:waypoint>
+        <omgdi:waypoint x="479.0" y="285.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="39.0" width="100.0" x="-52.0" y="8.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toAnalysisFlow1" id="BPMNEdge_toAnalysisFlow1">
+        <omgdi:waypoint x="75.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="186.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toAnalysisFlow2" id="BPMNEdge_toAnalysisFlow2">
+        <omgdi:waypoint x="76.0" y="425.0"></omgdi:waypoint>
+        <omgdi:waypoint x="238.0" y="374.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow62" id="BPMNEdge_flow62">
+        <omgdi:waypoint x="930.0" y="366.0"></omgdi:waypoint>
+        <omgdi:waypoint x="930.0" y="499.0"></omgdi:waypoint>
+        <omgdi:waypoint x="557.0" y="499.0"></omgdi:waypoint>
+        <omgdi:waypoint x="557.0" y="454.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,175 +1,241 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="ncwf:nonConformityModel">
-    <author>beCPG</author>
-    <version>1.0</version>
-    <imports>
-        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
-        <import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm"/>
-        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
-        <import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
-        <import uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa" />
-    </imports>
-    <namespaces>
-        <namespace uri="http://www.bcpg.fr/model/nc-workflow/1.0" prefix="ncwf"/>
-    </namespaces>
-    <data-types/>
-    <constraints/>    	
-    <types>
-        <type name="ncwf:startTask">
-            <parent>bpm:startTask</parent>
-            <properties>
-            	<property name="ncwf:batchId">
-						<type>d:text</type>
-					</property>
-            </properties>
-            <associations>            	            	
-					<association name="ncwf:product">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:product</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="ncwf:supplier">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:supplier</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-					<association name="ncwf:client">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>bcpg:client</class>
-							<mandatory>false</mandatory>
-							<many>false</many>
-						</target>
-					</association>
-            </associations>
-            <overrides>
-                <property name="bpm:packageActionGroup">
-                    <mandatory/>
-                    <default>add_package_item_actions</default>
-                    <constraints/>
-                </property>
-                <property name="bpm:packageItemActionGroup">
-                    <mandatory/>
-                    <default>edit_package_item_actions</default>
-                    <constraints/>
-                </property>                          
-            </overrides>
-        </type>
-        <type name="ncwf:analysisTask">
-            <parent>bpm:workflowTask</parent>
-            <properties>
-            	<property name="ncwf:needPrevAction">
-						<type>d:boolean</type>
-					</property>					
-            </properties>
-            <associations>
-            	<association name="ncwf:corrActionActor">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>cm:person</class>
-							<mandatory>true</mandatory>
-							<many>false</many>
-						</target>
-					</association>	
-					<association name="ncwf:checkActor">
-						<source>
-							<mandatory>false</mandatory>
-							<many>true</many>
-						</source>
-						<target>
-							<class>cm:person</class>
-							<mandatory>true</mandatory>
-							<many>false</many>
-						</target>
-					</association>	
-            </associations>  
-            <mandatory-aspects>
-            	<aspect>ncwf:correctiveAction</aspect>
-            </mandatory-aspects>
-        </type>
-        <type name="ncwf:corrActionTask">
-            <parent>bpm:workflowTask</parent>
-            <properties/>
-            <associations/>            
-            <mandatory-aspects>
-            	<aspect>ncwf:correctiveAction</aspect>
-            </mandatory-aspects>
-        </type>
-        <type name="ncwf:checkTask">
-            <parent>bpm:workflowTask</parent>
-            <properties/>
-            <associations/>           
-            <mandatory-aspects>
-            	<aspect>ncwf:correctiveAction</aspect>
-            </mandatory-aspects>
-        </type>
-        <type name="ncwf:notificationTask">
-            <parent>bpm:workflowTask</parent>
-            <properties/>
-            <associations/>            
-            <mandatory-aspects>
-            	<aspect>ncwf:correctiveAction</aspect>
-            </mandatory-aspects>
-        </type>
-        <type name="ncwf:prevActionTask">
-            <parent>bpm:workflowTask</parent>
-            <properties/>
-            <associations/>            
-            <mandatory-aspects/>
-        </type>
-        <type name="ncwf:workTask">
-            <parent>bpm:workflowTask</parent>
-            <properties>
-            	<property name="ncwf:previousComment">
-						<type>d:text</type>
-					</property>
-            </properties>
-            <associations>
-                <association name="ncwf:assignee">
-                    <source>
-                        <mandatory>false</mandatory>
-                        <many>false</many>
-                    </source>
-                    <target>
-                        <class>cm:person</class>
-                        <mandatory>false</mandatory>
-                        <many>false</many>
-                    </target>
-                </association>
-            </associations>            
-            <mandatory-aspects>            	
-            	<aspect>ncwf:correctiveAction</aspect>            	
-            </mandatory-aspects>
-        </type>
-    </types>
-    <aspects>
-    	<aspect name="ncwf:correctiveAction">
+	<author>beCPG</author>
+	<version>1.0</version>
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
+		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+		<import uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa" />
+	</imports>
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/nc-workflow/1.0" prefix="ncwf" />
+	</namespaces>
+	<data-types />
+	<constraints />
+	<types>
+		<type name="ncwf:startTask">
+			<parent>bpm:startTask</parent>
+			<properties>
+				<property name="ncwf:batchId">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="ncwf:product">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="ncwf:supplier">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:supplier</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="ncwf:client">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:client</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<overrides>
+				<property name="bpm:packageActionGroup">
+					<mandatory />
+					<default>add_package_item_actions</default>
+					<constraints />
+				</property>
+				<property name="bpm:packageItemActionGroup">
+					<mandatory />
+					<default>edit_package_item_actions</default>
+					<constraints />
+				</property>
+			</overrides>
+		</type>
+		<type name="ncwf:analysisTask">
+			<parent>bpm:workflowTask</parent>
+			<properties>
+				<property name="ncwf:needPrevAction">
+					<type>d:boolean</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="ncwf:corrActionActor">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="ncwf:checkActor">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>ncwf:correctiveAction</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="ncwf:corrActionTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<mandatory-aspects>
+				<aspect>ncwf:correctiveAction</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="ncwf:checkTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<mandatory-aspects>
+				<aspect>ncwf:correctiveAction</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="ncwf:notificationTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<mandatory-aspects>
+				<aspect>ncwf:correctiveAction</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="ncwf:prevActionTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<mandatory-aspects />
+		</type>
+		<type name="ncwf:workTask">
+			<parent>bpm:workflowTask</parent>
+			<properties>
+				<property name="ncwf:previousComment">
+					<type>d:text</type>
+				</property>
+			</properties>
+			<associations>
+				<association name="ncwf:assignee">
+					<source>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>ncwf:correctiveAction</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="ncwf:claimStartTask">
+			<parent>bpm:startTask</parent>
+			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects>
+				<aspect>bpm:assignee</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="ncwf:claimAnalysisTask">
+			<parent>bpm:workflowTask</parent>
+			<properties>
+				<property name="ncwf:claimTreatmentDueDate">
+					<title>Délai maximum demandé pour le Traitement</title>
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="ncwf:claimResponseDueDate">
+					<title>Délai maximum demandé pour la Réponse</title>
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</type>
+		<type name="ncwf:claimTreatmentTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</type>
+		<type name="ncwf:claimResponseTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</type>
+		<type name="ncwf:claimClosingTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</type>
+		<type name="ncwf:claimClassificationTask">
+			<parent>bpm:workflowTask</parent>
+			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</type>
+
+	</types>
+	<aspects>
+		<aspect name="ncwf:correctiveAction">
 			<properties>
 				<property name="ncwf:ncState">
-						<type>d:text</type>
-						<constraints>
-							<constraint ref="qa:ncStates" />
-						</constraints>
-					</property>
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:ncStates" />
+					</constraints>
+				</property>
 			</properties>
 		</aspect>
-    </aspects>
+	</aspects>
 </model>
