@@ -1,24 +1,22 @@
 
 <@markup id="css" >
-   <#-- CSS Dependencies -->
-   <#include "../form/form.css.ftl"/>
-   <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-datagrid/entity-datagrid.css" group="entity-datagrid" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/custom-entity-datagrid/entity-datagrid.css" group="entity-datagrid" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datagrid" />
+   <#include "./include/entity-datagrid.css.ftl"/>
+   
+	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datagrid" />
 </@>
 
 <@markup id="js">
-   <#-- JavaScript Dependencies -->
-   <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/columnRenderers.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="entity-datagrid"></@script>
+  <#include "./include/entity-datagrid.js.ftl"/>
 	
-	<@script type="text/javascript" src="${url.context}/res/yui/swf/swf.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/yui/charts/charts.js" group="entity-datagrid"></@script>
-	<@script type="text/javascript" src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datagrid"></@script>
+	<@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
+	<@script src="${url.context}/res/yui/swf/swf.js" group="entity-datagrid"></@script>
+	<@script src="${url.context}/res/yui/charts/charts.js" group="entity-datagrid"></@script>
+	<@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datagrid"></@script>
+</@>
+
+
+<@markup id="widgets">
+  	<@createWidgets group="entity-datagrid"/>
 </@>
 
 
@@ -33,52 +31,6 @@
 		<div id="toolbar-contribs-${el}" style="display:none;">
 			<@dataGridToolbar  toolbarId=el />
 		</div>
-		<script type="text/javascript">//<![CDATA[
-		(function() {
-		
-			new beCPG.module.EntityDataGrid('${el}').setOptions(
-			   {
-			      siteId: "${page.url.templateArgs.site!""}",
-			      usePagination: ${(args.pagination!false)?string},
-			      useFilter: ${(args.filter!false)?string},
-				   entityNodeRef: "${page.url.args.nodeRef!""}",
-				   list: "${page.url.args.list!""}",
-				   sortable : true,
-					sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
-				   dataUrl : Alfresco.constants.PROXY_URI + "${(args.dataUrl!"slingshot/datalists/data/node/")}",
-				   itemUrl : Alfresco.constants.PROXY_URI + "${(args.itemUrl!"slingshot/datalists/data/item/")}",
-				   saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save"
-			   }).setMessages(${messages});
-		
-			var Dom = YAHOO.util.Dom;
-			//Toolbar contribs
-			var controls = Dom.getChildren("toolbar-contribs-${el}")
-		   for(var el in controls){
-		   	(new  YAHOO.util.Element("toolbar-contribs")).appendChild(controls[el]);
-		   }
-		   
-		    
-		    // Initialize the browser history management library
-		    YAHOO.Bubbling.on("dataGridReady", function (layer, args){
-				  try {
-					      YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
-				      } catch (e2) {
-					      	/*
-								* The only exception that gets thrown here is when the
-								* browser is not supported (Opera, or not A-grade)
-								*/
-					        Alfresco.logger.error(this.name + ": Couldn't initialize HistoryManager.", e2);
-					        var obj = args[1];
-			              if ((obj !== null) && (obj.entityDataGridModule !== null))
-			              {
-							     obj.entityDataGridModule.onHistoryManagerReady();
-							  }
-					}
-				});
-		  
-		})();
-		//]]>
-		</script>
 		<@entityDataGrid/>
 		</@>
 </@>

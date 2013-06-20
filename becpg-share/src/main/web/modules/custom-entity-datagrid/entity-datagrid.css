@@ -1,105 +1,22 @@
-/* Data Types */
-.datagrid span.finishedProduct {
-	background:
-		url(../../components/images/filetypes/generic-finishedProduct-16.png)
+.datagrid span.nc {
+	background: url(../../components/images/filetypes/generic-nc-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid span.localSemiFinishedProduct {
-	background:
-		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.packagingKit {
-	background:
-		url(../../components/images/filetypes/generic-packagingKit-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.packagingMaterial {
-	background:
-		url(../../components/images/filetypes/generic-packagingMaterial-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.rawMaterial {
-	background:
-		url(../../components/images/filetypes/generic-rawMaterial-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.semiFinishedProduct {
-	background:
-		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-/** --- **/
-.datagrid span.finishedProduct-ToValidate {
-	background:
-		url(../../components/images/filetypes/generic-finishedProduct-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.localSemiFinishedProduct-ToValidate {
-	background:
-		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.packagingKit-ToValidate {
-	background:
-		url(../../components/images/filetypes/generic-packagingKit-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.packagingMaterial-ToValidate {
-	background:
-		url(../../components/images/filetypes/generic-packagingMaterial-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.rawMaterial-ToValidate {
-	background:
-		url(../../components/images/filetypes/generic-rawMaterial-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid span.semiFinishedProduct-ToValidate {
-	background:
-		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid  span.resourceProduct-ToValidate {
+.datagrid span.resourceProduct-ToValidate {
 	background:
 		url(../../components/images/filetypes/generic-resourceProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-/** --- **/
 .datagrid span.finishedProduct-Valid {
 	background: url(../../components/images/states/valid-16.png),
 		url(../../components/images/filetypes/generic-finishedProduct-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.localSemiFinishedProduct-Valid {
@@ -108,8 +25,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.packagingKit-Valid {
@@ -118,8 +33,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.packagingMaterial-Valid {
@@ -128,8 +41,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.rawMaterial-Valid {
@@ -138,8 +49,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.semiFinishedProduct-Valid {
@@ -148,8 +57,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.resourceProduct-Valid {
@@ -158,19 +65,14 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
-/* Archived */
 .datagrid span.finishedProduct-Archived {
 	background: url(../../components/images/states/archived-16.png),
 		url(../../components/images/filetypes/generic-finishedProduct-16.png);
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.localSemiFinishedProduct-Archived {
@@ -179,8 +81,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.packagingKit-Archived {
@@ -189,8 +89,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.packagingMaterial-Archived {
@@ -199,8 +97,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.rawMaterial-Archived {
@@ -209,8 +105,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.semiFinishedProduct-Archived {
@@ -219,8 +113,6 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
 .datagrid span.resourceProduct-Archived {
@@ -229,14 +121,9 @@
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
 	padding-left: 20px;
-	background-repeat: no-repeat;
-	background-position: 8px 2px, 0 0;
 }
 
-/** Refused **/
-.datagrid span.finishedProduct-Refused,.datagrid span.localSemiFinishedProduct-Refused,
-.datagrid span.packagingKit-Refused,.datagrid span.packagingMaterial-Refused,
-.datagrid span.rawMaterial-Refused,.datagrid span.semiFinishedProduct-Refused,.datagrid span.resourceProduct-Refused
+.datagrid span.finishedProduct-Refused,.datagrid span.localSemiFinishedProduct-Refused,.datagrid span.packagingKit-Refused,.datagrid span.packagingMaterial-Refused,.datagrid span.rawMaterial-Refused,.datagrid span.semiFinishedProduct-Refused,.datagrid span.resourceProduct-Refused
 	{
 	background: url(../../components/images/states/stop-16.png);
 	background-repeat: no-repeat;
@@ -244,12 +131,10 @@
 	padding-left: 20px;
 }
 
-/* Allergens */
 .datagrid .presentAllergen {
 	color: red;
 }
 
-/* reqType */
 .datagrid .reqTypeForbidden,.datagrid span.dynaAccessDenied {
 	background: url(../../components/images/states/stop-16.png) no-repeat;
 	padding-left: 20px;
@@ -265,7 +150,6 @@
 	padding-left: 20px;
 }
 
-/* quality */
 .datagrid .controlPoint {
 	background: url(../../components/images/quality/sample-16.png) no-repeat;
 	padding-left: 20px;
@@ -277,174 +161,168 @@
 	padding-left: 20px;
 }
 
-/* group */
 .datagrid .userGroup {
 	background: url(../../components/images/filetypes/generic-group-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-/* charact */
-.datagrid  span.client {
+.datagrid span.client {
 	background: url(../../components/images/filetypes/generic-client-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.supplier {
+.datagrid span.supplier {
 	background:
 		url(../../components/images/filetypes/generic-supplier-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.allergen {
+.datagrid span.allergen {
 	background:
 		url(../../components/images/filetypes/generic-allergen-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.bioOrigin {
+.datagrid span.bioOrigin {
 	background:
 		url(../../components/images/filetypes/generic-bioOrigin-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.geoOrigin {
+.datagrid span.geoOrigin {
 	background:
 		url(../../components/images/filetypes/generic-geoOrigin-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.cost {
+.datagrid span.cost {
 	background: url(../../components/images/filetypes/generic-cost-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.geo {
+.datagrid span.geo {
 	background: url(../../components/images/filetypes/generic-geo-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.ing {
+.datagrid span.ing {
 	background: url(../../components/images/filetypes/generic-ing-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.microbio {
+.datagrid span.microbio {
 	background:
 		url(../../components/images/filetypes/generic-microbio-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.organo {
+.datagrid span.organo {
 	background: url(../../components/images/filetypes/generic-organo-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.physicoChem {
+.datagrid span.physicoChem {
 	background:
 		url(../../components/images/filetypes/generic-physicoChem-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.nut {
+.datagrid span.nut {
 	background: url(../../components/images/filetypes/generic-nut-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.aclEntry {
+.datagrid span.aclEntry {
 	background:
 		url(../../components/images/filetypes/generic-aclEntry-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.task {
+.datagrid span.task {
 	background: url(../../components/images/filetypes/generic-task-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.task-milestone {
+.datagrid span.task-milestone {
 	background:
 		url(../../components/images/filetypes/generic-task-milestone-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.task-planned {
+.datagrid span.task-planned {
 	background:
 		url(../../components/documentlibrary/indicators/project-planned-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.task-inprogress {
+.datagrid span.task-inprogress {
 	background:
 		url(../../components/documentlibrary/indicators/project-inprogress-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.task-cancelled {
+.datagrid span.task-cancelled {
 	background:
 		url(../../components/documentlibrary/indicators/project-cancelled-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.task-onhold {
+.datagrid span.task-onhold {
 	background:
 		url(../../components/documentlibrary/indicators/project-onhold-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid  span.task-completed {
+.datagrid span.task-completed {
 	background:
 		url(../../components/documentlibrary/indicators/project-completed-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid-bar .onActionShowDetails {
+.datagrid-bar .onActionShowDetails,.datagrid .onActionShowDetails a {
 	background-image: url(../../components/images/show-details-16.png);
 }
 
-.datagrid .onActionShowDetails a {
-	background-image: url(../../components/images/show-details-16.png);
+.datagrid-bar .onActionShowComments,.datagrid .onActionShowComments a {
+	background-image: url(../../components/images/comment-16.png);
 }
 
 .datagrid span.document-version {
-	margin-left: 0.8em;
-	padding: 1px;
+	margin-left: .8em;
 	position: relative;
 	top: -2px;
 	visibility: hidden;
+	padding: 1px;
 }
 
-.datagrid  .yui-dt-highlighted span.document-version {
+.datagrid .yui-dt-highlighted span.document-version {
 	visibility: visible;
 }
 
-.datagrid  div.scoreList-screening {
+.datagrid div.scoreList-screening {
 	height: 150px;
 	overflow: auto;
-}
-
-.datagrid span.variant-common {
-	
 }
 
 .datagrid span.variant {
@@ -457,4 +335,50 @@
 	background: url(../../components/images/enabled-indicator-on-16.png)
 		no-repeat;
 	padding-left: 14px;
+}
+
+.datagrid span.finishedProduct,.datagrid span.finishedProduct-ToValidate
+	{
+	background:
+		url(../../components/images/filetypes/generic-finishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.localSemiFinishedProduct,.datagrid span.localSemiFinishedProduct-ToValidate
+	{
+	background:
+		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.packagingKit,.datagrid span.packagingKit-ToValidate {
+	background:
+		url(../../components/images/filetypes/generic-packagingKit-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.packagingMaterial,.datagrid span.packagingMaterial-ToValidate
+	{
+	background:
+		url(../../components/images/filetypes/generic-packagingMaterial-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.rawMaterial,.datagrid span.rawMaterial-ToValidate {
+	background:
+		url(../../components/images/filetypes/generic-rawMaterial-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.semiFinishedProduct,.datagrid span.semiFinishedProduct-ToValidate
+	{
+	background:
+		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
 }

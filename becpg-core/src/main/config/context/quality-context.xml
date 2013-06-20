@@ -4,55 +4,23 @@
 <beans>
     
     <!-- Quality -->
-    <bean id="controlPlanDAO" class="fr.becpg.repo.quality.impl.ControlPlanDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="entityListDAO" ref="entityListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>			
-    <bean id="controlPointDAO" class="fr.becpg.repo.quality.impl.ControlPointDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="entityListDAO" ref="entityListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>
-    <bean id="qualityControlDAO" class="fr.becpg.repo.quality.impl.QualityControlDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="entityListDAO" ref="entityListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>
-    <bean id="workItemAnalysisDAO" class="fr.becpg.repo.quality.impl.WorkItemAnalysisDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="entityListDAO" ref="entityListDAO"/>
-    	<property name="associationService" ref="associationService"/>
-    </bean>
+   
     <bean id="qualityControlService" class="fr.becpg.repo.quality.impl.QualityControlServiceImpl">
     	<property name="nodeService" ref="nodeService"/>
-    	<property name="controlPlanDAO" ref="controlPlanDAO"/>
-    	<property name="controlPointDAO" ref="controlPointDAO"/>
-    	<property name="qualityControlDAO" ref="qualityControlDAO"/>
-    	<property name="workItemAnalysisDAO" ref="workItemAnalysisDAO"/>
-    	<property name="alfrescoRepository" ref="alfrescoRepository" />
-    	<property name="repoService" ref="repoService"/>
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
     </bean>    
     <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="qualityControlService" ref="qualityControlService" />		
 	</bean>
-	<bean id="nonConformityDAO" class="fr.becpg.repo.quality.impl.NonConformityDAOImpl">
-    	<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="entityListDAO" ref="entityListDAO"/>
-    </bean>
+
     <bean id="nonConformityService" class="fr.becpg.repo.quality.impl.NonConformityServiceImpl">
 		<property name="repoService" ref="repoService" />				
 		<property name="repositoryHelper" ref="repositoryHelper" />				
 	</bean>
     <bean id="nonConformityPolicies" class="fr.becpg.repo.quality.policy.NonConformityPolicies" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
-		<property name="nonConformityDAO" ref="nonConformityDAO" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nonConformityService" ref="nonConformityService" />					
 	</bean>	
    <!-- Extractor -->
@@ -62,7 +30,7 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityService" ref="entityService"/>
-		<property name="nonConformityDAO" ref="nonConformityDAO"/>		
+		<property name="alfrescoRepository" ref="alfrescoRepository" />	
 		<property name="versionService" ref="versionService"/>	
 	</bean>	
 	<bean id="defaultNonConformityExtractorPlugin" class="fr.becpg.repo.report.entity.ExtractorPlugin" init-method="init">

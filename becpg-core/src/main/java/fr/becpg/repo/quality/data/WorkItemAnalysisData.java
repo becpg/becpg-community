@@ -4,14 +4,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
+@AlfType
+@AlfQname(qname = "qa:workItemAnalysis")
 public class WorkItemAnalysisData extends BeCPGDataObject {
 
-	
 	List<ControlListDataItem> controlList = new LinkedList<ControlListDataItem>();
-	
 
+	@DataList
+	@AlfQname(qname = "qa:controlList")
 	public List<ControlListDataItem> getControlList() {
 		return controlList;
 	}
@@ -19,9 +24,9 @@ public class WorkItemAnalysisData extends BeCPGDataObject {
 	public void setControlList(List<ControlListDataItem> controlList) {
 		this.controlList = controlList;
 	}
-	
-	public WorkItemAnalysisData(){
-		
+
+	public WorkItemAnalysisData() {
+
 	}
 
 	@Override
@@ -53,6 +58,5 @@ public class WorkItemAnalysisData extends BeCPGDataObject {
 	public String toString() {
 		return "WorkItemAnalysisData [controlList=" + controlList + "]";
 	}
-	
-	
+
 }

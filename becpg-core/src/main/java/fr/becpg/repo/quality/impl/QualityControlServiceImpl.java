@@ -14,8 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.BeCPGDao;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -29,6 +27,7 @@ import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 public class QualityControlServiceImpl implements QualityControlService {
 
@@ -38,60 +37,25 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private static final long HOUR = 3600*1000; // in milli-seconds.
 	
 	private NodeService nodeService;
-	private BeCPGDao<QualityControlData> qualityControlDAO;
-	private BeCPGDao<ControlPlanData> controlPlanDAO;
-	private BeCPGDao<ControlPointData> controlPointDAO;
-	private BeCPGDao<WorkItemAnalysisData> workItemAnalysisDAO;
-	private AlfrescoRepository<ProductData> alfrescoRepository;
-	private RepoService repoService;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
 		
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 	
-	
-	
-	public void setQualityControlDAO(BeCPGDao<QualityControlData> qualityControlDAO) {
-		this.qualityControlDAO = qualityControlDAO;
-	}
-
-
-
-	public void setControlPlanDAO(BeCPGDao<ControlPlanData> controlPlanDAO) {
-		this.controlPlanDAO = controlPlanDAO;
-	}
-
-
-
-	public void setControlPointDAO(BeCPGDao<ControlPointData> controlPointDAO) {
-		this.controlPointDAO = controlPointDAO;
-	}
-
-
-
-	public void setWorkItemAnalysisDAO(
-			BeCPGDao<WorkItemAnalysisData> workItemAnalysisDAO) {
-		this.workItemAnalysisDAO = workItemAnalysisDAO;
-	}
-
-	
-
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
 
-
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
 
 	@Override
 	public void createSamplingList(NodeRef qcNodeRef, NodeRef controlPlanNodeRef) {
 		
 		logger.debug("createSamplingList");
 		
-		QualityControlData qualityControlData = qualityControlDAO.find(qcNodeRef);
+		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
 		
 		// TODO gérer les controles qui ne sont pas fait sur un produit (ex: vérif résidu désinfectant cuve,etc...)
 		// TODO optimiser le chargement des datalists...		
@@ -102,7 +66,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		
 			logger.debug("createSamplingList - load product");
 
-			productData = alfrescoRepository.findOne(qualityControlData.getProduct());
+			productData = (ProductData) alfrescoRepository.findOne(qualityControlData.getProduct());
 			
 			// load microbio
 			List<AssociationRef> controlPointAssocRefs = nodeService.getTargetAssocs(qualityControlData.getProduct(), BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
@@ -110,7 +74,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 			if(!controlPointAssocRefs.isEmpty()){
 				NodeRef productMicrobioCriteriaNodeRef = (controlPointAssocRefs.get(0)).getTargetRef();
 				
-				productMicrobioCriteriaData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);				
+				productMicrobioCriteriaData = (ProductData) alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);				
 				productData.setMicrobioList(productMicrobioCriteriaData.getMicrobioList());
 			}			
 		}		
@@ -118,7 +82,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		createSamples(qualityControlData, controlPlanNodeRef, productData);
 		
 		logger.debug("save qualityControl, name: " + qualityControlData.getName());
-		qualityControlDAO.update(qcNodeRef, qualityControlData);
+		alfrescoRepository.create(qcNodeRef, qualityControlData);
 		
 	}
 	
@@ -135,7 +99,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		Integer batchDuration = qualityControlData.getBatchDuration();
 		
 		logger.debug("load control plan");
-		ControlPlanData controlPlanData = controlPlanDAO.find(controlPlanNodeRef);
+		ControlPlanData controlPlanData = (ControlPlanData) alfrescoRepository.findOne(controlPlanNodeRef);
 		
 		logger.debug("control plan loaded, controlPlanData.getSamplingDefList(): " + controlPlanData.getSamplingDefList());
 		
@@ -180,7 +144,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 						samplesCounter++;
 						String sampleId = batchId + BATCH_SEPARATOR + samplesCounter;
 						
-						samplingList.add(new SamplingListDataItem(null, 
+						samplingList.add(new SamplingListDataItem(
 										sampleDateTime, 
 										sampleId, 
 										null, 
@@ -214,7 +178,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private void prepareWorkItemAnalysis(SamplingDefListDataItem sdl, String sampleId, WorkItemAnalysisData wiaData, ProductData productData){
 		
 		// get control point and create control list
-		ControlPointData controlPointData = controlPointDAO.find(sdl.getControlPoint());
+		ControlPointData controlPointData = (ControlPointData) alfrescoRepository.findOne(sdl.getControlPoint());
 		
 		logger.debug("prepareWorkItemAnalysis, controlPointData.getControlDefList(): " + controlPointData.getControlDefList());
 		
@@ -287,7 +251,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 			wiaData.setName(name);
 			
 			// TODO manage update ? or create another work item Analyses - RD - 1 puis 2, etc...			
-			workItemAnalysisDAO.create(qualityControlNodeRef, wiaData);
+			alfrescoRepository.create(qualityControlNodeRef, wiaData);
 		}
 	}
 }

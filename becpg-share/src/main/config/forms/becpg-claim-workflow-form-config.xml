@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alfresco-config>
+	<config condition="activiti$claimProcess" evaluator="string-compare" replace="false">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:workflowDueDate" />
+					<show force="false" id="bpm:workflowPriority" />
+					<show force="false" id="bpm:workflowDescription" />
+					<show force="true" id="bcpg:clients" />
+					<show force="true" id="qa:orderId" />
+					<show force="true" id="qa:claimSource" />
+					<show force="true" id="qa:claimDistributionNetwork" />
+					<show force="true" id="qa:claimCustomerInformation" />
+					<show force="true" id="qa:claimTradeContact" />
+					<show force="true" id="qa:product" />
+					<show force="true" id="qa:productUseByDate" />
+					<show force="true" id="qa:claimTradeContactCheck" />
+					<show force="true" id="qa:claimTracking" />
+					<show force="false" id="packageItems" />
+					<show force="false" id="bpm:sendEMailNotifications" />
+				</field-visibility>
+				<appearance>
+					<set appearance="title" id="main" label-id="workflow.set.general" />
+
+					<field id="bpm:workflowDescription" label-id="workflow.field.message" mandatory="false" read-only="false" set="main">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>
+
+					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="main">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="qa:orderId" mandatory="false" read-only="false" set="main" />
+					<field id="qa:claimSource" mandatory="false" read-only="false" set="main" />
+					<field id="qa:claimDistributionNetwork" mandatory="false" read-only="false" set="main" />
+					<field id="qa:claimCustomerInformation" mandatory="false" read-only="false" set="main" />
+					<field id="qa:claimTradeContact" mandatory="false" read-only="false" set="main" />
+					<field id="qa:product" mandatory="false" read-only="false" set="main" />
+
+					<field id="qa:productUseByDate" mandatory="false" read-only="false" set="main" />
+
+					<field id="qa:claimTradeContactCheck" mandatory="false" read-only="false" set="main" />
+					<field id="qa:claimTracking" mandatory="false" read-only="false" set="main" />
+
+					<set id="info" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bpm:workflowDueDate" label-id="workflow.field.due" mandatory="false" read-only="false" set="info" />
+					<field id="bpm:workflowPriority" label-id="workflow.field.priority" mandatory="false" read-only="false" set="info">
+						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+
+
+					<set appearance="title" id="items" label-id="workflow.set.items" />
+					<field id="packageItems" mandatory="false" read-only="false" set="items" />
+
+					<set appearance="title" id="other" label-id="workflow.set.other" />
+					<field id="bpm:sendEMailNotifications" mandatory="false" read-only="false" set="other">
+						<control template="/org/alfresco/components/form/controls/workflow/email-notification.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="ncwf:claimStartTask" evaluator="task-type" replace="true">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:packageActionGroup" />
+					<show force="false" id="bpm:packageItemActionGroup" />
+				</field-visibility>
+				<appearance>
+					<field id="bpm:packageActionGroup" mandatory="false" read-only="false" />
+					<field id="bpm:packageItemActionGroup" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="ncwf:claimAnalysisTask" evaluator="task-type" replace="true">
+		<forms>
+			<form>
+				<field-visibility>
+					<hide id="bpm:packageItemActionGroup" />
+					<show id="message" />
+					<show id="taskOwner" />
+					<show id="bpm:priority" />
+					<show id="bpm:dueDate" />
+					<show id="bpm:taskId" />
+               <show id="bpm:status" />
+               <show id="packageItems" />
+               
+               <show force="true" id="bcpg:clients" />
+					<show force="true" id="qa:orderId" />
+					<show force="true" id="qa:claimSource" />
+					<show force="true" id="qa:claimDistributionNetwork" />
+					<show force="true" id="qa:claimCustomerInformation" />
+					<show force="true" id="qa:claimTradeContact" />
+					<show force="true" id="qa:product" />
+					<show force="true" id="qa:productUseByDate" />
+					<show force="true" id="qa:claimTradeContactCheck" />
+					<show force="true" id="qa:claimTracking" />
+               
+               
+					<show force="true" id="qa:claimTreatmentActor" />
+					<show force="false" id="ncwf:claimTreatmentDueDate" />
+					
+					<show force="true" id="qa:claimResponseActor" />
+					<show force="false" id="ncwf:claimResponseDueDate" />
+					
+					<show force="true" id="ncwf:claimRejectedState" />
+					<show force="true" id="ncwf:claimRejectedCause" />
+					<show force="false" id="bpm:comment" />
+					<show id="transitions" />
+				</field-visibility>
+				<appearance>
+					<set id="" appearance="title" label-id="workflow.set.task.info" />
+					<set id="info" appearance="" template="/org/alfresco/components/form/3-column-set.ftl" />
+					<set id="progress" appearance="title" label-id="workflow.set.task.progress" />
+					<set id="items" appearance="title" label-id="workflow.set.items" />
+					<set id="analysis" appearance="title" label="Orientation" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="rejected" appearance="title" label="Refus ou demande complémentaire" />
+					<set id="response" appearance="title" label-id="workflow.set.response" />
+
+					<field id="message">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="taskOwner" set="info" />
+					<field id="bpm:taskId" set="info">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="bpm:priority" set="info" read-only="true">
+						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="bpm:dueDate" set="info" label-id="workflow.field.due">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					
+					<field id="bcpg:clients" label="Client" set="info" read-only="true">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:orderId" mandatory="false" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:claimSource" mandatory="false" set="info" read-only="true">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:claimDistributionNetwork" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:claimCustomerInformation" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:claimTradeContact" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:product" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:productUseByDate" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:claimTradeContactCheck" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:claimTracking" set="info" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					
+					
+					<field id="qa:claimResponseActor"  set="analysis" mandatory="false" read-only="false" />
+					<field id="qa:claimTreatmentActor" set="analysis" mandatory="false" read-only="false" />
+					<field id="ncwf:claimTreatmentDueDate" set="analysis" mandatory="false" read-only="false" />
+					<field id="ncwf:claimResponseDueDate" set="analysis" mandatory="false" read-only="false" />
+					
+					<field id="bpm:status" set="progress" />
+					<field id="packageItems" set="items" />
+
+					<field id="ncwf:claimRejectedState"  set="rejected" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">none|Aucun refus,entry|Saisie refusé</control-param>
+						</control>
+					</field>
+					<field id="ncwf:claimRejectedCause" set="rejected" mandatory="false" read-only="false" />
+					
+				   <field id="bpm:comment" label-id="workflow.field.comment" set="response">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>
+               <field id="transitions" set="response" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="ncwf:claimTreatmentTask" evaluator="task-type" replace="true">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:packageItemActionGroup" />
+					<show force="false" id="qa:claimTreatementDetails" />
+					<show force="false" id="bpm:comment" />
+					<show force="false" id="ncwf:claimRejectedCause" />
+					<show force="false" id="ncwf:claimRejectedState" />
+				</field-visibility>
+				<appearance>
+					<field id="bpm:packageItemActionGroup" mandatory="false" read-only="false" />
+					<field id="qa:claimTreatementDetails" mandatory="false" read-only="false" />
+					<field id="bpm:comment" mandatory="false" read-only="false" />
+					<field id="ncwf:claimRejectedCause" mandatory="false" read-only="false" />
+					<field id="ncwf:claimRejectedState" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">none|Aucun refus,analysis|Orientation refusé</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="ncwf:claimResponseTask" evaluator="task-type" replace="true">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:packageItemActionGroup" />
+					<show force="false" id="qa:claimResponseState" />
+					<show force="false" id="qa:claimResponseDetails" />
+					<show force="false" id="ncwf:claimRejectedCause" />
+					<show force="false" id="ncwf:claimRejectedState" />
+				</field-visibility>
+				<appearance>
+					<field id="bpm:packageItemActionGroup" mandatory="false" read-only="false" />
+					<field id="qa:claimResponseState" mandatory="false" read-only="false" />
+					<field id="qa:claimResponseDetails" mandatory="false" read-only="false" />
+					<field id="ncwf:claimRejectedCause" mandatory="false" read-only="false" />
+					<field id="ncwf:claimRejectedState" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">none|Aucun refus,analysis|Orientation refusé, treatment|Traitement refusé</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="ncwf:claimClosingTask" evaluator="task-type" replace="true">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:packageItemActionGroup" />
+					<show force="false" id="bpm:comment" />
+					<show force="false" id="ncwf:claimRejectedCause" />
+					<show force="false" id="ncwf:claimRejectedState" />
+				</field-visibility>
+				<appearance>
+					<field id="bpm:packageItemActionGroup" mandatory="false" read-only="false" />
+					<field id="bpm:comment" mandatory="false" read-only="false" />
+					<field id="ncwf:claimRejectedCause" mandatory="false" read-only="false" />
+					<field id="ncwf:claimRejectedState" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">none|Aucun refus,analysis|Orientation refusé, treatment|Traitement refusé,response|Réponse refusé, classification|Classification refusé</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="ncwf:claimClassificationTask" evaluator="task-type" replace="true">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:packageItemActionGroup" />
+					<show force="false" id="qa:claimType" />
+					<show force="false" id="qa:product" />
+					<show force="false" id="bpm:comment" />
+				</field-visibility>
+				<appearance>
+					<field id="bpm:packageItemActionGroup" mandatory="false" read-only="false" />
+					<field id="qa:claimType" mandatory="false" read-only="false" />
+					<field id="qa:product" mandatory="false" read-only="false" />
+					<field id="bpm:comment" mandatory="false" read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+</alfresco-config>

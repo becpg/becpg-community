@@ -160,24 +160,3 @@
 	clear: both;
 	margin-bottom: 0.5em;
 }
-
-/* Forms */
-.form-container .form-fields {
-	border-bottom: medium none;
-	padding: 1em;
-}
-
-/* Details Form */
-.form-container .edit-dataitem a {
-	background: transparent url("../images/edit-metadata-16.png") no-repeat
-		12px 4px;
-	padding-left: 32px;
-}
-
-.form-container .yui-u {
-	margin-left: 0px;
-}
-
-.alfresco-share .yui-panel .bd .form-container .yui-u.first {
-	text-align: left;
-}
