@@ -205,9 +205,6 @@
                     <constraints/>
                 </property>
             </overrides>
-             <mandatory-aspects>
-            	<aspect>ncwf:claimRejectedAspect</aspect>
-            </mandatory-aspects>
         </type>
         <type name="ncwf:claimAnalysisTask">
             <title>Orientation réclamation</title>
@@ -237,6 +234,9 @@
             <associations/>
             <overrides/>
             <mandatory-aspects>
+            	<aspect>qa:claimAspect</aspect>
+            	<aspect>qa:claimTreatementAspect</aspect>
+            	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
             </mandatory-aspects>
         </type>
@@ -247,6 +247,9 @@
             <associations/>
             <overrides/>
             <mandatory-aspects>
+            	<aspect>qa:claimAspect</aspect>
+            	<aspect>qa:claimTreatementAspect</aspect>
+            	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
             </mandatory-aspects>
         </type>
@@ -257,6 +260,9 @@
             <associations/>
             <overrides/>
              <mandatory-aspects>
+             	<aspect>qa:claimAspect</aspect>
+            	<aspect>qa:claimTreatementAspect</aspect>
+            	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
             </mandatory-aspects>
         </type>
@@ -267,6 +273,10 @@
             <associations/>
             <overrides/>
              <mandatory-aspects>
+               <aspect>qa:claimAspect</aspect>
+            	<aspect>qa:claimTreatementAspect</aspect>
+            	<aspect>qa:claimResponseAspect</aspect>
+            	<aspect>qa:claimClosingAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
             </mandatory-aspects>
         </type>
@@ -277,7 +287,7 @@
             <associations/>
             <overrides/>
              <mandatory-aspects>
-            	<aspect>ncwf:claimRejectedAspect</aspect>
+             	<aspect>qa:claimAspect</aspect>
             </mandatory-aspects>
         </type>
     </types>
