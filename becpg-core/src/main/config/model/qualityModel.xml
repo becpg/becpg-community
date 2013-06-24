@@ -634,6 +634,7 @@
                     <index enabled="true"/>
                 </property>
                 <property name="qa:productUseByDate">
+                	  <title>DLC produit</title>
                     <type>d:date</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -802,7 +803,7 @@
                 <property name="qa:claimTreatementDate">
                     <title>Date traitement</title>
                     <type>d:date</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>
                         <stored>false</stored>
@@ -812,7 +813,7 @@
                 <property name="qa:claimTreatementDetails">
                     <title>Détails du traitement effectué (analyse des causes, traçabilité)</title>
                     <type>d:text</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>
                         <stored>false</stored>
@@ -824,9 +825,9 @@
                 <association name="qa:claimTreatmentActor">
                     <title>Pilote étape Traitement</title>
                     <description>Une étape Traitement (recherches des causes, traçabilité…) est elle à effectuer ?</description>
-                    <source>
+                     <source>
                         <mandatory>false</mandatory>
-                        <many>false</many>
+                        <many>true</many>
                     </source>
                     <target>
                         <class>cm:person</class>
@@ -844,7 +845,7 @@
                 <property name="qa:claimResponseDate">
                     <title>Date réponse</title>
                     <type>d:date</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>
                         <stored>false</stored>
@@ -854,7 +855,7 @@
                 <property name="qa:claimResponseState">
                     <title>Etat réponse</title>
                     <type>d:text</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>
                         <stored>false</stored>
@@ -867,7 +868,7 @@
                 <property name="qa:claimResponseDetails">
                     <title>Réponse apportée( à détailler de façon formalisée en quelques phrases, sans abréviation - si besoin, préciser juste "cf pièce jointe"))</title>
                     <type>d:text</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>
                         <stored>false</stored>
@@ -879,9 +880,9 @@
                 <association name="qa:claimResponseActor">
                     <title>Pilote étape Réponse</title>
                     <description>Une étape Réponse sera-t-elle à effectuer ?</description>
-                    <source>
+                     <source>
                         <mandatory>false</mandatory>
-                        <many>false</many>
+                        <many>true</many>
                     </source>
                     <target>
                         <class>cm:person</class>
