@@ -123,6 +123,7 @@
 			<workflow name="jbpm$wf:review" />
 			<workflow name="jbpm$wf:parallelreview" />
 			<workflow name="jbpm$bcpgwf:productValidationWF" />
+			<workflow name="jbpm$npdwf:newProductDevelopmentWF" />			
 		</hidden-workflows>
 	</config>
 
