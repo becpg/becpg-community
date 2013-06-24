@@ -324,7 +324,7 @@
                     </constraints>
                 </property>
                 <property name="ncwf:claimRejectedCause">
-                    <title>Motif de "refus ou demande complémentaire"</title>
+                    <title>Motif de refus ou demande complémentaire</title>
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">

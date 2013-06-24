@@ -666,7 +666,7 @@
                 <property name="qa:claimSource">
                     <title>Source de la remontée</title>
                     <type>d:text</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true"/>
                     <constraints>
                         <constraint ref="qa:claimSources"/>
@@ -704,7 +704,7 @@
                 <property name="qa:claimType">
                     <title>Type réclamation</title>
                     <type>d:text</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>
                         <stored>false</stored>
@@ -714,7 +714,7 @@
                 <property name="qa:claimDistributionNetwork">
                     <title>Réseau de distribution</title>
                     <type>d:text</type>
-                    <mandatory>true</mandatory>
+                    <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>
                         <stored>false</stored>

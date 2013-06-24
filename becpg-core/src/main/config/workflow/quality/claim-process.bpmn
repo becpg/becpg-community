@@ -70,13 +70,13 @@
 							 execution.setVariable('ncwf_claimTreatmentDueDate', task.getVariable('ncwf_claimTreatmentDueDate'));
                execution.setVariable('ncwf_claimResponseDueDate',  task.getVariable('ncwf_claimResponseDueDate'));
                
-               if(task.getVariable('qa_claimTreatmentActor')!=null && task.getVariable('qa_claimTreatmentActor').length>0){
-                  execution.setVariable('qa_claimTreatmentActor',  search.findNode(task.getVariable('qa_claimTreatmentActor')[0]));
+               if(task.getVariable('qa_claimTreatmentActor')!=null ){
+                  execution.setVariable('qa_claimTreatmentActor',task.getVariable('qa_claimTreatmentActor'));
                } else {
                   execution.setVariable('qa_claimTreatmentActor',null);
                }
-	            if(task.getVariable('qa_claimResponseActor')!=null && task.getVariable('qa_claimResponseActor').length>0){
-	                execution.setVariable('qa_claimResponseActor',  search.findNode(task.getVariable('qa_claimResponseActor')[0]));
+	            if(task.getVariable('qa_claimResponseActor')!=null ){
+	                execution.setVariable('qa_claimResponseActor',task.getVariable('qa_claimResponseActor'));
 	            } else {
 	                execution.setVariable('qa_claimResponseActor',null);
 	            }
@@ -94,7 +94,7 @@
 			<conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none'}]]></conditionExpression>
 		</sequenceFlow>
 		<inclusiveGateway id="dispatchTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
-		<sequenceFlow id="toTreatmentFlow" name="Si acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="treatementTask">
+		<sequenceFlow id="toTreatmentFlow" name="Si acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimTreatmentTask">
 			<extensionElements>
 				<activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
 					<activiti:field name="script">
@@ -115,11 +115,11 @@
 			</extensionElements>
 			<conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimTreatmentActor == null &&  qa_claimResponseActor!=null }]]></conditionExpression>
 		</sequenceFlow>
-		<userTask id="treatementTask" name="Traitement" activiti:assignee="${qa_claimTreatmentActor.properties.userName}" activiti:formKey="ncwf:claimTreatmentTask">
+		<userTask id="claimTreatmentTask" name="Traitement" activiti:assignee="${qa_claimTreatmentActor.properties.userName}" activiti:formKey="ncwf:claimTreatmentTask">
 			<extensionElements>
 				<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
-						<activiti:string>logger.error("Enter treatementTask");
+						<activiti:string>logger.error("Enter claimTreatmentTask");
             if (typeof ncwf_claimTreatmentDueDate != 'undefined') task.dueDate = ncwf_claimTreatmentDueDate;
             if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
 					
@@ -147,7 +147,7 @@
 				<!-- <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener> -->
 			</extensionElements>
 		</userTask>
-		<sequenceFlow id="toValidateTreatement1" sourceRef="treatementTask" targetRef="validateTreatementGateway"></sequenceFlow>
+		<sequenceFlow id="toValidateTreatement1" sourceRef="claimTreatmentTask" targetRef="validateTreatementGateway"></sequenceFlow>
 		<userTask id="claimResponseTask" name="Réponse" activiti:assignee="${qa_claimResponseActor.properties.userName}" activiti:formKey="ncwf:claimResponseTask">
 			<extensionElements>
 				<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -273,7 +273,7 @@
 		<sequenceFlow id="backToTreatementFlow1" name="Refus ou demande complémentaire" sourceRef="validateClosingGateway" targetRef="validateTreatementGateway">
 			<conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'none' && ncwf_claimRejectedState != 'classification'  }]]></conditionExpression>
 		</sequenceFlow>
-		<sequenceFlow id="backToTraitementFlow3" name="Refus ou demande complémentaire" sourceRef="validateTreatementGateway" targetRef="treatementTask">
+		<sequenceFlow id="backToTraitementFlow3" name="Refus ou demande complémentaire" sourceRef="validateTreatementGateway" targetRef="claimTreatmentTask">
 			<conditionExpression xsi:type="tFormalExpression"><![CDATA[${(ncwf_claimRejectedState == 'treatment' && qa_claimTreatmentActor!=null)
   || (ncwf_claimRejectedState == 'response' && qa_claimResponseActor==null) }]]></conditionExpression>
 		</sequenceFlow>
@@ -314,7 +314,7 @@
 			<bpmndi:BPMNShape bpmnElement="startClaimProcess" id="BPMNShape_startClaimProcess">
 				<omgdc:Bounds height="35.0" width="35.0" x="-160.0" y="329.0"></omgdc:Bounds>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="treatementTask" id="BPMNShape_treatementTask">
+			<bpmndi:BPMNShape bpmnElement="claimTreatmentTask" id="BPMNShape_claimTreatmentTask">
 				<omgdc:Bounds height="55.0" width="105.0" x="427.0" y="230.0"></omgdc:Bounds>
 			</bpmndi:BPMNShape>
 			<bpmndi:BPMNShape bpmnElement="classificationTask" id="BPMNShape_classificationTask">
