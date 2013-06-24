@@ -32,7 +32,7 @@
 					<set appearance="title" id="other" label-id="workflow.set.other" />
 					
 
-					<field id="bpm:workflowDescription" label-id="workflow.field.message" mandatory="false" read-only="false" set="main">
+					<field id="bpm:workflowDescription" label-id="workflow.field.message" mandatory="true" read-only="false" set="main">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 		              <control-param name="style">width: 95%</control-param>
 		            </control>
@@ -44,8 +44,8 @@
 						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
 					
-					<field id="qa:claimSource" mandatory="false" read-only="false" set="info" />
-					<field id="qa:claimDistributionNetwork" mandatory="false" read-only="false" set="info" />
+					<field id="qa:claimSource" mandatory="true" read-only="false" set="info" />
+					<field id="qa:claimDistributionNetwork" mandatory="true" read-only="false" set="info" />
 					
 					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="info">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -55,13 +55,13 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl"/>
 					</field>
 					
-					<field id="qa:product" mandatory="false" read-only="false" set="info" />
+					<field id="qa:product" mandatory="true" read-only="false" set="info" />
 					<field id="qa:batchId" mandatory="false" read-only="false" set="info" />
 					<field id="qa:productUseByDate" mandatory="false" read-only="false" set="info" />
 					
 					<field id="qa:claimTradeContact" mandatory="false" read-only="false" set="info" />	
 					<field id="qa:claimTradeContactCheck" mandatory="false" read-only="false" set="info" />
-					<field id="qa:claimTracking" mandatory="false" read-only="false" set="info" />
+					<field id="qa:claimTracking" mandatory="true" read-only="false" set="info" />
 					
 					<field id="packageItems" mandatory="false" read-only="false" set="items" />
 
@@ -99,13 +99,13 @@
 					<show force="false" id="bpm:sendEMailNotifications" />
 				</field-visibility>
 				<appearance>
-					<set appearance="title" id="main" label-id="workflow.set.general" />
+						<set appearance="title" id="main" label-id="workflow.set.general" />
 					<set id="info" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set appearance="title" id="items" label-id="workflow.set.items"  template="/org/alfresco/components/form/claim-info.ftl" />
 					<set appearance="title" id="other" label-id="workflow.set.other" />
 					
 
-					<field id="bpm:workflowDescription" label-id="workflow.field.message" mandatory="false" read-only="false" set="main">
+					<field id="bpm:workflowDescription" label-id="workflow.field.message" mandatory="true" read-only="false" set="main">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 		              <control-param name="style">width: 95%</control-param>
 		            </control>
@@ -117,8 +117,8 @@
 						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
 					
-					<field id="qa:claimSource" mandatory="false" read-only="false" set="info" />
-					<field id="qa:claimDistributionNetwork" mandatory="false" read-only="false" set="info" />
+					<field id="qa:claimSource" mandatory="true" read-only="false" set="info" />
+					<field id="qa:claimDistributionNetwork" mandatory="true" read-only="false" set="info" />
 					
 					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="info">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -128,13 +128,13 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl"/>
 					</field>
 					
-					<field id="qa:product" mandatory="false" read-only="false" set="info" />
+					<field id="qa:product" mandatory="true" read-only="false" set="info" />
 					<field id="qa:batchId" mandatory="false" read-only="false" set="info" />
 					<field id="qa:productUseByDate" mandatory="false" read-only="false" set="info" />
 					
 					<field id="qa:claimTradeContact" mandatory="false" read-only="false" set="info" />	
 					<field id="qa:claimTradeContactCheck" mandatory="false" read-only="false" set="info" />
-					<field id="qa:claimTracking" mandatory="false" read-only="false" set="info" />
+					<field id="qa:claimTracking" mandatory="true" read-only="false" set="info" />
 					
 					<field id="packageItems" mandatory="false" read-only="false" set="items" />
 
@@ -588,16 +588,12 @@
 					<field id="qa:claimDistributionNetwork" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpg:clients" label="Client" set="infoClaim" read-only="true">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="bcpg:clients" label="Client" set="infoClaim" read-only="true"/>
 					<field id="qa:claimCustomerInformation" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<field id="qa:product" set="infoClaim" read-only="true" >
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="qa:product" set="infoClaim" read-only="true" />
 					<field id="qa:batchId" mandatory="false" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -606,9 +602,7 @@
 					</field>
 					
 					
-					<field id="qa:claimTradeContact" set="infoClaim" read-only="true" >
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="qa:claimTradeContact" set="infoClaim" read-only="true" />
 					
 					<field id="qa:claimTradeContactCheck" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -621,18 +615,15 @@
 					<field id="qa:claimType" set="infoClaim" mandatory="false" read-only="false" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="qa:claimTreatmentActor" set="infoClaim" mandatory="false" read-only="false" >
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="qa:claimTreatmentActor" set="infoClaim" mandatory="false" read-only="false" />
 					
 					
 					<field id="qa:claimTreatementDetails" set="infoClaim" mandatory="false" read-only="false" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<field id="qa:claimResponseActor"  set="infoClaim" mandatory="false" read-only="false" >
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="qa:claimResponseActor"  set="infoClaim" mandatory="false" read-only="false" />
+					
 					<field id="qa:claimResponseState" set="infoClaim" mandatory="false" read-only="false" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -725,16 +716,12 @@
 					<field id="qa:claimDistributionNetwork" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
-					<field id="bcpg:clients" label="Client" set="infoClaim" read-only="true">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="bcpg:clients" label="Client" set="infoClaim" read-only="true"/>
 					<field id="qa:claimCustomerInformation" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<field id="qa:product" set="infoClaim" read-only="true" >
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="qa:product" set="infoClaim" read-only="true" />
 					<field id="qa:batchId" mandatory="false" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -743,9 +730,7 @@
 					</field>
 					
 					
-					<field id="qa:claimTradeContact" set="infoClaim" read-only="true" >
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
-					</field>
+					<field id="qa:claimTradeContact" set="infoClaim" read-only="true" />
 					
 					<field id="qa:claimTradeContactCheck" set="infoClaim" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -757,7 +742,7 @@
 					<field id="bpm:status" set="progress" />
 					
 					
-					<field id="qa:claimType"  set="classification" mandatory="false" read-only="false" />
+					<field id="qa:claimType"  set="classification" mandatory="true" read-only="false" />
 					
 					 <field id="bpm:comment" label-id="workflow.field.comment" set="response">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl" />

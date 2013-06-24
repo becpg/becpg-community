@@ -196,20 +196,21 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 		}, false, true);
 
 		assertEquals("claimTreatmentTask", task2.getPath().getNode().getName());
-
+		
 		
 		
 		//checkWorkLog(ncNodeRef, 1, "En cours", "commentaire émetteur");
 		/*
 		 * do corrActionTask
 		 */
-		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, null);
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, new HashMap<QName, Serializable>());
 		assertEquals("claimResponseTask", task.getPath().getNode().getName());
 		
-		task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, null);
-		task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, null);
+		task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, new HashMap<QName, Serializable>());
+		task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, new HashMap<QName, Serializable>());
+		
 		assertEquals("claimClosingTask", task.getPath().getNode().getName());
-		task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, null);
+		task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, new HashMap<QName, Serializable>());
 
 		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 	}
