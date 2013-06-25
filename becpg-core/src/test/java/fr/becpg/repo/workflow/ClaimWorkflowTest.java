@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.quality.NonConformityService;
@@ -123,7 +124,9 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 				Serializable workflowPackage = workflowService.createPackage(null);
 				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
+				
 				properties.put(QualityModel.ASSOC_PRODUCT, rawMaterial1NodeRef);
+				
 
 				WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
 				assertNotNull("The workflow path is null!", path);

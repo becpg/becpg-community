@@ -70,9 +70,9 @@ public class CreateNC extends BaseJavaDelegate {
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
 
-		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+		RunAsWork<NodeRef> actionRunAs = new RunAsWork<NodeRef>() {
 			@Override
-			public Object doWork() throws Exception {
+			public NodeRef doWork() throws Exception {
 				try {
 
 					// product
@@ -98,16 +98,33 @@ public class CreateNC extends BaseJavaDelegate {
 					properties.put(ContentModel.PROP_DESCRIPTION, (String) task.getVariable("bpm_workflowDescription"));
 					properties.put(QualityModel.PROP_NC_PRIORITY, (Integer) task.getVariable("bpm_priority"));
 
-					NodeRef ncNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					return  nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(ncName)), QualityModel.TYPE_NC, properties).getChildRef();
+
+
+				} catch (Exception e) {
+					logger.error("Failed to create nc", e);
+					throw e;
+				}
+
+			}
+
+		};
+		final NodeRef ncNodeRef  = AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+		
+		actionRunAs = new RunAsWork<NodeRef>() {
+			@Override
+			public NodeRef doWork() throws Exception {
+				try {
 
 					NodeRef briefNodeRef = NCWorkflowUtils.getDocumentsFolder(ncNodeRef, serviceRegistry);
 					
-					if(briefNodeRef!=null){
-						Map<QName, Serializable> emailableProperties = new HashMap<QName, Serializable>();
+					String ncName = (String) nodeService.getProperty(ncNodeRef, ContentModel.PROP_NAME);
+					
+					Map<QName, Serializable> emailableProperties = new HashMap<QName, Serializable>();
 						emailableProperties.put(EmailServerModel.PROP_ALIAS, ncName);
 						nodeService.addAspect(briefNodeRef, EmailServerModel.ASPECT_ALIASABLE, emailableProperties);
-					}
+					
 
 					NCWorkflowUtils.updateNC(ncNodeRef, new NCWorkflowUtilsTask() {
 						

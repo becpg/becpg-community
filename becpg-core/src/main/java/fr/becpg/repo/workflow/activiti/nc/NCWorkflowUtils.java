@@ -12,7 +12,6 @@ import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.model.FileExistsException;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -88,12 +87,13 @@ public class NCWorkflowUtils {
 		// Move documents from pkgNodeRef
 		NodeRef briefNodeRef = getDocumentsFolder(ncNodeRef, serviceRegistry);
 
+		
 		NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
 		List<ChildAssociationRef> childAssocs = serviceRegistry.getNodeService().getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 		for (ChildAssociationRef childAssoc : childAssocs) {
 			String name = (String) serviceRegistry.getNodeService().getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME);
-			if (briefNodeRef != null && serviceRegistry.getNodeService().getType(childAssoc.getChildRef()).equals(ContentModel.TYPE_CONTENT)) {
+			if ( !serviceRegistry.getNodeService().getType(childAssoc.getChildRef()).equals(QualityModel.TYPE_NC)) {
 				serviceRegistry.getFileFolderService().move(childAssoc.getChildRef(), briefNodeRef, name);
 				serviceRegistry.getNodeService().removeChild(pkgNodeRef, childAssoc.getChildRef());
 			}
@@ -101,15 +101,17 @@ public class NCWorkflowUtils {
 
 	}
 
-	public static NodeRef getDocumentsFolder(NodeRef productNodeRef, ServiceRegistry serviceRegistry) {
+	public static NodeRef getDocumentsFolder(NodeRef entityNodeRef, ServiceRegistry serviceRegistry) {
 
-		for (FileInfo file : serviceRegistry.getFileFolderService().listFolders(productNodeRef)) {
-			if (file.getName().equals(TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS))) {
-				return file.getNodeRef();
-			}
+		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
+		NodeRef documentsFolderNodeRef = serviceRegistry.getNodeService().getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
+		if (documentsFolderNodeRef == null) {
+
+			documentsFolderNodeRef = serviceRegistry.getFileFolderService().create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
+		
 
-		return null;
+		return documentsFolderNodeRef;
 	}
 
 }

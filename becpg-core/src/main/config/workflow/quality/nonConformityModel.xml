@@ -8,6 +8,7 @@
         <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
         <import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg"/>
         <import uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa"/>
+        <import uri="http://www.bcpg.fr/model/workflow/1.0" prefix="bcpgwf" />
     </imports>
     <namespaces>
         <namespace uri="http://www.bcpg.fr/model/nc-workflow/1.0" prefix="ncwf"/>
@@ -204,9 +205,11 @@
             </overrides>
             <mandatory-aspects>
             	<aspect>qa:claimAspect</aspect>
+            	<aspect>qa:batchAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
+            	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
         <type name="ncwf:claimTreatmentTask">
@@ -223,9 +226,11 @@
             </overrides>
             <mandatory-aspects>
             	<aspect>qa:claimAspect</aspect>
+            	<aspect>qa:batchAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
+            	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
         <type name="ncwf:claimResponseTask">
@@ -242,9 +247,11 @@
             </overrides>
              <mandatory-aspects>
              	<aspect>qa:claimAspect</aspect>
+             	<aspect>qa:batchAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
+            	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
         <type name="ncwf:claimClosingTask">
@@ -261,10 +268,12 @@
             </overrides>
              <mandatory-aspects>
                <aspect>qa:claimAspect</aspect>
+               <aspect>qa:batchAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>qa:claimClosingAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
+            	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
         <type name="ncwf:claimClassificationTask">
@@ -281,6 +290,8 @@
             </overrides>
              <mandatory-aspects>
              	<aspect>qa:claimAspect</aspect>
+             	<aspect>qa:batchAspect</aspect>
+             	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
     </types>
