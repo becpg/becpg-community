@@ -102,6 +102,8 @@
 					<show force="true" id="qa:claimTradeContact" />
 					<show force="true" id="qa:claimTradeContactCheck" />
 					<show force="true" id="qa:claimTracking" />
+					
+					<show force="true" id="ncwf:claimRejectedCause" />
 
 					<show force="false" id="bpm:workflowDueDate" />
 					<show force="false" id="bpm:workflowPriority" />
@@ -119,6 +121,8 @@
 
 					<set appearance="" id="fixedReference" parent="items" label-id="workflow.set.fixedReference.start" template="/org/alfresco/components/form/set-message.ftl" />
 					<set appearance="title" id="other" label-id="workflow.set.other" />
+
+					<field id="ncwf:claimRejectedCause" mandatory="true" read-only="true" set="info" />
 
 					<field id="qa:claimSource" mandatory="true" read-only="false" set="info" />
 					<field id="qa:claimDistributionNetwork" mandatory="true" read-only="false" set="info" />
@@ -144,6 +148,9 @@
 					<field id="qa:claimTradeContact" mandatory="false" read-only="false" set="info" />
 					<field id="qa:claimTradeContactCheck" mandatory="false" read-only="false" set="info" />
 					<field id="qa:claimTracking" mandatory="true" read-only="false" set="info" />
+					
+					
+					
 
 					<field id="bpm:workflowDueDate" label-id="workflow.field.due" mandatory="false" read-only="false" set="info" />
 					<field id="bpm:workflowPriority" label-id="workflow.field.priority" mandatory="false" read-only="false" set="info">
@@ -245,7 +252,7 @@
 
 					<show force="true" id="qa:product" />
 					<show force="true" id="qa:productType" />
-					<show force="true" id="qa:batchId" />
+					<show force="true" id="qa:batchId" /><show force="true" id="ncwf:claimRejectedCause" />
 					<show force="true" id="qa:productUseByDate" />
 					<show force="true" id="qa:claimTradeContact" />
 					<show force="true" id="qa:claimTradeContactCheck" />
@@ -266,7 +273,7 @@
 
 
 					<show id="packageItems" />
-					<show id="bpm:sendEMailNotifications" />
+					<show id="bcpgwf:notifyAssignee" />
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
@@ -348,9 +355,7 @@
 
 					<field id="packageItems" set="fixedReference" />
 
-					<field id="bpm:sendEMailNotifications" mandatory="false" read-only="false" set="other">
-						<control template="/org/alfresco/components/form/controls/workflow/email-notification.ftl" />
-					</field>
+					<field id="bcpgwf:notifyAssignee" mandatory="false" read-only="false" set="other"/>
 
 					<field id="transitions" set="other" />
 				</appearance>
@@ -393,7 +398,7 @@
 
 
 					<show id="packageItems" />
-					<show id="bpm:sendEMailNotifications" />
+					<show id="bcpgwf:notifyAssignee" />
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
@@ -476,9 +481,7 @@
 
 					<field id="packageItems" set="fixedReference" />
 
-					<field id="bpm:sendEMailNotifications" mandatory="false" read-only="false" set="other">
-						<control template="/org/alfresco/components/form/controls/workflow/email-notification.ftl" />
-					</field>
+					<field id="bcpgwf:notifyAssignee" mandatory="false" read-only="false" set="other"/>
 
 					<field id="transitions" set="other" />
 				</appearance>
@@ -526,7 +529,7 @@
 
 
 					<show id="packageItems" />
-					<show id="bpm:sendEMailNotifications" />
+					<show id="bcpgwf:notifyAssignee" />
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
@@ -616,9 +619,7 @@
 
 					<field id="packageItems" set="fixedReference" />
 
-					<field id="bpm:sendEMailNotifications" mandatory="false" read-only="false" set="other">
-						<control template="/org/alfresco/components/form/controls/workflow/email-notification.ftl" />
-					</field>
+					<field id="bcpgwf:notifyAssignee" mandatory="false" read-only="false" set="other"/>
 
 					<field id="transitions" set="other" />
 				</appearance>
@@ -668,7 +669,7 @@
 
 
 					<show id="packageItems" />
-					<show id="bpm:sendEMailNotifications" />
+					<show id="bcpgwf:notifyAssignee" />
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
@@ -765,9 +766,7 @@
 
 					<field id="packageItems" set="fixedReference" />
 
-					<field id="bpm:sendEMailNotifications" mandatory="false" read-only="false" set="other">
-						<control template="/org/alfresco/components/form/controls/workflow/email-notification.ftl" />
-					</field>
+					<field id="bcpgwf:notifyAssignee" mandatory="false" read-only="false" set="other"/>
 
 					<field id="transitions" set="other" />
 				</appearance>
@@ -806,7 +805,7 @@
 					<show force="false" id="bpm:comment" />
 
 					<show id="packageItems" />
-					<show id="bpm:sendEMailNotifications" />
+					<show id="bcpgwf:notifyAssignee" />
 					<show id="transitions" />
 				</field-visibility>
 				<appearance>
@@ -877,9 +876,7 @@
 
 					<field id="packageItems" set="fixedReference" />
 
-					<field id="bpm:sendEMailNotifications" mandatory="false" read-only="false" set="other">
-						<control template="/org/alfresco/components/form/controls/workflow/email-notification.ftl" />
-					</field>
+					<field id="bcpgwf:notifyAssignee" mandatory="false" read-only="false" set="other"/>
 
 					<field id="transitions" set="other" />
 				</appearance>

@@ -29,7 +29,32 @@
 					<show id="qa:batchComment" force="true" />
 
 					<!-- Product -->
+					<show id="qa:productType" force="true" />
 					<show id="qa:product" force="true" />
+					<show id="qa:productUseByDate" />
+					
+					<!-- Claim -->
+					<show  id="qa:claimSource" />
+					<show  id="qa:claimDistributionNetwork" />
+					<show  id="qa:claimCustomerInformation" />
+
+					<show id="qa:claimTradeContact" />
+					<show id="qa:claimTradeContactCheck" />
+					<show id="qa:claimTracking" />
+					<show id="qa:claimDescription" />
+
+					<show id="qa:claimType" />
+
+					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatmentActor" />
+					<show id="qa:claimTreatementDetails" />
+
+					<show id="qa:claimResponseDate" />
+					<show id="qa:claimResponseActor" />
+					<show id="qa:claimResponseState" />
+					<show id="qa:claimResponseDetails" />
+					
+					<show id="qa:claimClosingDate" />
 
 					<!-- auditable -->
 					<show id="cm:created" />
@@ -64,7 +89,9 @@
 					</field>
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<field id="qa:productType" set="product-info" />
 					<field id="qa:product" set="product-info" />
+					<field id="qa:productUseByDate" set="product-info" />
 
 					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
@@ -76,6 +103,30 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
+					
+					<set id="claim-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.claim-info.label" />
+
+					<field id="qa:claimSource"  set="claim-info"/>
+					<field id="qa:claimDistributionNetwork" set="claim-info"/>
+					<field id="qa:claimCustomerInformation" set="claim-info"/>
+
+					<field id="qa:claimTradeContact" set="claim-info"/>
+					<field id="qa:claimTradeContactCheck" set="claim-info"/>
+					<field id="qa:claimTracking" set="claim-info"/>
+					<field id="qa:claimDescription" set="claim-info"/>
+
+					<field id="qa:claimType" set="claim-info"/>
+
+					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatmentActor" set="claim-info"/>
+					<field id="qa:claimTreatementDetails" set="claim-info"/>
+
+					<field id="qa:claimResponseDate" set="claim-info"/>
+					<field id="qa:claimResponseActor" set="claim-info"/>
+					<field id="qa:claimResponseState" set="claim-info"/>
+					<field id="qa:claimResponseDetails" set="claim-info"/>
+					
+					<field id="qa:claimClosingDate" set="claim-info"/>
 
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" />
@@ -114,7 +165,33 @@
 					<show id="qa:batchComment" force="true" />
 
 					<!-- Product -->
+					<show id="qa:productType" force="true" />
 					<show id="qa:product" force="true" />
+					<show id="qa:productUseByDate" />
+					
+					<!-- Claim -->
+					<show  id="qa:claimSource" />
+					<show  id="qa:claimDistributionNetwork" />
+					<show  id="qa:claimCustomerInformation" />
+
+					<show id="qa:claimTradeContact" />
+					<show id="qa:claimTradeContactCheck" />
+					<show id="qa:claimTracking" />
+					<show id="qa:claimDescription" />
+
+					<show id="qa:claimType" />
+
+					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatmentActor" />
+					<show id="qa:claimTreatementDetails" />
+
+					<show id="qa:claimResponseDate" />
+					<show id="qa:claimResponseActor" />
+					<show id="qa:claimResponseState" />
+					<show id="qa:claimResponseDetails" />
+					
+					<show id="qa:claimClosingDate" />
+					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
@@ -148,7 +225,9 @@
 					</field>
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<field id="qa:productType" set="product-info" />
 					<field id="qa:product" set="product-info" />
+					<field id="qa:productUseByDate" set="product-info" />
 
 					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
@@ -160,6 +239,30 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
+					
+					<set id="claim-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.claim-info.label" />
+
+					<field id="qa:claimSource"  set="claim-info"/>
+					<field id="qa:claimDistributionNetwork" set="claim-info"/>
+					<field id="qa:claimCustomerInformation" set="claim-info"/>
+
+					<field id="qa:claimTradeContact" set="claim-info"/>
+					<field id="qa:claimTradeContactCheck" set="claim-info"/>
+					<field id="qa:claimTracking" set="claim-info"/>
+					<field id="qa:claimDescription" set="claim-info"/>
+
+					<field id="qa:claimType" set="claim-info"/>
+
+					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatmentActor" set="claim-info"/>
+					<field id="qa:claimTreatementDetails" set="claim-info"/>
+
+					<field id="qa:claimResponseDate" set="claim-info"/>
+					<field id="qa:claimResponseActor" set="claim-info"/>
+					<field id="qa:claimResponseState" set="claim-info"/>
+					<field id="qa:claimResponseDetails" set="claim-info"/>
+					
+					<field id="qa:claimClosingDate" set="claim-info"/>
 
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -247,7 +350,32 @@
 					<show id="qa:batchComment" force="true" />
 
 					<!-- Product -->
+					<show id="qa:productType" force="true" />
 					<show id="qa:product" force="true" />
+					<show id="qa:productUseByDate" />
+					
+					<!-- Claim -->
+					<show  id="qa:claimSource" />
+					<show  id="qa:claimDistributionNetwork" />
+					<show  id="qa:claimCustomerInformation" />
+
+					<show id="qa:claimTradeContact" />
+					<show id="qa:claimTradeContactCheck" />
+					<show id="qa:claimTracking" />
+					<show id="qa:claimDescription" />
+
+					<show id="qa:claimType" />
+
+					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatmentActor" />
+					<show id="qa:claimTreatementDetails" />
+
+					<show id="qa:claimResponseDate" />
+					<show id="qa:claimResponseActor" />
+					<show id="qa:claimResponseState" />
+					<show id="qa:claimResponseDetails" />
+					
+					<show id="qa:claimClosingDate" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -282,8 +410,10 @@
 					</field>
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<field id="qa:productType" set="product-info" />
 					<field id="qa:product" set="product-info" />
-
+					<field id="qa:productUseByDate" set="product-info" />
+					
 					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="qa:batchId" set="batch-info" />
 					<field id="qa:orderId" set="batch-info" />
@@ -294,6 +424,30 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
+					
+					<set id="claim-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.claim-info.label" />
+
+					<field id="qa:claimSource"  set="claim-info"/>
+					<field id="qa:claimDistributionNetwork" set="claim-info"/>
+					<field id="qa:claimCustomerInformation" set="claim-info"/>
+
+					<field id="qa:claimTradeContact" set="claim-info"/>
+					<field id="qa:claimTradeContactCheck" set="claim-info"/>
+					<field id="qa:claimTracking" set="claim-info"/>
+					<field id="qa:claimDescription" set="claim-info"/>
+
+					<field id="qa:claimType" set="claim-info"/>
+
+					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatmentActor" set="claim-info"/>
+					<field id="qa:claimTreatementDetails" set="claim-info"/>
+
+					<field id="qa:claimResponseDate" set="claim-info"/>
+					<field id="qa:claimResponseActor" set="claim-info"/>
+					<field id="qa:claimResponseState" set="claim-info"/>
+					<field id="qa:claimResponseDetails" set="claim-info"/>
+					
+					<field id="qa:claimClosingDate" set="claim-info"/>
 
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
