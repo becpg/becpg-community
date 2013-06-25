@@ -208,8 +208,6 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 		
 		task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, new HashMap<QName, Serializable>());
 		task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, new HashMap<QName, Serializable>());
-		
-		assertEquals("claimClosingTask", task.getPath().getNode().getName());
 		task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, new HashMap<QName, Serializable>());
 
 		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());

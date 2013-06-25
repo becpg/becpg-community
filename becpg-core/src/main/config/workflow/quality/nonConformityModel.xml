@@ -33,48 +33,7 @@
     <types>
         <type name="ncwf:startTask">
             <parent>bpm:startTask</parent>
-            <properties>
-                <property name="ncwf:batchId">
-                    <type>d:text</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true"/>
-                </property>
-            </properties>
-            <associations>
-                <association name="ncwf:product">
-                    <source>
-                        <mandatory>false</mandatory>
-                        <many>true</many>
-                    </source>
-                    <target>
-                        <class>bcpg:product</class>
-                        <mandatory enforced="false">false</mandatory>
-                        <many>false</many>
-                    </target>
-                </association>
-                <association name="ncwf:supplier">
-                    <source>
-                        <mandatory>false</mandatory>
-                        <many>true</many>
-                    </source>
-                    <target>
-                        <class>bcpg:supplier</class>
-                        <mandatory enforced="false">false</mandatory>
-                        <many>false</many>
-                    </target>
-                </association>
-                <association name="ncwf:client">
-                    <source>
-                        <mandatory>false</mandatory>
-                        <many>true</many>
-                    </source>
-                    <target>
-                        <class>bcpg:client</class>
-                        <mandatory enforced="false">false</mandatory>
-                        <many>false</many>
-                    </target>
-                </association>
-            </associations>
+           <properties/>
             <overrides>
                 <property name="bpm:packageActionGroup">
                     <mandatory>false</mandatory>
@@ -87,7 +46,11 @@
                     <constraints/>
                 </property>
             </overrides>
-            <mandatory-aspects/>
+            <mandatory-aspects>	
+              	<aspect>qa:batchAspect</aspect>
+              	<aspect>bcpg:clientsAspect</aspect>
+               <aspect>bcpg:suppliersAspect</aspect>
+            </mandatory-aspects>
         </type>
         <type name="ncwf:analysisTask">
             <parent>bpm:workflowTask</parent>
@@ -232,7 +195,13 @@
                 </property>
             </properties>
             <associations/>
-            <overrides/>
+           <overrides>
+                <property name="bpm:packageActionGroup">
+                    <mandatory>false</mandatory>
+                    <default>add_package_item_actions</default>
+                    <constraints/>
+                </property>
+            </overrides>
             <mandatory-aspects>
             	<aspect>qa:claimAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
@@ -245,7 +214,13 @@
             <parent>bpm:workflowTask</parent>
             <properties/>
             <associations/>
-            <overrides/>
+             <overrides>
+                <property name="bpm:packageActionGroup">
+                    <mandatory>false</mandatory>
+                    <default>add_package_item_actions</default>
+                    <constraints/>
+                </property>
+            </overrides>
             <mandatory-aspects>
             	<aspect>qa:claimAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
@@ -258,7 +233,13 @@
             <parent>bpm:workflowTask</parent>
             <properties/>
             <associations/>
-            <overrides/>
+            <overrides>
+                <property name="bpm:packageActionGroup">
+                    <mandatory>false</mandatory>
+                    <default>add_package_item_actions</default>
+                    <constraints/>
+                </property>
+            </overrides>
              <mandatory-aspects>
              	<aspect>qa:claimAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
@@ -271,7 +252,13 @@
             <parent>bpm:workflowTask</parent>
             <properties/>
             <associations/>
-            <overrides/>
+             <overrides>
+                <property name="bpm:packageActionGroup">
+                    <mandatory>false</mandatory>
+                    <default>add_package_item_actions</default>
+                    <constraints/>
+                </property>
+            </overrides>
              <mandatory-aspects>
                <aspect>qa:claimAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
@@ -285,7 +272,13 @@
             <parent>bpm:workflowTask</parent>
             <properties/>
             <associations/>
-            <overrides/>
+             <overrides>
+                <property name="bpm:packageActionGroup">
+                    <mandatory>false</mandatory>
+                    <default>add_package_item_actions</default>
+                    <constraints/>
+                </property>
+            </overrides>
              <mandatory-aspects>
              	<aspect>qa:claimAspect</aspect>
             </mandatory-aspects>

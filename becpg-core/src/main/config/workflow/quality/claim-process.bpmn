@@ -9,24 +9,70 @@
 			<extensionElements>
 				<activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
 					<activiti:field name="script">
-						<activiti:string>
-	               execution.setVariable('ncwf_claimRejectedState','none');
-	               execution.setVariable('ncwf_ncType',"Claim");
-	               execution.setVariable('ncwf_ncState',"new");</activiti:string>
+						<activiti:string>execution.setVariable('ncwf_claimRejectedState','none');
+	               execution.setVariable('ncwf_ncType',"Claim");</activiti:string>
 					</activiti:field>
 				</activiti:executionListener>
 			</extensionElements>
 		</sequenceFlow>
-		<serviceTask id="initialiseNCTask" name="Initialisation réclamation" activiti:delegateExpression="${CreateNC}"></serviceTask>
+		<serviceTask id="initialiseNCTask" name="Initialisation réclamation" activiti:delegateExpression="${CreateNC}">
+			<extensionElements>
+				<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+            	 task.setVariable('ncwf_ncState',"analysis");
+            </activiti:string>
+					</activiti:field>
+				</activiti:taskListener>
+			</extensionElements>
+		</serviceTask>
 		<sequenceFlow id="toAnalysisFlow1" sourceRef="initialiseNCTask" targetRef="analysisTask"></sequenceFlow>
 		<userTask id="enteringClaimTask" name="Saisie réclamation" activiti:assignee="${initiator.properties.userName}" activiti:candidateUsers="initiator" activiti:formKey="ncwf:claimStartTask">
 			<extensionElements>
-				<activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+				<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
-						<activiti:string>execution.setVariable('ncwf_claimRejectedState','none');</activiti:string>
+						<activiti:string>
+						task.setVariable('qa_claimSource', execution.getVariable('qa_claimSource'));
+	               task.setVariable('qa_claimDistributionNetwork', execution.getVariable('qa_claimDistributionNetwork'));
+	               task.setVariable('bcpg_clients', execution.getVariable('bcpg_clients'));
+						task.setVariable('qa_claimCustomerInformation', execution.getVariable('qa_claimCustomerInformation'));
+						
+						task.setVariable('qa_product', execution.getVariable('qa_product'));
+						task.setVariable('qa_productType', execution.getVariable('qa_productType'));
+						task.setVariable('qa_batchId', execution.getVariable('qa_batchId'));
+						task.setVariable('qa_productUseByDate', execution.getVariable('qa_productUseByDate'));
+						task.setVariable('qa_claimTradeContact', execution.getVariable('qa_claimTradeContact'));
+						task.setVariable('qa_claimTradeContactCheck', execution.getVariable('qa_claimTradeContactCheck'));
+						task.setVariable('qa_claimTracking', execution.getVariable('qa_claimTracking'));
+						task.setVariable('qa_claimDescription', execution.getVariable('qa_claimDescription'));
+					</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
-				<!-- <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener> -->
+			
+				<activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+						
+					   execution.setVariable('qa_claimSource', task.getVariable('qa_claimSource'));
+	               execution.setVariable('qa_claimDistributionNetwork', task.getVariable('qa_claimDistributionNetwork'));
+	               execution.setVariable('bcpg_clients', task.getVariable('bcpg_clients'));
+						execution.setVariable('qa_claimCustomerInformation', task.getVariable('qa_claimCustomerInformation'));
+						
+						execution.setVariable('qa_product', task.getVariable('qa_product'));
+						execution.setVariable('qa_productType', task.getVariable('qa_productType'));
+						execution.setVariable('qa_batchId', task.getVariable('qa_batchId'));
+						execution.setVariable('qa_productUseByDate', task.getVariable('qa_productUseByDate'));
+						execution.setVariable('qa_claimTradeContact', task.getVariable('qa_claimTradeContact'));
+						execution.setVariable('qa_claimTradeContactCheck', task.getVariable('qa_claimTradeContactCheck'));
+						execution.setVariable('qa_claimTracking', task.getVariable('qa_claimTracking'));
+						execution.setVariable('qa_claimDescription', task.getVariable('qa_claimDescription'));
+						
+                  execution.setVariable('ncwf_claimRejectedState','none');
+            	  task.setVariable('ncwf_ncState',"analysis");
+            </activiti:string>
+					</activiti:field>
+				</activiti:taskListener>
+				<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
 			</extensionElements>
 		</userTask>
 		<userTask id="analysisTask" name="Orientation réclamation" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:claimAnalysisTask">
@@ -34,9 +80,16 @@
 				<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
-            
-					if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+               if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+               
+               for (var i = 0; i &lt; bpm_package.children.length; i++)
+					{
+						var nc = bpm_package.children[i];
+						
+						task.setVariable('bpm_workflowDescription',nc.properties["cm:name"]);
+					}
+               
 					
 					task.setVariable('qa_claimSource', execution.getVariable('qa_claimSource'));
                task.setVariable('qa_claimDistributionNetwork', execution.getVariable('qa_claimDistributionNetwork'));
@@ -44,11 +97,15 @@
 					task.setVariable('qa_claimCustomerInformation', execution.getVariable('qa_claimCustomerInformation'));
 					
 					task.setVariable('qa_product', execution.getVariable('qa_product'));
+					task.setVariable('qa_productType', execution.getVariable('qa_productType'));
 					task.setVariable('qa_batchId', execution.getVariable('qa_batchId'));
 					task.setVariable('qa_productUseByDate', execution.getVariable('qa_productUseByDate'));
 					task.setVariable('qa_claimTradeContact', execution.getVariable('qa_claimTradeContact'));
 					task.setVariable('qa_claimTradeContactCheck', execution.getVariable('qa_claimTradeContactCheck'));
 					task.setVariable('qa_claimTracking', execution.getVariable('qa_claimTracking'));
+					task.setVariable('qa_claimDescription', execution.getVariable('qa_claimDescription'));
+					
+				
             
 
                 var tDate = new  java.util.Date();
@@ -66,28 +123,33 @@
 				<activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
-						<![CDATA[
-							 execution.setVariable('ncwf_claimTreatmentDueDate', task.getVariable('ncwf_claimTreatmentDueDate'));
+            
+               execution.setVariable('ncwf_claimTreatmentDueDate', task.getVariable('ncwf_claimTreatmentDueDate'));
                execution.setVariable('ncwf_claimResponseDueDate',  task.getVariable('ncwf_claimResponseDueDate'));
                
-               if(task.getVariable('qa_claimTreatmentActor')!=null ){
-                  execution.setVariable('qa_claimTreatmentActor',task.getVariable('qa_claimTreatmentActor'));
-               } else {
-                  execution.setVariable('qa_claimTreatmentActor',null);
-               }
-	            if(task.getVariable('qa_claimResponseActor')!=null ){
+               if(task.getVariable('qa_claimResponseActor')!=null ){
 	                execution.setVariable('qa_claimResponseActor',task.getVariable('qa_claimResponseActor'));
+	                task.setVariable('ncwf_ncState','response');
 	            } else {
 	                execution.setVariable('qa_claimResponseActor',null);
 	            }
                
-               execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
-						
-						]]>
-              </activiti:string>
+               if(task.getVariable('qa_claimTreatmentActor')!=null ){
+                  execution.setVariable('qa_claimTreatmentActor',task.getVariable('qa_claimTreatmentActor'));
+                  task.setVariable('ncwf_ncState','treatment');
+               } else {
+                  execution.setVariable('qa_claimTreatmentActor',null);
+               }
+	            
+               
+               if(task.getVariable('ncwf_claimRejectedState')!='none'){
+                 task.setVariable('ncwf_ncState',"new");
+               }
+               
+               execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
-			<!-- 	<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener> -->
+				<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
 			</extensionElements>
 		</userTask>
 		<sequenceFlow id="toDispatchTreatmentGateway" sourceRef="endOrientationGateway" targetRef="dispatchTreatmentGateway">
@@ -129,11 +191,13 @@
 					task.setVariable('qa_claimCustomerInformation', execution.getVariable('qa_claimCustomerInformation'));
 					
 					task.setVariable('qa_product', execution.getVariable('qa_product'));
+					task.setVariable('qa_productType', execution.getVariable('qa_productType'));
 					task.setVariable('qa_batchId', execution.getVariable('qa_batchId'));
 					task.setVariable('qa_productUseByDate', execution.getVariable('qa_productUseByDate'));
 					task.setVariable('qa_claimTradeContact', execution.getVariable('qa_claimTradeContact'));
 					task.setVariable('qa_claimTradeContactCheck', execution.getVariable('qa_claimTradeContactCheck'));
 					task.setVariable('qa_claimTracking', execution.getVariable('qa_claimTracking'));
+					task.setVariable('qa_claimDescription', execution.getVariable('qa_claimDescription'));
             
             
             	task.setVariable('ncwf_claimRejectedState', 'none');</activiti:string>
@@ -141,10 +205,23 @@
 				</activiti:taskListener>
 				<activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
-						<activiti:string>execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>
+						<activiti:string>
+               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
+            
+	            if(task.getVariable('ncwf_claimRejectedState') == 'none'){
+	              task.setVariable('qa_claimTreatmentDate', new  java.util.Date());
+	              if(execution.getVariable('qa_claimResponseActor')!=null){
+	               task.setVariable('ncwf_ncState','response');
+	              } else {
+	               task.setVariable('ncwf_ncState','closing');
+	              }
+	            }
+            
+           
+          	  execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
-				<!-- <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener> -->
+				<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
 			</extensionElements>
 		</userTask>
 		<sequenceFlow id="toValidateTreatement1" sourceRef="claimTreatmentTask" targetRef="validateTreatementGateway"></sequenceFlow>
@@ -162,11 +239,13 @@
 					task.setVariable('qa_claimCustomerInformation', execution.getVariable('qa_claimCustomerInformation'));
 					
 					task.setVariable('qa_product', execution.getVariable('qa_product'));
+					task.setVariable('qa_productType', execution.getVariable('qa_productType'));
 					task.setVariable('qa_batchId', execution.getVariable('qa_batchId'));
 					task.setVariable('qa_productUseByDate', execution.getVariable('qa_productUseByDate'));
 					task.setVariable('qa_claimTradeContact', execution.getVariable('qa_claimTradeContact'));
 					task.setVariable('qa_claimTradeContactCheck', execution.getVariable('qa_claimTradeContactCheck'));
 					task.setVariable('qa_claimTracking', execution.getVariable('qa_claimTracking'));
+					task.setVariable('qa_claimDescription', execution.getVariable('qa_claimDescription'));
 					task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
 	
             
@@ -175,10 +254,20 @@
 				</activiti:taskListener>
 				<activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
-						<activiti:string>execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>
+						<activiti:string>
+            	if(task.getVariable('ncwf_claimRejectedState') == 'none'){
+	              task.setVariable('qa_claimResponseDate', new  java.util.Date());
+	               task.setVariable('ncwf_ncState',task.getVariable('closing'));
+	            } else {
+	              task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
+	            }
+	            execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
+
+            	
+            	</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
-				<!-- <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener> -->
+				<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
 			</extensionElements>
 		</userTask>
 		<sequenceFlow id="toResponseFlow" name="Si acteur réponse ou refus" sourceRef="validateTreatementGateway" targetRef="claimResponseTask">
@@ -199,11 +288,13 @@
 					task.setVariable('qa_claimCustomerInformation', execution.getVariable('qa_claimCustomerInformation'));
 					
 					task.setVariable('qa_product', execution.getVariable('qa_product'));
+					task.setVariable('qa_productType', execution.getVariable('qa_productType'));
 					task.setVariable('qa_batchId', execution.getVariable('qa_batchId'));
 					task.setVariable('qa_productUseByDate', execution.getVariable('qa_productUseByDate'));
 					task.setVariable('qa_claimTradeContact', execution.getVariable('qa_claimTradeContact'));
 					task.setVariable('qa_claimTradeContactCheck', execution.getVariable('qa_claimTradeContactCheck'));
 					task.setVariable('qa_claimTracking', execution.getVariable('qa_claimTracking'));
+					task.setVariable('qa_claimDescription', execution.getVariable('qa_claimDescription'));
 					task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
 					
 					
@@ -218,10 +309,18 @@
 				</activiti:taskListener>
 				<activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
-						<activiti:string>execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>
+						<activiti:string>
+             if(task.getVariable('ncwf_claimRejectedState') == 'none'){
+	              task.setVariable('qa_claimClosingDate', new  java.util.Date());
+	               task.setVariable('ncwf_ncState',task.getVariable('closed'));
+	            } else {
+	              task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
+	            }
+            execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
+            </activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
-				<!-- <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener> -->
+				<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
 			</extensionElements>
 		</userTask>
 		<userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:claimClassificationTask">
@@ -229,9 +328,8 @@
 				<activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
-            
-					if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
-               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+               if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+              if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
 					
 					task.setVariable('qa_claimSource', execution.getVariable('qa_claimSource'));
                task.setVariable('qa_claimDistributionNetwork', execution.getVariable('qa_claimDistributionNetwork'));
@@ -239,18 +337,19 @@
 					task.setVariable('qa_claimCustomerInformation', execution.getVariable('qa_claimCustomerInformation'));
 					
 					task.setVariable('qa_product', execution.getVariable('qa_product'));
+					task.setVariable('qa_productType', execution.getVariable('qa_productType'));
 					task.setVariable('qa_batchId', execution.getVariable('qa_batchId'));
 					task.setVariable('qa_productUseByDate', execution.getVariable('qa_productUseByDate'));
 					task.setVariable('qa_claimTradeContact', execution.getVariable('qa_claimTradeContact'));
 					task.setVariable('qa_claimTradeContactCheck', execution.getVariable('qa_claimTradeContactCheck'));
 					task.setVariable('qa_claimTracking', execution.getVariable('qa_claimTracking'));
-         
-         	</activiti:string>
+					task.setVariable('qa_claimDescription', execution.getVariable('qa_claimDescription'));
+					
+				</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
+				<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
 			</extensionElements>
-
-
 		</userTask>
 		<inclusiveGateway id="jointTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
 		<sequenceFlow id="toValidateTreatement2" sourceRef="validateResponseGateway" targetRef="validateTreatementGateway">
@@ -289,7 +388,7 @@
 		</sequenceFlow>
 		<exclusiveGateway id="validateResponseGateway" name="Exclusive Gateway"></exclusiveGateway>
 		<sequenceFlow id="toValidateResponse" sourceRef="claimResponseTask" targetRef="validateResponseGateway"></sequenceFlow>
-		<sequenceFlow id="flow63" sourceRef="validateResponseGateway" targetRef="validateClosingGateway">
+		<sequenceFlow id="flow63" sourceRef="validateResponseGateway" targetRef="jointTreatmentGateway">
 			<conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none' }]]></conditionExpression>
 		</sequenceFlow>
 		<sequenceFlow id="endClassificationFlow" sourceRef="classificationTask" targetRef="jointTreatmentGateway"></sequenceFlow>
@@ -345,7 +444,7 @@
 				<omgdc:Bounds height="40.0" width="40.0" x="907.0" y="330.0"></omgdc:Bounds>
 			</bpmndi:BPMNShape>
 			<bpmndi:BPMNShape bpmnElement="validateResponseGateway" id="BPMNShape_validateResponseGateway">
-				<omgdc:Bounds height="40.0" width="40.0" x="810.0" y="117.0"></omgdc:Bounds>
+				<omgdc:Bounds height="40.0" width="40.0" x="682.0" y="197.0"></omgdc:Bounds>
 			</bpmndi:BPMNShape>
 			<bpmndi:BPMNEdge bpmnElement="toDispatchTreatmentGateway" id="BPMNEdge_toDispatchTreatmentGateway">
 				<omgdi:waypoint x="350.0" y="346.0"></omgdi:waypoint>
@@ -403,9 +502,8 @@
 				<omgdi:waypoint x="569.0" y="257.0"></omgdi:waypoint>
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge bpmnElement="toValidateTreatement2" id="BPMNEdge_toValidateTreatement2">
-				<omgdi:waypoint x="830.0" y="157.0"></omgdi:waypoint>
-				<omgdi:waypoint x="829.0" y="257.0"></omgdi:waypoint>
-				<omgdi:waypoint x="703.0" y="257.0"></omgdi:waypoint>
+				<omgdi:waypoint x="702.0" y="237.0"></omgdi:waypoint>
+				<omgdi:waypoint x="614.0" y="257.0"></omgdi:waypoint>
 				<omgdi:waypoint x="609.0" y="257.0"></omgdi:waypoint>
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge bpmnElement="backToAnalysisFlow1" id="BPMNEdge_backToAnalysisFlow1">
@@ -459,13 +557,13 @@
 				<omgdi:waypoint x="702.0" y="330.0"></omgdi:waypoint>
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge bpmnElement="flow63" id="BPMNEdge_flow63">
-				<omgdi:waypoint x="850.0" y="137.0"></omgdi:waypoint>
-				<omgdi:waypoint x="927.0" y="137.0"></omgdi:waypoint>
-				<omgdi:waypoint x="927.0" y="330.0"></omgdi:waypoint>
+				<omgdi:waypoint x="702.0" y="237.0"></omgdi:waypoint>
+				<omgdi:waypoint x="702.0" y="261.0"></omgdi:waypoint>
+				<omgdi:waypoint x="702.0" y="330.0"></omgdi:waypoint>
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge bpmnElement="toValidateResponse" id="BPMNEdge_toValidateResponse">
-				<omgdi:waypoint x="755.0" y="137.0"></omgdi:waypoint>
-				<omgdi:waypoint x="810.0" y="137.0"></omgdi:waypoint>
+				<omgdi:waypoint x="702.0" y="165.0"></omgdi:waypoint>
+				<omgdi:waypoint x="702.0" y="197.0"></omgdi:waypoint>
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge bpmnElement="endClassificationFlow" id="BPMNEdge_endClassificationFlow">
 				<omgdi:waypoint x="610.0" y="426.0"></omgdi:waypoint>

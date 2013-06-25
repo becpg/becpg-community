@@ -42,7 +42,7 @@
 	<!-- Workflow -->
 	<bean id="CreateNC" parent="baseJavaDelegate" class="fr.becpg.repo.workflow.activiti.nc.CreateNC">
 		<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
+    	<property name="serviceRegistry" ref="ServiceRegistry"/>
     	<property name="nonConformityService" ref="nonConformityService"/>
     	<property name="autoNumService" ref="autoNumService" />
     </bean>    

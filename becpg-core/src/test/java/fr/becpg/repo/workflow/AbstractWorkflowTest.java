@@ -85,7 +85,7 @@ public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 				for (WorkflowTask task : workflowTasks) {
 					logger.info("Task Name " + task.getName());
 					if (taskName.equals(task.getName())) {
-						logger.info("submit task" + task.getName());
+						logger.info("submit task " + task.getName());
 						workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 						task = workflowService.endTask(task.getId(), transitionName);
 
