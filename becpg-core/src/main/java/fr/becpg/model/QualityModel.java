@@ -119,4 +119,8 @@ public interface QualityModel {
 	public static final String NC_TYPE_NONCONFORMITY = "NonConformity";
 	public static final String NC_TYPE_CLAIM = "Claim";
 
+	public static final QName ASPECT_CLAIM_CLOSING = QName.createQName(QUALITY_URI, "claimClosingAspect");
+	
+	public static final QName ASPECT_CLAIM = QName.createQName(QUALITY_URI, "claimAspect");
+
 }

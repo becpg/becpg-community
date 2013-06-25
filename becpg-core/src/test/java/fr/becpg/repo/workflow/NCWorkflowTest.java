@@ -46,7 +46,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	private static final QName PROP_ASSIGNEE = QName.createQName(NC_URI, "assignee");
 	private static final QName ASSOC_CORR_ACTION_ACTOR = QName.createQName(NC_URI, "corrActionActor");
 	private static final QName ASSOC_CHECK_ACTOR = QName.createQName(NC_URI, "checkActor");
-	private static final QName ASSOC_PRODUCT = QName.createQName(NC_URI, "product");
 
 
 	@Resource
@@ -131,7 +130,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 				Serializable workflowPackage = workflowService.createPackage(null);
 				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-				properties.put(ASSOC_PRODUCT, rawMaterial1NodeRef);
+				properties.put(QualityModel.ASSOC_PRODUCT, rawMaterial1NodeRef);
 
 				WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
 				assertNotNull("The workflow path is null!", path);
@@ -182,7 +181,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
 				properties.put(PROP_NEED_PREV_ACTION, needPrevAction);
-				properties.put(PROP_STATE, "En cours");
+				properties.put(PROP_STATE, "new");
 
 				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
 				List<NodeRef> assignees = new ArrayList<NodeRef>();
@@ -203,22 +202,22 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 			assertEquals("corrActionTask", task2.getPath().getNode().getName());
 		}
 
-		checkWorkLog(ncNodeRef, 1, "En cours", "commentaire émetteur");
+		checkWorkLog(ncNodeRef, 1, "new", "commentaire émetteur");
 		/*
 		 * do corrActionTask
 		 */
-		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:corrActionTask", null, "À déclasser", "commentaire émetteur 2");
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:corrActionTask", null, "analysis", "commentaire émetteur 2");
 		assertEquals("checkTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 2, "À déclasser", "commentaire émetteur 2");
+		checkWorkLog(ncNodeRef, 2, "analysis", "commentaire émetteur 2");
 
 		/*
 		 * do checkTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:checkTask", null, "Résolu", "commentaire émetteur 3");
+		task = submitTask(workflowInstanceId, "ncwf:checkTask", null, "closing", "commentaire émetteur 3");
 		assertEquals("notificationTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 3, "Résolu", "commentaire émetteur 3");
+		checkWorkLog(ncNodeRef, 3, "closing", "commentaire émetteur 3");
 
 		/*
 		 * do notificationTask
@@ -251,7 +250,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 				Serializable workflowPackage = workflowService.createPackage(null);
 				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-				properties.put(ASSOC_PRODUCT, rawMaterial1NodeRef);
+				properties.put(QualityModel.ASSOC_PRODUCT, rawMaterial1NodeRef);
 
 				WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
 				assertNotNull("The workflow path is null!", path);
@@ -298,33 +297,33 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		 * Update workTask (analysis)
 		 */
 
-		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_ONE), "En cours",
+		WorkflowTask task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_ONE), "new",
 				"commentaire émetteur");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 1, "En cours", "commentaire émetteur");
+		checkWorkLog(ncNodeRef, 1, "new", "commentaire émetteur");
 		/*
 		 * do corrActionTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_ONE), "À déclasser",
+		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_ONE), "analysis",
 				"commentaire émetteur 2");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 2, "À déclasser", "commentaire émetteur 2");
+		checkWorkLog(ncNodeRef, 2, "analysis", "commentaire émetteur 2");
 
 		/*
 		 * do checkTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_TWO), "Résolu",
+		task = submitTask(workflowInstanceId, "ncwf:workTask", personService.getPerson(BeCPGTestHelper.USER_TWO), "closing",
 				"commentaire émetteur 3");
 		assertEquals("workTask", task.getPath().getNode().getName());
 
-		checkWorkLog(ncNodeRef, 3, "Résolu", "commentaire émetteur 3");
+		checkWorkLog(ncNodeRef, 3, "closing", "commentaire émetteur 3");
 
 		/*
 		 * do notificationTask
 		 */
-		task = submitTask(workflowInstanceId, "ncwf:workTask", null, "Fermé", "commentaire émetteur");
+		task = submitTask(workflowInstanceId, "ncwf:workTask", null, "closed", "commentaire émetteur");
 
 		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 	}

@@ -48,6 +48,7 @@
                 </list>
             </parameter>
         </constraint>
+       
         <constraint name="qa:ncClassification" type="LIST">
             <parameter name="allowedValues">
                 <list>
@@ -148,6 +149,20 @@
                 <value>true</value>
             </parameter>
         </constraint>
+        <constraint name="qa:productTypes" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>Triangles</value>
+                    <value>Baguettes</value>
+                    <value>Wraps</value>
+                    <value>Négoce</value>
+                    <value>Autres</value>
+                </list>
+            </parameter>
+            <parameter name="caseSensitive">
+                <value>true</value>
+            </parameter>
+         </constraint>
         <constraint name="qa:claimTypes" type="LIST">
             <parameter name="allowedValues">
                 <list>
@@ -633,6 +648,15 @@
                     <mandatory>false</mandatory>
                     <index enabled="true"/>
                 </property>
+                	<property name="qa:productType">
+                    <title>Type produit</title>
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true"/>
+                    <constraints>
+                        <constraint ref="qa:productTypes"/>
+                    </constraints>
+                </property>
                 <property name="qa:productUseByDate">
                 	  <title>DLC produit</title>
                     <type>d:date</type>
@@ -663,6 +687,11 @@
         <aspect name="qa:claimAspect">
             <title>Aspect réclamation client</title>
             <properties>
+            	<property name="qa:claimDescription">
+                    <title>Descriptif du problème</title>
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                </property>
                 <property name="qa:claimSource">
                     <title>Source de la remontée</title>
                     <type>d:text</type>
@@ -710,6 +739,9 @@
                         <stored>false</stored>
                         <tokenised>TRUE</tokenised>
                     </index>
+                    <constraints>
+                        <constraint ref="qa:claimTypes"/>
+                    </constraints>
                 </property>
                 <property name="qa:claimDistributionNetwork">
                     <title>Réseau de distribution</title>
