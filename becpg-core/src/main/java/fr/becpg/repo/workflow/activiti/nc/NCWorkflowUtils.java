@@ -70,9 +70,9 @@ public class NCWorkflowUtils {
 					}
 				} else {
 					@SuppressWarnings("unchecked")
-					List<NodeRef> nodes = (ArrayList<NodeRef>) task.getVariable(assocQname.toPrefixString(serviceRegistry.getNamespaceService()).replaceFirst(":", "_"));
+					List<ActivitiScriptNode> nodes = (ArrayList<ActivitiScriptNode>) task.getVariable(assocQname.toPrefixString(serviceRegistry.getNamespaceService()).replaceFirst(":", "_"));
 					if (nodes != null) {
-						associationService.update(ncNodeRef, assocQname, nodes);
+						associationService.update(ncNodeRef, assocQname, convertList(nodes));
 					}
 				}
 			}
@@ -99,6 +99,16 @@ public class NCWorkflowUtils {
 			}
 		}
 
+	}
+
+	private static List<NodeRef> convertList(List<ActivitiScriptNode> nodes) {
+		List<NodeRef> ret = new ArrayList<>();
+		
+		for(ActivitiScriptNode node : nodes){
+			ret.add(node.getNodeRef());
+		}
+		
+		return ret;
 	}
 
 	public static NodeRef getDocumentsFolder(NodeRef entityNodeRef, ServiceRegistry serviceRegistry) {
