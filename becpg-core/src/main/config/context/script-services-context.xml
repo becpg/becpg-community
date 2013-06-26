@@ -3,6 +3,7 @@
 
 <beans>
 
+	<!-- Todo merge that with  beCPGScriptHelper-->
 	<bean id="bSearchScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Search">
         <property name="extensionName">
             <value>bSearch</value>
@@ -26,6 +27,12 @@
 			<property name="serviceRegistry" ref="ServiceRegistry"/>
     </bean>
     
+    
+    <bean id="beCPGScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGScriptHelper">
+    	 <property name="extensionName">
+            <value>bcpg</value>
+        </property> 
+    </bean>
     
     <!-- Override Alfresco -->
     

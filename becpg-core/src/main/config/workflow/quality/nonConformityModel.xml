@@ -169,6 +169,11 @@
                     <constraints/>
                 </property>
             </overrides>
+            <mandatory-aspects>
+            	<aspect>qa:claimAspect</aspect>
+            	<aspect>qa:batchAspect</aspect>
+            	<aspect>bcpgwf:notificationAspect</aspect>
+            </mandatory-aspects>
         </type>
         <type name="ncwf:claimAnalysisTask">
             <title>Orientation réclamation</title>
