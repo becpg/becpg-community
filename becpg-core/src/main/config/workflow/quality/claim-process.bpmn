@@ -39,6 +39,11 @@
 						
                   execution.setVariable('ncwf_claimRejectedState','none');
                   execution.setVariable('ncwf_claimRejectedCause','');
+                  
+                  execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        			   execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+        			   execution.setVariable('bcpgwf_notifyMe', task.getVariable('bcpgwf_notifyMe'));
+                  
             	   task.setVariable('ncwf_ncState',"analysis");
             </activiti:string>
 					</activiti:field>
@@ -125,6 +130,8 @@
                  
                }
                
+               execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
                execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
                </activiti:string>
 					</activiti:field>
@@ -213,11 +220,13 @@
                } else {
                  execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
                }
-            
-           
+              
           	  execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
+          	  execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
         
-          	  
+        			execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+        
           	  </activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
@@ -236,7 +245,9 @@
 					task.setVariable('bpm_comment', '');
 					
                task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-            	task.setVariable('ncwf_claimRejectedState', 'none');
+               task.setVariable('ncwf_claimRejectedState', 'none');
+              
+               task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
             	
             	if (bcpgwf_notifyAssignee) {
 						sendMail(qa_claimResponseActor,initiator, 
@@ -272,13 +283,17 @@
 							  }
 	             
 	            } else {
-	              task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
+	               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
 	               execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
 	            }
 	            
-	            
+	            execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+        			
 	            execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
-
+           		execution.setVariable('qa_claimResponseState', task.getVariable('qa_claimResponseState'));
+			      execution.setVariable('qa_claimResponseDetails', task.getVariable('qa_claimResponseDetails'));
+			   
 
             	</activiti:string>
 					</activiti:field>
@@ -315,6 +330,12 @@
 						 }
 							  
 				
+               
+               task.setVariable('qa_claimResponseState', execution.getVariable('qa_claimResponseState'));
+			   	task.setVariable('qa_claimResponseDetails', execution.getVariable('qa_claimResponseDetails'));
+			   	task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
+			   	task.setVariable('qa_claimType', execution.getVariable('qa_claimType'));
+          
                task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
                task.setVariable('ncwf_claimRejectedState', 'none');</activiti:string>
 					</activiti:field>
@@ -347,6 +368,9 @@
 	            }
 	            
 	            
+	            execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+        			
                execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
             </activiti:string>
 					</activiti:field>
@@ -366,6 +390,15 @@
 
 					task.setVariable('ncwf_ncState','classification');
 				</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>
+				<activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+		              execution.setVariable('qa_claimType', task.getVariable('qa_claimType'));
+		              execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        		  	     execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+						</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
 				<activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
