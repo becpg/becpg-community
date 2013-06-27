@@ -918,7 +918,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			   , NPDGroup.NPD.toString(),
 				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
 				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
-				NPDGroup.ValidateFaisability.toString(), NPDGroup.FaisabilityAssignersGroup.toString() };
+				NPDGroup.ValidateFaisability.toString(), NPDGroup.FaisabilityAssignersGroup.toString(),
+				NCGroup.ClaimMgr.toString(), NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString()
+					};
 
 		Set<String> zones = new HashSet<String>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);

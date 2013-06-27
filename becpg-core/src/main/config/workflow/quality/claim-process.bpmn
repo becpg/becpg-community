@@ -13,13 +13,16 @@
 	                if(execution.getVariable('bcpgwf_notifyUsers')==null){
 	                	execution.setVariable('bcpgwf_notifyUsers',null);
 	                }
-	                execution.setVariable('ncwf_ncState',"analysis");</activiti:string>
+	                execution.setVariable('ncwf_ncState',"analysis");
+	                if(execution.getVariable('ncwf_claimStartAsDraft')==null){
+	                 	 execution.setVariable('ncwf_claimStartAsDraft',false);
+	                 }
+	                 execution.setVariable('skipClassification',false);</activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
     <serviceTask id="initialiseNCTask" name="Initialisation réclamation" activiti:delegateExpression="${CreateNC}"></serviceTask>
-    <sequenceFlow id="toAnalysisFlow1" sourceRef="initialiseNCTask" targetRef="analysisTask"></sequenceFlow>
     <userTask id="enteringClaimTask" name="Saisie réclamation" activiti:assignee="${initiator.properties.userName}" activiti:candidateUsers="initiator" activiti:formKey="ncwf:claimStartTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -33,12 +36,12 @@
                   execution.setVariable('ncwf_claimRejectedCause','');
                   
                   execution.setVariable('qa_claimSource', task.getVariable('qa_claimSource'));
-	               execution.setVariable('qa_claimDistributionNetwork', task.getVariable('qa_claimDistributionNetwork'));
+	             
 	               execution.setVariable('bcpg_clients', task.getVariable('bcpg_clients'));
 						execution.setVariable('qa_claimCustomerInformation', task.getVariable('qa_claimCustomerInformation'));
 						
 						execution.setVariable('qa_product', task.getVariable('qa_product'));
-						execution.setVariable('qa_productType', task.getVariable('qa_productType'));
+						
 						execution.setVariable('qa_batchId', task.getVariable('qa_batchId'));
 						execution.setVariable('qa_productUseByDate', task.getVariable('qa_productUseByDate'));
 						execution.setVariable('qa_claimTradeContact', task.getVariable('qa_claimTradeContact'));
@@ -50,13 +53,15 @@
         			   execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
         			   execution.setVariable('bcpgwf_notifyMe', task.getVariable('bcpgwf_notifyMe'));
                   
+                  execution.setVariable('skipClassification',false);
+                   
             	   task.setVariable('ncwf_ncState',"analysis");</activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="analysisTask" name="Orientation réclamation" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:claimAnalysisTask">
+    <userTask id="analysisTask" name="Orientation réclamation" activiti:candidateGroups="GROUP_ClaimMgr" activiti:formKey="ncwf:claimAnalysisTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -148,8 +153,9 @@
           <activiti:field name="script">
             <activiti:string>logger.error("Go To Dispatch Treatment Gateway ");
             			logger.error("State :  "+ncwf_claimRejectedState);
-            			logger.error("Treatment Actor:  "+qa_claimTreatmentActor!=null);
-            			logger.error("Response Actor:  "+qa_claimResponseActor!=null);</activiti:string>
+            			logger.error("Treatment Actor: "+(qa_claimTreatmentActor!=null));
+            			logger.error("Response Actor: "+(qa_claimResponseActor!=null));
+            			logger.error("Skip classification: "+skipClassification);</activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -167,7 +173,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimTreatmentActor!=null && ncwf_claimRejectedState !='classification' && ncwf_claimRejectedState !='response'  }]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="toClassificationFlow" name="Dans tous les cas" sourceRef="dispatchTreatmentGateway" targetRef="classificationTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ ncwf_claimRejectedState =='classification' ||   ncwf_claimRejectedState =='none' }]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${skipClassification == false && (  ncwf_claimRejectedState =='classification' ||   ncwf_claimRejectedState =='none') }]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="toResponseWithoutTraitementFlow" name="Si acteur réponse et pas d'acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimResponseTask">
       <extensionElements>
@@ -319,7 +325,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimResponseActor!=null && !(  ncwf_claimRejectedState == 'treatment'  ||   ncwf_claimRejectedState == 'analysis')}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="validateTreatementGateway" name="Exclusive Gateway"></exclusiveGateway>
-    <userTask id="claimClosingTask" name="Clôture réclamation" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:claimClosingTask">
+    <userTask id="claimClosingTask" name="Clôture réclamation" activiti:candidateGroups="GROUP_ClaimMgr" activiti:formKey="ncwf:claimClosingTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -391,7 +397,7 @@
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_QualityMgr" activiti:formKey="ncwf:claimClassificationTask">
+    <userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_ClaimMgr" activiti:formKey="ncwf:claimClassificationTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -427,7 +433,8 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string>logger.error("Go to analysis");</activiti:string>
+            <activiti:string>logger.error("Go to analysis");
+					execution.setVariable('skipClassification',true);</activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -443,6 +450,18 @@
     <exclusiveGateway id="validateClosingGateway" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="toValidateClosingGateway" sourceRef="claimClosingTask" targetRef="validateClosingGateway"></sequenceFlow>
     <sequenceFlow id="backToTreatementFlow1" name="Refus ou demande complémentaire" sourceRef="validateClosingGateway" targetRef="endOrientationGateway">
+      <extensionElements>
+        <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string>logger.error("Go to analysis");
+if(ncwf_claimRejectedState!='classification'){
+   execution.setVariable('skipClassification',true);
+} else {
+  execution.setVariable('skipClassification',false);
+}</activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'none' }]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="backToTraitementFlow3" name="Refus ou demande complémentaire" sourceRef="validateTreatementGateway" targetRef="claimTreatmentTask">
@@ -480,6 +499,14 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ ncwf_claimRejectedState == 'analysis'  ||   (ncwf_claimRejectedState == 'treatment'  &&  qa_claimTreatmentActor==null )
  || (ncwf_claimRejectedState == 'response' && qa_claimTreatmentActor==null  && qa_claimResponseActor==null) }]]></conditionExpression>
     </sequenceFlow>
+    <exclusiveGateway id="testDraftGateway" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="toTestIsDraft" sourceRef="initialiseNCTask" targetRef="testDraftGateway"></sequenceFlow>
+    <sequenceFlow id="isDraftFlow" sourceRef="testDraftGateway" targetRef="enteringClaimTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimStartAsDraft == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="isNotDraftFlow" sourceRef="testDraftGateway" targetRef="analysisTask">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimStartAsDraft == false}]]></conditionExpression>
+    </sequenceFlow>
     <textAnnotation id="textannotation1">
       <text>Assigné au groupe Orientation réclamation </text>
     </textAnnotation>
@@ -496,7 +523,7 @@
         <omgdc:Bounds height="35.0" width="35.0" x="1100.0" y="333.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="initialiseNCTask" id="BPMNShape_initialiseNCTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="-30.0" y="319.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="-77.0" y="319.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="startClaimProcess" id="BPMNShape_startClaimProcess">
         <omgdc:Bounds height="35.0" width="35.0" x="-160.0" y="329.0"></omgdc:Bounds>
@@ -517,7 +544,7 @@
         <omgdc:Bounds height="40.0" width="40.0" x="569.0" y="237.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="enteringClaimTask" id="BPMNShape_enteringClaimTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="27.0" y="414.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="50.0" y="414.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endOrientationGateway" id="BPMNShape_endOrientationGateway">
         <omgdc:Bounds height="40.0" width="40.0" x="310.0" y="326.0"></omgdc:Bounds>
@@ -543,6 +570,9 @@
       <bpmndi:BPMNShape bpmnElement="signalintermediatethrowevent1" id="BPMNShape_signalintermediatethrowevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="621.0" y="284.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="testDraftGateway" id="BPMNShape_testDraftGateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="83.0" y="326.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="toDispatchTreatmentGateway" id="BPMNEdge_toDispatchTreatmentGateway">
         <omgdi:waypoint x="350.0" y="346.0"></omgdi:waypoint>
         <omgdi:waypoint x="370.0" y="346.0"></omgdi:waypoint>
@@ -561,7 +591,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="startFlow" id="BPMNEdge_startFlow">
         <omgdi:waypoint x="-125.0" y="346.0"></omgdi:waypoint>
-        <omgdi:waypoint x="-30.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="-77.0" y="346.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toTreatmentFlow" id="BPMNEdge_toTreatmentFlow">
         <omgdi:waypoint x="390.0" y="326.0"></omgdi:waypoint>
@@ -631,12 +661,8 @@
           <omgdc:Bounds height="39.0" width="100.0" x="-52.0" y="8.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="toAnalysisFlow1" id="BPMNEdge_toAnalysisFlow1">
-        <omgdi:waypoint x="75.0" y="346.0"></omgdi:waypoint>
-        <omgdi:waypoint x="186.0" y="346.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toAnalysisFlow2" id="BPMNEdge_toAnalysisFlow2">
-        <omgdi:waypoint x="79.0" y="414.0"></omgdi:waypoint>
+        <omgdi:waypoint x="102.0" y="414.0"></omgdi:waypoint>
         <omgdi:waypoint x="238.0" y="374.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endTreatmentFlow" id="BPMNEdge_endTreatmentFlow">
@@ -665,7 +691,7 @@
         <omgdi:waypoint x="330.0" y="366.0"></omgdi:waypoint>
         <omgdi:waypoint x="330.0" y="492.0"></omgdi:waypoint>
         <omgdi:waypoint x="102.0" y="492.0"></omgdi:waypoint>
-        <omgdi:waypoint x="79.0" y="469.0"></omgdi:waypoint>
+        <omgdi:waypoint x="102.0" y="469.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="39.0" width="100.0" x="-86.0" y="-2.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
@@ -683,6 +709,18 @@
       <bpmndi:BPMNEdge bpmnElement="flow66" id="BPMNEdge_flow66">
         <omgdi:waypoint x="609.0" y="257.0"></omgdi:waypoint>
         <omgdi:waypoint x="638.0" y="284.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="toTestIsDraft" id="BPMNEdge_toTestIsDraft">
+        <omgdi:waypoint x="28.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="83.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isDraftFlow" id="BPMNEdge_isDraftFlow">
+        <omgdi:waypoint x="103.0" y="366.0"></omgdi:waypoint>
+        <omgdi:waypoint x="102.0" y="414.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="isNotDraftFlow" id="BPMNEdge_isNotDraftFlow">
+        <omgdi:waypoint x="123.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="186.0" y="346.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

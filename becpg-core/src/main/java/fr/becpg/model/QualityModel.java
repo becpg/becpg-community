@@ -123,4 +123,6 @@ public interface QualityModel {
 	
 	public static final QName ASPECT_CLAIM = QName.createQName(QUALITY_URI, "claimAspect");
 
+	public static final QName ASPECT_CLAIM_CLASSIFICATION = QName.createQName(QUALITY_URI, "claimClassificationAspect");
+
 }
