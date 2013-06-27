@@ -133,7 +133,7 @@
 								sendMail(bcpgwf_notifyUsers.get(i),initiator, bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject',bpm_workflowDescription), bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
 			          	}
 			          }
-			          if(bcpgwf_notifyMe != null){
+			          if(bcpgwf_notifyMe){
 			             sendMail(initiator,initiator,  bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject',bpm_workflowDescription),	 bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
 			          }
                  
@@ -231,7 +231,7 @@
 						}
 		          }
 		          
-		          if(bcpgwf_notifyMe != null){
+		          if(bcpgwf_notifyMe){
 		               sendMail(initiator,initiator, 
 		                   bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject',bpm_workflowDescription),
 								 bcpg.getMessage('claimProcess.mail.notify.treatment.end.message')); 
@@ -292,7 +292,7 @@
 										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));  
 									}	
 				          	}
-				           if(bcpgwf_notifyMe != null){
+				           if(bcpgwf_notifyMe){
 				               sendMail(initiator,initiator,
 										  bcpg.getMessage('claimProcess.mail.notify.response.end.subject',bpm_workflowDescription),
 										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
@@ -343,7 +343,7 @@
 								    	bcpg.getMessage('claimProcess.mail.notify.closing.message'));  
 									}	
 				      }
-				      if(bcpgwf_notifyMe != null){
+				      if(bcpgwf_notifyMe){
 				             sendMail(initiator,initiator, 
 						      bcpg.getMessage('claimProcess.mail.notify.closing.subject',bpm_workflowDescription),
 						      bcpg.getMessage('claimProcess.mail.notify.closing.message'));  
@@ -376,7 +376,7 @@
 										  bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));  
 									}	
 				          	}
-				           if(bcpgwf_notifyMe != null){
+				           if(bcpgwf_notifyMe){
 				               sendMail(initiator,initiator,
 										  bcpg.getMessage('claimProcess.mail.notify.closing.end.subject',bpm_workflowDescription),
 										  bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));
