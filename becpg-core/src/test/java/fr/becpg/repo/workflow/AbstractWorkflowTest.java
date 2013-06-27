@@ -71,6 +71,12 @@ public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 
 	protected WorkflowTask submitTask(final String workflowInstanceId,final String taskName,final String transitionName,final Map<QName, Serializable> properties) {
 
+		return submitTask(workflowInstanceId, taskName, transitionName, properties,new HashMap<QName, List<NodeRef>>());
+
+	}
+	
+	protected WorkflowTask submitTask(final String workflowInstanceId,final String taskName,final String transitionName,final Map<QName, Serializable> properties,final Map<QName, List<NodeRef>> assocs) {
+
 		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
 			public WorkflowTask execute() throws Throwable {
 
@@ -78,26 +84,28 @@ public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 				taskQuery.setProcessId(workflowInstanceId);
 				taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-
+				
 				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 
+				WorkflowTask ret = null;
+				
 				for (WorkflowTask task : workflowTasks) {
-					logger.info("Task Name " + task.getName());
+					logger.info("Active task Name " + task.getName());
 					if (taskName.equals(task.getName())) {
-						logger.info("submit task " + task.getName());
+						logger.info(" --- submit task " + task.getName());
 						workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 						task = workflowService.endTask(task.getId(), transitionName);
 
-						return task;
+						ret =  task;
 					}
 				}
-				return null;
+				return ret;
 
 			}
 		}, false, true);
 
 	}
+	
 
 	protected void printInProgressTasks(String workflowInstanceId) {
 		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
