@@ -9,6 +9,7 @@ package fr.becpg.repo.admin;
  *
  * @author querephi
  */
+@Deprecated
 public enum NPDGroup {
 
 	NPD,

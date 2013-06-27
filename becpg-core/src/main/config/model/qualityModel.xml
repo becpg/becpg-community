@@ -149,7 +149,7 @@
                 <value>true</value>
             </parameter>
         </constraint>
-        <constraint name="qa:productTypes" type="LIST">
+       <!--  <constraint name="qa:productTypes" type="LIST">
             <parameter name="allowedValues">
                 <list>
                     <value>Triangles</value>
@@ -162,7 +162,7 @@
             <parameter name="caseSensitive">
                 <value>true</value>
             </parameter>
-         </constraint>
+         </constraint> -->
         <constraint name="qa:claimTypes" type="LIST">
             <parameter name="allowedValues">
                 <list>
@@ -204,7 +204,7 @@
                 <value>true</value>
             </parameter>
         </constraint>
-        <constraint name="qa:claimDistributionNetworks" type="LIST">
+        <!-- <constraint name="qa:claimDistributionNetworks" type="LIST">
             <parameter name="allowedValues">
                 <list>
                     <value>Enseignes GMS</value>
@@ -216,7 +216,7 @@
             <parameter name="caseSensitive">
                 <value>true</value>
             </parameter>
-        </constraint>
+        </constraint> -->
     </constraints>
     <types>
         <type name="qa:nc">
@@ -648,7 +648,7 @@
                     <mandatory>false</mandatory>
                     <index enabled="true"/>
                 </property>
-                	<property name="qa:productType">
+                <!-- 	<property name="qa:productType">
                     <title>Type produit</title>
                     <type>d:text</type>
                     <mandatory>false</mandatory>
@@ -656,7 +656,7 @@
                     <constraints>
                         <constraint ref="qa:productTypes"/>
                     </constraints>
-                </property>
+                </property> -->
                 <property name="qa:productUseByDate">
                 	  <title>DLC produit</title>
                     <type>d:date</type>
@@ -682,7 +682,9 @@
                 </association>
             </associations>
             <overrides/>
-            <mandatory-aspects/>
+            <mandatory-aspects>
+            	 <aspect>bcpg:manufacturingAspect</aspect>
+            </mandatory-aspects>
         </aspect>
         <aspect name="qa:claimAspect">
             <title>Aspect réclamation client</title>
@@ -743,7 +745,7 @@
                         <constraint ref="qa:claimTypes"/>
                     </constraints>
                 </property>
-                <property name="qa:claimDistributionNetwork">
+                <!-- <property name="qa:claimDistributionNetwork">
                     <title>Réseau de distribution</title>
                     <type>d:text</type>
                     <mandatory>false</mandatory>
@@ -755,7 +757,7 @@
                     <constraints>
                         <constraint ref="qa:claimDistributionNetworks"/>
                     </constraints>
-                </property>
+                </property> -->
             </properties>
             <associations>
                 <association name="qa:claimTradeContact">
@@ -852,6 +854,16 @@
                         <tokenised>TRUE</tokenised>
                     </index>
                 </property>
+                 <property name="qa:claimTreatementPrevActions">
+                    <title>Actions préventives éventuellement lancé</title>
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
             </properties>
             <associations>
                 <association name="qa:claimTreatmentActor">
@@ -898,7 +910,8 @@
                     </constraints>
                 </property>
                 <property name="qa:claimResponseDetails">
-                    <title>Réponse apportée( à détailler de façon formalisée en quelques phrases, sans abréviation - si besoin, préciser juste "cf pièce jointe"))</title>
+                    <title>Réponse apportée</title>
+                    <description>( à détailler de façon formalisée en quelques phrases, sans abréviation - si besoin, préciser juste "cf pièce jointe")</description>
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -932,6 +945,34 @@
                 <property name="qa:claimClosingDate">
                     <title>Date de clôture</title>
                     <type>d:date</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+            </properties>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+         <aspect name="qa:claimClassificationAspect">
+            <title>Aspect classification réclamation</title>
+            <properties>
+                <property name="qa:claimOriginHierarchy1">
+                    <title>Processus responsable de la réclamation - Famille</title>
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="qa:claimOriginHierarchy2">
+                    <title>Processus responsable de la réclamation - Sous famille</title>
+                    <type>d:text</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
                         <atomic>false</atomic>

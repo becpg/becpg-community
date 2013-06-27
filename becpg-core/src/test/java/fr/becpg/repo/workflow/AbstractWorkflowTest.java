@@ -87,8 +87,6 @@ public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 				
 				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 
-				WorkflowTask ret = null;
-				
 				for (WorkflowTask task : workflowTasks) {
 					logger.info("Active task Name " + task.getName());
 					if (taskName.equals(task.getName())) {
@@ -96,10 +94,10 @@ public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 						workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 						task = workflowService.endTask(task.getId(), transitionName);
 
-						ret =  task;
+						return task;
 					}
 				}
-				return ret;
+				return null;
 
 			}
 		}, false, true);

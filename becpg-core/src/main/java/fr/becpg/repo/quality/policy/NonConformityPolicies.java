@@ -96,21 +96,23 @@ public class NonConformityPolicies implements NodeServicePolicies.OnUpdateProper
 
 	}
 
+	@Deprecated
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 
 		logger.debug("NC onCreateAssociation");
-		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
-			nonConformityService.classifyNC(assocRef.getSourceRef(), assocRef.getTargetRef());
-		}
+//		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
+//			nonConformityService.classifyNC(assocRef.getSourceRef(), assocRef.getTargetRef());
+//		}
 	}
 
+	@Deprecated
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 
 		logger.debug("NC onDeleteAssociation");
-		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
-			nonConformityService.classifyNC(assocRef.getSourceRef(), null);
-		}
+//		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
+//			nonConformityService.classifyNC(assocRef.getSourceRef(), null);
+//		}
 	}
 }

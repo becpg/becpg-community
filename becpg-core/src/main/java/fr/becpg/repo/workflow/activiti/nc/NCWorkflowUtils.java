@@ -51,7 +51,8 @@ public class NCWorkflowUtils {
 		}
 
 		for (QName aspectQname : new QName[] { QualityModel.ASPECT_BATCH, QualityModel.ASPECT_CLAIM_RESPONSE, QualityModel.ASPECT_CLAIM_TREATEMENT,
-				QualityModel.ASPECT_CLAIM_CLOSING, QualityModel.ASPECT_CLAIM, BeCPGModel.ASPECT_CLIENTS, BeCPGModel.ASPECT_SUPPLIERS }) {
+				QualityModel.ASPECT_CLAIM_CLOSING, QualityModel.ASPECT_CLAIM, BeCPGModel.ASPECT_CLIENTS, BeCPGModel.ASPECT_SUPPLIERS , BeCPGModel.ASPECT_MANUFACTURING,
+				QualityModel.ASPECT_CLAIM_CLASSIFICATION}) {
 
 			AspectDefinition aspectDef = serviceRegistry.getDictionaryService().getAspect(aspectQname);
 			for (QName propQname : aspectDef.getProperties().keySet()) {

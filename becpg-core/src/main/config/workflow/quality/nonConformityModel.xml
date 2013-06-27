@@ -155,7 +155,13 @@
         <type name="ncwf:claimStartTask">
             <title>Saisie réclamation</title>
             <parent>bpm:startTask</parent>
-            <properties/>
+            <properties>
+            	 <property name="ncwf:claimStartAsDraft">
+                    <title>Créer comme brouillon</title>
+                    <type>d:boolean</type>
+                    <mandatory>false</mandatory>
+                </property>
+            </properties>
             <associations/>
             <overrides>
                 <property name="bpm:packageActionGroup">
@@ -277,6 +283,7 @@
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>qa:claimClosingAspect</aspect>
+            	<aspect>qa:claimClassificationAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
             	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
@@ -296,6 +303,7 @@
              <mandatory-aspects>
              	<aspect>qa:claimAspect</aspect>
              	<aspect>qa:batchAspect</aspect>
+             	<aspect>qa:claimClassificationAspect</aspect>
              	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
