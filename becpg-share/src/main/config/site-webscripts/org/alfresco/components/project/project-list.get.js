@@ -12,6 +12,7 @@ function main()
    var projectList = {
     id : "projectList", 
     name : "beCPG.component.ProjectList",
+    initArgs: [ '"'+args.htmlid+'"' , page.url.args.view ? '"'+page.url.args.view+'"': '"dataTable"' ],
     options : {
        siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
        extraDataParams: page.url.templateArgs.site!=null ? "&repo=false&container=documentLibrary":"&repo=true",
