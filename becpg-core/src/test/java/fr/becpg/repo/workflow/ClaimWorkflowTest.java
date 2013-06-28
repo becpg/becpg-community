@@ -211,8 +211,11 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 			
 			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "analysis");
 			task =  submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
-			//properties = new HashMap<QName, Serializable>();
-			//task =  submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
+			properties = new HashMap<QName, Serializable>();
+			task =  submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
+			
+			//logger.error("Classification should not be here:");
+			//assertNotTask(workflowInstanceId,"ncwf:claimClassificationTask");
 			
 			//assertEquals("analysisTask", task.getPath().getNode().getName());
 			properties = new HashMap<QName, Serializable>();

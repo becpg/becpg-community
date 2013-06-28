@@ -117,5 +117,21 @@ public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 			logger.info("iter task " + task.getName() + " - " + task.getState());
 		}
 	}
+	
+	protected void assertNotTask(String workflowInstanceId, String taskName) {
+		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
+		taskQuery.setProcessId(workflowInstanceId);
+		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
+
+		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
+
+		for (WorkflowTask task : workflowTasks) {
+
+			logger.info("iter task " + task.getName() + " - " + task.getState());
+			if (taskName.equals(task.getName())) {
+				assertFalse(true);
+			}
+		}
+	}
 
 }

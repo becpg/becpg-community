@@ -283,7 +283,6 @@
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>qa:claimClosingAspect</aspect>
-            	<aspect>qa:claimClassificationAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
             	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
@@ -303,7 +302,6 @@
              <mandatory-aspects>
              	<aspect>qa:claimAspect</aspect>
              	<aspect>qa:batchAspect</aspect>
-             	<aspect>qa:claimClassificationAspect</aspect>
              	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>

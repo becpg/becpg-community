@@ -745,6 +745,16 @@
                         <constraint ref="qa:claimTypes"/>
                     </constraints>
                 </property>
+                 <property name="qa:claimOriginHierarchy1">
+                    <title>Processus responsable de la réclamation - Famille</title>
+                    <type>d:noderef</type>
+                    <mandatory>false</mandatory>    
+                </property>
+                <property name="qa:claimOriginHierarchy2">
+                    <title>Processus responsable de la réclamation - Sous famille</title>
+                    <type>d:noderef</type>
+                    <mandatory>false</mandatory>
+                </property>
                 <!-- <property name="qa:claimDistributionNetwork">
                     <title>Réseau de distribution</title>
                     <type>d:text</type>
@@ -951,24 +961,6 @@
                         <stored>false</stored>
                         <tokenised>TRUE</tokenised>
                     </index>
-                </property>
-            </properties>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
-         <aspect name="qa:claimClassificationAspect">
-            <title>Aspect classification réclamation</title>
-            <properties>
-                <property name="qa:claimOriginHierarchy1">
-                    <title>Processus responsable de la réclamation - Famille</title>
-                    <type>d:noderef</type>
-                    <mandatory>false</mandatory>    
-                </property>
-                <property name="qa:claimOriginHierarchy2">
-                    <title>Processus responsable de la réclamation - Sous famille</title>
-                    <type>d:noderef</type>
-                    <mandatory>false</mandatory>
                 </property>
             </properties>
             <associations/>
