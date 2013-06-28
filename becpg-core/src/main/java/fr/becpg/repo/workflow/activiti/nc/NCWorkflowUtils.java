@@ -15,6 +15,8 @@ import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
+import org.alfresco.service.cmr.repository.datatype.TypeConverter;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
@@ -35,6 +37,21 @@ public class NCWorkflowUtils {
 		Object getVariable(String name);
 
 	}
+	
+	static {
+	
+		DefaultTypeConverter.INSTANCE.addConverter(ActivitiScriptNode.class, NodeRef.class,new TypeConverter.Converter<ActivitiScriptNode, NodeRef>()
+                {
+            public NodeRef convert(ActivitiScriptNode source)
+            {
+            	if(source!=null){
+            		return source.getNodeRef();
+            	} 
+            	return null;
+            }
+        } );
+	
+	}
 
 	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry) throws FileExistsException, FileNotFoundException {
 
@@ -51,8 +68,7 @@ public class NCWorkflowUtils {
 		}
 
 		for (QName aspectQname : new QName[] { QualityModel.ASPECT_BATCH, QualityModel.ASPECT_CLAIM_RESPONSE, QualityModel.ASPECT_CLAIM_TREATEMENT,
-				QualityModel.ASPECT_CLAIM_CLOSING, QualityModel.ASPECT_CLAIM, BeCPGModel.ASPECT_CLIENTS, BeCPGModel.ASPECT_SUPPLIERS , BeCPGModel.ASPECT_MANUFACTURING,
-				QualityModel.ASPECT_CLAIM_CLASSIFICATION}) {
+				QualityModel.ASPECT_CLAIM_CLOSING, QualityModel.ASPECT_CLAIM, BeCPGModel.ASPECT_CLIENTS, BeCPGModel.ASPECT_SUPPLIERS , BeCPGModel.ASPECT_MANUFACTURING}) {
 
 			AspectDefinition aspectDef = serviceRegistry.getDictionaryService().getAspect(aspectQname);
 			for (QName propQname : aspectDef.getProperties().keySet()) {

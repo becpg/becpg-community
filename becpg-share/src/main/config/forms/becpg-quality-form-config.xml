@@ -46,8 +46,8 @@
 					<show id="qa:claimDescription" />
 
 					<show id="qa:claimType" />
-					<show id="qa:claimOriginHierachy1" />
-					<show id="qa:claimOriginHierachy2" />
+					<show id="qa:claimOriginHierarchy1" />
+					<show id="qa:claimOriginHierarchy2" />
 
 					<show id="qa:claimTreatmentDate" />
 					<show id="qa:claimTreatmentActor" />
@@ -204,8 +204,8 @@
 					<show id="qa:claimDescription" />
 
 					<show id="qa:claimType" />
-   			   <show id="qa:claimOriginHierachy1" />
-					<show id="qa:claimOriginHierachy2" />
+   			   <show id="qa:claimOriginHierarchy1" />
+					<show id="qa:claimOriginHierarchy2" />
 
 					<show id="qa:claimTreatmentDate" />
 					<show id="qa:claimTreatmentActor" />
@@ -409,8 +409,8 @@
 					<show id="qa:claimDescription" />
 
 					<show id="qa:claimType" />
-   			   <show id="qa:claimOriginHierachy1" />
-					<show id="qa:claimOriginHierachy2" />
+   			   <show id="qa:claimOriginHierarchy1" />
+					<show id="qa:claimOriginHierarchy2" />
 
 					<show id="qa:claimTreatmentDate" />
 					<show id="qa:claimTreatmentActor" />
