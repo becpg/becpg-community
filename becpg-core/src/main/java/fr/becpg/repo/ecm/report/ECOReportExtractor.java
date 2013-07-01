@@ -1,5 +1,7 @@
 package fr.becpg.repo.ecm.report;
 
+import java.io.Serializable;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -83,7 +85,7 @@ private Element extractXml(ChangeOrderData ecoData){
 			}
 			
 
-			Integer projectedQty = (Integer)nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PROJECTED_QTY);
+			Serializable projectedQty = nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PROJECTED_QTY);
 			if(projectedQty == null){
 				projectedQty = DEFAULT_PROJECTED_QTY;
 			}
