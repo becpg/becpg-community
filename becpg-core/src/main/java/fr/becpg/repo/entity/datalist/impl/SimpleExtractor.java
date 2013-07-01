@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -69,6 +70,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	public void setDataListSortRegistry(DataListSortRegistry dataListSortRegistry) {
 		this.dataListSortRegistry = dataListSortRegistry;
 	}
+	
+	
+	
 
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess) {
@@ -150,8 +154,11 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, final Map<String, Object> props) {
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, metadataFields, false, new AttributeExtractorService.DataListCallBack() {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<QName,Serializable> properties, final Map<String, Object> props) {
+		
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties ,  metadataFields, false, new AttributeExtractorService.DataListCallBack() {
+			
+			final Map<NodeRef,Map<String, Object>> cache = new HashMap<>();
 			
 			@Override
 			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<String> metadataFields) {
@@ -164,9 +171,16 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
 				
 					for (NodeRef nodeRef : results) {
-						if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
-						  ret.add(extract(nodeRef, metadataFields, props));
+						if(cache.containsKey(nodeRef)){
+							ret.add(cache.get(nodeRef));
+						} else {
+							if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
+								cache.put(nodeRef, extract(nodeRef, metadataFields, props));
+								ret.add(cache.get(nodeRef));
+							}
 						}
+						
+						
 					}
 				}
 
@@ -178,8 +192,15 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 			public Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname, List<String> metadataFields) {
 	
 				NodeRef entityNodeRef = entityListDAO.getEntity(entityListNodeRef);
-				if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
-					return  extract(entityNodeRef, metadataFields, props);
+			
+				if(cache.containsKey(entityNodeRef)){
+					return cache.get(entityNodeRef);
+				} else {
+					if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
+						
+						cache.put(entityNodeRef,extract(entityNodeRef, metadataFields, props));
+						return  cache.get(entityNodeRef);
+					}
 				}
 				
 				return  new HashMap<String, Object>();

@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,17 +82,17 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<String, Object> props) {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<QName, Serializable> properties , Map<String, Object> extraProps) {
 
-		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, props);
-		if(props.get(PROP_DEPTH)!=null){
+		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, properties , extraProps);
+		if(extraProps.get(PROP_DEPTH)!=null){
 			@SuppressWarnings("unchecked")
 			Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
 			if (depth == null) {
 				depth = new HashMap<String, Object>();
 			}
 			
-			Integer value = (Integer) props.get(PROP_DEPTH);
+			Integer value = (Integer) extraProps.get(PROP_DEPTH);
 			depth.put("value", value);
 			depth.put("displayValue", value);
 			
@@ -99,8 +100,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			
 		}
 		
-		if(props.get(PROP_ENTITYNODEREF)!=null && props.get(PROP_REVERSE_ASSOC)!=null){
-			NodeRef entityNodeRef  = (NodeRef) props.get(PROP_ENTITYNODEREF);
+		if(extraProps.get(PROP_ENTITYNODEREF)!=null && extraProps.get(PROP_REVERSE_ASSOC)!=null){
+			NodeRef entityNodeRef  = (NodeRef) extraProps.get(PROP_ENTITYNODEREF);
 			Map<String, Object> entity = new HashMap<String, Object>();
 			entity.put("value",entityNodeRef);
 			entity.put("displayValue",(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
@@ -110,7 +111,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				entity.put("siteId",siteId);
 			}
 			
-			String assocName  = (String) props.get(PROP_REVERSE_ASSOC);	
+			String assocName  = (String) extraProps.get(PROP_REVERSE_ASSOC);	
 			
 			tmp.put("assoc_"+assocName.replaceFirst(":", "_"), entity);
 		}
