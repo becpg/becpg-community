@@ -283,7 +283,7 @@ function findUsersInGroup(searchTerm, maxResults, results, groupName)
    
    if(group != null)
    {
-   	usersInGroup = people.getMembers(group, false);
+   	usersInGroup = people.getMembers(group, true);
    	
 //   	if(searchTerm == "*")
 //	   {   	
