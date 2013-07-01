@@ -85,6 +85,19 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			return true;
 		}
 		
+		if(formulatedProduct.getIngList()!=null){
+			for(IngListDataItem il : formulatedProduct.getIngList()){
+				if(il.getIsManual() == null || !il.getIsManual()){
+					//reset
+					il.setQtyPerc(null);
+					il.setIsGMO(false);
+					il.setIsIonized(false);
+					il.getGeoOrigin().clear();
+					il.getBioOrigin().clear();					
+				}
+			}
+		}
+		
 		// Load product specification
 		List<ProductData> productSpecicationDataList = new ArrayList<ProductData>();    	
     	List<AssociationRef> productSpecificationAssocRefs = nodeService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);

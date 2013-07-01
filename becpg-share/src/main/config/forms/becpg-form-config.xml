@@ -4587,6 +4587,7 @@
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactFormula">
@@ -4620,6 +4621,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:dynamicCharactGroupColor" />
+					<show id="bcpg:isManualListItem" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactGroupColor">
@@ -4641,6 +4643,7 @@
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactFormula">

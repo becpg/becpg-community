@@ -58,19 +58,26 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		logger.debug("Start AllergensCalculatingVisitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) && !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
 
 		Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
 		List<AllergenListDataItem> retainNodes = new ArrayList<AllergenListDataItem>();
-		
-		//manuel
+				
 		if(formulatedProduct.getAllergenList()!=null){
 			for(AllergenListDataItem a : formulatedProduct.getAllergenList()){
 				if(a.getIsManual()!= null && a.getIsManual()){
+					//manuel
 					retainNodes.add(a);
+				}
+				else{
+					//reset
+					a.setVoluntary(false);
+					a.setInVoluntary(false);
+					a.getVoluntarySources().clear();
+					a.getInVoluntarySources().clear();
 				}
 			}
 		}

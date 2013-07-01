@@ -112,7 +112,7 @@
 			<workflow name="activiti$activitiInvitationNominated" />
 			<workflow name="activiti$activitiReviewPooled" />
 			<workflow name="activiti$activitiParallelGroupReview" />
-			<workflow name="activiti$activitiParallelReview" />
+<!-- 			<workflow name="activiti$activitiParallelReview" /> -->
 			<workflow name="activiti$activitiAdhoc" />
 			<workflow name="activiti$activitiReview" />
 			<workflow name="activiti$projectAdhoc" />
@@ -123,7 +123,6 @@
 			<workflow name="jbpm$wf:review" />
 			<workflow name="jbpm$wf:parallelreview" />
 			<workflow name="jbpm$bcpgwf:productValidationWF" />
-			<workflow name="jbpm$npdwf:newProductDevelopmentWF" />			
 		</hidden-workflows>
 	</config>
 

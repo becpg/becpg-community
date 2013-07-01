@@ -3,11 +3,11 @@ package fr.becpg.repo.product.data.productList;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:dynamicCharactList")
-public class DynamicCharactListItem extends BeCPGDataObject {
+public class DynamicCharactListItem extends AbstractManualDataItem {
 
 	private String title;
 
