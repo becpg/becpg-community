@@ -16,8 +16,8 @@
 	                execution.setVariable('ncwf_ncState',"analysis");
 	                if(execution.getVariable('ncwf_claimStartAsDraft')==null){
 	                 	 execution.setVariable('ncwf_claimStartAsDraft',false);
-	                 }
-	                 execution.setVariable('skipClassification',false);</activiti:string>
+	                }
+	                execution.setVariable('skipClassification',false);</activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -36,8 +36,7 @@
 							   bpm_workflowDescription = extractName(nc);
 								task.setVariable('bpm_workflowDescription',bpm_workflowDescription);
 							}
-						}
-            </activiti:string>
+						}</activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -169,7 +168,7 @@
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'entry'}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'entry' && ncwf_claimRejectedState != 'analysis'}]]></conditionExpression>
     </sequenceFlow>
     <inclusiveGateway id="dispatchTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
     <sequenceFlow id="toTreatmentFlow" name="Si acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimTreatmentTask">
@@ -421,8 +420,7 @@
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-            			execution.setVariable('qa_claimType', task.getVariable('qa_claimType'));
+            <activiti:string>execution.setVariable('qa_claimType', task.getVariable('qa_claimType'));
             			execution.setVariable('qa_claimOriginHierarchy1', task.getVariable('qa_claimOriginHierarchy1'));
         		  	      execution.setVariable('qa_claimOriginHierarchy2', task.getVariable('qa_claimOriginHierarchy2'));
             			
