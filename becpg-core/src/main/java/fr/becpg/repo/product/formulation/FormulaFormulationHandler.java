@@ -188,7 +188,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 					// update formula
 					if (sourceItem.getTitle().equals(targetItem.getTitle())) {
-						targetItem.setFormula(sourceItem.getFormula());
+						if(targetItem.getIsManual() == null || targetItem.getIsManual() == false){
+							targetItem.setFormula(sourceItem.getFormula());
+							targetItem.setColumnName(sourceItem.getColumnName());
+							targetItem.setGroupColor(sourceItem.getGroupColor());
+							targetItem.setIsManual(sourceItem.getIsManual());
+						}						
 						isFound = true;
 						break;
 					}					

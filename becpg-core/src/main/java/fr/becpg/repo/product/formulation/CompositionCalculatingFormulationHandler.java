@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -262,7 +263,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			public NodeRef getData() {
 								
 				List<NodeRef> resultSet = null;
-				String waterIngName = I18NUtil.getMessage(MESSAGE_RM_WATER);
+				String waterIngName = I18NUtil.getMessage(MESSAGE_RM_WATER, Locale.getDefault());
 				
 				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_RAWMATERIAL)) + 
 						LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, waterIngName));
