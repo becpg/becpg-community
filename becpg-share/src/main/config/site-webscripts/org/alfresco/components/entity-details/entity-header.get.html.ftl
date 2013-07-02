@@ -111,7 +111,7 @@
 					      <select id="${el}-entityReportPicker-select"  name="${el}-entityReportPicker-select">      
 					      	<option value="properties">${msg("picker.report.properties")}</option>
 					      	<#list reports as report>
-					      		<option value="${report.nodeRef}">${report.templateName!""}</option>
+					      		<option value="${report.nodeRef}">${report.templateName?replace(".rptdesign", "")}</option>
 					      	</#list>
 					      </select>
 		               

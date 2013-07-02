@@ -39,7 +39,7 @@ import fr.becpg.report.client.ReportParams;
 public class EntityReportServiceImpl implements EntityReportService {
 
 	private static final String DEFAULT_EXTRACTOR = "default";
-	private static final String REPORT_NAME = "%s - %s";
+	private static final String REPORT_NAME = "%s - %s";	
 
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
@@ -186,6 +186,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
 				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+		if(documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null){
+			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
+		}
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 		if (documentNodeRef == null) {
 
