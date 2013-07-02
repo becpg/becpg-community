@@ -155,8 +155,7 @@
             if (endDate == null) {
                var duration = record["itemData"]["prop_pjt_tlDuration"].value;
                if (duration == null) {
-                  var tlIsMilestone = record["itemData"]["prop_pjt_tlIsMilestone"].value;
-                  if (tlIsMilestone) {
+                  if (record["itemData"]["prop_pjt_tlIsMilestone"] != null && record["itemData"]["prop_pjt_tlIsMilestone"].value) {
                      duration = 1;
                   } else {
                      duration = 0;
