@@ -27,6 +27,7 @@ import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -136,19 +137,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- Add report template --*/
-				NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplsFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
-
-				QName productType = BeCPGModel.TYPE_RAWMATERIAL;
-				ClassDefinition classDef = dictionaryService.getClass(productType);
-				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(productReportTplsFolder, classDef.getTitle(), classDef.getTitle());
-				reportTplService.createTplRptDesign(productReportTplFolder, classDef.getTitle(), "beCPG/birt/document/product/default/ProductReport.rptdesign",
-						ReportType.Document, ReportFormat.PDF, productType, true, true, true);
-
 				/*-- Create images folder --*/
 				NodeRef imagesNodeRef = fileFolderService.create(testFolderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 
@@ -164,8 +152,8 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				/*-- Check report --*/
 				logger.debug("/*-- Check report --*/");
 				NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
-				assertNotNull(documentsNodeRef);				
-				NodeRef documentNodeRef = nodeService.getChildByName(documentsNodeRef, ContentModel.ASSOC_CONTAINS, "MP test report - " + classDef.getTitle());
+				assertNotNull(documentsNodeRef);								
+				NodeRef documentNodeRef = nodeService.getChildByName(documentsNodeRef, ContentModel.ASSOC_CONTAINS, "MP test report - Fiche Technique Client.pdf");
 				ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
 				assertNotNull("Reader should not be null", reader);
 				InputStream in = reader.getContentInputStream();

@@ -20,6 +20,7 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.report.template.ReportTplService;
 
 public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAssociationDecorator {
@@ -71,6 +72,9 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(obj);
 				if (reportTemplateNodeRef != null) {
 					String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
+					if(templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)){
+						templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
+					}
 					jsonObj.put("templateName", templateName);
 					jsonObj.put("isDefault", this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT));
 					if (templateName.equalsIgnoreCase(reportName)) {

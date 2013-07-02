@@ -180,11 +180,22 @@
         <property name="description"><value>patch.bcpg.nutFactsMethodsPatch.description</value></property>
         <property name="fixesFromSchema"><value>0</value></property>
         <property name="fixesToSchema"><value>${version.schema}</value></property>
-        <property name="targetSchema"><value>100011</value></property>
+        <property name="targetSchema"><value>10011</value></property>
         <property name="entitySystemService" ref="entitySystemService" />
         <property name="importService" ref="importService" />
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>	
+	
+	<bean id="patch.bcpg.renameBIRTTemplateExtensionPatch" class="fr.becpg.repo.admin.patch.RenameBIRTTemplateExtensionPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.renameBIRTTemplateExtensionPatch</value></property>
+        <property name="description"><value>patch.bcpg.renameBIRTTemplateExtensionPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10012</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
 	
 </beans>
