@@ -129,6 +129,44 @@
             });
          }
       });
+      
+      
+      YAHOO.Bubbling
+      .fire(
+            "registerToolbarButtonAction",
+            {
+               actionName : "full-screen",
+               evaluate : function(asset, entity) {
+                  return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity!=null && entity.userAccess.edit;
+               },
+               fn : function(instance) {
+                  if( Dom.hasClass("alf-hd","hidden")){
+                     Dom.removeClass("alf-hd","hidden");
+                     Dom.removeClass("alf-filters","hidden");
+                     Dom.removeClass("alf-ft","hidden");
+                     Dom.addClass("alf-content","yui-b");
+                     if( this.fullScreen ){
+                        Dom.setStyle("alf-content", "margin-left",this.fullScreen.marginLeft);
+                     }
+                     
+                  } else {
+                     Dom.addClass("alf-hd","hidden");
+                     Dom.addClass("","hidden");
+                     Dom.addClass("alf-ft","hidden");
+                   
+                     Dom.addClass("alf-filters","hidden");
+                     Dom.removeClass("alf-content","yui-b");
+                     this.fullScreen = {
+                           marginLeft : Dom.getStyle("alf-content", "margin-left")
+                     };
+                     
+                     Dom.setStyle("alf-content", "margin-left",null);
+                    
+                  }
+                     
+               }
+            });
+      
 
       YAHOO.Bubbling
             .fire(
@@ -179,6 +217,11 @@
                      }
                   });
 
+      
+
+      
+      
+      
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "import",
          evaluate : function(asset, entity) {
