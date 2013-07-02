@@ -117,5 +117,31 @@
    };
    
    
+   /////////////// PATCH TODO REMOVE IN 4.2.d
+   
+   Alfresco.util.onlineEditUrl = function(vtiServer, location)
+   {
+      // Thor: used by overridden JS to place the tenant domain into the URL.
+      var tenant = location.tenant ? location.tenant : "";
+      var onlineEditUrl = vtiServer.host + ":" + vtiServer.port + "/" +
+         Alfresco.util.combinePaths(vtiServer.contextPath, tenant, location.site ? location.site.name : "", location.container ? location.container.name : "", location.path, location.file.replace(/#/g,"%23"));
+      if (!(/^(http|https):\/\//).test(onlineEditUrl))
+      {
+         // Did they specify the protocol on the vti server bean?
+         var protocol = vtiServer.protocol;
+         if (protocol == null)
+         {
+           // If it's not set, assume it's the same as Share
+            protocol = window.location.protocol;
+            // Get it without the trailing colon, to match the vti property form
+            protocol = protocol.substring(0, protocol.length-1);
+         }
+
+         // Build up the full HTTP / HTTPS URL
+         onlineEditUrl = protocol + "://" + onlineEditUrl;
+      }
+      return onlineEditUrl;
+   };
+   
 
 })();

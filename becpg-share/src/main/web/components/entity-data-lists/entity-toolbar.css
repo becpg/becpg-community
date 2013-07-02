@@ -40,6 +40,12 @@
    padding-left: 24px;
 }
 
+.datalist-toolbar .full-screen span.first-child
+{
+   background: url(../images/full-screen-16.png) no-repeat 5px 4px;
+}
+
+
 
 div.flat-button  span.yui-checkbox-button-checked {
 	 background: none repeat scroll 0 0 transparent;

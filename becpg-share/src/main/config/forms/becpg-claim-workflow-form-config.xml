@@ -786,7 +786,6 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 
-
 					<field id="qa:claimType" set="infoClaim" mandatory="false" read-only="true">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>

@@ -30,11 +30,11 @@ public interface AttributeExtractorService {
 
 	public String getPersonDisplayName(String userId);
 
-	public Serializable getProperty(NodeRef nodeRef, QName propQname);
+	public String convertDateValue(Serializable value);
 	
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch);
-
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch, DataListCallBack callback);
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch );
+	
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<String> metadataFields, boolean isSearch, DataListCallBack dataListCallBack);
 
 	public String getDisplayPath(NodeRef nodeRef);
 
@@ -47,6 +47,10 @@ public interface AttributeExtractorService {
 	public PropertyFormats getPropertyFormats();
 
 	public String extractSiteId(NodeRef entityNodeRef);
+
+	@Deprecated 
+	//Use convertDateValue instead
+	public Serializable getProperty(NodeRef nodeRef, QName propName);
 
 	
 }
