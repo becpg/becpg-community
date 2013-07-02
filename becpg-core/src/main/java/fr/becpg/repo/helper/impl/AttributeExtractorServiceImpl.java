@@ -54,6 +54,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private static Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
 	private static final String PERSON_DISPLAY_CACHE = "fr.becpg.cache.personDisplayCache";
+	private static final String DICTIONNARY_CACHE = "fr.becpg.cache.dictionnaryCache";
 
 	private NodeService nodeService;
 
@@ -155,17 +156,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		String dataType = propertyDef.getDataType().toString();
 
 		if (dataType.equals(DataTypeDefinition.ASSOC_REF.toString())) {
-			QName type = nodeService.getType((NodeRef) v);
-			value = extractPropName(type, (NodeRef)v);
+			value = extractPropName((NodeRef) v);
 		} else if (dataType.equals(DataTypeDefinition.CATEGORY.toString())) {
 
 			List<NodeRef> categories = (ArrayList<NodeRef>) v;
 
 			for (NodeRef categoryNodeRef : categories) {
 				if (value == null) {
-					value = (String) nodeService.getProperty(categoryNodeRef, ContentModel.PROP_NAME);
+					value = extractPropName(categoryNodeRef);
 				} else {
-					value += RepoConsts.LABEL_SEPARATOR + (String) nodeService.getProperty(categoryNodeRef, ContentModel.PROP_NAME);
+					value += RepoConsts.LABEL_SEPARATOR + extractPropName(categoryNodeRef);
 				}
 			}
 		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString()) || (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean))) {
@@ -207,8 +207,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
 			if (!propertyDef.isMultiValued()){
-				QName type = nodeService.getType((NodeRef) v);
-				value = extractPropName(type,(NodeRef) v);
+				value = extractPropName((NodeRef)v);
 			} else {
 				List<NodeRef> values = (List<NodeRef>) v;
 
@@ -219,8 +218,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						value="";
 					}
 					
-					QName type = nodeService.getType(tempValue);
-					value += extractPropName(type,tempValue);
+					value += extractPropName(tempValue);
 				}
 			}
 	
@@ -253,15 +251,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
+	
 	@Override
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch ){
-		return extractNodeData(nodeRef, itemType, metadataFields, isSearch, null);
+		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), metadataFields, isSearch, null);
 	}
 	
 	
 	
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch, AttributeExtractorService.DataListCallBack callback ) {
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties , List<String> metadataFields, boolean isSearch, AttributeExtractorService.DataListCallBack callback ) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -269,7 +268,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		Map<String, Object> ret = new LinkedHashMap<String, Object>();
 
-		TypeDefinition typeDef = dictionaryService.getType(itemType);
+		TypeDefinition typeDef = getTypeDef(itemType);
 		Integer order = 0;
 		for (String field : metadataFields) {
 		
@@ -313,7 +312,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	
 					if (propDef == null) {
 						for (QName aspectName : nodeService.getAspects(nodeRef)) {
-							AspectDefinition aspectDefinition = dictionaryService.getAspect(aspectName);
+							AspectDefinition aspectDefinition = getAspectDef(aspectName);
 							propDef = getAttributeDef(fieldQname, aspectDefinition);
 							if (propDef != null) {
 								break;
@@ -321,7 +320,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						}
 					}
 	
-					Object tmp = extractNodeData(nodeRef, propDef, isSearch, order++);
+					Object tmp = extractNodeData(nodeRef, properties, propDef, isSearch, order++);
 	
 					if (tmp != null) {
 						logger.debug("Extract field : " + field);
@@ -342,7 +341,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	
-
 
 	private boolean isAssoc(ClassAttributeDefinition propDef) {
 		return propDef instanceof AssociationDefinition;
@@ -366,7 +364,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
-	private Object extractNodeData(NodeRef nodeRef, ClassAttributeDefinition attribute, boolean isSearch, int order) {
+	private Object extractNodeData(NodeRef nodeRef , Map<QName, Serializable> properties, ClassAttributeDefinition attribute, boolean isSearch, int order) {
 		Map<String, Object> tmp = new HashMap<String, Object>();
 		if (isSearch) {
 			tmp.put("order", order);
@@ -378,7 +376,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		// property
 		if (attribute instanceof PropertyDefinition) {
 
-			value = nodeService.getProperty(nodeRef, attribute.getName());
+			value = properties.get(attribute.getName());
 			displayName = getStringValue((PropertyDefinition) attribute, value, propertyFormats);
 			type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
 
@@ -389,7 +387,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				tmp.put("metadata", extractMetadata(type, nodeRef));
 			}
 			if(nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)){
-				tmp.put("version", nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
+				tmp.put("version", properties.get(ContentModel.PROP_VERSION_LABEL));
 			}
 			tmp.put("displayValue", displayName);
 			tmp.put("value",formatValue(value));
@@ -477,6 +475,31 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	
 	
 
+	private String extractPropName(NodeRef v) {
+		QName type = nodeService.getType((NodeRef) v);
+		return extractPropName(type,v);
+	}
+
+	
+
+
+	private TypeDefinition getTypeDef(final QName itemType) {
+		 return beCPGCacheService.getFromCache(DICTIONNARY_CACHE, itemType.toString(), new BeCPGCacheDataProviderCallBack<TypeDefinition>() {
+			public TypeDefinition getData() {	
+				return dictionaryService.getType(itemType);
+			}
+		});
+	}
+	
+	private AspectDefinition getAspectDef(final QName aspectName) {
+		 return beCPGCacheService.getFromCache(DICTIONNARY_CACHE, aspectName.toString(), new BeCPGCacheDataProviderCallBack<AspectDefinition>() {
+			public AspectDefinition getData() {	
+				return dictionaryService.getAspect(aspectName);
+			}
+		});
+	}
+	
+
 	private QName getPropName(QName type) {
 		if (type.equals(ContentModel.TYPE_PERSON)) {
 			return ContentModel.PROP_USERNAME;
@@ -509,13 +532,24 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	@Override
 	public Serializable getProperty(NodeRef nodeRef, QName propName) {
-		Serializable value = this.nodeService.getProperty(nodeRef, propName);
+		Serializable value = nodeService.getProperty(nodeRef, propName);
+		
 		if (value instanceof Date) {
-			value = formatDate((Date) value);
-
+			return (Serializable)formatDate((Date) value);
 		}
 		return value;
 	}
+	
+	
+	@Override
+	public String convertDateValue(Serializable value) {
+		if (value instanceof Date) {
+			return formatDate((Date) value);
+		}
+		return null;
+	}
+
+	
 
 	@Override
 	public String formatDate(Date date) {
@@ -542,6 +576,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		});
 
 	}
+	
+
+
+	
 
 	@Override
 	public String getDisplayPath(NodeRef nodeRef) {
@@ -575,5 +613,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return null;
 	}
+
+
+	
 
 }

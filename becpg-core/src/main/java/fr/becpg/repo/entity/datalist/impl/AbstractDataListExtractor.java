@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,33 +117,22 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		try {
 
 			QName itemType = nodeService.getType(nodeRef);
+			Map<QName,Serializable> properties = nodeService.getProperties(nodeRef);
+			
 
 			Map<String, Object> ret = new HashMap<String, Object>();
 
 			ret.put(PROP_NODE, nodeRef);
 		
 			if(nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)){
-				ret.put(PROP_VERSION, nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL));
+				ret.put(PROP_VERSION, properties.get(ContentModel.PROP_VERSION_LABEL));
 			}
 			
 			ret.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
-			ret.put(PROP_CREATED, attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-
-			String creator = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR);
-
-			Map<String, String> createdBy = new HashMap<String, String>(2);
-			createdBy.put("value", creator);
-			createdBy.put("displayValue", attributeExtractorService.getPersonDisplayName(creator));
-			ret.put(PROP_CREATOR_DISPLAY, createdBy);
-
-			String modifier = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIER);
-
-			ret.put(PROP_MODIFIED, attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
-			Map<String, String> modifiedBy = new HashMap<String, String>(2);
-			modifiedBy.put("value", modifier);
-			modifiedBy.put("displayValue", attributeExtractorService.getPersonDisplayName(modifier));
-
-			ret.put(PROP_MODIFIER_DISPLAY, modifiedBy);
+			ret.put(PROP_CREATED, attributeExtractorService.convertDateValue(properties.get(ContentModel.PROP_CREATED)));
+			ret.put(PROP_CREATOR_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_CREATOR)));
+			ret.put(PROP_MODIFIED, attributeExtractorService.convertDateValue(properties.get( ContentModel.PROP_MODIFIED)));
+			ret.put(PROP_MODIFIER_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_MODIFIER)));
 
 			ret.put(PROP_ACTIONSET, "");
 
@@ -163,7 +153,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
 			ret.put(PROP_ACTIONLABELS, new HashMap<String, Object>());
 
-			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, props));
+			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, properties, props));
 
 			String path = nodeService.getPath(nodeRef).toPrefixString(services.getNamespaceService());
 			String displayPath = attributeExtractorService.getDisplayPath(nodeRef);
@@ -205,11 +195,18 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 	}
 
+	private Map<String, String> extractPerson(String person) {
+		Map<String, String>  ret =  new HashMap<String, String>(2);
+		ret.put("value", person);
+		ret.put("displayValue", attributeExtractorService.getPersonDisplayName(person));
+		return ret;
+	}
+
 	private boolean isDetaillable(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}
 
-	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<String, Object> props);
+	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<QName,Serializable> properties, Map<String, Object> extraProps);
 	
 	
 
