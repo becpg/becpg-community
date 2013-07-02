@@ -4,7 +4,7 @@
    [
    <#list reportTpls as reportTpl>
     {
-	   "name": "${reportTpl.name}",
+	   "name": "${reportTpl.name?replace(".rptdesign", "")}",
 	   "title": "${reportTpl.properties.title!""}",
 	   "format": "${reportTpl.properties["rep:reportTplFormat"]!""}",
 	   "nodeRef": "${reportTpl.nodeRef}"

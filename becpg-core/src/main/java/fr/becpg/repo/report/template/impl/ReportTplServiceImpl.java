@@ -208,10 +208,11 @@ public class ReportTplServiceImpl implements ReportTplService{
 		if(resource.exists()){
 			try {
 				in = new BufferedInputStream(resource.getInputStream());
-				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplName);
+				String tplFullName = tplName + "." + RepoConsts.REPORT_EXTENSION_BIRT;
+				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplFullName);
 				
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, tplName);	    		
+				properties.put(ContentModel.PROP_NAME, tplFullName);	    		
 				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
 				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
 				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
@@ -221,7 +222,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 				if(reportTplNodeRef != null){
 					
 					if(overrideTpl){
-						logger.debug("override report Tpl, name: " + tplName);
+						logger.debug("override report Tpl, name: " + tplFullName);
 						
 						nodeService.addProperties(reportTplNodeRef, properties);
 					}
@@ -230,7 +231,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 					}
 				}
 				else{
-					logger.debug("Create report Tpl, name: " + tplName);
+					logger.debug("Create report Tpl, name: " + tplFullName);
 					
 					reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
