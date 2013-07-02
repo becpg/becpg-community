@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -37,40 +38,45 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		
 		logger.debug("Formulate project " + projectData.getNodeRef());
 		
-		// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
-		if(ProjectState.Planned.equals(projectData.getProjectState()) && 
-				projectData.getStartDate() != null && 
-				!projectData.getStartDate().equals(projectData.getCreated()) &&
-				projectData.getStartDate().before(new Date())){
-			projectData.setProjectState(ProjectState.InProgress);
-		}
+		// we don't want tasks of project template start
+		if(!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)){
 		
-		// even if project is not in Progress, we visit it because a task can start the project (manual task or task that has startdate < NOW)
-		visitTask(projectData, null);
-		
-		// first tasks to manage Project state
-		if(ProjectState.Planned.equals(projectData.getProjectState())){
-			List<TaskListDataItem> firstTasks = ProjectHelper.getNextTasks(projectData, null);
-			if (!firstTasks.isEmpty()) {
-				for (TaskListDataItem nextTask : firstTasks) {
-					if(TaskState.InProgress.equals(nextTask.getState()) || TaskState.Completed.equals(nextTask.getState())){
-						projectData.setProjectState(ProjectState.InProgress);
-						break;
-					}				
-				}			
+			// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
+			if(ProjectState.Planned.equals(projectData.getProjectState()) && 
+					projectData.getStartDate() != null && 
+					!projectData.getStartDate().equals(projectData.getCreated()) &&
+					projectData.getStartDate().before(new Date())){
+				projectData.setProjectState(ProjectState.InProgress);
 			}
-		}
-				
-		// is project completed ?
-		if(ProjectHelper.areTasksDone(projectData)){
-			projectData.setCompletionDate(new Date());
-			projectData.setCompletionPercent(COMPLETED);
-			projectData.setProjectState(ProjectState.Completed);
+			
+			// even if project is not in Progress, we visit it because a task can start the project (manual task or task that has startdate < NOW)
+			visitTask(projectData, null);
+			
+			// first tasks to manage Project state
+			if(ProjectState.Planned.equals(projectData.getProjectState())){
+				List<TaskListDataItem> firstTasks = ProjectHelper.getNextTasks(projectData, null);
+				if (!firstTasks.isEmpty()) {
+					for (TaskListDataItem nextTask : firstTasks) {
+						if(TaskState.InProgress.equals(nextTask.getState()) || TaskState.Completed.equals(nextTask.getState())){
+							projectData.setProjectState(ProjectState.InProgress);
+							break;
+						}				
+					}			
+				}
+			}
+					
+			// is project completed ?
+			if(ProjectHelper.areTasksDone(projectData)){
+				projectData.setCompletionDate(new Date());
+				projectData.setCompletionPercent(COMPLETED);
+				projectData.setProjectState(ProjectState.Completed);
+			}
+			
+			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
+			
+			calculateProjectLegends(projectData);	
 		}
 		
-		projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
-		
-		calculateProjectLegends(projectData);		
 		return true;
 	}
 	

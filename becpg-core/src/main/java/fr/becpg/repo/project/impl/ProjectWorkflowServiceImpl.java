@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -37,6 +38,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 	private static final String WORKFLOW_DESCRIPTION = "%s - %s";
 	private static final String DESCRIPTION__TASK_DL_SEPARATOR = " : ";
 	private static final String DESCRIPTION_DL_SEPARATOR = ", ";
+	private static final String DEFAULT_INITIATOR = "System";
 	
 	private static Log logger = LogFactory.getLog(ProjectWorkflowServiceImpl.class);
 	
@@ -75,6 +77,16 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());
 		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
 		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());
+		
+		// set workflow Initiator as Project Manager
+		String authenticatedUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		if(projectData.getProjectManager() != null){
+			authenticatedUser = (String)nodeService.getProperty(projectData.getProjectManager(), ContentModel.PROP_USERNAME);			
+		}
+		else if (authenticatedUser == null || authenticatedUser.isEmpty()){
+			authenticatedUser = DEFAULT_INITIATOR;
+		}
+		AuthenticationUtil.setFullyAuthenticatedUser(authenticatedUser);
 		
 		NodeRef wfPackage = workflowService.createPackage(null);
 		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
