@@ -172,6 +172,7 @@ public class RepoConsts {
 	public static final String LABEL_SEPARATOR = ", ";
 	
 	/*-- Report --*/
+	public static final String REPORT_EXTENSION_BIRT = "rptdesign";
 	public static final String REPORT_EXTENSION_PDF = ".PDF";
 	public static final String REPORT_EXTENSION_XLS = ".XLS";
 	
