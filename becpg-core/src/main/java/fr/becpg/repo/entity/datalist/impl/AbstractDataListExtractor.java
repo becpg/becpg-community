@@ -181,10 +181,14 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			
 			SiteInfo site = null;
 			if(siteId!=null){
-				site = siteService.getSite(siteId);
 				Map<String, Object> siteData = new HashMap<String, Object>();
 				siteData.put(PROP_SHORTNAME, siteId);
-				siteData.put(PROP_TITLE, site.getTitle());
+				site = siteService.getSite(siteId);
+				if(site!=null){		
+					siteData.put(PROP_TITLE, site.getTitle());
+				} else {
+					siteData.put(PROP_TITLE, "#AccessDenied");
+				}
 				ret.put(PROP_SITE, siteData);
 				ret.put(PROP_SITE_ID, siteId);
 			}
