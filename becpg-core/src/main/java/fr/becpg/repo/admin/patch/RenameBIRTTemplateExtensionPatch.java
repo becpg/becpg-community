@@ -33,6 +33,7 @@ public class RenameBIRTTemplateExtensionPatch extends AbstractPatch {
 		
 		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch("+TYPE:\"rep:reportTpl\"");
 		logger.info("RenameBIRTTemplateExtensionPatch size: " + nodeRefs.size());
+		try {
 		
 		for(NodeRef nodeRef : nodeRefs){
 			if(nodeService.exists(nodeRef)){
@@ -53,6 +54,9 @@ public class RenameBIRTTemplateExtensionPatch extends AbstractPatch {
 			else{
 				logger.warn("nodeRef doesn't exist : " + nodeRef);
 			}			
+		}
+		} catch(Exception e){
+			logger.error(e,e);
 		}
 		
 		return I18NUtil.getMessage(MSG_SUCCESS);

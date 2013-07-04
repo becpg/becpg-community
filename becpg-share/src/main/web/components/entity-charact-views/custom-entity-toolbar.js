@@ -137,31 +137,117 @@
             {
                actionName : "full-screen",
                evaluate : function(asset, entity) {
-                  return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity!=null && entity.userAccess.edit;
+                  return asset.name !== null && (asset.name === "compoList") && entity!=null && entity.userAccess.edit;
                },
                fn : function(instance) {
+                  
+                  var onBeforeFormRuntimeInit = function (layer, args)
+                  {
+                     var formUI = args[1].component,
+                        formsRuntime = args[1].runtime;
+
+                     formsRuntime.setAsReusable(true);
+                     
+                     formUI.buttons.submit.set("label", this.msg("button.add"));
+
+                     Dom.removeClass("full-screen-form","hidden");
+                     
+                     formsRuntime.setAJAXSubmit(true,
+                     {
+                        successCallback:
+                        {
+                           fn: function (response){
+                              YAHOO.Bubbling.fire("dataItemCreated", { nodeRef : response.json.persistedObject});
+                              formsRuntime.reset();
+                           },
+                           scope: this
+                        }
+                     });
+                     
+                  };
+                  
+                  
                   if( Dom.hasClass("alf-hd","hidden")){
                      Dom.removeClass("alf-hd","hidden");
                      Dom.removeClass("alf-filters","hidden");
                      Dom.removeClass("alf-ft","hidden");
+                     Dom.removeClass("Share","full-screen");
                      Dom.addClass("alf-content","yui-b");
                      if( this.fullScreen ){
                         Dom.setStyle("alf-content", "margin-left",this.fullScreen.marginLeft);
                      }
+                     Dom.addClass("full-screen-form","hidden");
+                     
                      
                   } else {
                      Dom.addClass("alf-hd","hidden");
-                     Dom.addClass("","hidden");
+                     Dom.addClass("alf-ft","hidden");
+                     Dom.addClass("Share","full-screen");
                      Dom.addClass("alf-ft","hidden");
                    
                      Dom.addClass("alf-filters","hidden");
                      Dom.removeClass("alf-content","yui-b");
-                     this.fullScreen = {
-                           marginLeft : Dom.getStyle("alf-content", "margin-left")
-                     };
+                   
+                     if(!this.fullScreen){
                      
-                     Dom.setStyle("alf-content", "margin-left",null);
-                    
+                        var destination = this.datalistMeta.nodeRef!=null ?this.datalistMeta.nodeRef : this.options.parentNodeRef;
+                        
+                        var templateUrl = YAHOO.lang
+                        .substitute(
+                              Alfresco.constants.URL_SERVICECONTEXT
+                                    + "components/form?formId=full-screen&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
+                              {
+                                 itemKind : "type",
+                                 itemId : this.datalistMeta.itemType,
+                                 destination : destination,
+                                 mode : "create",
+                                 submitType : "json",
+                                 entityNodeRef : this.options.entityNodeRef,
+                                 dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list)
+                              });
+                        
+                        
+                       
+                        
+                        YAHOO.Bubbling.on("beforeFormRuntimeInit", onBeforeFormRuntimeInit, this);
+                        
+                        Alfresco.util.Ajax.request({
+                           url : templateUrl,
+                           dataObj : {
+                            htmlid : this.id
+                           },
+                           successCallback : {
+                              fn : function (response){
+                                 var containerDiv = Dom.get("full-screen-form" );
+   
+                                 if (containerDiv.hasChildNodes()) {
+                                     while (containerDiv.childNodes.length >= 1) {
+                                         containerDiv.removeChild(containerDiv.firstChild);
+                                     }
+                                 }
+   
+                                 containerDiv.innerHTML = response.serverResponse.responseText;
+                                 
+                                 
+                              },
+                              scope : this
+                           },
+                           failureMessage : "Could not load dialog template from '" + this.options.templateUrl
+                                 + "'.",
+                           scope : this,
+                           execScripts : true
+                        });
+                     
+                     } else {
+                        Dom.removeClass("full-screen-form","hidden");
+                     }
+                        
+                        this.fullScreen = {
+                              marginLeft : Dom.getStyle("alf-content", "margin-left")
+                        };
+                        
+                        Dom.setStyle("alf-content", "margin-left",null);
+                     
                   }
                      
                }
