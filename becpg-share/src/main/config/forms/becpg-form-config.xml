@@ -3393,7 +3393,41 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="full-screen">
+				<field-visibility>
+					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListYieldPerc" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:parentLevel" />
+					<!-- <show id="bcpg:compoListPlants"/> -->
+				</field-visibility>
 
+				<appearance>
+					<field id="bcpg:compoListProduct">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct&#38;excludeClassNames=bcpg:entityTplAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:compoListDeclType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentLevel">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+ 							<control-param name="ds">becpg/autocomplete/compoListParentLevel
+ 							</control-param>	
+						</control>
+ 					</field> 
+				</appearance>
+			</form>
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
@@ -3513,6 +3547,32 @@
 	<config evaluator="model-type" condition="bcpg:packagingList">
 		<forms>
 			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:packagingListProduct" />
+					<show id="bcpg:packagingListQty" />
+					<show id="bcpg:packagingListUnit" />
+					<show id="bcpg:packagingListPkgLevel" />
+					<show id="bcpg:packagingListIsMaster" />
+					<show id="bcpg:variantIds" force="true"/>
+				</field-visibility>
+
+				<appearance>
+					<field id="bcpg:packagingListProduct">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">ingList
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit&#38;excludeClassNames=bcpg:entityTplAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:variantIds" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 			<form>
 				<field-visibility>
 					<show id="bcpg:packagingListProduct" />
