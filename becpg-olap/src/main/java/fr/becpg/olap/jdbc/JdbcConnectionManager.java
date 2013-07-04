@@ -16,8 +16,8 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * 
- * @author matthieu Warning not thread safe transaction (use single thread or
- *         modify)
+ * @author matthieu
+ * 
  */
 public class JdbcConnectionManager {
 
@@ -33,19 +33,16 @@ public class JdbcConnectionManager {
 
 	public interface JdbcConnectionManagerCallBack {
 
-		public void execute(JdbcConnectionManager jdbcConnectionManager) throws Exception;
+		public void execute(Connection connection) throws Exception;
 
 	}
 
-	private Connection connection;
+	public void doInTransaction(JdbcConnectionManagerCallBack callback) throws Exception {
 
-	public static void doInTransaction(JdbcConnectionManager jdbcConnectionManager, JdbcConnectionManagerCallBack callback) throws Exception {
-		jdbcConnectionManager.initConnection();
-
-		try (Connection connection = jdbcConnectionManager.connection) {
+		try (Connection connection = createConnection()) {
 			connection.setAutoCommit(false);
 			try {
-				callback.execute(jdbcConnectionManager);
+				callback.execute(connection);
 			} catch (Exception e) {
 				logger.error("Rollback transaction caused by: " + e.getMessage(), e);
 				connection.rollback();
@@ -88,29 +85,7 @@ public class JdbcConnectionManager {
 		}
 	}
 
-	public void initConnection() throws SQLException {
-
-		this.connection = createConnection();
-
-	}
-
-	public Long update(String sql, Object[] objects) throws SQLException {
-
-		try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
-
-			for (int i = 0; i < objects.length; i++) {
-				pst.setObject(i + 1, objects[i]);
-			}
-			pst.executeUpdate();
-			try (ResultSet rs = pst.getGeneratedKeys();) {
-				if (rs != null && rs.next()) {
-					return rs.getLong(1);
-				}
-			}
-		}
-
-		return -1L;
-	}
+	
 
 	public <T> List<T> list(String sql, RowMapper<T> rowMapper, Object[] objects) throws SQLException {
 

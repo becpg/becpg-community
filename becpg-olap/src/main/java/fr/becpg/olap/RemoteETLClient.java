@@ -1,6 +1,7 @@
 package fr.becpg.olap;
 
 import java.io.FileInputStream;
+import java.sql.Connection;
 import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
@@ -49,18 +50,16 @@ public class RemoteETLClient {
 				logger.debug(" - Login: " + instance.getTenantUser());
 				logger.debug(" - Password: " + instance.getTenantPassword());
 			}
-			JdbcConnectionManager.doInTransaction(jdbcConnectionManager, new JdbcConnectionManagerCallBack() {
+			jdbcConnectionManager.doInTransaction( new JdbcConnectionManagerCallBack() {
 
 				@Override
-				public void execute(JdbcConnectionManager jdbcConnectionManager) throws Exception {
+				public void execute(Connection connection) throws Exception {
 					
-
-					instanceManager.createBatch(instance);
-
-					
+					instanceManager.createBatch(connection,instance);
+		
 					InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
 
-					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(jdbcConnectionManager, instance));
+					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
 					HttpClient httpClient = instanceManager.createInstanceSession(instance);
 					try {
 						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient);
@@ -69,7 +68,7 @@ public class RemoteETLClient {
 
 					}
 					
-					instanceManager.updateBatchAndDate(instance);
+					instanceManager.updateBatchAndDate(connection,instance);
 				}
 			});
 

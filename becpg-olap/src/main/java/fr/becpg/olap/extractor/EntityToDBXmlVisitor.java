@@ -3,6 +3,7 @@ package fr.becpg.olap.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.exception.PlatformRuntimeException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,7 +29,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import fr.becpg.olap.InstanceManager.Instance;
-import fr.becpg.olap.jdbc.JdbcConnectionManager;
+import fr.becpg.olap.jdbc.JdbcUtils;
 
 /**
  * 
@@ -40,15 +42,14 @@ public class EntityToDBXmlVisitor {
 	private static final String ATTR_NAME = "name";
 	private static final String ATTR_NODEREF = "nodeRef";
 
-	private JdbcConnectionManager jdbcConnectionManager;
+	private Connection connection;
 
 	private Instance instance;
 
-	public EntityToDBXmlVisitor(JdbcConnectionManager jdbcConnectionManager, Instance instance) {
+	public EntityToDBXmlVisitor(Connection connection, Instance instance) {
 		super();
-		this.jdbcConnectionManager = jdbcConnectionManager;
 		this.instance = instance;
-
+		this.connection = connection;
 	}
 
 	class Column {
@@ -186,16 +187,16 @@ public class EntityToDBXmlVisitor {
 		// creation
 
 
-		jdbcConnectionManager.update("update  `becpg_datalist` set is_last_version = ? where  datalist_id = ? and instance_id = ?", new Object[]{false, dataListItemNodeRef, instance.getId()});
+		JdbcUtils.update(connection,"update  `becpg_datalist` set is_last_version = ? where  datalist_id = ? and instance_id = ?", new Object[]{false, dataListItemNodeRef, instance.getId()});
 		
-		Long columnId = jdbcConnectionManager.update("insert into `becpg_datalist` " + "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`,`is_last_version`) "
+		Long columnId = JdbcUtils.update(connection,"insert into `becpg_datalist` " + "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`,`is_last_version`) "
 				+ " values (?,?,?,?,?,?,?)", new Object[] { dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId() ,true});
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
 			if (column.value != null) {
 
-				jdbcConnectionManager.update("insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
+				JdbcUtils.update(connection,"insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
 						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
 			}
 		}
@@ -227,16 +228,16 @@ public class EntityToDBXmlVisitor {
 		// TODO look if already exist aka same nodeRef same date modification or
 		// creation
 		
-		jdbcConnectionManager.update("update  `becpg_entity` set is_last_version = ? where  entity_id = ? and instance_id = ?", new Object[]{false, nodeRef, instance.getId()});
+		JdbcUtils.update(connection,"update  `becpg_entity` set is_last_version = ? where  entity_id = ? and instance_id = ?", new Object[]{false, nodeRef, instance.getId()});
 
-		Long columnId = jdbcConnectionManager.update("insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) " 
+		Long columnId = JdbcUtils.update(connection,"insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) " 
 				+ " values (?,?,?,?,?,?)",
 				new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId(),true });
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
 			if (column.value != null) {
-				jdbcConnectionManager.update("insert into `becpg_property` " + "(`entity_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
+				JdbcUtils.update(connection,"insert into `becpg_property` " + "(`entity_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
 						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getId() });
 			}
 		}

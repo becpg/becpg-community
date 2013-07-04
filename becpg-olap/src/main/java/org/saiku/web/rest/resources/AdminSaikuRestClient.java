@@ -1,5 +1,7 @@
 package org.saiku.web.rest.resources;
 
+import java.sql.Connection;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -56,17 +58,17 @@ public class AdminSaikuRestClient {
 			if(logger.isInfoEnabled()){
 				logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
 			}
-			JdbcConnectionManager.doInTransaction(jdbcConnectionManager, new JdbcConnectionManagerCallBack() {
+			jdbcConnectionManager.doInTransaction( new JdbcConnectionManagerCallBack() {
 
 				@Override
-				public void execute(JdbcConnectionManager jdbcConnectionManager) throws Exception {
+				public void execute(Connection connection) throws Exception {
 	
 
-					instanceManager.createBatch(instance);
+					instanceManager.createBatch(connection,instance);
 
 					InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
 
-					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(jdbcConnectionManager, instance));
+					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
 					HttpClient httpClient = instanceManager.createInstanceSession(instance);
 					try {
 						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient);
@@ -75,7 +77,7 @@ public class AdminSaikuRestClient {
 
 					}
 					
-					instanceManager.updateBatchAndDate(instance);
+					instanceManager.updateBatchAndDate(connection,instance);
 				}
 			});
 
