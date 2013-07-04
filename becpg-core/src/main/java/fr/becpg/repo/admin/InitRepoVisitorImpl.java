@@ -68,27 +68,6 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements InitVisitor {
 
-	/** The Constant GROUP_SYSTEM_MGR. */
-	public static final String GROUP_SYSTEM_MGR = "SystemMgr";
-
-	/** The Constant GROUP_RD_USER. */
-	public static final String GROUP_RD_USER = "RDUser";
-
-	/** The Constant GROUP_RD_MGR. */
-	public static final String GROUP_RD_MGR = "RDMgr";
-
-	/** The Constant GROUP_QUALITY_USER. */
-	public static final String GROUP_QUALITY_USER = "QualityUser";
-
-	/** The Constant GROUP_QUALITY_MGR. */
-	public static final String GROUP_QUALITY_MGR = "QualityMgr";
-
-	/** The Constant GROUP_PURCHASING_USER. */
-	public static final String GROUP_PURCHASING_USER = "PurchasingUser";
-
-	/** The Constant GROUP_PURCHASING_MGR. */
-	public static final String GROUP_PURCHASING_MGR = "PurchasingMgr";
-
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	public static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
@@ -476,28 +455,31 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		if (folderName == RepoConsts.PATH_SYSTEM) {
 
-			// boolean hasSystemMgrPerm = false;
-			// Set<AccessPermission> permissions =
-			// permissionService.getAllSetPermissions(nodeRef);
-			// for(AccessPermission permission : permissions){
-			// if(permission.getAuthority().equals(PermissionService.GROUP_PREFIX
-			// + GROUP_SYSTEM_MGR) &&
-			// permission.getPermission().equals(PermissionService.WRITE))
-
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(),
 					PermissionService.WRITE, true);
 		} else if (folderName == RepoConsts.PATH_PRODUCTS) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_RD_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString(),
 					PermissionService.WRITE, true);
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString(),
 					PermissionService.WRITE, true);
 		} else if (folderName == RepoConsts.PATH_EXCHANGE) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(),
 					PermissionService.WRITE, true);
 		}
 
 		else if (folderName == RepoConsts.PATH_QUALITY) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString(),
+					PermissionService.WRITE, true);
+		}
+		
+		else if (folderName == RepoConsts.PATH_NC) {
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimMgr.toString(),
+					PermissionService.WRITE, true);
+
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(),
+					PermissionService.WRITE, true);
+
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(),
 					PermissionService.WRITE, true);
 		}
 	}
@@ -916,11 +898,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.Production.toString(),
 				SystemGroup.ProductionUser.toString(), SystemGroup.ProductionMgr.toString(),
 			   SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString()
-			   , NPDGroup.NPD.toString(),
-				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
-				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
-				NPDGroup.ValidateFaisability.toString(), NPDGroup.FaisabilityAssignersGroup.toString(),
-				NCGroup.ClaimMgr.toString(), NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString()
+			   ,NCGroup.ClaimMgr.toString(), NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString()
 					};
 
 		Set<String> zones = new HashSet<String>();
@@ -996,30 +974,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString()))
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(),
 					PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString());
-		// NPD
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
-				+ NPDGroup.NPD.toString(), true);
-
-		for (String group : new String[] {NPDGroup.NeedDefinition.toString(),
-				NPDGroup.ValidateNeedDefinition.toString(), NPDGroup.DoPrototype.toString(),
-				NPDGroup.StartProduction.toString(), NPDGroup.ValidateFaisability.toString(),
-				NPDGroup.FaisabilityAssignersGroup.toString() }) {
-			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
-				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.NPD.toString(),
-						PermissionService.GROUP_PREFIX + group);
-
-		}
-
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
-				+ NPDGroup.FaisabilityAssignersGroup.toString(), true);
-
-		for (String group : new String[] { SystemGroup.RDMgr.toString(), SystemGroup.QualityMgr.toString() }) {
-			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
-				authorityService.addAuthority(
-						PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
-						PermissionService.GROUP_PREFIX + group);
-
-		}
+	
 
 	}
 
