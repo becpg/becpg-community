@@ -1,6 +1,7 @@
 package fr.becpg.olap;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -18,6 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import fr.becpg.olap.helper.UserNameHelper;
 import fr.becpg.olap.jdbc.JdbcConnectionManager;
+import fr.becpg.olap.jdbc.JdbcUtils;
 
 /**
  * 
@@ -114,9 +116,9 @@ public class InstanceManager {
 
 	}
 
-	public Instance createBatch(Instance instance) throws SQLException {
+	public Instance createBatch(Connection connection, Instance instance) throws SQLException {
 
-		final Long batchId = jdbcConnectionManager.update("INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[] {});
+		final Long batchId = JdbcUtils.update(connection,"INSERT INTO `becpg_batch`(`id`) VALUES(NULL)", new Object[] {});
 
 		
 		instance.setBatchId(batchId);
@@ -125,11 +127,11 @@ public class InstanceManager {
 
 	}
 	
-	public void updateBatchAndDate(Instance instance) throws SQLException {
+	public void updateBatchAndDate(Connection connection,Instance instance) throws SQLException {
 
 		instance.setLastImport(new Date());
 		
-		jdbcConnectionManager.update("UPDATE `becpg_instance` SET `last_imported`=?, `batch_id`=? WHERE `id`=? ", new Object[] { instance.getLastImport(), instance.getBatchId(),
+		JdbcUtils.update(connection,"UPDATE `becpg_instance` SET `last_imported`=?, `batch_id`=? WHERE `id`=? ", new Object[] { instance.getLastImport(), instance.getBatchId(),
 				instance.getId() });
 	}
 	
