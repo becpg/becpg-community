@@ -1,258 +1,266 @@
 (function() {
    if (beCPG.component.EntityDataListToolbar) {
-      
 
-      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         actionName : "eco-calculate-wused",
-         evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList" || asset.name === "wUsedList") && entity!=null && entity.userAccess.edit;
-         },
-         fn : function(instance) {
-
-            Alfresco.util.PopupManager.displayMessage({
-               text : this.msg("message.eco-calculate-wused.please-wait")
-            });
-
-            Alfresco.util.Ajax.request({
-               method : Alfresco.util.Ajax.GET,
-               url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/",
-                     "") + "/calculatewused",
-               successCallback : {
-                  fn : function EntityDataListthis_onECOCalculateWUsed_success(response) {
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.eco-calculate-wused.success")
-                     });
-
-                  },
-                  scope : this
-               },
-               failureCallback : {
-                  fn : function EntityDataListthis_onECOCalculateWUsed_failure(response) {
-                     if (response.message !== null) {
-                        Alfresco.util.PopupManager.displayPrompt({
-                           text : response.message
-                        });
-                     } else {
-                        Alfresco.util.PopupManager.displayMessage({
-                           text : this.msg("message.eco-calculate-wused.failure")
-                        });
-                     }
-                  },
-                  scope : this
-               }
-            });
-         }
-      });
-
-      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         actionName : "eco-do-simulation",
-         evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList" || asset.name === "calculatedCharactList") && entity!=null && entity.userAccess.edit;
-         },
-         fn : function(instance) {
-
-            Alfresco.util.PopupManager.displayMessage({
-               text : this.msg("message.eco-do-simulation.please-wait")
-            });
-
-            Alfresco.util.Ajax.request({
-               method : Alfresco.util.Ajax.GET,
-               url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/",
-                     "") + "/dosimulation",
-               successCallback : {
-                  fn : function EntityDataListthis_onECODoSimulation_success(response) {
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.eco-do-simulation.success")
-                     });
-
-                  },
-                  scope : this
-               },
-               failureCallback : {
-                  fn : function EntityDataListthis_onECODoSimulation_failure(response) {
-                     if (response.message !== null) {
-                        Alfresco.util.PopupManager.displayPrompt({
-                           text : response.message
-                        });
-                     } else {
-                        Alfresco.util.PopupManager.displayMessage({
-                           text : this.msg("message.eco-do-simulation.failure")
-                        });
-                     }
-                  },
-                  scope : this
-               }
-
-            });
-         }
-      });
-
-      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         actionName : "eco-apply",
-         evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "replacementList") && entity!=null && entity.userAccess.edit;
-         },
-         fn : function(instance) {
-
-            Alfresco.util.PopupManager.displayMessage({
-               text : this.msg("message.eco-apply.please-wait")
-            });
-
-            Alfresco.util.Ajax.request({
-               method : Alfresco.util.Ajax.GET,
-               url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef.replace(":/",
-                     "") + "/apply",
-               successCallback : {
-                  fn : function EntityDataListthis_onECOApply_success(response) {
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.eco-apply.success")
-                     });
-
-                  },
-                  scope : this
-               },
-               failureCallback : {
-                  fn : function EntityDataListthis_onECOApply_failure(response) {
-                     if (response.message !== null) {
-                        Alfresco.util.PopupManager.displayPrompt({
-                           text : response.message
-                        });
-                     } else {
-                        Alfresco.util.PopupManager.displayMessage({
-                           text : this.msg("message.eco-apply.failure")
-                        });
-                     }
-                  },
-                  scope : this
-               }
-
-            });
-         }
-      });
-      
-      
       YAHOO.Bubbling
-      .fire(
-            "registerToolbarButtonAction",
-            {
-               actionName : "full-screen",
-               evaluate : function(asset, entity) {
-                  return asset.name !== null && (asset.name === "compoList") && entity!=null && entity.userAccess.edit;
-               },
-               fn : function(instance) {
-                  
-                  var onBeforeFormRuntimeInit = function (layer, args)
+            .fire(
+                  "registerToolbarButtonAction",
                   {
-                     var formUI = args[1].component,
-                        formsRuntime = args[1].runtime;
+                     actionName : "eco-calculate-wused",
+                     evaluate : function(asset, entity) {
+                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "wUsedList") && entity != null && entity.userAccess.edit;
+                     },
+                     fn : function(instance) {
 
-                     formsRuntime.setAsReusable(true);
-                     
-                     formUI.buttons.submit.set("label", this.msg("button.add"));
+                        Alfresco.util.PopupManager.displayMessage({
+                           text : this.msg("message.eco-calculate-wused.please-wait")
+                        });
 
-                     Dom.removeClass("full-screen-form","hidden");
-                     
-                     formsRuntime.setAJAXSubmit(true,
-                     {
-                        successCallback:
-                        {
-                           fn: function (response){
-                              YAHOO.Bubbling.fire("dataItemCreated", { nodeRef : response.json.persistedObject});
-                              formsRuntime.reset();
-                           },
-                           scope: this
-                        }
-                     });
-                     
-                  };
-                  
-                  
-                  if( Dom.hasClass("alf-hd","hidden")){
-                     Dom.removeClass("alf-hd","hidden");
-                     Dom.removeClass("alf-filters","hidden");
-                     Dom.removeClass("alf-ft","hidden");
-                     Dom.removeClass("Share","full-screen");
-                     Dom.addClass("alf-content","yui-b");
-                     if( this.fullScreen ){
-                        Dom.setStyle("alf-content", "margin-left",this.fullScreen.marginLeft);
-                     }
-                     Dom.addClass("full-screen-form","hidden");
-                     
-                     
-                  } else {
-                     Dom.addClass("alf-hd","hidden");
-                     Dom.addClass("alf-ft","hidden");
-                     Dom.addClass("Share","full-screen");
-                     Dom.addClass("alf-ft","hidden");
-                   
-                     Dom.addClass("alf-filters","hidden");
-                     Dom.removeClass("alf-content","yui-b");
-                   
-                     if(!this.fullScreen){
-                     
-                        var destination = this.datalistMeta.nodeRef!=null ?this.datalistMeta.nodeRef : this.options.parentNodeRef;
-                        
-                        var templateUrl = YAHOO.lang
-                        .substitute(
-                              Alfresco.constants.URL_SERVICECONTEXT
-                                    + "components/form?formId=full-screen&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
-                              {
-                                 itemKind : "type",
-                                 itemId : this.datalistMeta.itemType,
-                                 destination : destination,
-                                 mode : "create",
-                                 submitType : "json",
-                                 entityNodeRef : this.options.entityNodeRef,
-                                 dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list)
-                              });
-                        
-                        
-                       
-                        
-                        YAHOO.Bubbling.on("beforeFormRuntimeInit", onBeforeFormRuntimeInit, this);
-                        
                         Alfresco.util.Ajax.request({
-                           url : templateUrl,
-                           dataObj : {
-                            htmlid : this.id
-                           },
+                           method : Alfresco.util.Ajax.GET,
+                           url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef
+                                 .replace(":/", "") + "/calculatewused",
                            successCallback : {
-                              fn : function (response){
-                                 var containerDiv = Dom.get("full-screen-form" );
-   
-                                 if (containerDiv.hasChildNodes()) {
-                                     while (containerDiv.childNodes.length >= 1) {
-                                         containerDiv.removeChild(containerDiv.firstChild);
-                                     }
-                                 }
-   
-                                 containerDiv.innerHTML = response.serverResponse.responseText;
-                                 
-                                 
+                              fn : function EntityDataListthis_onECOCalculateWUsed_success(response) {
+                                 Alfresco.util.PopupManager.displayMessage({
+                                    text : this.msg("message.eco-calculate-wused.success")
+                                 });
+
                               },
                               scope : this
                            },
-                           failureMessage : "Could not load dialog template from '" + this.options.templateUrl
-                                 + "'.",
-                           scope : this,
-                           execScripts : true
+                           failureCallback : {
+                              fn : function EntityDataListthis_onECOCalculateWUsed_failure(response) {
+                                 if (response.message !== null) {
+                                    Alfresco.util.PopupManager.displayPrompt({
+                                       text : response.message
+                                    });
+                                 } else {
+                                    Alfresco.util.PopupManager.displayMessage({
+                                       text : this.msg("message.eco-calculate-wused.failure")
+                                    });
+                                 }
+                              },
+                              scope : this
+                           }
                         });
-                     
-                     } else {
-                        Dom.removeClass("full-screen-form","hidden");
                      }
-                        
-                        this.fullScreen = {
-                              marginLeft : Dom.getStyle("alf-content", "margin-left")
+                  });
+
+      YAHOO.Bubbling
+            .fire(
+                  "registerToolbarButtonAction",
+                  {
+                     actionName : "eco-do-simulation",
+                     evaluate : function(asset, entity) {
+                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "calculatedCharactList") && entity != null && entity.userAccess.edit;
+                     },
+                     fn : function(instance) {
+
+                        Alfresco.util.PopupManager.displayMessage({
+                           text : this.msg("message.eco-do-simulation.please-wait")
+                        });
+
+                        Alfresco.util.Ajax.request({
+                           method : Alfresco.util.Ajax.GET,
+                           url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef
+                                 .replace(":/", "") + "/dosimulation",
+                           successCallback : {
+                              fn : function EntityDataListthis_onECODoSimulation_success(response) {
+                                 Alfresco.util.PopupManager.displayMessage({
+                                    text : this.msg("message.eco-do-simulation.success")
+                                 });
+
+                              },
+                              scope : this
+                           },
+                           failureCallback : {
+                              fn : function EntityDataListthis_onECODoSimulation_failure(response) {
+                                 if (response.message !== null) {
+                                    Alfresco.util.PopupManager.displayPrompt({
+                                       text : response.message
+                                    });
+                                 } else {
+                                    Alfresco.util.PopupManager.displayMessage({
+                                       text : this.msg("message.eco-do-simulation.failure")
+                                    });
+                                 }
+                              },
+                              scope : this
+                           }
+
+                        });
+                     }
+                  });
+
+      YAHOO.Bubbling
+            .fire(
+                  "registerToolbarButtonAction",
+                  {
+                     actionName : "eco-apply",
+                     evaluate : function(asset, entity) {
+                        return asset.name !== null && (asset.name === "replacementList") && entity != null && entity.userAccess.edit;
+                     },
+                     fn : function(instance) {
+
+                        Alfresco.util.PopupManager.displayMessage({
+                           text : this.msg("message.eco-apply.please-wait")
+                        });
+
+                        Alfresco.util.Ajax.request({
+                           method : Alfresco.util.Ajax.GET,
+                           url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef
+                                 .replace(":/", "") + "/apply",
+                           successCallback : {
+                              fn : function EntityDataListthis_onECOApply_success(response) {
+                                 Alfresco.util.PopupManager.displayMessage({
+                                    text : this.msg("message.eco-apply.success")
+                                 });
+
+                              },
+                              scope : this
+                           },
+                           failureCallback : {
+                              fn : function EntityDataListthis_onECOApply_failure(response) {
+                                 if (response.message !== null) {
+                                    Alfresco.util.PopupManager.displayPrompt({
+                                       text : response.message
+                                    });
+                                 } else {
+                                    Alfresco.util.PopupManager.displayMessage({
+                                       text : this.msg("message.eco-apply.failure")
+                                    });
+                                 }
+                              },
+                              scope : this
+                           }
+
+                        });
+                     }
+                  });
+
+      YAHOO.Bubbling
+            .fire(
+                  "registerToolbarButtonAction",
+                  {
+                     actionName : "full-screen",
+                     evaluate : function(asset, entity) {
+                        return asset.name !== null && (asset.name === "compoList") && entity != null && entity.userAccess.edit;
+                     },
+                     fn : function(instance) {
+
+                        var onBeforeFormRuntimeInit = function(layer, args) {
+                           var formUI = args[1].component, formsRuntime = args[1].runtime;
+
+                           formsRuntime.setAsReusable(true);
+
+                           formUI.buttons.submit.set("label", this.msg("button.add"));
+
+                           Dom.removeClass("full-screen-form", "hidden");
+
+                           formsRuntime.setAJAXSubmit(true, {
+                              successCallback : {
+                                 fn : function(response) {
+                                    YAHOO.Bubbling.fire("dataItemCreated", {
+                                       nodeRef : response.json.persistedObject
+                                    });
+                                    formsRuntime.reset();
+
+                                    var form = Dom.get(formsRuntime.formId);
+                                    for ( var j = 0; j < form.elements.length; j++) {
+                                       if (Alfresco.util.isVisible(form.elements[j])) {
+                                          form.elements[j].focus();
+                                          break;
+                                       }
+                                    }
+
+                                 },
+                                 scope : this
+                              }
+                           });
+
                         };
-                        
-                        Dom.setStyle("alf-content", "margin-left",null);
-                     
-                  }
-                     
-               }
-            });
-      
+
+                        if (Dom.hasClass("alf-hd", "hidden")) {
+                           Dom.removeClass("alf-hd", "hidden");
+                           Dom.removeClass("alf-filters", "hidden");
+                           Dom.removeClass("alf-ft", "hidden");
+                           Dom.removeClass("Share", "full-screen");
+                           Dom.addClass("alf-content", "yui-b");
+                           if (this.fullScreen) {
+                              Dom.setStyle("alf-content", "margin-left", this.fullScreen.marginLeft);
+                           }
+                           Dom.addClass("full-screen-form", "hidden");
+
+                        } else {
+                           Dom.addClass("alf-hd", "hidden");
+                           Dom.addClass("alf-ft", "hidden");
+                           Dom.addClass("Share", "full-screen");
+                           Dom.addClass("alf-ft", "hidden");
+
+                           Dom.addClass("alf-filters", "hidden");
+                           Dom.removeClass("alf-content", "yui-b");
+
+                           if (!this.fullScreen) {
+
+                              var destination = this.datalistMeta.nodeRef != null ? this.datalistMeta.nodeRef
+                                    : this.options.parentNodeRef;
+
+                              var templateUrl = YAHOO.lang
+                                    .substitute(
+                                          Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=full-screen&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
+                                          {
+                                             itemKind : "type",
+                                             itemId : this.datalistMeta.itemType,
+                                             destination : destination,
+                                             mode : "create",
+                                             submitType : "json",
+                                             entityNodeRef : this.options.entityNodeRef,
+                                             dataListsName : encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
+                                                   : this.options.list)
+                                          });
+
+                              YAHOO.Bubbling.on("beforeFormRuntimeInit", onBeforeFormRuntimeInit, this);
+
+                              Alfresco.util.Ajax
+                                    .request({
+                                       url : templateUrl,
+                                       dataObj : {
+                                          htmlid : this.id
+                                       },
+                                       successCallback : {
+                                          fn : function(response) {
+                                             var containerDiv = Dom.get("full-screen-form");
+
+                                             if (containerDiv.hasChildNodes()) {
+                                                while (containerDiv.childNodes.length >= 1) {
+                                                   containerDiv.removeChild(containerDiv.firstChild);
+                                                }
+                                             }
+
+                                             containerDiv.innerHTML = response.serverResponse.responseText;
+
+                                          },
+                                          scope : this
+                                       },
+                                       failureMessage : "Could not load dialog template from '" + this.options.templateUrl + "'.",
+                                       scope : this,
+                                       execScripts : true
+                                    });
+
+                           } else {
+                              Dom.removeClass("full-screen-form", "hidden");
+                           }
+
+                           this.fullScreen = {
+                              marginLeft : Dom.getStyle("alf-content", "margin-left")
+                           };
+
+                           Dom.setStyle("alf-content", "margin-left", null);
+
+                        }
+
+                     }
+                  });
 
       YAHOO.Bubbling
             .fire(
@@ -260,7 +268,7 @@
                   {
                      actionName : "formulate",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity!=null && entity.userAccess.edit;
+                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -303,15 +311,10 @@
                      }
                   });
 
-      
-
-      
-      
-      
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "import",
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "compoList") && entity!=null && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "compoList") && entity != null && entity.userAccess.edit;
          },
          fn : function(instance) {
             var actionUrl = Alfresco.constants.PROXY_URI + "becpg/remote/import";
@@ -395,44 +398,45 @@
          });
 
       };
-      
-     
 
-      YAHOO.Bubbling.fire("registerToolbarButtonAction",{
-            actionName : "variant-picker",
-            right : true,
-            evaluate : function(asset, entity) {
-               
-              return entity!=null  && entity.userAccess.edit && (beCPG.util.contains(entity.aspects, "bcpg:entityVariantAspect")
-                     || (asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") ));
-             
-            },
-            createWidget : function(containerDiv, instance) {
+      YAHOO.Bubbling
+            .fire(
+                  "registerToolbarButtonAction",
+                  {
+                     actionName : "variant-picker",
+                     right : true,
+                     evaluate : function(asset, entity) {
 
-               var divEl = document.createElement("div");
+                        return entity != null && entity.userAccess.edit && (beCPG.util.contains(entity.aspects,
+                              "bcpg:entityVariantAspect") || (asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList")));
 
-               containerDiv.appendChild(divEl);
+                     },
+                     createWidget : function(containerDiv, instance) {
 
-               Dom.setAttribute(divEl, "id", instance.id + "-variantPicker");
-               
-               Dom.addClass(divEl, "variantPicker");
-               
-               var picker = new beCPG.component.VariantPicker(instance.id + "-variantPicker").setOptions({
-                  entityNodeRef : instance.options.entityNodeRef,
-                  entity : instance.entity,
-                  containerDiv : divEl,
-                  toolBarInstance : instance
-               });
+                        var divEl = document.createElement("div");
 
-               return picker;
-            }
-         });
+                        containerDiv.appendChild(divEl);
+
+                        Dom.setAttribute(divEl, "id", instance.id + "-variantPicker");
+
+                        Dom.addClass(divEl, "variantPicker");
+
+                        var picker = new beCPG.component.VariantPicker(instance.id + "-variantPicker").setOptions({
+                           entityNodeRef : instance.options.entityNodeRef,
+                           entity : instance.entity,
+                           containerDiv : divEl,
+                           toolBarInstance : instance
+                        });
+
+                        return picker;
+                     }
+                  });
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "view-details",
          right : true,
          evaluate : function(datalistMeta, entity) {
-            return entity!=null && entity.type != "bcpg:systemEntity";
+            return entity != null && entity.type != "bcpg:systemEntity";
          },
          fn : function(instance) {
 
@@ -451,7 +455,7 @@
          actionName : "view-documents",
          right : true,
          evaluate : function(datalistMeta, entity) {
-            return  entity!=null && entity.type != "bcpg:systemEntity";
+            return entity != null && entity.type != "bcpg:systemEntity";
          },
          fn : function(instance) {
 
@@ -466,39 +470,38 @@
          }
 
       });
-      
-      
 
-      YAHOO.Bubbling.fire("registerToolbarButtonAction",{
-         right: true,
+      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+         right : true,
          actionName : "datalist-state",
          evaluate : function(asset, entity) {
-           return  entity!=null && asset.state !== null;
+            return entity != null && asset.state !== null;
          },
          createWidget : function(containerDiv, instance) {
-            
+
             var divEl = document.createElement("div");
 
             containerDiv.appendChild(divEl);
 
             Dom.setAttribute(divEl, "id", instance.id + "-stateCkeckbox");
-            
+
             Dom.addClass(divEl, "stateCkeckbox");
-            
-            var stateCkeckbox = new YAHOO.widget.Button({ 
-               type: "checkbox", 
-               title: instance.msg("button.datalist-state.description"),
-               value: instance.datalistMeta.state, 
-               container:divEl , 
+
+            var stateCkeckbox = new YAHOO.widget.Button({
+               type : "checkbox",
+               title : instance.msg("button.datalist-state.description"),
+               value : instance.datalistMeta.state,
+               container : divEl,
                disabled : !instance.entity.userAccess.edit,
-               checked: "Valid" == instance.datalistMeta.state });
-            
-            
-            stateCkeckbox.on("checkedChange", function (){
-               Alfresco.util.Ajax
-               .request({
+               checked : "Valid" == instance.datalistMeta.state
+            });
+
+            stateCkeckbox.on("checkedChange", function() {
+               Alfresco.util.Ajax.request({
                   method : Alfresco.util.Ajax.POST,
-                  url : Alfresco.constants.PROXY_URI + "becpg/entitylist/node/"+instance.datalistMeta.nodeRef.replace(":/", "")+"?state="+("Valid" == instance.datalistMeta.state?"ToValidate":"Valid"),
+                  url : Alfresco.constants.PROXY_URI + "becpg/entitylist/node/" + instance.datalistMeta.nodeRef
+                        .replace(":/", "") + "?state=" + ("Valid" == instance.datalistMeta.state ? "ToValidate"
+                        : "Valid"),
                   successCallback : {
                      fn : function(response) {
                         Alfresco.util.PopupManager.displayMessage({
@@ -508,7 +511,7 @@
                      scope : this
                   }
                });
-               
+
             });
 
             return stateCkeckbox;

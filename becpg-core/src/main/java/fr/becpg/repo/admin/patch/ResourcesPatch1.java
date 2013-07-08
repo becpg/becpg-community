@@ -101,8 +101,9 @@ public class ResourcesPatch1 extends AbstractBeCPGPatch {
 		try{
 			policyBehaviourFilter.disableBehaviour(ReportModel.TYPE_REPORT_TPL);
 			updateProductReports();
-		}
-		finally{
+		} catch(Exception e){
+			logger.error(e,e);
+		} finally{
 			policyBehaviourFilter.enableBehaviour(ReportModel.TYPE_REPORT_TPL);
 		}
 		
