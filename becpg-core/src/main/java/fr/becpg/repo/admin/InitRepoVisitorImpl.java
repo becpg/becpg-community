@@ -776,36 +776,37 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		try {
 
-			QName [] productTypes = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_RAWMATERIAL};
-			Boolean [] defaultReport = {true, true};
+			QName [] productTypes = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, BeCPGModel.TYPE_PACKAGINGMATERIAL};
+			String [] defaultReport = {PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_CLIENT_PATH};
+			String [] defaultReportName = {productReportClientName, productReportClientName, productReportProductionName, productReportClientName};
+			String [] otherReport = {PRODUCT_REPORT_PRODUCTION_PATH, null, null, null};
+			String [] otherReportName = {productReportProductionName, null, null, null};
+			
 			int i = 0;
 			
 			for(QName productType : productTypes){
 				
 				ClassDefinition classDef = dictionaryService.getClass(productType);
 				
-				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
-						classDef.getTitle(), classDef.getTitle());
-				reportTplService.createTplRptDesign(folderNodeRef, productReportClientName,
-								PRODUCT_REPORT_CLIENT_PATH, 
-								ReportType.Document, ReportFormat.PDF, productType, true, defaultReport[i], false);				
-				i++;
-			}
-			
-			QName [] productTypes2 = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT};
-			Boolean [] defaultReport2 = {false, true};
-			i = 0;
-			
-			for(QName productType : productTypes2){
-				ClassDefinition classDef = dictionaryService.getClass(productType);
-				
-				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
-						classDef.getTitle(), classDef.getTitle());
-				
-				reportTplService.createTplRptDesign(folderNodeRef, productReportProductionName,
-						PRODUCT_REPORT_PRODUCTION_PATH, 
-						ReportType.Document, ReportFormat.PDF, productType, true, defaultReport2[i], false);				
-				i++;
+				if(repoService.getFolderByPath(productReportTplsNodeRef, classDef.getTitle()) == null){
+					
+					NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
+							classDef.getTitle(), classDef.getTitle());
+					
+					if(defaultReport[i] != null && defaultReportName[i] != null){
+						reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i],
+								defaultReport[i], 
+								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
+					}
+					
+					if(otherReport[i] != null && otherReportName[i] != null){
+						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i],
+								otherReport[i], 
+								ReportType.Document, ReportFormat.PDF, productType, true, false, false);
+					}
+				}
+								
+				i++;			
 			}			
 			
 		} catch (Exception e) {

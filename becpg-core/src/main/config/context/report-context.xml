@@ -85,7 +85,6 @@
 		<property name="transactionService" ref="transactionService" />
 		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
 		<property name="entityReportService" ref="entityReportService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 	
 	<!-- Report property decorator -->
