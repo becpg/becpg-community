@@ -69,15 +69,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 		
 		//Take in account net weight
-		Double netWeight;
-		if(formulatedProduct.getUnit() == ProductUnit.P){
-			netWeight = formulatedProduct.getDensity();
-		}
-		else{
-			Double qty = FormulationHelper.getQty(formulatedProduct);
-			Double density = FormulationHelper.getDensity(formulatedProduct);
-			netWeight = qty * density;
-		}		
+		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);			
 					
 		// calculate on every item
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
