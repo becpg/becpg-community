@@ -27,7 +27,11 @@ public enum ProductUnit  {
 	
 	m3,
 	
-	h;
+	h,
+	
+	g,
+	
+	mL;
 	
 
 		

@@ -51,7 +51,9 @@
 				<list>
 					<value></value>
 					<value>kg</value>
+					<value>g</value>
 					<value>L</value>
+					<value>mL</value>
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
@@ -333,6 +335,7 @@
 				</list>
 			</parameter>
 		</constraint>
+		
 	</constraints>
 
 	<types>
@@ -814,6 +817,11 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+				</property>
+				<property name="bcpg:allergenListDecisionTree">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<associations>

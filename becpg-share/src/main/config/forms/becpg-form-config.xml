@@ -3679,7 +3679,7 @@
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
-					<show id="bcpg:allergenListInVoluntaryCauses" />
+					<show id="bcpg:allergenListDecisionTree" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -3694,7 +3694,7 @@
 					</field>
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
-					<field id="bcpg:allergenListInVoluntaryCauses" />
+					<field id="bcpg:allergenListDecisionTree" />
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3720,7 +3720,7 @@
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
-					<show id="bcpg:allergenListInVoluntaryCauses" />
+					<show id="bcpg:allergenListDecisionTree" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -3741,7 +3741,7 @@
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
-					<show id="bcpg:allergenListInVoluntaryCauses" />
+					<show id="bcpg:allergenListDecisionTree" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -3755,7 +3755,7 @@
 					</field>
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
-					<field id="bcpg:allergenListInVoluntaryCauses" />
+					<field id="bcpg:allergenListDecisionTree" />
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
