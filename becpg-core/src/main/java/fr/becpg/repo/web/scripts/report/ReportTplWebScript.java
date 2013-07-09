@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -40,6 +41,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 	private static final String ACTION_DISABLE = "disable";
 	private static final String ACTION_ENABLE = "enable";
 	private static final String ACTION_DELETE_REPORTS = "deleteReports";
+	private static final String ACTION_UPDATE_PERMISSIONS = "updatePermissions";
 
 	private static final String PARAM_ACTION = "action";
 	private static final String PARAM_STORE_TYPE = "store_type";
@@ -51,6 +53,8 @@ public class ReportTplWebScript extends AbstractWebScript {
 	private EntityReportService entityReportService;
 
 	private BeCPGSearchService beCPGSearchService;
+	
+	private AssociationService associationService;
 
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
@@ -62,6 +66,10 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@Override
@@ -77,15 +85,17 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		if (nodeService.exists(nodeRef)) {
 			if (ACTION_REFRESH.equals(action)) {
-				refreshReports(nodeRef);
+				updateReports(nodeRef, ACTION_REFRESH);
 			} else if (ACTION_DISABLE.equals(action)) {
 				nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);
-				refreshReports(nodeRef);
+				updateReports(nodeRef, ACTION_REFRESH);
 			} else if (ACTION_ENABLE.equals(action)) {
 				nodeService.setProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
-				refreshReports(nodeRef);
+				updateReports(nodeRef, ACTION_REFRESH);
 			} else if (ACTION_DELETE_REPORTS.equals(action)) {
 				deleteReports(nodeRef);
+			} else if(ACTION_UPDATE_PERMISSIONS.equals(action)){
+				updateReports(nodeRef, ACTION_UPDATE_PERMISSIONS);
 			} else {
 				String error = "Unsupported action: " + action;
 				logger.error(error);
@@ -94,7 +104,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 		}
 	}
 
-	private void refreshReports(NodeRef nodeRef) {
+	private void updateReports(NodeRef nodeRef, String action) {
 
 		Boolean isSystem = (Boolean) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
 		QName classType = (QName) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
@@ -107,11 +117,19 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 			List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
 			
-			logger.info("Refresh reports of " + entityNodeRefs.size() + " entities.");
+			logger.info("Refresh reports of " + entityNodeRefs.size() + " entities. action: " + action);
 
 			for (List<NodeRef> batch : Lists.partition(entityNodeRefs, BATCH_SIZE)) {
 				for (NodeRef entityNodeRef : batch) {
-					entityReportService.generateReport(entityNodeRef);
+					if(ACTION_REFRESH.equals(action)){
+						entityReportService.generateReport(entityNodeRef);
+					} else if(ACTION_UPDATE_PERMISSIONS.equals(action)){						
+						List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+						for(NodeRef report : reports){
+							entityReportService.setPermissions(nodeRef, report);
+						}						
+					}
+					
 				}
 			}
 			
@@ -126,15 +144,12 @@ public class ReportTplWebScript extends AbstractWebScript {
 		logger.info("Delete " + assocRefs.size() + " reports.");
 
 		for (AssociationRef assocRef : assocRefs) {
-			if (!nodeService.hasAspect(assocRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)) {
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Delete report " + assocRef.getSourceRef() + " - name: "
-							+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
-				}
-				nodeService.addAspect(assocRef.getSourceRef(), ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(assocRef.getSourceRef());
+			if (logger.isDebugEnabled()) {
+				logger.debug("Delete report " + assocRef.getSourceRef() + " - name: "
+						+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
 			}
+			nodeService.addAspect(assocRef.getSourceRef(), ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.deleteNode(assocRef.getSourceRef());
 		}
 		
 		logger.info("Reports deleted.");

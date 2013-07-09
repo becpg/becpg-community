@@ -381,6 +381,15 @@
 				</permissions>
 				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
 			</action>
+			
+			<action id="reportTpl-update-permissions" type="javascript"
+				icon="document-manage-permissions" label="actions.reportTpl-update-permissions">
+				<param name="function">onActionReportTplUpdatePermissions</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
+			</action>			
 
 		</actions>
 
@@ -450,10 +459,12 @@
 
 			<actionGroup id="document-details">
             <action index="121" id="reportTpl-refresh" /> 
+            <action index="301" id="reportTpl-update-permissions" />
          </actionGroup>
          
          <actionGroup id="document-browse">
-            <action index="131" id="reportTpl-refresh" /> 
+            <action index="131" id="reportTpl-refresh" />
+            <action index="371" id="reportTpl-update-permissions" />  
          </actionGroup>
 		</actionGroups>
 

@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.webservice.accesscontrol.AccessStatus;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -15,6 +17,8 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,6 +68,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
+	private PermissionService permissionService;
+	
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
 		logger.debug("Register report extractor :" + typeName + " - " + extractor.getClass().getSimpleName());
@@ -114,6 +120,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
 	}
 
 	@Override
@@ -201,9 +211,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 		if (documentNodeRef == null) {
 
 			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
-			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);						
+			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);			
+			setPermissions(tplNodeRef, documentNodeRef);
 		}
-
+		
 		newReports.add(documentNodeRef);
 		contentWriter = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 
@@ -272,6 +283,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		for (NodeRef dbReport : dbReports) {
 			if (!newReports.contains(dbReport)) {
 				logger.debug("delete old report: " + dbReport);
+				nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
 				nodeService.deleteNode(dbReport);
 			}
 		}
@@ -310,4 +322,27 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return tplsToReturnNodeRef;
 	}
 
+	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef){
+		
+		Set<AccessPermission> tplAccessPermissions = permissionService.getAllSetPermissions(tplNodeRef);
+		permissionService.deletePermissions(documentNodeRef);	
+		boolean inheritParentPermissions = true;
+		
+		if(!tplAccessPermissions.isEmpty()){		
+			logger.debug("set permissions size " + tplAccessPermissions.size());
+			if(logger.isDebugEnabled()){
+				for(AccessPermission a : tplAccessPermissions){
+					logger.debug("Authority: " + a.getAuthority() + " status " + a.getAccessStatus() + " " + a.getPermission());
+				}	
+			}
+			for(AccessPermission tplAccessPermission : tplAccessPermissions){	
+				if(!tplAccessPermission.isInherited()){
+					permissionService.setPermission(documentNodeRef, tplAccessPermission.getAuthority(), tplAccessPermission.getPermission(), true);
+					inheritParentPermissions = false;
+				}				
+			}
+		}
+		
+		permissionService.setInheritParentPermissions(documentNodeRef, inheritParentPermissions);
+	}
 }
