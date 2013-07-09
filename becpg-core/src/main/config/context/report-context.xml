@@ -43,7 +43,8 @@
 		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
 		<property name="reportTplService" ref="reportTplService" />		
 		<property name="mimetypeService" ref="mimetypeService"/>
-		<property name="associationService" ref="associationService"/>			
+		<property name="associationService" ref="associationService"/>
+		<property name="permissionService" ref="permissionService"/>			
 	</bean>
 	
 	<bean id="defaultExtractorPlugin" class="fr.becpg.repo.report.entity.ExtractorPlugin" init-method="init">
@@ -85,7 +86,6 @@
 		<property name="transactionService" ref="transactionService" />
 		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
 		<property name="entityReportService" ref="entityReportService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 	
 	<!-- Report property decorator -->

@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.report;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,6 +130,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_3 = "grossWeightPkgLevel3";
 	private static final String ATTR_NB_PRODUCTS_LEVEL_3= "nbProductsPkgLevel3";
 	private static final String ATTR_NB_PRODUCTS_LEVEL_2= "nbProductsPkgLevel2";
+	
+	private static final String PROP_DYNAMIC_CHARACT_COLUMN = "bcpg:dynamicCharactColumn";
 	
 
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
@@ -268,6 +271,14 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
 					partElt.addAttribute(ATTR_ASPECTS, extractAspects(dataItem.getProduct()));
 					extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
+					
+					for(int i=1 ; i<=5 ; i++){
+						QName qName = QName.createQName(PROP_DYNAMIC_CHARACT_COLUMN + i, namespaceService);
+						Serializable s = nodeService.getProperty(dataItem.getNodeRef(), qName);
+						if(s != null){
+							partElt.addAttribute(qName.getLocalName(), s.toString());
+						}
+					}
 				}
 			}
 

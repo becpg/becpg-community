@@ -14,6 +14,7 @@
 					<show id="rep:reportTplIsSystem" />
 					<show id="rep:reportTplIsDefault" />
 					<show id="rep:reportTplFormat" />					
+					<show id="rep:reportTplIsDisabled" />
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -25,6 +26,10 @@
 					<field id="cm:description">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
+						</control>
+					</field>	
+					<field id="rep:reportTplClassName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl">
 						</control>
 					</field>	
 					<field id="rep:reportTplType" sorted="true"/>

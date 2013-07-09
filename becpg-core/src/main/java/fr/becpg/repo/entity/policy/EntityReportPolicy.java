@@ -4,16 +4,12 @@
 package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.content.ContentServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -26,14 +22,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * Generate documents when product properties are updated.
@@ -42,9 +34,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 @Service
 public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy,
-		NodeServicePolicies.OnUpdatePropertiesPolicy, ContentServicePolicies.OnContentUpdatePolicy {
-
-	private static final int BATCH_SIZE = 25;
+		NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityReportPolicy.class);
@@ -57,8 +47,6 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	/** The entityReportService **/
 	private EntityReportService entityReportService;
-
-	private BeCPGSearchService beCPGSearchService;
 
 	/**
 	 * Sets the transaction service.
@@ -86,10 +74,6 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 		this.entityReportService = entityReportService;
 	}
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
 	/**
 	 * Inits the.
 	 */
@@ -104,14 +88,6 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 				"onDeleteAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this, "onUpdateProperties"));
-
-		// report Tpl policies
-
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ReportModel.TYPE_REPORT, ReportModel.ASSOC_REPORT_TPL, new JavaBehaviour(
-				this, "onDeleteAssociation"));
-
-		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, ReportModel.TYPE_REPORT_TPL, new JavaBehaviour(this, "onContentUpdate",
-				NotificationFrequency.TRANSACTION_COMMIT));
 	}
 
 	@Override
@@ -123,17 +99,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 
-		if (ReportModel.ASSOC_REPORT_TPL.equals(assocRef.getTypeQName())) {
-			if (!nodeService.hasAspect(assocRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)) {
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Policy delete report " + assocRef.getSourceRef() + " - name: " + nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
-				}
-				nodeService.deleteNode(assocRef.getSourceRef());
-			}
-		} else {
-			onUpdateProduct(assocRef.getSourceRef());
-		}
+		onUpdateProduct(assocRef.getSourceRef());		
 	}
 
 	private void onUpdateProduct(NodeRef entityNodeRef) {
@@ -251,29 +217,6 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 				AuthenticationUtil.runAs(actionRunAs, runAsUser);
 			} catch (Throwable e) {
 				logger.error("Unable to generate product reports ", e);
-			}
-		}
-	}
-
-	@Override
-	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
-
-		if (nodeService.exists(nodeRef)) {
-			Boolean isSystem = (Boolean) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
-			QName classType = (QName) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
-
-			if (isSystem != null && isSystem && classType != null) {
-
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) + 
-								LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY)) +
-								LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-
-				List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
-
-				for (List<NodeRef> batch : Lists.partition(entityNodeRefs,BATCH_SIZE)) {
-					Runnable runnable = new ProductReportGenerator(new HashSet<>(batch), AuthenticationUtil.getSystemUserName());
-					threadExecuter.execute(runnable);
-				}
 			}
 		}
 	}

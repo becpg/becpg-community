@@ -65,7 +65,7 @@
 				<property name="rep:reportTplIsDefault">
 					<type>d:boolean</type>
 					<default>true</default>
-				</property>
+				</property>				
 				<property name="rep:reportTplFormat">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -74,6 +74,9 @@
 					<constraints>
 						<constraint ref="rep:reportTplFormats" />
 					</constraints>
+				</property>
+				<property name="rep:reportTplIsDisabled">
+					<type>d:boolean</type>
 				</property>
 			</properties>
 		</type>
