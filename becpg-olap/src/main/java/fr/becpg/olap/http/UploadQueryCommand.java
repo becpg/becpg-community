@@ -1,7 +1,6 @@
 package fr.becpg.olap.http;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,12 +12,13 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 
 public class UploadQueryCommand extends AbstractHttpCommand {
 
 	private static String COMMAND_URL_TEMPLATE = "/api/upload";
+	private static String FILEBODY_CHARSET = "UTF-8";
+	private static String FILEBODY_MIMETYPE = "text/plain";
 
 	public UploadQueryCommand(String serverUrl) {
 		super(serverUrl);
@@ -35,8 +35,8 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 		try {
 			if (params.length > 2) {
 				// Case create
-				entity.addPart("destination", new StringBody((String) params[0], "text/plain", Charset.forName("UTF-8")));
-				entity.addPart("filename", new StringBody((String) params[1], Charset.forName("UTF-8")));
+				entity.addPart("destination", new StringBody((String) params[0], FILEBODY_MIMETYPE, Charset.forName(FILEBODY_CHARSET)));
+				entity.addPart("filename", new StringBody((String) params[1], Charset.forName(FILEBODY_CHARSET)));
 				entity.addPart("filedata", getFileBody((String) params[1], (String) params[2]));
 
 				if (logger.isDebugEnabled()) {
@@ -50,7 +50,7 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 				// Case update
 
-				entity.addPart("updatenoderef", new StringBody((String) params[0], "text/plain", Charset.forName("UTF-8")));
+				entity.addPart("updatenoderef", new StringBody((String) params[0], FILEBODY_MIMETYPE, Charset.forName(FILEBODY_CHARSET)));
 				entity.addPart("filedata", getFileBody(null, (String) params[1]));
 
 				if (logger.isDebugEnabled()) {
@@ -59,59 +59,86 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 					logger.debug("filedata=" + (String) params[1]);
 				}
 			}
+			
+			logger.debug("MultipartEntity: " + entity + " length: " + entity.getContentLength());				
 
-			postRequest.setEntity(entity);
+			postRequest.setEntity(entity);		
 
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e, e);
 		}
+		
 		return postRequest;
 	}
 
-	private ContentBody getFileBody(String filename, final String filecontent) {
-		File temp = null;
+	private ContentBody getFileBody(final String filename, final String filecontent) {
 
-		try {
-			temp = File.createTempFile("temp", ".saiku");
+		return new ContentBody() {
 
-			return new FileBody(temp, filename, "text/plain", "UTF-8") {
+			@Override
+			public String getTransferEncoding() {
+				return FILEBODY_CHARSET;
+			}
 
-				@Override
-				public InputStream getInputStream() throws IOException {
-					return new ByteArrayInputStream(filecontent.getBytes("UTF-8"));
+			@Override
+			public String getCharset() {
+				return FILEBODY_CHARSET;
+			}
+
+			@Override
+			public String getSubType() {
+				return "octet-stream";
+			}
+
+			@Override
+			public String getMimeType() {
+				return "application/octet-stream";
+			}
+
+			@Override
+			public String getMediaType() {
+				return "application";
+			}
+
+			private InputStream getInputStream() throws IOException {
+				return new ByteArrayInputStream(filecontent.getBytes(FILEBODY_CHARSET));
+			}
+
+			@Override
+			public void writeTo(OutputStream out) throws IOException {
+				if (out == null) {
+					throw new IllegalArgumentException("Output stream may not be null");
 				}
-
-				@Override
-				public void writeTo(OutputStream out) throws IOException {
-					if (out == null) {
-						throw new IllegalArgumentException("Output stream may not be null");
+				InputStream in = getInputStream();
+				try {
+					byte[] tmp = new byte[4096];
+					int l;
+					while ((l = in.read(tmp)) != -1) {
+						out.write(tmp, 0, l);
 					}
-					InputStream in = getInputStream();
-					try {
-						byte[] tmp = new byte[4096];
-						int l;
-						while ((l = in.read(tmp)) != -1) {
-							out.write(tmp, 0, l);
-						}
-						out.flush();
-					} finally {
-						in.close();
-					}
+					out.flush();
+				} finally {
+					in.close();
 				}
+			}
 
-				@Override
-				public long getContentLength() {
-					return filecontent.length();
+			@Override
+			public long getContentLength() {
+				try {
+					return filecontent.getBytes(FILEBODY_CHARSET).length;
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+				return -1;
+			}
 
-			};
-		} catch (IOException e) {
-			logger.error(e, e);
-		} finally {
-			temp.delete();
-		}
+			@Override
+			public String getFilename() {
+				return filename;
+			}
+		};
 
-		return null;
 	}
 
 	@Override
