@@ -148,6 +148,8 @@
                      },
                      fn : function(instance) {
 
+                        var me = this;
+
                         var onBeforeFormRuntimeInit = function(layer, args) {
                            var formUI = args[1].component, formsRuntime = args[1].runtime;
 
@@ -251,9 +253,34 @@
                               Dom.removeClass("full-screen-form", "hidden");
                            }
 
-                           this.fullScreen = {
-                              marginLeft : Dom.getStyle("alf-content", "margin-left")
+                           me.fullScreen = {
+                              marginLeft : Dom.getStyle("alf-content", "margin-left"),
+                              lock : false
                            };
+
+                           YAHOO.Bubbling.on("dirtyDataTable", function() {
+                              if (!me.fullScreen.lock) {
+                                 me.fullScreen.lock = true;
+                                 Alfresco.util.Ajax
+                                 .request({
+                                    method : Alfresco.util.Ajax.GET,
+                                    url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + me.options.entityNodeRef
+                                          .replace(":/", ""),
+                                    successCallback : {
+                                       fn : function(response) {
+                                          YAHOO.Bubbling.fire("refreshDataGrids", {
+                                             updateOnly : true,
+                                             callback : function (){
+                                                me.fullScreen.lock = false;
+                                             }
+                                          });
+                                       },
+                                       scope : this
+                                    }
+                                 });
+                              }
+                           }, this);
+
 
                            Dom.setStyle("alf-content", "margin-left", null);
 

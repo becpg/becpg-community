@@ -1,56 +1,13 @@
 <#include "../../../modules/entity-datagrid/include/entity-datagrid.lib.ftl" />
 
-<#macro dataGridDashlet dashletId dashletName usePagination=true useFilter=true extra...>
-<@inlineScript group="formulation-view">
-	
+<#macro dataGridDashlet dashletId dashletName extra...>
 
-		new Alfresco.widget.DashletResizer("${dashletId}", "${dashletName}");
-	   new Alfresco.widget.DashletTitleBarActions("${dashletId}").setOptions(
-			   {
-			      actions:
-			      [
-			         {
-			            cssClass: "help",
-			            bubbleOnClick:
-			            {
-			              	<#if extra["itemType"]??>
-			               	message: "${msg("dashlet.help." + extra["itemType"]?replace(":", "_"))?js_string}"
-								<#else>
-			               	message: "${msg("dashlet.help.composition")?js_string}"
-								</#if>
-			            },
-			            tooltip: "${msg("dashlet.help.tooltip")?js_string}"
-			         }
-			      ]
-			   });
-			   
-	   new beCPG.module.EntityDataGrid('${dashletId}'<#if extra["itemType"]??>,true</#if>).setOptions(
-			   {
-			       entityNodeRef: "${page.url.args.nodeRef!""}",
-			       siteId: "${page.url.templateArgs.site!""}",
-			       list: "${page.url.args.list!""}",
-				    dataUrl : Alfresco.constants.PROXY_URI + "${(args.dataUrl!"slingshot/datalists/data/node/")}",
-				    itemUrl : Alfresco.constants.PROXY_URI + "${(args.itemUrl!"slingshot/datalists/data/item/")}",
-			       usePagination: "${usePagination?string}",
-			       displayBottomPagination : false,
-			       useFilter: "${useFilter?string}",
-			       sortable : true,
-			       sortUrl : Alfresco.constants.PROXY_URI + "becpg/entity/datalists/sort/node",
-			       <#if extra["itemType"]??>
-			       	itemType : "${extra["itemType"]?string}",
-			       </#if>
-			       saveFieldUrl : Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
-			       hiddenColumns : ["prop_bcpg_depthLevel"],
-			       initHistoryManager : false
-			   }).setMessages(${messages});
-
-</@>
 	
 <div id="${dashletId}">
 <@uniqueIdDiv>
 	<div class="dashlet datagrid" id="${dashletId}-body" >
 		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
-			<div  class="toolbar datagrid-bar flat-button">
+			 <div class="toolbar datagrid-bar flat-button">
 			      <div class="left">
 			         <div class="item-select">
 			            <button id="${dashletId}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
@@ -87,20 +44,20 @@
 			      </div>
 			      <div class="clear"></div>
 			</div>
-			<div  class="body scrollableList" >
+			<div  class="body scrollableList" <#if extra["height"]??>style="height: ${extra["dashletTitle"]?string}px;"</#if> >
 		  	
 			   <div id="${dashletId}-grid" class="grid"></div>
 			
 			   <div id="${dashletId}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>
 			
-			   <div id="${dashletId}-datagridBarBottom" class="yui-ge datagrid-bar datagrid-bar-bottom flat-button">
+			   <div id="${dashletId}-datagridBarBottom" class="hidden yui-ge datagrid-bar datagrid-bar-bottom flat-button" >
 			      <div class="yui-u first align-center">
 			         <div class="item-select">&nbsp;</div>
 			         
 			         <div id="${dashletId}-paginatorBottom" class="paginator"></div>
 			      </div>
 			   </div>
-			
+			   
 			   <!-- Action Sets -->
 			   <div style="display:none">
 			      <!-- Action Set "More..." container -->
@@ -118,6 +75,7 @@
 			   </div>
 			</div>
 		</div>
+	
 	</@>	
 </div>
 
