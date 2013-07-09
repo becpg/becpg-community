@@ -281,8 +281,8 @@
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 			</action>
 
-			<action id="entity-refresh-report" type="javascript"
-				label="actions.document.refreshReport">
+			<action id="entity-refresh-reports" type="javascript"
+				label="actions.document.refreshReports">
 				<param name="function">onActionRefreshReport</param>
 				<permissions>
 					<permission allow="true">Write</permission>
@@ -372,6 +372,15 @@
 		      </permissions>
 		      <evaluator>evaluator.becpg.doclib.action.project</evaluator>
 		   </action>
+		   
+		   <action id="reportTpl-refresh" type="javascript"
+				icon="entity-refresh-reports" label="actions.document.refreshReports">
+				<param name="function">onActionReportTplRefresh</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
+			</action>
 
 		</actions>
 
@@ -418,7 +427,7 @@
 				<action index="104" id="entity-cancel-editing" />
 				<action index="105" id="entity-view-original" />
 				<action index="106" id="entity-view-working-copy" />
-				<action index="107" id="entity-refresh-report" />
+				<action index="107" id="entity-refresh-reports" />
             <action index="110" id="document-approve" icon="folder-approve" />
             <action index="120" id="document-reject" icon="folder-reject" />
             <action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
@@ -439,6 +448,13 @@
             <action index="390" id="document-request-sync"/>
          </actionGroup>
 
+			<actionGroup id="document-details">
+            <action index="121" id="reportTpl-refresh" /> 
+         </actionGroup>
+         
+         <actionGroup id="document-browse">
+            <action index="131" id="reportTpl-refresh" /> 
+         </actionGroup>
 		</actionGroups>
 
 

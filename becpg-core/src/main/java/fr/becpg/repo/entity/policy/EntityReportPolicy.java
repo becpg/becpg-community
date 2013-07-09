@@ -88,14 +88,6 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 				"onDeleteAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ReportModel.ASPECT_REPORT_ENTITY, new JavaBehaviour(this, "onUpdateProperties"));
-
-		// report Tpl policies
-
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ReportModel.TYPE_REPORT, ReportModel.ASSOC_REPORT_TPL, new JavaBehaviour(
-				this, "onDeleteAssociation"));
-
-//		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, ReportModel.TYPE_REPORT_TPL, new JavaBehaviour(this, "onContentUpdate",
-//				NotificationFrequency.TRANSACTION_COMMIT));
 	}
 
 	@Override
@@ -107,17 +99,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 
-		if (ReportModel.ASSOC_REPORT_TPL.equals(assocRef.getTypeQName())) {
-			if (!nodeService.hasAspect(assocRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)) {
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Policy delete report " + assocRef.getSourceRef() + " - name: " + nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
-				}
-				nodeService.deleteNode(assocRef.getSourceRef());
-			}
-		} else {
-			onUpdateProduct(assocRef.getSourceRef());
-		}
+		onUpdateProduct(assocRef.getSourceRef());		
 	}
 
 	private void onUpdateProduct(NodeRef entityNodeRef) {
@@ -238,27 +220,4 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 			}
 		}
 	}
-
-//	@Override
-//	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
-//
-//		if (nodeService.exists(nodeRef)) {
-//			Boolean isSystem = (Boolean) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
-//			QName classType = (QName) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
-//
-//			if (isSystem != null && isSystem && classType != null) {
-//
-//				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) + 
-//								LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY)) +
-//								LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-//
-//				List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
-//
-//				for (List<NodeRef> batch : Lists.partition(entityNodeRefs,BATCH_SIZE)) {
-//					Runnable runnable = new ProductReportGenerator(new HashSet<>(batch), AuthenticationUtil.getSystemUserName());
-//					threadExecuter.execute(runnable);
-//				}
-//			}
-//		}
-//	}
 }

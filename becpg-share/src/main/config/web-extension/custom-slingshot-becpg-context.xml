@@ -193,6 +193,12 @@
       </property>
    </bean>
 	
-
+	<bean id="evaluator.becpg.doclib.action.reportTpl" parent="evaluator.doclib.action.nodeType">
+      <property name="types">
+         <list>
+            <value>rep:reportTpl</value>
+         </list>
+      </property>
+   </bean> 
 
 </beans>
