@@ -159,6 +159,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="beCPGSearchService" ref="BeCPGSearchService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 	<!-- Migration -->
