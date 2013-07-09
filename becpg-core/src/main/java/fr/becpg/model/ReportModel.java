@@ -26,6 +26,8 @@ public class ReportModel {
 	"reportTplIsDefault");
 	public static final QName PROP_REPORT_TPL_FORMAT = QName.createQName(REPORT_URI,
 	"reportTplFormat");
+	public static final QName PROP_REPORT_TPL_IS_DISABLED = QName.createQName(REPORT_URI,
+			"reportTplIsDisabled");
 		
 	// reportEntity
 	public static final QName ASPECT_REPORT_ENTITY = QName.createQName(REPORT_URI,

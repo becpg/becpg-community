@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -18,6 +19,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -117,9 +119,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
 
+		// #366 : force to use server locale for mlText fields 
+		I18NUtil.setLocale(Locale.getDefault());
+		
 		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
 		// TODO here plug a template filter base on entityNodeRef
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
+		EntityReportData reportData = null;
 
 		if (!tplsNodeRef.isEmpty()) {
 			StopWatch watch = null;
@@ -128,7 +134,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				watch.start();
 			}
 
-			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
+			reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
 
 			generateReports(entityNodeRef, tplsNodeRef, reportData.getXmlDataSource(), reportData.getDataObjects());
 			if (logger.isDebugEnabled()) {
@@ -136,7 +142,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 				logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 			}
 		} else {
-			logger.debug("No report tpls found");
+			logger.debug("No report tpls found, delete existing ones");
+			updateReportsAssoc(entityNodeRef, new ArrayList<NodeRef>());
 		}
 
 		// set reportNodeGenerated property to now
@@ -225,15 +232,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 			throw new IllegalArgumentException("tplsNodeRef is empty");
 		}
 
-		if (nodeElt == null) {
-			throw new IllegalArgumentException("nodeElt is null");
-		}
-
 		List<NodeRef> newReports = new ArrayList<NodeRef>();
 
 		// generate reports
 		for (NodeRef tplNodeRef : tplsNodeRef) {
 
+			if (nodeElt == null) {
+				throw new IllegalArgumentException("nodeElt is null");
+			}
+			
 			// prepare
 			try {
 
@@ -256,6 +263,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 
+		updateReportsAssoc(entityNodeRef, newReports);		
+	}
+	
+	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports){
 		// #417 : refresh reports assoc (delete obsolete reports if we rename entity)
 		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 		for (NodeRef dbReport : dbReports) {

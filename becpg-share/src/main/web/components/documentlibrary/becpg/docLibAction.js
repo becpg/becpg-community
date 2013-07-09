@@ -122,7 +122,7 @@
 	   actionName : "onActionRefreshReport",
 	   fn : function onActionRefreshReport(asset) {
 		   Alfresco.util.PopupManager.displayMessage({
-			   text : this.msg("message.generate-report.please-wait")
+			   text : this.msg("message.generate-reports.please-wait")
 		   });
 
 		   Alfresco.util.Ajax.request({
@@ -140,7 +140,7 @@
 		      failureCallback : {
 		         fn : function EntityDataListToolbar_onFinish_failure(response) {
 			         Alfresco.util.PopupManager.displayMessage({
-				         text : this.msg("message.generate-report.failure")
+				         text : this.msg("message.generate-reports.failure")
 			         });
 		         },
 		         scope : this
@@ -173,5 +173,37 @@
         
        }
     });
+	
+	YAHOO.Bubbling.fire("registerAction", {
+	   actionName : "onActionReportTplRefresh",
+	   fn : function onActionReportTplRefresh(asset) {
+		   Alfresco.util.PopupManager.displayMessage({
+			   text : this.msg("message.generate-reports.please-wait")
+		   });
+
+		   Alfresco.util.Ajax.request({
+		      method : Alfresco.util.Ajax.GET,
+		      url : Alfresco.constants.PROXY_URI + "becpg/report/reportTpl/" + asset.nodeRef.replace(":/", "")
+		            + "/refresh",
+		      successCallback : {
+		         fn : function EntityDataListToolbar_onReportTplRefreshReports_success(response) {
+		         	Alfresco.util.PopupManager.displayMessage({
+				         text : this.msg("message.generate-reports.success")
+			         });
+		         },
+		         scope : this
+		      },
+		      failureCallback : {
+		         fn : function EntityDataListToolbar_onReportTplRefreshReports_failure(response) {
+			         Alfresco.util.PopupManager.displayMessage({
+				         text : this.msg("message.generate-reports.failure")
+			         });
+		         },
+		         scope : this
+		      }
+		   });
+	   }
+	});
+	
 
 })();
