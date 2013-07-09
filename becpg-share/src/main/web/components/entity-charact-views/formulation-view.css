@@ -1,80 +1,96 @@
-.yui-g.formulation .yui-u {
+/**
+ Yui 
+**/
+
+
+.formulation-view  .yui-g .yui-u {
 	width: 49.5%;
 }
 
-.datagrid .scrollableList {
+
+.formulation-view  .yui-skin-default .yui-button {
+	margin: 0px;
+}
+
+/**
+ Dashlet
+**/
+
+.formulation-view  .datagrid .scrollableList {
 	padding: 0;
 	height: 260px;
 }
 
-.datagrid {
+ 
+.formulation-view  .datagrid {
 	padding: 0px;
 }
 
-.datagrid.dashlet {
+.formulation-view  .dashlet {
 	margin: 10px 0;
 }
 
-.dashlet.datagrid  .toolbar {
-	min-height: 28px;
-	padding: 2px 0px 1px;
-}
-
-.datagrid .datagrid-bar {
+.formulation-view  .dashlet  .toolbar {
+	height: 28px;
 	margin: 0px;
 	padding: 0x;
 }
 
+
 /**
  Bar
 */
-.datagrid .datagrid-bar .item-select {
+.formulation-view  .datagrid .datagrid-bar .item-select {
 	float: inherit;
 	width: inherit;
 }
 
-.datagrid .datagrid-bar .paginator {
+.formulation-view  .datagrid .datagrid-bar .paginator {
 	float: inherit;
 	width: inherit;
 }
 
-.datagrid-bar .left,.datagrid-bar .left div {
+.formulation-view  .datagrid-bar .left,.datagrid-bar .left div {
 	float: left;
 }
 
-.datagrid-bar .right {
+.formulation-view  .datagrid-bar .right {
 	float: right;
 }
 
-.datagrid-bar .new-row span.first-child {
+.formulation-view  .datagrid-bar .new-row span.first-child {
 	background: url(../images/add-row-16.png) no-repeat 12px 4px;
 	padding-left: 24px;
 }
 
-.datagrid-bar  .onActionBulkEdit {
+.formulation-view  .datagrid-bar  .onActionBulkEdit {
 	background: transparent url(../images/edit-inline-16.png) no-repeat 12px
 		4px;
 	padding-left: 22px;
 }
 
-/* DataGrid bar */
-.datagrid .datagrid-bar-bottom {
-	display: none;
-	visibility: hidden;
-}
 
 /* Hide New Item */
 .constraintsList .datagrid .datagrid-bar .new-row {
 	display: none;
 }
 
-.yui-skin-default .yui-button {
-	margin: 0px;
+
+/** Full screen mode */
+
+
+/* .full-screen  .formulation-view  .datagrid .scrollableList {
+	height: 350px;
+}
+ */
+
+.full-screen .sticky-footer, .full-screen  .sticky-push {
+    height: 0px;
 }
 
-/** Full screen mode */
 
-/** Full screen mode */
+/** Full screen form */
+
 div#full-screen-form {
 	border: 1px solid #CCCCCC;
 	box-shadow: 0 1px 2px #CCCCCC;
@@ -83,6 +99,9 @@ div#full-screen-form {
 	padding: 6px;
 	border-radius: 4px;
 }
+
+
+
 
 #full-screen-form  div.form-fields {
 	float: left;
@@ -133,9 +152,6 @@ div#full-screen-form {
 	display: none;
 }
 
-.full-screen .sticky-footer, .sticky-push {
-    height: 0px;
-}
 
 #full-screen-form  .yui-submit-button span.first-child {
 	background: url("../images/add-row-16.png") no-repeat scroll 12px 4px
@@ -144,6 +160,6 @@ div#full-screen-form {
 }
 
 #full-screen-form  form .mandatory,#full-screen-form  .form-fields .mandatory,#full-screen-form  .form-fields input.mandatory[type="text"],#full-screen-form  .form-fields .input.mandatory input[type="text"],#full-screen-form  .form-fields .input .mandatory input[type="text"]
-	{
+{
 	background-color: transparent;
 }

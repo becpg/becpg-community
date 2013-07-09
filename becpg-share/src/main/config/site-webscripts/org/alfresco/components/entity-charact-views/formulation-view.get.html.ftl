@@ -21,30 +21,30 @@
 
 <@markup id="html">
    <@uniqueIdDiv>
-		<#assign el = args.htmlid?html>
-		<#include "include/formulation.lib.ftl" />
-		<!--[if IE]>
-		<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
-		<![endif]-->
-		<input id="yui-history-field" type="hidden" />
-	   <div id="full-screen-form" class="hidden"></div>
-		<div id="main-view-${el}" style="clear:both;">
-				<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
-				<div class="yui-g formulation">
-					<div class="yui-u first dynamicCharactList">
-						<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
-							dashletId="dynamicCharactList-${el}" 
-							dashletTitle=msg("dashlet.dynamicCharactList.title")  
-							itemType="bcpg:dynamicCharactList"  />
+			<#assign el = args.htmlid?html>
+			<#include "include/formulation.lib.ftl" />
+			<!--[if IE]>
+			<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
+			<![endif]-->
+			<input id="yui-history-field" type="hidden" ></input>
+			<div id="main-view-${el}" class="formulation-view">
+					<div id="full-screen-form" class=" hidden"></div>
+					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
+					<div class="yui-g">
+						<div class="yui-u first dynamicCharactList">
+							<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
+								dashletId="dynamicCharactList-${el}" 
+								dashletTitle=msg("dashlet.dynamicCharactList.title")  
+								itemType="bcpg:dynamicCharactList"  />
+						</div>
+					   <div class="yui-u constraintsList">
+						   <@dataGridDashlet dashletName="constraintsListDashlet"
+						   	dashletId="constraintsList-${el}" 
+						   	dashletTitle=msg("dashlet.constraintsList.title")
+						   	itemType="bcpg:reqCtrlList"  />
+					   </div>
 					</div>
-				   <div class="yui-u constraintsList">
-				   <@dataGridDashlet dashletName="constraintsListDashlet"
-				   	dashletId="constraintsList-${el}" 
-				   	dashletTitle=msg("dashlet.constraintsList.title")
-				   	itemType="bcpg:reqCtrlList"  />
-				   </div>
-				 </div>
-		 </div>
+			</div>
  	</@>
  </@>
  
