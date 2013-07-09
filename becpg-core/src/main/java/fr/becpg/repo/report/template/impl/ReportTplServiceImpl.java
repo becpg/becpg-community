@@ -36,7 +36,7 @@ import fr.becpg.report.client.ReportFormat;
 
 public class ReportTplServiceImpl implements ReportTplService{
 
-	private static final String QUERY_REPORTTEMPLATE = " +TYPE:\"rep:reportTpl\" +@rep\\:reportTplType:%s +@rep\\:reportTplIsSystem:%s";
+	private static final String QUERY_REPORTTEMPLATE = " +TYPE:\"rep:reportTpl\" +@rep\\:reportTplType:%s +@rep\\:reportTplIsSystem:%s AND (@rep\\:reportTplIsDisabled:false ISNULL:rep\\:reportTplIsDisabled)";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ReportTplServiceImpl.class);

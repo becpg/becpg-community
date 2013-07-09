@@ -161,23 +161,20 @@ public class FormulationHelper {
 	 * @param productData
 	 * @return
 	 */
-	public static Double getQty(ProductData productData) {
-		Double qty =  (productData.getUnit() != ProductUnit.P) ? productData.getQty(): QTY_FOR_PIECE; //unit => qty == 1
-		if(qty==null){
-			qty = DEFAULT_PRODUCT_QUANTITY;
-		}
-		return qty;
-	}
-
-	/**
-	 * 
-	 * @param productData
-	 * @return
-	 */
 	public static Double getNetWeight(ProductData productData) {
-		Double qty = getQty(productData); 
-		Double density = getDensity(productData); 
-		return  qty * density;
+		
+		Double qty = productData.getQty() != null ? productData.getQty() : DEFAULT_PRODUCT_QUANTITY;
+		if(qty == null){
+			return null;
+		}
+		else{
+			ProductUnit productUnit = productData.getUnit();					
+			if(productUnit != null && (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL))){
+				qty = qty / 1000;
+			}
+			Double density = getDensity(productData);
+			return  qty * density;
+		}		
 	}
 	
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight){
