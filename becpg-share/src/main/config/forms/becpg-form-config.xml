@@ -3678,8 +3678,8 @@
 				<field-visibility>
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListVoluntary" />
-					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListDecisionTree" />
+					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -3694,7 +3694,23 @@
 					</field>
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
-					<field id="bcpg:allergenListDecisionTree" />
+					<field id="bcpg:allergenListDecisionTree" >
+							<control
+							template="/org/alfresco/components/form/controls/decision-tree.ftl">
+							<control-param name="prefix">allergenList</control-param> 
+							<control-param name="data"> 
+										[{id:"q1",choices :
+							  					 [{id : "yes" , cid :  "q3" }, {id: "no" , cid :  "q2"}, {id:"-", cid :  "q2"}]},
+										{id:"q2",choices : 
+												 [{id : "yes" , cid :  "q3", comment : true}, {id:"no", cid : "r1"}, {id:"-", cid :  "q3"}]},
+										{id:"q3",choices :
+												 [{id : "yes" , cid :  "q4"}, {id:"no", cid :"r1"}, {id:"-", cid :  "q4"}]},
+										{id:"q4",choices : 
+												[{id : "yes", cid :"r1"}, {id:"no", cid:"r2"}, {id:"-"}]},
+										{id:"r1"}, {id:"r2"}
+										]</control-param>
+						</control>
+					</field>
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3730,6 +3746,12 @@
 					<field id="bcpg:variantIds" label="hidden" ></field>
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:allergenListVoluntary" />
+					<show id="bcpg:allergenListInVoluntary" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	<!-- bcpg:allergenList type (existing nodes) -->
@@ -3740,8 +3762,8 @@
 				<field-visibility>
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListVoluntary" />
-					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListDecisionTree" />
+					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -3755,7 +3777,23 @@
 					</field>
 					<field id="bcpg:allergenListVoluntary" />
 					<field id="bcpg:allergenListInVoluntary" />
-					<field id="bcpg:allergenListDecisionTree" />
+					<field id="bcpg:allergenListDecisionTree" >
+							<control
+							template="/org/alfresco/components/form/controls/decision-tree.ftl">
+							<control-param name="prefix">allergenList</control-param> 
+							<control-param name="data"> 
+										[{id:"q1",choices :
+							  					 [{id : "yes" , cid :  "q3" }, {id: "no" , cid :  "q2"}, {id:"-", cid :  "q2"}]},
+										{id:"q2",choices : 
+												 [{id : "yes" , cid :  "q3", comment : true}, {id:"no", cid : "r1"}, {id:"-", cid :  "q3"}]},
+										{id:"q3",choices :
+												 [{id : "yes" , cid :  "q4"}, {id:"no", cid :"r1"}, {id:"-", cid :  "q4"}]},
+										{id:"q4",choices : 
+												[{id : "yes", cid :"r1"}, {id:"no", cid:"r2"}, {id:"-"}]},
+										{id:"r1"}, {id:"r2"}
+										]</control-param>
+						</control>
+					</field>
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

@@ -13,6 +13,9 @@
 				<js src="/modules/spel-editor/spel-editor.js" />
 				<js src="/modules/spel-editor/shCore.js" />
 				<js src="/modules/spel-editor/shBrushJScript.js" />
+				<!-- Decision tree -->
+				<css src="/components/form/controls/decision-tree.css" />
+				<js src="/components/form/controls/decision-tree.js" />
 			</dependencies>
 		</forms>
 	</config>
