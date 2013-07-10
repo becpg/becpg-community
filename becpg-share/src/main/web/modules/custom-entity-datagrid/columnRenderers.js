@@ -68,6 +68,29 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:allergenListDecisionTree",
+      renderer : function(oRecord, data, label, scope) {
+         var ret =  "";
+         if(data.value){
+            var values = eval(data.value);
+         
+            for(var i =0 ; i<values.length;i++){
+               if(ret.length>0){
+                  ret+=", ";
+               }
+               var msgKey  =  values[i].cid == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree.allergenList."+values[i].qid+"."+values[i].cid;
+               
+               ret+= values[i].qid.toUpperCase()+": "+scope.msg(msgKey);
+            }
+         
+         }
+         return ret;
+
+      }
+
+   });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:rclReqType", "bcpg:filReqType", "ecm:culReqType" ],

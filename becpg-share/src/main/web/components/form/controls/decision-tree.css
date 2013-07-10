@@ -1,0 +1,36 @@
+
+.decision-tree-control {
+	padding-top : 5px;
+}
+
+.form-container .decision-tree-control label {
+    clear: both;
+    display: inline;
+    margin-left: 0.2em;
+    vertical-align: top;
+}
+
+
+.form-container .decision-tree-control  .decision-tree-comments label {
+    clear: both;
+    display: block;
+    margin-left: 0;
+    vertical-align: middle;
+}
+
+.form-container .decision-tree-control  legend {
+    font-size: 100%;
+}
+
+.form-container .decision-tree-control p {
+	display : inline-table;
+	padding-left: 5px;
+}
+
+.decision-tree-message {
+	 background-color: #FFFFCC;
+    border: 1px solid #CACACA;
+    border-radius: 5px 5px 5px 5px;
+    margin-top: 0.4em;
+    padding: 0.6em;
+}

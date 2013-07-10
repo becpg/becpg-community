@@ -6,17 +6,16 @@
 <@markup id="js">
 	<@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="form"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/project/project-commons.js" group="form" />
-	<@script type="text/javascript" src="${url.context}/components/form/controls/workflow/project-task.js" group="form" />
+	<@script type="text/javascript" src="${url.context}/res/components/form/controls/workflow/project-task.js" group="form" />
 </@>
 
 <#assign controlId = fieldHtmlId + "-cntrl">
 
-<script type="text/javascript">//<![CDATA[
-(function()
-{
-  new beCPG.component.ProjectTask("${controlId}").setOptions({taskNodeRef:"${field.value!""}"<#if form.mode == "view">,readOnly:true</#if> }).setMessages(${messages});
-})();
-//]]></script>
+<@markup id="widgets">
+   	<@inlineScript group="form">
+  			new beCPG.component.ProjectTask("${controlId}").setOptions({taskNodeRef:"${field.value!""}"<#if form.mode == "view">,readOnly:true</#if> }).setMessages(${messages});
+		</@>
+</@>
 
 <div class="form-field project-list project-task">
       <div id="${controlId}" class="viewmode-field">
