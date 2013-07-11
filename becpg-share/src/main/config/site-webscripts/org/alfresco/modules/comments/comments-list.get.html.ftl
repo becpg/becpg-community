@@ -38,6 +38,20 @@
 	<script type="text/javascript">//<![CDATA[
 			(function()
 			{
+			
+			Alfresco.CommentsList.prototype.synchronizeElements =  function synchronizeElements(syncEl, sourceEl)
+	      {
+	         var sourceYuiEl = new YAHOO.util.Element(sourceEl),
+            syncYuiEl = new YAHOO.util.Element(syncEl),
+            region = YAHOO.util.Dom.getRegion(sourceYuiEl.get("id"));
+				region2 = YAHOO.util.Dom.getRegion("${el}-dialog");
+
+	         syncYuiEl.setStyle("position", "absolute");
+	         syncYuiEl.setStyle("left", (region.left-region2.left) + "px");
+	         syncYuiEl.setStyle("top", (region.top-region2.top) + "px");
+	         syncYuiEl.setStyle("width", region.width + "px");
+	         syncYuiEl.setStyle("height", region.height + "px");
+	      }
 	      
 	       new Alfresco.CommentsList('${el}').setOptions(
 				   {
