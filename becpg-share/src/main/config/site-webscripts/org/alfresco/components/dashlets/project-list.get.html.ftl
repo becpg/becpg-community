@@ -2,17 +2,20 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
    <#include "../form/form.css.ftl"/>
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/project/project-commons.css" group="project-list" />
-  <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dashlets/project-list.css" group="project-list" />
+  <@link href="${url.context}/res/components/project/project-commons.css" group="project-list" />
+  <@link href="${url.context}/res/components/dashlets/project-list.css" group="project-list" />
+  <@link href="${url.context}/res/components/comments/comments-list.css" group="comments"/>
+  
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
     <#include "../form/form.js.ftl"/>
-    <@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="project-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="project-list"></@script>
-   <@script type="text/javascript" src="${url.context}/res/components/project/project-commons.js"  group="project-list"></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/dashlets/project-dashlet.js"  group="project-list"></@script>
+   <@script src="${url.context}/res/modules/simple-dialog.js" group="project-list"></@script>
+	<@script src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="project-list"></@script>
+   <@script src="${url.context}/res/components/project/project-commons.js"  group="project-list"></@script>
+	<@script src="${url.context}/res/components/dashlets/project-dashlet.js"  group="project-list"></@script>
+	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
 </@>
 
 

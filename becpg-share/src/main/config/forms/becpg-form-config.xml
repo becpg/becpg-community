@@ -3467,6 +3467,7 @@
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
 					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="fm:commentCount" force="true" />
 					<!-- <show id="bcpg:compoListPlants"/> -->					
 				</field-visibility>
 				<appearance>
@@ -3477,6 +3478,7 @@
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>				
 			</form>
 			<form id="datagridWUsed">
@@ -3614,6 +3616,7 @@
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
 					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
@@ -3622,6 +3625,7 @@
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 			<form id="datagridWUsed">
@@ -3740,10 +3744,12 @@
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="fm:commentCount" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 			<form id="filter">
@@ -3843,9 +3849,11 @@
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>
@@ -4047,9 +4055,11 @@
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 					<show id="bcpg:illManualValue" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>
@@ -4118,9 +4128,11 @@
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>
@@ -4196,9 +4208,11 @@
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>
@@ -4261,10 +4275,12 @@
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListGroup" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
 					<field id="bcpg:nutListUnit" read-only="true" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>
@@ -4316,9 +4332,11 @@
 					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>
@@ -4372,9 +4390,11 @@
 					<show id="bcpg:pclUnit" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>

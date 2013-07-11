@@ -305,13 +305,13 @@
                               "pjt_completionPercent",
                               "bcpg_code",
                               "cm_name",
-                              "pjt_taskList|pjt_tlTaskName|pjt_tlDuration|pjt_tlPrevTasks|pjt_tlState|pjt_completionPercent|pjt_tlStart|pjt_tlEnd|pjt_tlWorkflowInstance",
-                              "pjt_deliverableList|pjt_dlDescription|pjt_dlContent|pjt_dlState",
+                              "pjt_taskList|pjt_tlTaskName|pjt_tlDuration|pjt_tlPrevTasks|pjt_tlState|pjt_completionPercent|pjt_tlStart|pjt_tlEnd|pjt_tlWorkflowInstance|fm_commentCount",
+                              "pjt_deliverableList|pjt_dlDescription|pjt_dlContent|pjt_dlState|fm_commentCount",
                               "pjt_projectManager", "pjt_projectStartDate", "pjt_projectCompletionDate",
                               "pjt_projectDueDate", "pjt_projectState" ],
                         "task" : [ "pjt_tlTaskName", "pjt_tlDuration",
                               "pjt_tlResources", "pjt_tlTaskLegend", "pjt_tlState", "pjt_completionPercent",
-                              "pjt_tlStart", "pjt_tlEnd", "pjt_tlWorkflowInstance",
+                              "pjt_tlStart", "pjt_tlEnd", "pjt_tlWorkflowInstance","fm_commentCount",
                               "pjt_project|cm_name|pjt_projectHierarchy1|pjt_projectHierarchy2|pjt_completionPercent|bcpg_code" ]
                      };
 
@@ -783,6 +783,47 @@
                      this._cleanSearchText();
 
                      this.reloadDataTable();
+                  },
+                  
+                  
+                  _showPanel : function EntityDataGrid__showPanel(url, htmlid, itemNodeRef) {
+                     
+                     var me = this;
+                     
+                     Alfresco.util.Ajax.request({
+                        url : url,
+                        dataObj : {
+                           htmlid : htmlid
+                        },
+                        successCallback : {
+                           fn : function(response) {
+                              // Inject the template from the XHR request into a new DIV
+                              // element
+                              var containerDiv = document.createElement("div");
+                              containerDiv.innerHTML = response.serverResponse.responseText;
+
+                              // The panel is created from the HTML returned in the XHR
+                              // request, not the container
+                              var panelDiv = Dom.getFirstChild(containerDiv);
+                              this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
+                                 draggable : true,
+                                 width : "50em"
+                              });
+
+                              this.widgets.panel.subscribe("hide", function (){
+                                 me.reloadDataTable();
+                              });
+                              
+                              this.widgets.panel.show();
+                              
+
+                           },
+                           scope : this
+                        },
+                        failureMessage : "Could not load dialog template from '" + url + "'.",
+                        scope : this,
+                        execScripts : true
+                     });
                   }
 
                });
