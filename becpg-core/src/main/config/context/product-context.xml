@@ -50,14 +50,6 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-
-	<bean id="hierarchyService"
-		class="fr.becpg.repo.product.hierarchy.impl.HierarchyServiceImpl">
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="nodeService" ref="nodeService" />
-	</bean>
-
 	
 	<!-- Workflow -->
 	<bean id="ValidateProduct" parent="baseJavaDelegate"

@@ -33,8 +33,8 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
-import fr.becpg.repo.product.hierarchy.HierarchyService;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 //MOVE that to admin.patch

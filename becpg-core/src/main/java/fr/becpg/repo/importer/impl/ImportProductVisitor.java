@@ -21,11 +21,11 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
-import fr.becpg.repo.product.hierarchy.HierarchyService;
 
 // TODO: Auto-generated Javadoc
 /**

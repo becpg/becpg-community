@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChain;
@@ -47,15 +48,33 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 	
 	@Override
 	public T formulate(NodeRef entityNodeRef) throws FormulateException {
-		
+
 		T entity = alfrescoRepository.findOne(entityNodeRef);
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		entity = formulate(entity);
 		
-		 entity =  formulate(entity);
-		 
-		 alfrescoRepository.save(entity);
-		 
-		 return entity;
-		 
+		if(logger.isDebugEnabled()){
+        	watch.stop();
+        	logger.debug("Formulate : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+        	watch = new StopWatch();
+			watch.start();
+        }
+
+		alfrescoRepository.save(entity);
+		
+		if(logger.isDebugEnabled()){
+        	watch.stop();
+        	logger.debug("Save : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+        }
+
+		return entity;
+
 	}
 
 	@Override

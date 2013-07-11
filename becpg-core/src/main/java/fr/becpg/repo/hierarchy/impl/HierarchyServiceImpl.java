@@ -1,4 +1,4 @@
-package fr.becpg.repo.product.hierarchy.impl;
+package fr.becpg.repo.hierarchy.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
-import fr.becpg.repo.product.hierarchy.HierarchyService;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -30,6 +30,8 @@ import fr.becpg.repo.search.BeCPGSearchService;
 public class HierarchyServiceImpl implements HierarchyService{	
 	
 	private static Log logger = LogFactory.getLog(HierarchyServiceImpl.class);
+	
+	private static final String SUFFIX_ALL = "*";
 	
 	private NamespaceService namespaceService;
 	private BeCPGSearchService beCPGSearchService;
@@ -48,24 +50,41 @@ public class HierarchyServiceImpl implements HierarchyService{
 	}
 
 	@Override
-	public NodeRef getRootHierarchy(QName type, String value) {
-		
-		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, 
-				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(type,namespaceService)),
-				value);
-		
-		return getHierarchyByQuery(queryPath, value);
+	public NodeRef getRootHierarchy(QName type, String value) {				
+		return getHierarchyByPath(HierarchyHelper.getHierarchyPath(type,namespaceService), null, value);
 	}
 
 	@Override
-	public NodeRef getHierarchy(QName type, NodeRef parentNodeRef, String value) {
-		
-		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, 
-				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(type,namespaceService)), parentNodeRef.toString(),
-				value);
-		
-		return getHierarchyByQuery(queryPath, value);
+	public NodeRef getHierarchy(QName type, NodeRef parentNodeRef, String value) {		
+		return getHierarchyByPath(HierarchyHelper.getHierarchyPath(type,namespaceService), parentNodeRef, value);
 	}
+	
+	@Override
+	public List<NodeRef> getRootHierarchies(QName type, String value) {				
+		return getHierarchiesByPath(HierarchyHelper.getHierarchyPath(type,namespaceService), null, value);
+	}
+
+	@Override
+	public List<NodeRef> getHierarchies(QName type, NodeRef parentNodeRef, String value) {		
+		return getHierarchiesByPath(HierarchyHelper.getHierarchyPath(type,namespaceService), parentNodeRef, value);
+	}
+	
+	@Override
+	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value){
+		
+		NodeRef hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_CODE, value), value);
+		
+		if(hierarchyNodeRef == null){
+			hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value), value);
+		}
+		
+		return hierarchyNodeRef;
+	}
+	
+	@Override
+	public List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value){		
+		return beCPGSearchService.luceneSearch(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value), RepoConsts.MAX_SUGGESTIONS);
+	}	
 	
 	@Override
 	public NodeRef createRootHierarchy(NodeRef dataListNodeRef, String hierachy1) {
@@ -111,6 +130,26 @@ public class HierarchyServiceImpl implements HierarchyService{
 		return null;
 	}
 	
+	private String getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value){
+		
+		String query = LuceneHelper.getCondPath(LuceneHelper.encodePath(path), null) +
+				LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_LINKED_VALUE));
+		
+		if(parentNodeRef != null){
+			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString()));
+		}
+		else{
+			query += LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL));
+		}
+		
+		// value == * -> return all
+		if(!isAllQuery(value)){
+			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(property, value));
+		}
+		
+		return query;
+	}
+	
 
 	@Override
 	public String getHierarchyPath(NodeRef hierarchyNodeRef, SystemProductType systemProductType) {
@@ -131,7 +170,10 @@ public class HierarchyServiceImpl implements HierarchyService{
 			appendNamePath(path,parent);
 		}
 		path.append("/cm:");
-		path.append(ISO9075.encode(HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService)));
-		
+		path.append(ISO9075.encode(HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService)));		
+	}	
+	
+	protected boolean isAllQuery(String query) {
+		return query != null && query.trim().equals(SUFFIX_ALL);
 	}	
 }

@@ -19,9 +19,9 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 // TODO: Auto-generated Javadoc

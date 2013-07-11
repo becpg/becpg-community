@@ -33,6 +33,8 @@ public class ImportContext {
 	/** The type. */
 	private QName type;
 	
+	private QName entityType;
+	
 	/** The do update. */
 	private boolean doUpdate;	
 	
@@ -107,6 +109,14 @@ public class ImportContext {
 		this.type = type;
 	}
 	
+	public QName getEntityType() {
+		return entityType;
+	}
+
+	public void setEntityType(QName entityType) {
+		this.entityType = entityType;
+	}
+
 	/**
 	 * Checks if is do update.
 	 *

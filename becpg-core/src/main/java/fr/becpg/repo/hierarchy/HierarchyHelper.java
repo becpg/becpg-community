@@ -1,4 +1,4 @@
-package fr.becpg.repo.product.hierarchy;
+package fr.becpg.repo.hierarchy;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;

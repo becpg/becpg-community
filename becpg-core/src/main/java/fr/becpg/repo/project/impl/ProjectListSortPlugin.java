@@ -12,7 +12,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.AbstractDataListSortPlugin;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 
 public class ProjectListSortPlugin extends AbstractDataListSortPlugin {
 

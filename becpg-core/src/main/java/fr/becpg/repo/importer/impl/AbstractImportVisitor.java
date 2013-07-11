@@ -61,6 +61,7 @@ import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
@@ -180,6 +181,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected EntityListDAO entityListDAO;
 
 	protected AutoNumService autoNumService;
+	
+	protected HierarchyService hierarchyService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -252,6 +255,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	public void setAutoNumService(AutoNumService autoNumService) {
 		this.autoNumService = autoNumService;
+	}
+
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
 	}
 
 	@Override
@@ -1079,40 +1086,24 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			Map<QName, Serializable> properties) throws ImporterException {
 
 		if (attributeMapping instanceof HierarchyMapping) {
-			String queryPath = "";
+			NodeRef hierarchyNodeRef = null;
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null && !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
 				if (parentHierachyNodeRef != null) {
-					queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, LuceneHelper.encodePath(importContext.getPath()), parentHierachyNodeRef, value);
+					hierarchyNodeRef = hierarchyService.getHierarchyByPath(importContext.getPath(), parentHierachyNodeRef, value);
 				} else {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, properties));
 				}
 			} else {
-
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, LuceneHelper.encodePath(importContext.getPath()), value);
-
+				hierarchyNodeRef = hierarchyService.getHierarchyByPath(importContext.getPath(), null, value);
 			}
 
-			queryPath += DEFAULT_IGNORE_QUERY;
-
-			logger.debug("findPropertyTargetNodeByValue: " + queryPath);
-
-			List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_256);
-
-			logger.debug("resultSet.length() : " + ret.size() + " for " + queryPath);
-
-			if (ret.size() == 1) {
-				return ret.get(0);
-			} else if (ret.size() > 1) {
-				for (NodeRef n : ret) {
-					if (value.equals(nodeService.getProperty(n, RemoteHelper.getPropName(importContext.getType())))) {
-						return n;
-					}
-				}
+			if(hierarchyNodeRef != null){
+				return hierarchyNodeRef;
 			}
-
-			logger.error(" Hierachy value parent : " + queryPath + " not found ");
-			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
+			else{
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
+			}			
 		}
 
 		return findTargetNodeByValue(importContext, propDef.getDataType().getName(), value);

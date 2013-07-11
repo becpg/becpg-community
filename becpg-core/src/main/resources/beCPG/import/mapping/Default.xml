@@ -76,6 +76,17 @@
 		</columns>
 	</mapping>
 	
+		<mapping name="bcpg:contactList">
+			<nodeColumnKeys>
+				<nodeColumnKey attribute="bcpg:erpCode" />
+			</nodeColumnKeys>
+			<dataListColumnKeys>
+				<dataListColumnKey attribute="bcpg:contactListJobTitle" />
+			</dataListColumnKeys>
+			<columns>
+			</columns>
+		</mapping>
+	
 	<!-- Sample for multi-hierarchy
 		
 	<mapping name="bcpg:finishedProduct">
