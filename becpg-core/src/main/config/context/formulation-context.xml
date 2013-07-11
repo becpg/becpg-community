@@ -98,6 +98,27 @@
 	</bean>
 
 
+  <bean id="fastProductFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
+		init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler"/>
+				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="beCPGSearchService" ref="BeCPGSearchService" />
+					<property name="beCPGCacheService" ref="beCPGCacheService" />	
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="chainId" value="fastProductFormulationChain"/>
+		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
+	</bean>
 
 
 

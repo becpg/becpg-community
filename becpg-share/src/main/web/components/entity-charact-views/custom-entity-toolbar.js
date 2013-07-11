@@ -265,7 +265,7 @@
                                  .request({
                                     method : Alfresco.util.Ajax.GET,
                                     url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + me.options.entityNodeRef
-                                          .replace(":/", ""),
+                                          .replace(":/", "")+"?fast=true",
                                     successCallback : {
                                        fn : function(response) {
                                           YAHOO.Bubbling.fire("refreshDataGrids", {

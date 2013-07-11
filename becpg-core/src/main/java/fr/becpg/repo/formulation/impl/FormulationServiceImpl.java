@@ -26,9 +26,11 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @Service
 public class FormulationServiceImpl<T extends RepositoryEntity> implements FormulationService<T>{
 
+	private static final String DEFAULT_CHAIN_ID = "default";
+
 	AlfrescoRepository<T> alfrescoRepository;
 	
-	private Map<Class<T>,FormulationChain<T> > formulationChains = new HashMap<Class<T>,FormulationChain<T>>();
+	private Map<Class<T>,Map<String,FormulationChain<T>> > formulationChains = new HashMap<>();
 
 	private static Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 	
@@ -38,17 +40,37 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 	}
 
 	@Override
-	public void registerFormulationChain(Class<T> clazz, FormulationChain<T> chain){
+	public void registerFormulationChain( Class<T> clazz, FormulationChain<T> chain){
 		if(logger.isDebugEnabled()){
 			logger.debug("Register  chain for: "+clazz.getName());
 		}
+		Map<String,FormulationChain<T>> chains = formulationChains.get(clazz);
+		if(chains == null){
+			chains = new HashMap<>();
+		}
 		
-		formulationChains.put(clazz, chain);
+		if(chain.getChainId() != null){
+			chains.put(chain.getChainId(), chain);
+		} else {
+			chains.put(DEFAULT_CHAIN_ID, chain);
+		}
+		
+		formulationChains.put(clazz, chains);
 	}
 	
 	@Override
 	public T formulate(NodeRef entityNodeRef) throws FormulateException {
+		return formulate(entityNodeRef, DEFAULT_CHAIN_ID);
 
+	}
+
+	@Override
+	public T formulate(T repositoryEntity) throws FormulateException {
+		return formulate(repositoryEntity, DEFAULT_CHAIN_ID);
+	}
+
+	@Override
+	public T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException {
 		T entity = alfrescoRepository.findOne(entityNodeRef);
 
 		StopWatch watch = null;
@@ -57,7 +79,7 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 			watch.start();
 		}
 
-		entity = formulate(entity);
+		entity = formulate(entity,chainId);
 		
 		if(logger.isDebugEnabled()){
         	watch.stop();
@@ -74,22 +96,21 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
         }
 
 		return entity;
-
 	}
 
 	@Override
-	public T formulate(T repositoryEntity) throws FormulateException {
-		
+	public T formulate(T repositoryEntity, String chainId) throws FormulateException {
 		try {
 			
-			FormulationChain<T> chain = formulationChains.get(repositoryEntity.getClass());
+			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
+		
 			
 			if(chain==null && repositoryEntity.getClass().getSuperclass()!=null){
 				//look from superclass
 				if(logger.isDebugEnabled()){
 					logger.debug("Look for superClass :"+repositoryEntity.getClass().getSuperclass().getName());
 				}
-				chain = formulationChains.get(repositoryEntity.getClass().getSuperclass());	
+				chain = getChain(repositoryEntity.getClass().getSuperclass(),chainId);	
 			}
 			
 			if(chain!=null){
@@ -111,6 +132,15 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 		
 		
 		return repositoryEntity;
+	}
+
+	private FormulationChain<T> getChain(Class<?> clazz, String chainId) {
+		Map<String, FormulationChain<T>> claims = formulationChains.get(clazz);
+		if(claims!=null){
+			return claims.get(chainId);
+		}
+		
+		return null;
 	}
 
 }

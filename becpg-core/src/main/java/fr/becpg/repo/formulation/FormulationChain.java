@@ -37,9 +37,21 @@ public class FormulationChain<T extends RepositoryEntity> {
 	private FormulationService<T> formulationService;
 	
     private List<FormulationHandler<T>> handlers;
-
     
-    public void setFormulationService(FormulationService<T> formulationService) {
+    private String chainId; 
+    
+    
+    public void setChainId(String chainId) {
+		this.chainId = chainId;
+	}
+
+
+	public String getChainId() {
+		return chainId;
+	}
+
+
+	public void setFormulationService(FormulationService<T> formulationService) {
 		this.formulationService = formulationService;
 	}
     

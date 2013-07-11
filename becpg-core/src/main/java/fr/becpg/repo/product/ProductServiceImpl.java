@@ -47,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
 
 	private FormulationService<ProductData> formulationService;
 	
+	
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -77,13 +78,23 @@ public class ProductServiceImpl implements ProductService {
 		this.formulationService = formulationService;
 	}
 
-
+   
 	@Override
     public void formulate(NodeRef productNodeRef) throws FormulateException {
-		formulationService.formulate(productNodeRef);
+		formulate(productNodeRef,false);
     }       
     
    
+	@Override
+	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
+		if(fast){
+			formulationService.formulate(productNodeRef,"fastProductFormulationChain");
+		}  else {
+			formulationService.formulate(productNodeRef);
+		}
+		
+	}
+	
     @Override
     public ProductData formulate(ProductData productData) throws FormulateException {
     	return formulationService.formulate(productData);    	
@@ -158,6 +169,8 @@ public class ProductServiceImpl implements ProductService {
 		
 		return destinationNodeRef;
 	}
+
+	
 
 
 }

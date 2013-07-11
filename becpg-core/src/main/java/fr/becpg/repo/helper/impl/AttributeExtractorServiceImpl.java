@@ -288,14 +288,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 				
 				
-				if(dictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM) && callback!=null){
+				if(isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM) && callback!=null){
 					if(logger.isDebugEnabled()){
 						logger.debug("Field :"+ fieldQname+" is a dataList");
 					}
 					ret.put("dt_"+dlField.replaceFirst(":", "_"), callback.extractDataListField( nodeRef, fieldQname, dLFields));
 				}
 				
-				if(dictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2) && callback!=null){
+				if(isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2) && callback!=null){
 					if(logger.isDebugEnabled()){
 						logger.debug("Field :"+ fieldQname+" is an entity");
 					}
@@ -482,9 +482,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	
 
+	private boolean isSubClass(final QName fieldQname,final QName typeEntitylistItem) {
+		return beCPGCacheService.getFromCache(DICTIONNARY_CACHE+".isSubClass", fieldQname.toString()+"_"+typeEntitylistItem.toString(), new BeCPGCacheDataProviderCallBack<Boolean>() {
+			public Boolean getData() {	
+				return dictionaryService.isSubClass(fieldQname, typeEntitylistItem);
+			}
+		});
+	}
+
 
 	private TypeDefinition getTypeDef(final QName itemType) {
-		 return beCPGCacheService.getFromCache(DICTIONNARY_CACHE, itemType.toString(), new BeCPGCacheDataProviderCallBack<TypeDefinition>() {
+		 return beCPGCacheService.getFromCache(DICTIONNARY_CACHE+".typeDef", itemType.toString(), new BeCPGCacheDataProviderCallBack<TypeDefinition>() {
 			public TypeDefinition getData() {	
 				return dictionaryService.getType(itemType);
 			}
@@ -492,7 +500,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 	
 	private AspectDefinition getAspectDef(final QName aspectName) {
-		 return beCPGCacheService.getFromCache(DICTIONNARY_CACHE, aspectName.toString(), new BeCPGCacheDataProviderCallBack<AspectDefinition>() {
+		 return beCPGCacheService.getFromCache(DICTIONNARY_CACHE+".aspectDef", aspectName.toString(), new BeCPGCacheDataProviderCallBack<AspectDefinition>() {
 			public AspectDefinition getData() {	
 				return dictionaryService.getAspect(aspectName);
 			}
