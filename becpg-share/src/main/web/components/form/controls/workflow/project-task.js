@@ -5,6 +5,7 @@
    var Dom = YAHOO.util.Dom, 
    			Bubbling = YAHOO.Bubbling, 
    			TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
+   var COMMENT_EVENTCLASS = Alfresco.util.generateDomId(null, "comment");
    /**
     * ProjectTask constructor.
     * 
@@ -84,6 +85,7 @@
                         Dom.get(this.id + "-currentTask").innerHTML = this.getTaskTitle(task, task.entityNodeRef);
                         Dom.get(this.id + "-currentDeliverableList").innerHTML = this.getDeliverableList(deliverables,
                               task.entityNodeRef);
+                        
                         if (!this.options.readOnly) {
                            var fnOnShowTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
                               var owner = Bubbling.getOwnerByTagName(args[1].anchor, "span");
@@ -94,6 +96,16 @@
                            };
                            Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
                         }
+                        
+                        var fnOnCommentTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
+                           var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+                           if (owner !== null) {
+                             
+                              me.onActionCommentTask.call(me, owner.className, owner);
+                           }
+                           return true;
+                        };
+                        YAHOO.Bubbling.addDefaultAction(COMMENT_EVENTCLASS, fnOnCommentTaskHandler);
                      }
                   },
 
@@ -115,7 +127,19 @@
                      // task.completionPercent + '%)</a></span>';
                      // ret += "</span>";
 
-                     return '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + task.name + ' (' + task.completionPercent + '%)</span>';
+                     
+                     var ret ='<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + task.name + ' (' + task.completionPercent + '%)';
+                     ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="#" >';
+                     
+                     if (task.commentCount) {
+                        ret += task.commentCount;
+                     } else {
+                        ret +="&nbsp;";
+                     }
+                     ret += "</a></span>";
+                     
+                     return ret;
+                     
                   },
                   getDeliverableTitle : function PT_getDeliverableTitle(deliverable, entityNodeRef) {
 
@@ -139,20 +163,67 @@
                      if (!this.options.readOnly) {
                         ret += '</a>';
                      }
+                     ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="#" >';
+                     if (deliverable.commentCount) {
+                        ret += deliverable.commentCount;
+                     } else {
+                        ret +="&nbsp;";
+                     }
+                     ret += "</a>";
                      ret += '</span>';
 
                      return ret;
                   },
 
                   _buildCellUrl : function PT__buildCellUrl(content) {
+                     var cellUrl;
                      if (content.siteId) {
-                        url = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + 'document-details?nodeRef=' + content.nodeRef;
+                        cellUrl = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + 'document-details?nodeRef=' + content.nodeRef;
                      } else {
-                        url = Alfresco.constants.URL_PAGECONTEXT + 'document-details?nodeRef=' + content.nodeRef;
+                        cellUrl = Alfresco.constants.URL_PAGECONTEXT + 'document-details?nodeRef=' + content.nodeRef;
                      }
-                     return url;
+                     return cellUrl;
 
                   },
+                  //TODO Duplicate Method
+                  _showPanel : function EntityDataGrid__showPanel(panelUrl, htmlid, itemNodeRef) {
+                     
+                     var me = this;
+                     Alfresco.util.Ajax.request({
+                        url : panelUrl,
+                        dataObj : {
+                           htmlid : htmlid
+                        },
+                        successCallback : {
+                           fn : function(response) {
+                              // Inject the template from the XHR request into a new DIV
+                              // element
+                              var containerDiv = document.createElement("div");
+                              containerDiv.innerHTML = response.serverResponse.responseText;
+
+                              // The panel is created from the HTML returned in the XHR
+                              // request, not the container
+                              var panelDiv = Dom.getFirstChild(containerDiv);
+                              this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
+                                 draggable : true,
+                                 width : "50em"
+                              });
+
+                              this.widgets.panel.subscribe("hide", function (){
+                                 me.onDataItemUpdated();
+                              });
+                              
+                              this.widgets.panel.show();
+                              
+
+                           },
+                           scope : this
+                        },
+                        failureMessage : "Could not load dialog template from '" + panelUrl + "'.",
+                        scope : this,
+                        execScripts : true
+                     });
+                  }
 
                }, true);
 

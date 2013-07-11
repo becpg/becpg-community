@@ -785,13 +785,13 @@
                      this.reloadDataTable();
                   },
                   
-                  
-                  _showPanel : function EntityDataGrid__showPanel(url, htmlid, itemNodeRef) {
+                  //TODO Duplicate Method
+                  _showPanel : function EntityDataGrid__showPanel(panelUrl, htmlid, itemNodeRef) {
                      
                      var me = this;
                      
                      Alfresco.util.Ajax.request({
-                        url : url,
+                        url : panelUrl,
                         dataObj : {
                            htmlid : htmlid
                         },
@@ -820,7 +820,7 @@
                            },
                            scope : this
                         },
-                        failureMessage : "Could not load dialog template from '" + url + "'.",
+                        failureMessage : "Could not load dialog template from '" + panelUrl + "'.",
                         scope : this,
                         execScripts : true
                      });
