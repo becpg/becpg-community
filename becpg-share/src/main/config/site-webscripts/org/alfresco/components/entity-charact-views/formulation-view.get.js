@@ -15,7 +15,7 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType){
             list: page.url.args.list!=null ?page.url.args.list : "",
             dataUrl : page.url.context+"/proxy/alfresco/" +  (args.dataUrl!=null ? args.dataUrl :"becpg/entity/datalists/data/node"),
             itemUrl : page.url.context+"/proxy/alfresco/" +  (args.itemUrl!=null ? args.itemUrl :"becpg/entity/datalists/item/node/"),
-            usePagination: args.pagination!=null ? args.pagination!="false" : false,
+            usePagination: true,
             displayBottomPagination : false,
             useFilter: true,
             sortable : true,
