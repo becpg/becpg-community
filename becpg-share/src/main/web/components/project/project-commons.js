@@ -3,6 +3,7 @@
    var Bubbling = YAHOO.Bubbling, $html = Alfresco.util.encodeHTML;
 
    var TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
+   var COMMENT_EVENTCLASS = Alfresco.util.generateDomId(null, "comment");
 
    beCPG.component.ProjectCommons = {};
    beCPG.component.ProjectCommons.prototype = {
@@ -74,6 +75,15 @@
                scope : this
             }
          }).show();
+
+      },
+      onActionCommentTask : function PL_onActionShowTask(className) {
+         var nodes = className.replace("node-", "").split("|");
+
+         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + nodes[0] + "&activityType=entity";
+
+         this._showPanel(url ,this.id+"_comments", nodes[1]);
+         
 
       },
       getTaskAdvancementClass : function PL_getAdvancementClass(task) {
@@ -243,6 +253,18 @@
             ret += '<a class="task-link" title="' + this.msg("link.title.open-workflow") + '" href="' + Alfresco.constants.URL_PAGECONTEXT + 'workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value + '&referrer=project-list&myWorkflowsLinkBack=true' + '" >&nbsp;</a>';
          }
 
+        
+         ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
+         ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
+         
+         if (task["itemData"]["prop_fm_commentCount"] && task["itemData"]["prop_fm_commentCount"].value) {
+            ret += task["itemData"]["prop_fm_commentCount"].value;
+         } else {
+            ret +="&nbsp;";
+         }
+         ret += "</a></span>";
+         
+         
          ret += "</span>";
 
          return ret;
@@ -261,7 +283,19 @@
          ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
                .msg("link.title.deliverable-edit") + '" >' + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
 
+         ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">';
+         ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
+         if (deliverable["itemData"]["prop_fm_commentCount"] && deliverable["itemData"]["prop_fm_commentCount"].value) {
+            ret += deliverable["itemData"]["prop_fm_commentCount"].value;
+         } else {
+            ret +="&nbsp;";
+         }
+         ret += "</a></span>";
+         
          ret += "</span>";
+         
+          
+        
 
          return ret;
       },
@@ -329,7 +363,19 @@
             }
             return true;
          };
+         
          YAHOO.Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
+         
+         
+         var fnOnCommentTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
+            var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+            if (owner !== null) {
+               me.onActionCommentTask.call(me, owner.className, owner);
+            }
+            return true;
+         };
+         YAHOO.Bubbling.addDefaultAction(COMMENT_EVENTCLASS, fnOnCommentTaskHandler);
+         
       }
 
    };

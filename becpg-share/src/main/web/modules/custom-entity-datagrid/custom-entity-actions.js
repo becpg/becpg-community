@@ -56,11 +56,14 @@
 
          var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + item.nodeRef + "&activityType=entity";
 
-         this._showPanel(url ,this.id+"_comments");
+         this._showPanel(url ,this.id+"_comments", item.nodeRef);
 
       },
 
-      _showPanel : function EntityDataGrid__showPanel(url, htmlid) {
+      _showPanel : function EntityDataGrid__showPanel(url, htmlid, itemNodeRef) {
+         
+         var me = this;
+         
          Alfresco.util.Ajax.request({
             url : url,
             dataObj : {
@@ -81,7 +84,13 @@
                      width : "50em"
                   });
 
+                  this.widgets.panel.subscribe("hide", function (){
+                     YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+                     nodeRef : itemNodeRef });
+                  });
+                  
                   this.widgets.panel.show();
+                  
 
                },
                scope : this

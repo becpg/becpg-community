@@ -278,6 +278,30 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
+   
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "fm:commentCount",
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+        
+         if (data.value != null &&  data.value!="" && data.value!="0") {
+
+            if (oColumn.hidden) {
+               scope.widgets.dataTable.showColumn(oColumn);
+               Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+            }
+            Dom.setStyle(elCell, "width", "32px");
+            Dom.setStyle(elCell.parentNode, "width", "32px");
+            return '<div class="onActionShowComments"><a class="'+scope.id+'-action-link action-link" title="'+scope.msg("actions.comment")+'" href="" rel="edit"><span>'+data.displayValue+'</span></a></div>';
+
+         }
+
+         return "";
+         
+
+      }
+
+   });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3",
