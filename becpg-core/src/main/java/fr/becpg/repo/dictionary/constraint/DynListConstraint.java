@@ -29,6 +29,9 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
+import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.util.ApplicationContextHelper;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -40,6 +43,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	/** The Constant ERR_NO_VALUES. */
 	private static final String ERR_NO_VALUES = "d_dictionary.constraint.list_of_values.no_values";
+	
+	private static final String DICTIONNARY_CACHE = "fr.becpg.cache.DynListConstraint";
 	
 	/** The Constant UNDIFINED_CONSTRAINT_VALUE. */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";    
@@ -148,23 +153,30 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	@Override
 	public List<String> getAllowedValues()
 	{				
-		List<String> allowedValues = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>(){
- 			@Override
-			public List<String> execute() throws Throwable {
- 				
- 				List<String> allowedValues = new ArrayList<String>();
- 				
- 				for(String path : paths){
- 					
- 					//logger.debug("getAllowedValues, path: " + path); 		
-	 				NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-	 				List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService), QName.createQName(constraintProp, namespaceService));		 				
-	 				allowedValues.addAll(values);
- 				} 				
- 				
- 				return allowedValues;
+		
+		List<String> allowedValues = ApplicationContextHelper.getApplicationContext().getBean(BeCPGCacheService.class).getFromCache(DICTIONNARY_CACHE, constraintType+"_"+constraintProp, new BeCPGCacheDataProviderCallBack<	List<String>>() {
+			public 	List<String> getData() {
+				return serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>(){
+		 			@Override
+					public List<String> execute() throws Throwable {
+		 				
+		 				List<String> allowedValues = new ArrayList<String>();
+		 				
+		 				for(String path : paths){
+		 					
+		 					//logger.debug("getAllowedValues, path: " + path); 		
+			 				NamespaceService namespaceService = serviceRegistry.getNamespaceService();
+			 				List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService), QName.createQName(constraintProp, namespaceService));		 				
+			 				allowedValues.addAll(values);
+		 				} 				
+		 				
+		 				return allowedValues;
 
- 			}},false,true);
+		 			}},false,true);
+			}
+		});
+				
+			
 													
 		if(allowedValues.isEmpty()){
 			allowedValues.add(UNDIFINED_CONSTRAINT_VALUE);

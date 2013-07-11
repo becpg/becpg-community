@@ -27,6 +27,15 @@ public interface ProductService {
      */
     public void formulate(NodeRef productNodeRef) throws FormulateException;
     
+
+    /**
+     * Use fast chain formulation handler if fast param is true
+     * @param productNodeRef
+     * @param fast
+     * @throws FormulateException
+     */
+	public void formulate(NodeRef productNodeRef, boolean fast)   throws FormulateException;
+    
     
     /**
      * Formulate the product (don't update DB)
@@ -35,6 +44,9 @@ public interface ProductService {
      * @throws FormulateException
      */
     public ProductData formulate(ProductData productData) throws FormulateException;
+    
+
+    
     
  
     /**
@@ -56,7 +68,8 @@ public interface ProductService {
      * @return 
      * @throws FormulateException
      */
-	public CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements) throws FormulateException;   
-    
+	public CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements) throws FormulateException;
+
+
    
 }

@@ -7,6 +7,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface FormulationService<T extends RepositoryEntity> {
 
+    public T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
+    
+    public T formulate(T repositoryEntity, String chainId) throws FormulateException;
+	
     public T formulate(NodeRef entityNodeRef) throws FormulateException;
     
     public T formulate(T repositoryEntity) throws FormulateException;

@@ -273,7 +273,6 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="copyService" ref="copyService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="associationService" ref="associationService" />
 	</bean>
 	<bean id="entityTplService" class="fr.becpg.repo.entity.impl.EntityTplServiceImpl">
