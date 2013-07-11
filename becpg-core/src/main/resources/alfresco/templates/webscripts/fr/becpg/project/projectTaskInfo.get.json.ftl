@@ -11,6 +11,7 @@
 		"name": "${task.properties["pjt:tlTaskName"]!""}",
 	   "state": "${task.properties["pjt:tlState"]!""}",
 	   "completionPercent": "${task.properties["pjt:completionPercent"]!""}",
+	   "commentCount":"${task.properties["fm:commentCount"]!""}",
 	   "nodeRef": "${task.nodeRef}",
 		"deliverables":
 		[
@@ -22,6 +23,7 @@
 					"nodeRef": "${deliverable.nodeRef}",
 					"state": "${deliverable.properties["pjt:dlState"]!""}",
 		   		"completionPercent": "${deliverable.properties["pjt:completionPercent"]!""}",
+		   		"commentCount":"${deliverable.properties["fm:commentCount"]!""}",
 		   		"contents": [
 		   			<#if deliverable.assocs["pjt:dlContent"]?exists>
 			   			<#list deliverable.assocs["pjt:dlContent"] as content>

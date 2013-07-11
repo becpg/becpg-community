@@ -65,7 +65,7 @@
 
 
 
-.project-list table a.task-comments {
+.project-list  a.task-comments {
 	cursor: pointer;
 	padding-left: 20px;
 	margin-left: 5px;
