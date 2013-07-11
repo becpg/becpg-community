@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
@@ -24,6 +25,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
@@ -40,11 +42,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
-	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	protected AlfrescoRepository<AllergenListDataItem> alfrescoRepository;
 	
 	protected NodeService nodeService;
 
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<AllergenListDataItem> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -61,6 +63,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) && !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			logger.debug("no compo => no formulation");
 			return true;
+		}
+		
+		StopWatch watch = null;
+		if(logger.isDebugEnabled()){
+		   watch = new StopWatch();
+			watch.start();
 		}
 
 		Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
@@ -82,16 +90,36 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			}
 		}
 		
+		StopWatch watchCalculation2 = null;
+		StopWatch watchCalculation3 = null;
+		if(logger.isDebugEnabled()){
+			watchCalculation2 = new StopWatch();
+			watchCalculation3 = new StopWatch();
+        	watch.stop();
+        	logger.debug("reset : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+        	watch = new StopWatch();
+			watch.start();
+        }
+		
 		// compoList
 		for (CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE)) {
 
 			NodeRef part = compoItem.getProduct();
 			if (!visitedProducts.contains(part)) {
-				visitPart(compoItem, part, formulatedProduct.getAllergenList(), retainNodes);
+				visitPart(compoItem, part, formulatedProduct.getAllergenList(), retainNodes, watchCalculation2, watchCalculation3);
 				visitedProducts.add(part);
 			}
 		}
 
+		if(logger.isDebugEnabled()){
+        	watch.stop();
+        	logger.debug("Compo : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+        	logger.debug("Compo calculation2 : "+this.getClass().getName()+" takes " + watchCalculation2.getTotalTimeSeconds() + " seconds");
+        	logger.debug("Compo calculation3 : "+this.getClass().getName()+" takes " + watchCalculation3.getTotalTimeSeconds() + " seconds");
+        	watch = new StopWatch();
+			watch.start();
+        }
+		
 		// process
 		if (formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			for (ProcessListDataItem processItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE)) {
@@ -100,16 +128,35 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				if (resource != null && !visitedProducts.contains(resource)) {
 					// TODO : resource is not a product => il faudrait déplacer
 					// les méthodes loadAllergenList ailleurs que dans
-					visitPart(processItem, resource, formulatedProduct.getAllergenList(), retainNodes);
+					visitPart(processItem, resource, formulatedProduct.getAllergenList(), retainNodes, watchCalculation2, watchCalculation3);
 					visitedProducts.add(resource);
 				}
 			}
 		}
 		
+		if(logger.isDebugEnabled()){
+        	watch.stop();
+        	logger.debug("Process : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+        	watch = new StopWatch();
+			watch.start();
+        }
+		
 		formulatedProduct.getAllergenList().retainAll(retainNodes);
+		
+		if(logger.isDebugEnabled()){
+        	watch.stop();
+        	logger.debug("retainAll : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+        	watch = new StopWatch();
+			watch.start();
+        }
 		
 		//sort
 		sort(formulatedProduct.getAllergenList());
+		
+		if(logger.isDebugEnabled()){
+        	watch.stop();
+        	logger.debug("sort : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
+        }
 				
 		return true;
 	}
@@ -122,16 +169,16 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 * @param allergenMap
 	 *            the allergen map
 	 */
-	private void visitPart(VariantDataItem variantDataItem, NodeRef part, List<AllergenListDataItem> allergenList, List<AllergenListDataItem> retainNodes) {
+	private void visitPart(VariantDataItem variantDataItem, NodeRef part, List<AllergenListDataItem> allergenList, List<AllergenListDataItem> retainNodes, StopWatch watchCalculation2, StopWatch watchCalculation3) {
 
-		ProductData productData = (ProductData) alfrescoRepository.findOne(part);
-
-		if (productData.getAllergenList() == null) {
-			return;
-		}
-
-		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-
+		watchCalculation2.start();
+		List<AllergenListDataItem> allergenListDataItems = alfrescoRepository.loadDataList(part, BeCPGModel.TYPE_ALLERGENLIST, BeCPGModel.TYPE_ALLERGENLIST);
+		watchCalculation2.stop();
+		
+		for (AllergenListDataItem allergenListDataItem : allergenListDataItems) {
+			
+			
+			watchCalculation3.start();
 			// Look for alllergen
 			NodeRef allergenNodeRef = allergenListDataItem.getAllergen();
 			if (allergenNodeRef != null) {
@@ -208,6 +255,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 				}				
 			}
+			watchCalculation3.stop();
 		}
 	}
 	

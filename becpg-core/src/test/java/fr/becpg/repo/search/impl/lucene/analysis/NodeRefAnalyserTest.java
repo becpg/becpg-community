@@ -13,9 +13,9 @@ import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.RepoBaseTestCase;
 

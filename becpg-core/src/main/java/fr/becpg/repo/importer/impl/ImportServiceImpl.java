@@ -68,6 +68,8 @@ public class ImportServiceImpl implements ImportService {
 
 	/** The Constant PFX_TYPE. */
 	private static final String PFX_TYPE = "TYPE";
+	
+	private static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
 
 	private static final String PFX_STOP_ON_FIRST_ERROR = "STOP_ON_FIRST_ERROR";
 
@@ -106,6 +108,7 @@ public class ImportServiceImpl implements ImportService {
 	private static final int COLUMN_MAPPING = 1;
 	private static final int COLUMN_PATH = 1;
 	private static final int COLUMN_TYPE = 1;
+	private static final int COLUMN_ENTITY_TYPE = 1;
 	private static final int COLUMN_IMPORT_TYPE = 1;
 	private static final int COLUMN_DISABLED_POLICIES = 1;
 
@@ -480,7 +483,17 @@ public class ImportServiceImpl implements ImportService {
 				// }
 				// }
 				// }
-			} else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
+			} else if (prefix.equals(PFX_ENTITY_TYPE)) {
+
+				importContext.setEntityType(null);
+
+				String typeValue = arrStr[COLUMN_ENTITY_TYPE];
+				if (typeValue.isEmpty())
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getCSVLine()));
+
+				QName entityType = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
+				importContext.setEntityType(entityType);
+			}else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
 
 				String stopOnFirstErrorValue = arrStr[COLUMN_TYPE];
 				if (!stopOnFirstErrorValue.isEmpty()) {

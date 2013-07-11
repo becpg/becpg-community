@@ -33,12 +33,12 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
-import fr.becpg.repo.product.hierarchy.HierarchyService;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -84,7 +84,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	private HierarchyService hierarchyService;
 	
 	@Resource
-	private BeCPGSearchService beCPGSearchService;
+	private BeCPGSearchService beCPGSearchService;	
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
@@ -658,19 +658,19 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// 2nd time to check they are updated and not recreated
 		importHierarchies();
 		
-		//check		
-		String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, 
-				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(BeCPGModel.TYPE_RAWMATERIAL,namespaceService)),
-				"USDA");
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_256);
+		// search by name				
+		List<NodeRef> ret = hierarchyService.getRootHierarchies(BeCPGModel.TYPE_RAWMATERIAL, "USDA");
 		assertEquals(1, ret.size());
 		
-		queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, 
-				LuceneHelper.encodePath(HierarchyHelper.getHierarchyPath(BeCPGModel.TYPE_RAWMATERIAL,namespaceService)), ret.get(0),
-				"Dairy and Egg Products");
-		ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_256);
+		// search by code		
+		assertNotNull(hierarchyService.getRootHierarchy(BeCPGModel.TYPE_RAWMATERIAL, (String)nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		
+		// search by name	
+		ret = hierarchyService.getHierarchies(BeCPGModel.TYPE_RAWMATERIAL, ret.get(0), "Dairy and Egg Products");
 		assertEquals(1, ret.size());
 		
+		// search by code				
+		assertNotNull(hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, ret.get(0), (String)nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 	}
 	
 	private void importHierarchies(){

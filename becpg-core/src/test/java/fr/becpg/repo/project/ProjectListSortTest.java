@@ -21,7 +21,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.RepoBaseTestCase;

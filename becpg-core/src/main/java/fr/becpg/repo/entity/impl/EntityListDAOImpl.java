@@ -5,10 +5,15 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -17,9 +22,11 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.FileFilterMode;
+import org.alfresco.util.FileFilterMode.Client;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
@@ -29,7 +36,6 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -322,7 +328,46 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Override
 	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName) {
-		return beCPGSearchService.search(String.format(QUERY_LIST_ITEM, listNodeRef, listQName), LuceneHelper.getSort(BeCPGModel.PROP_SORT), RepoConsts.MAX_RESULTS_256, SearchService.LANGUAGE_LUCENE, listNodeRef.getStoreRef());
+		Collection<QName> qnames = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+
+		Set<QName> ignoreTypeQNames = new HashSet<QName>(qnames.size());
+		for (QName qname : qnames) {
+			if (!qname.equals(listQName)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Add to ignore :" + qname);
+				}
+				ignoreTypeQNames.add(qname);
+			}
+		}
+
+		int skipOffset = 0;
+		int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
+
+		PagingRequest pageRequest = new PagingRequest(skipOffset, RepoConsts.MAX_RESULTS_1000, null);
+		pageRequest.setRequestTotalCountMax(requestTotalCountMax);
+
+		List<Pair<QName, Boolean>> sortProps = new LinkedList<Pair<QName, Boolean>>();
+
+		sortProps.add(new Pair<QName, Boolean>(BeCPGModel.PROP_SORT, true));
+
+		PagingResults<FileInfo> pageOfNodeInfos = null;
+		FileFilterMode.setClient(Client.script);
+		try {
+
+			pageOfNodeInfos = this.fileFolderService.list(listNodeRef, true, false, null, ignoreTypeQNames, sortProps, pageRequest);
+		} finally {
+			FileFilterMode.clearClient();
+		}
+
+		List<FileInfo> nodeInfos = pageOfNodeInfos.getPage();
+		int size = nodeInfos.size();
+		List<NodeRef> ret = new LinkedList<NodeRef>();
+		for (int i = 0; i < size; i++) {
+			FileInfo nodeInfo = nodeInfos.get(i);
+			ret.add(nodeInfo.getNodeRef());
+		}
+
+		return ret;
 	}
 
 	@Override

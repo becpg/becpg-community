@@ -34,6 +34,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.LuceneHelper.Operator;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 import fr.becpg.repo.listvalue.impl.ListValueServiceImpl;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -97,6 +98,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private AutoNumService autoNumService;
 
 	private Analyzer luceneAnaLyzer = null;
+	
+	private HierarchyService hierarchyService;
 
 	/**
 	 * Sets the namespace service.
@@ -136,6 +139,10 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
+	}
+
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
 	}
 
 	public String[] getHandleSourceTypes() {
@@ -297,38 +304,18 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			}
 		}
 
-		logger.debug("suggestLinkedValue for path:" + path);
-
-		String queryPath = "";
-
 		String parent = (String) props.get(ListValueService.PROP_PARENT);
-		path = LuceneHelper.encodePath(path);
-		if (!isAllQuery(query)) {
-			query = prepareQuery(query);
-
-			if (parent == null) {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, path, query);
-			} else {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);
-			}
-		} else {
-			if (parent == null) {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT, path);
-			} else {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);
-			}
-		}
+		NodeRef parentNodeRef = parent != null && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+		
+		List<NodeRef> ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 
 		// avoid cycle: when editing an item, cannot select itself as parent
-		if (itemIdNodeRef != null) {
-			queryPath += LuceneHelper.getCondEqualID(itemIdNodeRef, Operator.NOT);
+		if (itemIdNodeRef != null && ret.contains(itemIdNodeRef)) {
+			ret.remove(itemIdNodeRef);
 		}
-
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE,
 				nodeService));
-
 	}
 
 	/**

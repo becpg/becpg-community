@@ -79,12 +79,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			entityProperties.put(qName, propValues.get(qName));
 		}
 
-		
-		
-
-		// TODO gérer les entités qui ne sont pas des produits (arg dans le xml
-		// de définition ou fichier d'import ou evaluator)
-		QName entityType = BeCPGModel.TYPE_PRODUCT;
+		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : BeCPGModel.TYPE_PRODUCT;
 		QName entityCode = BeCPGModel.PROP_CODE;
 		if (!classMapping.getNodeColumnKeys().isEmpty()) {
 			entityCode = classMapping.getNodeColumnKeys().get(0);

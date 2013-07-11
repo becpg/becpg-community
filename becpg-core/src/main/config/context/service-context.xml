@@ -94,6 +94,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="reportTplService" ref="reportTplService" />
+		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
 	<bean id="spelEditorListValuePlugin" parent="entityListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.SpelEditorListValuePlugin">
@@ -138,6 +139,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="autoNumService" ref="autoNumService" />
+		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
 
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor"
@@ -441,5 +443,10 @@
 	
 	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper"/>
 
-
+	<bean id="hierarchyService"
+		class="fr.becpg.repo.hierarchy.impl.HierarchyServiceImpl">
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="nodeService" ref="nodeService" />
+	</bean>
 </beans>

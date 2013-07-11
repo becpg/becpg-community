@@ -13,7 +13,7 @@ import org.dom4j.Element;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
