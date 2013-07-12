@@ -1,11 +1,14 @@
 package fr.becpg.repo.product.formulation;
 
+import org.springframework.stereotype.Service;
+
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
+@Service
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	@Override

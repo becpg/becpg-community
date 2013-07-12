@@ -361,9 +361,10 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return compoListView;
 	}
 
-	@SafeVarargs
+	
 	@AlfQname(qname = "bcpg:compoList")
-	public final List<CompoListDataItem> getCompoList( DataListFilter<ProductData>... filters) {
+	@SuppressWarnings("unchecked")
+	public  List<CompoListDataItem> getCompoList( DataListFilter<ProductData>... filters) {
 		if (compoListView != null && compoListView.getCompoList() != null) {
 			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
 			if (filters != null) {
@@ -376,8 +377,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return null;
 	}
 
-	@SafeVarargs
-	public final boolean hasCompoListEl(DataListFilter<ProductData>... filters) {
+	@SuppressWarnings("unchecked")
+	public  boolean hasCompoListEl(DataListFilter<ProductData>... filters) {
 		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 
@@ -391,9 +392,9 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return processListView;
 	}
 
-	@SafeVarargs
 	@AlfQname(qname = "mpm:processList")
-	public final List<ProcessListDataItem> getProcessList(DataListFilter<ProductData>... filters) {
+	@SuppressWarnings("unchecked")
+	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData>... filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
 			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
 			if (filters != null) {
@@ -406,8 +407,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return null;
 	}
 
-	@SafeVarargs
-	public final boolean hasProcessListEl(DataListFilter<ProductData>... filters) {
+	@SuppressWarnings("unchecked")
+	public boolean hasProcessListEl(DataListFilter<ProductData>... filters) {
 		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
 	}
 
@@ -421,9 +422,9 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return packagingListView;
 	}
 
-	@SafeVarargs
 	@AlfQname(qname = "bcpg:packagingList")
-	public final List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
+	@SuppressWarnings("unchecked")
+	public  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
 			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
 			if (filters != null) {
@@ -435,9 +436,9 @@ public class ProductData extends AbstractEffectiveDataItem {
 		}
 		return null;
 	}
-
-	@SafeVarargs
-	public final boolean hasPackagingListEl(DataListFilter<ProductData>... filters) {
+	
+	@SuppressWarnings("unchecked")
+	public boolean hasPackagingListEl(DataListFilter<ProductData>... filters) {
 		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
 	}
 

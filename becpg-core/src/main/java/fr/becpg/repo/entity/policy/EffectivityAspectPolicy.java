@@ -2,7 +2,6 @@ package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,12 +12,12 @@ import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy, CopyServicePolicies.OnCopyNodePolicy {
@@ -26,6 +25,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 	private EffectivityAspectCopyBehaviourCallback effectivityAspectCopyBehaviourCallback;
 	private DictionaryService dictionaryService;
 	private EntityDictionaryService entityDictionaryService;
+	private AssociationService associationService;
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
@@ -34,6 +34,12 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
+	}
+	
+	
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@Override
@@ -57,8 +63,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 						QName dataListItemType = nodeService.getType(nodeRef);
 						QName pivotCharactAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListItemType);
 						if (pivotCharactAssoc != null) {
-							List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, pivotCharactAssoc);
-							NodeRef charactNodeRef = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
+							NodeRef charactNodeRef = associationService.getTargetAssoc(nodeRef, pivotCharactAssoc);
 							if (charactNodeRef != null && nodeService.hasAspect(charactNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
 								startEffectivity = (Date) nodeService.getProperty(charactNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
 								if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY) == null) {

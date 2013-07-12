@@ -6,6 +6,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -21,6 +22,7 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  * @author quere
  * 
  */
+@Service
 public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);

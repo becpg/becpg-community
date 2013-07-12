@@ -3,10 +3,8 @@
  */
 package fr.becpg.repo.product;
 
-import java.util.Collection;
 import java.util.Locale;
 
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -37,9 +35,6 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	/** The node service. */
 	private NodeService nodeService;
 	
-	/** The dictionary service. */
-	private DictionaryService dictionaryService;
-	
 	/**
 	 * Sets the node service.
 	 *
@@ -49,28 +44,7 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 		this.nodeService = nodeService;
 	}
 	
-	/**
-	 * Sets the dictionary service.
-	 *
-	 * @param dictionaryService the new dictionary service
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-	
-	/**
-	 * Get the data lists defined in the model.
-	 *
-	 * @return the data lists
-	 */
-	@Override
-	public Collection<QName> getDataLists(){
 
-		Collection<QName> productDataLists = dictionaryService.getSubTypes(BeCPGModel.TYPE_PRODUCTLIST_ITEM, true);
-		productDataLists.remove(BeCPGModel.TYPE_PRODUCTLIST_ITEM);
-		
-		return productDataLists;
-	}		
 	
 //	/**
 //	 * Initialize the product folders according to the product types, states and hierarchy.

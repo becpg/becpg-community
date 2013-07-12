@@ -5,6 +5,7 @@ package fr.becpg.repo.product;
 
 import java.util.List;
 
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.OwnableService;
@@ -13,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
@@ -47,9 +49,14 @@ public class ProductServiceImpl implements ProductService {
 
 	private FormulationService<ProductData> formulationService;
 	
-	
+	public BehaviourFilter policyBehaviourFilter;
+
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 	
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}	
@@ -87,10 +94,18 @@ public class ProductServiceImpl implements ProductService {
    
 	@Override
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
-		if(fast){
-			formulationService.formulate(productNodeRef,"fastProductFormulationChain");
-		}  else {
-			formulationService.formulate(productNodeRef);
+		
+		try {
+			policyBehaviourFilter.disableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+
+			if(fast){
+				formulationService.formulate(productNodeRef,"fastProductFormulationChain");
+			}  else {
+				formulationService.formulate(productNodeRef);
+			}
+
+		} finally {
+			policyBehaviourFilter.enableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
 		}
 		
 	}

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
@@ -42,6 +43,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	private EntityListDAO entityListDAO;
 
 	private FileFolderService fileFolderService;
+	
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -156,8 +163,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									FileInfo node = nodes.get(z_idx);
 									NodeRef productListItemNodeRef = node.getNodeRef();
 
-									List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(productListItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
-									NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
+									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
 									Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTFIXED);
 
 									if (costFixed == null || !costFixed) {
@@ -184,8 +190,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									NodeRef productListItemNodeRef = node.getNodeRef();
 									String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT);
 
-									List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(productListItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
-									NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
+									NodeRef nutNodeRef =  associationService.getTargetAssoc(productListItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
 									String nutUnit = (String) nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTUNIT);
 
 									if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {

@@ -1,6 +1,7 @@
 package fr.becpg.repo.helper;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,8 @@ public interface AttributeExtractorService {
 	@Deprecated 
 	//Use convertDateValue instead
 	public Serializable getProperty(NodeRef nodeRef, QName propName);
+
+	public Collection<QName> getSubTypes(QName typeQname);
 
 	
 }

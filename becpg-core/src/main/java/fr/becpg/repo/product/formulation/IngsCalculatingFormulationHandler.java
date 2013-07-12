@@ -13,7 +13,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -25,6 +24,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.CompositeIng;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -62,6 +62,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	
 	private NodeService mlNodeService;
 	
+	private AssociationService associationService;
+	
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -75,6 +77,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		this.mlNodeService = mlNodeService;
 	}
 	
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Calculate ingredient list");
@@ -100,10 +107,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		
 		// Load product specification
 		List<ProductData> productSpecicationDataList = new ArrayList<ProductData>();    	
-    	List<AssociationRef> productSpecificationAssocRefs = nodeService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
+    	List<NodeRef> productSpecificationAssocRefs = associationService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
     	if(productSpecificationAssocRefs != null && !productSpecificationAssocRefs.isEmpty()){    		
-    		for(AssociationRef productSpecificationAssocRef : productSpecificationAssocRefs){
-    			productSpecicationDataList.add((ProductData) alfrescoRepository.findOne(productSpecificationAssocRef.getTargetRef()));            	
+    		for(NodeRef productSpecificationAssocRef : productSpecificationAssocRefs){
+    			productSpecicationDataList.add((ProductData) alfrescoRepository.findOne(productSpecificationAssocRef));            	
     		}    		
     	}
 		

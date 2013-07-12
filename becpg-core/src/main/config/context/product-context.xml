@@ -6,7 +6,6 @@
 		<!-- Product dictionary -->
 	<bean id="productDictionaryService" class="fr.becpg.repo.product.ProductDictionaryServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 
 
@@ -19,6 +18,7 @@
 		<property name="repoService" ref="repoService" />
 		<property name="ownableService" ref="ownableService" />
 		<property name="charactDetailsVisitorFactory" ref="charactDetailsVisitorFactory" />		
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 
 	
@@ -29,6 +29,7 @@
 		parent="abstractBeCPGPolicy">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="associationService" ref="associationService"/>
 	</bean>
 	<bean id="productListUnits.PriceListPolicy"
 		class="fr.becpg.repo.product.policy.productListUnits.PriceListPolicy"
