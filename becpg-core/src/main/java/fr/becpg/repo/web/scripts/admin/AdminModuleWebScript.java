@@ -105,6 +105,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			logger.debug("Init repository");
 			initRepoVisitor.visitContainer(repository.getCompanyHome());
 		} else if (action.equals(ACTION_RELOAD_CACHE)) {
+			beCPGCacheService.printCacheInfos();
 			logger.debug("Delete all cache");
 			beCPGCacheService.clearAllCaches();
 		} else if (action.equals(ACTION_RELOAD_ACL)) {

@@ -26,6 +26,7 @@ import org.dom4j.Element;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -147,6 +148,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	private DictionaryService dictionaryService;
 	
 	private NamespaceService namespaceService;
+	
 		
 	/**
 	 * Sets the compare entity service.

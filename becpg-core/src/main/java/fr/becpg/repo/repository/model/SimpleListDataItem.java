@@ -2,7 +2,7 @@ package fr.becpg.repo.repository.model;
 
 
 
-public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataItem {
+public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataItem, AspectAwareDataItem {
 
 
 	public Double getMini();

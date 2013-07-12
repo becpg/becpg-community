@@ -40,6 +40,7 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
 @Repository
 public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T> {
@@ -158,10 +159,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	// For now only add aspect
 	private void saveAspects(T entity) {
-		if (entity.getAspects() != null) {
-			for (QName aspect : entity.getAspects()) {
-				if (!nodeService.hasAspect(entity.getNodeRef(), aspect)) {
-					nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<QName, Serializable>());
+		if(entity instanceof AspectAwareDataItem){
+			if (((AspectAwareDataItem)entity).getAspects() != null) {
+				for (QName aspect : ((AspectAwareDataItem)entity).getAspects()) {
+					if (!nodeService.hasAspect(entity.getNodeRef(), aspect)) {
+						nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<QName, Serializable>());
+					}
 				}
 			}
 		}
@@ -387,7 +390,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 			}
-
+			
 			loadAspects(entity);
 
 			caches.put(id, entity);
@@ -402,7 +405,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	private void loadAspects(T entity) {
-		entity.setAspects(nodeService.getAspects(entity.getNodeRef()));
+		if(entity instanceof AspectAwareDataItem){
+			((AspectAwareDataItem)entity).setAspects(nodeService.getAspects(entity.getNodeRef()));
+		}
 
 	}
 

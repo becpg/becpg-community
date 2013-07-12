@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -40,7 +39,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	private FileFolderService fileFolderService;
 
-	private DictionaryService dictionaryService;
 	
 	private EntityListDAO entityListDAO;
 	
@@ -53,10 +51,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
 	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
@@ -102,7 +96,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		if (dataListFilter.isAllFilter()) {
 
-			Collection<QName> qnames = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+			Collection<QName> qnames = attributeExtractorService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 			if(logger.isDebugEnabled()){
 				logger.debug("DataType to filter :"+dataListFilter.getDataType());

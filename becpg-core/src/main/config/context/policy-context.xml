@@ -31,6 +31,7 @@
 		init-method="init" parent="abstractBeCPGPolicy">
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="associationService" ref="associationService"/>
 	</bean>
 
 	<bean id="entityCheckOutCheckInServicePolicy"

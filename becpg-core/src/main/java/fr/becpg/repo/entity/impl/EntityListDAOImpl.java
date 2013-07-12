@@ -20,6 +20,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
@@ -211,19 +213,41 @@ public class EntityListDAOImpl implements EntityListDAO {
 		}
 		return existingLists;
 	}
+	
+	@Override
+	public List<NodeRef> getListItems(NodeRef listNodeRef,final  QName listQNameFilter) {
+		
+		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);
+	
+		if(listQNameFilter!=null){
+			CollectionUtils.filter(ret, new Predicate() {
+				
+				@Override
+				public boolean evaluate(Object object) {
+					if(object !=null  && object instanceof NodeRef && nodeService.getType((NodeRef)object).equals(listQNameFilter)){
+						return true;
+					}
+					
+					return false;
+				}
+			});
+		}
+		
+		return ret;
+	}
+
 
 	@Override
 	public NodeRef getListItem(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
 
 		if (listContainerNodeRef != null && assocQName != null && nodeRef != null) {
+			
 
-			List<FileInfo> fileInfos = fileFolderService.listFiles(listContainerNodeRef);
+			for (NodeRef listItemNodeRef : getListItems(listContainerNodeRef, null)) {
 
-			for (FileInfo fileInfo : fileInfos) {
-
-				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(fileInfo.getNodeRef(), assocQName);
-				if (assocRefs!=null &&  !assocRefs.isEmpty() && nodeRef.equals(assocRefs.get(0).getTargetRef())) {
-					return fileInfo.getNodeRef();
+				NodeRef assocRef = associationService.getTargetAssoc(listItemNodeRef, assocQName);
+				if (assocRef!=null  && nodeRef.equals(assocRef)) {
+					return listItemNodeRef;
 				}
 
 			}
@@ -312,21 +336,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return nodeRef;
 	}
 
-	@Override
-	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName) {
-		
-		List<NodeRef> ret = new LinkedList<NodeRef>();
-		List<FileInfo> fileInfos = fileFolderService.listFiles(listNodeRef);
-
-		for (FileInfo fileInfo : fileInfos) {
-			if(fileInfo.getType().equals(listQName)){
-				ret.add(fileInfo.getNodeRef());
-			}
-
-		}
-		return ret;
-	}
-
+	
 	@Override
 	public void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		NodeRef sourceListContainerNodeRef = getListContainer(sourceNodeRef);

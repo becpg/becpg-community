@@ -2,6 +2,7 @@ package fr.becpg.repo.project.formulation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -14,6 +15,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
  * @author quere
  * 
  */
+@Service
 public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static Log logger = LogFactory.getLog(ScoreFormulationHandler.class);

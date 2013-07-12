@@ -71,9 +71,11 @@
 		<property name="personService" ref="personService" />
 		<property name="taggingService" ref="taggingService" />
 		<property name="securityService" ref="securityService" />
+		<property name="associationService" ref="associationService"/>
 	</bean>
 	<bean id="associationService" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">
 		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 
 	<bean id="commentsService" class="fr.becpg.repo.helper.CommentsService">
@@ -336,7 +338,6 @@
 
 
    <bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" parent="abstractDataListExtractor">
-		<property name="dictionaryService" ref="dictionaryService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
@@ -423,7 +424,6 @@
 
 	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
 		<property name="maxCacheItems" value="1500"/>
-		<property name="tenantService" ref="tenantService" />
 	</bean>
 	
 	<!-- Repository -->

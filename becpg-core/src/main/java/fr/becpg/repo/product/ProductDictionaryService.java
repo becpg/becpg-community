@@ -3,8 +3,6 @@
  */
 package fr.becpg.repo.product;
 
-import java.util.Collection;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -18,13 +16,6 @@ import fr.becpg.model.SystemProductType;
  */
 public interface ProductDictionaryService {
 
-	/**
-	 * Gets the data lists.
-	 *
-	 * @return the data lists
-	 */
-	@Deprecated
-	public Collection<QName> getDataLists();
 
 	/**
 	 * Gets the display name.
