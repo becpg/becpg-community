@@ -15,3 +15,9 @@ VALUES;Extrait sec;%;false
 VALUES;Matière grasse;%;false
 VALUES;Pouvoir sucrant;%;false
 VALUES;Température de cuve;°C;false
+VALUES;ESDL (= ES-MG);-;false
+VALUES;Indice de peroxyde (meqO2/kg);meqO2/kg;false
+VALUES;Indice réfractométrique;-;false
+VALUES;Acidité lactique (1°Dornic = 0,1g/L);g/L;false
+VALUES;Viscosité;mPa.s;false
+VALUES;Densité du produit;-;false
