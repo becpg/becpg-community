@@ -3,7 +3,6 @@ package fr.becpg.repo.report.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +12,8 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -27,13 +28,12 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 
@@ -56,19 +56,16 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String ATTR_VALUE = "value";
 	protected static final String ATTR_ITEM_TYPE = "itemType";	
 	protected static final String ATTR_ASPECTS = "aspects";
+	protected static final String TAG_IMAGES = "images";
+	protected static final String TAG_IMAGE = "image";
+	protected static final String PRODUCT_IMG_ID = "Img%d";
+	protected static final String ATTR_IMAGE_ID = "id";
 	
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
 	
 	private static final String VALUE_PERSON = "%s %s";
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
-	
-	private static final String QUERY_XPATH_FORM_SETS = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/set";
-	private static final String QUERY_XPATH_FORM_FIELDS_BY_SET = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/field[@set=\"%s\"]";
-	private static final String QUERY_XPATH_FORM_FIELDS = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/field-visibility/show";
-	private static final String QUERY_ATTR_GET_ID = "@id";
-	private static final String QUERY_ATTR_GET_LABEL = "@label";
-	private static final String SET_DEFAULT = "";
 	
 	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
 
@@ -83,6 +80,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected EntityService entityService;
 
 	protected VersionService versionService;
+	
+	protected FileFolderService fileFolderService;
 
 	/**
 	 * @param nodeService the nodeService to set
@@ -128,6 +127,9 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		this.versionService = versionService;
 	}
 
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
@@ -136,7 +138,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 		Document document = DocumentHelper.createDocument();
 		Element entityElt = document.addElement(TAG_ENTITY);
-
+		Map<String, byte[]> images = new HashMap<String, byte[]>();
+		
 		// add attributes at <product/> tag
 		Map<ClassAttributeDefinition, String> attributes = loadNodeAttributes(entityNodeRef);
 
@@ -155,21 +158,45 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
 		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).getPrefixString());
 		
+		// load images
+		Element imgsElt = entityElt.addElement(TAG_IMAGES);		
+		extractEntityImages(entityNodeRef, imgsElt, images);
+		
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
-		loadDataLists(entityNodeRef, dataListsElt);
+		loadDataLists(entityNodeRef, dataListsElt, images);
 		
 		// render versions
 		loadVersions(entityNodeRef, entityElt);
-
+		
 		ret.setXmlDataSource(entityElt);
-		ret.setDataObjects(extractImages(entityNodeRef, entityElt));
+		ret.setDataObjects(images);
 
 		return ret;
 	}
 	
-	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef, Element entityElt) {
-		return null;
+	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
+		
+		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		if (imagesFolderNodeRef != null) {
+			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
+
+				String imgName = fileInfo.getName().toLowerCase();
+				NodeRef imgNodeRef = fileInfo.getNodeRef();
+				String imgId = String.format(PRODUCT_IMG_ID, cnt);
+				byte[] imageBytes = entityService.getImage(imgNodeRef);
+				if (imageBytes != null) {
+					Element imgElt = imgsElt.addElement(TAG_IMAGE);
+					imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
+					imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName);
+					imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+
+					images.put(imgId, imageBytes);
+				}
+				cnt++;
+			}
+		}
 	}
 	
 	protected void loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
@@ -178,7 +205,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
 	}
 	
-	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 	}
 	
 	/**
@@ -264,57 +291,6 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return values;
 	}	
 
-	@SuppressWarnings("unchecked")
-	protected Map<String, List<String>> getFieldsBySets(NodeRef nodeRef, String reportFormConfigPath){
-				
-		Map<String, List<String>> fieldsBySets = new LinkedHashMap<String, List<String>>();
-		Document doc = null;
-		try{
-			ClassPathResource classPathResource = new ClassPathResource(reportFormConfigPath);
-			
-			SAXReader reader = new SAXReader();
-			doc = reader.read(classPathResource.getInputStream());
-		}
-		catch(Exception e){
-			logger.error("Failed to load file " + reportFormConfigPath, e);
-			return fieldsBySets;
-		}				
-		
-		// fields to show
-		List<String> fields = new ArrayList<String>();
-		QName nodeType = nodeService.getType(nodeRef);		
-		String nodeTypeWithPrefix = nodeType.toPrefixString(namespaceService);
-		
-		List<Element> fieldElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_FIELDS, nodeTypeWithPrefix));		
-		for(Element fieldElt : fieldElts){
-			fields.add(fieldElt.valueOf(QUERY_ATTR_GET_ID));
-		}				
-		
-		// sets to show
-		List<Element> setElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_SETS, nodeTypeWithPrefix));		
-		for(Element setElt : setElts){
-						
-			String setId = setElt.valueOf(QUERY_ATTR_GET_ID);
-			String setLabel = setElt.valueOf(QUERY_ATTR_GET_LABEL);
-			
-			List<String> fieldsForSet = new ArrayList<String>(); 
-			List<Element> fieldsForSetElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_FIELDS_BY_SET, nodeTypeWithPrefix, setId));			
-			for(Element fieldElt : fieldsForSetElts){
-				
-				String fieldId = fieldElt.valueOf(QUERY_ATTR_GET_ID);						
-				fieldsForSet.add(fieldId);
-				fields.remove(fieldId);
-			}
-
-			fieldsBySets.put(setLabel, fieldsForSet);
-		}
-		
-		// fields not associated to set
-		fieldsBySets.put(SET_DEFAULT, fields);	
-		
-		return fieldsBySets;
-	}
-
 	protected String generateKeyAttribute(String attributeName){
 		
 		return attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase();
@@ -368,5 +344,5 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			value += aspect.toPrefixString();
 		}		
 		return value;
-	}
+	}	
 }

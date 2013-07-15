@@ -70,8 +70,10 @@
 		<image id="img6" name="img_fab2" title="img_fab2 title" />
 		<image id="img7" name="img_fab3" title="img_fab3 title" />
 		<image id="img8" name="img_fab4" title="img_fab4 title" />
-		<image id="img9" name="produit.jpg" title="img produit" />
-		<image id="img10" name="product.jpg" title="img product" />
+		<image id="img9" name="img_palet1" title="img_palet1 title" />
+		<image id="img10" name="img_palet2" title="img_palet2 title" />
+		<image id="img11" name="produit.jpg" title="img produit" />
+		<image id="img12" name="product.jpg" title="img product" />
 	</images>
 
 	<plants>
@@ -127,7 +129,7 @@
 				dynamicCharactValue="value" />
 		</dynamicCharactList>
 
-		<allergenList allergens="Arachides et produits à base de d'arachide">
+		<allergenList allergenListVoluntary="Arachides et produits à base de d'arachide" allergenListInVoluntary="Noix">
 			<allergen allergenListAllergen="Arachide" allergenType="Allergène majeur"
 				allergenListInVoluntary="false" allergenListVoluntary="true"
 				allergenListInVolSources=""
@@ -357,7 +359,11 @@
 			</entity>
 		</packagingList>
 
-
+		<labelClaimList>
+			<labelClaim lclType="Nutritionnelle" lclLabelClaim="Allégé en sucre" lclIsClaimed="true"/>
+			<labelClaim lclType="Environnementale" lclLabelClaim="Sans BPA" lclIsClaimed="true"/>
+			<labelClaim lclType="Environnementale" lclLabelClaim="Sans huile de palme" lclIsClaimed="true"/>
+		</labelClaimList>
 
 	</dataLists>
 </entity>

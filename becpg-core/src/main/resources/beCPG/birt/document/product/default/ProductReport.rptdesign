@@ -2349,15 +2349,27 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="allergenList2" id="2638">
             <list-property name="columnHints">
                 <structure>
-                    <property name="columnName">allergens</property>
-                    <text-property name="heading">allergens</text-property>
+                    <property name="columnName">allergenListVoluntary</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">allergenListVoluntary</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">allergenListInVoluntary</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">allergenListInVoluntary</text-property>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">allergens</property>
+                        <property name="name">allergenListVoluntary</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">allergenListInVoluntary</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -2366,13 +2378,20 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
-                    <property name="name">allergens</property>
-                    <property name="nativeName">allergens</property>
+                    <property name="name">allergenListVoluntary</property>
+                    <property name="nativeName">allergenListVoluntary</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">allergenListInVoluntary</property>
+                    <property name="nativeName">allergenListInVoluntary</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList]#:#{allergens;STRING;/@allergens}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList]#:#{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVoluntary;STRING;/@allergenListInVoluntary}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4903,6 +4922,146 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="labelClaimList" id="3109">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">lclType</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">lclType</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">lclLabelClaim</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">lclLabelClaim</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">lclIsClaimed</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">lclIsClaimed</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["lclIsClaimed"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"true"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">lclType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">lclLabelClaim</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">lclIsClaimed</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">lclType</property>
+                    <property name="nativeName">lclType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">lclLabelClaim</property>
+                    <property name="nativeName">lclLabelClaim</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">lclIsClaimed</property>
+                    <property name="nativeName">lclIsClaimed</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimList/labelClaim]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclIsClaimed}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>lclType</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>lclType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>lclLabelClaim</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>lclLabelClaim</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>lclIsClaimed</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>lclIsClaimed</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -5993,23 +6152,31 @@ else{
                                 </label>
                             </cell>
                             <cell id="2134">
-                                <data id="2637">
+                                <data id="3134">
                                     <property name="dataSet">allergenList2</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">allergens</property>
-                                            <text-property name="displayName">allergens</text-property>
-                                            <expression name="expression" type="javascript">if(dataSetRow["allergens"]==""){
-"sans allergène pour les produits pur viande; inscrits dans la liste des ingrédients pour les produits élaborés"
-}
-else{
-dataSetRow["allergens"]
-}</expression>
+                                            <property name="name">allergenListVoluntary</property>
+                                            <text-property name="displayName">allergenListVoluntary</text-property>
+                                            <expression name="expression" type="javascript">"Présence volontaire : " + dataSetRow["allergenListVoluntary"]</expression>
                                             <property name="dataType">string</property>
                                             <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">allergens</property>
+                                    <property name="resultSetColumn">allergenListVoluntary</property>
+                                </data>
+                                <data id="3135">
+                                    <property name="dataSet">allergenList2</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">allergenListInVoluntary</property>
+                                            <text-property name="displayName">allergenListInVoluntary</text-property>
+                                            <expression name="expression" type="javascript">"Présence fortuite : " + dataSetRow["allergenListInVoluntary"]</expression>
+                                            <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <property name="resultSetColumn">allergenListInVoluntary</property>
                                 </data>
                             </cell>
                         </row>
@@ -6039,6 +6206,53 @@ dataSetRow["allergens"]
                                 <label id="2659">
                                     <text-property name="text">Produit non soumis aux obligations d'étiquetage de la directive 2000/13/CE</text-property>
                                 </label>
+                            </cell>
+                        </row>
+                        <row id="3105">
+                            <cell id="3106">
+                                <label id="3108">
+                                    <property name="style">becpg-row-header</property>
+                                    <property name="textUnderline">none</property>
+                                    <text-property name="text">Allégations</text-property>
+                                </label>
+                            </cell>
+                            <cell id="3107">
+                                <table id="3110">
+                                    <property name="width">6.030534351145038in</property>
+                                    <property name="dataSet">labelClaimList</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">lclType</property>
+                                            <text-property name="displayName">lclType</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lclType"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">lclLabelClaim</property>
+                                            <text-property name="displayName">lclLabelClaim</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lclLabelClaim"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">lclIsClaimed</property>
+                                            <text-property name="displayName">lclIsClaimed</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["lclIsClaimed"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="3121">
+                                        <property name="width">4.603053435114504in</property>
+                                    </column>
+                                    <detail>
+                                        <row id="3114">
+                                            <cell id="3116">
+                                                <data id="3125">
+                                                    <property name="resultSetColumn">lclLabelClaim</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </detail>
+                                </table>
                             </cell>
                         </row>
                     </grid>
@@ -6816,7 +7030,7 @@ dataSetRow["packagingListProduct"]
                             <property name="textAlign">center</property>
                             <cell id="2755">
                                 <label id="2758">
-                                    <text-property name="text">SPCB</text-property>
+                                    <text-property name="text">SPCB (nb UV)</text-property>
                                 </label>
                             </cell>
                             <cell id="2372">

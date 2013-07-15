@@ -241,6 +241,9 @@
 					<value>%</value>
 					<value>°C</value>
 					<value>-</value>
+					<value>meqO2/kg</value>
+					<value>g/L</value>
+					<value>mPa.s</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -281,12 +284,15 @@
 					<value>PP</value>
 					<value>m</value>
 					<value>m2</value>
+					<value>kg</value>
+					<value>g</value>
 				</list>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:packagingLevel" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>Primary</value>
 					<value>Secondary</value>
 					<value>Tertiary</value>
