@@ -181,6 +181,7 @@
 		<property name="migrationService" ref="migrationService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="transactionService" ref="TransactionService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 
