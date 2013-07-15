@@ -3439,137 +3439,6 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images_palet" id="2460">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">name</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">name</text-property>
-                    <property name="analysisColumn">name</property>
-                </structure>
-                <structure>
-                    <property name="columnName">title</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">title</text-property>
-                    <property name="analysisColumn">title</property>
-                </structure>
-                <structure>
-                    <property name="columnName">id</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">id</text-property>
-                    <property name="analysisColumn">id</property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">like</property>
-                    <expression name="expr" type="javascript">row["name"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"img_palet%"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">title</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">id</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">title</property>
-                    <property name="nativeName">title</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">id</property>
-                    <property name="nativeName">id</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{name;STRING;/@name},{title;STRING;/@title},{id;STRING;/@id}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>name</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>name</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>title</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>title</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="allergenList2" id="2486">
             <list-property name="columnHints">
                 <structure>
@@ -3699,137 +3568,6 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images_fab" id="2823">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">name</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">name</text-property>
-                    <property name="analysisColumn">name</property>
-                </structure>
-                <structure>
-                    <property name="columnName">title</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">title</text-property>
-                    <property name="analysisColumn">title</property>
-                </structure>
-                <structure>
-                    <property name="columnName">id</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">id</text-property>
-                    <property name="analysisColumn">id</property>
-                </structure>
-            </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">like</property>
-                    <expression name="expr" type="javascript">row["name"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"img_fab%"</value>
-                    </simple-property-list>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">name</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">title</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">id</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">name</property>
-                    <property name="nativeName">name</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">title</property>
-                    <property name="nativeName">title</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">id</property>
-                    <property name="nativeName">id</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{name;STRING;/@name},{title;STRING;/@title},{id;STRING;/@id}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>name</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>name</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>title</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>title</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="images" id="1771">
             <property name="nullsOrdering">nulls lowest</property>
             <list-property name="columnHints">
@@ -3852,12 +3590,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                     <text-property name="heading">title</text-property>
                 </structure>
             </list-property>
-            <list-property name="filter">
-                <structure>
-                    <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">BirtStr.indexOf("produit.", row["name"], 0) == 0 || BirtStr.indexOf("product.", row["name"], 0) == 0</expression>
-                </structure>
-            </list-property>
+            <list-property name="filter"/>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
@@ -7071,6 +6804,13 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                 <property name="strength">-1</property>
                             </structure>
                         </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <expression name="expr" type="javascript">BirtStr.indexOf("produit.", row["name"], 0) == 0 || BirtStr.indexOf("product.", row["name"], 0) == 0</expression>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
                         <column id="2889"/>
                         <header>
                             <row id="2881">
@@ -7529,7 +7269,7 @@ value = value + " x " + dataSetRow["height"];
                 <property name="textAlign">center</property>
                 <cell id="2755">
                     <label id="2758">
-                        <text-property name="text">SPCB</text-property>
+                        <text-property name="text">SPCB (nb UV)</text-property>
                     </label>
                 </cell>
                 <cell id="2372">
@@ -7894,7 +7634,7 @@ en m</text-property>
                         <property name="borderLeftColor">#FFFFFF</property>
                         <property name="borderRightColor">#FFFFFF</property>
                         <property name="borderTopColor">#FFFFFF</property>
-                        <property name="dataSet">images_palet</property>
+                        <property name="dataSet">images</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">name</property>
@@ -7928,6 +7668,12 @@ en m</text-property>
                                 </list-property>
                                 <property name="allowExport">true</property>
                             </structure>
+                            <structure>
+                                <property name="name">id</property>
+                                <text-property name="displayName">id</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <list-property name="sort">
                             <structure>
@@ -7943,6 +7689,14 @@ en m</text-property>
                                 <simple-property-list name="value1">
                                     <value>1</value>
                                 </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">like</property>
+                                <expression name="expr" type="javascript">row["name"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"img_palet%"</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
                         <column id="2473"/>
@@ -7982,196 +7736,7 @@ en m</text-property>
                         <property name="borderLeftColor">#FFFFFF</property>
                         <property name="borderRightColor">#FFFFFF</property>
                         <property name="borderTopColor">#FFFFFF</property>
-                        <property name="dataSet">images_palet</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">name</property>
-                                <text-property name="displayName">name</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">title</property>
-                                <text-property name="displayName">title</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["title"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">img</property>
-                                <text-property name="displayName">img</text-property>
-                                <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                <property name="dataType">blob</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">runningCount</property>
-                                <text-property name="displayName">runningCount</text-property>
-                                <property name="dataType">integer</property>
-                                <property name="aggregateFunction">RUNNINGCOUNT</property>
-                                <list-property name="arguments">
-                                    <structure>
-                                        <property name="name">Expression</property>
-                                        <expression name="value" type="javascript">row["name"]</expression>
-                                    </structure>
-                                </list-property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="sort">
-                            <structure>
-                                <expression name="key" type="javascript">row["name"]</expression>
-                                <property name="direction">asc</property>
-                                <property name="strength">-1</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">eq</property>
-                                <expression name="expr" type="javascript">row["runningCount"]%2</expression>
-                                <simple-property-list name="value1">
-                                    <value>0</value>
-                                </simple-property-list>
-                            </structure>
-                        </list-property>
-                        <column id="2482"/>
-                        <header>
-                            <row id="2459">
-                                <cell id="2475"/>
-                            </row>
-                        </header>
-                        <detail>
-                            <row id="2476">
-                                <property name="pageBreakInside">avoid</property>
-                                <cell id="2477">
-                                    <data id="2478">
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">center</property>
-                                        <property name="resultSetColumn">title</property>
-                                    </data>
-                                    <image id="2479">
-                                        <property name="height">2.435114503816794in</property>
-                                        <property name="width">3.236641221374046in</property>
-                                        <property name="source">expr</property>
-                                        <expression name="valueExpr">row["img"]</expression>
-                                    </image>
-                                </cell>
-                            </row>
-                        </detail>
-                        <footer>
-                            <row id="2480">
-                                <cell id="2481"/>
-                            </row>
-                        </footer>
-                    </table>
-                </cell>
-            </row>
-        </grid>
-        <label id="2852"/>
-        <label id="2853">
-            <property name="style">becpg-chapter-header</property>
-            <text-property name="text">PHOTOS DU PRODUIT</text-property>
-        </label>
-        <label id="2824"/>
-        <grid id="2826">
-            <column id="2827"/>
-            <column id="2828"/>
-            <row id="2829">
-                <cell id="2830">
-                    <table id="2831">
-                        <property name="borderBottomColor">#FFFFFF</property>
-                        <property name="borderLeftColor">#FFFFFF</property>
-                        <property name="borderRightColor">#FFFFFF</property>
-                        <property name="borderTopColor">#FFFFFF</property>
-                        <property name="dataSet">images_fab</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">name</property>
-                                <text-property name="displayName">name</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">title</property>
-                                <text-property name="displayName">title</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["title"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">img</property>
-                                <text-property name="displayName">img</text-property>
-                                <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                <property name="dataType">blob</property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                            <structure>
-                                <property name="name">runningCount</property>
-                                <text-property name="displayName">runningCount</text-property>
-                                <property name="dataType">integer</property>
-                                <property name="aggregateFunction">RUNNINGCOUNT</property>
-                                <list-property name="arguments">
-                                    <structure>
-                                        <property name="name">Expression</property>
-                                        <expression name="value" type="javascript">row["name"]</expression>
-                                    </structure>
-                                </list-property>
-                                <property name="allowExport">true</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="sort">
-                            <structure>
-                                <expression name="key" type="javascript">row["name"]</expression>
-                                <property name="direction">asc</property>
-                                <property name="strength">-1</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">eq</property>
-                                <expression name="expr" type="javascript">row["runningCount"]%2</expression>
-                                <simple-property-list name="value1">
-                                    <value>1</value>
-                                </simple-property-list>
-                            </structure>
-                        </list-property>
-                        <column id="2840"/>
-                        <header>
-                            <row id="2832">
-                                <cell id="2833"/>
-                            </row>
-                        </header>
-                        <detail>
-                            <row id="2834">
-                                <property name="pageBreakInside">avoid</property>
-                                <cell id="2835">
-                                    <data id="2836">
-                                        <property name="fontWeight">bold</property>
-                                        <property name="textAlign">center</property>
-                                        <property name="resultSetColumn">title</property>
-                                    </data>
-                                    <label id="2854"/>
-                                    <image id="2837">
-                                        <property name="height">2.435114503816794in</property>
-                                        <property name="width">3.236641221374046in</property>
-                                        <property name="source">expr</property>
-                                        <expression name="valueExpr">row["img"]</expression>
-                                    </image>
-                                </cell>
-                            </row>
-                        </detail>
-                        <footer>
-                            <row id="2838">
-                                <cell id="2839"/>
-                            </row>
-                        </footer>
-                    </table>
-                </cell>
-                <cell id="2841">
-                    <table id="2842">
-                        <property name="borderBottomColor">#FFFFFF</property>
-                        <property name="borderLeftColor">#FFFFFF</property>
-                        <property name="borderRightColor">#FFFFFF</property>
-                        <property name="borderTopColor">#FFFFFF</property>
-                        <property name="dataSet">images_fab</property>
+                        <property name="dataSet">images</property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">name</property>
@@ -8226,6 +7791,231 @@ en m</text-property>
                                 <simple-property-list name="value1">
                                     <value>0</value>
                                 </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">like</property>
+                                <expression name="expr" type="javascript">row["name"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"img_palet%"</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
+                        <column id="2482"/>
+                        <header>
+                            <row id="2459">
+                                <cell id="2475"/>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="2476">
+                                <property name="pageBreakInside">avoid</property>
+                                <cell id="2477">
+                                    <data id="2478">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">title</property>
+                                    </data>
+                                    <image id="2479">
+                                        <property name="height">2.435114503816794in</property>
+                                        <property name="width">3.236641221374046in</property>
+                                        <property name="source">expr</property>
+                                        <expression name="valueExpr">row["img"]</expression>
+                                    </image>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="2480">
+                                <cell id="2481"/>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+            </row>
+        </grid>
+        <label id="2852"/>
+        <label id="2853">
+            <property name="style">becpg-chapter-header</property>
+            <text-property name="text">PHOTOS DU PRODUIT</text-property>
+        </label>
+        <label id="2824"/>
+        <grid id="2826">
+            <column id="2827"/>
+            <column id="2828"/>
+            <row id="2829">
+                <cell id="2830">
+                    <table id="2831">
+                        <property name="borderBottomColor">#FFFFFF</property>
+                        <property name="borderLeftColor">#FFFFFF</property>
+                        <property name="borderRightColor">#FFFFFF</property>
+                        <property name="borderTopColor">#FFFFFF</property>
+                        <property name="dataSet">images</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">name</property>
+                                <text-property name="displayName">name</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">title</property>
+                                <text-property name="displayName">title</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">img</property>
+                                <text-property name="displayName">img</text-property>
+                                <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                <property name="dataType">blob</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <property name="dataType">integer</property>
+                                <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                        <expression name="value" type="javascript">row["name"]</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">id</property>
+                                <text-property name="displayName">id</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="sort">
+                            <structure>
+                                <expression name="key" type="javascript">row["name"]</expression>
+                                <property name="direction">asc</property>
+                                <property name="strength">-1</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <expression name="expr" type="javascript">row["runningCount"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value>1</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">like</property>
+                                <expression name="expr" type="javascript">row["name"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"img_fab%"</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
+                        <column id="2840"/>
+                        <header>
+                            <row id="2832">
+                                <cell id="2833"/>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="2834">
+                                <property name="pageBreakInside">avoid</property>
+                                <cell id="2835">
+                                    <data id="2836">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="resultSetColumn">title</property>
+                                    </data>
+                                    <label id="2854"/>
+                                    <image id="2837">
+                                        <property name="height">2.435114503816794in</property>
+                                        <property name="width">3.236641221374046in</property>
+                                        <property name="source">expr</property>
+                                        <expression name="valueExpr">row["img"]</expression>
+                                    </image>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="2838">
+                                <cell id="2839"/>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+                <cell id="2841">
+                    <table id="2842">
+                        <property name="borderBottomColor">#FFFFFF</property>
+                        <property name="borderLeftColor">#FFFFFF</property>
+                        <property name="borderRightColor">#FFFFFF</property>
+                        <property name="borderTopColor">#FFFFFF</property>
+                        <property name="dataSet">images</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">name</property>
+                                <text-property name="displayName">name</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">title</property>
+                                <text-property name="displayName">title</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">img</property>
+                                <text-property name="displayName">img</text-property>
+                                <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                <property name="dataType">blob</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningCount</property>
+                                <text-property name="displayName">runningCount</text-property>
+                                <property name="dataType">integer</property>
+                                <property name="aggregateFunction">RUNNINGCOUNT</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                        <expression name="value" type="javascript">row["name"]</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">id</property>
+                                <text-property name="displayName">id</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="sort">
+                            <structure>
+                                <expression name="key" type="javascript">row["name"]</expression>
+                                <property name="direction">asc</property>
+                                <property name="strength">-1</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <expression name="expr" type="javascript">row["runningCount"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value>0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">like</property>
+                                <expression name="expr" type="javascript">row["name"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"img_fab%"</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
                         <column id="2851"/>

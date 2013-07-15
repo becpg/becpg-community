@@ -993,6 +993,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					}
 					doQuery = true;
 				}
+				else{
+					logger.warn("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
+				}
 			}
 		}
 		// code

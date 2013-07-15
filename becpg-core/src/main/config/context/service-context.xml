@@ -423,7 +423,7 @@
 	<!-- Cache -->
 
 	<bean id="beCPGCacheService" class="fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl">
-		<property name="maxCacheItems" value="1500"/>
+		<property name="maxCacheItems" value="15000"/>
 	</bean>
 	
 	<!-- Repository -->

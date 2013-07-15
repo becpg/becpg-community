@@ -1,5 +1,7 @@
 package fr.becpg.repo.quality.report;
 
+import java.util.Map;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.dom4j.Element;
@@ -37,7 +39,7 @@ public class DefaultNonConformityReportExtractor extends AbstractEntityReportExt
 	 * @return the element
 	 */
 	@Override
-	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
 		NonConformityData ncData = (NonConformityData) alfrescoRepository.findOne(entityNodeRef);
