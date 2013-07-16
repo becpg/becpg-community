@@ -63,6 +63,7 @@ public class ProjectListSortTest extends RepoBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public NodeRef execute() throws Throwable {
 

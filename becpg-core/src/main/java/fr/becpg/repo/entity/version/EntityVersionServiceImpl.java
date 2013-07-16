@@ -364,7 +364,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				
 				return entitiesHistoryNodeRef;
 			}			
-		});		
+		},true);		
 	}
 
 	@Override

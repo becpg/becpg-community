@@ -58,7 +58,8 @@
 		</columns>
 	</mapping>
 	
-	<mapping name="bcpg:linkedValue">
+	
+   <mapping name="bcpg:linkedValue">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:parentLevel" />
 		   <nodeColumnKey attribute="bcpg:lkvValue" />
@@ -75,7 +76,8 @@
 			<column id="lkvValue"     type="Hierarchy" attribute="bcpg:lkvValue" parentLevel="bcpg:parentLevel" />
 		</columns>
 	</mapping>
-	
+
+
 		<mapping name="bcpg:contactList">
 			<nodeColumnKeys>
 				<nodeColumnKey attribute="bcpg:erpCode" />
