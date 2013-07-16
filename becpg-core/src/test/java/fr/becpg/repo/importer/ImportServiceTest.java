@@ -665,12 +665,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		// search by code		
 		assertNotNull(hierarchyService.getRootHierarchy(BeCPGModel.TYPE_RAWMATERIAL, (String)nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 		
+		NodeRef parentNodeRef = ret.get(0);
+		
 		// search by name	
-		ret = hierarchyService.getHierarchies(BeCPGModel.TYPE_RAWMATERIAL, ret.get(0), "Dairy and Egg Products");
+		ret = hierarchyService.getHierarchies(BeCPGModel.TYPE_RAWMATERIAL, parentNodeRef, "Dairy and Egg Products");
 		assertEquals(1, ret.size());
 		
 		// search by code				
-		assertNotNull(hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, ret.get(0), (String)nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		assertNotNull(hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, parentNodeRef, (String)nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 	}
 	
 	private void importHierarchies(){

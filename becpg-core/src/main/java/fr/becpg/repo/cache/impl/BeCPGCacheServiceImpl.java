@@ -102,7 +102,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 			ret = cacheDataProviderCallBack.getData();
 			if (!disableAllCache && ret != null) {
 				
-				if(deleteOnTxRollback){
+				if(deleteOnTxRollback  && AlfrescoTransactionSupport.isActualTransactionActive()){
 					Set<String> currentTransactionCacheKeys = (Set<String>) AlfrescoTransactionSupport.getResource(cacheName);
 					if (currentTransactionCacheKeys == null) {
 						currentTransactionCacheKeys = new LinkedHashSet<String>();
