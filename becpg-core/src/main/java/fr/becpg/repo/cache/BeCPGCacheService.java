@@ -8,11 +8,12 @@ public interface BeCPGCacheService {
 
 	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack);
 
-	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, long timeStamp);
-
 	void clearAllCaches();
 
 	void removeFromCache(String name, String aclsCacheKey);
 
 	void printCacheInfos();
+	
+
+	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
 }
