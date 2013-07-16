@@ -166,7 +166,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
-
 		if (formulatedProduct.getEntityTplRef() != null) {
 			ProductData templateProductData = alfrescoRepository.findOne(formulatedProduct.getEntityTplRef());
 

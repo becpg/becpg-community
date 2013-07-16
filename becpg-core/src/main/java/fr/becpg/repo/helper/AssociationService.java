@@ -14,4 +14,5 @@ public interface AssociationService {
 	NodeRef getChildAssoc(NodeRef nodeRef, QName qName);
 	List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName);
 	List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName);
+	String createCacheKey(NodeRef nodeRef, QName qName);
 }
