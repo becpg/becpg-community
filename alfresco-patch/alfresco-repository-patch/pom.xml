@@ -55,6 +55,7 @@
 									<artifact>org.alfresco:alfresco-repository</artifact>
 									<excludes>																	
 										<exclude>org/alfresco/repo/forms/processor/node/TypeFormProcessor**</exclude>
+										<exclude>org/alfresco/repo/thumbnail/ThumbnailServiceImpl**</exclude>
 									</excludes>
 								</filter>
 							</filters>

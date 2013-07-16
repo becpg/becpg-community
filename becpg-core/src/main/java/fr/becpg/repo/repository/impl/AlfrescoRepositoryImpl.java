@@ -296,6 +296,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					}
 				}
 
+				
 				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 
 			} else {

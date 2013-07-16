@@ -6,18 +6,26 @@
 	</settings>
 
 
-	<mapping name="bcpg:linkedValue">
+
+   <mapping name="bcpg:linkedValue">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:parentLevel" />
-			<nodeColumnKey attribute="bcpg:lkvValue" />
+		   <nodeColumnKey attribute="bcpg:lkvValue" />
+		   <!-- to match by path -->
+		   <nodeColumnKey attribute="cm:contains" />
 		</nodeColumnKeys>
-		<columns>
-			<column id="lkvValue1" type="Hierarchy" attribute="bcpg:parentLevel" />
-			<column id="lkvValue2" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
-			<column id="lkvValue3" type="Hierarchy" attribute="bcpg:lkvValue" parentLevel="bcpg:parentLevel" />
+		<columns >
+		   <!-- Allow up to six level -->
+			<column id="parentLevel"  type="Hierarchy" attribute="bcpg:parentLevel"  />
+			<column id="parentLevel1" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
+			<column id="parentLevel2" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
+			<column id="parentLevel3" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
+			<column id="parentLevel4" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
+			<column id="lkvValue"     type="Hierarchy" attribute="bcpg:lkvValue" parentLevel="bcpg:parentLevel" />
 		</columns>
 	</mapping>
-	
+
+
 	<mapping name="bcpg:rawMaterial">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:code" />

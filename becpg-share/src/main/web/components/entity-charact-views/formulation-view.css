@@ -89,6 +89,9 @@
 }
 
 
+
+
+
 /** Full screen form */
 
 div#full-screen-form {
@@ -118,6 +121,14 @@ div#full-screen-form {
 	padding: 2px;
 }
 
+#full-screen-form  .clear {
+	height:0px;	
+}
+
+#full-screen-form   .yui-ac .ac-body {
+    min-height: 18px;
+}
+
 #full-screen-form form {
 	display: table;
 	margin: 0 15px;
@@ -130,6 +141,17 @@ div#full-screen-form {
 #full-screen-form  .yui-ac .ac-body {
 	width: 15em;
 	max-width: 15em;
+}
+
+#full-screen-form .ac-toogle {
+    height: 18px;
+}
+
+
+.yui-skin-lightTheme #full-screen-form   .yui-ac-container,
+#full-screen-form  .yui-ac-container
+{
+	width: 35em;
 }
 
 #full-screen-form .yui-ac .ac-body .yui-ac-input {

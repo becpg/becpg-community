@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.MLText;
@@ -25,6 +27,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -59,6 +62,9 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 public class FormulationTest extends AbstractFinishedProductTest {
 	
 	protected static Log logger = LogFactory.getLog(FormulationTest.class);
+	
+	@Resource
+	private AssociationService associationService;
     
     /* (non-Javadoc)
      * @see fr.becpg.test.RepoBaseTestCase#setUp()
@@ -973,22 +979,28 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						nutList.add(new NutListDataItem(null, null, null, null, null, null, nut, null));
 					}
 					SFProduct2.setNutList(nutList);
-					return alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
+					
+					NodeRef productNodeRef =  alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
+
+					productService.formulate(productNodeRef);
+									
+					
+					
+					
+					return  productNodeRef;
 					
 				}},false,true);
 		 
 		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				public NodeRef execute() throws Throwable {	
 					
-					productService.formulate(SFProduct2NodeRef);
-									
 					ProductData formulatedSF2 = alfrescoRepository.findOne(SFProduct2NodeRef);
 					
 					String [] nutNames = {"nut1", "nut14", "nut3", "nut5", "nut17", "nut2", "nut26", "nut10", "nut8", "nut9"}; 
 					int i = 0;
 					
 					for(String nutName : nutNames){
-						logger.debug("nutName : " + nutName);
+						logger.debug("nutName : " + nutName+" "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
 						assertEquals(nutName, (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
 						i++;
 					}
@@ -1836,7 +1848,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				 */				
 				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
 				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
-					
+				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
 				productService.formulate(finishedProductNodeRef);

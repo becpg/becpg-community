@@ -170,8 +170,7 @@
                                     var form = Dom.get(formsRuntime.formId);
                                     for ( var j = 0; j < form.elements.length; j++) {
                                        if (Alfresco.util.isVisible(form.elements[j])) {
-                                          form.elements[j].focus();
-                                          break;
+                                          try {form.elements[j].focus();  break;} catch (e){/*Ie 8*/}      
                                        }
                                     }
 
