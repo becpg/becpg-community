@@ -6158,7 +6158,7 @@ else{
                                         <structure>
                                             <property name="name">allergenListVoluntary</property>
                                             <text-property name="displayName">allergenListVoluntary</text-property>
-                                            <expression name="expression" type="javascript">"Présence volontaire : " + dataSetRow["allergenListVoluntary"]</expression>
+                                            <expression name="expression" type="javascript">"Contient : " + dataSetRow["allergenListVoluntary"]</expression>
                                             <property name="dataType">string</property>
                                             <property name="allowExport">true</property>
                                         </structure>
@@ -6171,7 +6171,7 @@ else{
                                         <structure>
                                             <property name="name">allergenListInVoluntary</property>
                                             <text-property name="displayName">allergenListInVoluntary</text-property>
-                                            <expression name="expression" type="javascript">"Présence fortuite : " + dataSetRow["allergenListInVoluntary"]</expression>
+                                            <expression name="expression" type="javascript">"Peut contenir : " + dataSetRow["allergenListInVoluntary"]</expression>
                                             <property name="dataType">string</property>
                                             <property name="allowExport">true</property>
                                         </structure>

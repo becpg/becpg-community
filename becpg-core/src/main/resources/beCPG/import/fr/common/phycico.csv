@@ -21,3 +21,6 @@ VALUES;Indice réfractométrique;-;false
 VALUES;Acidité lactique (1°Dornic = 0,1g/L);g/L;false
 VALUES;Viscosité;mPa.s;false
 VALUES;Densité du produit;-;false
+VALUES;Degré d'amidation;%;false
+VALUES;Degré d'estérification;%;false
+VALUES;Degré alcoolique;%;false

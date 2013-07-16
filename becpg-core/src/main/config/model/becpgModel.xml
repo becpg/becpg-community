@@ -244,6 +244,9 @@
 					<value>meqO2/kg</value>
 					<value>g/L</value>
 					<value>mPa.s</value>
+					<value>s</value>
+					<value>min</value>
+					<value>°B</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -341,6 +344,20 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:labellingPositions"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/LabellingPositions</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
 		
 	</constraints>
 
@@ -383,7 +400,7 @@
 			</mandatory-aspects>			
 		</type>
 		<type name="bcpg:finishedProduct">
-			<parent>bcpg:product</parent>
+			<parent>bcpg:product</parent>			
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:transformationAspect</aspect>
@@ -681,10 +698,10 @@
 		<type name="bcpg:approvalNumber">
 			<parent>bcpg:entityListItem</parent>
 		</type>
-
-		<!-- Entity Charact View -->
-
-
+		
+		<type name="bcpg:labellingTemplate">
+			<parent>bcpg:entityListItem</parent>
+		</type>
 
 		<!-- _______________________________________ COMPO ________________________________________________ -->
 		<type name="bcpg:compoList">
@@ -2258,6 +2275,71 @@
 					<default>false</default>
 				</property>
 			</overrides>-->
+		</aspect>
+		
+		<aspect name="bcpg:foodAspect">
+			<properties>
+				<property name="bcpg:numberOfServings">
+					<type>d:int</type>
+				</property>
+				<property name="bcpg:alcoholContent">
+					<type>d:text</type>
+				</property>		
+				<property name="bcpg:preparationTips">
+					<type>d:text</type>
+				</property>		
+			</properties>
+			<associations>
+				<association name="bcpg:storageConditions">
+					<title>Conditions de conservation</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:precautionOfUse">
+					<title>Précautions d’emploi</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>			
+			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:labellingAspect">
+			<properties>			
+				<property name="bcpg:labellingPosition">
+					<type>d:text</type>
+<!-- 					<constraints> -->
+<!-- 						<constraint ref="bcpg:labellingPositions" /> -->
+<!-- 					</constraints>					 -->
+				</property>
+			</properties>
+			<associations>			
+				<association name="bcpg:labellingTemplate">
+					<title>Marquage</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:labellingTemplate</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+			</associations>
 		</aspect>
 
 	</aspects>
