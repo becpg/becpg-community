@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.webservice.accesscontrol.AccessStatus;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -178,21 +177,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		return ret;
 	}
-
-	/**
-	 * Get the node where the document will we stored.
-	 * 
-	 * @param entityNodeRef
-	 *            the node ref
-	 * @param tplNodeRef
-	 *            the tpl node ref
-	 * @return the document content writer
-	 */
-	public ContentWriter getDocumentContentWriter(NodeRef entityNodeRef, NodeRef tplNodeRef, List<NodeRef> newReports) {
-
-		ContentWriter contentWriter = null;
+	
+	
+	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat) {
 		
-		//Entity V2 is a container
+		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
+				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+		if(documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null){
+			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
+		}
+		return documentName;
+	}
+	
+	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef,String documentName){
 
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
@@ -201,25 +199,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 			documentsFolderNodeRef = fileFolderService.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 
-		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
-				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-		if(documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null){
-			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
-		}
+		
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 		if (documentNodeRef == null) {
-
 			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
-			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);			
-			setPermissions(tplNodeRef, documentNodeRef);
+			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);
 		}
 		
-		newReports.add(documentNodeRef);
-		contentWriter = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
-
-		return contentWriter;
+		
+		return documentNodeRef;
 	}
+
+	
 
 	/**
 	 * Method that generates reports.
@@ -254,21 +245,34 @@ public class EntityReportServiceImpl implements EntityReportService {
 			
 			// prepare
 			try {
-
+				
+				String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+				String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
+				
+				
+				NodeRef documentNodeRef  = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+				
 				// Run report
-				ContentWriter writer = getDocumentContentWriter(entityNodeRef, tplNodeRef, newReports);
+				ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 
 				if (writer != null) {
-					String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
+					String mimetype = mimetypeService.guessMimetype(documentName);
 					writer.setMimetype(mimetype);
 					Map<String, Object> params = new HashMap<String, Object>();
 
 					params.put(ReportParams.PARAM_IMAGES, images);
-					params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
+					params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 
 					logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
 					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
 				}
+				
+				//Update permissions
+				setPermissions(tplNodeRef, documentNodeRef);
+				
+				//Set Assoc
+				newReports.add(documentNodeRef);
+				
 			} catch (ReportException e) {
 				logger.error("Failed to execute report for template : " + tplNodeRef, e);
 			}
@@ -277,7 +281,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 		updateReportsAssoc(entityNodeRef, newReports);		
 	}
 	
+
+
 	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports){
+		
 		// #417 : refresh reports assoc (delete obsolete reports if we rename entity)
 		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 		for (NodeRef dbReport : dbReports) {

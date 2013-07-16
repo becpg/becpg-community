@@ -325,7 +325,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef getEntitiesHistoryFolder() {
 		
-		return beCPGCacheService.getFromCache(EntityVersionServiceImpl.class.getName(), KEY_ENTITIES_HISTORY , new BeCPGCacheDataProviderCallBack<NodeRef>() {
+		return beCPGCacheService.getFromCache(EntityVersionService.class.getName(), KEY_ENTITIES_HISTORY , new BeCPGCacheDataProviderCallBack<NodeRef>() {
 
 			@Override
 			public NodeRef getData() {
@@ -364,7 +364,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				
 				return entitiesHistoryNodeRef;
 			}			
-		});		
+		},true);		
 	}
 
 	@Override

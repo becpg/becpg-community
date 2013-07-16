@@ -346,13 +346,18 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	@Test
 	public void testECOService() throws Exception {
+		logger.error("Call testECOService ");
+		
+		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
+
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
-				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
+				logger.error("Call tx testECOService ");
 
+				
 				/*
 				 * create a change order to replace RM4 by RM5
 				 */
@@ -381,7 +386,10 @@ public class ECOTest extends RepoBaseTestCase {
 				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				assertEquals("Check 2 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+
+				logger.error( dbECOData.getWUsedList().size());
+				assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+				logger.error( "SUCCESS");
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
 
@@ -471,10 +479,14 @@ public class ECOTest extends RepoBaseTestCase {
 				ecoService.apply(ecoNodeRef);
 
 				return null;
+				
+				
 
 			}
 
 		}, false, true);
+		
+		logger.error("end ecoService ");
 
 	}
 
@@ -486,7 +498,7 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
-
+		logger.error("Call testECOInMultiLeveCompo ");
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
@@ -530,7 +542,7 @@ public class ECOTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Formulate product --*/
-
+				logger.error("Call txStart ");
 				logger.debug("/*-- Formulate product PF3 --*/");
 				productService.formulate(finishedProduct3NodeRef);
 
@@ -596,8 +608,7 @@ public class ECOTest extends RepoBaseTestCase {
 				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				// assertEquals("Check WUsed impacted", 5,
-				// dbECOData.getWUsedList().size());
+			     assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
 

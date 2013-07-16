@@ -6,13 +6,18 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.repo.cache.SimpleCache;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.tenant.TenantUtil;
-import org.alfresco.util.Pair;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,8 +39,14 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	private static Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
 	private int maxCacheItems = 500;
+	
+	Map<String,Integer> cacheSizes = new HashMap<>();
 
 	private boolean isDebugEnable = false;
+	
+	private boolean disableAllCache = false;
+	
+	private TenantAdminService tenantAdminService;
 
 	private Map<String, DefaultSimpleCache<Serializable, ?>> caches = new ConcurrentHashMap<String, DefaultSimpleCache<Serializable, ?>>();
 
@@ -48,60 +59,98 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		isDebugEnable = logger.isDebugEnabled();
 
 	}
+	
+
+	public void setDisableAllCache(boolean disableAllCache) {
+		this.disableAllCache = disableAllCache;
+	}
+
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
+	}
+
+	public void setCacheSizes(Map<String, Integer> cacheSizes) {
+		this.cacheSizes = cacheSizes;
+	}
+
 
 	@Override
 	public <T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack) {
-
-		return getFromCache(cacheName, cacheKey, cacheDataProviderCallBack, -1);
+		return getFromCache(cacheName, cacheKey, cacheDataProviderCallBack, false);
 	}
-
+	
+	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, long timeStamp) {
-
+	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback) {
+	
 		cacheKey = computeCacheKey(cacheKey);
-		DefaultSimpleCache<Serializable, Pair<Long, T>> cache = (DefaultSimpleCache<Serializable, Pair<Long, T>>) getCache(cacheName);
-		Pair<Long, T> ret = null;
-		T value = null;
+		SimpleCache<Serializable, T> cache = (DefaultSimpleCache<Serializable,T>) getCache(cacheName);
+		T ret = null;
 		try {
-			ret = cache.get(cacheKey);
-
+			ret = disableAllCache? null : cache.get(cacheKey);
 		} catch (Exception e) {
 			logger.error("Cannot get " + cacheKey + " from cache " + cacheName, e);
 		}
 
-		if (ret != null) {
-			if (ret.getFirst() < timeStamp) {
-				if (isDebugEnable) {
-					logger.debug("Remove obsolete cache value " + cacheKey + " old timeStamp " + ret.getFirst() + " new timeStamp " + timeStamp);
-				}
-				cache.remove(cacheKey);
-			} else {
-				if (isDebugEnable) {
-					logger.debug("Cache hit " + cacheKey);
-				}
-				value = ret.getSecond();
-			}
-		}
-		if (value == null) {
+	
+		if (ret == null) {
 			if (isDebugEnable) {
 				logger.debug("Cache miss " + cacheKey);
 			}
 
-			value = cacheDataProviderCallBack.getData();
-			if (value != null) {
-				cache.put(cacheKey, new Pair<Long, T>(timeStamp, value));
+			ret = cacheDataProviderCallBack.getData();
+			if (!disableAllCache && ret != null) {
+				
+				if(deleteOnTxRollback  && AlfrescoTransactionSupport.isActualTransactionActive()){
+					Set<String> currentTransactionCacheKeys = (Set<String>) AlfrescoTransactionSupport.getResource(cacheName);
+					if (currentTransactionCacheKeys == null) {
+						currentTransactionCacheKeys = new LinkedHashSet<String>();
+						if (isDebugEnable) {
+							logger.debug("Bind key to transaction : "+cacheName);
+						}
+						AlfrescoTransactionSupport.bindResource(cacheName, currentTransactionCacheKeys);
+					}
+					currentTransactionCacheKeys.add(cacheKey);
+					
+					AlfrescoTransactionSupport.bindListener( new TransactionListenerAdapter() {
+	
+						@Override
+						public void afterRollback() {
+							
+							Set<String> txCacheKeys = (Set<String>) AlfrescoTransactionSupport.getResource(cacheName);
+							if (txCacheKeys != null) {
+								for (String txCacheKey : txCacheKeys) {
+									if (isDebugEnable) {
+										logger.debug("Remove tx assoc   "+cacheName+" "+txCacheKey);
+									}
+									removeFromCache(cacheName, txCacheKey);
+								}
+								
+							}
+							
+						}
+					});
+				}
+				
+				cache.put(cacheKey,ret);
 			}
+		} else if (isDebugEnable) {
+			logger.debug("Cache Hit " + cacheKey);
 		}
 
-		return value;
+		return ret;
 	}
 
 	@Override
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
 		SimpleCache<Serializable, ?> cache = getCache(cacheName);
+		if(isDebugEnable && cache.get(cacheKey)==null){
+			logger.debug("Cache object doesn't exists");
+		}
 		cache.remove(cacheKey);
+
 
 	}
 
@@ -127,7 +176,16 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private DefaultSimpleCache<Serializable, ?> getCache(String cacheName) {
 		if (!caches.containsKey(cacheName)) {
-			caches.put(cacheName, new DefaultSimpleCache(maxCacheItems, cacheName));
+			Integer cacheSize = cacheSizes.get(cacheName);
+			if(cacheSize == null){
+				cacheSize = maxCacheItems;
+			}
+			
+			if(tenantAdminService.isEnabled()){
+				cacheSize *= tenantAdminService.getAllTenants().size();
+			}
+			
+			caches.put(cacheName, new DefaultSimpleCache(cacheSize, cacheName));
 		}
 		return caches.get(cacheName);
 	}
@@ -226,5 +284,6 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		}
 
 	}
+
 
 }

@@ -223,11 +223,13 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 		
 		String defaultReportName = String.format("%s - %s", 
 				nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME), 
-				nodeService.getProperty(defaultReportTplNodeRef, ContentModel.PROP_NAME));
+				nodeService.getProperty(defaultReportTplNodeRef, ContentModel.PROP_NAME))
+				.replace(RepoConsts.REPORT_EXTENSION_BIRT, ((String)nodeService.getProperty(defaultReportTplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT)).toLowerCase());
 		
 		String otherReportName = String.format("%s - %s", 
 						nodeService.getProperty(pfNodeRef, ContentModel.PROP_NAME), 
-						nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME));
+						nodeService.getProperty(otherReportTplNodeRef, ContentModel.PROP_NAME))
+						.replace(RepoConsts.REPORT_EXTENSION_BIRT, ((String)nodeService.getProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT)).toLowerCase());
 		
 		int checks=0;
 		for(NodeRef reportNodeRef : reportNodeRefs){

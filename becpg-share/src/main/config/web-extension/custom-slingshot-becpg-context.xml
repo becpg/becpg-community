@@ -200,5 +200,16 @@
          </list>
       </property>
    </bean> 
+   
+   
+   <!-- Remove alfresco logo Patch -->
+   
+   <bean id="webscript.org.springframework.extensions.messages.get" parent="webscript" class="fr.becpg.web.scripts.MessagesWebScript">
+      <property name="webFrameworkConfigElement" ref="webframework.config.element"/>
+      <property name="dependencyHandler"         ref="dependency.handler"/>
+   </bean>
+
+   <bean id="webscript.org.springframework.extensions.messages.post" parent="webscript" class="fr.becpg.web.scripts.MessagesWebScript" />
+   
 
 </beans>

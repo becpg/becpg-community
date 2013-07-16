@@ -19,6 +19,7 @@
 	padding-left: 20px;
 }
 
+
 .datagrid span.localSemiFinishedProduct-Valid {
 	background: url(../../components/images/states/valid-16.png),
 		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
