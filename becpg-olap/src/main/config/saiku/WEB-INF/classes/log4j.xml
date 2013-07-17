@@ -47,7 +47,7 @@
 
    <appender name="SAIKUCONSOLE" class="org.apache.log4j.ConsoleAppender">
       <param name="Target" value="System.out"/>
-      <param name="Threshold" value="DEBUG"/>
+      <param name="Threshold" value="INFO"/>
 
       <layout class="org.apache.log4j.PatternLayout">
          <!-- The default pattern: Date Priority [Category] Message\n -->
@@ -60,11 +60,11 @@
    <!-- ================ -->
 
    <category name="org.saiku">
-     <priority value="DEBUG"/>
+     <priority value="INFO"/>
    </category>
    
     <category name="fr.becpg">
-     <priority value="DEBUG"/>
+     <priority value="INFO"/>
    </category>
    <!-- 
 	 <category name="mondrian.sql">
