@@ -3374,7 +3374,7 @@
 					</field>
 					<field id="bcpg:compoListDeclType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
+							<control-param name="options">Declare|data.bcpg_compolistdecltype.declare,Detail|data.bcpg_compolistdecltype.detail,Group|data.bcpg_compolistdecltype.group,Omit|data.bcpg_compolistdecltype.omit,DoNotDeclare|data.bcpg_compolistdecltype.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -3415,7 +3415,7 @@
 					</field>
 					<field id="bcpg:compoListDeclType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
+							<control-param name="options">Declare|data.bcpg_compolistdecltype.declare,Detail|data.bcpg_compolistdecltype.detail,Group|data.bcpg_compolistdecltype.group,Omit|data.bcpg_compolistdecltype.omit,DoNotDeclare|data.bcpg_compolistdecltype.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -3521,7 +3521,7 @@
 					</field>
 					<field id="bcpg:compoListDeclType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.declarationtype.declare,Detail|data.declarationtype.detail,Group|data.declarationtype.group,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
+							<control-param name="options">Declare|data.bcpg_compolistdecltype.declare,Detail|data.bcpg_compolistdecltype.detail,Group|data.bcpg_compolistdecltype.group,Omit|data.bcpg_compolistdecltype.omit,DoNotDeclare|data.bcpg_compolistdecltype.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -3567,30 +3567,9 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:variantIds" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/variantList</control-param>
-						</control>
-					</field>
-				</appearance>
-			</form>
-			<form>
-				<field-visibility>
-					<show id="bcpg:packagingListProduct" />
-					<show id="bcpg:packagingListQty" />
-					<show id="bcpg:packagingListUnit" />
-					<show id="bcpg:packagingListPkgLevel" />
-					<show id="bcpg:packagingListIsMaster" />
-					<show id="bcpg:variantIds" force="true"/>
-				</field-visibility>
-
-				<appearance>
-					<field id="bcpg:packagingListProduct">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">ingList
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
+					<field id="bcpg:packagingListPkgLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary</control-param>
 						</control>
 					</field>
 					<field id="bcpg:variantIds" >
@@ -3661,6 +3640,11 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:packagingListPkgLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary</control-param>
 						</control>
 					</field>
 					<field id="bcpg:variantIds" >
