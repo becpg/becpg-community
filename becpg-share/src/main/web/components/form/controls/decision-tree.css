@@ -26,6 +26,9 @@
 	display : inline-table;
 	padding-left: 5px;
 }
+.form-container .decision-tree-control input[type="radio"] {
+	width:1em;
+} 
 
 .decision-tree-message {
 	 background-color: #FFFFCC;
