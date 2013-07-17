@@ -12,6 +12,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,13 +40,9 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 		this.reportTplService = reportTplService;
 	}
 
-	
-	
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
 	}
-
-
 
 	@SuppressWarnings("unchecked")
 	public JSONAware decorate(QName propertyName, NodeRef nodeRef, List<NodeRef> assocs) {
@@ -63,46 +60,48 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 		}
 
 		for (NodeRef obj : assocs) {
-			try {
-				JSONObject jsonObj = new JSONObject();
-				
-				String name = (String )this.nodeService.getProperty(obj, ContentModel.PROP_NAME);
-				
-				jsonObj.put("name", name);
-				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(obj);
-				if (reportTemplateNodeRef != null) {
-					String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
-					if(templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)){
-						templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
-					}
-					jsonObj.put("templateName", templateName);
-					jsonObj.put("isDefault", this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT));
-					if (templateName.equalsIgnoreCase(reportName)) {
-						jsonObj.put("isSelected", true);
-					} else {
-						jsonObj.put("isSelected", false);
-					}
-				}
-
-				jsonObj.put("nodeRef", obj.toString());
-				
+			if(permissionService.hasPermission(obj, "Read") == AccessStatus.ALLOWED){
 				try {
-					String contentURL = MessageFormat.format(
-					            CONTENT_DOWNLOAD_API_URL, new Object[]{
-					            		obj.getStoreRef().getProtocol(),
-					            		obj.getStoreRef().getIdentifier(),
-					            		obj.getId(),
-					                    URLEncoder.encode(name,"UTF-8")});
+					JSONObject jsonObj = new JSONObject();
+					
+					String name = (String )this.nodeService.getProperty(obj, ContentModel.PROP_NAME);
+					
+					jsonObj.put("name", name);
+					NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(obj);
+					if (reportTemplateNodeRef != null) {
+						String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
+						if(templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)){
+							templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
+						}
+						jsonObj.put("templateName", templateName);
+						jsonObj.put("isDefault", this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT));
+						if (templateName.equalsIgnoreCase(reportName)) {
+							jsonObj.put("isSelected", true);
+						} else {
+							jsonObj.put("isSelected", false);
+						}
+					}
 
-					jsonObj.put("contentURL", contentURL);
-				} catch (UnsupportedEncodingException e) {
-					logger.error(e,e);
+					jsonObj.put("nodeRef", obj.toString());
+					
+					try {
+						String contentURL = MessageFormat.format(
+						            CONTENT_DOWNLOAD_API_URL, new Object[]{
+						            		obj.getStoreRef().getProtocol(),
+						            		obj.getStoreRef().getIdentifier(),
+						            		obj.getId(),
+						                    URLEncoder.encode(name,"UTF-8")});
+
+						jsonObj.put("contentURL", contentURL);
+					} catch (UnsupportedEncodingException e) {
+						logger.error(e,e);
+					}
+					
+					array.add(jsonObj);
+				} catch (InvalidNodeRefException e) {
+					logger.warn("Report with nodeRef " + obj.toString() + " does not exist.");
 				}
-				
-				array.add(jsonObj);
-			} catch (InvalidNodeRefException e) {
-				logger.warn("Report with nodeRef " + obj.toString() + " does not exist.");
-			}
+			}			
 		}
 
 		return array;

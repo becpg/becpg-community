@@ -307,6 +307,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		String parent = (String) props.get(ListValueService.PROP_PARENT);
 		NodeRef parentNodeRef = parent != null && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
 		
+		query = prepareQuery(query);		
 		List<NodeRef> ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 
 		// avoid cycle: when editing an item, cannot select itself as parent

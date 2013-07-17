@@ -446,7 +446,7 @@
 					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
 					<field id="pjt:tlWorkflowName" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
+							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct</control-param>
 						</control>
 					</field>
 					
