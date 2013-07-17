@@ -191,7 +191,9 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 				
 				logger.info("Delete report Tpl");
-				nodeService.deleteNode(otherReportTplNodeRef);
+				nodeService.setProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);				
+				
+				entityReportService.generateReport(pfNodeRef);
 				
 				// check report Tpl
 				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT);
@@ -209,6 +211,8 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 					}
 				}
 				assertFalse(hasReportPF2Name);
+				
+				nodeService.setProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, false);
 				
 				return null;
 

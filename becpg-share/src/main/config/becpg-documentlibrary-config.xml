@@ -36,6 +36,7 @@
 				<aspect name="ext1:customAspect" />
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
+				<aspect name="pjt:projectAspect"/>
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

@@ -126,10 +126,12 @@ public class ReportTplWebScript extends AbstractWebScript {
 					} else if(ACTION_UPDATE_PERMISSIONS.equals(action)){						
 						List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 						for(NodeRef report : reports){
-							entityReportService.setPermissions(nodeRef, report);
+							NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
+							if(nodeRef.equals(tplNodeRef)){
+								entityReportService.setPermissions(nodeRef, report);
+							}							
 						}						
-					}
-					
+					}					
 				}
 			}
 			

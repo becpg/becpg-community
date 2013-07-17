@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -199,13 +200,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 			documentsFolderNodeRef = fileFolderService.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 
-		
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 		if (documentNodeRef == null) {
 			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
+			//We don't update permissions. If permissions are modified -> admin should use the action update-permissions from the reportTpl
+			setPermissions(tplNodeRef, documentNodeRef);
 			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);
 		}
-		
 		
 		return documentNodeRef;
 	}
@@ -224,7 +225,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	 * @param images
 	 *            the images
 	 */
-	public void generateReports(NodeRef entityNodeRef, List<NodeRef> tplsNodeRef, Element nodeElt, Map<String, byte[]> images) {
+	public void generateReports(final NodeRef entityNodeRef, List<NodeRef> tplsNodeRef, final Element nodeElt, final Map<String, byte[]> images) {
 
 		if (entityNodeRef == null) {
 			throw new IllegalArgumentException("nodeRef is null");
@@ -237,45 +238,49 @@ public class EntityReportServiceImpl implements EntityReportService {
 		List<NodeRef> newReports = new ArrayList<NodeRef>();
 
 		// generate reports
-		for (NodeRef tplNodeRef : tplsNodeRef) {
+		for (final NodeRef tplNodeRef : tplsNodeRef) {
 
 			if (nodeElt == null) {
 				throw new IllegalArgumentException("nodeElt is null");
 			}
 			
-			// prepare
-			try {
-				
-				String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-				String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
-				
-				
-				NodeRef documentNodeRef  = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
-				
-				// Run report
-				ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
-
-				if (writer != null) {
-					String mimetype = mimetypeService.guessMimetype(documentName);
-					writer.setMimetype(mimetype);
-					Map<String, Object> params = new HashMap<String, Object>();
-
-					params.put(ReportParams.PARAM_IMAGES, images);
-					params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-
-					logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
-					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
-				}
-				
-				//Update permissions
-				setPermissions(tplNodeRef, documentNodeRef);
-				
-				//Set Assoc
-				newReports.add(documentNodeRef);
-				
-			} catch (ReportException e) {
-				logger.error("Failed to execute report for template : " + tplNodeRef, e);
-			}
+			// prepare			
+			final String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+			final String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
+			
+			final NodeRef documentNodeRef  = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+			
+			// Run report
+			AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Object>()
+            {
+                public Object doWork() throws Exception 
+                {
+                	try {
+	                	ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+	
+	    				if (writer != null) {
+	    					String mimetype = mimetypeService.guessMimetype(documentName);
+	    					writer.setMimetype(mimetype);
+	    					Map<String, Object> params = new HashMap<String, Object>();
+	
+	    					params.put(ReportParams.PARAM_IMAGES, images);
+	    					params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+	
+	    					logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+	    					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
+	    				
+	    				}
+    				} catch (ReportException e) {
+    					logger.error("Failed to execute report for template : " + tplNodeRef, e);
+    				}
+    				
+                    return null;
+                }
+            }, 
+            AuthenticationUtil.getSystemUserName());
+			
+			//Set Assoc
+			newReports.add(documentNodeRef);			
 		}
 
 		updateReportsAssoc(entityNodeRef, newReports);		

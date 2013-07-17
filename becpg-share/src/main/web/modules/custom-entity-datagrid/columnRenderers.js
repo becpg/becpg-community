@@ -33,7 +33,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                         var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
                         return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">' + Alfresco.util
-                              .encodeHTML(data.displayValue) + '</a></span>' + version;
+                        				.encodeHTML(data.displayValue) + '</a></span>' + version;
                      }
                      return '<span class="' + data.metadata + '" ><a href="' + url + '">' + Alfresco.util
                            .encodeHTML(data.displayValue) + '</a></span>' + version;
@@ -83,11 +83,22 @@ if (beCPG.module.EntityDataGridRenderers) {
                var msgKey  =  values[i].cid == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree.allergenList."+values[i].qid+"."+values[i].cid;
                
                ret+= values[i].qid.toUpperCase()+": "+scope.msg(msgKey);
-            }
-         
+            }        
          }
          return ret;
-
+      }
+   });
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources" ],
+      renderer : function(oRecord, data, label, scope) {
+      	if(data.metadata == "ing"){
+      		return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+      	}
+      	else{
+      		return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityCharactURL(data.siteId, data.value) + '">' + Alfresco.util
+            .encodeHTML(data.displayValue) + '</a></span>';
+      	}      	
       }
 
    });
@@ -347,6 +358,19 @@ if (beCPG.module.EntityDataGridRenderers) {
          }
 
          return Alfresco.util.encodeHTML(qty);
+      }
+   });
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : [ "bcpg:compoListDeclType", "bcpg:packagingListPkgLevel" ],
+      renderer : function(oRecord, data, label, scope) {      	
+      	if(data.displayValue != null){
+      		var msgKey = "data." + label.replace(":","_").toLowerCase() + "." + data.displayValue.toLowerCase(), msgValue = scope.msg(msgKey);
+      		if(msgKey != msgValue){
+      			return Alfresco.util.encodeHTML(msgValue);
+      		}      		
+      	}
+      	return Alfresco.util.encodeHTML(data.displayValue);
       }
    });
 }
