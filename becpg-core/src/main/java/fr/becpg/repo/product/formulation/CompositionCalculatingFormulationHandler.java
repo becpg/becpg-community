@@ -18,12 +18,10 @@ import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
-import fr.becpg.repo.entity.version.EntityVersionServiceImpl;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
@@ -249,7 +247,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	
 	private NodeRef getWaterRawMaterial(){
 		
-		return beCPGCacheService.getFromCache(EntityVersionServiceImpl.class.getName(), KEY_RM_WATER , new BeCPGCacheDataProviderCallBack<NodeRef>() {
+		return beCPGCacheService.getFromCache(CompositionCalculatingFormulationHandler.class.getName(), KEY_RM_WATER , new BeCPGCacheDataProviderCallBack<NodeRef>() {
 
 			@Override
 			public NodeRef getData() {
