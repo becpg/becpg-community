@@ -109,6 +109,13 @@
 					<property name="beCPGSearchService" ref="BeCPGSearchService" />
 					<property name="beCPGCacheService" ref="beCPGCacheService" />	
 				</bean>
+				<bean parent="abstractSimpleFormulationHandler"
+					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
+				</bean>
+				<bean parent="abstractSimpleFormulationHandler"
+					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
+					<property name="entityTplService" ref="entityTplService" />
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
