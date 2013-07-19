@@ -35,6 +35,8 @@
    </div>
 </div>
 
+
+
 	<script type="text/javascript">//<![CDATA[
 			(function()
 			{
@@ -57,8 +59,17 @@
 				   {
 				        nodeRef : "${nodeRef?string}",
 				        siteId : "${site!""?string}",
-				         maxItems : 10,
-				         activity :  "${widgets[0].options.activity!""?string}",
+				        maxItems : 10,
+				        <#if activityParameters??>
+					      activity :{
+					            itemTitle: "${activityParameters.itemTitle}",
+					            page: "${activityParameters.page}",
+					            pageParams:
+					            {
+					               nodeRef: "${activityParameters.pageParams.nodeRef}"
+					            }
+					         },
+				         </#if>
 				         editorConfig : {
 				             inline_styles: false,
 				            convert_fonts_to_spans: false,
@@ -71,7 +82,7 @@
 				            theme_advanced_buttons2: null,
 				            theme_advanced_buttons3: null,
 				            theme_advanced_path: false,
-				            language: "${widgets[0].options.editorConfig.language!""?string}"
+				            language: "${localeString!""?string}"
 				          }
 				   }).setMessages(${messages});
 			   })();
