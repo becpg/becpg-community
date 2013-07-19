@@ -223,12 +223,12 @@ public class EntityListDAOImpl implements EntityListDAO {
 				@Override
 				public boolean evaluate(Object object) {
 					
-//					if(!nodeService.exists((NodeRef) object)){
-//						logger.error("NodeRef doesn't exist ? "+((NodeRef) object).toString());
-//						logger.error(" - Datalist  "+nodeService.getProperty(listNodeRef,ContentModel.PROP_NAME));
-//						logger.error(" - Cache Key "+associationService.createCacheKey(listNodeRef,ContentModel.ASSOC_CONTAINS ));
-//						return false;
-//					}
+					if(!nodeService.exists((NodeRef) object)){
+						logger.error("NodeRef doesn't exist ? "+((NodeRef) object).toString());
+						logger.error(" - Datalist  "+nodeService.getProperty(listNodeRef,ContentModel.PROP_NAME));
+						logger.error(" - Cache Key "+associationService.createCacheKey(listNodeRef,ContentModel.ASSOC_CONTAINS ));
+						return false;
+					}
 					
 					if (object != null && object instanceof NodeRef && nodeService.getType((NodeRef) object).equals(listQNameFilter)) {
 						return true;
