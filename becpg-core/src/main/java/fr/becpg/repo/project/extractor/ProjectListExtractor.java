@@ -76,16 +76,20 @@ public class ProjectListExtractor extends SimpleExtractor {
 		
 
 		for (NodeRef nodeRef : results) {
-			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
-				
-				Map<String, Object> extracted = extract(nodeRef, metadataFields, props);
-				if(favorites.contains(nodeRef)){
-					extracted.put(PROP_IS_FAVOURITE,true);
+			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED ) {
+				if(!nodeService.exists(nodeRef)){
+					logger.error("NodeRef doesn't exist ? "+nodeRef.toString());
 				} else {
-					extracted.put(PROP_IS_FAVOURITE,false);
-				}
 				
-				ret.getItems().add(extracted);
+					Map<String, Object> extracted = extract(nodeRef, metadataFields, props);
+					if(favorites.contains(nodeRef)){
+						extracted.put(PROP_IS_FAVOURITE,true);
+					} else {
+						extracted.put(PROP_IS_FAVOURITE,false);
+					}
+					
+					ret.getItems().add(extracted);
+				}
 			}
 		}
 
