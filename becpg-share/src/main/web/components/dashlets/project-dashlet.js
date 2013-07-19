@@ -527,10 +527,10 @@
 
                               desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';
                               desc += '<span class="hierachy">';
-                              if (record.itemData["prop_pjt_projectHierarchy1"]) {
+                              if (record.itemData["prop_pjt_projectHierarchy1"] && record.itemData["prop_pjt_projectHierarchy1"].displayValue!=null) {
                                  desc += record.itemData["prop_pjt_projectHierarchy1"].displayValue;
                               }
-                              if (record.itemData["prop_pjt_projectHierarchy2"]) {
+                              if (record.itemData["prop_pjt_projectHierarchy2"] && record.itemData["prop_pjt_projectHierarchy2"].displayValue!=null) {
 
                                  desc += " - " + record.itemData["prop_pjt_projectHierarchy2"].displayValue;
                               }
@@ -549,10 +549,10 @@
 
                               desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';
                               desc += '<span class="hierachy">';
-                              if (record.itemData["prop_pjt_projectHierarchy1"]) {
+                              if (record.itemData["prop_pjt_projectHierarchy1"] && record.itemData["prop_pjt_projectHierarchy1"].displayValue!=null) {
                                  desc += record.itemData["prop_pjt_projectHierarchy1"].displayValue;
                               }
-                              if (record.itemData["prop_pjt_projectHierarchy2"]) {
+                              if (record.itemData["prop_pjt_projectHierarchy2"] && record.itemData["prop_pjt_projectHierarchy2"].displayValue!=null) {
 
                                  desc += " - " + record.itemData["prop_pjt_projectHierarchy2"].displayValue;
                               }
