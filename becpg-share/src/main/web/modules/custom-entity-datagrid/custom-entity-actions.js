@@ -54,7 +54,7 @@
 
       onActionShowComments : function EntityDataGrid_onActionShowComments(item) {
 
-         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + item.nodeRef + "&activityType=entity";
+         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + item.nodeRef + "&activityType=datalist"+(item.siteId ? "&site="+item.siteId:"")+(this.options.entityNodeRef?"&entityNodeRef="+ this.options.entityNodeRef:"");
 
          this._showPanel(url ,this.id+"_comments", item.nodeRef);
 
