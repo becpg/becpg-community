@@ -56,5 +56,14 @@
          <value>task</value>
       </property>
    </bean>
+   
+   <!-- These transformers are not used alone but only as part of a failover sequence -->
+   <!-- For this reason they do not extend the baseContentTransformer bean and so will not be registered. -->
+   <bean id="failover.transformer.PdfRenderer.PdfToImage"
+         class="fr.becpg.patch.repo.content.transform.PdfToImageContentTransformer" >
+         <property name="mimetypeService">
+            <ref bean="mimetypeService"/>
+         </property>
+   </bean>
     
 </beans>
