@@ -5,4 +5,9 @@
 	<format default="json">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readonly" buffersize="0">required</transaction>
+	<cache>
+	  <never>false</never>
+	  <public>false</public>
+	  <mustrevalidate>false</mustrevalidate>
+	</cache>
 </webscript>

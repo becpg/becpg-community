@@ -1,6 +1,7 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 @Service
 public class MultiLevelExtractor extends SimpleExtractor {
@@ -56,6 +58,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 		
+		
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props);
 
 
@@ -66,13 +69,21 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex, int startIndex, int pageSize,
 			Map<String, Object> props) {
 		logger.debug("appendNextLevel :" + currIndex);
+		
+		Map<NodeRef,Map<String, Object>> cache = new HashMap<>();
+		
+		 List<AttributeExtractorStructure> computedFields =null;
+		
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef nodeRef = entry.getKey();
 			props.put(PROP_DEPTH, entry.getValue().getDepth());
 			props.put(PROP_ENTITYNODEREF, entry.getValue().getEntityNodeRef());
 			props.put(PROP_ACCESSRIGHT, false);
 			if(currIndex>=startIndex && currIndex< (startIndex+pageSize)){
-				ret.getItems().add(extract(nodeRef, metadataFields, props));
+				if(computedFields == null){
+					computedFields = attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields);
+				}
+				ret.getItems().add(extract(nodeRef, computedFields, props,cache));
 			} else if(currIndex >= (startIndex+pageSize)){
 				return currIndex;
 			}
@@ -82,9 +93,9 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<QName, Serializable> properties , Map<String, Object> extraProps) {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, Map<QName, Serializable> properties , Map<String, Object> extraProps,Map<NodeRef,Map<String, Object>> cache) {
 
-		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, properties , extraProps);
+		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, properties , extraProps, cache);
 		if(extraProps.get(PROP_DEPTH)!=null){
 			@SuppressWarnings("unchecked")
 			Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
@@ -115,8 +126,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			
 			tmp.put("assoc_"+assocName.replaceFirst(":", "_"), entity);
 		}
-		
-		
 
 		return tmp;
 	}
@@ -127,4 +136,13 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				 && !dataListName.equals("WUsed");
 	}
 
+	
+	@Override
+	public Date computeLastModified(DataListFilter dataListFilter) {
+		if(!dataListFilter.isDepthDefined()){
+			return super.computeLastModified(dataListFilter);
+		}
+		return null;
+	}
+	
 }

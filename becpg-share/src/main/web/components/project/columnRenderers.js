@@ -33,14 +33,8 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:taskList",
 		   renderer : function(oRecord, data, label, scope, idx, length) {
-
 			   var oData = oRecord.getData();
-
-			   if (data["itemData"]["prop_pjt_tlState"].value == "InProgress") {
-				  return scope.getTaskTitle(data, oData.nodeRef, true);
-			   }
-
-			   return null;
+			   return scope.getTaskTitle(data, oData.nodeRef, true);
 		   }
 		});
 

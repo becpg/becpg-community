@@ -309,6 +309,16 @@
                               "pjt_deliverableList|pjt_dlDescription|pjt_dlContent|pjt_dlState|fm_commentCount",
                               "pjt_projectManager", "pjt_projectStartDate", "pjt_projectCompletionDate",
                               "pjt_projectDueDate", "pjt_projectState" ],
+                       "project-simple" : [
+                                           "pjt_projectOverdue",
+                                           "pjt_projectHierarchy1",
+                                           "pjt_projectHierarchy2",
+                                           "pjt_projectPriority",
+                                           "pjt_completionPercent",
+                                           "bcpg_code",
+                                           "cm_name",
+                                           "pjt_projectManager", "pjt_projectStartDate", "pjt_projectCompletionDate",
+                                           "pjt_projectDueDate", "pjt_projectState" ],
                         "task" : [ "pjt_tlTaskName", "pjt_tlDuration",
                               "pjt_tlResources", "pjt_tlTaskLegend", "pjt_tlState", "pjt_completionPercent",
                               "pjt_tlStart", "pjt_tlEnd", "pjt_tlWorkflowInstance","fm_commentCount",
@@ -316,13 +326,14 @@
                      };
 
                      var request = {
-                        fields : fields[isTask ? 'task' : "project"],
+                        fields : fields[isTask ? 'task' : ("project"+(this.options.simpleView?'-simple':''))],
                         page : this.currentPage,
                         sort : sort,
                         queryExecutionId : this.queryExecutionId,
                         filter : {
                            filterId : this.widgets.view.value,
                            filterOwner : "Alfresco.component.AllFilter",
+                           filterData : this.widgets.filter.value,
                            filterParams : req
                         }
                      };

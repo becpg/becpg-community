@@ -73,6 +73,8 @@
 		<property name="securityService" ref="securityService" />
 		<property name="associationService" ref="associationService"/>
 	</bean>
+	
+
 	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">
 		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>

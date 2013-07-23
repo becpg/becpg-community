@@ -117,6 +117,7 @@ var g; // gantt var
 
                                     Dom.get(this.id + "-legend").innerHTML = html;
                                     if (this.view == "gantt") {
+                                       this.options.pageSize = 10;
                                        this.initGantt();
                                     }
                                     this.initDataTable();

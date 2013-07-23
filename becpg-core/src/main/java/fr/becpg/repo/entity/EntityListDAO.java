@@ -18,13 +18,14 @@ public interface EntityListDAO {
 	 */
     public NodeRef getEntity(NodeRef listItemNodeRef);
 	
-	/**
-	 * Get the data list container.
-	 * 
-	 * @param nodeRef
-	 * @return the list container
-	 */
+
+    /*
+     * TODO Get List and create List should directly take entityNodeRef
+     */
+
 	public NodeRef getListContainer(NodeRef nodeRef);
+    
+	public NodeRef createListContainer(NodeRef dataNodeRef);
 
 	/**
 	 * Get dataList with specified name and type
@@ -55,14 +56,7 @@ public interface EntityListDAO {
 	 */
 	public NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);
 
-	/**
-	 * Create the data list container.
-	 * 
-	 * @param dataNodeRef
-	 *            the data node ref
-	 * @return the node ref
-	 */
-	public NodeRef createListContainer(NodeRef dataNodeRef);
+	
 
 	/**
 	 * Create the data list NodeRef.

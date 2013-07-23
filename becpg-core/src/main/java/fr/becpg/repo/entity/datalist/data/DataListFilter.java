@@ -53,6 +53,8 @@ public class DataListFilter {
 	
 	private String filterId = ALL_FILTER;
 	
+	private String filterData = null;
+	
 	private String sortId = null;
 	
 	public DataListFilter() {
@@ -127,9 +129,13 @@ public class DataListFilter {
 	public String getContainerId() {
 		return containerId;
 	}
-
 	public void setContainerId(String containerId) {
 		this.containerId = containerId;
+	}
+
+	
+	public String getFilterData() {
+		return filterData;
 	}
 
 	public int getMaxDepth() {
@@ -220,6 +226,7 @@ public class DataListFilter {
 		if (filterId != null) {
 			
 			this.filterId = filterId;
+			this.filterData = filterData;
 
 			if (filterId.equals("recentlyAdded") || filterId.equals("recentlyModified") || filterId.equals("recentlyCreatedByMe") || filterId.equals("recentlyModifiedByMe")) {
 				boolean onlySelf = (filterId.indexOf("ByMe")) > 0 ? true : false;

@@ -81,6 +81,8 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService {
 		return searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
 
 	}
+	
+	
 
 	@Override
 	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults, String searchLanguage, StoreRef storeRef) {

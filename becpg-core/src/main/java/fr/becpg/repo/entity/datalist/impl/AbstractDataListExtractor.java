@@ -24,6 +24,7 @@ import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.AdvSearchService;
 
 public abstract class AbstractDataListExtractor implements DataListExtractor {
@@ -75,7 +76,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	}
 
 	public static final String PROP_NODE = "nodeRef";
-	public static final String PROP_TAGS = "tags";
+//	public static final String PROP_TAGS = "tags";
 //	public static final String PROP_DISPLAYNAME = "displayName";
 //	public static final String PROP_NAME = "name";
 	public static final String PROP_TITLE = "title";
@@ -89,9 +90,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
 	public static final String PROP_CREATOR_DISPLAY = "createdBy";
 	public static final String PROP_NODEDATA = "itemData";
-	public static final String PROP_ACTIONSET = "actionSet";
+	//public static final String PROP_ACTIONSET = "actionSet";
 	public static final String PROP_PERMISSIONS = "permissions";
-	public static final String PROP_ACTIONLABELS = "actionLabels";
+	// public static final String PROP_ACTIONLABELS = "actionLabels";
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 	public static final String PROP_SITE = "site";
 	@Deprecated
@@ -107,8 +108,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		dataListExtractorFactory.registerExtractor(this);
 	}
 
-	public Map<String, Object> extract(final NodeRef nodeRef, List<String> metadataFields, Map<String, Object> props) {
+	public Map<String, Object> extract(final NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 
+		
+		
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -116,11 +119,15 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 		try {
 
+			if(cache.containsKey(nodeRef)){
+				return cache.get(nodeRef);
+			}
+			
 			QName itemType = nodeService.getType(nodeRef);
 			Map<QName,Serializable> properties = nodeService.getProperties(nodeRef);
 			
 
-			Map<String, Object> ret = new HashMap<String, Object>();
+			Map<String, Object> ret = new HashMap<String, Object>(20);
 
 			ret.put(PROP_NODE, nodeRef);
 		
@@ -134,10 +141,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			ret.put(PROP_MODIFIED, attributeExtractorService.convertDateValue(properties.get( ContentModel.PROP_MODIFIED)));
 			ret.put(PROP_MODIFIER_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_MODIFIER)));
 
-			ret.put(PROP_ACTIONSET, "");
+			//ret.put(PROP_ACTIONSET, "");
 
 			Map<String, Object> permissions = new HashMap<String, Object>(1);
-			Map<String, Boolean> userAccess = new HashMap<String, Boolean>(3);
+			Map<String, Boolean> userAccess = new HashMap<String, Boolean>(5);
 
 			boolean accessRight = (Boolean) (props.get(PROP_ACCESSRIGHT) != null ? props.get(PROP_ACCESSRIGHT) : false);
 
@@ -150,10 +157,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			ret.put(PROP_PERMISSIONS, permissions);
 
-			ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
-			ret.put(PROP_ACTIONLABELS, new HashMap<String, Object>());
+		//	ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
+		//	ret.put(PROP_ACTIONLABELS, new HashMap<String, Object>());
 
-			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, properties, props));
+			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, properties, props, cache));
 
 			String path = nodeService.getPath(nodeRef).toPrefixString(services.getNamespaceService());
 			String displayPath = attributeExtractorService.getDisplayPath(nodeRef);
@@ -185,6 +192,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 				ret.put(PROP_SITE_ID, siteId);
 			}
 			
+			cache.put(nodeRef, ret);
+			
 			return ret;
 
 		} finally {
@@ -206,7 +215,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}
 
-	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<QName,Serializable> properties, Map<String, Object> extraProps);
+	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, Map<QName,Serializable> properties, Map<String, Object> extraProps, Map<NodeRef, Map<String, Object>> cache);
 	
 	
 
