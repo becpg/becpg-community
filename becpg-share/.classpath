@@ -3,7 +3,7 @@
   <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/config" excluding="**README-*|**/*.properties|**/*.java"/>
   <classpathentry kind="src" path="src/main/web" excluding="**README-*|**/*.java"/>
-  <classpathentry kind="src" path="." output="target/becpg-share-1.5.0" including="file-mapping.properties" excluding="**/*.java"/>
+  <classpathentry kind="src" path="." output="target/becpg-share-1.5.2" including="file-mapping.properties" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4/mail-1.4.jar" sourcepath="M2_REPO/javax/mail/mail/1.4/mail-1.4-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar" sourcepath="M2_REPO/javax/activation/activation/1.1/activation-1.1-sources.jar"/>

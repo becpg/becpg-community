@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -56,7 +56,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private DictionaryService dictionaryService;
 
 	private BeCPGCacheService beCPGCacheService;
-	
+
 	private AssociationService associationService;
 
 	private NamespaceService namespaceService;
@@ -66,56 +66,99 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private TaggingService taggingService;
 
 	private PermissionService permissionService;
-	
+
 	private SecurityService securityService;
 
 	private PropertyFormats propertyFormats = new PropertyFormats(false);
-
 
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
 
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-
 
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
-
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
-	
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
-
 
 	public void setTaggingService(TaggingService taggingService) {
 		this.taggingService = taggingService;
 	}
 
-	
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
 
-	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	
+	public class AttributeExtractorStructure {
+		
+		String fieldName;
+		DataListCallBack callback;
+		boolean isEntityField;
+		ClassAttributeDefinition fieldDef;
+		List<AttributeExtractorStructure> childrens;
+		QName fieldQname;
+		
+		
+		public AttributeExtractorStructure(String fieldName, QName fieldQname, List<String> dLFields, boolean isEntityField) {
+			this.fieldName = fieldName;
+			this.isEntityField = isEntityField;
+			this.fieldQname = fieldQname;
+			this.childrens = readExtractStructure(fieldQname, dLFields);
+		}
+
+		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef) {
+			this.fieldDef = fieldDef;
+			this.fieldName = fieldName;
+		}
+
+		public String getFieldName() {
+			return fieldName;
+		}
+
+		public DataListCallBack getCallback() {
+			return callback;
+		}
+
+		public boolean isEntityField() {
+			return isEntityField;
+		}
+
+		public ClassAttributeDefinition getFieldDef() {
+			return fieldDef;
+		}
+
+		public List<AttributeExtractorStructure> getChildrens() {
+			return childrens;
+		}
+
+		public QName getFieldQname() {
+			return fieldQname;
+		}
+
+		
+		
+	}
+	
+	
 	@Override
 	public PropertyFormats getPropertyFormats() {
 		return propertyFormats;
@@ -178,14 +221,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				value = v.toString();
 			}
 		} else if (dataType.equals(DataTypeDefinition.DATE.toString())) {
-
 			value = propertyFormats.getDateFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.DATETIME.toString())) {
-
 			value = propertyFormats.getDatetimeFormat().format(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
-			if (!propertyDef.isMultiValued()){
-				value = extractPropName((NodeRef)v);
+			if (!propertyDef.isMultiValued()) {
+				value = extractPropName((NodeRef) v);
 			} else {
 				List<NodeRef> values = (List<NodeRef>) v;
 
@@ -193,13 +234,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					if (value != null) {
 						value += RepoConsts.LABEL_SEPARATOR;
 					} else {
-						value="";
+						value = "";
 					}
-					
+
 					value += extractPropName(tempValue);
 				}
 			}
-	
+
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
 
 			value = v.toString();
@@ -222,7 +263,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 
 		else {
-		
+
 			TypeConverter converter = new TypeConverter();
 			value = converter.convert(propertyDef.getDataType(), v).toString();
 		}
@@ -230,77 +271,81 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
-	
+
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch ){
-		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), metadataFields, isSearch, null);
+	public List<AttributeExtractorStructure> readExtractStructure( QName itemType, List<String> metadataFields){
+		List<AttributeExtractorStructure> ret = new LinkedList<>();
+		
+		for (String field : metadataFields) {
+
+			if (field.contains("|")) {
+				StringTokenizer tokeniser = new StringTokenizer(field, "|");
+				String dlField = tokeniser.nextToken();
+
+
+				QName fieldQname = QName.createQName(dlField, namespaceService);
+
+				List<String> dLFields = new ArrayList<String>();
+				while (tokeniser.hasMoreTokens()) {
+					dLFields.add(tokeniser.nextToken());
+				}
+
+				if (isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM) ) {
+					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"),fieldQname,dLFields,false));
+					
+				} else if (isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2) ) {
+					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"),fieldQname,dLFields,true));
+			
+				}
+
+			} else {
+
+				QName fieldQname = QName.createQName(field, namespaceService);
+
+				if (hasReadAccess(itemType, field)) {
+
+					ClassAttributeDefinition prodDef = getPropDef(fieldQname);
+					String prefix = "prop_";
+						if (isAssoc(prodDef)) {
+							prefix = "assoc_";
+						}
+						ret.add(new AttributeExtractorStructure(prefix + field.replaceFirst(":", "_"),prodDef));
+					}
+				}
+			}
+		return ret;
 	}
 	
-	
-	
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties , List<String> metadataFields, boolean isSearch, AttributeExtractorService.DataListCallBack callback ) {
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch) {
+		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), isSearch, null);
+	}
+
+	@Override
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, boolean isSearch,
+			AttributeExtractorService.DataListCallBack callback) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
-		Map<String, Object> ret = new LinkedHashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<String, Object>(metadataFields.size());
 
-		
 		Integer order = 0;
-		for (String field : metadataFields) {
 		
-			if(field.contains("|")){
-				StringTokenizer tokeniser = new StringTokenizer(field, "|");
-				String dlField = tokeniser.nextToken();
-				
-				if(logger.isDebugEnabled()){
-					logger.debug("found nested field for:"+ dlField+" ("+field+")");
+	
+		for (AttributeExtractorStructure field : metadataFields) {
+			if(field.getChildrens()!=null){
+				if(field.isEntityField()){
+					ret.put(field.getFieldName(), callback.extractEntityField(nodeRef, field.getFieldQname(), field.getChildrens()));
+				} else {
+					ret.put(field.getFieldName(), callback.extractDataListField(nodeRef, field.getFieldQname(), field.getChildrens()));
 				}
 				
-				QName fieldQname = QName.createQName(dlField, namespaceService);
-				
-				List<String> dLFields = new ArrayList<String>();
-				while(tokeniser.hasMoreTokens()){
-					dLFields.add(tokeniser.nextToken());
-				}
-				
-				
-				if(isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM) && callback!=null){
-					if(logger.isDebugEnabled()){
-						logger.debug("Field :"+ fieldQname+" is a dataList");
-					}
-					ret.put("dt_"+dlField.replaceFirst(":", "_"), callback.extractDataListField( nodeRef, fieldQname, dLFields));
-				}
-				
-				if(isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2) && callback!=null){
-					if(logger.isDebugEnabled()){
-						logger.debug("Field :"+ fieldQname+" is an entity");
-					}
-					ret.put("dt_"+dlField.replaceFirst(":", "_"), callback.extractEntityField( nodeRef, fieldQname, dLFields));
-				}
-
 			} else {
-			
-				QName fieldQname = QName.createQName(field, namespaceService);
-	
-				if (hasReadAccess(itemType, field)) {
-	
-					ClassAttributeDefinition prodDef = getPropDef(fieldQname);
-	
-					Object tmp = extractNodeData(nodeRef, properties, prodDef, isSearch, order++);
-	
-					if (tmp != null) {
-						logger.debug("Extract field : " + field);
-						String prefix = "prop_";
-						if (isAssoc(prodDef)) {
-							prefix = "assoc_";
-						}
-						ret.put(prefix + field.replaceFirst(":", "_"), tmp);
-					}
-				}
+				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, field.getFieldDef(), isSearch, order++));
 			}
+			
 		}
 		if (logger.isDebugEnabled()) {
 			watch.stop();
@@ -309,52 +354,47 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return ret;
 	}
 
-	
-
 	private boolean isAssoc(ClassAttributeDefinition propDef) {
 		return propDef instanceof AssociationDefinition;
 	}
 
 	private ClassAttributeDefinition getPropDef(final QName fieldQname) {
-		
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString()+".propDef", new BeCPGCacheDataProviderCallBack<ClassAttributeDefinition>() {
-			public ClassAttributeDefinition getData() {	
-				ClassAttributeDefinition propDef = dictionaryService.getProperty(fieldQname);
-				if(propDef == null){
-					 propDef = dictionaryService.getAssociation(fieldQname);
-				}
-				
-				return propDef;
-			}
-		});
+
+		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString() + ".propDef",
+				new BeCPGCacheDataProviderCallBack<ClassAttributeDefinition>() {
+					public ClassAttributeDefinition getData() {
+						ClassAttributeDefinition propDef = dictionaryService.getProperty(fieldQname);
+						if (propDef == null) {
+							propDef = dictionaryService.getAssociation(fieldQname);
+						}
+
+						return propDef;
+					}
+				});
 
 	}
 
-	private boolean isSubClass(final QName fieldQname,final QName typeEntitylistItem) {
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString()+"_"+typeEntitylistItem.toString()+".isSubClass", new BeCPGCacheDataProviderCallBack<Boolean>() {
-			public Boolean getData() {	
-				return dictionaryService.isSubClass(fieldQname, typeEntitylistItem);
-			}
-		});
+	private boolean isSubClass(final QName fieldQname, final QName typeEntitylistItem) {
+		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString() + "_" + typeEntitylistItem.toString() + ".isSubClass",
+				new BeCPGCacheDataProviderCallBack<Boolean>() {
+					public Boolean getData() {
+						return dictionaryService.isSubClass(fieldQname, typeEntitylistItem);
+					}
+				});
 	}
-	
 
 	@Override
 	public Collection<QName> getSubTypes(final QName typeQname) {
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), typeQname.toString()+".getSubTypes", new BeCPGCacheDataProviderCallBack<Collection<QName> >() {
-			public Collection<QName>  getData() {	
-				return dictionaryService.getSubTypes(typeQname, true);
-			}
-		});
+		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), typeQname.toString() + ".getSubTypes",
+				new BeCPGCacheDataProviderCallBack<Collection<QName>>() {
+					public Collection<QName> getData() {
+						return dictionaryService.getSubTypes(typeQname, true);
+					}
+				});
 	}
 
+	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, ClassAttributeDefinition attribute, boolean isSearch, int order) {
 
-
-	private Object extractNodeData(NodeRef nodeRef , Map<QName, Serializable> properties, ClassAttributeDefinition attribute, boolean isSearch, int order) {
-		Map<String, Object> tmp = new HashMap<String, Object>();
-		if (isSearch) {
-			tmp.put("order", order);
-		}
 		Serializable value = null;
 		String displayName = "";
 		QName type = null;
@@ -362,33 +402,40 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		// property
 		if (attribute instanceof PropertyDefinition) {
 
+			HashMap<String, Object> tmp = new HashMap<String, Object>(6);
+
 			value = properties.get(attribute.getName());
 			displayName = getStringValue((PropertyDefinition) attribute, value, propertyFormats);
 			type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
 
 			if (isSearch) {
+				tmp.put("order", order);
 				tmp.put("type", type);
 				tmp.put("label", attribute.getTitle());
 			} else if (type != null) {
 				tmp.put("metadata", extractMetadata(type, nodeRef));
 			}
-			if(nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)){
+			if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 				tmp.put("version", properties.get(ContentModel.PROP_VERSION_LABEL));
 			}
 			tmp.put("displayValue", displayName);
-			tmp.put("value",formatValue(value));
-			
+			tmp.put("value", formatValue(value));
+
 			return tmp;
 
-		} else if (attribute instanceof AssociationDefinition) {// associations
+		}
+
+		if (attribute instanceof AssociationDefinition) {// associations
 
 			List<NodeRef> assocRefs = null;
-			if(((AssociationDefinition) attribute).isChild()){
+			if (((AssociationDefinition) attribute).isChild()) {
 				assocRefs = associationService.getChildAssocs(nodeRef, attribute.getName());
 			} else {
 				assocRefs = associationService.getTargetAssocs(nodeRef, attribute.getName());
 			}
 			if (isSearch) {
+				HashMap<String, Object> tmp = new HashMap<String, Object>(5);
+
 				String nodeRefs = "";
 				for (NodeRef assocNodeRef : assocRefs) {
 
@@ -398,9 +445,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 
 					type = nodeService.getType(assocNodeRef);
-					displayName += extractPropName(type,assocNodeRef);
+					displayName += extractPropName(type, assocNodeRef);
 					nodeRefs += assocNodeRef.toString();
 				}
+				tmp.put("order", order);
 				tmp.put("label", attribute.getTitle());
 				tmp.put("type", "subtype");
 				tmp.put("displayValue", displayName);
@@ -408,17 +456,19 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				return tmp;
 
 			} else {
-				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>(assocRefs.size());
 				for (NodeRef assocNodeRef : assocRefs) {
-					tmp = new HashMap<String, Object>();
+					Map<String, Object> tmp = new HashMap<String, Object>(5);
 
 					type = nodeService.getType(assocNodeRef);
-					if (type != null) {
-						tmp.put("metadata", extractMetadata(type, assocNodeRef));
+
+					tmp.put("metadata", extractMetadata(type, assocNodeRef));
+					if (nodeService.hasAspect(assocNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+						tmp.put("version", nodeService.getProperty(assocNodeRef, ContentModel.PROP_VERSION_LABEL));
 					}
-					tmp.put("version", nodeService.getProperty(assocNodeRef,ContentModel.PROP_VERSION_LABEL));
-					tmp.put("displayValue", extractPropName(type,assocNodeRef));
-					tmp.put("value",assocNodeRef.toString());
+
+					tmp.put("displayValue", extractPropName(type, assocNodeRef));
+					tmp.put("value", assocNodeRef.toString());
 					String siteId = extractSiteId(assocNodeRef);
 					if (siteId != null) {
 						tmp.put("siteId", siteId);
@@ -438,12 +488,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				return ISO8601DateFormat.format((Date) value);
 			} else if (value instanceof Double) {
 				Double d = (Double) value;
-				if (d.isInfinite()){
+				if (d.isInfinite()) {
 					return 0 == d.compareTo(Double.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
 				}
 			} else if (value instanceof Float) {
 				Float f = (Float) value;
-				if (f.isInfinite()){
+				if (f.isInfinite()) {
 					return 0 == f.compareTo(Float.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
 				}
 			}
@@ -454,38 +504,32 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	private String extractPropName(QName type, NodeRef nodeRef) {
 		String value = "";
-		
-		if(permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED){
+
+		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
 			value = (String) nodeService.getProperty(nodeRef, getPropName(type));
 		} else {
 			value = I18NUtil.getMessage("message.becpg.access.denied");
 		}
-		
-		return  value;
+
+		return value;
 	}
-	
-	
 
 	private String extractPropName(NodeRef v) {
 		QName type = nodeService.getType((NodeRef) v);
-		return extractPropName(type,v);
+		return extractPropName(type, v);
 	}
-
-	
-
-	
 
 	private QName getPropName(QName type) {
 		if (type.equals(ContentModel.TYPE_PERSON)) {
 			return ContentModel.PROP_USERNAME;
-		} else if(type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)){
+		} else if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 			return ContentModel.PROP_AUTHORITY_DISPLAY_NAME;
-		} else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)){
+		} else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
 			return BeCPGModel.PROP_LKV_VALUE;
-		} else if (type.equals(ProjectModel.TYPE_TASK_LIST)){
+		} else if (type.equals(ProjectModel.TYPE_TASK_LIST)) {
 			return ProjectModel.PROP_TL_TASK_NAME;
 		}
-		
+
 		return ContentModel.PROP_NAME;
 	}
 
@@ -508,14 +552,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Override
 	public Serializable getProperty(NodeRef nodeRef, QName propName) {
 		Serializable value = nodeService.getProperty(nodeRef, propName);
-		
+
 		if (value instanceof Date) {
-			return (Serializable)formatDate((Date) value);
+			return (Serializable) formatDate((Date) value);
 		}
 		return value;
 	}
-	
-	
+
 	@Override
 	public String convertDateValue(Serializable value) {
 		if (value instanceof Date) {
@@ -523,8 +566,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return null;
 	}
-
-	
 
 	@Override
 	public String formatDate(Date date) {
@@ -539,7 +580,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())) {
 			return userId;
 		}
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId+".person", new BeCPGCacheDataProviderCallBack<String>() {
+		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId + ".person", new BeCPGCacheDataProviderCallBack<String>() {
 			public String getData() {
 				String displayName = "";
 				NodeRef personNodeRef = personService.getPerson(userId);
@@ -551,7 +592,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		});
 
 	}
-	
 
 	@Override
 	public String getDisplayPath(NodeRef nodeRef) {
@@ -585,8 +625,5 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return null;
 	}
-
-
-	
 
 }

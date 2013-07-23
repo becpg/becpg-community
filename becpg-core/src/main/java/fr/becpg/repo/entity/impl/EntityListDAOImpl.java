@@ -211,8 +211,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 	}
 
 	@Override
-	//TODO cache should be here instead of on associationService
-	@Deprecated
 	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter) {
 
 		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);

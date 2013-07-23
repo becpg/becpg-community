@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -95,6 +96,12 @@ public class WUsedExtractor extends MultiLevelExtractor {
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
 		return !dataListFilter.isSimpleItem() && dataListName!=null && dataListName.equals("WUsed");
+	}
+	
+	@Override
+	public Date computeLastModified(DataListFilter dataListFilter) {
+		//TODO cache timestamp
+		return null;
 	}
 
 }

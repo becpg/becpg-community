@@ -3,12 +3,14 @@ package fr.becpg.repo.entity.datalist.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -33,21 +35,20 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 @Service
 public class SimpleExtractor extends AbstractDataListExtractor {
 
 	private FileFolderService fileFolderService;
 
-	
-	private EntityListDAO entityListDAO;
-	
+	protected EntityListDAO entityListDAO;
+
 	private NamespaceService namespaceService;
-	
+
 	protected DataListSortRegistry dataListSortRegistry;
-	
+
 	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
-	
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
@@ -64,25 +65,30 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	public void setDataListSortRegistry(DataListSortRegistry dataListSortRegistry) {
 		this.dataListSortRegistry = dataListSortRegistry;
 	}
-	
-	
-	
 
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
-		
-		List<NodeRef> results = getListNodeRef(dataListFilter, pagination );
-		
+
+		List<NodeRef> results = getListNodeRef(dataListFilter, pagination);
+
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 
+		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
+
+		List<AttributeExtractorStructure> computedFields = null;
+
 		for (NodeRef nodeRef : results) {
-			//Right check not necessary
-			if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
-				ret.getItems().add(extract(nodeRef, metadataFields, props));
-			} 
+			// Right check not necessary
+			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+				if (computedFields == null) {
+					computedFields = attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields);
+				}
+
+				ret.getItems().add(extract(nodeRef, computedFields, props, cache));
+			}
 		}
 
 		ret.setFullListSize(pagination.getFullListSize());
@@ -91,28 +97,28 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	}
 
 	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
-	
+
 		List<NodeRef> results = new ArrayList<NodeRef>();
 
 		if (dataListFilter.isAllFilter()) {
 
 			Collection<QName> qnames = attributeExtractorService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-			if(logger.isDebugEnabled()){
-				logger.debug("DataType to filter :"+dataListFilter.getDataType());
+			if (logger.isDebugEnabled()) {
+				logger.debug("DataType to filter :" + dataListFilter.getDataType());
 			}
-			
+
 			Set<QName> ignoreTypeQNames = new HashSet<QName>(qnames.size());
 			for (QName qname : qnames) {
 				if (!qname.equals(dataListFilter.getDataType())) {
-					if(logger.isDebugEnabled()){
-						logger.debug("Add to ignore :"+qname);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Add to ignore :" + qname);
 					}
 					ignoreTypeQNames.add(qname);
 				}
 			}
 
-			int skipOffset = (pagination.getPage()-1) * pagination.getPageSize();
+			int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
 			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
 
 			PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
@@ -121,8 +127,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 			PagingResults<FileInfo> pageOfNodeInfos = null;
 			FileFilterMode.setClient(Client.script);
 			try {
-
-				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getParentNodeRef(), true, false, null, ignoreTypeQNames, dataListFilter.getSortProps(namespaceService), pageRequest);
+				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getParentNodeRef(), true, false, null, ignoreTypeQNames,
+						dataListFilter.getSortProps(namespaceService), pageRequest);
 			} finally {
 				FileFilterMode.clearClient();
 			}
@@ -133,13 +139,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 			results = advSearchService.queryAdvSearch(dataListFilter.getSearchQuery(), SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(),
 					dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), pagination.getMaxResults());
-			
-			if(dataListFilter.getSortId() != null){
+
+			if (dataListFilter.getSortId() != null) {
 				DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
-				if(plugin != null){
+				if (plugin != null) {
 					plugin.sort(results);
 				}
-			}					
+			}
 
 			results = pagination.paginate(results);
 
@@ -148,56 +154,57 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<String> metadataFields, Map<QName,Serializable> properties, final Map<String, Object> props) {
-		
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties ,  metadataFields, false, new AttributeExtractorService.DataListCallBack() {
-			
-			final Map<NodeRef,Map<String, Object>> cache = new HashMap<>();
-			
+	public Date computeLastModified(DataListFilter dataListFilter) {
+		if (dataListFilter.getParentNodeRef() != null) {
+			return (Date) nodeService.getProperty(dataListFilter.getParentNodeRef(), ContentModel.PROP_MODIFIED);
+		}
+		return null;
+	}
+
+	@Override
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, Map<QName, Serializable> properties,
+			final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
+
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, false, new AttributeExtractorService.DataListCallBack() {
+
 			@Override
-			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<String> metadataFields) {
-				
-				List<Map<String, Object>> ret = new ArrayList<Map<String,Object>>();
-				
+			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<AttributeExtractorStructure> metadataFields) {
+
+				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-				NodeRef listNodeRef =   entityListDAO.getList(listContainerNodeRef, dataListQname);
-				if(listNodeRef!=null){
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQname);
+				if (listNodeRef != null) {
 					List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
-				
+
 					for (NodeRef nodeRef : results) {
-						if(cache.containsKey(nodeRef)){
+						if (cache.containsKey(nodeRef)) {
 							ret.add(cache.get(nodeRef));
 						} else {
-							if(permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
-								cache.put(nodeRef, extract(nodeRef, metadataFields, props));
-								ret.add(cache.get(nodeRef));
+							if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+								ret.add(extract(nodeRef, metadataFields, props, cache));
 							}
 						}
-						
-						
+
 					}
 				}
 
-				
 				return ret;
 			}
-			
+
 			@Override
-			public Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname, List<String> metadataFields) {
-	
+			public Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname, List<AttributeExtractorStructure> metadataFields) {
+
 				NodeRef entityNodeRef = entityListDAO.getEntity(entityListNodeRef);
-			
-				if(cache.containsKey(entityNodeRef)){
+
+				if (cache.containsKey(entityNodeRef)) {
 					return cache.get(entityNodeRef);
 				} else {
 					if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
-						
-						cache.put(entityNodeRef,extract(entityNodeRef, metadataFields, props));
-						return  cache.get(entityNodeRef);
+						return extract(entityNodeRef, metadataFields, props, cache);
 					}
 				}
-				
-				return  new HashMap<String, Object>();
+
+				return new HashMap<String, Object>();
 			}
 		});
 	}

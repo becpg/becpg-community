@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -24,14 +25,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-import com.googlecode.concurrentlinkedhashmap.Weighers;
 
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 
 /**
  * 
- * @author matthieu TODO refactor with new simplecache or simply delete
+ * @author matthieu
+ *
  */
 @Service
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
@@ -40,7 +41,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private int maxCacheItems = 500;
 	
-	Map<String,Integer> cacheSizes = new HashMap<>();
+	Map<String,Integer> cacheSizes = new HashMap<>(10);
 
 	private boolean isDebugEnable = false;
 	
@@ -52,6 +53,10 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	public void setMaxCacheItems(int maxCacheItems) {
 		this.maxCacheItems = maxCacheItems;
+	}
+
+	public Map<String, DefaultSimpleCache<Serializable, ?>> getCaches() {
+		return  Collections.unmodifiableMap(caches);
 	}
 
 	@Override
@@ -147,7 +152,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		cacheKey = computeCacheKey(cacheKey);
 		SimpleCache<Serializable, ?> cache = getCache(cacheName);
 		if(isDebugEnable && cache.get(cacheKey)==null){
-			logger.debug("Cache object doesn't exists");
+			logger.debug("Cache "+cacheKey+" object doesn't exists");
 		}
 		cache.remove(cacheKey);
 
@@ -168,14 +173,15 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		final String tenantDomain = TenantUtil.getCurrentDomain();
 		if (!tenantDomain.equals(TenantService.DEFAULT_DOMAIN)) {
 			return cacheKey + "@" + tenantDomain;
-
 		}
 		return cacheKey;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private DefaultSimpleCache<Serializable, ?> getCache(String cacheName) {
-		if (!caches.containsKey(cacheName)) {
+		DefaultSimpleCache<Serializable, ?> cache = caches.get(cacheName);
+		
+		if (cache == null) {
 			Integer cacheSize = cacheSizes.get(cacheName);
 			if(cacheSize == null){
 				cacheSize = maxCacheItems;
@@ -185,9 +191,11 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 				cacheSize *= tenantAdminService.getAllTenants().size();
 			}
 			
-			caches.put(cacheName, new DefaultSimpleCache(cacheSize, cacheName));
+			cache = new DefaultSimpleCache(cacheSize, cacheName);
+			
+			caches.put(cacheName,cache );
 		}
-		return caches.get(cacheName);
+		return cache;
 	}
 
 	@Override
@@ -226,8 +234,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 			// The map will have a bounded size determined by the maxItems
 			// member variable.
-			map = new ConcurrentLinkedHashMap.Builder<K, AbstractMap.SimpleImmutableEntry<K, V>>().maximumWeightedCapacity(maxItems).concurrencyLevel(32)
-					.weigher(Weighers.singleton()).build();
+			map = new ConcurrentLinkedHashMap.Builder<K, AbstractMap.SimpleImmutableEntry<K, V>>().maximumWeightedCapacity(maxItems).build();
 		}
 
 		@Override
@@ -272,15 +279,6 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		@Override
 		public String toString() {
 			return "DefaultSimpleCache[maxItems=" + map.capacity() + "]";
-		}
-
-		/**
-		 * Sets the maximum number of items that the cache will hold.
-		 * 
-		 * @param maxItems
-		 */
-		public void setMaxItems(int maxItems) {
-			map.setCapacity(maxItems);
 		}
 
 	}

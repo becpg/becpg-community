@@ -166,6 +166,8 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig) {
 function main() {
    var itemType = getArgument("itemType"), list = getArgument("list");// beCPG
 
+   cache.maxAge = 3600; // in seconds
+   
    // pass form ui model to FTL
    model.columns = getColumns(itemType, list);
 }

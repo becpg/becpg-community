@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity.datalist;
 
+import java.util.Date;
 import java.util.List;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -17,5 +18,7 @@ public interface DataListExtractor {
 	boolean applyTo(DataListFilter dataListFilter, String dataListName);
 
 	boolean isDefaultExtractor();
+
+	Date computeLastModified(DataListFilter dataListFilter);
 
 }
