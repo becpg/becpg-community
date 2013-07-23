@@ -145,14 +145,15 @@
       	<property name="nodeService" ref="nodeService" />      				
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />			
 		<property name="mlNodeService" ref="mlAwareNodeService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="actionService" ref="actionService" />
-		<property name="ruleService" ref="ruleService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />		
 		<property name="contentService" ref="contentService" />
 		<property name="entityReportService" ref="entityReportService" />
 	    <property name="imageMagickContentTransformer">
 	    	<ref bean="transformer.ImageMagick" />
 	    </property> 
+	    <property name="lockService" ref="lockService" />
+	    <property name="searchService" ref="searchService" />
+	    <property name="nodeArchiveService" ref="nodeArchiveService" />
    	</bean>
    	
   

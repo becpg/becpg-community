@@ -5,30 +5,28 @@ package fr.becpg.repo.web.scripts.migration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
-import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
-import org.alfresco.repo.action.evaluator.compare.ContentPropertyName;
-import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.content.transform.ContentTransformer;
 import org.alfresco.repo.content.transform.magick.ImageTransformationOptions;
+import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.service.cmr.action.Action;
-import org.alfresco.service.cmr.action.ActionCondition;
-import org.alfresco.service.cmr.action.ActionService;
-import org.alfresco.service.cmr.action.CompositeAction;
+import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.rule.Rule;
-import org.alfresco.service.cmr.rule.RuleService;
-import org.alfresco.service.cmr.rule.RuleType;
+import org.alfresco.service.cmr.search.LimitBy;
+import org.alfresco.service.cmr.search.PermissionEvaluationMode;
+import org.alfresco.service.cmr.search.ResultSet;
+import org.alfresco.service.cmr.search.SearchParameters;
+import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +37,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.action.executer.ImageCompressorActionExecuter;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -63,9 +60,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private static final String PARAM_NODEREF = "nodeRef";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	
-	private static final String RULE_COMPRESS_IMAGE = "compress-image";
 	private static final String PARAM_CONVERT_COMMAND = "convertCommand";
-	private static final String ACTION_CREATE_RULE_COMPRESSOR = "createRuleCompressor";	
+	private static final String ACTION_CREATE_RULE_COMPRESSOR = "createRuleCompressor";
+	private static final String ACTION_CLEAN_TRASH = "cleanTrash";	
 	
 	/** The node service. */
 	private NodeService nodeService;
@@ -76,16 +73,17 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	
 	private BeCPGSearchService beCPGSearchService;
 	
-	private ActionService actionService;
-	
-	private RuleService ruleService;
-		   					
 	private ContentService contentService;
 	
 	private EntityReportService entityReportService;
 	
 	private ContentTransformer imageMagickContentTransformer;
 	
+	private LockService lockService;
+	
+	private SearchService searchService;
+	
+	private NodeArchiveService nodeArchiveService;
 	/**
 	 * Sets the node service.
 	 *
@@ -107,14 +105,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
-	public void setActionService(ActionService actionService) {
-		this.actionService = actionService;
-	}
-
-	public void setRuleService(RuleService ruleService) {
-		this.ruleService = ruleService;
-	}
-
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
@@ -126,6 +116,18 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	public void setImageMagickContentTransformer(
 			ContentTransformer imageMagickContentTransformer) {
 		this.imageMagickContentTransformer = imageMagickContentTransformer;
+	}
+
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
+	}
+
+	public void setSearchService(SearchService searchService) {
+		this.searchService = searchService;
+	}
+
+	public void setNodeArchiveService(NodeArchiveService nodeArchiveService) {
+		this.nodeArchiveService = nodeArchiveService;
 	}
 
 	@Override
@@ -149,7 +151,16 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	}
     	else if(ACTION_CREATE_RULE_COMPRESSOR.equals(action)){
     		String convertCommand = req.getParameter(PARAM_CONVERT_COMMAND);
-    		createRuleCompressor(convertCommand);
+    		try{
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				createRuleCompressor(convertCommand);
+    		}
+			finally{
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}    		
+    	}
+    	else if(ACTION_CLEAN_TRASH.equals(action)){
+    		cleanTrash();
     	}
     	else{
     		logger.error("Unknown action" + action);
@@ -207,74 +218,69 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 		
 		for(NodeRef product : products){
 			
-			NodeRef parentNodeRef = nodeService.getPrimaryParent(product).getParentRef();
-			
-			NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));		
-			if(imagesFolderNodeRef == null){
-				logger.warn("Folder 'Images' doesn't exist.");
-				continue;
-			}
-			
-			List<Rule> rules = ruleService.getRules(imagesFolderNodeRef);
-			for(Rule rule : rules){
-				if(rule.getTitle().equals(RULE_COMPRESS_IMAGE)){
-			
-					//remove rule
-					ruleService.removeRule(imagesFolderNodeRef, rule);
-					break;
+			if(nodeService.exists(product)){
+				
+				NodeRef parentNodeRef = nodeService.getPrimaryParent(product).getParentRef();
+				
+				NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));		
+				if(imagesFolderNodeRef == null){
+					logger.warn("Folder 'Images' doesn't exist.");
+					continue;
 				}
-			}
+				
+				nodeService.removeAspect(imagesFolderNodeRef, RuleModel.ASPECT_RULES);
 
-			logger.info("Create rule compressor for folder image of product: " + product);
-			// Action : compressor
-		    Map<String,Serializable> params = new HashMap<String, Serializable>();
-	  	  	params.put(ImageCompressorActionExecuter.PARAM_CONVERT_COMMAND, convertCommand);
-		    CompositeAction compositeAction = actionService.createCompositeAction();
-		    Action myAction= actionService.createAction(ImageCompressorActionExecuter.NAME, params);
-		    compositeAction.addAction(myAction);
-		    	   
-		    // Conditions for the Rule
-		    ActionCondition actionCondition = actionService.createActionCondition(CompareMimeTypeEvaluator.NAME);		    
-		    actionCondition.setParameterValue(CompareMimeTypeEvaluator.PARAM_PROPERTY, ContentModel.PROP_CONTENT);
-		    actionCondition.setParameterValue(ComparePropertyValueEvaluator.PARAM_CONTENT_PROPERTY, ContentPropertyName.MIME_TYPE.toString());
-		    actionCondition.setParameterValue(CompareMimeTypeEvaluator.PARAM_VALUE, MimetypeMap.MIMETYPE_IMAGE_JPEG);
-		    compositeAction.addActionCondition(actionCondition);
-		   	    
-		    // Create Rule
-			Rule rule = new Rule();
-		    rule.setTitle(RULE_COMPRESS_IMAGE);
-		    rule.setDescription("Every jpg image created or updated will be compressed");
-		    rule.applyToChildren(false);
-		    rule.setExecuteAsynchronously(false);
-		    rule.setRuleDisabled(false);
-		    List<String>ruleTypes = new ArrayList<String>();
-		    ruleTypes.add(RuleType.INBOUND);
-		    ruleTypes.add(RuleType.UPDATE);
-		    rule.setRuleTypes(ruleTypes);
-		    rule.setAction(compositeAction);	    	       	    
-		    ruleService.saveRule(imagesFolderNodeRef, rule);
-		    
-		    // compress image
-			String imageQuery = String.format("+PARENT:\"%s\" AND +@cm\\:content.mimetype:\"image/jpeg\"", imagesFolderNodeRef);			
-			List<NodeRef> images = beCPGSearchService.luceneSearch(imageQuery, RepoConsts.MAX_RESULTS_NO_LIMIT);
-			
-			for(NodeRef image : images){
-										 		    	
- 		        ContentReader contentReader = contentService.getReader(image, ContentModel.PROP_CONTENT);
- 		        ContentWriter contentWriter = contentService.getWriter(image, ContentModel.PROP_CONTENT, true);
- 		    	
- 		        ImageTransformationOptions imageOptions = new ImageTransformationOptions();
- 		        imageOptions.setCommandOptions(convertCommand);
- 		    	imageMagickContentTransformer.transform(contentReader, contentWriter, imageOptions); 	
- 		    	
- 		    	logger.debug("image transformed. initialSize: " + contentReader.getSize() + " - afterSize: " + contentWriter.getSize());					
-			}
-			
-			// force refresh report
-			if(!images.isEmpty()){
-				entityReportService.generateReport(product);
-			}						
+			    // compress image
+				String imageQuery = String.format("+PARENT:\"%s\" AND +@cm\\:content.mimetype:\"image/jpeg\"", imagesFolderNodeRef);			
+				List<NodeRef> images = beCPGSearchService.luceneSearch(imageQuery, RepoConsts.MAX_RESULTS_NO_LIMIT);
+				
+				for(NodeRef image : images){
+											 		    	
+	 		        ContentReader contentReader = contentService.getReader(image, ContentModel.PROP_CONTENT);
+	 		        ContentWriter contentWriter = contentService.getWriter(image, ContentModel.PROP_CONTENT, true);
+	 		    	
+	 		        ImageTransformationOptions imageOptions = new ImageTransformationOptions();
+	 		        imageOptions.setCommandOptions(convertCommand);
+	 		    	imageMagickContentTransformer.transform(contentReader, contentWriter, imageOptions); 	
+	 		    	
+	 		    	logger.debug("image transformed. initialSize: " + contentReader.getSize() + " - afterSize: " + contentWriter.getSize());					
+				}
+				
+				// force refresh report
+				if(!images.isEmpty() && lockService.getLockStatus(product) == LockStatus.NO_LOCK){					
+					entityReportService.generateReport(product);									
+				}		
+			}					
 		}
+	}
+	
+	private void cleanTrash(){
+		List<NodeRef> nodes = new ArrayList<NodeRef>();
+		
+		SearchParameters sp = new SearchParameters();
+		sp.addStore(nodeArchiveService.getStoreArchiveNode(RepoConsts.SPACES_STORE).getStoreRef());
+		sp.setLanguage(SearchService.LANGUAGE_LUCENE);
+		sp.setQuery("@cm\\:name:\"doclib\" OR @cm\\:name:\"webpreview\"");
+		sp.setLimit(RepoConsts.MAX_RESULTS_NO_LIMIT);
+		sp.setLimitBy(LimitBy.FINAL_SIZE);
+		sp.addLocale(Locale.getDefault());
+		sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
+		sp.excludeDataInTheCurrentTransaction(false);
+		sp.addSort(SearchParameters.SORT_IN_DOCUMENT_ORDER_DESCENDING);
+		ResultSet result = null;
+		try {
+			result = searchService.query(sp);
+			if (result != null) {
+				nodes =   new ArrayList<NodeRef>(result.getNodeRefs());
+			}
+		} finally {
+			if (result != null) {
+				result.close();
+			}			
+		}
+		
+		logger.info("Clean Trash, size: " + nodes.size());		
+		nodeArchiveService.purgeArchivedNodes(nodes);
 	}
 
 	

@@ -892,6 +892,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.QualityMgr.toString(), SystemGroup.Purchasing.toString(),
 				SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
 				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(),
+				SystemGroup.Production.toString(),SystemGroup.ProductionUser.toString(), SystemGroup.ProductionMgr.toString(),
 				SystemGroup.ProductReviewer.toString(), NPDGroup.NPD.toString(), NPDGroup.MarketingBrief.toString(),
 				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
 				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
@@ -953,6 +954,15 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(),
 					PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString());
 
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
+				+ SystemGroup.Production.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ProductionMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Production.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.ProductionMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ProductionUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Production.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.ProductionUser.toString());
+		
 		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
 				+ SystemGroup.Trade.toString(), true);
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeMgr.toString()))

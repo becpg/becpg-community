@@ -52,4 +52,10 @@ public enum SystemGroup {
 	
 	/** The RD mgr. */
 	TradeMgr,
+
+	Production,
+
+	ProductionUser,
+
+	ProductionMgr
 }
