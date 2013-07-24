@@ -15,6 +15,7 @@ import org.alfresco.repo.content.transform.magick.ImageTransformationOptions;
 import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -28,12 +29,15 @@ import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
+
+import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -84,6 +88,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 	private SearchService searchService;
 	
 	private NodeArchiveService nodeArchiveService;
+	
+	private TransactionService transactionService;
 	/**
 	 * Sets the node service.
 	 *
@@ -130,6 +136,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 		this.nodeArchiveService = nodeArchiveService;
 	}
 
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
+
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException
     {
@@ -150,14 +160,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     		deleteModel(modelNodeRef);
     	}
     	else if(ACTION_CREATE_RULE_COMPRESSOR.equals(action)){
-    		String convertCommand = req.getParameter(PARAM_CONVERT_COMMAND);
-    		try{
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				createRuleCompressor(convertCommand);
-    		}
-			finally{
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			}    		
+    		
+    		final String convertCommand = req.getParameter(PARAM_CONVERT_COMMAND);
+    		createRuleCompressor(convertCommand);
     	}
     	else if(ACTION_CLEAN_TRASH.equals(action)){
     		cleanTrash();
@@ -211,10 +216,36 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
     	}
 	}
 	
-	private void createRuleCompressor(String convertCommand){
-
-		List<NodeRef> products = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:finishedProduct\"", RepoConsts.MAX_RESULTS_NO_LIMIT);
+	private void createRuleCompressor(final String convertCommand){
+		int batchId = 1;
+		List<NodeRef> products = beCPGSearchService.unProtLuceneSearch("+TYPE:\"bcpg:finishedProduct\" -ASPECT:\"bcpg:compositeVersion\"");
 		logger.info("Create rule compressor for '" + products.size() + "' products");
+		
+		for (final List<NodeRef> batchList : Lists.partition(products, 25)) {
+			
+			logger.info("Batch " + batchId);
+			batchId++;
+			transactionService.getRetryingTransactionHelper().doInTransaction(
+					new RetryingTransactionCallback<Boolean>() {
+						public Boolean execute() throws Exception {								
+							
+							try{
+								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+								createRuleCompressorByBatcg(convertCommand, batchList);
+				    		}
+							finally{
+								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+							}
+							
+							return true;
+						}
+					}, false, true);
+		} 
+		
+		logger.info("Create rule compressor finished.");
+	}
+	
+	private void createRuleCompressorByBatcg(String convertCommand, List<NodeRef> products){			
 		
 		for(NodeRef product : products){
 			
@@ -279,8 +310,24 @@ public class MigrateRepositoryWebScript extends AbstractWebScript
 			}			
 		}
 		
-		logger.info("Clean Trash, size: " + nodes.size());		
-		nodeArchiveService.purgeArchivedNodes(nodes);
+		int batchId = 1;
+		logger.info("Clean Trash, size: " + nodes.size());	
+		
+		for (final List<NodeRef> batchList : Lists.partition(nodes, 50)) {
+			
+			logger.info("Batch " + batchId);
+			batchId++;
+			transactionService.getRetryingTransactionHelper().doInTransaction(
+					new RetryingTransactionCallback<Boolean>() {
+						public Boolean execute() throws Exception {								
+							
+							nodeArchiveService.purgeArchivedNodes(batchList);							
+							return true;
+						}
+					}, false, true);
+		}
+		
+		logger.info("Clean Trash finished.");		
 	}
 
 	

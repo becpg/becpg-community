@@ -154,6 +154,7 @@
 	    <property name="lockService" ref="lockService" />
 	    <property name="searchService" ref="searchService" />
 	    <property name="nodeArchiveService" ref="nodeArchiveService" />
+	    <property name="transactionService" ref="transactionService"/>
    	</bean>
    	
   
