@@ -1,14 +1,17 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
-function getActivityParameters(nodeRef, defaultValue)
+function getActivityParameters(nodeRef, entityNodeRef)
 {
-   var cm = "{http://www.alfresco.org/model/content/1.0}",
-      metadata = AlfrescoUtil.getMetaData(nodeRef, {});
-   if (metadata.properties)
-   {
+   var cm = "{http://www.alfresco.org/model/content/1.0}";
+   var pjt = "{http://www.bcpg.fr/model/project/1.0}";
+  
      
      if (model.activityType == "entity")
       {
+        metadata = AlfrescoUtil.getMetaData(nodeRef, {});
+        if (metadata.properties)
+        {
+        
          return (
          {
             itemTitle: metadata.properties[cm + 'name'],
@@ -18,32 +21,56 @@ function getActivityParameters(nodeRef, defaultValue)
                nodeRef: metadata.nodeRef
             }
          });
+        }
       } else if (model.activityType == "datalist")
       {
-         return (
+         metadata = AlfrescoUtil.getMetaData(entityNodeRef, {});
+         if (metadata.properties)
          {
-            itemTitle: metadata.properties[cm + 'name'],
-            page: 'entity-details',
-            pageParams:
-            {
-               nodeRef: metadata.nodeRef
-            }
-         });
+         
+          return (
+          {
+             itemTitle: metadata.properties[cm + 'name'],
+             page: 'entity-details',
+             pageParams:
+             {
+                nodeRef: entityNodeRef
+             }
+          });
+         }
       } else if (model.activityType == "task")
       {
-         return (
+         metadata = AlfrescoUtil.getMetaData(nodeRef, {});
+         entityNodeRefMetadata = AlfrescoUtil.getMetaData(entityNodeRef, {});
+         if (metadata.properties && entityNodeRefMetadata.properties)
          {
-            itemTitle: metadata.properties[cm + 'name'],
-            page: 'entity-details',
-            pageParams:
-            {
-               nodeRef: metadata.nodeRef
+              if(metadata.type == pjt+"taskList"){
+                return (
+                {
+                   itemTitle: metadata.properties[pjt+"tlTaskName"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
+                   page: 'entity-details',
+                   pageParams:
+                   {
+                      nodeRef: entityNodeRef
+                   }
+                });
+               
+            } else {
+               return (
+               {
+                  itemTitle: metadata.properties[pjt+"dlDescription"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
+                  page: 'entity-details',
+                  pageParams:
+                  {
+                     nodeRef: entityNodeRef
+                  }
+               });
             }
-         });
+         }
       }
       
-   }
-   return defaultValue;
+   
+   return null;
 }
 
 function main()
@@ -76,10 +103,20 @@ function main()
       }
    }
 
-   var documentDetails = AlfrescoUtil.getNodeDetails(model.entityNodeRef? model.entityNodeRef : model.nodeRef, model.site);
+   var documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef , model.site);
    if (documentDetails)
    {
-      model.activityParameters = getActivityParameters(model.entityNodeRef? model.entityNodeRef : model.nodeRef, null);
+      model.activityParameters = getActivityParameters(model.nodeRef, model.entityNodeRef );
+      
+      if(model.site == null && documentDetails.item.location !=null && documentDetails.item.location.path !=null){
+         
+         if (documentDetails.item.location.path.indexOf('/Sites/')>-1)
+         {
+            model.site = documentDetails.item.location.path.split('/')[2];
+         }
+
+      }
+      
    }
    else
    {
