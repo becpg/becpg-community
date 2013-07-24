@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.preference.PreferenceService;
+import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -120,7 +121,11 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		if (favorites != null) {
 			for (String favorite : favorites.split(",")) {
-				ret.add(new NodeRef(favorite));
+				try {
+					ret.add(new NodeRef(favorite));
+				} catch (MalformedNodeRefException e){
+					logger.warn("Favorite nodeRef is malformed : "+favorite);
+				}
 			}
 		}
 		return ret;
