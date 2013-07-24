@@ -80,7 +80,7 @@
       onActionCommentTask : function PL_onActionShowTask(className) {
          var nodes = className.replace("node-", "").split("|");
 
-         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + nodes[0] + "&activityType=task";
+         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + nodes[0] + "&activityType=task&entityNodeRef="+nodes[1];
 
          this._showPanel(url ,this.id+"_comments", nodes[1]);
          
