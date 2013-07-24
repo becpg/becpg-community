@@ -3,8 +3,8 @@
 {
 	"task":
 	{
-		<#if task.parent.hasPermission("Read") &&  task.parent.parent.hasPermission("Read") >
-		 "entityNodeRef" : "${task.parent.parent.nodeRef}",
+		<#if task.parent.hasPermission("Read") &&  task.parent.parent.hasPermission("Read") &&  task.parent.parent.parent.hasPermission("Read") >
+		 "entityNodeRef" : "${task.parent.parent.parent.nodeRef}",
 		<#else>
 		  "entityNodeRef" : "#access_forbidden",
 		</#if>
