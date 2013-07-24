@@ -15,8 +15,6 @@ public class SiteHelper {
 	      if (pos >= 1)
 	      {
 	    	 siteId = displayPath.split("/")[3];
-	         tmp = tmp.substring(pos + 1);
-	         pos = tmp.indexOf('/');
 	      }
 	   }
 	   
