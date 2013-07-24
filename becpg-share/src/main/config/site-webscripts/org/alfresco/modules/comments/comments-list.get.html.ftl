@@ -67,6 +67,7 @@
 					            pageParams:
 					            {
 					               nodeRef: "${activityParameters.pageParams.nodeRef}"
+					               <#if activityParameters.pageParams.list??>, list : "${activityParameters.pageParams.list}"</#if>
 					            }
 					         },
 				         </#if>
