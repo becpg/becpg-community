@@ -41,12 +41,13 @@ function getActivityParameters(nodeRef, entityNodeRef)
       } else if (model.activityType == "task")
       {
          metadata = AlfrescoUtil.getMetaData(nodeRef, {});
-         if (metadata.properties)
+         entityNodeRefMetadata = AlfrescoUtil.getMetaData(entityNodeRef, {});
+         if (metadata.properties && entityNodeRefMetadata.properties)
          {
               if(metadata.type == pjt+"taskList"){
                 return (
                 {
-                   itemTitle: metadata.properties[pjt+"tlTaskName"],
+                   itemTitle: metadata.properties[pjt+"tlTaskName"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
                    page: 'entity-details',
                    pageParams:
                    {
@@ -57,7 +58,7 @@ function getActivityParameters(nodeRef, entityNodeRef)
             } else {
                return (
                {
-                  itemTitle: metadata.properties[pjt+"dlDescription"],
+                  itemTitle: metadata.properties[pjt+"dlDescription"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
                   page: 'entity-details',
                   pageParams:
                   {
