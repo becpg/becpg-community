@@ -42,6 +42,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 	private static final String VIEW_FAVOURITES = "favourites";
 	private static final String VIEW_TASKS = "tasks";
 	private static final String VIEW_MY_TASKS = "my-tasks";
+	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 
 	private PersonService personService;
 
@@ -138,30 +139,35 @@ public class ProjectListExtractor extends SimpleExtractor {
 		// pjt:project
 		QName dataType = dataListFilter.getDataType();
 		String query = dataListFilter.getSearchQuery();
-
-		if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
-			dataType = ProjectModel.TYPE_TASK_LIST;
-			query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));
-		}
-
-		results = advSearchService.queryAdvSearch(query, SearchService.LANGUAGE_LUCENE, dataType, dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(),
-				pagination.getMaxResults());
-
-		// Always should return project
-		if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
-			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId())) {
-				logger.debug("Keep only tasks for  " + AuthenticationUtil.getFullyAuthenticatedUser());
-				NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
-				if (logger.isDebugEnabled()) {
-					logger.debug("Retain : " + associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
-				}
-				results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+		
+		if(VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())){
+			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
+		} else {
+			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
+				dataType = ProjectModel.TYPE_TASK_LIST;
+				query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));
 			}
-		}
-
-		if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
-			logger.debug("Keep only favorites");
-			results.retainAll(favorites);
+	
+			results = advSearchService.queryAdvSearch(query, SearchService.LANGUAGE_LUCENE, dataType, dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(),
+					pagination.getMaxResults());
+	
+			// Always should return project
+			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
+				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId())) {
+					logger.debug("Keep only tasks for  " + AuthenticationUtil.getFullyAuthenticatedUser());
+					NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+					if (logger.isDebugEnabled()) {
+						logger.debug("Retain : " + associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+					}
+					results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+				}
+			}
+	
+			if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
+				logger.debug("Keep only favorites");
+				results.retainAll(favorites);
+			}
+		
 		}
 
 		if (dataListFilter.getSortId() != null) {

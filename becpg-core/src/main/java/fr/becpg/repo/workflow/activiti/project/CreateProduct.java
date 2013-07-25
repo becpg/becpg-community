@@ -190,6 +190,7 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void copyDataList(NodeRef productNodeRef, NodeRef sourceNodeRef, QName typeCompolist) {
 	
 		 ProductData productData  = alfrescoRepository.findOne(productNodeRef);
