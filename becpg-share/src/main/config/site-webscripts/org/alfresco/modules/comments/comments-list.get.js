@@ -6,7 +6,7 @@ function getActivityParameters(nodeRef, entityNodeRef)
    var pjt = "{http://www.bcpg.fr/model/project/1.0}";
   
      
-     if (model.activityType == "entity")
+     if (model.activityType == "entity" || !entityNodeRef )
       {
         metadata = AlfrescoUtil.getMetaData(nodeRef, {});
         if (metadata.properties)
