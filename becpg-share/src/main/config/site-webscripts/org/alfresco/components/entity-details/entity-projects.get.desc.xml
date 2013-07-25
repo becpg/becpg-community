@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>entity-details-projects</shortname>
+  <description>Document Details Projects Component</description>
+  <url>/components/entity-details/entity-projects</url>
+</webscript>

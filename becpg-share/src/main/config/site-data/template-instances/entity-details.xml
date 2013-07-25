@@ -250,6 +250,14 @@
             <nodeRef>{nodeRef}</nodeRef>
          </properties>
       </component>
+      
+       <component>
+         <region-id>entity-projects</region-id>
+         <url>/components/entity-details/entity-projects</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>
 
       <!-- Document Versions -->
       <component>
