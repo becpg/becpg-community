@@ -25,6 +25,10 @@ Saiku.i18n = {
     },
     automatic_i18n: function() {
         // Load language file if it isn't English
+
+        //compatible 'zh-CN' -> 'zh';
+        if (Saiku.i18n.locale == 'zh') Saiku.i18n.locale = 'cn';
+
         if (Saiku.i18n.locale != "en") {
             $.ajax({
                 url: "js/saiku/plugins/I18n/po/" + Saiku.i18n.locale + ".json",
@@ -184,7 +188,8 @@ var TranslationTab = Backbone.View.extend({
         $(this.el).find('.changed').each(function(element) {
             translation[decodeURI($(this).attr('name'))] = encodeURI($(this).val());
         });
-        Translate.log(translation);
+        window.location = "mailto:contact@analytical-labs.com?subject=Translation for " + Saiku.i18n.locale + '&body=' + JSON.stringify(translation);
+        //Translate.log(translation);
         Saiku.ui.block('Thank you for improving our translation!');
         this.tab.remove();
         _.delay(function() {

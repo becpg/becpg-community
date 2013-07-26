@@ -13,28 +13,28 @@
 
 	<context:property-placeholder />
 
-   <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/saikuDataSource" resource-ref="true" expected-type="javax.sql.DataSource" />
+	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/saikuDataSource" resource-ref="true" expected-type="javax.sql.DataSource" />
 
 	<bean id="jdbcConnectionManager" class="fr.becpg.olap.jdbc.JdbcConnectionManager">
-		<property name="dataSource" ref="dataSource"/>
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="instanceManager" class="fr.becpg.olap.InstanceManager">
-		<property name="jdbcConnectionManager" ref="jdbcConnectionManager"/>
+		<property name="jdbcConnectionManager" ref="jdbcConnectionManager" />
 	</bean>
 
 
-	<bean id="mondrianApplicationContextProvider" class="fr.becpg.olap.mondrian.MondrianApplicationContextProvider"/>
+	<bean id="mondrianApplicationContextProvider" class="fr.becpg.olap.mondrian.MondrianApplicationContextProvider" />
 
 	<bean id="alfrepository" scope="request" class="org.saiku.web.rest.resources.AlfrescoRepository">
-	 	<property name="instanceManager" ref="instanceManager"/> 
-	</bean> 
-	
+		<property name="instanceManager" ref="instanceManager" />
+	</bean>
+
 	<bean id="adminSaikuRestClient" scope="request" class="org.saiku.web.rest.resources.AdminSaikuRestClient">
-	 	<property name="instanceManager" ref="instanceManager"/> 
-	 	<property name="jdbcConnectionManager" ref="jdbcConnectionManager"/> 
-	</bean> 
-	
+		<property name="instanceManager" ref="instanceManager" />
+		<property name="jdbcConnectionManager" ref="jdbcConnectionManager" />
+	</bean>
+
 	<bean id="sessionService" class="org.saiku.web.service.AlfrescoSessionService">
 		<property name="authenticationManager" ref="authenticationManager" />
 	</bean>
@@ -44,10 +44,7 @@
 	<bean id="classpathDsManager" class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
 		<property name="path" value="res:saiku-datasources" />
 	</bean>
-<!-- 
-	<bean id="sessionService" class="org.saiku.web.service.SessionService">
-		<property name="authenticationManager" ref="authenticationManager" />
-	</bean> -->
+	<!-- <bean id="sessionService" class="org.saiku.web.service.SessionService"> <property name="authenticationManager" ref="authenticationManager" /> </bean> -->
 
 	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init">
 		<property name="dataSourceManager" ref="classpathDsManager" />
@@ -93,8 +90,8 @@
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="path" value="file://${saiku.home}/saiku-repository/" />
 	</bean>
-	
-	 <bean id="acl" scope="session" class="org.saiku.web.rest.objects.acl.Acl">
+
+	<bean id="acl" scope="singleton" class="org.saiku.web.rest.objects.acl.Acl">
 		<property name="path" value="file://${saiku.home}/saiku-repository/" />
 		<property name="adminRoles">
 			<list>
@@ -102,19 +99,27 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="repository2bean" scope="request" class="org.saiku.web.rest.resources.BasicRepositoryResource2">
 		<property name="path" value="file://${saiku.home}/saiku-repository/" />
 		<property name="sessionService" ref="sessionService" />
 		<property name="acl" ref="acl" />
-	</bean> 
+	</bean>
 
- 	
+
 
 	<bean id="tagRepositoryBean" scope="request" class="org.saiku.web.rest.resources.BasicTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="path" value="file://${saiku.home}/saiku-repository/" />
 	</bean>
+
+	<bean id="exporterBean" scope="request" class="org.saiku.web.rest.resources.ExporterResource">
+		<property name="repository" ref="repository2bean" />
+		<property name="queryResource" ref="queryResource" />
+	</bean>
+
+
+	<bean id="statsBean" scope="singleton" class="org.saiku.web.rest.resources.StatisticsResource" />
 
 
 </beans>
