@@ -42,5 +42,9 @@ public class PackModel {
 	public static final QName PROP_HEIGHT = QName.createQName(PACK_URI,
 			"height");	
 	
-	
+	public static final QName TYPE_LABELING_TEMPLATE = QName.createQName(PACK_URI, "labelingTemplate");
+	public static final QName ASPECT_LABELING =   QName.createQName(PACK_URI,
+			"labelingAspect");
+	public static final QName ASSOC_LABELING_TEMPLATE = QName.createQName(PACK_URI, "labelingTemplate");
+	public static final QName PROP_LABELING_POSITION = QName.createQName(PACK_URI, "labelingPosition");
 }

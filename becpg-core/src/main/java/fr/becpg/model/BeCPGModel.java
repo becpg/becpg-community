@@ -690,5 +690,8 @@ public interface BeCPGModel {
 	@Deprecated
 	QName ASPECT_ENTITY_VERSIONABLE = QName.createQName(BECPG_URI, "entityVersionable");
 
-	
+	QName TYPE_STORAGE_CONDITIONS = QName.createQName(BECPG_URI, "storageConditions");
+	QName ASSOC_STORAGE_CONDITIONS = QName.createQName(BECPG_URI, "storageConditions");
+	QName TYPE_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
+	QName ASSOC_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
 }

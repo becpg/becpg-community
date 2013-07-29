@@ -5,6 +5,7 @@ package fr.becpg.repo;
 
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.namespace.QName;
 
 /**
  * beCPG constants for repository
@@ -67,7 +68,11 @@ public class RepoConsts {
 	public static final String PATH_CERTIFICATIONS = "Certifications";
 	public static final String PATH_APPROVALNUMBERS = "ApprovalNumbers";
 	public static final String PATH_PROCESSSTEPS = "ProcessSteps";
-	public static final String PATH_LABELCLAIMS = "LabelClaims";
+	public static final String PATH_LABELCLAIMS = "LabelClaims";	
+	public static final String PATH_STORAGE_CONDITIONS = "StorageConditions";
+	public static final String PATH_PRECAUTION_OF_USE = "PrecautionOfUse";
+	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
+	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";	
 	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";

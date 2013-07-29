@@ -8,9 +8,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -226,7 +225,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					partElt.addAttribute(BeCPGModel.PROP_CODE.getLocalName(), partCode);
 					partElt.addAttribute(BeCPGModel.PROP_ERP_CODE.getLocalName(), partERPCode);
 					partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), legalName);
-					partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(), extractTargetNames(nodeService.getTargetAssocs(dataItem.getProduct(), BeCPGModel.ASSOC_SUPPLIERS)));
+					partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(), extractNames(associationService.getTargetAssocs(dataItem.getProduct(), BeCPGModel.ASSOC_SUPPLIERS)));
 					partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), dataItem.getDepthLevel() == null ? VALUE_NULL : Integer.toString(dataItem.getDepthLevel()));
 					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY.getLocalName(), toString(dataItem.getQty()));
 					partElt.addAttribute(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA.getLocalName(), toString(dataItem.getQtySubFormula()));
@@ -373,9 +372,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			}
 		}
 		
-		List<AssociationRef> microbioAssocRefs = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
-		if (!microbioAssocRefs.isEmpty()) {
-			NodeRef productMicrobioCriteriaNodeRef = microbioAssocRefs.get(0).getTargetRef();
+		List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+		if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
+			NodeRef productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
 
 			if (productMicrobioCriteriaNodeRef != null) {
 				ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
@@ -439,25 +438,17 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	}
 
 	@Override
-	protected void loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
 
-		super.loadTargetAssocs(entityNodeRef, entityElt);
-		
-		// load plants
-		Element plantsElt = entityElt.addElement(TAG_PLANTS);
-		List<AssociationRef> plantAssocRefs = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PLANTS);
+		if(assocDef != null && assocDef.getName() != null){
+			if(assocDef.getName().equals(BeCPGModel.ASSOC_PLANTS) || assocDef.getName().equals(BeCPGModel.ASSOC_STORAGE_CONDITIONS) || assocDef.getName().equals(BeCPGModel.ASSOC_PRECAUTION_OF_USE)){
 
-		for (AssociationRef assocRef : plantAssocRefs) {
-
-			Element plantElt = plantsElt.addElement(TAG_PLANT);
-			NodeRef plantNodeRef = assocRef.getTargetRef();
-			Map<ClassAttributeDefinition, String> plantAttributes = loadNodeAttributes(plantNodeRef);
-
-			for (Map.Entry<ClassAttributeDefinition, String> attrKV : plantAttributes.entrySet()) {
-
-				plantElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+				extractTargetAssoc(entityNodeRef, assocDef, entityElt);				
+				return true;
 			}
-		}		
+		}
+		
+		return false;			
 	}
 	
 	private void loadPackaging(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images){			
@@ -510,11 +501,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				extractEntityImages(dataItem.getProduct(), imgsElt, images);
 			}
 		} else {
-			loadPackagingMaterial(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
 		}		
 	}
 
-	private Element loadPackagingMaterial(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
+	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
 		String partName = (String) nodeService.getProperty(dataItem.getProduct(), ContentModel.PROP_NAME);
 		String partCode = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_CODE);
 		String partERPCode = (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_ERP_CODE);
@@ -526,7 +517,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		partElt.addAttribute(BeCPGModel.PROP_CODE.getLocalName(), partCode);
 		partElt.addAttribute(BeCPGModel.PROP_ERP_CODE.getLocalName(), partERPCode);
 		partElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), legalName);
-		partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(), extractTargetNames(nodeService.getTargetAssocs(dataItem.getProduct(), BeCPGModel.ASSOC_SUPPLIERS)));
+		partElt.addAttribute(BeCPGModel.PROP_PRODUCT_COMMENTS.getLocalName(), (String) nodeService.getProperty(dataItem.getProduct(), BeCPGModel.PROP_PRODUCT_COMMENTS));
+		partElt.addAttribute(BeCPGModel.ASSOC_SUPPLIERS.getLocalName(), extractNames(associationService.getTargetAssocs(dataItem.getProduct(), BeCPGModel.ASSOC_SUPPLIERS)));
 		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_QTY.getLocalName(), toString(dataItem.getQty()));
 		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_UNIT.getLocalName(), dataItem.getPackagingListUnit() == null ? VALUE_NULL : dataItem.getPackagingListUnit().toString());
 		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL.getLocalName(), dataItem.getPkgLevel() == null ? VALUE_NULL : dataItem.getPkgLevel().toString());
@@ -579,19 +571,24 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			}			
 		}
 
+		if (nodeService.hasAspect(dataItem.getNodeRef(), PackModel.ASPECT_LABELING)) {	
+			partElt.addAttribute(PackModel.PROP_LABELING_POSITION.getLocalName(), (String) nodeService.getProperty(dataItem.getNodeRef(), PackModel.PROP_LABELING_POSITION));
+			extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt);
+		}
+		
 		return partElt;
 	}
 	
 	// manage 2 level depth
 	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
 
-		Element packagingKitEl = loadPackagingMaterial(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
 		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
 		Element packagingKitListEl = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());	
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 	
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {			
-			loadPackagingMaterial(p, packagingKitListEl, packagingData, defaultVariantNodeRef);
+			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef);
 		}
 	}
 
