@@ -82,7 +82,7 @@
 				<type name="association:bcpg:client" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="showTooltip">true</control-param>
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:client?excludeClassNames=bcpg:entityTplAspect</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associ<control-param name="showLink">false</control-param>ations/bcpg:client?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:bcpg:supplier" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 					<control-param name="showTooltip">true</control-param>
@@ -122,6 +122,13 @@
 				<type name="association:pjt:taskLegend" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:bcpg:productCatalog" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />		
 				<type name="association:bcpg:labelClaim" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:bcpg:storageConditions" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:precautionOfUse" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:pack:labelingTemplate" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
          
             <type name="transitions" template="/org/alfresco/components/form/controls/workflow/transitions.ftl" />
             <type name="taskOwner" template="/org/alfresco/components/form/controls/workflow/taskowner.ftl" />

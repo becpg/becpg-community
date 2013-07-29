@@ -117,7 +117,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
     	//IngList
 		calculateIL(formulatedProduct, productSpecicationDataList);
     	
-		//IngLabelling
+		//IngLabeling
 		logger.debug("Calculate Ingredient Labeling");
 		List<IngLabelingListDataItem> retainNodes = new ArrayList<IngLabelingListDataItem>();
 		List<CompositeIng> compositeIngs = calculateILL(formulatedProduct);

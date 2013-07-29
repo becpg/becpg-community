@@ -1,7 +1,6 @@
 package fr.becpg.repo.report.entity.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.dom4j.Element;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -82,6 +82,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected VersionService versionService;
 	
 	protected FileFolderService fileFolderService;
+	
+	protected AssociationService associationService;
 
 	/**
 	 * @param nodeService the nodeService to set
@@ -131,6 +133,10 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		this.fileFolderService = fileFolderService;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
 
@@ -141,16 +147,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		
 		// add attributes at <product/> tag
-		Map<ClassAttributeDefinition, String> attributes = loadNodeAttributes(entityNodeRef);
-
-		for (Map.Entry<ClassAttributeDefinition, String> attrKV : attributes.entrySet()) {
-
-			Element cDATAElt = entityElt.addElement(attrKV.getKey().getName().getLocalName());
-			cDATAElt.addCDATA(attrKV.getValue());			
-		}
-
-		// render target assocs (plants...special cases)
-		loadTargetAssocs(entityNodeRef, entityElt);		
+		loadNodeAttributes(entityNodeRef, entityElt);
 		
 		Element aspectsElt = entityElt.addElement(ATTR_ASPECTS);
 		aspectsElt.addCDATA(extractAspects(entityNodeRef));
@@ -199,7 +196,9 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		}
 	}
 	
-	protected void loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
+	// render target assocs (plants...special cases)
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
+		return false;
 	}
 	
 	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
@@ -215,7 +214,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	 * @param elt the elt
 	 * @return the element
 	 */
-	protected Map<ClassAttributeDefinition, String> loadNodeAttributes(NodeRef nodeRef) {
+	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
 		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();		
@@ -288,7 +287,13 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			values.put(associationDef, tempValue.getValue());
 		}
 		
-		return values;
+		for (Map.Entry<ClassAttributeDefinition, String> attrKV : values.entrySet()) {
+
+			if(attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition)attrKV.getKey(), nodeElt)){
+				Element cDATAElt = nodeElt.addElement(attrKV.getKey().getName().getLocalName());
+				cDATAElt.addCDATA(attrKV.getValue());	
+			}				
+		}
 	}	
 
 	protected String generateKeyAttribute(String attributeName){
@@ -327,14 +332,6 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return value;
 	}
 	
-	protected String extractTargetNames(List<AssociationRef> assocRefs){
-		List<NodeRef> nodeRefs = new ArrayList<NodeRef>(assocRefs.size());
-		for(AssociationRef assocRef : assocRefs){
-			nodeRefs.add(assocRef.getTargetRef());
-		}
-		return extractNames(nodeRefs);
-	}
-	
 	protected String extractAspects(NodeRef nodeRef){
 		String value = VALUE_NULL;
 		for(QName aspect : nodeService.getAspects(nodeRef)){
@@ -345,4 +342,20 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		}		
 		return value;
 	}	
+	
+	/**
+	 * Extract target(s) association
+	 */
+	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt){
+		
+		Element rootElt =  assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
+		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
+
+		for (NodeRef nodeRef : nodeRefs) {
+
+			QName qName = nodeService.getType(nodeRef);
+			Element nodeElt = rootElt.addElement(qName.getLocalName());					
+			loadNodeAttributes(nodeRef, nodeElt);
+		}
+	}
 }
