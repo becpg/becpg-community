@@ -41,7 +41,6 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.AbstractCachingWebscript;
@@ -327,6 +326,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 				CSVConfig csvConfig = new CSVConfig();
 				csvConfig.setDelimiter(';');
+				csvConfig.setFieldHeader(true);
 
 				appendCSVField(csvConfig, extractedItems.getComputedFields());
 
