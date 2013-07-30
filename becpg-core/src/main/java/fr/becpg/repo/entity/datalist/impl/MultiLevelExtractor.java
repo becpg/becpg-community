@@ -20,6 +20,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 @Service
@@ -47,6 +48,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			return super.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
 		}
 		
+		
 		int pageSize = pagination.getPageSize();
 		int startIndex = (pagination.getPage() - 1) * pagination.getPageSize();
 
@@ -59,7 +61,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 		
 		
-		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props);
+		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 
 
 		ret.setFullListSize(listData.getSize());
@@ -67,12 +69,11 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	}
 
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex, int startIndex, int pageSize,
-			Map<String, Object> props) {
+			Map<String, Object> props,String format) {
 		logger.debug("appendNextLevel :" + currIndex);
 		
 		Map<NodeRef,Map<String, Object>> cache = new HashMap<>();
 		
-		 List<AttributeExtractorStructure> computedFields =null;
 		
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef nodeRef = entry.getKey();
@@ -80,22 +81,26 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			props.put(PROP_ENTITYNODEREF, entry.getValue().getEntityNodeRef());
 			props.put(PROP_ACCESSRIGHT, false);
 			if(currIndex>=startIndex && currIndex< (startIndex+pageSize)){
-				if(computedFields == null){
-					computedFields = attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields);
+				if(ret.getComputedFields() == null){
+					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
-				ret.getItems().add(extract(nodeRef, computedFields, props,cache));
+				if(FORMAT_CSV.equals(format)){
+					ret.getItems().add(extractCSV(nodeRef, ret.getComputedFields(), props,cache));
+				} else {
+					ret.getItems().add(extractJSON(nodeRef, ret.getComputedFields(), props,cache));
+				}
 			} else if(currIndex >= (startIndex+pageSize)){
 				return currIndex;
 			}
-			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex+1, startIndex, pageSize, props);
+			currIndex = appendNextLevel(ret, metadataFields, entry.getValue(), currIndex+1, startIndex, pageSize, props,format);
 		}
 		return currIndex;
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, Map<QName, Serializable> properties , Map<String, Object> extraProps,Map<NodeRef,Map<String, Object>> cache) {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,AttributeExtractorMode mode, Map<QName, Serializable> properties , Map<String, Object> extraProps,Map<NodeRef,Map<String, Object>> cache) {
 
-		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields, properties , extraProps, cache);
+		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields,mode, properties , extraProps, cache);
 		if(extraProps.get(PROP_DEPTH)!=null){
 			@SuppressWarnings("unchecked")
 			Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");

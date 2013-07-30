@@ -35,6 +35,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 @Service
@@ -78,16 +79,18 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
-		List<AttributeExtractorStructure> computedFields = null;
 
 		for (NodeRef nodeRef : results) {
 			// Right check not necessary
 			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
-				if (computedFields == null) {
-					computedFields = attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields);
+				if (ret.getComputedFields() == null) {
+					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
-
-				ret.getItems().add(extract(nodeRef, computedFields, props, cache));
+				if (FORMAT_CSV.equals(dataListFilter.getFormat())) {
+					ret.getItems().add(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
+				} else {
+					ret.getItems().add(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
+				}
 			}
 		}
 
@@ -95,6 +98,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		return ret;
 	}
+
+
 
 	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
@@ -162,10 +167,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, Map<QName, Serializable> properties,
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,AttributeExtractorMode mode, Map<QName, Serializable> properties,
 			final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, false, new AttributeExtractorService.DataListCallBack() {
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode, new AttributeExtractorService.DataListCallBack() {
 
 			@Override
 			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<AttributeExtractorStructure> metadataFields) {
@@ -181,7 +186,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 							ret.add(cache.get(nodeRef));
 						} else {
 							if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
-								ret.add(extract(nodeRef, metadataFields, props, cache));
+								ret.add(extractJSON(nodeRef, metadataFields, props, cache));
 							}
 						}
 
@@ -200,7 +205,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					return cache.get(entityNodeRef);
 				} else {
 					if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
-						return extract(entityNodeRef, metadataFields, props, cache);
+						return extractJSON(entityNodeRef, metadataFields, props, cache);
 					}
 				}
 
@@ -213,5 +218,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
 		return false;
 	}
+
 
 }

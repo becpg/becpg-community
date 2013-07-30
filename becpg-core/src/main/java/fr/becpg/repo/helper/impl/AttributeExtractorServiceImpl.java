@@ -155,7 +155,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 
 		
-		
 	}
 	
 	
@@ -317,12 +316,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 	
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch) {
-		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), isSearch, null);
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode) {
+		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode, null);
 	}
 
 	@Override
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, boolean isSearch,
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode,
 			AttributeExtractorService.DataListCallBack callback) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -336,14 +335,22 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	
 		for (AttributeExtractorStructure field : metadataFields) {
 			if(field.getChildrens()!=null){
-				if(field.isEntityField()){
-					ret.put(field.getFieldName(), callback.extractEntityField(nodeRef, field.getFieldQname(), field.getChildrens()));
+				if(AttributeExtractorMode.CSV.equals(mode)) {
+					if(field.isEntityField()){
+						//put all directly on line
+						ret.putAll(callback.extractEntityField(nodeRef, field.getFieldQname(), field.getChildrens()));
+					}
+					//ignore datalists for now
 				} else {
-					ret.put(field.getFieldName(), callback.extractDataListField(nodeRef, field.getFieldQname(), field.getChildrens()));
+					if(field.isEntityField()){
+						ret.put(field.getFieldName(), callback.extractEntityField(nodeRef, field.getFieldQname(), field.getChildrens()));
+					} else {
+						ret.put(field.getFieldName(), callback.extractDataListField(nodeRef, field.getFieldQname(), field.getChildrens()));
+					}
 				}
 				
 			} else {
-				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, field.getFieldDef(), isSearch, order++));
+				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, field.getFieldDef(), mode, order++));
 			}
 			
 		}
@@ -393,7 +400,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				});
 	}
 
-	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, ClassAttributeDefinition attribute, boolean isSearch, int order) {
+	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, ClassAttributeDefinition attribute,AttributeExtractorMode mode, int order) {
 
 		Serializable value = null;
 		String displayName = "";
@@ -401,27 +408,32 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		// property
 		if (attribute instanceof PropertyDefinition) {
-
-			HashMap<String, Object> tmp = new HashMap<String, Object>(6);
-
+			
 			value = properties.get(attribute.getName());
 			displayName = getStringValue((PropertyDefinition) attribute, value, propertyFormats);
-			type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
-
-			if (isSearch) {
-				tmp.put("order", order);
-				tmp.put("type", type);
-				tmp.put("label", attribute.getTitle());
-			} else if (type != null) {
-				tmp.put("metadata", extractMetadata(type, nodeRef));
+			
+			if (AttributeExtractorMode.CSV.equals(mode)) {
+				return displayName;
+			} else {
+				HashMap<String, Object> tmp = new HashMap<String, Object>(6);
+		
+				type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
+	
+				if (AttributeExtractorMode.SEARCH.equals(mode)) {
+					tmp.put("order", order);
+					tmp.put("type", type);
+					tmp.put("label", attribute.getTitle());
+				} else if (type != null) {
+					tmp.put("metadata", extractMetadata(type, nodeRef));
+				}
+				if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+					tmp.put("version", properties.get(ContentModel.PROP_VERSION_LABEL));
+				}
+				tmp.put("displayValue", displayName);
+				tmp.put("value", formatValue(value));
+	
+				return tmp;
 			}
-			if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-				tmp.put("version", properties.get(ContentModel.PROP_VERSION_LABEL));
-			}
-			tmp.put("displayValue", displayName);
-			tmp.put("value", formatValue(value));
-
-			return tmp;
 
 		}
 
@@ -433,7 +445,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			} else {
 				assocRefs = associationService.getTargetAssocs(nodeRef, attribute.getName());
 			}
-			if (isSearch) {
+			
+			
+			if (AttributeExtractorMode.SEARCH.equals(mode)) {
 				HashMap<String, Object> tmp = new HashMap<String, Object>(5);
 
 				String nodeRefs = "";
@@ -455,6 +469,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				tmp.put("value", nodeRefs);
 				return tmp;
 
+			} else if (AttributeExtractorMode.CSV.equals(mode)) {
+				String ret = "";
+				for (NodeRef assocNodeRef : assocRefs) {
+					type = nodeService.getType(assocNodeRef);
+					if(ret.length()>0){
+						ret+="|";
+					}
+					ret+= extractPropName(type, assocNodeRef);
+				}
+				return ret;
+				
 			} else {
 				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>(assocRefs.size());
 				for (NodeRef assocNodeRef : assocRefs) {

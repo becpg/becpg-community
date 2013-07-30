@@ -27,6 +27,7 @@ import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -80,25 +81,29 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
-		List<AttributeExtractorStructure> computedFields = null;
 
 		for (NodeRef nodeRef : results) {
 			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				if (!nodeService.exists(nodeRef)) {
 					logger.error("NodeRef doesn't exist ? " + nodeRef.toString());
 				} else {
-					if (computedFields == null) {
-						computedFields = attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields);
+					if (ret.getComputedFields() == null) {
+						ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 					}
-
-					Map<String, Object> extracted = extract(nodeRef, computedFields, props, cache);
-					if (favorites.contains(nodeRef)) {
-						extracted.put(PROP_IS_FAVOURITE, true);
+					if (FORMAT_CSV.equals(dataListFilter.getFormat())) {
+						ret.getItems().add(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
 					} else {
-						extracted.put(PROP_IS_FAVOURITE, false);
+						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);
+						if (favorites.contains(nodeRef)) {
+							extracted.put(PROP_IS_FAVOURITE, true);
+						} else {
+							extracted.put(PROP_IS_FAVOURITE, false);
+						}
+
+						ret.getItems().add(extracted);
 					}
 
-					ret.getItems().add(extracted);
+					
 				}
 			}
 		}
@@ -183,10 +188,10 @@ public class ProjectListExtractor extends SimpleExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, Map<QName, Serializable> properties,
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,final AttributeExtractorMode mode, Map<QName, Serializable> properties,
 			final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, false, new AttributeExtractorService.DataListCallBack() {
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode, new AttributeExtractorService.DataListCallBack() {
 
 			@Override
 			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<AttributeExtractorStructure> metadataFields) {
@@ -219,7 +224,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 							Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 							tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
 							tmp.put(PROP_NODE, nodeRef);
-							tmp.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, properties, props, cache));
+							tmp.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache));
 							ret.add(tmp);
 						}
 					}
@@ -237,7 +242,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 					return cache.get(entityNodeRef);
 				} else {
 					if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
-						return extract(entityNodeRef, metadataFields, props, cache);
+						return extractJSON(entityNodeRef, metadataFields, props, cache);
 					}
 				}
 
