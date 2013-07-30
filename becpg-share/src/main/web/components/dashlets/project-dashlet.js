@@ -126,7 +126,7 @@
                      });
 
                      this.widgets.dataSource = new YAHOO.util.DataSource(this.getWebscriptUrl(), {
-                        connMethodPost : true,
+                        connMethodPost : false,
                         responseType : YAHOO.util.DataSource.TYPE_JSON,
                         responseSchema : {
                            resultsList : "items",
@@ -137,8 +137,6 @@
                            }
                         }
                      });
-                     this.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
-
                      var columDefs = [ {
                         key : "thumbnail",
                         sortable : false,
@@ -199,7 +197,7 @@
                            jsonParameters = scopeParameters;
                         }
 
-                        me.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(jsonParameters), {
+                        me.widgets.dataSource.sendRequest("&metadata="+encodeURIComponent(YAHOO.lang.JSON.stringify(jsonParameters)), {
                            success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
                               me.widgets.alfrescoDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);
 
