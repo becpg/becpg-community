@@ -322,23 +322,26 @@
 
 					<!-- mainInfo -->
 					<show id="qa:ncPriority" />
-					<show id="bcpg:code" />
 					<show id="cm:name" />
 					<show id="qa:ncType" />
 					<show id="qa:ncState" />
 					
 					<!-- batch -->
 					<show id="qa:batchId" force="true"/>
-					<show id="bcpg:clients" force="true" />
-					<show id="bcpg:suppliers" force="true" />
-					
-					
-					<!-- Product -->
 					<show id="qa:product" force="true"/>
+					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:plants" force="true" />
+					
+					<!-- Claim -->
 
-					<!-- auditable -->
-					<show id="cm:creator"   />
+					<show id="qa:claimType" force="true"/>
+
+
+					<!-- <show id="cm:creator"   />
+					<show id="qa:claimResponseActor" force="true"/> -->
 					<show id="cm:created"  />
+					<show id="qa:claimResponseDate" force="true"/>
+					<!-- <show id="qa:claimClosingDate" force="true"/> -->
 
 				</field-visibility>
             <appearance>
@@ -350,17 +353,35 @@
 				<field-visibility>
 
 					<!-- mainInfo -->
+					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
 					<show id="cm:name" />
 					
 					<show id="qa:ncState" />
+					<show id="qa:claimType" force="true"/>
 					
 					<!-- batch -->
 					<show id="qa:batchId" force="true" />
-					<show id="qa:orderId" force="true" />
 					
-
 				</field-visibility>
+				<appearance>
+					<field id="qa:ncType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="qa:ncPriority" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="qa:claimType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
