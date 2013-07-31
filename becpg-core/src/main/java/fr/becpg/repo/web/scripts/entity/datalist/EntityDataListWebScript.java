@@ -94,6 +94,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	protected static final String PARAM_ID = "id";
 
 	protected static final String PARAM_FIELDS = "fields";
+	
+	protected static final String PARAM_HEADERS = "headers";
 
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
@@ -325,14 +327,25 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				res.setContentEncoding("ISO-8859-1");
 
 				CSVConfig csvConfig = new CSVConfig();
+				
 				csvConfig.setDelimiter(';');
-				csvConfig.setFieldHeader(true);
 
-				appendCSVField(csvConfig, extractedItems.getComputedFields());
+				appendCSVField(csvConfig, extractedItems.getComputedFields(),null);
 
 				CSVWriter csvWriter = new CSVWriter(csvConfig);
 
 				csvWriter.setWriter(res.getWriter());
+				
+				if (json != null && json.has(PARAM_HEADERS)) {
+					JSONArray jsonFields = (JSONArray) json.get(PARAM_HEADERS);
+
+					Map<String,String> headers = new HashMap<>();
+					for (int i = 0; i < jsonFields.length(); i++) {	
+						headers.put(((JSONObject)jsonFields.get(i)).getString("name"),((JSONObject)jsonFields.get(i)).getString("label"));
+					}
+					csvWriter.writeRecord(headers);
+				}
+				
 
 				writeToCSV(extractedItems, csvWriter);
 
@@ -395,15 +408,16 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	}
 
-	private void appendCSVField(CSVConfig csvConfig, List<AttributeExtractorStructure> fields) {
+	private void appendCSVField(CSVConfig csvConfig, List<AttributeExtractorStructure> fields, String prefix) {
 		for (AttributeExtractorStructure field : fields) {
-			if (field.getChildrens() != null) {
-				if (field.isEntityField()) {
-					// put all directly on line
-					appendCSVField(csvConfig, field.getChildrens());
-				}
+			if (field.isNested() ) {
+				appendCSVField(csvConfig, field.getChildrens(), field.getFieldName());
 			} else {
-				csvConfig.addField(new CSVField(field.getFieldName()));
+				if(prefix!=null){
+					csvConfig.addField(new CSVField(prefix+"_"+field.getFieldName()));
+				} else {
+					csvConfig.addField(new CSVField(field.getFieldName()));
+				}
 			}
 		}
 

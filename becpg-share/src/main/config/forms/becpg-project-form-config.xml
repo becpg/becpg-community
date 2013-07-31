@@ -563,7 +563,6 @@
 					<show id="pjt:tlWorkflowInstance" />
 					<show id="fm:commentCount" force="true"/>
 				</field-visibility>
-				
 			</form>
 		</forms>
 	</config>
