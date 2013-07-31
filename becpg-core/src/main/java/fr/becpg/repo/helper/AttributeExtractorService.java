@@ -21,10 +21,8 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 public interface AttributeExtractorService {
 
 	public interface DataListCallBack {
-
-		List<Map<String,Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname,  List<AttributeExtractorStructure> metadataFields);
-
-		Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname,  List<AttributeExtractorStructure> metadataFields);
+		
+		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
 
 
 	}

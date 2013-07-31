@@ -13,6 +13,7 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -34,6 +35,7 @@ import fr.becpg.repo.entity.datalist.DataListSortRegistry;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -44,6 +46,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	private FileFolderService fileFolderService;
 
 	protected EntityListDAO entityListDAO;
+
+	protected AssociationService associationService;
 
 	private NamespaceService namespaceService;
 
@@ -67,6 +71,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		this.dataListSortRegistry = dataListSortRegistry;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess) {
 
@@ -78,7 +86,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
-
 
 		for (NodeRef nodeRef : results) {
 			// Right check not necessary
@@ -98,8 +105,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		return ret;
 	}
-
-
 
 	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
@@ -167,27 +172,41 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,AttributeExtractorMode mode, Map<QName, Serializable> properties,
-			final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, final AttributeExtractorMode mode,
+			Map<QName, Serializable> properties, final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
 
 		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode, new AttributeExtractorService.DataListCallBack() {
 
 			@Override
-			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<AttributeExtractorStructure> metadataFields) {
-
+			public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
 				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQname);
-				if (listNodeRef != null) {
-					List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
+				if (field.isDataListItems()) {
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
+					if (listNodeRef != null) {
+						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
-					for (NodeRef nodeRef : results) {
-						if (cache.containsKey(nodeRef)) {
-							ret.add(cache.get(nodeRef));
+						
+						
+						for (NodeRef itemNodeRef : results) {
+							addExtracted(itemNodeRef, field, cache, mode, ret);
+						}
+					}
+				} else if (field.isEntityField()) {
+					NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
+					addExtracted(entityNodeRef, field, cache, mode, ret);
+
+				} else {
+
+					if (field.getFieldDef() instanceof AssociationDefinition) {
+						List<NodeRef> assocRefs = null;
+						if (((AssociationDefinition) field.getFieldDef()).isChild()) {
+							assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
 						} else {
-							if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
-								ret.add(extractJSON(nodeRef, metadataFields, props, cache));
-							}
+							assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
+						}
+						for (NodeRef itemNodeRef : assocRefs) {
+							addExtracted(itemNodeRef, field, cache, mode, ret);
 						}
 
 					}
@@ -196,21 +215,21 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				return ret;
 			}
 
-			@Override
-			public Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname, List<AttributeExtractorStructure> metadataFields) {
-
-				NodeRef entityNodeRef = entityListDAO.getEntity(entityListNodeRef);
-
-				if (cache.containsKey(entityNodeRef)) {
-					return cache.get(entityNodeRef);
+			private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache, AttributeExtractorMode mode,
+					List<Map<String, Object>> ret) {
+				if (cache.containsKey(itemNodeRef)) {
+					ret.add(cache.get(itemNodeRef));
 				} else {
-					if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
-						return extractJSON(entityNodeRef, metadataFields, props, cache);
+					if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+						if (AttributeExtractorMode.CSV.equals(mode)) {
+							ret.add(extractCSV(itemNodeRef, field.getChildrens(), props, cache));
+						} else {
+							ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));
+						}
 					}
 				}
-
-				return new HashMap<String, Object>();
 			}
+
 		});
 	}
 
@@ -218,6 +237,5 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
 		return false;
 	}
-
 
 }
