@@ -462,7 +462,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />			
-					<show id="bcpg:packagingDescription" />		
+					<show id="bcpg:packagingDescription" force="true" />		
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:code" />
@@ -610,7 +610,7 @@
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />					
 					<field id="bcpg:productDensity" set="formulation" />
-					<field id="bcpg:numberOfServings" set="consumer" />					
+					<field id="bcpg:numberOfServings" set="formulation" />					
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

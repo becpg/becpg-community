@@ -87,20 +87,21 @@ public class FormulationHelper {
 	 * @throws FormulateException 
 	 */
 	public static Double getQtyWithLost(CompoListDataItem compoListDataItem, Double parentLossRatio) throws FormulateException{
-		
-		Double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
-				
-		return FormulationHelper.getQty(compoListDataItem) * FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);		
+		Double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;				
+		return FormulationHelper.getQtyWithLost(FormulationHelper.getQty(compoListDataItem), FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc));		
 	}
 	
-	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) throws FormulateException{
-		
+	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc){	
 		return (1 + lossPerc / 100) * parentLossRatio;		
 	}
 	
-	public static Double getQtyWithLost(PackagingListDataItem packagingListDataItem) throws FormulateException{
-		
-		return packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;		
+	public static Double getQtyWithLost(Double qty, Double lossPerc){		
+		return (1 + lossPerc / 100) * qty;		
+	}
+	
+	public static Double getQtyWithLost(PackagingListDataItem packagingListDataItem){		
+		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
+		return FormulationHelper.getQtyWithLost(FormulationHelper.getQty(packagingListDataItem), lossPerc);		
 	}
 
 	/**

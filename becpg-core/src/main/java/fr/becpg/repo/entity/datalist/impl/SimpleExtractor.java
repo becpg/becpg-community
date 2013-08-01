@@ -165,9 +165,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
-		if (dataListFilter.getParentNodeRef() != null) {
-			return (Date) nodeService.getProperty(dataListFilter.getParentNodeRef(), ContentModel.PROP_MODIFIED);
-		}
+//		if (dataListFilter.getParentNodeRef() != null) {
+//			return (Date) nodeService.getProperty(dataListFilter.getParentNodeRef(), ContentModel.PROP_MODIFIED);
+//		}
 		return null;
 	}
 
