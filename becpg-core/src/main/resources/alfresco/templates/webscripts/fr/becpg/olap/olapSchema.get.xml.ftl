@@ -23,6 +23,7 @@
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
 			<Level name="Jour" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 		</Hierarchy>
+		<#--
 		<Hierarchy name="Date par mois"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les périodes"  primaryKey="id" caption="Date par mois" visible="false">
 			<Table name="becpg_dimdate" alias="olapDate" />
 			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
@@ -32,10 +33,21 @@
 			<Table name="becpg_dimdate" alias="olapDate" />
 			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
-		</Hierarchy>
+		</Hierarchy> -->
 	</Dimension>
 
-	<Cube name="Non conformités" cache="true" enabled="true" defaultMeasure="Nombre de non conformités">
+	<#--
+	Top 10 des produits (Nb NC pour 1 000 000 			UVC facturés) + graph (camembert)
+	NC par mois avec filtre par usine, année, 			marque, famille, produit, nom/groupe (tjs ramené à 1000 000 UVC 			fab) + graph (histogramme + ligne)
+	Affichage des défauts avec % + graph 			(camembert)
+	Nombre de NC par équipe et par défaut 			avec filtres possible
+	Nombre NC par Centrale – client (2 niv)
+	NC internes regrouper par défauts
+  -->
+
+
+
+	<Cube name="Incidents" cache="true" enabled="true" defaultMeasure="Nombre d'incidents">
 		<View alias="nc">
 			<SQL dialect="generic">
 			<![CDATA[
@@ -46,12 +58,18 @@
 					entity.is_last_version as isLastVersion,
 					MAX(IF(prop.prop_name = "qa:ncType",prop.string_value,NULL)) as ncType,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
-					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
-					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
 					MAX(IF(prop.prop_name = "qa:ncPriority",prop.long_value,NULL)) as ncPriority,
-					MAX(IF(prop.prop_name = "qa:ncState",prop.date_value,NULL)) as ncState,
+					MAX(IF(prop.prop_name = "qa:ncState",prop.string_value,NULL)) as ncState,
 					MAX(IF(prop.prop_name = "qa:ncQuantityNc",prop.long_value,NULL)) as ncQuantityNc, 
 					MAX(IF(prop.prop_name = "qa:ncCost",prop.long_value,NULL)) as ncCost, 
+					MAX(IF(prop.prop_name = "qa:batchId",prop.string_value,NULL)) as batchId, 
+					MAX(IF(prop.prop_name = "qa:claimType",prop.string_value,NULL)) as claimType, 
+					MAX(IF(prop.prop_name = "qa:claimOriginHierarchy1",prop.string_value,NULL)) as claimOriginHierarchy1, 
+					MAX(IF(prop.prop_name = "qa:claimOriginHierarchy2",prop.string_value,NULL)) as claimOriginHierarchy2, 
+					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
+					MAX(IF(prop.prop_name = "qa:claimResponseDate",prop.long_value,NULL)) as claimResponseDate, 
+					MAX(IF(prop.prop_name = "qa:claimTreatmentDate",prop.long_value,NULL)) as claimTreatmentDate,
+					MAX(IF(prop.prop_name = "qa:claimClosingDate",prop.long_value,NULL)) as claimClosingDate,
 					entity.instance_id as instance_id
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
@@ -65,19 +83,53 @@
 		
 		
 		<Dimension  name="Désignation" >
-			<Hierarchy name="Non conformité" hasAll="true" allMemberCaption="Toutes les non conformités">
+			<Hierarchy name="Incident" hasAll="true" allMemberCaption="Tous les incidents">
 				<Level name="Nom" column="name"  type="String"    />
 				<Level name="Code NC" column="code"  type="String"    />
 			</Hierarchy>
 		</Dimension>
+		
+		<Dimension  name="Lot" >
+			<Hierarchy name="Lot" hasAll="true" allMemberCaption="Tous les lots">
+				<Level name="Numéro de lot" column="batchId"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Origine de l'incident" >
+			<Hierarchy name="Origine" hasAll="true" allMemberCaption="Toutes les origines">
+				<Level name="Famille" column="claimOriginHierarchy1"  type="String"    />
+				<Level name="Sous famille" column="claimOriginHierarchy2"  type="String" approxRowCount="20"   />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Type d'incident" >
+			<Hierarchy name="Type d'incident" hasAll="true" allMemberCaption="Tous les types d'incidents">
+				<Level name="Cause" column="claimType"  type="String" approxRowCount="20"   />
+			</Hierarchy>
+		</Dimension>
+		
 		<Dimension  name="Priorité">
 			<Hierarchy name="Priorité" hasAll="true" allMemberCaption="Toutes les priorités">
 				<Level name="Priorité" column="ncPriority"  type="String" uniqueMembers="true"   >
 					 <NameExpression>
 					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN ncPriority=1 THEN 'Basse'
-	                            WHEN ncPriority=2 THEN 'Moyenne'
-	                            WHEN ncPriority=3 THEN 'Haute'
+					  <![CDATA[CASE WHEN ncPriority=1 THEN '${msg("listconstraint.qa_ncPriority.1")}'
+	                            WHEN ncPriority=2 THEN '${msg("listconstraint.qa_ncPriority.2")}'
+	                            WHEN ncPriority=3 THEN '${msg("listconstraint.qa_ncPriority.3")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+              </NameExpression>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Type" >
+			<Hierarchy hasAll="true" allMemberCaption="Tous les types" >
+				<Level approxRowCount="2" name="Type"  column="ncType"  type="String" uniqueMembers="true"   >
+				<NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN ncType='Claim' THEN '${msg("listconstraint.qa_ncTypes.Claim")}'
+	                            WHEN ncType='NonConformity' THEN '${msg("listconstraint.qa_ncTypes.NonConformity")}'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
               </NameExpression>
@@ -87,48 +139,23 @@
 		
 		<Dimension  name="État" >
 			<Hierarchy hasAll="true" allMemberCaption="Tous les états" >
-				<Level approxRowCount="5" name="État"  column="ncState"  type="String" uniqueMembers="true"   />
+				<Level approxRowCount="7" name="État"  column="ncState"  type="String" uniqueMembers="true"   >
+				<NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN ncState='analysis' THEN '${msg("listconstraint.qa_ncStates.analysis")}'
+	                            WHEN ncState='treatment' THEN '${msg("listconstraint.qa_ncStates.treatment")}'
+	                            WHEN ncState='response' THEN '${msg("listconstraint.qa_ncStates.response")}'
+	                            WHEN ncState='classification' THEN '${msg("listconstraint.qa_ncStates.classification")}'
+	                            WHEN ncState='closing' THEN '${msg("listconstraint.qa_ncStates.closing")}'
+	                            WHEN ncState='closed' THEN '${msg("listconstraint.qa_ncStates.closed")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+              </NameExpression>
+				</Level>
 			</Hierarchy>
 		</Dimension>
-		<Dimension  name="Type" >
-			<Hierarchy hasAll="true" allMemberCaption="Tous les types" >
-				<Level approxRowCount="5" name="Type"  column="ncType"  type="String" uniqueMembers="true"   />
-			</Hierarchy>
-		</Dimension>
-		<Dimension type="StandardDimension" foreignKey="id"  name="Etape de détection">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les étapes de détections" primaryKey="entity_id">
-				<View alias="detectionStep">
-					<SQL dialect="generic">
-							select
-							prop.id,
-							prop.prop_id as nodeRef,
-							prop.string_value as name,
-							prop.entity_id
-						from
-							 becpg_property AS prop
-						where prop.prop_name = "qa:ncDetectionStep"
-					</SQL>
-				</View>
-				<Level approxRowCount="100" name="Etape de détection" column="nodeRef"  nameColumn="name" type="String"   ></Level>
-			</Hierarchy>
-		</Dimension>
-		<Dimension type="StandardDimension" foreignKey="id"  name="Etape de création">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les étapes de créations" primaryKey="entity_id">
-				<View alias="creationStep">
-					<SQL dialect="generic">
-							select
-							prop.id,
-							prop.prop_id as nodeRef,
-							prop.string_value as name,
-							prop.entity_id
-						from
-							 becpg_property AS prop
-						where prop.prop_name = "qa:ncCreationStep"
-					</SQL>
-				</View>
-				<Level approxRowCount="100" name="Etape de création" column="nodeRef"  nameColumn="name" type="String"   ></Level>
-			</Hierarchy>
-		</Dimension>
+
+
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="Produits">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les produits liés" primaryKey="entity_id">
@@ -162,9 +189,41 @@
 			</Hierarchy>
 		</Dimension>
 		
-	   <DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="dateCreated" />
-		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
-		<Measure name="Nombre de non conformités" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Dimension type="StandardDimension" foreignKey="id"  name="Client">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les clients" primaryKey="entity_id">
+				<View alias="client">
+					<SQL dialect="generic">
+						select
+							prop.id,
+							prop.prop_id as nodeRef,
+							prop.string_value as name,
+							prop.entity_id
+						from
+							 becpg_property AS prop
+						where prop.prop_name = "bcpg:clients"
+					</SQL>
+				</View>
+				<Level name="Nom client" nameColumn="name" column="nodeRef"  type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<#-- 
+				<show id="bcpg:plants"/>
+				<show id="qa:claimTreatmentActor" />
+				<show id="qa:claimResponseActor" />
+				<show id="cm:creator" /> 
+					
+		-->
+		
+		
+	   <DimensionUsage name="Date de saisie" caption="Date de création" source="Time dimension" foreignKey="dateCreated" />
+	   <DimensionUsage name="Date de traitement" caption="Date de traitement" source="Time dimension" foreignKey="claimTreatmentDate" />
+		<DimensionUsage name="Date de réponse" caption="Date de réponse" source="Time dimension" foreignKey="claimResponseDate" />
+		<DimensionUsage name="Date de clôture" caption="Date de clôture" source="Time dimension" foreignKey="claimClosingDate" />
+		
+		
+		<Measure name="Nombre d'incidents" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="Quantité non conforme" column="ncQuantityNc" datatype="Numeric" aggregator="sum" visible="true"  />
 		<Measure name="Montant lié &#224; la non conformité (euro)" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
@@ -183,7 +242,11 @@
 					MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL)) as tlStart,
 					MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)) as tlEnd,
 					MAX(IF(prop.prop_name = "pjt:tlState",prop.string_value,NULL)) as tlState,
-					MAX(IF(prop.prop_name = "pjt:tlResources",prop.string_value,NULL)) as tlResources,					
+					MAX(IF(prop.prop_name = "pjt:tlResources",prop.string_value,NULL)) as tlResources,
+					MAX(IF(prop.prop_name = "bcpg:sort",prop.long_value,NULL)) as sortOrder,
+					DATEDIFF(MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)),
+								MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL))
+						) as duration,					
 					datalist.instance_id as instance_id
 				from
 					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
@@ -198,7 +261,7 @@
 		
 		<Dimension  name="Désignation" >
 			<Hierarchy name="Etape par nom" hasAll="true" allMemberCaption="Toutes les étapes">
-				<Level name="Nom étape" column="tlTaskName"  type="String"    />
+				<Level name="Nom étape" column="tlTaskName"  type="String"   ordinalColumn="sortOrder" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -209,7 +272,7 @@
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN tlState='Planned' THEN 'Plannifié'
 	                            WHEN tlState='InProgress' THEN 'En cours'
-	                            WHEN tlState='OnHold' THEN 'Arrûté'
+	                            WHEN tlState='OnHold' THEN 'Arrêté'
 	                            WHEN tlState='Cancelled' THEN 'Annulé'
 	                            WHEN tlState='Completed' THEN 'Terminé'
 	                            ELSE 'Vide'
@@ -260,7 +323,13 @@
 		<DimensionUsage name="Date début" caption="Date début" source="Time dimension" foreignKey="tlStart" />
 		<DimensionUsage name="Date de fin" caption="Date de fin" source="Time dimension" foreignKey="tlEnd" />
 		<Measure name="Nombre d'étapes" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
-		<Measure name="Moyenne des durées" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Moyenne des durées (prévi)" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Moyenne des durées" column="duration" datatype="Numeric" aggregator="avg" visible="true"  />
+		
+		<CalculatedMember name="Moyenne des durées (Cumulé)" dimension="Measures" visible="true">
+			<Formula>([Measures].[Moyenne des durées],[Désignation.Etape par nom].PrevMember) + ([Measures].[Moyenne des durées])</Formula>
+		</CalculatedMember> 
+		
 	</Cube>
 
 	<Cube name="Projets" cache="true" enabled="true" defaultMeasure="Nombre de projets (Distinct)">
@@ -275,8 +344,8 @@
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
-					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
-					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
+					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as projectDateCreated,
+					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as projectDateModified,
 					MAX(IF(prop.prop_name = "pjt:projectState",prop.string_value,NULL)) as projectState,
 					MAX(IF(prop.prop_name = "pjt:projectStartDate",prop.date_value,NULL)) as projectStartDate,
 					MAX(IF(prop.prop_name = "pjt:projectDueDate",prop.date_value,NULL)) as projectDueDate,
@@ -288,7 +357,10 @@
 					MAX(IF(prop.prop_name = "pjt:projectManager",prop.string_value,NULL)) as projectManager,
 					MAX(IF(prop.prop_name = "pjt:projectOrigin",prop.string_value,NULL)) as projectOrigin,
 					MAX(IF(prop.prop_name = "pjt:projectSponsor",prop.string_value,NULL)) as projectSponsor,
-					MAX(IF(prop.prop_name = "bcpg:entityTplRef",prop.string_value,NULL)) as entityTplRef, 					
+					MAX(IF(prop.prop_name = "bcpg:entityTplRef",prop.string_value,NULL)) as entityTplRef, 
+					DATEDIFF(MAX(IF(prop.prop_name = "pjt:projectCompletionDate",prop.date_value,NULL)),
+								MAX(IF(prop.prop_name = "pjt:projectStartDate",prop.date_value,NULL))
+						) as duration,
 					entity.instance_id as instance_id
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
@@ -300,7 +372,7 @@
 			</SQL>
 		</View>
 		
-		 <!-- <Dimension  name="Noeuds" visible="false"  >
+		 <#-- <Dimension  name="Noeuds" visible="false"  >
 			<Hierarchy name="Noeuds" hasAll="true">
 				<Level name="Noeuds" column="noderef"  type="String"     />
 			</Hierarchy>
@@ -373,7 +445,7 @@
 							group by id
 							]]>
 						</SQL>
-					</View>		
+				</View>		
 				<Level name="Famille" column="productHierarchy1" type="String"   >
 				</Level>
 				<Level name="Sous famille" column="productHierarchy2" type="String"   >
@@ -414,27 +486,41 @@
 			</Hierarchy>
 		</Dimension>
 		
-	   <DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="dateCreated" />
-		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
+		
+		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension"  foreignKey="projectDateModified" />
+	   <DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="projectDateCreated" />
 		<DimensionUsage name="Date de début" caption="Date de début" source="Time dimension" foreignKey="projectStartDate" />
 		<DimensionUsage name="Date d'échéance" caption="Date d'échéance" source="Time dimension" foreignKey="projectDueDate" />
 		<DimensionUsage name="Date d'achèvement" caption="Date d'achèvement" source="Time dimension" foreignKey="completionDate" />
-		
+	
+
 		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
 		<Measure name="Nombre de projets (Distinct)" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="Durée moyenne" column="duration" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="Avancement (Moyen)" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="Note (Moyenne)" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="Retard " column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
 		
-
 		<CalculatedMember name="Avancement (Dernier)" dimension="Measures" visible="true">
-			<Formula>([Measures].[Avancement (Moyen)], LastNonEmpty(Descendants([Date de modification.Date].currentMember,[Date de modification.Date].[Jour]),[Measures].[Avancement (Moyen)]))</Formula>
+			<Formula>[Measures].[Avancement (Moyen)],LastNonEmpty(YTD(),[Measures].[Avancement (Moyen)])</Formula>
+		</CalculatedMember> 
+		
+		<CalculatedMember name="Nombre de projets (Cumulé)" dimension="Measures" visible="true">
+			<Formula>SUM(YTD(),[Measures].[Nombre de projets (Distinct)])</Formula>
 		</CalculatedMember> 
 		
 		<#--
+		
+		CalculatedMember name="Avancement (Dernier)" dimension="Measures" visible="true">
+			<Formula>([Measures].[Avancement (Moyen)], LastNonEmpty(Descendants([Date de modification.Date].currentMember,[Date de modification.Date].[Jour]),[Measures].[Avancement (Moyen)]))</Formula>
+		</CalculatedMember> 
+		
+	
 		<NamedSet name="Trois derniers mois">
-			<Formula>{CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]').Lag(2): CurrentDateMember([Date de modification.Date par mois],'[Date \de \mo\dificatio\n\.Date par \moi\s]\.[yyyy]\.[mmmm]')}</Formula>
+			<Formula>{CurrentDateMember([Date de modification.Date],'[Date \de \mo\dificatio\n\.Date]\.[yyyy]\.[mmmm]').Lag(2): CurrentDateMember([Date de modification.Date],'[Date \de \mo\dificatio\n\.Date]\.[yyyy]\.[mmmm]')}</Formula>
 		</NamedSet>
+		
+		
 		<CalculatedMember name="Dernier avancement" dimension="Measures" visible="true">
 			<Formula>Tail(NonEmptyCrossJoin({[Date de modification].[Date].firstChild:[Date de modification].[Date].currentMember},[Measures].[Avancement (Moyen)])).Item(0)</Formula>
 		</CalculatedMember> 
@@ -461,8 +547,8 @@
 					MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "bcpg:legalName",prop.string_value,NULL)) as legalName,
-					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
-					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as dateModified,
+					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as productDateCreated,
+					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as productDateModified,
 					MAX(IF(prop.prop_name = "bcpg:startEffectivity",prop.date_value,NULL)) as startEffectivity,
 					MAX(IF(prop.prop_name = "bcpg:endEffectivity",prop.date_value,NULL)) as endEffectivity,
 					MAX(IF(prop.prop_name = "bcpg:productState",prop.string_value,NULL)) as productState,
@@ -703,14 +789,14 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="Historique" >
+	  <Dimension  name="Historique" >
 			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
 				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
 			</Hierarchy>
 		</Dimension>
 		
-		<DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="dateCreated" />
-		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
+		<DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="productDateCreated" />
+		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="productDateModified" />
 		<DimensionUsage name="Debut d'effectivité" caption="Debut d'effectivité" source="Time dimension" foreignKey="startEffectivity" />
 		<DimensionUsage name="Fin d'effectivité" caption="Fin d'effectivité" source="Time dimension" foreignKey="endEffectivity" />
 		
