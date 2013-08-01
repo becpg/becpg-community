@@ -85,7 +85,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		
 		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(dataListFilter.getEntityNodeRef(), associationName, dataListFilter.getMaxDepth());
 		
-		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props);
+		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props,dataListFilter.getFormat());
 
 		ret.setFullListSize(wUsedData.getSize());
 		return ret;

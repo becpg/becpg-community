@@ -48,7 +48,9 @@
 		<property name="associationService" ref="associationService" />
 	</bean>
 	
-	<bean id="webscript.fr.becpg.entity.datalist.data.post" class="fr.becpg.repo.web.scripts.entity.datalist.EntityDataListWebScript"
+	<alias name="webscript.fr.becpg.entity.datalist.data.get" alias="webscript.fr.becpg.entity.datalist.data.post"/>
+	
+	<bean id="webscript.fr.becpg.entity.datalist.data.get" class="fr.becpg.repo.web.scripts.entity.datalist.EntityDataListWebScript"
 		parent="webscript">
 		<property name="securityService" ref="securityService" />
 		<property name="nodeService" ref="NodeService" />
@@ -57,6 +59,8 @@
 		<property name="permissionService" ref="PermissionService" />
 		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>
+	
+	
 	
 	<bean id="webscript.fr.becpg.entity.datalist.sort.post" class="fr.becpg.repo.web.scripts.entity.datalist.SortDataListWebScript"
 		parent="webscript">

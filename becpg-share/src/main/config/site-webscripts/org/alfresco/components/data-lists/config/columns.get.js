@@ -137,7 +137,7 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig) {
       var fieldId = null;
       for ( var f = 0; f < visibleFields.length; f++) {
          fieldId = visibleFields[f];
-         if (fieldId.indexOf("dataList_") < 0) {
+         if (fieldId.indexOf("dataList_") < 0 && fieldId.indexOf("entity_") < 0) {
             postBodyFields.push(fieldId);
             if (formConfig.isFieldForced(fieldId)) {
                postBodyForcedFields.push(fieldId);
@@ -164,25 +164,30 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig) {
  * @method main
  */
 function main() {
-   var itemType = getArgument("itemType"), list = getArgument("list");// beCPG
+   var itemType = getArgument("itemType"), list = getArgument("list"),
+        formId = getArgument("formId");// beCPG
 
    cache.maxAge = 3600; // in seconds
    
    // pass form ui model to FTL
-   model.columns = getColumns(itemType, list);
+   model.columns = getColumns(itemType, list,formId);
 }
 
-function getColumns(itemType, list) {
+function getColumns(itemType, list , formIdArgs) {
    var columns = [], ret = [];
 
    if (itemType != null && itemType.length > 0) {
       // get the config for the form
       // beCPG : WUsed
       var formId = "datagrid";
-      if (list == "WUsed") {
-         formId = "datagridWUsed";
-      } else if (list == "sub-datagrid") {
-         formId = "sub-datagrid";
+      if(formIdArgs == null){
+         if (list == "WUsed") {
+            formId = "datagridWUsed";
+         } else if (list == "sub-datagrid") {
+            formId = "sub-datagrid";
+         }
+      } else {
+         formId = formIdArgs;
       }
       var formConfig = getFormConfig(itemType, formId);
 
@@ -226,7 +231,6 @@ function getColumns(itemType, list) {
             var name = fieldId.replace("dataList_", ""), column = {
                type : "dataList",
                name : name,
-               formsName : "dt_" + name.replace(":", "_"),
                label : (formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId
                      : formConfig.fields[fieldId].label),
                "dataType" : "nested"
@@ -235,7 +239,24 @@ function getColumns(itemType, list) {
 
             ret.push(column);
 
-         } else {
+         }else if (fieldId.indexOf("entity_") == 0) {
+            var splitted = fieldId.replace("entity_", "").split("_");
+            var name = splitted[0], column = {
+               type : "entity",
+               name : name,
+               label : (formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId
+                     : formConfig.fields[fieldId].label),
+               "dataType" : "nested"
+            };
+            if(formId!=null){
+               column.columns = getColumns(splitted[1] + "", "sub-datagrid","sub-datagrid-"+formId);
+            } else {
+               column.columns = getColumns(splitted[1] + "", "sub-datagrid");
+            }
+
+            ret.push(column);
+
+         }  else {
 
             for ( var j in columns) {
                if (columns[j].name == fieldId) {

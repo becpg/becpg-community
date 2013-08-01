@@ -23,6 +23,12 @@ var AboutModal = Modal.extend({
             title: "About " + Settings.VERSION
         });
     },
+
+    events: {
+    	'click a' : 'dummy'
+    },
+
+    dummy: function() { return true;},
     
     type: "info",
     

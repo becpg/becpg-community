@@ -57,6 +57,8 @@ public class DataListFilter {
 	
 	private String sortId = null;
 	
+	private String format = null;
+	
 	public DataListFilter() {
 		super();
 		sortMap.put("@bcpg:sort", true);
@@ -86,6 +88,14 @@ public class DataListFilter {
 
 	public String getFilterId() {
 		return filterId;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
 	}
 
 	public Map<String, String> getCriteriaMap() {

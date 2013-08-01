@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.saiku.service.ISessionService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import fr.becpg.olap.authentication.AlfrescoUserDetails;
 
-public class AlfrescoSessionService implements ISessionService {
+public class AlfrescoSessionService extends SessionService {
 
 	private static final Log logger = LogFactory.getLog(SessionService.class);
 

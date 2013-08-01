@@ -21,14 +21,19 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 public interface AttributeExtractorService {
 
 	public interface DataListCallBack {
-
-		List<Map<String,Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname,  List<AttributeExtractorStructure> metadataFields);
-
-		Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname,  List<AttributeExtractorStructure> metadataFields);
+		
+		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
 
 
 	}
+	
+	public enum AttributeExtractorMode {
+		SEARCH,JSON,CSV;
+	}
 
+	
+	
+	
 	public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 
 	public String getPersonDisplayName(String userId);
@@ -37,9 +42,9 @@ public interface AttributeExtractorService {
 
 	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
 	
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch );
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode );
 	
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,  List<AttributeExtractorStructure> metadataFields, boolean isSearch, DataListCallBack dataListCallBack);
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,  List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
 
 	public String getDisplayPath(NodeRef nodeRef);
 
