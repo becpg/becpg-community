@@ -12,6 +12,7 @@
 			prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
@@ -31,7 +32,27 @@
                 <value>true</value>
             </parameter>
         </constraint>
+        <constraint name="pack:labelingPositions"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/LabelingPositions</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
      </constraints>		
+     
+     <types>
+     	<type name="pack:labelingTemplate">
+			<parent>bcpg:entityListItem</parent>
+		</type>
+     </types>
 
 	<aspects>
 		<!-- pallet -->
@@ -149,6 +170,31 @@
                 </property>
             </properties>
         </aspect>
+        
+        <aspect name="pack:labelingAspect">
+			<properties>			
+				<property name="pack:labelingPosition">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelingPositions" />
+					</constraints>					
+				</property>
+			</properties>
+			<associations>			
+				<association name="pack:labelingTemplate">
+					<title>Marquage</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pack:labelingTemplate</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+			</associations>
+		</aspect>
         
 		
 	</aspects>

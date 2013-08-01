@@ -358,6 +358,10 @@
 	background-image: url(../../components/images/comment-16.png);
 }
 
+.datagrid-bar .onActionManageAspects,.datagrid .onActionManageAspects a {
+	background-image: url(../../components/images/aspect-16.png);
+}
+
 .datagrid span.document-version {
 	margin-left: .8em;
 	position: relative;

@@ -106,7 +106,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);
+		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			

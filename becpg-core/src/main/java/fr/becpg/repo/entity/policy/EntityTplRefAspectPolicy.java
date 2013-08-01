@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.entity.policy;
 
+import java.util.List;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -16,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
@@ -37,6 +39,8 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements No
 	
 	private EntityTplService entityTplService;
 	
+	private EntityListDAO entityListDAO;
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -47,6 +51,10 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements No
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
+	}
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 	public void doInit() {
@@ -81,7 +89,18 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements No
 			NodeRef entityTplNodeRef = assocRef.getTargetRef();
 			
 			// copy files
-			entityService.copyFiles(entityTplNodeRef, entityNodeRef);			
+			entityService.copyFiles(entityTplNodeRef, entityNodeRef);	
+			
+			// copy datalists
+			entityListDAO.copyDataLists(entityTplNodeRef, entityNodeRef, false);
+			
+			// copy missing aspects
+			Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);			
+			for(QName aspect : aspects){
+				if(!nodeService.hasAspect(entityNodeRef, aspect)){
+					nodeService.addAspect(entityNodeRef, aspect, null);
+				}
+			}
 		}
 	}
 	

@@ -32,6 +32,7 @@
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="versionService" ref="versionService"/>
+		<property name="associationService" ref="associationService"/>
 	</bean>
 
 

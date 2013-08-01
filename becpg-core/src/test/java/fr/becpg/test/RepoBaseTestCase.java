@@ -50,6 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitor;
@@ -211,6 +212,8 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	/** The organos. */
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
+	
+	protected NodeRef labelingTemplateNodeRef = null;
 
 	protected ApplicationContext ctx;
 
@@ -292,6 +295,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					initEntityTemplates();
 					initHierarchyLists();
 					initSystemProducts();
+					initLabelingTemplate();
 					// reset dictionary to reload constraints on list_values
 					dictionaryDAO.reset();
 					return null;
@@ -395,6 +399,16 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		properties.put(ContentModel.PROP_NAME, AllergenType.Major.toString());
 		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		
+		// labelingPosition
+		NodeRef labelingPositionFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_LABELING_POSITIONS);
+		String[] labelingPositions = { "Côté de la boîte", "Dessus de la boite" };
+		for (String labelingPosition : labelingPositions) {
+			properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, labelingPosition);
+			nodeService.createNode(labelingPositionFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
 	}
 	
 	private void initTasks() {
@@ -543,7 +557,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);		
 		for (FileInfo fileInfo : taskLegendsFileInfo) {
 			taskLegends.add(fileInfo.getNodeRef());
-		}
+		}		
 	}
 	
 	private void initSystemProducts(){
@@ -696,6 +710,25 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		
 	}
 
-	
+	private void initLabelingTemplate() {
+
+		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_CHARACTS);
+
+		// labelingTemplate
+		NodeRef labelingTemplateFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_LABELING_TEMPLATES);
+		List<FileInfo> labelingTemplatesFileInfo = fileFolderService.listFiles(labelingTemplateFolder);
+		if (labelingTemplatesFileInfo.size() == 0) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, "Marquage 1");
+			properties.put(ContentModel.PROP_DESCRIPTION, "N° de lot : AAJJJ (AA : derniers chiffres de l’année ; JJJ : quantième du jour de fabrication)");
+			labelingTemplateNodeRef = nodeService.createNode(labelingTemplateFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PackModel.TYPE_LABELING_TEMPLATE, properties).getChildRef();
+		} else {
+			labelingTemplateNodeRef = labelingTemplatesFileInfo.get(0).getNodeRef();
+		}
+
+	}
 
 }

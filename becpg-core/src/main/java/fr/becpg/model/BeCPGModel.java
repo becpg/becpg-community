@@ -139,6 +139,10 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_COMPOLIST_DECL_TYPE. */
 	QName PROP_COMPOLIST_DECL_TYPE = QName.createQName(BECPG_URI, "compoListDeclType");
+	
+	QName PROP_COMPOLIST_OVERRUN_PERC = QName.createQName(BECPG_URI, "compoListOverrunPerc");
+	
+	QName PROP_COMPOLIST_VOLUME = QName.createQName(BECPG_URI, "compoListVolume");
 
 	// packagingList
 	QName TYPE_PACKAGINGLIST = QName.createQName(BECPG_URI, "packagingList");
@@ -481,6 +485,7 @@ public interface BeCPGModel {
 	QName ASPECT_TRANSFORMATION = QName.createQName(BECPG_URI, "transformationAspect");
 	QName PROP_PRODUCT_QTY = QName.createQName(BECPG_URI, "productQty");
 	QName PROP_PRODUCT_DENSITY = QName.createQName(BECPG_URI, "productDensity");
+	QName PROP_PRODUCT_NET_WEIGHT = QName.createQName(BECPG_URI, "netWeight");
 	@Deprecated
 	QName ASSOC_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI, "productSpecification");
 	QName ASSOC_PRODUCT_SPECIFICATIONS = QName.createQName(BECPG_URI, "productSpecifications");
@@ -690,5 +695,8 @@ public interface BeCPGModel {
 	@Deprecated
 	QName ASPECT_ENTITY_VERSIONABLE = QName.createQName(BECPG_URI, "entityVersionable");
 
-	
+	QName TYPE_STORAGE_CONDITIONS = QName.createQName(BECPG_URI, "storageConditions");
+	QName ASSOC_STORAGE_CONDITIONS = QName.createQName(BECPG_URI, "storageConditions");
+	QName TYPE_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
+	QName ASSOC_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
 }

@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,9 +23,12 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -32,8 +36,12 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 @Service
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static final String MESSAGE_RM_WATER = "message.formulate.rawmaterial.water";
-	private static final String KEY_RM_WATER = "RMWater";
+	private static final String MESSAGE_RM_WATER = "message.formulate.rawmaterial.water";	
+	private static final String MESSAGE_MISSING_NET_WEIGHT = "message.formulate.missing.netWeight";
+	private static final String MESSAGE_MISSING_QTY = "message.formulate.missing.qty";
+	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
+	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
+	private static final String KEY_RM_WATER = "RMWater";	
 	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 	
@@ -55,6 +63,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -66,19 +75,31 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			return true;
 		}
 		
+		checkMissingProperties(formulatedProduct);
+		
 		//Take in account net weight
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct);			
-					
+		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);			
+		
 		// calculate on every item
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
 		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
 		visitYieldChildren(formulatedProduct, netWeight, compositeAll);
 		
-		// Yield
-		Double qtyUsed = calculateQtyUsedBeforeProcess(CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)));
+		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
+		
+		// Yield		
+		Double qtyUsed = calculateQtyUsedBeforeProcess(compositeDefaultVariant);
 		if(qtyUsed != null && qtyUsed != 0d){
 			formulatedProduct.setYield(100 * netWeight / qtyUsed);
-		}			
+		}	
+		
+		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct.getNodeRef(), nodeService);
+		if(netVolume != null){
+			Double calculatedVolume = calculateVolumeFromChildren(compositeDefaultVariant);
+			if(calculatedVolume != 0d){
+				formulatedProduct.setYieldVolume(100 * netVolume / calculatedVolume);
+			}			
+		}
 		
 		return true;
 	}
@@ -120,9 +141,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 					}
 					qty = qtySubFormula * 100 / yield;			
 					
-					component.getData().setQty(qty);									
+					component.getData().setQty(qty);					
 				}
-			}	
+			}
+			
+			// calculate volume ?			
+			Double volume = FormulationHelper.getNetVolume(component.getData(), nodeService); 
+			component.getData().getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_VOLUME, volume);
 			
 			// calculate children
 			if(!component.isLeaf()){
@@ -141,32 +166,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 					component.getData().setQtySubFormula(compositePerc);
 					component.getData().setQty(compositePerc * parentQty / 100);
 				}
-				else{			
-					
-//					// has been modified from UI ?
-//					// then update qtySubFormula of components
-//					Date compositeModifiedDate = (Date)nodeService.getProperty(component.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
-//					boolean compositeYieldModified = true;
-//					for(Composite<CompoListDataItem> child : component.getChildren()){
-//						Date childModifiedDate = (Date)nodeService.getProperty(child.getData().getNodeRef(), ContentModel.PROP_MODIFIED);
-//						logger.info("###compositeModifiedDate: " + compositeModifiedDate);
-//						logger.info("###childModifiedDate: " + childModifiedDate);
-//						if(compositeModifiedDate != null && compositeModifiedDate.before(childModifiedDate)){
-//							compositeYieldModified = false;
-//						}
-//					}
-//					Double dbYieldPerc = component.getData().getYieldPerc();
-//					Double calcultedYieldPerc = calculateYield(component);
-//					if(compositeYieldModified && dbYieldPerc != null && dbYieldPerc != 0d && !calcultedYieldPerc.equals(dbYieldPerc)){
-//					
-//						Double ratio =  calcultedYieldPerc / dbYieldPerc;
-//						for(Composite<CompoListDataItem> child : component.getChildren()){
-//							Double dbQtySubFormula = child.getData().getQtySubFormula();
-//							Double qtySubFormula = dbQtySubFormula != null ? dbQtySubFormula * ratio : null;
-//							logger.debug("Yield has been modified from UI, dbQtySubFormula: " + dbQtySubFormula + " qtySubFormula: " + qtySubFormula);
-//							child.getData().setQtySubFormula(qtySubFormula);
-//						}
-//					}
+				else{
 					
 					visitQtyChildren(formulatedProduct, component.getData().getQty(),component);					
 				}				
@@ -269,4 +269,77 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		});
 	}
 	
+	private Double calculateVolumeFromChildren(Composite<CompoListDataItem> composite) throws FormulateException{				
+		
+		Double volume = 0d;
+		
+		for(Composite<CompoListDataItem> component : composite.getChildren()){						
+			
+			Double value = null;
+			
+			if(!component.isLeaf()){
+				// calculate children
+				value = calculateVolumeFromChildren(component);
+				component.getData().getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_VOLUME, value);				
+				
+			}else{
+				value = (Double)component.getData().getExtraProperties().get(BeCPGModel.PROP_COMPOLIST_VOLUME);
+				value = value != null ? value : 0d;
+			}			
+			volume += value;
+		}		
+		return volume;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void checkMissingProperties(ProductData formulatedProduct){
+		
+		checkMissingProperties(formulatedProduct, formulatedProduct.getNodeRef());
+		
+		for(CompoListDataItem c : formulatedProduct.getCompoList()){			
+			if(c.getCompoListUnit() != null && 
+				!(c.getCompoListUnit().equals(CompoListUnit.kg) || c.getCompoListUnit().equals(CompoListUnit.g))){
+				logger.info("checkMissingProperties");
+				checkMissingProperties(formulatedProduct, c.getProduct());
+			}			
+		}		
+	}
+	
+	private void checkMissingProperties(ProductData formulatedProduct, NodeRef productNodeRef){
+		
+		logger.info("checkMissingProperties " + nodeService.getType(productNodeRef));
+		
+		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))){
+			
+			logger.info("checkMissingProperties");
+			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
+			if(productUnit == null){	
+				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_UNIT);
+			}
+			
+			Double qty = FormulationHelper.getProductQty(productNodeRef, nodeService);
+			if(qty == null || qty.equals(0d)){
+				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_QTY);
+			}
+			
+			Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
+			if(density == null || density.equals(0d)){
+				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_DENSITY);
+			}
+			
+			Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService);
+			if(netWeight == null || netWeight.equals(0d)){				
+				if(qty == null || productUnit == null || !(productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.g))){
+					addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
+				}			
+			}
+		}		
+	}
+		
+	private void addMessingReq(ProductData formulatedProduct, NodeRef sourceNodeRef, String reqMsg){
+		String message = I18NUtil.getMessage(reqMsg);
+		ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
+		sources.add(sourceNodeRef);		
+		formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null,  RequirementType.Forbidden, message, sources));
+	}
 }
