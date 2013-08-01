@@ -17,6 +17,8 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	private Double qty = 0d;
 
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
+	
+	private Double lossPerc = 0d;
 
 	private PackagingLevel pkgLevel;
 
@@ -42,6 +44,16 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	public void setPackagingListUnit(PackagingListUnit packagingListUnit) {
 		this.packagingListUnit = packagingListUnit;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:packagingListLossPerc")
+	public Double getLossPerc() {
+		return lossPerc;
+	}
+
+	public void setLossPerc(Double lossPerc) {
+		this.lossPerc = lossPerc;
 	}
 
 	@AlfProp

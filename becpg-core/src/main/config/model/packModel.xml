@@ -168,11 +168,6 @@
                     <type>d:double</type>
                     <mandatory>false</mandatory>
                 </property>
-                <property name="pack:volume">
-                    <title>Volume (mL)</title>
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                </property>
             </properties>
         </aspect>
         

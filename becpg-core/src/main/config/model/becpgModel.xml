@@ -62,6 +62,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:netWeightUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>g</value>
+					<value>kg</value>				
+				</list>
+			</parameter>
+		</constraint>
 
 		<constraint name="bcpg:ingType"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -730,6 +740,12 @@
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
 				</property>
+				<property name="bcpg:compoListOverrunPerc">
+					<type>d:double</type>
+				</property>
+				<property name="bcpg:compoListVolume">
+					<type>d:double</type>
+				</property>
 			</properties>
 			<associations>
 				<!-- assoc used to store the product -->
@@ -766,6 +782,11 @@
 					<constraints>
 						<constraint ref="bcpg:packagingListUnit" />
 					</constraints>
+				</property>
+				<property name="bcpg:packagingListLossPerc">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:packagingListPkgLevel">
 					<type>d:text</type>
@@ -1080,6 +1101,17 @@
 					</target>
 				</association>
 				<association name="bcpg:ingListGeoOrigin">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:ingListGeoTransfo">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
@@ -1670,6 +1702,10 @@
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
+				<property name="bcpg:productQty">
+					<type>d:double</type>
+					<mandatory>true</mandatory>
+				</property>
 				<property name="bcpg:productUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -1692,11 +1728,7 @@
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
-			<properties>
-				<property name="bcpg:productQty">
-					<type>d:double</type>
-					<mandatory>true</mandatory>
-				</property>
+			<properties>							
 			</properties>
 			<associations>
 				<!-- @Deprecated -->
@@ -1771,12 +1803,69 @@
 			</properties>
 		</aspect>
 
-		<aspect name="bcpg:consumerAspect">
+		<aspect name="bcpg:consumerAspect">			
 			<properties>
 				<property name="bcpg:useByDate">
 					<type>d:int</type>
 				</property>
+				<property name="bcpg:bestBeforeDate">
+					<type>d:int</type>
+				</property>
+				<property name="bcpg:periodAfterOpening">
+					<type>d:int</type>
+				</property>
+				<property name="bcpg:netWeight">
+					<type>d:double</type>
+				</property>
+				<property name="bcpg:netWeightUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>kg</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:netWeightUnits" />
+					</constraints>
+				</property>
+				<property name="bcpg:numberOfServings">
+					<type>d:int</type>
+				</property>
+				<property name="bcpg:preparationTips">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:packagingDescription">
+					<type>d:mltext</type>
+				</property>
 			</properties>
+			<associations>
+				<association name="bcpg:storageConditions">
+					<title>Conditions de conservation</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:storageConditions</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:precautionOfUse">
+					<title>Précautions d’emploi</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:precautionOfUse</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:suppliersAspect">
@@ -2259,49 +2348,6 @@
 				remove bcpg:entityVersionable -->
 			<!-- <parent>cm:versionable</parent> <overrides> <property name="cm:autoVersion"> 
 				<default>false</default> </property> </overrides> -->
-		</aspect>
-
-		<aspect name="bcpg:finishedProductAspect">
-			<properties>
-				<property name="bcpg:numberOfServings">
-					<type>d:int</type>
-				</property>
-				<property name="bcpg:alcoholContent">
-					<type>d:text</type>
-				</property>
-				<property name="bcpg:preparationTips">
-					<type>d:text</type>
-				</property>
-				<property name="bcpg:packagingDescription">
-					<type>d:mltext</type>
-				</property>
-			</properties>
-			<associations>
-				<association name="bcpg:storageConditions">
-					<title>Conditions de conservation</title>
-					<source>
-						<mandatory>true</mandatory>
-						<many>false</many>
-					</source>
-					<target>
-						<class>bcpg:storageConditions</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="bcpg:precautionOfUse">
-					<title>Précautions d’emploi</title>
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:precautionOfUse</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-			</associations>
 		</aspect>
 
 	</aspects>

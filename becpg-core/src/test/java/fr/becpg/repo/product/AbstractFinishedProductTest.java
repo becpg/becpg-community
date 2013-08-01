@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -100,6 +101,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     
     /** The raw material14 node ref. */
     protected NodeRef rawMaterial14NodeRef;
+    
+    protected NodeRef rawMaterial15NodeRef;
     
     protected NodeRef packagingMaterial1NodeRef;
     protected NodeRef packagingMaterial2NodeRef;
@@ -316,6 +319,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					/*-- Raw material 1 --*/
 					RawMaterialData rawMaterial1 = new RawMaterialData();
 					rawMaterial1.setName("Raw material 1");
+					rawMaterial1.setDensity(1d);
 					MLText legalName = new MLText("Legal Raw material 1");
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 1");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 1");
@@ -366,6 +370,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 2");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 2");
 					rawMaterial2.setLegalName(legalName);
+					rawMaterial2.setDensity(1d);
 					//costList
 					costList = new ArrayList<CostListDataItem>();
 					costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false));
@@ -413,6 +418,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 3");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 3");
 					rawMaterial3.setLegalName(legalName);
+					rawMaterial3.setDensity(1d);
 					//costList
 					costList = new ArrayList<CostListDataItem>();
 					costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
@@ -455,6 +461,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 4");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 4");
 					rawMaterial4.setLegalName(legalName);
+					rawMaterial4.setDensity(1.1d);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
 					ingList = new ArrayList<IngListDataItem>();
 					bioOrigins = new ArrayList<NodeRef>();
@@ -478,6 +485,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 5");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 5");
 					rawMaterial5.setLegalName(legalName);
+					rawMaterial5.setQty(0.1d);
+					rawMaterial5.setUnit(ProductUnit.kg);
 					rawMaterial5.setDensity(0.1d);
 					//costList
 					costList = new ArrayList<CostListDataItem>();
@@ -581,6 +590,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 11");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 11");
 					rawMaterial11.setLegalName(legalName);
+					rawMaterial11.setDensity(1d);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ; geo1|geo2 
 					ingList = new ArrayList<IngListDataItem>();
 					bioOrigins = new ArrayList<NodeRef>();
@@ -602,6 +612,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 12");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 12");
 					rawMaterial12.setLegalName(legalName);
+					rawMaterial12.setDensity(1d);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
 					ingList = new ArrayList<IngListDataItem>();
 					bioOrigins = new ArrayList<NodeRef>();
@@ -624,6 +635,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 13");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 13");
 					rawMaterial13.setLegalName(legalName);
+					rawMaterial13.setDensity(1d);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
 					ingList = new ArrayList<IngListDataItem>();
 					bioOrigins = new ArrayList<NodeRef>();
@@ -642,6 +654,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 14");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 14");
 					rawMaterial14.setLegalName(legalName);
+					rawMaterial14.setDensity(1d);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
 					ingList = new ArrayList<IngListDataItem>();
 					bioOrigins = new ArrayList<NodeRef>();
@@ -677,6 +690,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					/*-- Raw material Water --*/					
 					RawMaterialData rawMaterialWater = new RawMaterialData();
 					rawMaterialWater.setName("Eau réseau");
+					rawMaterialWater.setDensity(1d);
 					legalName = new MLText("Legal Raw material Eau");
 					legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
@@ -685,6 +699,19 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
 					rawMaterialWater.setIngList(ingList);		
 					alfrescoRepository.create(folderNodeRef, rawMaterialWater).getNodeRef();
+					
+					/*-- Raw material 15 --*/
+					RawMaterialData rawMaterial15 = new RawMaterialData();
+					rawMaterial15.setName("Raw material 15");
+					legalName = new MLText("Legal Raw material 15");
+					legalName.addValue(Locale.FRENCH, "Legal Raw material 15");
+					legalName.addValue(Locale.ENGLISH, "Legal Raw material 15");
+					rawMaterial15.setLegalName(legalName);
+					rawMaterial15.setDensity(40d);
+					rawMaterial15.setQty(50d);
+					rawMaterial15.setUnit(ProductUnit.mL);
+					rawMaterial15.setNetWeight(2d);
+					rawMaterial15NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial15).getNodeRef();					
 //				}
 //				else{
 //					

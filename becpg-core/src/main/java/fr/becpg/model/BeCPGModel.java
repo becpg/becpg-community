@@ -139,6 +139,10 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_COMPOLIST_DECL_TYPE. */
 	QName PROP_COMPOLIST_DECL_TYPE = QName.createQName(BECPG_URI, "compoListDeclType");
+	
+	QName PROP_COMPOLIST_OVERRUN_PERC = QName.createQName(BECPG_URI, "compoListOverrunPerc");
+	
+	QName PROP_COMPOLIST_VOLUME = QName.createQName(BECPG_URI, "compoListVolume");
 
 	// packagingList
 	QName TYPE_PACKAGINGLIST = QName.createQName(BECPG_URI, "packagingList");
@@ -481,6 +485,7 @@ public interface BeCPGModel {
 	QName ASPECT_TRANSFORMATION = QName.createQName(BECPG_URI, "transformationAspect");
 	QName PROP_PRODUCT_QTY = QName.createQName(BECPG_URI, "productQty");
 	QName PROP_PRODUCT_DENSITY = QName.createQName(BECPG_URI, "productDensity");
+	QName PROP_PRODUCT_NET_WEIGHT = QName.createQName(BECPG_URI, "netWeight");
 	@Deprecated
 	QName ASSOC_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI, "productSpecification");
 	QName ASSOC_PRODUCT_SPECIFICATIONS = QName.createQName(BECPG_URI, "productSpecifications");
