@@ -55,6 +55,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private Double qty;
 	private Double density;
 	private Double yield;
+	private Double yieldVolume;
+	private Double netWeight;
 
 	/*
 	 * Profitability properties
@@ -204,6 +206,24 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setYield(Double yield) {
 		this.yield = yield;
+	}
+	
+	public Double getYieldVolume() {
+		return yieldVolume;
+	}
+
+	public void setYieldVolume(Double yieldVolume) {
+		this.yieldVolume = yieldVolume;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:netWeight")
+	public Double getNetWeight() {
+		return netWeight;
+	}
+
+	public void setNetWeight(Double netWeight) {
+		this.netWeight = netWeight;
 	}
 
 	@AlfProp

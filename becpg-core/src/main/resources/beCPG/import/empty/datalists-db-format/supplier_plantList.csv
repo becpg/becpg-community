@@ -1,0 +1,7 @@
+STOP_ON_FIRST_ERROR;false;;;;;;;;;;;
+IMPORT_TYPE;EntityListItem;;;;;;;;;;;
+PATH;/Temp/Products;;;;;;;;;;;
+TYPE;bcpg:plant;;;;;;;;;;;
+MAPPING;Products;;;;;;;;;;;
+COLUMNS;bcpg:erpCode;cm:title;cm:description;bcpg:plantTel;bcpg:locationAddress1;bcpg:locationAddress2;bcpg:locationAddress3;bcpg:locationZip;bcpg:locationCity;bcpg:locationCountry;bcpg:plantCertifications;bcpg:plantApprovalNumbers
+VALUES;ERP fournisseur 1;Usine A;Usine de fruit;00.00.00.00.00;16, rue Gabriel Péri;;;92120;MONTROUGE;FRANCE;ISO, IFS, ISO 22000;FR 10.375.003 CE

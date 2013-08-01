@@ -3,20 +3,27 @@
  */
 package fr.becpg.repo.product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.PackModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingLevel;
@@ -38,7 +45,9 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 	@Resource
 	private DefaultProductReportExtractor defaultProductReportExtractor; 
 
-
+	@Resource
+	private AssociationService associationService;
+	
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -53,6 +62,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 		logger.debug("testReport()");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {
 
 				/*-- Packaging material 1 --*/					
@@ -102,10 +112,17 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				finishedProduct.getPackagingListView().setPackagingList(packagingList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
 				
+				// add labelingTemplate aspect
+				ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(PackModel.PROP_LABELING_POSITION, "Côté de la boîte");
+				nodeService.addAspect(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASPECT_LABELING, properties);				
+				associationService.update(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASSOC_LABELING_TEMPLATE, labelingTemplateNodeRef);
+				
 				nodeService.setProperty(finishedProductNodeRef, ContentModel.PROP_DESCRIPTION, "Descr line 1 " + System.getProperty("line.separator") + " descr line 2");
 				
 				EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef);
-				logger.debug("XmlData : " + entityReportData.getXmlDataSource().asXML());
+				logger.info("XmlData : " + entityReportData.getXmlDataSource().asXML());
 
 				return null;
 			}

@@ -1,0 +1,7 @@
+PATH;/System/Characts/bcpg:entityLists/StorageConditions;
+TYPE;bcpg:storageConditions;
+COLUMNS;cm:name;cm:description
+VALUES;Pâtisserie surgelée;"* 3 jours dans le compartiment à glace du réfrigérateur à -6°C
+*** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée sur le côté de la boite.
+
+Après décongélation, à conserver au réfrigérateur et à consommer dans la journée."

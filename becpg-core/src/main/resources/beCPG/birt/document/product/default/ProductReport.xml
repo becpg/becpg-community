@@ -1,374 +1,519 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <entity>
+	<eanCode><![CDATA[]]>
+	</eanCode>
+	<entityTplRef><![CDATA[Modèle Produit fini]]></entityTplRef>
+	<title><![CDATA[]]>
+	</title>
+	<startEffectivity><![CDATA[lun. 24 juin 2013 00:00:00]]></startEffectivity>
+	<legalName><![CDATA[Quiche lorraine]]></legalName>
+	<modifier><![CDATA[admin]]></modifier>
+	<description><![CDATA[Quiche à destination de la MDD.
+Pour 4 personnes]]></description>
+	<productHierarchy2><![CDATA[Quiches individuelles]]></productHierarchy2>
+	<trademark><![CDATA[beCPG]]></trademark>
+	<productState><![CDATA[A valider]]></productState>
+	<preparationTips><![CDATA[Conseils de préparations]]></preparationTips>
+	<packagingDescription><![CDATA[]]>
+		Chaque gâteau est posé sur un rond en carton blanc et protégé par un
+		flow pack. Il est ensuite inséré dans une boîte imprimée. Les boîtes
+		sont regroupées par 6 en caisse américaine.
+	</packagingDescription>
+	<erpCode><![CDATA[]]>
+	</erpCode>
+	<versionLabel><![CDATA[1.2]]></versionLabel>
+	<useByDate><![CDATA[12]]></useByDate>
+	<productUnit><![CDATA[kg]]></productUnit>
+	<precautionOfUse>
+		<created>jeu. 25 juil. 2013 15:57:17</created>
+		<locale>fr</locale>
+		<modifier>admin</modifier>
+		<creator>admin</creator>
+		<description>NE JAMAIS RECONGELER UN PRODUIT DÉCONGELÉ.</description>
+		<modified>jeu. 25 juil. 2013 15:57:17</modified>
+		<name>Produit surgelé</name>
+	</precautionOfUse>
+	<storageConditions>
+		<created>jeu. 25 juil. 2013 15:56:21</created>
+		<locale>fr</locale>
+		<modifier>admin</modifier>
+		<creator>admin</creator>
+		<description>* 3 jours dans le compartiment à glace du réfrigérateur à
+			-6°C
+			*** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée sur
+			le côté de la boite.
 
-	<productState>A valider</productState>
-	<productDensity>1</productDensity>
-	<priceCurrency>€</priceCurrency>
-	<endEffectivity></endEffectivity>
-	<productSpecifications>Intermarché - Plat cuisiné
-	</productSpecifications>
-	<clients>Intermarché</clients>
-	<created>mer. 3 avr. 2013 13:17:42</created>
-	<breakEven>0</breakEven>
-	<productHierarchy2>Quiches individuelles</productHierarchy2>
-	<legalName>Quiche lorraine</legalName>
-	<eanCode>14554545454</eanCode>
-	<modified>ven. 31 mai 2013 13:02:43</modified>
-	<modifier>admin</modifier>
-	<plants>beCPG Montrouge</plants>
-	<creator>admin</creator>
-	<erpCode></erpCode>
-	<productUnit>kg</productUnit>
-	<categories>Cons. frais, Gamme MDD, Conditionnement individuel
-	</categories>
-	<autoVersionOnUpdateProps>Faux</autoVersionOnUpdateProps>
-	<versionLabel>1.1</versionLabel>
-	<productMicrobioCriteria>Microbio - Quiches</productMicrobioCriteria>
-	<startEffectivity>mer. 3 avr. 2013 00:00:00</startEffectivity>
-	<unitTotalCost>0,5559</unitTotalCost>
-	<subsidiary>beCPG agro</subsidiary>
-	<commentCount>3</commentCount>
-	<description>Quiche à destination de la MDD.
-		Pour 4 personnes
-	</description>	
-	<taggable>appel_offre</taggable>
-	<productHierarchy1>Quiches</productHierarchy1>
-	<entityTplRef>Produit fini</entityTplRef>
-	<projectedQty>10000</projectedQty>
-	<trademark>beCPG</trademark>
-	<reportEntityGenerated>ven. 31 mai 2013 13:02:50
-	</reportEntityGenerated>
-	<title></title>
-	<code>PF1378</code>
-	<productComments>Commentaire 1
-		Commentaire 2
-	</productComments>	
-	<productQty>0,2</productQty>
-	<useByDate>12</useByDate>
-	<profitability>92,0588</profitability>
-	<autoVersion>Vrai</autoVersion>
-	<reports>Quiche lorraineMDD 200g - Fiche Technique Production.pdf,
-		Quiche lorraineMDD 200g - Fiche Technique Client.pdf</reports>
-	<locale>fr</locale>
-	<initialVersion>Vrai</initialVersion>
-	<unitPrice>7</unitPrice>
-	<name>Quiche lorraineMDD 200g</name>
-	<pvValidationDate>ven. 31 mai 2013 13:02:50</pvValidationDate>
-	<pvCallerActor>Caller</pvCallerActor>
-	<pvTransmitterActor>Transmitter</pvTransmitterActor>
-	<pvQualityApprovalActor>Qual</pvQualityApprovalActor>
-	<pvProductionApprovalActor>Prod</pvProductionApprovalActor>
-	<pvRDApprovalActor>RD</pvRDApprovalActor>
-	<itemType>bcpg:finishedProduct</itemType>
-	<numberOfServings>3</numberOfServings>
-	<alcoholContent>2,2</alcoholContent>
-	<preparationTips>Conseils de préparations</preparationTips>
-	<storageConditions>Condition de stockage</storageConditions>
-	<precautionOfUse>Précautions d'utilisation</precautionOfUse>
-
+			Après décongélation, à conserver au réfrigérateur et à consommer dans la
+			journée.
+		</description>
+		<modified>jeu. 25 juil. 2013 16:24:03</modified>
+		<name>Pâtisserie surgelée</name>
+	</storageConditions>
+	<plants><![CDATA[beCPG Montrouge]]></plants>
+	<clients><![CDATA[Intermarché]]></clients>
+	<productQty><![CDATA[0,2]]></productQty>
+	<alcoholContent><![CDATA[1.2]]></alcoholContent>
+	<unitPrice><![CDATA[7]]></unitPrice>
+	<unitTotalCost><![CDATA[0,7452]]></unitTotalCost>
+	<reports><![CDATA[Quiche lorraineMDD 200g - Fiche Technique Client.pdf, Quiche lorraineMDD 200g - Fiche Technique Production.pdf]]></reports>
+	<projectedQty><![CDATA[10000]]></projectedQty>
+	<code><![CDATA[PF1378]]></code>
+	<numberOfServings><![CDATA[5]]></numberOfServings>
+	<profitability><![CDATA[89,3538]]></profitability>
+	<modified><![CDATA[jeu. 25 juil. 2013 19:18:03]]></modified>
+	<commentCount><![CDATA[0]]></commentCount>
+	<autoVersionOnUpdateProps><![CDATA[Faux]]></autoVersionOnUpdateProps>
+	<created><![CDATA[mer. 3 avr. 2013 13:17:42]]></created>
+	<productDensity><![CDATA[1]]></productDensity>
+	<breakEven><![CDATA[0]]></breakEven>
+	<productSpecifications><![CDATA[Intermarché - Plat cuisiné, Intermarché - Fromages blancs]]></productSpecifications>
+	<locale><![CDATA[fr]]></locale>
+	<taggable><![CDATA[appel_offre]]></taggable>
+	<productComments><![CDATA[Commentaire 1
+Commentaire 2]]></productComments>
+	<productHierarchy1><![CDATA[Quiches]]></productHierarchy1>
+	<creator><![CDATA[admin]]></creator>
+	<categories><![CDATA[Cons. frais, Gamme MDD]]></categories>
+	<endEffectivity><![CDATA[]]>
+	</endEffectivity>
+	<productMicrobioCriteria><![CDATA[Microbio - Quiches]]></productMicrobioCriteria>
+	<reportEntityGenerated><![CDATA[jeu. 25 juil. 2013 19:18:05]]></reportEntityGenerated>
+	<subsidiary><![CDATA[beCPG agro]]></subsidiary>
+	<initialVersion><![CDATA[Vrai]]></initialVersion>
+	<name><![CDATA[Quiche lorraineMDD 200g]]></name>
+	<autoVersion><![CDATA[Vrai]]></autoVersion>
+	<priceCurrency><![CDATA[€]]></priceCurrency>
+	<aspects><![CDATA[referenceable, titled, transformationAspect, discussable, entityTplRefAspect, auditable, entityListsAspect, manufacturingAspect, reportEntityAspect, clientsAspect, productAspect, commentsRollup, eanAspect, consumerAspect, localized, entityVariantAspect, erpCodeAspect, legalNameAspect, effectivityAspect, codeAspect, bcpg:finishedProductAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, versionable]]></aspects>
+	<itemType><![CDATA[finishedProduct]]></itemType>
 	<images>
-		<image id="img1" name="img1" title="img1 title" />
-		<image id="img2" name="img2" title="img2 title" />
-		<image id="img3" name="img3" title="img3 title" />
-		<image id="img4" name="img4" title="img4 title" />
-		<image id="img5" name="img_fab1" title="img_fab1 title" />
-		<image id="img6" name="img_fab2" title="img_fab2 title" />
-		<image id="img7" name="img_fab3" title="img_fab3 title" />
-		<image id="img8" name="img_fab4" title="img_fab4 title" />
-		<image id="img9" name="img_palet1" title="img_palet1 title" />
-		<image id="img10" name="img_palet2" title="img_palet2 title" />
-		<image id="img11" name="produit.jpg" title="img produit" />
-		<image id="img12" name="product.jpg" title="img product" />
+		<image id="Img0" name="produit.jpg" title="Aperçu du produit" />
+		<image id="Img1" name="img_fab5.jpg"
+			title="Mettre au four 30 min et découper en 8 parts" />
+		<image id="Img2" name="img_fab2.jpg" title="Faire revenir les lardons dans une poële" />
+		<image id="Img3" name="img_fab1.jpg" title="Etaler la pâte dans le moule" />
+		<image id="Img4" name="img_fab3.jpg"
+			title="Verser les oeufs, le lait et la crème fraiche" />
+		<image id="Img5" name="img_fab4.jpg" title="Ajouter les lardons, le sel et le poivre" />
+		<image id="Img6" name="img_palet1.jpg" title="Couches" />
+		<image id="Img7" name="img_palet2.jpg" title="Palette" />
 	</images>
-
-	<plants>
-		<plant description="" plantTel="" modifier="philippe.quere"
-			locationAddress1="" creator="admin" modified="mar. 26 mars 2013 12:23:19"
-			locationCity="" locationAddress3="" locationCountry="" locationZip=""
-			name="PC thouars" title="" locationAddress2="" locale="fr_FR"
-			created="jeu. 21 mars 2013 14:45:43" plantApprovalNumbers="FR.79.329.004 CE" />
-	</plants>
-
 	<dataLists>
-
-		<compoList>
-			<entity itemType="bcpg:localSemiFinishedProduct" erpCode="125665"
-				depthLevel="1" compoListProduct="Phase 1" legalName="legal name 1"
-				compoListQtySubFormula="30.12236" compoListQtyAfterProcess="12"
-				compoListQty="3.2555" compoListUnit="kg" />
-			<entity itemType="bcpg:rawMaterial" depthLevel="2"
-				compoListProduct="product1" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"
-				suppliers="supplier1, supplier2" />
-			<entity itemType="bcpg:rawMaterial" depthLevel="2"
-				compoListProduct="product2" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"
-				suppliers="supplier1, The HallStar Company" />
-			<entity itemType="bcpg:rawMaterial" depthLevel="2"
-				compoListProduct="product3" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg" />
-			<entity itemType="bcpg:localSemiFinished" depthLevel="1"
-				compoListProduct="Phase 2" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg" />
-			<entity itemType="bcpg:rawMaterial" depthLevel="2"
-				compoListProduct="product4" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg" />
-			<entity itemType="bcpg:rawMaterial" depthLevel="2"
-				compoListProduct="product5" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg" />
-			<entity itemType="bcpg:rawMaterial" depthLevel="2"
-				compoListProduct="product6" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="kg"
-				variants="Usine1" isDefaultVariant="true" />
-			<entity itemType="bcpg:rawMaterial" depthLevel="2"
-				compoListProduct="product6" legalName="legal name 1"
-				compoListQtySubFormula="30" compoListQty="3" compoListUnit="Perc"
-				variants="Usine2" isDefaultVariant="false" />
-		</compoList>
-
-		<dynamicCharactList>
-			<dynamicCharact
-				dynamicCharactTitle="title title title title title title title title title title title title title title title title title title title title title title title title "
-				dynamicCharactValue="value" />
-			<dynamicCharact dynamicCharactTitle="title"
-				dynamicCharactValue="value" />
-		</dynamicCharactList>
-
-		<allergenList allergenListVoluntary="Arachides et produits à base de d'arachide" allergenListInVoluntary="Noix">
-			<allergen allergenListAllergen="Arachide" allergenType="Allergène majeur"
-				allergenListInVoluntary="false" allergenListVoluntary="true"
-				allergenListInVolSources=""
-				allergenListVolSources="Blé, Farine, lalalalalaal, lalalalalaal, lalalalalaala, lalalalaal, ffffffff, tttttttttt, ggggggggg" />
-			<allergen allergenListAllergen="Blé" allergenType="Allergène majeur"
-				allergenListInVoluntary="false" allergenListVoluntary="true"
-				allergenListInVolSources=""
-				allergenListVolSources="Blé, Farine, lalalalalaal, lalalalalaal, lalalalalaala, lalalalaal, ffffffff, tttttttttt, ggggggggg" />
-			<allergen allergenListAllergen="Poisson" allergenType="Allergène mineur"
-				allergenListInVoluntary="false" allergenListVoluntary="false"
-				allergenListInVolSources="" allergenListVolSources="" />
-			<allergen allergenListAllergen="Soja" allergenType="Allergène mineur"
-				allergenListInVoluntary="false" allergenListVoluntary="false"
-				allergenListInVolSources="" allergenListVolSources="" variants="Usine1"
+		<allergenList
+			allergenListVoluntary="Céréales contenant du gluten et produits à base de céréales contenant du gluten, Lait et produits à base de lait (y compris le lactose), Oeufs et produits à base d'oeufs, Noix de muscade, Poivre, Pomme de terre, Porc (viande)"
+			allergenListInVoluntary="Fruits à coque et produits dérivés, Graines de sésame et produits à base de graines de sésame, Soja et produits à base de soja, Sulfites en concentrations de plus de 10 mg par kg ou 10 mg par litre (en SO2), Cannelle, Céleri et produits à base de céleri, Latex, Maïs, Moutarde et produits à base de moutarde, Vanilline">
+			<allergen allergenListAllergen="Arachides et produits à base d'arachides"
+				allergenType="Major" allergenListVoluntary="false"
+				allergenListInVoluntary="false" allergenListVolSources=""
+				allergenListInVolSources="" />
+			<allergen allergenListAllergen="Crustacés et produits à base de crustacés"
+				allergenType="Major" allergenListVoluntary="false"
+				allergenListInVoluntary="false" allergenListVolSources=""
+				allergenListInVolSources="" />
+			<allergen
+				allergenListAllergen="Céréales contenant du gluten et produits à base de céréales contenant du gluten"
+				allergenType="Major" allergenListVoluntary="true"
+				allergenListInVoluntary="true" allergenListVolSources="Farine"
+				allergenListInVolSources="Muscade" />
+			<allergen allergenListAllergen="Fruits à coque et produits dérivés"
+				allergenType="Major" allergenListVoluntary="false"
+				allergenListInVoluntary="true" allergenListVolSources=""
+				allergenListInVolSources="Muscade" />
+			<allergen allergenListAllergen="Graines de sésame et produits à base de graines de sésame"
+				allergenType="Major" allergenListVoluntary="false"
+				allergenListInVoluntary="true" allergenListVolSources=""
+				allergenListInVolSources="Muscade" />
+			<allergen allergenListAllergen="Lait et produits à base de lait (y compris le lactose)"
+				allergenType="Major" allergenListVoluntary="true"
+				allergenListInVoluntary="false"
+				allergenListVolSources="Beurre doux pasteurisé 82%MG, Lait demi écrémé UHT, Crème fraîche liquide 30%MG, Emmental râpé"
+				allergenListInVolSources="" />
+			<allergen allergenListAllergen="Oeufs et produits à base d'oeufs"
+				allergenType="Major" allergenListVoluntary="true"
+				allergenListInVoluntary="true" allergenListVolSources="Oeuf frais entier liquide"
+				allergenListInVolSources="Oeuf frais entier liquide" />
+			<allergen allergenListAllergen="Poissons et produits à base de poissons"
+				allergenType="Major" allergenListVoluntary="false"
+				allergenListInVoluntary="false" allergenListVolSources=""
+				allergenListInVolSources="" />
+			<allergen allergenListAllergen="Soja et produits à base de soja"
+				allergenType="Major" allergenListVoluntary="false"
+				allergenListInVoluntary="true" allergenListVolSources=""
+				allergenListInVolSources="Farine" />
+			<allergen
+				allergenListAllergen="Sulfites en concentrations de plus de 10 mg par kg ou 10 mg par litre (en SO2)"
+				allergenType="Major" allergenListVoluntary="false"
+				allergenListInVoluntary="true" allergenListVolSources=""
+				allergenListInVolSources="Lardon fumé 8x8xHP" />
+			<allergen allergenListAllergen="Ail" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="false"
+				allergenListVolSources="" allergenListInVolSources="" />
+			<allergen allergenListAllergen="Cannelle" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="true"
+				allergenListVolSources="" allergenListInVolSources="Muscade" />
+			<allergen allergenListAllergen="Céleri et produits à base de céleri"
+				allergenType="Minor" allergenListVoluntary="false"
+				allergenListInVoluntary="true" allergenListVolSources=""
+				allergenListInVolSources="Muscade" />
+			<allergen allergenListAllergen="Gingembre" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="false"
+				allergenListVolSources="" allergenListInVolSources="" />
+			<allergen allergenListAllergen="Latex" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="true"
+				allergenListVolSources="" allergenListInVolSources="Emmental râpé" />
+			<allergen allergenListAllergen="Levure" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="false"
+				allergenListVolSources="" allergenListInVolSources="" />
+			<allergen allergenListAllergen="Maïs" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="true"
+				allergenListVolSources="" allergenListInVolSources="Muscade" />
+			<allergen allergenListAllergen="Moutarde et produits à base de moutarde"
+				allergenType="Minor" allergenListVoluntary="false"
+				allergenListInVoluntary="true" allergenListVolSources=""
+				allergenListInVolSources="Muscade" />
+			<allergen allergenListAllergen="Noix de muscade"
+				allergenType="Minor" allergenListVoluntary="true"
+				allergenListInVoluntary="false" allergenListVolSources="Muscade"
+				allergenListInVolSources="" />
+			<allergen allergenListAllergen="Poivre" allergenType="Minor"
+				allergenListVoluntary="true" allergenListInVoluntary="false"
+				allergenListVolSources="Poivre blanc thermisé, Poivre noir thermisé"
+				allergenListInVolSources="" variants="Hiver, Défaut"
 				isDefaultVariant="true" />
+			<allergen allergenListAllergen="Pomme de terre"
+				allergenType="Minor" allergenListVoluntary="true"
+				allergenListInVoluntary="true" allergenListVolSources="Emmental râpé, Lardon fumé 8x8xHP"
+				allergenListInVolSources="Emmental râpé, Lardon fumé 8x8xHP" />
+			<allergen allergenListAllergen="Porc (viande)" allergenType="Minor"
+				allergenListVoluntary="true" allergenListInVoluntary="true"
+				allergenListVolSources="Lardon fumé 8x8xHP"
+				allergenListInVolSources="Lardon fumé 8x8xHP" />
+			<allergen allergenListAllergen="Vanille" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="false"
+				allergenListVolSources="" allergenListInVolSources="" />
+			<allergen allergenListAllergen="Vanilline" allergenType="Minor"
+				allergenListVoluntary="false" allergenListInVoluntary="true"
+				allergenListVolSources="" allergenListInVolSources="Muscade" />
 		</allergenList>
-
-		<costList>
-			<cost costListValue="12.212222" costListUnit="€/Kg"
-				costListCost="Coût PMP" />
-			<cost costListValue="12.2" costListUnit="€/Kg" costListCost="Coût MP" />
-		</costList>
-
-		<ingLabelingList>
-			<ingLabeling language="fr" illGrp="Pâte"
-				illValue="Blé farine, Eau, Crème, Sel fin, Ferments lactiques, Ferrocyanure de sodium" illManualValue="Etiquette retravaillée"/>
-			<ingLabeling language="en" illGrp="Paste"
-				illValue="Wheat flour, Water, Cream, Salt, Lactic, Sodium ferrocyanide" />
-			<ingLabeling language="russe" illGrp="вставлять"
-				illValue="Пшеничная мука, вода, сливки, соль End, молочная, натрия ферроцианида" />
-			<ingLabeling language="fr" illGrp="Garniture"
-				illValue="Lait demi écrémé 33 %, Crème de lait pasteurisée 28 %, Porc poitrine 18,1 %, oeuf frais 14 %, Eau, Poivre, Sel fin, Muscade" />
-			<ingLabeling language="en" illGrp="Garnish"
-				illValue="Semi-skimmed milk 33 %, Pasteurized cream milk 28 %, Breast pork 18.1 %, Fresh eggs 14 %, Water, Pepper, Salt End, Nutmeg" />
-			<ingLabeling language="russe" illGrp="Rарнир"
-				illValue="полу-обезжиренного молока 33 % , пастеризованное цельное молоко 28 %, молочной железы 18,1 % свинины, свежих яиц на 14 %, вода, перец, соль End, мускатный орех" />
-
-		</ingLabelingList>
-
-		<ingList>
-			<ing ingListQtyPerc="12.455662" ingListGeoOrigin="Asie"
-				ingListBioOrigin="Végétale" ingListIsGMO="false" ingListIng="Riz"
-				ingListCEECode="" />
-			<ing ingListQtyPerc="19.2" ingListGeoOrigin="France"
-				ingListBioOrigin="Animale" ingListIsGMO="false" ingListIng="Saumon"
-				ingListCEECode="" />
-			<ing ingListQtyPerc="9.2" ingListGeoOrigin="" ingListBioOrigin=""
-				ingListIsGMO="false" ingListIng="Arômes naturels" ingListCEECode="E440" />
-			<ing ingListQtyPerc="28.2" ingListGeoOrigin="" ingListBioOrigin=""
-				ingListIsGMO="false" ingListIng="Sucre" ingListCEECode="" />
-			<ing ingListQtyPerc="" ingListGeoOrigin="" ingListBioOrigin=""
-				ingListIsGMO="false" ingListIng="Protéine de lait" ingListCEECode="" />
-		</ingList>
-
-		<nutList>
-			<nut nutListValue="5.649556" nutListUnit="g/100g" nutListGroup="Groupe 1"
-				nutListNut="Protides" groupLevel="1" />
-			<nut nutListValue="" nutListUnit="g/100g" nutListGroup="Groupe 1"
-				nutListNut="Lipides" groupLevel="1" />
-			<nut nutListValue="1.3" nutListUnit="g/100g" nutListGroup="Groupe 1"
-				nutListNut="Glucides" groupLevel="1" />
-			<nut nutListValue="2.8" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
-				nutListNut="Protéines" groupLevel="2" />
-			<nut nutListValue="4.2" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
-				nutListNut="Protéines brutes" groupLevel="2" />
-			<nut nutListValue="2.24" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
-				nutListNut="Sodium" groupLevel="2" />
-			<nut nutListValue="7.0" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
-				nutListNut="Sucres" groupLevel="2" />
-			<nut nutListValue="1.1" nutListUnit="KJ/Kg" nutListGroup="Groupe 2"
-				nutListNut="Fibres alimentaires" groupLevel="2" />
-			<nut nutListValue="8.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Amidon" groupLevel="3" />
-			<nut nutListValue="9.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Polyols totaux" groupLevel="3" />
-			<nut nutListValue="1.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="AG saturés" groupLevel="3" />
-			<nut nutListValue="1.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="AG monoinsaturés" groupLevel="3" />
-			<nut nutListValue="1.7" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="AG polyinsaturés" groupLevel="3" />
-			<nut nutListValue="1.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Cholestérol" groupLevel="3" />
-			<nut nutListValue="2.0" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Alcool (éthanol)" groupLevel="3" />
-			<nut nutListValue="2.1" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Acides organiques" groupLevel="3" />
-			<nut nutListValue="2.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Magnésium" groupLevel="3" />
-			<nut nutListValue="2.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Phosphore" groupLevel="3" />
-			<nut nutListValue="2.7" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Potassium" groupLevel="3" />
-			<nut nutListValue="2.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Calcium" groupLevel="3" />
-			<nut nutListValue="2.9" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Manganèse" groupLevel="3" />
-			<nut nutListValue="3.1" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Fer total" groupLevel="3" />
-			<nut nutListValue="3.2" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Cuivre" groupLevel="3" />
-			<nut nutListValue="3.4" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Zinc" groupLevel="3" />
-			<nut nutListValue="3.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Sélénium" groupLevel="3" />
-			<nut nutListValue="3.6" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Iode" groupLevel="3" />
-			<nut nutListValue="3.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Rétinol" groupLevel="3" />
-			<nut nutListValue="3.9" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Bêta-carotène" groupLevel="3" />
-			<nut nutListValue="4.1" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine D" groupLevel="3" />
-			<nut nutListValue="4.2" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Activité vitaminique E (en équivalents alpha-tocophérol)"
-				groupLevel="3" />
-			<nut nutListValue="4.3" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine C" groupLevel="3" />
-			<nut nutListValue="4.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine B1 ou Thiamine" groupLevel="3" />
-			<nut nutListValue="4.6" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine B2 ou Riboflavine" groupLevel="3" />
-			<nut nutListValue="4.8" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine B3 ou PP ou Niacine" groupLevel="3" />
-			<nut nutListValue="4.9" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine B5 ou Acide pantothénique" groupLevel="3" />
-			<nut nutListValue="5.0" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine B6 ou Pyridoxine" groupLevel="3" />
-			<nut nutListValue="5.2" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine B9 ou Folates totaux" groupLevel="3" />
-			<nut nutListValue="5.3" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Vitamine B12 ou Cobalamines" groupLevel="3" />
-			<nut nutListValue="5.5" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Omega 3" groupLevel="3" />
-			<nut nutListValue="5.6" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Omega 6" groupLevel="3" />
-			<nut nutListValue="5.7" nutListUnit="KJ/Kg" nutListGroup="Autre"
-				nutListNut="Rapport Omega 6 - Omega 3" groupLevel="3" />
-			<nut nutListValue="0.0" nutListUnit="KJ/100g" nutListGroup="Autre"
-				nutListNut="Energie (kJoules)" groupLevel="3" />
-			<nut nutListValue="1.4" nutListUnit="KCal/100g" nutListGroup="Autre"
-				nutListNut="Energie (kCalories)" groupLevel="3" />
-		</nutList>
-
-		<organoList>
-			<organo organoListOrgano="Texture" >
-				<organoListValue>Ferme</organoListValue>
-			</organo>
-			<organo organoListOrgano="Odeur" >
-				<organoListValue>Salée</organoListValue>
-			</organo>
-		</organoList>
-
-		<microbioList>
-			<microbio mblMicrobio="Salmonelle" mblValue="7" mblUnit="UFC/50g"
-				mblMaxi="9" />
-			<microbio mblMicrobio="Champi" mblValue="0.8" mblUnit="UFC/10g"
-				mblMaxi="1" />
-			<microbio mblMicrobio="Arachide" mblValue="7" mblUnit="UFC/g"
-				mblMaxi="9" />
-			<microbio mblMicrobio="Salmonelle" mblValue="1" mblUnit="UFC/10g"
-				mblMaxi="1.9" mblTextCriteria="Text criteria" />
-		</microbioList>
-
+		<compoList>
+			<entity compoListProduct="Fond de quiche" code="SF1089"
+				erpCode="12356" legalName="pâte" suppliers="" depthLevel="1"
+				compoListQty="0.1" compoListQtySubFormula="0.1" compoListUnit="kg"
+				compoListYieldPerc="" compoListLossPerc="" compoListDeclType="Detail"
+				itemType="bcpg:semiFinishedProduct"
+				aspects="referenceable, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect"
+				dynamicCharactColumn1="0,55" dynamicCharactColumn2="2,50" />
+			<entity compoListProduct="Garniture" code="LSF1022" erpCode=""
+				legalName="garniture" suppliers="" depthLevel="1" compoListQty="0.1"
+				compoListQtySubFormula="0.1" compoListUnit="kg" compoListYieldPerc="99.60159362549803"
+				compoListLossPerc="" compoListDeclType="Detail"
+				itemType="bcpg:localSemiFinishedProduct"
+				aspects="referenceable, titled, localized, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, generalclassifiable, productAspect"
+				dynamicCharactColumn1="" dynamicCharactColumn2="2,50" />
+			<entity compoListProduct="Lait demi écrémé UHT" code="MP1004"
+				erpCode="125877" legalName="lait demi écrémé" suppliers="Fournisseur JP Martin"
+				depthLevel="2" compoListQty="0.02" compoListQtySubFormula="20.0"
+				compoListUnit="g" compoListYieldPerc="" compoListLossPerc=""
+				compoListDeclType="Declare" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect"
+				dynamicCharactColumn1="0,045" dynamicCharactColumn2="0,50" />
+			<entity compoListProduct="Crème fraîche liquide 30%MG" code="MP1005"
+				legalName="crème fraîche liquide 30%MG" suppliers="Fournisseur JP Martin"
+				depthLevel="2" compoListQty="0.025" compoListQtySubFormula="25.0"
+				compoListUnit="g" compoListYieldPerc="100.0" compoListLossPerc=""
+				compoListDeclType="Declare" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				dynamicCharactColumn1="0,1875" dynamicCharactColumn2="0,625" />
+			<entity compoListProduct="Lardon fumé 8x8xHP" code="MP1003"
+				legalName="lardon fumé" suppliers="Fournisseur JP Martin"
+				depthLevel="2" compoListQty="0.012" compoListQtySubFormula="12.0"
+				compoListUnit="g" compoListYieldPerc="" compoListLossPerc=""
+				compoListDeclType="Detail" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, projectAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				dynamicCharactColumn1="0,246" dynamicCharactColumn2="0,30" />
+			<entity compoListProduct="Oeuf frais entier liquide" code="MP1006"
+				legalName="oeuf frais" suppliers="Fournisseur JP Martin" depthLevel="2"
+				compoListQty="0.025" compoListQtySubFormula="25.0" compoListUnit="g"
+				compoListYieldPerc="" compoListLossPerc="5.0" compoListDeclType="Declare"
+				itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				dynamicCharactColumn1="0,1688" dynamicCharactColumn2="0,625" />
+			<entity compoListProduct="Emmental râpé" code="MP1007"
+				legalName="Emmental râpé" suppliers="Fournisseur JP Martin"
+				depthLevel="2" compoListQty="0.0106" compoListQtySubFormula="10.6"
+				compoListUnit="g" compoListYieldPerc="" compoListLossPerc=""
+				compoListDeclType="Declare" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				dynamicCharactColumn1="0,212" dynamicCharactColumn2="0,265" />
+			<entity compoListProduct="Poivre blanc thermisé" code="MP1010"
+				legalName="poivre blanc" suppliers="Fournisseur condiments"
+				depthLevel="2" compoListQty="0.0024" compoListQtySubFormula="2.4"
+				compoListUnit="g" compoListYieldPerc="" compoListLossPerc=""
+				compoListDeclType="Declare" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				variants="Hiver" isDefaultVariant="false" dynamicCharactColumn1="0,084"
+				dynamicCharactColumn2="0,06" />
+			<entity compoListProduct="Poivre noir thermisé" code="MP1009"
+				legalName="poivre noir" suppliers="Fournisseur condiments"
+				depthLevel="2" compoListQty="0.0024" compoListQtySubFormula="2.4"
+				compoListUnit="g" compoListYieldPerc="" compoListLossPerc=""
+				compoListDeclType="Declare" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				variants="Défaut" isDefaultVariant="true" dynamicCharactColumn1="0,084"
+				dynamicCharactColumn2="0,06" />
+			<entity compoListProduct="Sel fin" code="MP1014" legalName="sel"
+				suppliers="Fournisseur condiments" depthLevel="2" compoListQty="0.001"
+				compoListQtySubFormula="1.0" compoListUnit="g" compoListYieldPerc=""
+				compoListLossPerc="" compoListDeclType="Declare" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				dynamicCharactColumn1="0,0007" dynamicCharactColumn2="0,025" />
+			<entity compoListProduct="Muscade" code="MP1011" legalName="épice muscade"
+				suppliers="Fournisseur condiments" depthLevel="2" compoListQty="0.002"
+				compoListQtySubFormula="2.0" compoListUnit="g" compoListYieldPerc=""
+				compoListLossPerc="5.0" compoListDeclType="Declare" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, referenceable, titled, localized, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect"
+				dynamicCharactColumn1="0,064" dynamicCharactColumn2="0,05" />
+		</compoList>
+		<dynamicCharactList>
+			<dynamicCharact dynamicCharactTitle="1b3ee177-b14e-489d-9fba-1b0aaef19f11"
+				dynamicCharactValue="101.01010101010101" />
+			<dynamicCharact dynamicCharactTitle="556456f1-bb96-41f2-b2f9-869f27c2a5c4"
+				dynamicCharactValue="89.35384525872087" />
+			<dynamicCharact dynamicCharactTitle="4652fc00-c140-45d9-acff-4967ef6a24e0"
+				dynamicCharactValue="1.5696390086776018" />
+			<dynamicCharact dynamicCharactTitle="986bc797-4d74-4611-a176-63189b5d711f"
+				dynamicCharactValue="" />
+			<dynamicCharact dynamicCharactTitle="73c6cf11-d959-4feb-9dcf-f1918451ca4b"
+				dynamicCharactValue="25" />
+			<dynamicCharact dynamicCharactTitle="cbf5576f-feb6-43fe-8357-ac3aaf069c2c"
+				dynamicCharactValue="" />
+			<dynamicCharact dynamicCharactTitle="28e56d03-70bc-40de-a1d8-989286206994"
+				dynamicCharactValue="1.3391134373281517" />
+		</dynamicCharactList>
 		<packagingList tarePkgLevel1="0.04006"
 			netWeightPkgLevel1="0.2" grossWeightPkgLevel1="0.24006"
 			tarePkgLevel2="0.8011999999999999" netWeightPkgLevel2="4.0"
 			grossWeightPkgLevel2="4.8012" tarePkgLevel3="33.843199999999996"
-			netWeightPkgLevel3="144.0" grossWeightPkgLevel3="177.84"
-			nbProductsPkgLevel2="25" nbProductsPkgLevel3="125">
-			<entity packagingListProduct="Film Aertop laize 500" code="E55"
-				erpCode="4707" suppliers="PROMATEC" packagingListQty="1.0"
-				packagingListUnit="" packagingListPkgLevel="Primary"
+			netWeightPkgLevel3="144.0" grossWeightPkgLevel3="177.8432"
+			nbProductsPkgLevel2="20" nbProductsPkgLevel3="720">
+			<entity packagingListProduct="Boite tarte" code="E1086"
+				erpCode="458999" legalName="boite tarte" productComments=""
+				suppliers="Fournisseur Lacroix" packagingListQty="1.0"
+				packagingListUnit="P" packagingListPkgLevel="Primary"
+				packagingListIsMaster="true" itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect"
+				tare="40.0" tareUnit="g" length="100.0" width="80.0" height="5.0"
+				labelingPosition="Longeur de la boîte">
+				<labelingTemplate>
+					<created><![CDATA[jeu. 25 juil. 2013 15:50:23]]></created>
+					<modified><![CDATA[jeu. 25 juil. 2013 15:50:23]]></modified>
+					<locale><![CDATA[fr]]></locale>
+					<name><![CDATA[Marquage Quiche]]></name>
+					<creator><![CDATA[admin]]></creator>
+					<modifier><![CDATA[admin]]></modifier>
+					<description><![CDATA[<p>[MM/AAAA] (DLUO mois ann&eacute;e)<br />L [AAJJJ]&nbsp; [hh:mm] (n&deg; lot) (heure)<br /><font color="#FF0000"><strong>ATTENTION&nbsp;! INVERSER LE SENS DE LECTURE DU MARQUAGE DE L&rsquo;ETUI (concordance avec l&rsquo;impression de l&rsquo;&eacute;tui)</strong></font></p>]]></description>
+				</labelingTemplate>
+			</entity>
+			<entity packagingListProduct="Film 150µ" code="E1087" erpCode="112254"
+				legalName="film" productComments="" suppliers="Fournisseur Lacroix"
+				packagingListQty="0.3" packagingListUnit="m" packagingListPkgLevel="Primary"
 				packagingListIsMaster="false" itemType="bcpg:packagingMaterial"
-				tare="52.0" tareUnit="g/m2" />
-			<entity packagingListProduct="Etiquette VOLAE entier été"
-				code="E96" erpCode="5117" suppliers="ATLANT ETIQ" packagingListQty="1.0"
-				packagingListUnit="" packagingListPkgLevel="Primary"
-				packagingListIsMaster="false" itemType="bcpg:packagingMaterial"
-				variants="Eté" isDefaultVariant="false" labellingPosition="Top" />
-			<entity packagingListProduct="Etiquette VOLAE entier hivers"
-				code="E96" erpCode="5117" suppliers="ATLANT ETIQ" packagingListQty="1.0"
-				packagingListUnit="" packagingListPkgLevel="Primary"
-				packagingListIsMaster="false" itemType="bcpg:packagingMaterial"
-				variants="Hivers" isDefaultVariant="false" />
-			<entity packagingListProduct="Buvard blanc EF 1500 60x75"
-				code="E9" erpCode="5263" suppliers="GLOBAL PLASTICS"
-				packagingListQty="1.0" packagingListUnit="" packagingListPkgLevel="Primary"
-				packagingListIsMaster="false" itemType="bcpg:packagingMaterial"
-				length="75.0" width="60.0" height="" />
-			<entity packagingListProduct="Barquette 2 alvéoles rouge"
-				code="E281" erpCode="5562" suppliers="PLASTOBREIZ" packagingListQty="1.0"
-				packagingListUnit="" packagingListPkgLevel="Primary"
-				packagingListIsMaster="true" itemType="bcpg:packagingMaterial" tare="16.23"
-				tareUnit="g" length="100.0" width="80.0" height="5.0" />
-			<entity packagingListProduct="Etiquette blanche colis" code="E179"
-				erpCode="6147" suppliers="ATLANT ETIQ" packagingListQty="1.0"
-				packagingListUnit="" packagingListPkgLevel="Secondary"
-				packagingListIsMaster="false" itemType="bcpg:packagingMaterial" />
-			<entity packagingListProduct="Petite Poids-Prix Bizerba neutre"
-				code="E147" erpCode="8183" suppliers="ATLANT ETIQ" packagingListQty="1.0"
-				packagingListUnit="" packagingListPkgLevel="Primary"
-				packagingListIsMaster="false" itemType="bcpg:packagingMaterial"
-				tare="0.6" tareUnit="g" />
-			<entity packagingListProduct="Colis - 7158"
-				legalName="Palettisation europe (800 x 1200 mm)" code="KE9"
-				suppliers="" packagingListQty="1.0" packagingListUnit=""
-				packagingListPkgLevel="Secondary" packagingListIsMaster="true"
-				itemType="bcpg:packagingKit" tare="210.0" tareUnit="g"
-				palletBoxesPerLayer="13" palletLayers="8" palletBoxesPerPallet="104"
-				palletHeight="1905">
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect, certificateDateAspect"
+				tare="0.2" tareUnit="g/m2" />
+			<entity packagingListProduct="Carton SdV - Palette euro" code="KE1110"
+				erpCode="" legalName="Palette Europe" productComments="" suppliers=""
+				packagingListQty="20.0" packagingListUnit="PP"
+				packagingListPkgLevel="Secondary" packagingListIsMaster="false"
+				itemType="bcpg:packagingKit"
+				aspects="referenceable, titled, localized, palletAspect, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, profitabilityAspect, generalclassifiable, productAspect"
+				palletBoxesPerLayer="6" palletLayers="6" palletBoxesPerPallet="36"
+				palletHeight="1800">
 				<dataLists>
 					<packagingList>
-						<entity packagingListProduct="Petit plateau 400 x 300"
-							code="E121" erpCode="7158" suppliers="EUROPAC (MONDI)"
-							packagingListQty="1.0" packagingListUnit="P"
-							packagingListPkgLevel="Secondary" packagingListIsMaster="true"
-							itemType="bcpg:packagingMaterial" tare="210.0" tareUnit="g"
-							length="400.0" width="300.0" height="135.0" />
-						<entity packagingListProduct="Palette europe (800 x 1200 mm)"
-							code="E315" erpCode="" suppliers="" packagingListQty="1.0"
+						<entity packagingListProduct="Carton 50x30x30" code="E1084"
+							erpCode="" legalName="carton" productComments=""
+							suppliers="Fournisseur Lacroix" packagingListQty="1.0"
+							packagingListUnit="P" packagingListPkgLevel="Secondary"
+							packagingListIsMaster="false" itemType="bcpg:packagingMaterial"
+							aspects="eanAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect" />
+						<entity packagingListProduct="Palette euro" code="E1085"
+							erpCode="" legalName="palette euro" productComments=""
+							suppliers="Fournisseur Lacroix" packagingListQty="1.0"
 							packagingListUnit="P" packagingListPkgLevel="Tertiary"
 							packagingListIsMaster="false" itemType="bcpg:packagingMaterial"
-							length="1000.0" width="1200.0" height="" />
+							aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect, certificateDateAspect"
+							tare="5.0" tareUnit="kg" />
 					</packagingList>
 				</dataLists>
 			</entity>
 		</packagingList>
-
+		<costList>
+			<cost costListCost="Coût Emb" costListValue="2.074999999254942"
+				costListUnit="€/kg" />
+			<cost costListCost="Coût MP" costListValue="1.5696390086776018"
+				costListUnit="€/kg" />
+			<cost costListCost="Coût Production" costListValue="0.08151515151515153"
+				costListUnit="€/kg" />
+		</costList>
+		<ingList>
+			<ing ingListIng="Blé farine" ingListQtyPerc="28.032926875321603"
+				ingListGeoOrigin="France" ingListBioOrigin="Blé" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Crème de lait pasteurisée" ingListQtyPerc="12.409842493339095"
+				ingListGeoOrigin="France" ingListBioOrigin="" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="oeuf frais" ingListQtyPerc="12.409842493339095"
+				ingListGeoOrigin="Union européenne" ingListBioOrigin="Poulet, Poule, Oeuf"
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Lait demi écrémé" ingListQtyPerc="12.409842493339095"
+				ingListGeoOrigin="France" ingListBioOrigin="Bovine (Boeuf, Vache, Veau)"
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Eau" ingListQtyPerc="10.78189495204677"
+				ingListGeoOrigin="France" ingListBioOrigin="" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Crème" ingListQtyPerc="10.247112962425248"
+				ingListGeoOrigin="Union européenne" ingListBioOrigin=""
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Porc poitrine" ingListQtyPerc="5.2419174691864345"
+				ingListGeoOrigin="France" ingListBioOrigin="" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Vache lait pasteurisé" ingListQtyPerc="5.156537752832261"
+				ingListGeoOrigin="Allemagne, Irlande" ingListBioOrigin="Bovine (Boeuf, Vache, Veau)"
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Poivre noir" ingListQtyPerc="1.1913448793605532"
+				ingListGeoOrigin="Indonésie" ingListBioOrigin="Poivre" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Muscade" ingListQtyPerc="0.9927873994671277"
+				ingListGeoOrigin="Indonésie" ingListBioOrigin="Muscade"
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Sel fin" ingListQtyPerc="0.9698263056313198"
+				ingListGeoOrigin="France" ingListBioOrigin="" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Ferments lactiques" ingListQtyPerc="0.10350619153964896"
+				ingListGeoOrigin="Union européenne, Allemagne, Espagne, France, Irlande"
+				ingListBioOrigin="" ingListIsGMO="false" ingListIsIonized="false"
+				ingCEECode="" />
+			<ing ingListIng="Sel" ingListQtyPerc="0.05261773217175777"
+				ingListGeoOrigin="Allemagne, Irlande, Royaume-Uni" ingListBioOrigin="Minérale"
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Ferrocyanure de sodium" ingListQtyPerc="0.0"
+				ingListGeoOrigin="" ingListBioOrigin="" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Présure" ingListQtyPerc="0.0"
+				ingListGeoOrigin="Allemagne, Danemark, Irlande" ingListBioOrigin=""
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Pomme de terre fécule" ingListQtyPerc="0.0"
+				ingListGeoOrigin="France" ingListBioOrigin="Pomme de terre"
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="Lactose" ingListQtyPerc="0.0" ingListGeoOrigin="Union européenne"
+				ingListBioOrigin="" ingListIsGMO="false" ingListIsIonized="false"
+				ingCEECode="" />
+			<ing ingListIng="Fumée naturelle" ingListQtyPerc="0.0"
+				ingListGeoOrigin="" ingListBioOrigin="Bois" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="" />
+			<ing ingListIng="E262(i) - acétate de sodium" ingListQtyPerc="0.0"
+				ingListGeoOrigin="Union européenne" ingListBioOrigin=""
+				ingListIsGMO="false" ingListIsIonized="false" ingCEECode="E262(i)" />
+			<ing ingListIng="E127 - érythrosine" ingListQtyPerc="0.0"
+				ingListGeoOrigin="Chine" ingListBioOrigin="Riz" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="E127" />
+			<ing ingListIng="E252 - nitrate de potassium" ingListQtyPerc="0.0"
+				ingListGeoOrigin="" ingListBioOrigin="" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="E252" />
+			<ing ingListIng="E250 - nitrite de sodium" ingListQtyPerc="0.0"
+				ingListGeoOrigin="Allemagne" ingListBioOrigin="" ingListIsGMO="false"
+				ingListIsIonized="false" ingCEECode="E250" />
+		</ingList>
+		<ingLabelingList>
+			<ingLabeling language="français" illGrp=""
+				illValue="pâte 50,00 % (Ingrédient : Blé farine 56,47 %, Eau 21,72 %, Crème 20,64 %, Sel fin 0,95 %, Ferments lactiques 0,21 %, Ferrocyanure de sodium), garniture 50,00 % (Ingrédient : Lait demi écrémé 24,27 %, Crème de lait pasteurisée 24,27 %, oeuf frais 24,27 %, Vache lait pasteurisé 10,09 %, Muscade 1,94 %, Sel fin 0,97 %, Sel 0,10 %, Ferments lactiques, Présure, Pomme de terre fécule, Poivre noir 2,33 %, Ferrocyanure de sodium, Eau, lardon fumé 11,65 % (Ingrédient : Porc poitrine 88,00 %, Eau, Sel, Lactose, Fumée naturelle, Conservateur : E262(i) - acétate de sodium, E252 - nitrate de potassium, E250 - nitrite de sodium, Colorant alimentaire : E127 - érythrosine))" />
+			<ingLabeling language="russe" illGrp=""
+				illValue="паста 50,00 % (Ingrédient : Мука пшеничная 56,47 %, Воды 21,72 %, Крем 20,64 %, Соль 0,95 %, Молочный 0,21 %, Натрий ферроцианида), гарнир 50,00 % (Ingrédient : Полу-обезжиренное молоко 24,27 %, Пастеризованные сливки 24,27 %, свежие яйца 24,27 %, Пастеризованное коровье молоко 10,09 %, Мускатный орех 1,94 %, Соль 0,97 %, Соль 0,10 %, Молочный, Сычужный фермент, Картофельный крахмал, Черный перец 2,33 %, Натрий ферроцианида, Воды, null 11,65 % (Ingrédient : Свинина грудь 88,00 %, Воды, Соль, Лактоза, Природные дыма, Conservateur : E262 (я) - ацетата натрия, E252 - нитрат калия, E250 - нитрит натрия, Colorant alimentaire : E127 - эритрозин))" />
+			<ingLabeling language="anglais" illGrp=""
+				illValue="pastry 50.00 % (Ingrédient : Wheat flour 56.47 %, Water 21.72 %, Cream 20.64 %, Salt 0.95 %, Lactic 0.21 %, Sodium ferrocyanide), mixture 50.00 % (Ingrédient : Semi-skimmed milk 24.27 %, Pasteurized cream 24.27 %, fresh egg 24.27 %, Pasteurized milk cow 10.09 %, Nutmeg 1.94 %, Salt 0.97 %, Salt 0.10 %, Lactic, Rennet, Potato starch, Black pepper 2.33 %, Sodium ferrocyanide, Water, null 11.65 % (Ingrédient : Pork chest 88.00 %, Water, Salt, Lactose, Natural smoke, Conservateur : E262 (i) - sodium acetate, E252 - potassium nitrate, E250 - sodium nitrite, Colorant alimentaire : E127 - erythrosine))" />
+		</ingLabelingList>
+		<nutList energiekj="1238.42" energiekcal="373.4239999999999"
+			glucides="24.937639997019765" lipides="18.622500007748606" protéines="8.233499998569489"
+			agsaturés="9.9" sodium="514.455004529953" sucres="0.12996" phosphore="58.015125" alcooléthanol="1.25">
+			<nut nutListNut="Energie kJ" nutListValue="1238.42" nutListUnit="kJ/100g"
+				nutListGroup="Groupe 1" />
+			<nut nutListNut="Energie kcal" nutListValue="373.4239999999999"
+				nutListUnit="kcal/100g" nutListGroup="Groupe 1" />
+			<nut nutListNut="Glucides" nutListValue="24.937639997019765"
+				nutListUnit="g/100g" nutListGroup="Groupe 1" />
+			<nut nutListNut="Lipides" nutListValue="18.622500007748606"
+				nutListUnit="g/100g" nutListGroup="Groupe 1" />
+			<nut nutListNut="Protéines" nutListValue="8.233499998569489"
+				nutListUnit="g/100g" nutListGroup="Groupe 1" />
+			<nut nutListNut="AG saturés" nutListValue="9.9" nutListUnit="g/100g"
+				nutListGroup="Groupe 2" />
+			<nut nutListNut="Sodium" nutListValue="514.455004529953"
+				nutListUnit="mg/100g" nutListGroup="Groupe 2" />
+			<nut nutListNut="Sucres" nutListValue="0.12996" nutListUnit="g/100g"
+				nutListGroup="Groupe 2" />
+			<nut nutListNut="Phosphore" nutListValue="58.015125" nutListUnit="mg/100g"
+				nutListGroup="Autre" />
+		</nutList>
+		<organoList>
+			<organo organoListOrgano="Aspect">
+				<organoListValue><![CDATA[Lardons bien visibles]]></organoListValue>
+			</organo>
+			<organo organoListOrgano="Couleur">
+				<organoListValue><![CDATA[Couleur jaune, brun]]></organoListValue>
+			</organo>
+			<organo organoListOrgano="Goût">
+				<organoListValue><![CDATA[]]>
+				</organoListValue>
+			</organo>
+			<organo organoListOrgano="Odeur">
+				<organoListValue><![CDATA[]]>
+				</organoListValue>
+			</organo>
+			<organo organoListOrgano="Texture">
+				<organoListValue><![CDATA[Bonne tenue]]></organoListValue>
+			</organo>
+		</organoList>
+		<microbioList>
+			<microbio mblMicrobio="Flore aérobie mésophile revivifiable"
+				mblValue="300000.0" mblUnit="UFC/g" mblMaxi="500000.0" />
+			<microbio mblMicrobio="Salmonelle" mblValue="" mblUnit="UFC/25g"
+				mblMaxi="" />
+			<microbio mblMicrobio="Levure" mblValue="" mblUnit="UFC/10g"
+				mblMaxi="" />
+			<microbio mblMicrobio="Coliforme totaux" mblValue="1000.0"
+				mblUnit="UFC/g" mblMaxi="4000.0" />
+			<microbio mblMicrobio="Moisissure" mblValue="" mblUnit="UFC/10g"
+				mblMaxi="" />
+			<microbio mblMicrobio="ASR" mblValue="100.0" mblUnit="/g"
+				mblMaxi="1000.0" mblTextCriteria="" />
+			<microbio mblMicrobio="Staphylocoque" mblValue="100.0"
+				mblUnit="UFC/g" mblMaxi="500.0" />
+			<microbio mblMicrobio="Escherichia coli" mblValue="100.0"
+				mblUnit="UFC/g" mblMaxi="1000.0" />
+		</microbioList>
+		<physicoChemList>
+			<physicoChem pclPhysicoChem="Densité" pclValue=""
+				pclUnit="-" pclMini="" pclMaxi="" />
+			<physicoChem pclPhysicoChem="Point de congélation"
+				pclValue="" pclUnit="°C" pclMini="" pclMaxi="" />
+			<physicoChem pclPhysicoChem="pH" pclValue="" pclMini=""
+				pclMaxi="" />
+		</physicoChemList>
 		<labelClaimList>
-			<labelClaim lclType="Nutritionnelle" lclLabelClaim="Allégé en sucre" lclIsClaimed="true"/>
-			<labelClaim lclType="Environnementale" lclLabelClaim="Sans BPA" lclIsClaimed="true"/>
-			<labelClaim lclType="Environnementale" lclLabelClaim="Sans huile de palme" lclIsClaimed="true"/>
+			<labelClaim name="Sans BPA" lclIsClaimed="true" lclType="Santé" />
+			<labelClaim name="Sans huile de palme" lclIsClaimed="true"
+				lclType="Santé" />
+			<labelClaim name="Produit exempt de matières grasses de palme"
+				lclIsClaimed="true" lclType="Environnementale" />
 		</labelClaimList>
-
 	</dataLists>
+	<variants>
+		<variant name="Défaut" isDefaultVariant="true" />
+		<variant name="Hiver" isDefaultVariant="false" />
+	</variants>
+	<versions>
+		<version versionLabel="1.2" versionDescription="Modif recette"
+			creator="utilisateur RD" created="lun. 24 juin 2013" />
+		<version versionLabel="1.1" versionDescription="Modif recette emmental 8.8 -&gt; 8.5"
+			creator="Administrator " created="mer. 3 avr. 2013" />
+		<version versionLabel="1.0" creator="Administrator " created="mer. 3 avr. 2013" />
+	</versions>
 </entity>

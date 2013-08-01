@@ -97,6 +97,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(22.4d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -435,7 +436,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setName("Finished product 1");
 			finishedProduct1.setLegalName("Legal Finished product 1");
 			finishedProduct1.setQty(2d);
-			finishedProduct1.setUnit(ProductUnit.kg);				
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
 			compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
 			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
@@ -550,6 +552,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct2.setLegalName("Legal Finished product 2");
 			finishedProduct2.setQty(2d);
 			finishedProduct2.setUnit(ProductUnit.kg);
+			finishedProduct2.setDensity(1d);
 			List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
 			compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
 			compoList2.add(new CompoListDataItem(null, compoList2.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
@@ -679,6 +682,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -834,6 +838,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setQty(2.5d);
 				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();				
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));				
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 2d, CompoListUnit.L, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
@@ -1066,6 +1071,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
@@ -1300,6 +1306,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -1503,6 +1510,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 2d,CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
@@ -1629,6 +1637,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					finishedProduct.setLegalName("Legal Produit fini 1");
 					finishedProduct.setUnit(ProductUnit.kg);
 					finishedProduct.setQty(2d);
+					finishedProduct.setDensity(1d);
 					List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
 					packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
@@ -1689,6 +1698,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				
 				CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
@@ -1884,6 +1894,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -2122,6 +2133,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
@@ -2205,6 +2217,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				CompoListDataItem parent = new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
 				compoList.add(parent);
@@ -2406,6 +2419,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(1d);
+				finishedProduct.setDensity(1d);
 				List<ProcessListDataItem> processList = new ArrayList<ProcessListDataItem>();
 				//decoupe
 				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 4d, null, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
@@ -2551,6 +2565,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);				
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
@@ -2650,6 +2665,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -2724,6 +2740,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				legalName.addValue(Locale.FRENCH, "Legal Raw material 100");
 				legalName.addValue(Locale.ENGLISH, "Legal Raw material 100");
 				rawMaterial100.setLegalName(legalName);
+				rawMaterial100.setDensity(1d);
 				//ingList : 4 ing3 ; bio1|bio2 ; geo2
 				List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();					
 				ingList.add(new IngListDataItem(null, null, null, null, true, true, ing3, false));
@@ -2736,7 +2753,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct1.setName("Finished product 1");
 				finishedProduct1.setLegalName("Legal Finished product 1");
 				finishedProduct1.setQty(2d);
-				finishedProduct1.setUnit(ProductUnit.kg);				
+				finishedProduct1.setUnit(ProductUnit.kg);
+				finishedProduct1.setDensity(1d);
 				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
 				compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
 				compoList1.add(new CompoListDataItem(null, compoList1.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
@@ -2800,7 +2818,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setName("Finished product 1");
 			finishedProduct1.setLegalName("Legal Finished product 1");
 			finishedProduct1.setQty(2d);
-			finishedProduct1.setUnit(ProductUnit.kg);				
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
 			compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
 			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
@@ -2865,6 +2884,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial1NodeRef));
 				
@@ -2915,6 +2935,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 2");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 65d, CompoListUnit.g, null, DeclarationType.Declare, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 80d, CompoListUnit.Perc, null, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -2948,6 +2969,100 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				assertEquals(df.format(0.0065d), df.format(formulatedProduct.getCompoListView().getCompoList().get(3).getQty()));
 				
 				return null;
+
+			}},false,true);
+		   
+	   }
+	   
+	@Test
+	public void testOverrunAndVolume() throws Exception{
+		
+		logger.info("testOverrunAndVolume");
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			@SuppressWarnings("unchecked")
+			public NodeRef execute() throws Throwable {					   
+			
+			
+			/**
+			 *  		Finished product 1
+			 */
+			logger.debug("/*************************************/");
+			logger.debug("/*-- Create Finished product 1--*/");
+			logger.debug("/*************************************/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished product 1");
+			finishedProduct.setLegalName("Legal Finished product 1");
+			finishedProduct.setQty(7.6d);
+			finishedProduct.setUnit(ProductUnit.L);
+			finishedProduct.setNetWeight(2d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+			compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 20d, CompoListUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 25d, CompoListUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 55d, CompoListUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 10d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, CompoListUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
+			
+			// add overrun
+			compoList.get(6).getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC, 80d);
+			compoList.get(7).getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC, 70d);
+			
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+			
+			/*-- Formulate product --*/
+			logger.debug("/*-- Formulate product --*/");
+			productService.formulate(finishedProductNodeRef1);
+			
+			/*-- Verify formulation --*/
+			logger.debug("/*-- Verify formulation --*/");
+			ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
+
+			assertNotNull(formulatedProduct1.getCompoList());
+			int checks=0;
+			for(CompoListDataItem compoListDataItem : formulatedProduct1.getCompoList()){				
+				
+				
+				Double volume = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_COMPOLIST_VOLUME);
+				
+				Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC);
+				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);				
+				logger.info("Product: " + nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
+				logger.info("overrun: " + overrun);
+				logger.info("volume: " + volume);
+				logger.info("density: " + density);
+				
+				if(compoListDataItem.getProduct().equals(rawMaterial3NodeRef)){					
+					assertEquals(null, volume);
+					checks++;
+				}
+				else if(compoListDataItem.getProduct().equals(rawMaterial4NodeRef)){					
+					assertEquals(2*0.25*1.8/1.1, volume);
+					checks++;
+				}
+				else if(compoListDataItem.getProduct().equals(rawMaterial5NodeRef)){
+					assertEquals(2*0.2*1.7/0.1, volume);
+					checks++;
+				}
+				else if(compoListDataItem.getProduct().equals(rawMaterial15NodeRef)){
+					assertEquals(0.050d, volume);
+					checks++;
+				}
+			}
+			
+			assertEquals(4, checks);
+			
+			
+			// TODO : yieldVolume -> not store as prop so cannot test it
+			//logger.info("yieldVolume: " + finishedProduct.getYieldVolume());
+			//assertEquals(100 * sum / 7.7d, finishedProduct.getYieldVolume());
+			
+			return null;
 
 			}},false,true);
 		   

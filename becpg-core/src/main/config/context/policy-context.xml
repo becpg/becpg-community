@@ -25,6 +25,7 @@
 		<property name="entityService" ref="entityService" />
 		<property name="associationService" ref="associationService"/>
 		<property name="entityTplService" ref="entityTplService" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy"
