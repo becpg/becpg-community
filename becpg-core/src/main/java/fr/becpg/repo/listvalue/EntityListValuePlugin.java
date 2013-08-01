@@ -205,7 +205,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		// Is code or name search
 		if (isQueryCode(query, type, arrClassNames)) {
 			String codeQuery = prepareQueryCode(query, type, arrClassNames);
-			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, codeQuery,  query);
+			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, codeQuery,  query, query);
 		} else if (isAllQuery(query)) {
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_ALL, type);
 		} else {

@@ -27,7 +27,7 @@ public class RepoConsts {
 	//public static final String QUERY_SUGGEST_PRODUCT_ALL = " +TYPE:\"bcpg:product\" -@bcpg\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_TARGET_BY_NAME = " +TYPE:\"%s\"  +@cm\\:name:(%s) AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_TARGET_ALL = " +TYPE:\"%s\" AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
-	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  AND (@bcpg\\:code:%s  OR @bcpg\\:erpCode:%s)  AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
+	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  AND (@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s)  AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_FILTER_PRODUCT_STATE = " -@bcpg\\:productState:%s -@bcpg\\:productState:%s";
 	public static final String PATH_QUERY_LIST_CONSTRAINTS = "+PATH:\"/app:company_home/%s/*\" +TYPE:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_FAILED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed\"";
