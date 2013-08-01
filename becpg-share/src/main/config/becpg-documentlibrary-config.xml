@@ -390,7 +390,18 @@
 					<permission allow="true">Write</permission>
 				</permissions>
 				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
-			</action>			
+			</action>
+			
+			<!-- Cancel editing (unlock) -->
+         <action id="document-cancel-editing-unlock" type="javascript" label="actions.document.cancel-editing">
+            <param name="function">onActionCancelEditing</param>
+            <permissions>
+               <permission allow="true">CancelCheckOut</permission>
+            </permissions>
+            <evaluator>evaluator.doclib.metadata.isLocked</evaluator>
+            <!-- patch #535 -->
+            <evaluator>evaluator.doclib.action.isWorkingCopy</evaluator> 
+         </action>			
 
 		</actions>
 
