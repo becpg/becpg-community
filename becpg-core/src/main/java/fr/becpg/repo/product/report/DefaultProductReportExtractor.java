@@ -464,7 +464,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			
 			// display tare, net weight and gross weight
 			Double tarePrimary = packagingData.getTarePrimary();
-			Double netWeightPrimary = FormulationHelper.getNetWeight(productData);
+			Double netWeightPrimary = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService);
 			packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_1, toString(tarePrimary));
 			packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_1, toString(netWeightPrimary));
 			packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_1, toString(tarePrimary + netWeightPrimary));
