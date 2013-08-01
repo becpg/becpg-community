@@ -97,7 +97,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements No
 			// copy missing aspects
 			Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);			
 			for(QName aspect : aspects){
-				if(!nodeService.hasAspect(entityNodeRef, aspect)){
+				if(!nodeService.hasAspect(entityNodeRef, aspect) && !BeCPGModel.ASPECT_ENTITY_TPL.isMatch(aspect)){
 					nodeService.addAspect(entityNodeRef, aspect, null);
 				}
 			}
