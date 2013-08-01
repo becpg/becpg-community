@@ -22,19 +22,18 @@ function main()
        itemType : "qa:nc",
        list: "ncList",
        filterParameters : filterParameters,
-       sortable : true,
-       sortUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
+       sortable : false,
        dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node",
        itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/",
      //  forceLoad : true,
        hiddenColumns : ["prop_bcpg_code", "prop_qa_ncType", "prop_qa_ncPriority"],
+       groupBy : "prop_cm_created%7Cfalse",
        formWidth : "65em"
       }
    };
-    
+   
    model.widgets = [entityDataGrid];
 
-   
 }
 
 

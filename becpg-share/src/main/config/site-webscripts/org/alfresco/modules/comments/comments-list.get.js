@@ -6,7 +6,7 @@ function getActivityParameters(nodeRef, entityNodeRef)
    var pjt = "{http://www.bcpg.fr/model/project/1.0}";
   
      
-     if (model.activityType == "entity")
+     if (model.activityType == "entity" || !entityNodeRef )
       {
         metadata = AlfrescoUtil.getMetaData(nodeRef, {});
         if (metadata.properties)
@@ -22,23 +22,7 @@ function getActivityParameters(nodeRef, entityNodeRef)
             }
          });
         }
-      } else if (model.activityType == "datalist")
-      {
-         metadata = AlfrescoUtil.getMetaData(entityNodeRef, {});
-         if (metadata.properties)
-         {
-         
-          return (
-          {
-             itemTitle: metadata.properties[cm + 'name'],
-             page: 'entity-details',
-             pageParams:
-             {
-                nodeRef: entityNodeRef
-             }
-          });
-         }
-      } else if (model.activityType == "task")
+      } else if (model.activityType == "task" || model.activityType == "datalist")
       {
          metadata = AlfrescoUtil.getMetaData(nodeRef, {});
          entityNodeRefMetadata = AlfrescoUtil.getMetaData(entityNodeRef, {});
@@ -47,25 +31,39 @@ function getActivityParameters(nodeRef, entityNodeRef)
               if(metadata.type == pjt+"taskList"){
                 return (
                 {
+                  
                    itemTitle: metadata.properties[pjt+"tlTaskName"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
+                   page: 'entity-data-lists',
+                   pageParams:
+                   {
+                      nodeRef: entityNodeRef,
+                      list: 'taskList'
+                   }
+                });
+               
+            } else  if (metadata.type == pjt+"deliverableList") {
+               return (
+               {
+                  itemTitle: metadata.properties[pjt+"dlDescription"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
+                  page: 'entity-data-lists',
+                  pageParams:
+                  {
+                     nodeRef: entityNodeRef,
+                     list: 'deliverableList'
+                  }
+               });
+            } else {
+                return (
+                {
+                   itemTitle: entityNodeRefMetadata.properties[cm + 'name'],
                    page: 'entity-details',
                    pageParams:
                    {
                       nodeRef: entityNodeRef
                    }
                 });
-               
-            } else {
-               return (
-               {
-                  itemTitle: metadata.properties[pjt+"dlDescription"]+" ["+entityNodeRefMetadata.properties[cm + 'name']+"]",
-                  page: 'entity-details',
-                  pageParams:
-                  {
-                     nodeRef: entityNodeRef
-                  }
-               });
-            }
+            } 
+              
          }
       }
       

@@ -4,30 +4,29 @@
 package fr.becpg.repo.web.scripts.entity.datalist;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.csv.writer.CSVConfig;
+import org.apache.commons.csv.writer.CSVField;
+import org.apache.commons.csv.writer.CSVWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -35,13 +34,14 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
+import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.AbstractCachingWebscript;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -70,6 +70,11 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
 
 	/**
+	 * METADATA
+	 */
+	protected static final String PARAM_METADATA = "metadata";
+
+	/**
 	 * Sites search params
 	 */
 	protected static final String PARAM_CONTAINER = "container";
@@ -89,6 +94,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	protected static final String PARAM_ID = "id";
 
 	protected static final String PARAM_FIELDS = "fields";
+	
+	protected static final String PARAM_HEADERS = "headers";
 
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
@@ -122,7 +129,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	private DataListExtractorFactory dataListExtractorFactory;
 
 	private DataListSortService dataListSortService;
-
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -182,6 +188,9 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		dataListFilter.setSortMap(WebscriptHelper.extractSortMap(req.getParameter(PARAM_SORT), namespaceService));
 		dataListFilter.setSortId(req.getParameter(PARAM_SORT_ID));
 
+		// Format
+		dataListFilter.setFormat(req.getFormat());
+
 		// Site filter
 		dataListFilter.setSiteId(req.getParameter(PARAM_SITE));
 		dataListFilter.setContainerId(req.getParameter(PARAM_CONTAINER));
@@ -220,7 +229,13 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 		try {
 
-			JSONObject json = (JSONObject) req.parseContent();
+			JSONObject json = null;
+
+			if (req.getParameter(PARAM_METADATA) != null) {
+				json = new JSONObject(req.getParameter(PARAM_METADATA));
+			} else {
+				json = (JSONObject) req.parseContent();
+			}
 
 			if (filterId == null) {
 				if (json != null && json.has(PARAM_FILTER)) {
@@ -262,6 +277,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			}
 
 			List<String> metadataFields = new LinkedList<String>();
+
 			if (json != null && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);
 
@@ -290,70 +306,96 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter, dataListName);
 
-			// cache.ETag = tutorial.properties.description;
-			// cache.lastModified = tutorial.properties.modified;
-
-		
-		
 			Date lastModified = extractor.computeLastModified(dataListFilter);
-			
-		
-			if(shouldReturnNotModified(req,lastModified)){
+
+			if (shouldReturnNotModified(req, lastModified)) {
 				res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("Send Not_MODIFIED status");
 				}
 				return;
 			}
-			
-			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
 
 			Cache cache = new Cache(getDescription().getRequiredCache());
 
 			cache.setLastModified(lastModified);
-			
-			JSONObject ret = new JSONObject();
-			if (!dataListFilter.isSimpleItem()) {
-				ret.put("startIndex", pagination.getPage());
-				ret.put("pageSize", pagination.getPageSize());
-				ret.put("totalRecords", extractedItems.getFullListSize());
-				if (pagination.getQueryExecutionId() != null) {
-					ret.put(PARAM_QUERY_EXECUTION_ID, pagination.getQueryExecutionId());
-					cache.setETag(pagination.getQueryExecutionId());
+
+			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
+
+			if ("csv".equals(dataListFilter.getFormat())) {
+				res.setContentType("application/vnd.ms-excel");
+				res.setContentEncoding("ISO-8859-1");
+
+				CSVConfig csvConfig = new CSVConfig();
+				
+				csvConfig.setDelimiter(';');
+
+				appendCSVField(csvConfig, extractedItems.getComputedFields(),null);
+
+				CSVWriter csvWriter = new CSVWriter(csvConfig);
+
+				csvWriter.setWriter(res.getWriter());
+				
+				if (json != null && json.has(PARAM_HEADERS)) {
+					JSONArray jsonFields = (JSONArray) json.get(PARAM_HEADERS);
+
+					Map<String,String> headers = new HashMap<>();
+					for (int i = 0; i < jsonFields.length(); i++) {	
+						headers.put(((JSONObject)jsonFields.get(i)).getString("name"),((JSONObject)jsonFields.get(i)).getString("label"));
+					}
+					csvWriter.writeRecord(headers);
 				}
-	
-			}
+				
 
-			JSONObject metadata = new JSONObject();
+				writeToCSV(extractedItems, csvWriter);
 
-			JSONObject parent = new JSONObject();
-
-			parent.put("nodeRef", dataListFilter.getParentNodeRef());
-
-			JSONObject permissions = new JSONObject();
-			JSONObject userAccess = new JSONObject();
-
-			userAccess.put("create", (hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
-
-			permissions.put("userAccess", userAccess);
-
-			parent.put("permissions", permissions);
-
-			metadata.put("parent", parent);
-
-			ret.put("metadata", metadata);
-			if (dataListFilter.isSimpleItem()) {
-				Map<String, Object> item = extractedItems.getItems().get(0);
-				ret.put("item", new JSONObject(item));
-				ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef) item.get(AbstractDataListExtractor.PROP_NODE)));
+				res.setHeader("Content-disposition","attachment; filename=export.csv");
 			} else {
-				ret.put("items", processResults(extractedItems));
+
+				JSONObject ret = new JSONObject();
+				if (!dataListFilter.isSimpleItem()) {
+					ret.put("startIndex", pagination.getPage());
+					ret.put("pageSize", pagination.getPageSize());
+					ret.put("totalRecords", extractedItems.getFullListSize());
+					if (pagination.getQueryExecutionId() != null) {
+						ret.put(PARAM_QUERY_EXECUTION_ID, pagination.getQueryExecutionId());
+						cache.setETag(pagination.getQueryExecutionId());
+					}
+
+				}
+
+				JSONObject metadata = new JSONObject();
+
+				JSONObject parent = new JSONObject();
+
+				parent.put("nodeRef", dataListFilter.getParentNodeRef());
+
+				JSONObject permissions = new JSONObject();
+				JSONObject userAccess = new JSONObject();
+
+				userAccess.put("create", (hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+
+				permissions.put("userAccess", userAccess);
+
+				parent.put("permissions", permissions);
+
+				metadata.put("parent", parent);
+
+				ret.put("metadata", metadata);
+				if (dataListFilter.isSimpleItem()) {
+					Map<String, Object> item = extractedItems.getItems().get(0);
+					ret.put("item", new JSONObject(item));
+					ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef) item.get(AbstractDataListExtractor.PROP_NODE)));
+				} else {
+					ret.put("items", processResults(extractedItems));
+				}
+
+				res.setContentType("application/json");
+				res.setContentEncoding("UTF-8");
+				ret.write(res.getWriter());
 			}
 
 			res.setCache(cache);
-			res.setContentType("application/json");
-			res.setContentEncoding("UTF-8");
-			ret.write(res.getWriter());
 
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
@@ -366,9 +408,22 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	}
 
-	
+	private void appendCSVField(CSVConfig csvConfig, List<AttributeExtractorStructure> fields, String prefix) {
+		for (AttributeExtractorStructure field : fields) {
+			if (field.isNested() ) {
+				appendCSVField(csvConfig, field.getChildrens(), field.getFieldName());
+			} else {
+				if(prefix!=null){
+					csvConfig.addField(new CSVField(prefix+"_"+field.getFieldName()));
+				} else {
+					csvConfig.addField(new CSVField(field.getFieldName()));
+				}
+			}
+		}
 
-	private JSONArray processResults(PaginatedExtractedItems extractedItems) throws InvalidNodeRefException, JSONException {
+	}
+
+	private JSONArray processResults(PaginatedExtractedItems extractedItems) {
 
 		JSONArray items = new JSONArray();
 
@@ -378,6 +433,12 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 		return items;
 
+	}
+
+	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVWriter csvWriter) {
+		for (Map<String, Object> item : extractedItems.getItems()) {
+			csvWriter.writeRecord(item);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

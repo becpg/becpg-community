@@ -39,6 +39,10 @@
          this.widgets.showPlanningButton = Alfresco.util.createYUIButton(this, "show-planning-button",
                this.onPlanningButtonClick);
 
+         this.widgets.exportProjectList = Alfresco.util.createYUIButton(this, "export-csv-button",
+               this.onExportProjectList);
+         
+         
          if (this.view == "gantt") {
             this.widgets.showGanttButton.set("disabled", true);
          } else {
@@ -53,6 +57,16 @@
       },
       onPlanningButtonClick : function PTL_onPlanningButtonClick(e, p_obj) {
          document.location.href = Alfresco.util.siteURL("project-list#filter=projects|InProgress");
+      },
+      onExportProjectList : function PTL_onPlanningButtonClick(e, p_obj) {
+         var dt = Alfresco.util.ComponentManager.find({
+            name : "beCPG.module.EntityDataGrid"
+         })[0];
+
+         var PAGE_SIZE = 5000;
+         
+         document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+               .stringify(dt._buildDataGridParams({filter:dt.currentFilter})));
       }
 
    });

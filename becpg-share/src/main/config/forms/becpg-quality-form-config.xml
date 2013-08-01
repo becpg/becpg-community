@@ -322,6 +322,38 @@
 
 					<!-- mainInfo -->
 					<show id="qa:ncPriority" />
+					<show id="cm:name" />
+					<show id="qa:ncType" />
+					<show id="qa:ncState" />
+					
+					<!-- batch -->
+					<show id="qa:batchId" force="true"/>
+					<show id="qa:product" force="true"/>
+					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:plants" force="true" />
+					
+					<!-- Claim -->
+
+					<show id="qa:claimType" force="true"/>
+
+
+					<!-- <show id="cm:creator"   />
+					<show id="qa:claimResponseActor" force="true"/> -->
+					<show id="cm:created"  />
+					<show id="qa:claimResponseDate" force="true"/>
+					<!-- <show id="qa:claimClosingDate" force="true"/> -->
+
+				</field-visibility>
+            <appearance>
+            	<field id="cm:creator" label="Emetteur" />
+            	<field id="cm:created" label="Date saisie" />
+            </appearance>
+			</form>
+			<form id="export">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="qa:ncPriority" />
 					<show id="bcpg:code" />
 					<show id="cm:name" />
 					<show id="qa:ncType" />
@@ -329,16 +361,37 @@
 					
 					<!-- batch -->
 					<show id="qa:batchId" force="true"/>
-					<show id="bcpg:clients" force="true" />
-					<show id="bcpg:suppliers" force="true" />
+					<show id="entity_qa:product_bcpg:product" force="true"/>
 					
 					
-					<!-- Product -->
-					<show id="qa:product" force="true"/>
+					<show id="qa:productUseByDate" />
+					
+					<show id="entity_bcpg:clients_bcpg:client" force="true" />
+					<show  id="qa:claimCustomerInformation" force="true"/>
+					
+					<show id="bcpg:plants" force="true" />
+					
+					<!-- Claim -->
+					<show  id="qa:claimSource" force="true"/>
+					<show id="qa:claimType" force="true"/>
+					
 
-					<!-- auditable -->
+   			   <show id="qa:claimOriginHierarchy1" force="true"/>
+					<show id="qa:claimOriginHierarchy2" force="true"/>
+
 					<show id="cm:creator"   />
 					<show id="cm:created"  />
+
+					<show id="qa:claimTreatmentDate" force="true"/>
+					<show id="qa:claimTreatmentActor" force="true"/>
+
+					<show id="qa:claimResponseDate" force="true"/>
+					<show id="qa:claimResponseActor" force="true"/>
+					
+					<show id="qa:claimResponseState" force="true"/>
+					
+					<show id="qa:claimClosingDate" force="true"/>
+
 
 				</field-visibility>
             <appearance>
@@ -350,17 +403,88 @@
 				<field-visibility>
 
 					<!-- mainInfo -->
+					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
 					<show id="cm:name" />
 					
 					<show id="qa:ncState" />
+					<show id="qa:claimType" force="true"/>
 					
 					<!-- batch -->
 					<show id="qa:batchId" force="true" />
-					<show id="qa:orderId" force="true" />
 					
+				</field-visibility>
+				<appearance>
+					<field id="qa:ncType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="qa:ncPriority" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="qa:claimType" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:product">
+		<forms>
+
+			<form id="sub-datagrid-export">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<!-- <show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:productState" /> -->
+					<show id="bcpg:subsidiary" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:trademark" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" label="Produit" />
+					<field id="bcpg:productHierarchy1" label="Famille Produit"/>
+					<field id="bcpg:productHierarchy2" label="Sous Famille Produit"/>
+					<field id="bcpg:plants" label="Usine Produit"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:client">
+		<forms>
+
+			<form id="sub-datagrid-export">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:clientTel" />
+					<show id="bcpg:clientEmail" />
+					<show id="bcpg:clientFax" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationAddress2" />
+					<show id="bcpg:locationAddress3" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationState" />
+					<show id="bcpg:locationCountry" />
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" label="Client" />
+				</appearance>
 			</form>
 		</forms>
 	</config>

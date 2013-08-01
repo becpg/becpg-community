@@ -15,27 +15,27 @@
 	
 
 	<Dimension type="TimeDimension"  name="Time dimension">
-		<Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date">
+		<Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les périodes"  primaryKey="id" caption="Date">
 			<Table name="becpg_dimdate" alias="olapDate" />
-			<Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
+			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
 			<Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
 			<Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
 			<Level name="Jour" column="Day" nameColumn="NDay" ordinalColumn="Day" type="Numeric"  levelType="TimeDays"  />
 		</Hierarchy>
-		<Hierarchy name="Date par mois"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date par mois" visible="false">
+		<Hierarchy name="Date par mois"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les périodes"  primaryKey="id" caption="Date par mois" visible="false">
 			<Table name="becpg_dimdate" alias="olapDate" />
-			<Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
+			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
 			<Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
 		</Hierarchy>
-		<Hierarchy name="Date par semaine"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les p&#233;riodes"  primaryKey="id" caption="Date par semaine" visible="false">
+		<Hierarchy name="Date par semaine"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les périodes"  primaryKey="id" caption="Date par semaine" visible="false">
 			<Table name="becpg_dimdate" alias="olapDate" />
-			<Level name="Ann&#233;e" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
+			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
 		</Hierarchy>
 	</Dimension>
 
-	<Cube name="Non conformit&#233;s" cache="true" enabled="true" defaultMeasure="Nombre de non conformit&#233;s">
+	<Cube name="Non conformités" cache="true" enabled="true" defaultMeasure="Nombre de non conformités">
 		<View alias="nc">
 			<SQL dialect="generic">
 			<![CDATA[
@@ -64,15 +64,15 @@
 		</View>
 		
 		
-		<Dimension  name="D&#233;signation" >
-			<Hierarchy name="Non conformit&#233;" hasAll="true" allMemberCaption="Toutes les non conformit&#233;s">
+		<Dimension  name="Désignation" >
+			<Hierarchy name="Non conformité" hasAll="true" allMemberCaption="Toutes les non conformités">
 				<Level name="Nom" column="name"  type="String"    />
 				<Level name="Code NC" column="code"  type="String"    />
 			</Hierarchy>
 		</Dimension>
-		<Dimension  name="Priorit&#233;">
-			<Hierarchy name="Priorit&#233;" hasAll="true" allMemberCaption="Toutes les priorit&#233;s">
-				<Level name="Priorit&#233;" column="ncPriority"  type="String" uniqueMembers="true"   >
+		<Dimension  name="Priorité">
+			<Hierarchy name="Priorité" hasAll="true" allMemberCaption="Toutes les priorités">
+				<Level name="Priorité" column="ncPriority"  type="String" uniqueMembers="true"   >
 					 <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN ncPriority=1 THEN 'Basse'
@@ -84,9 +84,10 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
-		<Dimension  name="&#201;tat" >
-			<Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats" >
-				<Level approxRowCount="5" name="&#201;tat"  column="ncState"  type="String" uniqueMembers="true"   />
+		
+		<Dimension  name="État" >
+			<Hierarchy hasAll="true" allMemberCaption="Tous les états" >
+				<Level approxRowCount="5" name="État"  column="ncState"  type="String" uniqueMembers="true"   />
 			</Hierarchy>
 		</Dimension>
 		<Dimension  name="Type" >
@@ -94,8 +95,8 @@
 				<Level approxRowCount="5" name="Type"  column="ncType"  type="String" uniqueMembers="true"   />
 			</Hierarchy>
 		</Dimension>
-		<Dimension type="StandardDimension" foreignKey="id"  name="Etape de d&#233;tection">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tapes de d&#233;tections" primaryKey="entity_id">
+		<Dimension type="StandardDimension" foreignKey="id"  name="Etape de détection">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les étapes de détections" primaryKey="entity_id">
 				<View alias="detectionStep">
 					<SQL dialect="generic">
 							select
@@ -108,11 +109,11 @@
 						where prop.prop_name = "qa:ncDetectionStep"
 					</SQL>
 				</View>
-				<Level approxRowCount="100" name="Etape de d&#233;tection" column="nodeRef"  nameColumn="name" type="String"   ></Level>
+				<Level approxRowCount="100" name="Etape de détection" column="nodeRef"  nameColumn="name" type="String"   ></Level>
 			</Hierarchy>
 		</Dimension>
-		<Dimension type="StandardDimension" foreignKey="id"  name="Etape de cr&#233;ation">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tapes de cr&#233;ations" primaryKey="entity_id">
+		<Dimension type="StandardDimension" foreignKey="id"  name="Etape de création">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les étapes de créations" primaryKey="entity_id">
 				<View alias="creationStep">
 					<SQL dialect="generic">
 							select
@@ -125,12 +126,12 @@
 						where prop.prop_name = "qa:ncCreationStep"
 					</SQL>
 				</View>
-				<Level approxRowCount="100" name="Etape de cr&#233;ation" column="nodeRef"  nameColumn="name" type="String"   ></Level>
+				<Level approxRowCount="100" name="Etape de création" column="nodeRef"  nameColumn="name" type="String"   ></Level>
 			</Hierarchy>
 		</Dimension>
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="Produits">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les produits li&#233;s" primaryKey="entity_id">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les produits liés" primaryKey="entity_id">
 				<View alias="products">
 						<SQL dialect="generic">
 							<![CDATA[
@@ -161,14 +162,14 @@
 			</Hierarchy>
 		</Dimension>
 		
-	   <DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
+	   <DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
-		<Measure name="Nombre de non conformit&#233;s" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
-		<Measure name="Quantit&#233; non conforme" column="ncQuantityNc" datatype="Numeric" aggregator="sum" visible="true"  />
-		<Measure name="Montant li&#233; &#224; la non conformit&#233; (euro)" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
+		<Measure name="Nombre de non conformités" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="Quantité non conforme" column="ncQuantityNc" datatype="Numeric" aggregator="sum" visible="true"  />
+		<Measure name="Montant lié &#224; la non conformité (euro)" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 	
-	<Cube name="Etapes de projets" cache="true" enabled="true" defaultMeasure="Nombre d'&#233;tapes">
+	<Cube name="Etapes de projets" cache="true" enabled="true" defaultMeasure="Nombre d'étapes">
 		<View alias="projectTask">
 			<SQL dialect="generic">
 			<![CDATA[
@@ -195,22 +196,22 @@
 		</View>
 		
 		
-		<Dimension  name="D&#233;signation" >
-			<Hierarchy name="Etape par nom" hasAll="true" allMemberCaption="Toutes les &#233;tapes">
-				<Level name="Nom &#233;tape" column="tlTaskName"  type="String"    />
+		<Dimension  name="Désignation" >
+			<Hierarchy name="Etape par nom" hasAll="true" allMemberCaption="Toutes les étapes">
+				<Level name="Nom étape" column="tlTaskName"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="&#201;tat" >
-			<Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats" >
-				<Level approxRowCount="5" name="&#201;tat"  column="tlState"  type="String" uniqueMembers="true"   >
+		<Dimension  name="État" >
+			<Hierarchy hasAll="true" allMemberCaption="Tous les états" >
+				<Level approxRowCount="5" name="État"  column="tlState"  type="String" uniqueMembers="true"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN tlState='Planned' THEN 'Plannifi&#233;'
+					  <![CDATA[CASE WHEN tlState='Planned' THEN 'Plannifié'
 	                            WHEN tlState='InProgress' THEN 'En cours'
-	                            WHEN tlState='OnHold' THEN 'Arr&#251;t&#233;'
-	                            WHEN tlState='Cancelled' THEN 'Annul&#233;'
-	                            WHEN tlState='Completed' THEN 'Termin&#233;'
+	                            WHEN tlState='OnHold' THEN 'Arrûté'
+	                            WHEN tlState='Cancelled' THEN 'Annulé'
+	                            WHEN tlState='Completed' THEN 'Terminé'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
               </NameExpression>
@@ -256,10 +257,10 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<DimensionUsage name="Date d&#233;but" caption="Date d&#233;but" source="Time dimension" foreignKey="tlStart" />
+		<DimensionUsage name="Date début" caption="Date début" source="Time dimension" foreignKey="tlStart" />
 		<DimensionUsage name="Date de fin" caption="Date de fin" source="Time dimension" foreignKey="tlEnd" />
-		<Measure name="Nombre d'&#233;tapes" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
-		<Measure name="Moyenne des dur&#233;es" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Nombre d'étapes" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="Moyenne des durées" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 	</Cube>
 
 	<Cube name="Projets" cache="true" enabled="true" defaultMeasure="Nombre de projets (Distinct)">
@@ -305,7 +306,7 @@
 			</Hierarchy>
 		</Dimension> -->
 		
-		<Dimension  name="D&#233;signation" >
+		<Dimension  name="Désignation" >
 			<Hierarchy name="Projet par famille" hasAll="true" allMemberCaption="Tous les projets">
 				<Level name="Famille" column="projectHierarchy1"  type="String"    />
 				<Level name="Sous famille" column="projectHierarchy2"  type="String"    />
@@ -319,9 +320,9 @@
 		</Dimension>
 		
 		
-		<Dimension  name="Priorit&#233;">
-			<Hierarchy name="Priorit&#233;" hasAll="true" allMemberCaption="Toutes les priorit&#233;s">
-				<Level name="Priorit&#233;" column="projectPriority"  type="String" uniqueMembers="true"   >
+		<Dimension  name="Priorité">
+			<Hierarchy name="Priorité" hasAll="true" allMemberCaption="Toutes les priorités">
+				<Level name="Priorité" column="projectPriority"  type="String" uniqueMembers="true"   >
 				 <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectPriority=1 THEN 'Basse'
@@ -333,16 +334,16 @@
 				</Level>
 			</Hierarchy>
 		</Dimension>
-		<Dimension  name="&#201;tat" >
-			<Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats" >
-				<Level approxRowCount="5" name="&#201;tat"  column="projectState"  type="String" uniqueMembers="true"   >
+		<Dimension  name="État" >
+			<Hierarchy hasAll="true" allMemberCaption="Tous les états" >
+				<Level approxRowCount="5" name="État"  column="projectState"  type="String" uniqueMembers="true"   >
 				  <NameExpression>
 					  <SQL dialect="generic" >
-					  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifi&#233;'
+					  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifié'
 	                            WHEN projectState='InProgress' THEN 'En cours'
-	                            WHEN projectState='OnHold' THEN 'Arr&#251;t&#233;'
-	                            WHEN projectState='Cancelled' THEN 'Annul&#233;'
-	                            WHEN projectState='Completed' THEN 'Termin&#233;'
+	                            WHEN projectState='OnHold' THEN 'Arrêté'
+	                            WHEN projectState='Cancelled' THEN 'Annulé'
+	                            WHEN projectState='Completed' THEN 'Terminé'
 	                            ELSE 'Vide'
 	                           END]]></SQL>
               </NameExpression>
@@ -350,8 +351,8 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension type="StandardDimension" foreignKey="id"  name="Entit&#233;s">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les entit&#233;s li&#233;es" primaryKey="entity_id">
+		<Dimension type="StandardDimension" foreignKey="id"  name="Entités">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les entités liées" primaryKey="entity_id">
 				<View alias="compoList">
 						<SQL dialect="generic">
 							<![CDATA[
@@ -377,7 +378,7 @@
 				</Level>
 				<Level name="Sous famille" column="productHierarchy2" type="String"   >
 				</Level>
-				<Level name="Entit&#233;" column="entity_noderef" nameColumn="name" type="String"   >
+				<Level name="Entité" column="entity_noderef" nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -395,9 +396,9 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="Origine de l&#39;id&#233;e" >
-			<Hierarchy name="Origine de l&#39;id&#233;e" hasAll="true" allMemberCaption="Toutes les origines">
-				<Level name="Origine de l&#39;id&#233;e" column="projectOrigin"  type="String"    />
+		<Dimension  name="Origine de l'idée" >
+			<Hierarchy name="Origine de l'idée" hasAll="true" allMemberCaption="Toutes les origines">
+				<Level name="Origine de l'idée" column="projectOrigin"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
@@ -407,17 +408,17 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="Mod&#232;le de projet" >
-			<Hierarchy name="Mod&#232;le de projet" hasAll="true" allMemberCaption="Tous les mod&#232;les de projet">
-				<Level name="Mod&#232;le de projet" column="entityTplRef"  type="String"    />
+		<Dimension  name="Modèle de projet" >
+			<Hierarchy name="Modèle de projet" hasAll="true" allMemberCaption="Tous les modèles de projet">
+				<Level name="Modèle de projet" column="entityTplRef"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
-	   <DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
+	   <DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
-		<DimensionUsage name="Date de d&#233;but" caption="Date de d&#233;but" source="Time dimension" foreignKey="projectStartDate" />
-		<DimensionUsage name="Date d&#39;&#233;ch&#233;ance" caption="Date d&#39;&#233;ch&#233;ance" source="Time dimension" foreignKey="projectDueDate" />
-		<DimensionUsage name="Date d&#39;ach&#232;vement" caption="Date d&#39;ach&#232;vement" source="Time dimension" foreignKey="completionDate" />
+		<DimensionUsage name="Date de début" caption="Date de début" source="Time dimension" foreignKey="projectStartDate" />
+		<DimensionUsage name="Date d'échéance" caption="Date d'échéance" source="Time dimension" foreignKey="projectDueDate" />
+		<DimensionUsage name="Date d'achèvement" caption="Date d'achèvement" source="Time dimension" foreignKey="completionDate" />
 		
 		<Measure name="Nombre de projets" column="id" datatype="Numeric" aggregator="count" visible="true" />
 		<Measure name="Nombre de projets (Distinct)" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
@@ -444,10 +445,7 @@
 		  </CalculatedMember> 
 		-->
 		
-		
-		
-
-		
+	
 	</Cube>
 
 	<Cube name="Produits" cache="true" enabled="true" defaultMeasure="Nombre de produits">
@@ -490,7 +488,7 @@
 		</Dimension>
  		-->
 
-		<Dimension  name="D&#233;signation" >
+		<Dimension  name="Désignation" >
 			<Hierarchy name="Produit par famille" hasAll="true" allMemberCaption="Tous les produits">
 				<Level name="Famille" column="productHierarchy1"  type="String"    />
 				<Level name="Sous famille" column="productHierarchy2"  type="String"    />
@@ -500,15 +498,15 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="&#201;tat" foreignKey="productState">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les &#233;tats" primaryKey="product_state">
+		<Dimension  name="État" foreignKey="productState">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les états" primaryKey="product_state">
 				<Table name="becpg_product_state" />
-				<Level approxRowCount="5" name="&#201;tat" table="becpg_product_state" column="product_state" nameColumn="product_label" type="String" uniqueMembers="true"   />
+				<Level approxRowCount="5" name="État" table="becpg_product_state" column="product_state" nameColumn="product_label" type="String" uniqueMembers="true"   />
 			</Hierarchy>
 		</Dimension>
 		
 		 
-		<Dimension foreignKey="id"  name="Origine g&#233;ographique">
+		<Dimension foreignKey="id"  name="Origine géographique">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les origines" primaryKey="entity_fact_id">
 				<View alias="geoOrigin">
 					<SQL dialect="generic">
@@ -593,8 +591,8 @@
 			
 		</Dimension>
 	
-		<Dimension type="StandardDimension" foreignKey="id"  name="Allerg&#232;ne">
-			<Hierarchy hasAll="true" allMemberCaption="Tous les allerg&#232;nes" primaryKey="entity_fact_id">
+		<Dimension type="StandardDimension" foreignKey="id"  name="Allergène">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les allergènes" primaryKey="entity_fact_id">
 				<View alias="allergenList">
 					<SQL dialect="generic">
 						select
@@ -607,7 +605,7 @@
 								and datalist.instance_id = ${instanceId}
 					</SQL>
 				</View>
-				<Level approxRowCount="100" name="Allerg&#232;ne" column="nodeRef"  nameColumn="name" type="String"   >
+				<Level approxRowCount="100" name="Allergène" column="nodeRef"  nameColumn="name" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -711,26 +709,26 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<DimensionUsage name="Date de cr&#233;ation" caption="Date de cr&#233;ation" source="Time dimension" foreignKey="dateCreated" />
+		<DimensionUsage name="Date de création" caption="Date de création" source="Time dimension" foreignKey="dateCreated" />
 		<DimensionUsage name="Date de modification" caption="Date de modification" source="Time dimension" foreignKey="dateModified" />
-		<DimensionUsage name="Debut d&#39;effectivit&#233;" caption="Debut d&#39;effectivit&#233;" source="Time dimension" foreignKey="startEffectivity" />
-		<DimensionUsage name="Fin d&#39;effectivit&#233;" caption="Fin d&#39;effectivit&#233;" source="Time dimension" foreignKey="endEffectivity" />
+		<DimensionUsage name="Debut d'effectivité" caption="Debut d'effectivité" source="Time dimension" foreignKey="startEffectivity" />
+		<DimensionUsage name="Fin d'effectivité" caption="Fin d'effectivité" source="Time dimension" foreignKey="endEffectivity" />
 		
 		<Measure name="Nombre de produits" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
-		<Measure name="Quantit&#233; previsionnelle" column="projectedQty" datatype="Integer" aggregator="sum" visible="true">
+		<Measure name="Quantité previsionnelle" column="projectedQty" datatype="Integer" aggregator="sum" visible="true">
 		</Measure>
-		<Measure name="Co&#251;ts" column="unitTotalCost" datatype="Numeric" aggregator="sum" visible="true" >
+		<Measure name="Coûts" column="unitTotalCost" datatype="Numeric" aggregator="sum" visible="true" >
 		</Measure>
 		<Measure name="Rentabilite unitaire" column="profitability" datatype="Numeric" aggregator="sum" visible="true">
 		</Measure>
 		<Measure name="Prix unitaire" column="unitPrice" datatype="Numeric" aggregator="sum" visible="true">
 		</Measure>
 		<CalculatedMember name="Profit" dimension="Measures" visible="true">
-			<Formula>([Measures].[Prix unitaire] - [Measures].[Co&#251;ts])*[Measures].[Quantit&#233; previsionnelle]
+			<Formula>([Measures].[Prix unitaire] - [Measures].[Coûts])*[Measures].[Quantité previsionnelle]
 			</Formula>
 		</CalculatedMember>
-		<CalculatedMember name="Rentabilit&#233;" dimension="Measures" visible="true">
-			<Formula>([Measures].[Prix unitaire] - [Measures].[Co&#251;ts])/[Measures].[Co&#251;ts]</Formula>
+		<CalculatedMember name="Rentabilité" dimension="Measures" visible="true">
+			<Formula>([Measures].[Prix unitaire] - [Measures].[Coûts])/[Measures].[Coûts]</Formula>
 		</CalculatedMember>
 	</Cube>
 	

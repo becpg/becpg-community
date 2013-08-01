@@ -82,9 +82,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 				ProjectModel.TYPE_PROJECT, BeCPGModel.ASSOC_ENTITY_TPL_REF, new JavaBehaviour(this,
 						"onCreateAssociation"));
 
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, ProjectModel.ASSOC_PROJECT_ENTITY, new JavaBehaviour(this,
-						"onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
 				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));		
@@ -120,14 +117,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			// initialize
 			queueNode(projectNodeRef);
 							
-		} else if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {
-			
-			NodeRef entityNodeRef = assocRef.getTargetRef();
-			
-			// add project aspect on entity
-			nodeService.addAspect(entityNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT, null);
-			associationService.update(entityNodeRef, ProjectModel.ASSOC_PROJECT, projectNodeRef);
-		}
+		} 
 	}	
 	
 	// TODO : do it in a generic way

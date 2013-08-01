@@ -4,47 +4,29 @@
 	<display-name>saiku</display-name>
 
 	<context-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+
+	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/applicationContext.xml</param-value>
 	</context-param>
 
-	<filter>
-		<filter-name>encodingFilter</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter
-		</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-		<init-param>
-			<param-name>forceEncoding</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
 
 	<filter>
-		<filter-name>org.springframework.security.filterChainProxy
-		</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy
-		</filter-class>
+		<filter-name>org.springframework.security.filterChainProxy</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 
 
 	<filter>
 		<filter-name>http-request-context</filter-name>
-		<filter-class>org.codehaus.enunciate.webapp.HTTPRequestContextFilter
-		</filter-class>
+		<filter-class>org.codehaus.enunciate.webapp.HTTPRequestContextFilter</filter-class>
 	</filter>
 
-
 	<filter-mapping>
-		<filter-name>encodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>org.springframework.security.filterChainProxy
-		</filter-name>
+		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
@@ -52,10 +34,6 @@
 		<filter-name>http-request-context</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
-
-
-
 
 	<listener>
 		<listener-class>
@@ -64,89 +42,61 @@
 	</listener>
 
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener
-		</listener-class>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
 	<listener>
-		<listener-class>org.codehaus.enunciate.modules.spring_app.SpringComponentPostProcessor
-		</listener-class>
+		<listener-class>org.codehaus.enunciate.modules.spring_app.SpringComponentPostProcessor</listener-class>
 	</listener>
 
 	<servlet>
 		<servlet-name>spring</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet
-		</servlet-class>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 	</servlet>
 
 	<servlet>
-		<servlet-name>jersey</servlet-name>
-		<servlet-class>org.codehaus.enunciate.modules.jersey.EnunciateJerseyServletContainer
-		</servlet-class>
+		<servlet-name>jersey2</servlet-name>
+		<servlet-class>org.codehaus.enunciate.modules.jersey.EnunciateJerseyServletContainer</servlet-class>
 		<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
 			<param-value>org.saiku.web</param-value>
 		</init-param>
 		<init-param>
-			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters
-			</param-name>
-			<param-value>com.sun.jersey.api.container.filter.PostReplaceFilter
-			</param-value>
+			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+			<param-value>com.sun.jersey.api.container.filter.PostReplaceFilter</param-value>
 		</init-param>
 		<init-param>
-			<param-name>org.codehaus.enunciate.modules.jersey.config.ServletPath
-			</param-name>
+			<param-name>org.codehaus.enunciate.modules.jersey.config.ServletPath</param-name>
 			<param-value>/rest</param-value>
 		</init-param>
-
-		
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<servlet-mapping>
-		<servlet-name>spring</servlet-name>
-		<url-pattern>/oauth/*</url-pattern>
-	</servlet-mapping>
+
 
 	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
-		<url-pattern>/json/saiku/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
-		<url-pattern>/json/saiku/session</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
+		<servlet-name>jersey2</servlet-name>
 		<url-pattern>/rest/saiku/*</url-pattern>
 	</servlet-mapping>
 
 
 	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
+		<servlet-name>jersey2</servlet-name>
 		<url-pattern>/rest/saiku/session</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
-		<url-pattern>/xml/saiku/*</url-pattern>
-	</servlet-mapping>
+	<resource-ref>
+		<description>DB Connection</description>
+		<res-ref-name>jdbc/saikuDataSource</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Unshareable</res-sharing-scope>
+	</resource-ref>
 
-	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
-		<url-pattern>/xml/saiku/session</url-pattern>
-	</servlet-mapping>
 
-	
-	 <resource-ref>
-      <description>DB Connection</description>
-      <res-ref-name>jdbc/saikuDataSource</res-ref-name>
-      <res-type>javax.sql.DataSource</res-type>
-      <res-auth>Container</res-auth>
-      <res-sharing-scope>Unshareable</res-sharing-scope>
-    </resource-ref>
-	
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
 
 	<mime-mapping>
 		<extension>wsdl</extension>
@@ -158,6 +108,6 @@
 		<mime-type>text/xml</mime-type>
 	</mime-mapping>
 
-	
+
 
 </web-app>

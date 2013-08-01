@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.preference.PreferenceService;
+import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -26,6 +28,7 @@ import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -41,6 +44,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 	private static final String VIEW_FAVOURITES = "favourites";
 	private static final String VIEW_TASKS = "tasks";
 	private static final String VIEW_MY_TASKS = "my-tasks";
+	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 
 	private PersonService personService;
 
@@ -78,25 +82,27 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
-		List<AttributeExtractorStructure> computedFields = null;
-
 		for (NodeRef nodeRef : results) {
 			if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				if (!nodeService.exists(nodeRef)) {
 					logger.error("NodeRef doesn't exist ? " + nodeRef.toString());
 				} else {
-					if (computedFields == null) {
-						computedFields = attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields);
+					if (ret.getComputedFields() == null) {
+						ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 					}
-
-					Map<String, Object> extracted = extract(nodeRef, computedFields, props, cache);
-					if (favorites.contains(nodeRef)) {
-						extracted.put(PROP_IS_FAVOURITE, true);
+					if (FORMAT_CSV.equals(dataListFilter.getFormat())) {
+						ret.getItems().add(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
 					} else {
-						extracted.put(PROP_IS_FAVOURITE, false);
+						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);
+						if (favorites.contains(nodeRef)) {
+							extracted.put(PROP_IS_FAVOURITE, true);
+						} else {
+							extracted.put(PROP_IS_FAVOURITE, false);
+						}
+
+						ret.getItems().add(extracted);
 					}
 
-					ret.getItems().add(extracted);
 				}
 			}
 		}
@@ -120,7 +126,11 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		if (favorites != null) {
 			for (String favorite : favorites.split(",")) {
-				ret.add(new NodeRef(favorite));
+				try {
+					ret.add(new NodeRef(favorite));
+				} catch (MalformedNodeRefException e) {
+					logger.warn("Favorite nodeRef is malformed : " + favorite);
+				}
 			}
 		}
 		return ret;
@@ -134,29 +144,34 @@ public class ProjectListExtractor extends SimpleExtractor {
 		QName dataType = dataListFilter.getDataType();
 		String query = dataListFilter.getSearchQuery();
 
-		if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
-			dataType = ProjectModel.TYPE_TASK_LIST;
-			query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));
-		}
-
-		results = advSearchService.queryAdvSearch(query, SearchService.LANGUAGE_LUCENE, dataType, dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(),
-				pagination.getMaxResults());
-
-		// Always should return project
-		if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
-			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId())) {
-				logger.debug("Keep only tasks for  " + AuthenticationUtil.getFullyAuthenticatedUser());
-				NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
-				if (logger.isDebugEnabled()) {
-					logger.debug("Retain : " + associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
-				}
-				results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
+			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
+		} else {
+			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
+				dataType = ProjectModel.TYPE_TASK_LIST;
+				query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));
 			}
-		}
 
-		if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
-			logger.debug("Keep only favorites");
-			results.retainAll(favorites);
+			results = advSearchService.queryAdvSearch(query, SearchService.LANGUAGE_LUCENE, dataType, dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(),
+					pagination.getMaxResults());
+
+			// Always should return project
+			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
+				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId())) {
+					logger.debug("Keep only tasks for  " + AuthenticationUtil.getFullyAuthenticatedUser());
+					NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+					if (logger.isDebugEnabled()) {
+						logger.debug("Retain : " + associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+					}
+					results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
+				}
+			}
+
+			if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
+				logger.debug("Keep only favorites");
+				results.retainAll(favorites);
+			}
+
 		}
 
 		if (dataListFilter.getSortId() != null) {
@@ -172,66 +187,82 @@ public class ProjectListExtractor extends SimpleExtractor {
 	}
 
 	@Override
-	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, Map<QName, Serializable> properties,
-			final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
+	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, final AttributeExtractorMode mode,
+			Map<QName, Serializable> properties, final Map<String, Object> props, final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, false, new AttributeExtractorService.DataListCallBack() {
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, mode, new AttributeExtractorService.DataListCallBack() {
 
 			@Override
-			public List<Map<String, Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<AttributeExtractorStructure> metadataFields) {
-
+			public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
 				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
-				// TODO inneficient join
-				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQname);
+				if (field.isDataListItems()) {
+					NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
+					if (listNodeRef != null) {
+						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
-				if (listNodeRef != null) {
-					List<NodeRef> results = entityListDAO.getListItems(listNodeRef, dataListQname);
-
-					DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
-					TaskState taskState = null;
-					if (pagination.getPageSize() > 10) {
-						DataListFilter filter = (DataListFilter) props.get(FILTER_DATA);
-						taskState = TaskState.valueOf(filter.getFilterData());
-					}
-
-					for (NodeRef nodeRef : results) {
-
-						
-						if ((taskState == null
-								|| (ProjectModel.TYPE_TASK_LIST.equals(dataListQname) && taskState.toString().equals(nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_STATE))) 
-								|| ProjectModel.TYPE_DELIVERABLE_LIST
-									.equals(dataListQname)) && permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
-
-							Map<String, Object> tmp = new HashMap<String, Object>(3);
-							QName itemType = nodeService.getType(nodeRef);
-							Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-							tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
-							tmp.put(PROP_NODE, nodeRef);
-							tmp.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields, properties, props, cache));
-							ret.add(tmp);
+						DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
+						TaskState taskState = null;
+						if (pagination.getPageSize() > 10) {
+							DataListFilter filter = (DataListFilter) props.get(FILTER_DATA);
+							taskState = TaskState.valueOf(filter.getFilterData());
 						}
+
+						for (NodeRef itemNodeRef : results) {
+
+							if ((taskState == null
+									|| (ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && taskState.toString().equals(
+											nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_STATE))) || ProjectModel.TYPE_DELIVERABLE_LIST.equals(field.getFieldQname()))
+									&& permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+
+								Map<String, Object> tmp = new HashMap<String, Object>(3);
+								QName itemType = nodeService.getType(itemNodeRef);
+								Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
+								tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
+								tmp.put(PROP_NODE, itemNodeRef);
+								tmp.put(PROP_NODEDATA, doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties, props, cache));
+								ret.add(tmp);
+							}
+						}
+					}
+				} else if (field.isEntityField()) {
+					NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
+					addExtracted(entityNodeRef, field, cache, mode, ret);
+
+				} else {
+
+					if (field.getFieldDef() instanceof AssociationDefinition) {
+						List<NodeRef> assocRefs = null;
+						if (((AssociationDefinition) field.getFieldDef()).isChild()) {
+							assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
+						} else {
+							assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
+						}
+						for (NodeRef itemNodeRef : assocRefs) {
+							addExtracted(itemNodeRef, field, cache, mode, ret);
+						}
+
 					}
 				}
 
 				return ret;
 			}
 
-			@Override
-			public Map<String, Object> extractEntityField(NodeRef entityListNodeRef, QName entityTypeQname, List<AttributeExtractorStructure> metadataFields) {
-
-				NodeRef entityNodeRef = entityListDAO.getEntity(entityListNodeRef);
-
-				if (cache.containsKey(entityNodeRef)) {
-					return cache.get(entityNodeRef);
+			private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache, AttributeExtractorMode mode,
+					List<Map<String, Object>> ret) {
+				if (cache.containsKey(itemNodeRef)) {
+					ret.add(cache.get(itemNodeRef));
 				} else {
-					if (permissionService.hasPermission(entityNodeRef, "Read") == AccessStatus.ALLOWED) {
-						return extract(entityNodeRef, metadataFields, props, cache);
+					if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+						if (AttributeExtractorMode.CSV.equals(mode)) {
+							ret.add(extractCSV(itemNodeRef, field.getChildrens(), props, cache));
+						} else {
+							ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));
+						}
 					}
 				}
-
-				return new HashMap<String, Object>();
 			}
+
 		});
 	}
 
@@ -242,7 +273,6 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
-
 		return null;
 	}
 

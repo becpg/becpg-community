@@ -346,16 +346,13 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	@Test
 	public void testECOService() throws Exception {
-		logger.error("Call testECOService ");
-		
+	
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-				logger.error("Call tx testECOService ");
 
 				
 				/*
@@ -387,9 +384,9 @@ public class ECOTest extends RepoBaseTestCase {
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
 
-				logger.error( dbECOData.getWUsedList().size());
+				
 				assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
-				logger.error( "SUCCESS");
+
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
 
@@ -486,8 +483,6 @@ public class ECOTest extends RepoBaseTestCase {
 
 		}, false, true);
 		
-		logger.error("end ecoService ");
-
 	}
 
 	/**
@@ -498,7 +493,6 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
-		logger.error("Call testECOInMultiLeveCompo ");
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
@@ -542,7 +536,6 @@ public class ECOTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Formulate product --*/
-				logger.error("Call txStart ");
 				logger.debug("/*-- Formulate product PF3 --*/");
 				productService.formulate(finishedProduct3NodeRef);
 
