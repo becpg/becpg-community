@@ -116,7 +116,11 @@
 
 					<field id="qa:claimSource"  set="claim-info"/>
 					<!-- <field id="qa:claimDistributionNetwork" set="claim-info"/> -->
-					<field id="qa:claimCustomerInformation" set="claim-info"/>
+					<field id="qa:claimCustomerInformation" set="claim-info">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 
 					<field id="qa:claimTradeContact" set="claim-info"/>
 					<field id="qa:claimTradeContactCheck" set="claim-info"/>
@@ -272,7 +276,11 @@
 
 					<field id="qa:claimSource"  set="claim-info"/>
 					<!-- <field id="qa:claimDistributionNetwork" set="claim-info"/> -->
-					<field id="qa:claimCustomerInformation" set="claim-info"/>
+					<field id="qa:claimCustomerInformation" set="claim-info">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 
 					<field id="qa:claimTradeContact" set="claim-info"/>
 					<field id="qa:claimTradeContactCheck" set="claim-info"/>
@@ -601,7 +609,11 @@
 
 					<field id="qa:claimSource"  set="claim-info"/>
 					<!-- <field id="qa:claimDistributionNetwork" set="claim-info"/> -->
-					<field id="qa:claimCustomerInformation" set="claim-info"/>
+					<field id="qa:claimCustomerInformation" set="claim-info">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 
 					<field id="qa:claimTradeContact" set="claim-info"/>
 					<field id="qa:claimTradeContactCheck" set="claim-info"/>
