@@ -94,8 +94,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	protected static final String PARAM_ID = "id";
 
 	protected static final String PARAM_FIELDS = "fields";
-	
-	protected static final String PARAM_HEADERS = "headers";
 
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
@@ -129,7 +127,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	private DataListExtractorFactory dataListExtractorFactory;
 
 	private DataListSortService dataListSortService;
-
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -335,17 +333,10 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				CSVWriter csvWriter = new CSVWriter(csvConfig);
 
 				csvWriter.setWriter(res.getWriter());
-				
-				if (json != null && json.has(PARAM_HEADERS)) {
-					JSONArray jsonFields = (JSONArray) json.get(PARAM_HEADERS);
-
-					Map<String,String> headers = new HashMap<>();
-					for (int i = 0; i < jsonFields.length(); i++) {	
-						headers.put(((JSONObject)jsonFields.get(i)).getString("name"),((JSONObject)jsonFields.get(i)).getString("label"));
-					}
-					csvWriter.writeRecord(headers);
-				}
-				
+	
+				Map<String,String> headers = new HashMap<>();
+				appendCSVHeader(headers, extractedItems.getComputedFields(), null, null);
+				csvWriter.writeRecord(headers);
 
 				writeToCSV(extractedItems, csvWriter);
 
@@ -422,6 +413,18 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		}
 
 	}
+	
+	private void appendCSVHeader(Map<String,String> headers, List<AttributeExtractorStructure> fields, String fieldNamePrefix, String titlePrefix) {
+		for (AttributeExtractorStructure field : fields) {
+			if (field.isNested() ) {
+				appendCSVHeader(headers, field.getChildrens(), field.getFieldName(), field.getFieldDef().getTitle());
+			} else {
+				String fieldName = fieldNamePrefix != null ? fieldNamePrefix + "_" + field.getFieldName() : field.getFieldName();
+				String fullTitle = titlePrefix != null ? titlePrefix + " - " + field.getFieldDef().getTitle() : field.getFieldDef().getTitle();				
+				headers.put(fieldName, fullTitle);
+			}
+		}
+	}
 
 	private JSONArray processResults(PaginatedExtractedItems extractedItems) {
 
@@ -437,6 +440,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVWriter csvWriter) {
 		for (Map<String, Object> item : extractedItems.getItems()) {
+			logger.info("###item: " + item);
 			csvWriter.writeRecord(item);
 		}
 	}
