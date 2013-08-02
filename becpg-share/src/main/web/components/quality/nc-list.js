@@ -85,7 +85,6 @@
 
                                     var requestParams = {
                                        fields : [],
-                                       headers : [],
                                        filter : dt.currentFilter,
                                        page : 1
                                     };
@@ -94,21 +93,11 @@
 
                                     for ( var i = 0, ii = response.json.columns.length; i < ii; i++) {
                                        var column = response.json.columns[i], columnName = column.name.replace(":", "_");
-
                                        if (column.dataType == "nested" && column.columns) {
-                                          for ( var j = 0; j < column.columns.length; j++) {
-                                             
-                                             var col = column.columns[j];
-                                             
-                                             columnName += "|" + col.name.replace(":", "_");
-                                             
-                                             requestParams.headers.push({name: "dt_"+column.name.replace(":", "_")+"_"+(col.type == "property" ? "prop"
-                                                   : "assoc")+"_"+ col.name.replace(":", "_"), label : col.label});
+                                          for ( var j = 0; j < column.columns.length; j++) {                                             
+                                             var col = column.columns[j];                                            
+                                             columnName += "|" + col.name.replace(":", "_");                                             
                                           }
-
-                                       } else {
-                                          requestParams.headers.push({name: (column.type == "property" ? "prop"
-                                                : "assoc")+"_" + columnName, label : column.label});
                                        }
 
                                        requestParams.fields.push(columnName);
