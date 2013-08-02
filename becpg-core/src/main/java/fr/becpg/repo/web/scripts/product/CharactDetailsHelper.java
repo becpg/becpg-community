@@ -92,6 +92,8 @@ public class CharactDetailsHelper {
 		
 		CSVConfig csvConfig = new CSVConfig();
 		csvConfig.setDelimiter(';');
+		csvConfig.setValueDelimiter('"');
+		csvConfig.setIgnoreValueDelimiter(false);
 		csvConfig.addField(new CSVField(getYAxisLabel()));
 		
 		
