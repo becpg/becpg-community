@@ -286,7 +286,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						} else {
 							// pseudo cm:content property - e.g. mimetype, size
 							// or encoding
-							formQuery += operator + "m:content." + propName + ":\"" + propValue + "\"";
+							formQuery += operator + "cm:content." + propName + ":\"" + propValue + "\"";
 						}
 					}
 				}
