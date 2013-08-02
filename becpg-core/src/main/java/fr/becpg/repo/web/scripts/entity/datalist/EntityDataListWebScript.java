@@ -327,6 +327,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				CSVConfig csvConfig = new CSVConfig();
 				
 				csvConfig.setDelimiter(';');
+				csvConfig.setValueDelimiter('"');
+				csvConfig.setIgnoreValueDelimiter(false);
 
 				appendCSVField(csvConfig, extractedItems.getComputedFields(),null);
 
