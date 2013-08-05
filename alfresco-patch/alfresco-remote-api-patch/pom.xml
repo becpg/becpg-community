@@ -64,6 +64,7 @@
 									<artifact>org.alfresco:alfresco-remote-api</artifact>
 									<excludes>																	
 										<exclude>org/alfresco/repo/web/scripts/RepositoryContainer**</exclude>
+										<exclude>org/alfresco/repo/web/scripts/workflow/TaskInstancesGet**</exclude>
 									</excludes>
 								</filter>
 							</filters>
