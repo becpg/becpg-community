@@ -46,23 +46,22 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException 
 	 */
-	public static Double getQty(CompoListDataItem compoListDataItem) throws FormulateException{		
+	public static Double getQty(CompoListDataItem compoListDataItem) throws FormulateException{
+		Double qty = null;
 		if(FormulationHelper.isCompoUnitLiter(compoListDataItem.getCompoListUnit())){
 			if(compoListDataItem.getQtySubFormula() != null){
 				if(compoListDataItem.getCompoListUnit().equals(CompoListUnit.mL)){
-					return compoListDataItem.getQtySubFormula() / 1000;
+					qty = compoListDataItem.getQtySubFormula() / 1000;
 				}	
 				else{
-					return compoListDataItem.getQtySubFormula();
+					qty = compoListDataItem.getQtySubFormula();
 				}
-			}
-			else{
-				return DEFAULT_COMPONANT_QUANTITY;
-			}			
+			}					
 		}
 		else{
-			return compoListDataItem.getQty();
-		}
+			qty = compoListDataItem.getQty();
+		}		
+		return qty != null ? qty : DEFAULT_COMPONANT_QUANTITY; 
 	}
 	
 	public static Double getQtyInKg(CompoListDataItem compoListDataItem) throws FormulateException{				

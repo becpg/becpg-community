@@ -96,6 +96,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			addMessingReq(formulatedProduct, formulatedProduct.getNodeRef(), MESSAGE_MISSING_QTY);
 		}
 		
+		checkNetWeight(formulatedProduct, formulatedProduct.getNodeRef());
 		checkCompositionItem(formulatedProduct, formulatedProduct.getNodeRef(), null);
 	}
 	
@@ -111,10 +112,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			if(c != null){
 				
 				if(FormulationHelper.isCompoUnitP(c.getCompoListUnit())){
-					Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService);
-					if(netWeight == null || netWeight.equals(0d)){								
-						addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
-					}
+					checkNetWeight(formulatedProduct, productNodeRef);
 				}
 				
 				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
@@ -134,6 +132,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 		}		
 	}	
+	
+	private void checkNetWeight(ProductData formulatedProduct, NodeRef productNodeRef){
+		Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService);
+		if(netWeight == null || netWeight.equals(0d)){								
+			addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
+		}
+	}
 	
 	private void checkPackagingItem(ProductData formulatedProduct, PackagingListDataItem p){
 		NodeRef productNodeRef = p.getProduct();
