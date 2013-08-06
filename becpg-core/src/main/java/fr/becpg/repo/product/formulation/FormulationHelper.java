@@ -46,7 +46,26 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException 
 	 */
-	public static Double getQty(CompoListDataItem compoListDataItem) throws FormulateException{
+	public static Double getQty(CompoListDataItem compoListDataItem) throws FormulateException{		
+		if(FormulationHelper.isCompoUnitLiter(compoListDataItem.getCompoListUnit())){
+			if(compoListDataItem.getQtySubFormula() != null){
+				if(compoListDataItem.getCompoListUnit().equals(CompoListUnit.mL)){
+					return compoListDataItem.getQtySubFormula() / 1000;
+				}	
+				else{
+					return compoListDataItem.getQtySubFormula();
+				}
+			}
+			else{
+				return DEFAULT_COMPONANT_QUANTITY;
+			}			
+		}
+		else{
+			return compoListDataItem.getQty();
+		}
+	}
+	
+	public static Double getQtyInKg(CompoListDataItem compoListDataItem) throws FormulateException{				
 		return compoListDataItem.getQty();
 	}
 	
@@ -92,7 +111,7 @@ public class FormulationHelper {
 	}
 	
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc){	
-		return (1 + lossPerc / 100) * parentLossRatio;		
+		return 100 * (1 - (1 + lossPerc / 100) * (1 + parentLossRatio / 100));		
 	}
 	
 	public static Double getQtyWithLost(Double qty, Double lossPerc){		
@@ -163,6 +182,30 @@ public class FormulationHelper {
 		String strProductUnit = (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_UNIT);
 		return strProductUnit != null ? ProductUnit.valueOf(strProductUnit) : null;
 	}
+	
+	public static boolean isProductUnitLiter(ProductUnit unit) {
+		return unit != null && (unit.equals(ProductUnit.L) || unit.equals(ProductUnit.mL));
+	}
+	
+	public static boolean isProductUnitKg(ProductUnit unit) {
+		return unit != null && (unit.equals(ProductUnit.kg) || unit.equals(ProductUnit.g));
+	}
+	
+	public static boolean isProductUnitP(ProductUnit unit) {
+		return unit != null && unit.equals(ProductUnit.P);
+	}
+	
+	public static boolean isCompoUnitLiter(CompoListUnit unit) {
+		return unit != null && (unit.equals(CompoListUnit.L) || unit.equals(CompoListUnit.mL));
+	}
+	
+	public static boolean isCompoUnitKg(CompoListUnit unit) {
+		return unit != null && (unit.equals(CompoListUnit.kg) || unit.equals(CompoListUnit.g));
+	}
+	
+	public static boolean isCompoUnitP(CompoListUnit unit) {
+		return unit != null && unit.equals(CompoListUnit.P);
+	}
 
 	/**
 	 * 
@@ -180,12 +223,11 @@ public class FormulationHelper {
 			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);						
 			
 			if(qty != null && productUnit != null){
-				if(productUnit != null && (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL) || 
-						productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.L))){					
+				if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
 					if(productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)){
 						qty = qty / 1000;
 					}
-					if(productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.mL)){
+					if(FormulationHelper.isProductUnitLiter(productUnit)){
 						Double density = FormulationHelper.getDensity(nodeRef, nodeService);
 						qty = qty * density;
 					}
@@ -253,7 +295,7 @@ public class FormulationHelper {
 		Double tare = (Double)nodeService.getProperty(packagingNodeRef, PackModel.PROP_TARE);
 		String strTareUnit = (String)nodeService.getProperty(packagingNodeRef, PackModel.PROP_TARE_UNIT);
 		if(tare == null || strTareUnit == null){
-			return DEFAULT_COMPONANT_QUANTITY;
+			return null;
 		}
 		else{
 			

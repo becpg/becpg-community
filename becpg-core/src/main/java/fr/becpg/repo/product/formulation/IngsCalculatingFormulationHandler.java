@@ -270,7 +270,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 			
 			//Calculate qty
-			Double qty = FormulationHelper.getQty(compoListDataItem);
+			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 			Double qtyIng = ingListDataItem.getQtyPerc();
 						
 			if(qty != null && qtyIng != null){

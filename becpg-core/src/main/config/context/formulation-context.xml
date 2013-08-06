@@ -59,7 +59,9 @@
 		init-method="init">
 		<property name="handlers">
 			<list>
-				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler"/>
+				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 					<property name="beCPGSearchService" ref="BeCPGSearchService" />
@@ -103,7 +105,9 @@
 		init-method="init">
 		<property name="handlers">
 			<list>
-				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler"/>
+				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 					<property name="beCPGSearchService" ref="BeCPGSearchService" />
