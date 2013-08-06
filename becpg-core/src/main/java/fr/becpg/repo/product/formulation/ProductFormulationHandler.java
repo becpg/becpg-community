@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -71,19 +72,19 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		
 		for(CompoListDataItem c : formulatedProduct.getCompoList()){	
 			if(c.getCompoListUnit() == null){
-				addMessingReq(formulatedProduct, null, MESSAGE_WRONG_UNIT);
+				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
 			}
 			else{
-				checkCompositionItem(formulatedProduct, c.getProduct(), c);
+				checkCompositionItem(formulatedProduct.getCompoListView().getReqCtrlList(), c.getProduct(), c);
 			}			
 		}
 		
 		for(PackagingListDataItem p : formulatedProduct.getPackagingList()){	
 			if(p.getPackagingListUnit() == null){
-				addMessingReq(formulatedProduct, null, MESSAGE_WRONG_UNIT);
+				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
 			}
 			else{
-				checkPackagingItem(formulatedProduct, p);
+				checkPackagingItem(formulatedProduct.getPackagingListView().getReqCtrlList(), p);
 			}
 			
 		}
@@ -93,88 +94,88 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		
 		Double qty = FormulationHelper.getProductQty(formulatedProduct.getNodeRef(), nodeService);
 		if(qty == null || qty.equals(0d)){
-			addMessingReq(formulatedProduct, formulatedProduct.getNodeRef(), MESSAGE_MISSING_QTY);
+			addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), formulatedProduct.getNodeRef(), MESSAGE_MISSING_QTY);
 		}
 		
-		checkNetWeight(formulatedProduct, formulatedProduct.getNodeRef());
-		checkCompositionItem(formulatedProduct, formulatedProduct.getNodeRef(), null);
+		checkNetWeight(formulatedProduct.getCompoListView().getReqCtrlList(), formulatedProduct.getNodeRef());
+		checkCompositionItem(formulatedProduct.getCompoListView().getReqCtrlList(), formulatedProduct.getNodeRef(), null);
 	}
 	
-	private void checkCompositionItem(ProductData formulatedProduct, NodeRef productNodeRef, CompoListDataItem c){
+	private void checkCompositionItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c){
 				
 		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))){
 			
 			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
 			if(productUnit == null){	
-				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_UNIT);
+				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT);
 			}			
 			
 			if(c != null){
 				
 				if(FormulationHelper.isCompoUnitP(c.getCompoListUnit())){
-					checkNetWeight(formulatedProduct, productNodeRef);
+					checkNetWeight(reqCtrlListDataItem, productNodeRef);
 				}
 				
 				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
 				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
 				
 				if(shouldUseLiter && !useLiter || !shouldUseLiter && useLiter){
-					addMessingReq(formulatedProduct, productNodeRef, MESSAGE_WRONG_UNIT);
+					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 				}
 				
 				Double overrunPerc = (Double) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC);
 				if(FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null){
 					Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 					if(density == null || density.equals(0d)){
-						addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_DENSITY);
+						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY);
 					}
 				}				
 			}
 		}		
 	}	
 	
-	private void checkNetWeight(ProductData formulatedProduct, NodeRef productNodeRef){
+	private void checkNetWeight(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef){
 		Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService);
 		if(netWeight == null || netWeight.equals(0d)){								
-			addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
+			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
 		}
 	}
 	
-	private void checkPackagingItem(ProductData formulatedProduct, PackagingListDataItem p){
+	private void checkPackagingItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, PackagingListDataItem p){
 		NodeRef productNodeRef = p.getProduct();
 		ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
 		if(productUnit == null){	
-			addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_UNIT);
+			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT);
 		}
 		else{			
 			if((p.getPackagingListUnit().equals(PackagingListUnit.kg) || p.getPackagingListUnit().equals(PackagingListUnit.g)) &&
 					!FormulationHelper.isProductUnitKg(productUnit)){						
-				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_WRONG_UNIT);
+				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 			}
 			
 			if((p.getPackagingListUnit().equals(PackagingListUnit.P) || p.getPackagingListUnit().equals(PackagingListUnit.PP)) &&
 					!productUnit.equals(ProductUnit.P)){						
-				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_WRONG_UNIT);
+				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 			}
 			
 			if((p.getPackagingListUnit().equals(PackagingListUnit.m) && !productUnit.equals(ProductUnit.m)) ||
 					(p.getPackagingListUnit().equals(PackagingListUnit.m2) && !productUnit.equals(ProductUnit.m2))){						
-				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_WRONG_UNIT);
+				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 			}
 		}
 		
 		Double tare = FormulationHelper.getTareInKg(productNodeRef, nodeService);
 		if(tare == null){
-			addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_TARE);
+			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_TARE);
 		}
 	}
 		
-	private void addMessingReq(ProductData formulatedProduct, NodeRef sourceNodeRef, String reqMsg){
+	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg){
 		String message = I18NUtil.getMessage(reqMsg);
 		ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
 		if(sourceNodeRef!=null){
 			sources.add(sourceNodeRef);
 		}			
-		formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null,  RequirementType.Forbidden, message, sources));
+		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null,  RequirementType.Forbidden, message, sources));
 	}
 }
