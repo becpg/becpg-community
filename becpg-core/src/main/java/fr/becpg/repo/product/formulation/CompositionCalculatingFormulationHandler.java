@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,12 +22,9 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -37,10 +33,6 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final String MESSAGE_RM_WATER = "message.formulate.rawmaterial.water";	
-	private static final String MESSAGE_MISSING_NET_WEIGHT = "message.formulate.missing.netWeight";
-	private static final String MESSAGE_MISSING_QTY = "message.formulate.missing.qty";
-	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
-	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
 	private static final String KEY_RM_WATER = "RMWater";	
 	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
@@ -74,8 +66,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			logger.debug("no compo => no formulation");
 			return true;
 		}
-		
-		checkMissingProperties(formulatedProduct);
 		
 		//Take in account net weight
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);			
@@ -291,55 +281,4 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return volume;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void checkMissingProperties(ProductData formulatedProduct){
-		
-		checkMissingProperties(formulatedProduct, formulatedProduct.getNodeRef());
-		
-		for(CompoListDataItem c : formulatedProduct.getCompoList()){			
-			if(c.getCompoListUnit() != null && 
-				!(c.getCompoListUnit().equals(CompoListUnit.kg) || c.getCompoListUnit().equals(CompoListUnit.g))){
-				logger.info("checkMissingProperties");
-				checkMissingProperties(formulatedProduct, c.getProduct());
-			}			
-		}		
-	}
-	
-	private void checkMissingProperties(ProductData formulatedProduct, NodeRef productNodeRef){
-		
-		logger.info("checkMissingProperties " + nodeService.getType(productNodeRef));
-		
-		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))){
-			
-			logger.info("checkMissingProperties");
-			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
-			if(productUnit == null){	
-				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_UNIT);
-			}
-			
-			Double qty = FormulationHelper.getProductQty(productNodeRef, nodeService);
-			if(qty == null || qty.equals(0d)){
-				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_QTY);
-			}
-			
-			Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
-			if(density == null || density.equals(0d)){
-				addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_DENSITY);
-			}
-			
-			Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService);
-			if(netWeight == null || netWeight.equals(0d)){				
-				if(qty == null || productUnit == null || !(productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.g))){
-					addMessingReq(formulatedProduct, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
-				}			
-			}
-		}		
-	}
-		
-	private void addMessingReq(ProductData formulatedProduct, NodeRef sourceNodeRef, String reqMsg){
-		String message = I18NUtil.getMessage(reqMsg);
-		ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
-		sources.add(sourceNodeRef);		
-		formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null,  RequirementType.Forbidden, message, sources));
-	}
 }

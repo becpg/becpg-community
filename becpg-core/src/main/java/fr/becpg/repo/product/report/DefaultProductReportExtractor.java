@@ -534,18 +534,21 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					(defaultVariantNodeRef == null || dataItem.getVariants() == null || dataItem.getVariants().contains(defaultVariantNodeRef)) &&
 					!BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeType)){
 				
-				Double tare = FormulationHelper.getQty(dataItem) * FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
-				logger.debug("Tare " + partName + " " + tare);
-				
-				if(dataItem.getPkgLevel().equals(PackagingLevel.Primary)){
-					packagingData.setTarePrimary(packagingData.getTarePrimary() + tare);
-				}
-				else if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){					
-					packagingData.setTareSecondary(packagingData.getTareSecondary() + tare);
-				}
-				else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
-					packagingData.setTareTertiary(packagingData.getTareTertiary() + tare);
-				}
+				Double tare = FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
+				if(tare != null){
+					tare = FormulationHelper.getQty(dataItem) * tare;
+					logger.debug("Tare " + partName + " " + tare);
+					
+					if(dataItem.getPkgLevel().equals(PackagingLevel.Primary)){
+						packagingData.setTarePrimary(packagingData.getTarePrimary() + tare);
+					}
+					else if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){					
+						packagingData.setTareSecondary(packagingData.getTareSecondary() + tare);
+					}
+					else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
+						packagingData.setTareTertiary(packagingData.getTareTertiary() + tare);
+					}
+				}				
 			}
 			
 			partElt.addAttribute(PackModel.PROP_TARE.getLocalName(), toString((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_TARE)));

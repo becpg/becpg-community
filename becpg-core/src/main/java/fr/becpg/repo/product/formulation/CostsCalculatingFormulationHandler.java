@@ -36,7 +36,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 @Service
 public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<CostListDataItem> {
 
-	public static final Double DEFAULT_LOSS_RATIO = 1d;
+	public static final Double DEFAULT_LOSS_RATIO = 0d;
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
@@ -176,8 +176,16 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	 * @param productUnit
 	 * @return
 	 */
-	public static String calculateSuffixUnit(ProductUnit productUnit){
-		return (productUnit != null && productUnit.equals(ProductUnit.L)) ? UNIT_SEPARATOR + ProductUnit.L : UNIT_SEPARATOR + ProductUnit.kg;
+	public static String calculateSuffixUnit(ProductUnit productUnit){		
+		if(productUnit == null || productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.g)){
+			return UNIT_SEPARATOR + ProductUnit.kg;
+		}
+		else if(productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.mL)){
+			return UNIT_SEPARATOR + ProductUnit.L;
+		}
+		else{
+			return UNIT_SEPARATOR + productUnit.toString();
+		}
 	}
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){

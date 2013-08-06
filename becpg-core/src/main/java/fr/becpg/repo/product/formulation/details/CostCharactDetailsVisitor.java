@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation.details;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -24,12 +23,6 @@ import fr.becpg.repo.repository.filters.EffectiveFilters;
 public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	private static Log logger = LogFactory.getLog(CostCharactDetailsVisitor.class);
-	
-	private NodeService nodeService;
-	
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 
 	@Override
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {

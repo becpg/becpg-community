@@ -27,7 +27,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 	protected AlfrescoRepository<SimpleCharactDataItem> alfrescoRepository;
 	
-	private NodeService nodeService;
+	protected NodeService nodeService;
 	
 	protected QName dataListType;
 
