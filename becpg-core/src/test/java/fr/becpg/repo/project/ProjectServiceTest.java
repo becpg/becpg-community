@@ -66,16 +66,6 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	
 	@Resource private PersonService personService;
 
-	@Test
-	public void testProjectAspectOnEntity() {
-
-		initTest();
-		createProject(ProjectState.Planned, new Date(), null);
-
-		assertTrue(nodeService.hasAspect(rawMaterialNodeRef, ProjectModel.ASPECT_PROJECT_ASPECT));
-		assertEquals(projectNodeRef, associationService.getTargetAssoc(rawMaterialNodeRef, ProjectModel.ASSOC_PROJECT));
-	}
-
 	/**
 	 * Test a project create InProgress start automatically
 	 */

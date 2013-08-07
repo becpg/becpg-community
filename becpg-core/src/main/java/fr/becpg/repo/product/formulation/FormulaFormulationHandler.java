@@ -116,9 +116,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-				try {
-					logger.debug("Parse formula : " + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")");
-					Expression exp = parser.parseExpression(dynamicCharactListItem.getFormula());
+				try {					
+					String formula = dynamicCharactListItem.getFormula().replace("&lt;", "<");
+					formula = formula.replace("&gt;", ">");
+					logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+					Expression exp = parser.parseExpression(formula);
 
 					if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);

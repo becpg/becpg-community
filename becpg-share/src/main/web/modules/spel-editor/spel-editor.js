@@ -728,6 +728,12 @@
                               name : "variables",
                               type : "bcpg:dynamicCharactList",
                               template : "{currentList}View.dynamicCharactList.?[title == '{name1}'][0].value"
+                           },
+                           {
+                              name : "labelClaimList",
+                              type : "bcpg:labelClaim",
+                              subType : "fr.becpg.repo.product.data.productList.LabelClaimListDataItem",
+                              template : "labelClaimList.?[labelClaim.toString() == '{item1}'][0].{item2}"
                            } ];
 
                      var menuItem, item, label;
