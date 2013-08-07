@@ -79,21 +79,21 @@
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="cm:title" force="true"/>
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:productComments" />					
 					<show id="cm:description" force="true" />
-					<show id="bcpg:packagingDescription" force="true" />					
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:packagingDescription" force="true" />									
 					<show id="bcpg:code" />
-					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:subsidiary" force="true" />
 					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:plants" force="true" />					
 					<show id="bcpg:clients" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
 					<show id="rep:reportTpls" />					
 										
 					<!-- Consumer -->
@@ -459,21 +459,20 @@
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />			
-					<show id="bcpg:packagingDescription" force="true" />		
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:code" />
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:eanCode" />
+					<show id="bcpg:packagingDescription" force="true" />							
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" />					
 					<show id="bcpg:subsidiary" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
-					<show id="bcpg:clients" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:clients" />					
 					<show id="rep:reportTpls" />					
 					
 					<!-- consumer aspect -->										
@@ -889,7 +888,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
 					<show id="rep:reportTpls" />
 					
 					<!-- pallet -->
@@ -1139,14 +1138,7 @@
 					</field>
 				</appearance>
 			</form>
-		</forms>
-	</config>
-
-
-	<!-- bcpg:packagingMaterial type (existing nodes) -->
-	<config evaluator="node-type" condition="bcpg:packagingMaterial">
-		<forms>
-			<form>
+			<form id="bulk-edit">
 				<field-visibility>
 
 					<!-- mainInfo -->
@@ -1161,10 +1153,52 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="rep:reportTpls" />
+					
+					<!-- pallet -->
+					<show id="pack:palletLayers" force="true" />
+					<show id="pack:palletDimensions" force="true" />
+					<show id="pack:palletBoxesPerLayer" force="true" />
+					<show id="pack:palletBoxesPerLastLayer" force="true" />
+					<show id="pack:palletBoxesPerPallet" force="true" />				
+					<show id="pack:palletNbOfIntercropping"/>
+					<show id="pack:palletHeight" force="true" />
+					<show id="pack:palletNbOfBoxes" force="true" />
+					
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+
+				</field-visibility>				
+			</form>
+		</forms>
+	</config>
+
+
+	<!-- bcpg:packagingMaterial type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:packagingMaterial">
+		<forms>
+			<form>
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />										
+					<show id="bcpg:productState" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:suppliers" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
 					<show id="rep:reportTpls" />
 					
 					<!-- Tare -->
@@ -1235,7 +1269,8 @@
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:certificateDate" set="mainInfo" />
-					<field id="bcpg:suppliers" force="true" set="mainInfo" />
+					<field id="bcpg:suppliers" set="mainInfo" />
+					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1332,18 +1367,19 @@
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />									
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
-					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
-					<show id="bcpg:suppliers" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:suppliers" />		
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:certificateDate" force="true" />			
 					<show id="rep:reportTpls" />
 
 					<!-- tags and categories -->
@@ -1392,7 +1428,9 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:suppliers" force="true" set="mainInfo" />
+					<field id="bcpg:suppliers" set="mainInfo" />
+					<field id="bcpg:plants" set="mainInfo" />
+					<field id="bcpg:certificateDate" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1433,20 +1471,20 @@
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:productState" />					
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:packagingDescription" force="true" />														
 					<show id="bcpg:code" />
+					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:eanCode" />
-					<show id="bcpg:certificateDate" force="true" />
+					<show id="bcpg:eanCode" />					
 					<show id="bcpg:suppliers" />
-					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:plants" force="true" />					
 					<show id="rep:reportTpls" />
-					<show id="bcpg:entityTplRef" force="true" />					
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />					
 					
 					<!-- Consumer -->
 					<show id="bcpg:productQty" />
@@ -1460,6 +1498,7 @@
 					<show id="bcpg:precautionOfUse" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:certificateDate" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1493,6 +1532,11 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:packagingDescription" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>	
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -1514,8 +1558,7 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:certificateDate" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />					
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
@@ -1554,11 +1597,12 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
+					<field id="bcpg:productMicrobioCriteria" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
+					<field id="bcpg:certificateDate" set="consumer" />
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1637,19 +1681,19 @@
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:productState" />					
-					<show id="bcpg:code" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:packagingDescription" force="true" />																			
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
-					<show id="rep:reportTpls" />
-					<show id="bcpg:entityTplRef" force="true" />					
+					<show id="rep:reportTpls" />									
 
 					<!-- Consumer -->
 					<show id="bcpg:productQty" />
@@ -1663,6 +1707,7 @@
 					<show id="bcpg:precautionOfUse" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:certificateDate" force="true" />
 					
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1688,6 +1733,11 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:packagingDescription" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>	
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -1747,12 +1797,8 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="consumer">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">width:200px</control-param>
-						</control>
-					</field>
+					<field id="bcpg:productMicrobioCriteria" set="consumer"/>
+					<field id="bcpg:certificateDate" set="consumer" />
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1785,15 +1831,16 @@
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:productState" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:packagingDescription" force="true" />														
 					<show id="bcpg:code" />
+					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
 					<show id="rep:reportTpls" />
 					
 					<!-- formulation -->
@@ -1849,6 +1896,11 @@
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:packagingDescription" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
@@ -1921,7 +1973,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
+					<field id="bcpg:productMicrobioCriteria" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
@@ -2009,15 +2061,15 @@
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
-					<show id="bcpg:legalName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:productState" />
-					<show id="bcpg:code" />
-					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:packagingDescription" force="true" />									
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:productState" />
+					<show id="bcpg:erpCode" force="true" />					
 					<show id="rep:reportTpls" />
 					
 					<!-- Consumer -->
@@ -2061,6 +2113,11 @@
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:packagingDescription" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productComments" set="mainInfo">
@@ -2115,7 +2172,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="mainInfo">
+					<field id="bcpg:productMicrobioCriteria" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
@@ -2181,7 +2238,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
-					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -3467,10 +3524,10 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
+					<show id="cm:name" />					
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType"/>
+					<show id="cm:description" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />
@@ -3489,10 +3546,10 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
+					<show id="cm:name" />					
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType"/>
+					<show id="cm:description" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />

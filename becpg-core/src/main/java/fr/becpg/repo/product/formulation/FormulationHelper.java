@@ -110,7 +110,7 @@ public class FormulationHelper {
 	}
 	
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc){	
-		return 100 * (1 - (1 + lossPerc / 100) * (1 + parentLossRatio / 100));		
+		return 100 * ((1 + lossPerc / 100) * (1 + parentLossRatio / 100) - 1);		
 	}
 	
 	public static Double getQtyWithLost(Double qty, Double lossPerc){		
