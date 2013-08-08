@@ -442,7 +442,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVWriter csvWriter) {
 		for (Map<String, Object> item : extractedItems.getItems()) {
-			logger.info("###item: " + item);
 			csvWriter.writeRecord(item);
 		}
 	}
