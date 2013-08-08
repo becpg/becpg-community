@@ -26,7 +26,6 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.GUID;
 import org.alfresco.util.PropertyCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,10 +37,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
-import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.migration.MigrationService;
@@ -75,7 +72,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	private static final String ACTION_RENAME_USER = "renameUser";
 	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";
-	private static final String ACTION_MIGRATE_CLASSIFY_PRODUCT = "classifyProduct";	
+	private static final String ACTION_MIGRATE_CLASSIFY_PRODUCT = "classifyProduct";
+	private static final String ACTION_DELETE_UNUSED_INGS = "deleteUnusedIngs";
 	
 	private static final String ACTION_REMOVE_ASPECT = "removeAspect";
 	private static final String ACTION_ADD_MANDATORY_ASPECT = "addMandatoryAspect";
@@ -416,6 +414,24 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 //					associationService.update(genProductData.getNodeRef(), BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs);					
 				}
 			}
+		}
+		else if(ACTION_DELETE_UNUSED_INGS.equals(action)){
+			
+			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ING));
+			List<NodeRef> ingNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+			
+			for(NodeRef ingNodeRef : ingNodeRefs){	
+				
+				List<AssociationRef> ingAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_INGLIST_ING);
+				List<AssociationRef> inVolAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES);
+				List<AssociationRef> volAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES);
+				
+				if(ingAssocRefs.isEmpty() && inVolAssocRefs.isEmpty() && volAssocRefs.isEmpty()){
+					logger.info("Delete ing : " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));
+					nodeService.deleteNode(ingNodeRef);
+				}							
+			}
+			
 		}
 		else {
 			logger.error("Unknown action" + action);
