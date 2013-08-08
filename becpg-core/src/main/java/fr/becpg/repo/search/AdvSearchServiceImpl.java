@@ -121,28 +121,25 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	
 		String pathQuery = "PATH:\"/app:company_home//*\"";
 		if (!isRepo) {
-			pathQuery =LuceneHelper.getSiteSearchPath(siteId, containerId);
-		}
+			pathQuery =  LuceneHelper.getSiteSearchPath(siteId, containerId);
+		}	
 		
-		ftsQuery =  pathQuery + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
-		
+		ftsQuery = pathQuery + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
 		
 		if (datatype != null) {
-			ftsQuery = "TYPE:\"" + datatype + "\" AND (" + ftsQuery + ")" ;
-		} else {
-			ftsQuery += "  AND  (-TYPE:\"cm:thumbnail\" -TYPE:\"cm:failedThumbnail\" -TYPE:\"cm:rating\" -TYPE:\"bcpg:entityListItem\" -TYPE:\"systemfolder\" -TYPE:\"rep:report\" )";
-//			ftsQuery += " TYPE:\"" + BeCPGModel.TYPE_PRODUCT + "\"^4";
-			
+			ftsQuery = "TYPE:\"" + datatype + "\"" + " AND " + ftsQuery;
 		}
+		
+		ftsQuery += " AND -TYPE:\"cm:thumbnail\" AND -TYPE:\"cm:failedThumbnail\" AND -TYPE:\"cm:rating\" AND -TYPE:\"bcpg:entityListItem\" AND -TYPE:\"systemfolder\" AND -TYPE:\"rep:report\"";
+//		ftsQuery += " TYPE:\"" + BeCPGModel.TYPE_PRODUCT + "\"^4";
+			
 
 		// extract data type for this search - advanced search query is type
 		// specific
-		ftsQuery += " AND  (-ASPECT:\"ecm:simulationEntityAspect\""
-				    +" -ASPECT: \"bcpg:hiddenFolder\""
-				    +" -ASPECT:\"bcpg:compositeVersion\""
-				    +" -ASPECT:\"bcpg:entityTplAspect\""
-					+" -ASPECT:\"bcpg:entityListsAspect\")";
-
+		ftsQuery += " AND -ASPECT:\"ecm:simulationEntityAspect\""
+				    +" AND -ASPECT: \"bcpg:hiddenFolder\""
+				    +" AND -ASPECT:\"bcpg:compositeVersion\""
+				    +" AND -ASPECT:\"bcpg:entityTplAspect\"";
 
 		if(logger.isDebugEnabled()){
 			logger.debug(" build searchQueryByProperties :" +ftsQuery );
