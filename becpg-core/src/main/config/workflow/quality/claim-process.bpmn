@@ -70,7 +70,7 @@
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="analysisTask" name="Orientation réclamation" activiti:candidateGroups="GROUP_ClaimMgr" activiti:formKey="ncwf:claimAnalysisTask">
+    <userTask id="analysisTask" name="Orientation réclamation" activiti:candidateGroups="GROUP_ClaimAnalysis" activiti:formKey="ncwf:claimAnalysisTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -334,7 +334,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimResponseActor!=null && !(  ncwf_claimRejectedState == 'treatment'  ||   ncwf_claimRejectedState == 'analysis')}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="validateTreatementGateway" name="Exclusive Gateway"></exclusiveGateway>
-    <userTask id="claimClosingTask" name="Clôture réclamation" activiti:candidateGroups="GROUP_ClaimMgr" activiti:formKey="ncwf:claimClosingTask">
+    <userTask id="claimClosingTask" name="Clôture réclamation" activiti:candidateGroups="GROUP_ClaimClosing" activiti:formKey="ncwf:claimClosingTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -406,7 +406,7 @@
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_ClaimMgr" activiti:formKey="ncwf:claimClassificationTask">
+    <userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_ClaimClassification" activiti:formKey="ncwf:claimClassificationTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">

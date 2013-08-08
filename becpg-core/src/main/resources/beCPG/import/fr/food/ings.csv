@@ -656,109 +656,109 @@ VALUES;E999(i) - extrait de quillaia de type 1, agent moussant, émulsifiant;Aut
 VALUES;E999(ii) - extrait de quillaia de type 2, agent moussant, émulsifiant;Autre additif;E999(ii);E999(ii) - extrait de quillaia de type 2, agent moussant, émulsifiant;E999(ii) - extrait de quillaia de type 2, agent moussant, émulsifiant;E999 (ii) - Quillaia extract type 2 foaming agent, emulsifier
 ;;;;;;
 #;http://passion-cuisine.skynetblogs.be/archive/2008/01/05/les-parties-du-boeuf.html;;;;;
-VALUES;Boeuf entrecôte;Ingrédient;;Boeuf entrecôte;Boeuf entrecôte;Beef steak
-VALUES;Boeuf faux-filet ou filet;Ingrédient;;Boeuf faux-filet ou filet;Boeuf faux-filet ou filet;Beef sirloin or tenderloin
-VALUES;Boeuf rumsteck;Ingrédient;;Boeuf rumsteck;Boeuf rumsteck;Beef rump
-VALUES;Boeuf culotte;Ingrédient;;Boeuf culotte;Boeuf culotte;Beef panties
-VALUES;Boeuf gîte;Ingrédient;;Boeuf gîte;Boeuf gîte;Beef cottage
-VALUES;Boeuf tranche grasse et aiguillette;Ingrédient;;Boeuf tranche grasse et aiguillette;Boeuf tranche grasse et aiguillette;Beef knuckle and lanyard
-VALUES;Boeuf paleron;Ingrédient;;Boeuf paleron;Boeuf paleron;Beef chuck
-VALUES;Boeuf macreuse;Ingrédient;;Boeuf macreuse;Boeuf macreuse;Beef scoter
-VALUES;Boeuf talon;Ingrédient;;Boeuf talon;Boeuf talon;Beef heel
-VALUES;Boeuf griffe;Ingrédient;;Boeuf griffe;Boeuf griffe;Beef claw
-VALUES;Boeuf bavette;Ingrédient;;Boeuf bavette;Boeuf bavette;Beef steak
-VALUES;Boeuf collier;Ingrédient;;Boeuf collier;Boeuf collier;Beef necklace
-VALUES;Boeuf poitrine;Ingrédient;;Boeuf poitrine;Boeuf poitrine;Beef chest
-VALUES;Boeuf crosse;Ingrédient;;Boeuf crosse;Boeuf crosse;Beef stick
-VALUES;Boeuf gîte avant;Ingrédient;;Boeuf gîte avant;Boeuf gîte avant;Beef before bed
-VALUES;Boeuf plat de côtes;Ingrédient;;Boeuf plat de côtes;Boeuf plat de côtes;Beef short ribs
-VALUES;Boeuf poitrine ;Ingrédient;;Boeuf poitrine ;Boeuf poitrine ;Beef chest
-VALUES;Boeuf tendron;Ingrédient;;Boeuf tendron;Boeuf tendron;Beef brisket
-VALUES;Boeuf flanchet;Ingrédient;;Boeuf flanchet;Boeuf flanchet;Beef flank
-VALUES;Boeuf gîte arrière;Ingrédient;;Boeuf gîte arrière;Boeuf gîte arrière;Beef back heel
-VALUES;Boeuf cervelle;Ingrédient;;Boeuf cervelle;Boeuf cervelle;Beef brain
-VALUES;Boeuf coeur;Ingrédient;;Boeuf coeur;Boeuf coeur;Beef heart
-VALUES;Boeuf foie;Ingrédient;;Boeuf foie;Boeuf foie;Beef liver
-VALUES;Boeuf langue;Ingrédient;;Boeuf langue;Boeuf langue;Beef tongue
-VALUES;Boeuf rognons;Ingrédient;;Boeuf rognons;Boeuf rognons;Beef kidney
-VALUES;Boeuf tête;Ingrédient;;Boeuf tête;Boeuf tête;Beef head
-VALUES;Boeuf tripes;Ingrédient;;Boeuf tripes;Boeuf tripes;Beef tripe
-VALUES;Mouton carré couvert;Ingrédient;;Mouton carré couvert;Mouton carré couvert;Sheep rack
-VALUES;Mouton filet;Ingrédient;;Mouton filet;Mouton filet;Sheep netting
-VALUES;Mouton selle;Ingrédient;;Mouton selle;Mouton selle;Lamb saddle
-VALUES;Mouton gigot;Ingrédient;;Mouton gigot;Mouton gigot;Mouton lamb
-VALUES;Mouton carré découvert;Ingrédient;;Mouton carré découvert;Mouton carré découvert;Mouton square discovered
-VALUES;Mouton épaule;Ingrédient;;Mouton épaule;Mouton épaule;Lamb shoulder
-VALUES;Mouton collier;Ingrédient;;Mouton collier;Mouton collier;Mouton collar
-VALUES;Mouton haut de côtelettes;Ingrédient;;Mouton haut de côtelettes;Mouton haut de côtelettes;Mutton chops up
-VALUES;Mouton poitrine;Ingrédient;;Mouton poitrine;Mouton poitrine;Mouton chest
-VALUES;Mouton cervelle;Ingrédient;;Mouton cervelle;Mouton cervelle;Sheep brains
-VALUES;Mouton coeur;Ingrédient;;Mouton coeur;Mouton coeur;Sheep heart
-VALUES;Mouton foie;Ingrédient;;Mouton foie;Mouton foie;Sheep liver
-VALUES;Mouton langue;Ingrédient;;Mouton langue;Mouton langue;Mouton language
-VALUES;Mouton rognons;Ingrédient;;Mouton rognons;Mouton rognons;Sheep kidney
-VALUES;Veau côtes secondes;Ingrédient;;Veau côtes secondes;Veau côtes secondes;Veal rib seconds
-VALUES;Veau côtes premières;Ingrédient;;Veau côtes premières;Veau côtes premières;Veal ribs first
-VALUES;Veau longe;Ingrédient;;Veau longe;Veau longe;Veal loin
-VALUES;Veau quasi et culotte;Ingrédient;;Veau quasi et culotte;Veau quasi et culotte;Veal and panties almost
-VALUES;"Veau cuisse ; noix, sous-noix";Ingrédient;;"Veau cuisse ; noix, sous-noix";"Veau cuisse ; noix, sous-noix";Veal thigh nuts, nut sub-
-VALUES;Veau côtes découvertes;Ingrédient;;Veau côtes découvertes;Veau côtes découvertes;Veal ribs
-VALUES;Veau épaule;Ingrédient;;Veau épaule;Veau épaule;Veal shoulder
-VALUES;Veau pied;Ingrédient;;Veau pied;Veau pied;Calf walk
-VALUES;Veau tendron;Ingrédient;;Veau tendron;Veau tendron;Veal brisket
-VALUES;Veau flanchet;Ingrédient;;Veau flanchet;Veau flanchet;Veal flank
-VALUES;Veau jarret;Ingrédient;;Veau jarret;Veau jarret;Veal shank
-VALUES;Veau poitrine;Ingrédient;;Veau poitrine;Veau poitrine;Veal breast
-VALUES;Veau collier;Ingrédient;;Veau collier;Veau collier;Veal necklace
-VALUES;Veau tête;Ingrédient;;Veau tête;Veau tête;Veal head
-VALUES;Veau cervelle;Ingrédient;;Veau cervelle;Veau cervelle;Calf brains
-VALUES;Veau coeur;Ingrédient;;Veau coeur;Veau coeur;Calf heart
-VALUES;Veau foie;Ingrédient;;Veau foie;Veau foie;Calf liver
-VALUES;Veau langue;Ingrédient;;Veau langue;Veau langue;Veal tongue
-VALUES;Veau rognons;Ingrédient;;Veau rognons;Veau rognons;Veal kidneys
-VALUES;Veau tête;Ingrédient;;Veau tête;Veau tête;Veal head
-VALUES;Porc jambon;Ingrédient;;Porc jambon;Porc jambon;Pork ham
-VALUES;Porc jambonneau;Ingrédient;;Porc jambonneau;Porc jambonneau;Pork knuckle
-VALUES;Porc pied;Ingrédient;;Porc pied;Porc pied;Pig foot
-VALUES;Porc pointe;Ingrédient;;Porc pointe;Porc pointe;Pork advanced
-VALUES;Porc filet;Ingrédient;;Porc filet;Porc filet;Pork fillet
-VALUES;Porc carré;Ingrédient;;Porc carré;Porc carré;Pork square
-VALUES;Porc échine;Ingrédient;;Porc échine;Porc échine;Pork loin
-VALUES;Porc palette;Ingrédient;;Porc palette;Porc palette;Range pork
-VALUES;Porc plat de côtes;Ingrédient;;Porc plat de côtes;Porc plat de côtes;Pork ribs
-VALUES;Porc travers de côtes;Ingrédient;;Porc travers de côtes;Porc travers de côtes;Pork ribs through
-VALUES;Porc gorge;Ingrédient;;Porc gorge;Porc gorge;Pork throat
-VALUES;Porc poitrine;Ingrédient;;Porc poitrine;Porc poitrine;Pork chest
-VALUES;Porc épaule;Ingrédient;;Porc épaule;Porc épaule;Pork shoulder
-VALUES;Porc tête;Ingrédient;;Porc tête;Porc tête;Pig head
-VALUES;Porc coeur;Ingrédient;;Porc coeur;Porc coeur;Pig heart
-VALUES;Porc foie;Ingrédient;;Porc foie;Porc foie;Pork liver
-VALUES;Porc rognons;Ingrédient;;Porc rognons;Porc rognons;Pig kidneys
-VALUES;Porc tête;Ingrédient;;Porc tête;Porc tête;Pig head
+VALUES;Boeuf entrecôte;Ingrédient;;Entrecôte de boeuf;Entrecôte de boeuf;Beef steak
+VALUES;Boeuf faux-filet ou filet;Ingrédient;;Faux-filet ou filet de boeuf;Faux-filet ou filet de boeuf;Beef sirloin or tenderloin
+VALUES;Boeuf rumsteck;Ingrédient;;Rumsteck de boeuf;Rumsteck de boeuf;Beef rump
+VALUES;Boeuf culotte;Ingrédient;;Culotte de boeuf;Culotte de boeuf;Beef panties
+VALUES;Boeuf gîte;Ingrédient;;Gîte de boeuf;Gîte de boeuf;Beef cottage
+VALUES;Boeuf tranche grasse et aiguillette;Ingrédient;;Tranche grasse et aiguillette de boeuf;Tranche grasse et aiguillette de boeuf;Beef knuckle and lanyard
+VALUES;Boeuf paleron;Ingrédient;;Paleron de boeuf;Paleron de boeuf;Beef chuck
+VALUES;Boeuf macreuse;Ingrédient;;Macreuse de boeuf;Macreuse de boeuf;Beef scoter
+VALUES;Boeuf talon;Ingrédient;;Talon de boeuf;Talon de boeuf;Beef heel
+VALUES;Boeuf griffe;Ingrédient;;Griffe de boeuf;Griffe de boeuf;Beef claw
+VALUES;Boeuf bavette;Ingrédient;;Bavette de boeuf;Bavette de boeuf;Beef steak
+VALUES;Boeuf collier;Ingrédient;;Collier de boeuf;Collier de boeuf;Beef necklace
+VALUES;Boeuf poitrine;Ingrédient;;Poitrine de boeuf;Poitrine de boeuf;Beef chest
+VALUES;Boeuf crosse;Ingrédient;;Crosse de boeuf;Crosse de boeuf;Beef stick
+VALUES;Boeuf gîte avant;Ingrédient;;Gîte avant de boeuf;Gîte avant de boeuf;Beef before bed
+VALUES;Boeuf plat de côtes;Ingrédient;;Plat de côtes de boeuf;Plat de côtes de boeuf;Beef short ribs
+VALUES;Boeuf poitrine ;Ingrédient;;Poitrine de boeuf;Poitrine de boeuf;Beef chest
+VALUES;Boeuf tendron;Ingrédient;;Tendron de boeuf;Tendron de boeuf;Beef brisket
+VALUES;Boeuf flanchet;Ingrédient;;Flanchet de boeuf;Flanchet de boeuf;Beef flank
+VALUES;Boeuf gîte arrière;Ingrédient;;Gîte arrière de boeuf;Gîte arrière de boeuf;Beef back heel
+VALUES;Boeuf cervelle;Ingrédient;;Cervelle de boeuf;Cervelle de boeuf;Beef brain
+VALUES;Boeuf coeur;Ingrédient;;Coeur de boeuf;Coeur de boeuf;Beef heart
+VALUES;Boeuf foie;Ingrédient;;Foie de boeuf;Foie de boeuf;Beef liver
+VALUES;Boeuf langue;Ingrédient;;Langue de boeuf;Langue de boeuf;Beef tongue
+VALUES;Boeuf rognons;Ingrédient;;Rognons de boeuf;Rognons de boeuf;Beef kidney
+VALUES;Boeuf tête;Ingrédient;;Tête de boeuf;Tête de boeuf;Beef head
+VALUES;Boeuf tripes;Ingrédient;;Tripes de boeuf;Tripes de boeuf;Beef tripe
+VALUES;Mouton carré couvert;Ingrédient;;Carré couvert de mouton;Carré couvert de mouton;Sheep rack
+VALUES;Mouton filet;Ingrédient;;Filet de mouton;Filet de mouton;Sheep netting
+VALUES;Mouton selle;Ingrédient;;Selle de mouton;Selle de mouton;Lamb saddle
+VALUES;Mouton gigot;Ingrédient;;Gigot de mouton;Gigot de mouton;Mouton lamb
+VALUES;Mouton carré découvert;Ingrédient;;Carré découvert de mouton;Carré découvert de mouton;Mouton square discovered
+VALUES;Mouton épaule;Ingrédient;;Épaule de mouton;Épaule de mouton;Lamb shoulder
+VALUES;Mouton collier;Ingrédient;;Collier de mouton;Collier de mouton;Mouton collar
+VALUES;Mouton haut de côtelettes;Ingrédient;;Haut de côtelettes de mouton;Haut de côtelettes de mouton;Mutton chops up
+VALUES;Mouton poitrine;Ingrédient;;Poitrine de mouton;Poitrine de mouton;Mouton chest
+VALUES;Mouton cervelle;Ingrédient;;Cervelle de mouton;Cervelle de mouton;Sheep brains
+VALUES;Mouton coeur;Ingrédient;;Coeur de mouton;Coeur de mouton;Sheep heart
+VALUES;Mouton foie;Ingrédient;;Foie de mouton;Foie de mouton;Sheep liver
+VALUES;Mouton langue;Ingrédient;;Langue de mouton;Langue de mouton;Mouton language
+VALUES;Mouton rognons;Ingrédient;;Rognons de mouton;Rognons de mouton;Sheep kidney
+VALUES;Veau côtes secondes;Ingrédient;;Côtes secondes de veau;Côtes secondes de veau;Veal rib seconds
+VALUES;Veau côtes premières;Ingrédient;;Côtes premières de veau;Côtes premières de veau;Veal ribs first
+VALUES;Veau longe;Ingrédient;;Longe de veau;Longe de veau;Veal loin
+VALUES;Veau quasi et culotte;Ingrédient;;Quasi et culotte de veau;Quasi et culotte de veau;Veal and panties almost
+VALUES;"Veau cuisse ; noix, sous-noix";Ingrédient;;"Cuisse ; noix, sous-noix de veau";"Cuisse ; noix, sous-noix de veau";Veal thigh nuts, nut sub-
+VALUES;Veau côtes découvertes;Ingrédient;;Côtes découvertes de veau;Côtes découvertes de veau;Veal ribs
+VALUES;Veau épaule;Ingrédient;;Épaule de veau;Épaule de veau;Veal shoulder
+VALUES;Veau pied;Ingrédient;;Pied de veau;Pied de veau;Calf walk
+VALUES;Veau tendron;Ingrédient;;Tendron de veau;Tendron de veau;Veal brisket
+VALUES;Veau flanchet;Ingrédient;;Flanchet de veau;Flanchet de veau;Veal flank
+VALUES;Veau jarret;Ingrédient;;Jarret de veau;Jarret de veau;Veal shank
+VALUES;Veau poitrine;Ingrédient;;Poitrine de veau;Poitrine de veau;Veal breast
+VALUES;Veau collier;Ingrédient;;Collier de veau;Collier de veau;Veal necklace
+VALUES;Veau tête;Ingrédient;;Tête de veau;Tête de veau;Veal head
+VALUES;Veau cervelle;Ingrédient;;Cervelle de veau;Cervelle de veau;Calf brains
+VALUES;Veau coeur;Ingrédient;;Coeur de veau;Coeur de veau;Calf heart
+VALUES;Veau foie;Ingrédient;;Foie de veau;Foie de veau;Calf liver
+VALUES;Veau langue;Ingrédient;;Langue de veau;Langue de veau;Veal tongue
+VALUES;Veau rognons;Ingrédient;;Rognons de veau;Rognons de veau;Veal kidneys
+VALUES;Veau tête;Ingrédient;;Tête de veau;Tête de veau;Veal head
+VALUES;Porc jambon;Ingrédient;;Jambon de porc;Jambon de porc;Pork ham
+VALUES;Porc jambonneau;Ingrédient;;Jambonneau de porc;Jambonneau de porc;Pork knuckle
+VALUES;Porc pied;Ingrédient;;Pied de porc;Pied de porc;Pig foot
+VALUES;Porc pointe;Ingrédient;;Pointe de porc;Pointe de porc;Pork advanced
+VALUES;Porc filet;Ingrédient;;Filet de porc;Filet de porc;Pork fillet
+VALUES;Porc carré;Ingrédient;;Carré de porc;Carré de porc;Pork square
+VALUES;Porc échine;Ingrédient;;Échine de porc;Échine de porc;Pork loin
+VALUES;Porc palette;Ingrédient;;Palette de porc;Palette de porc;Range pork
+VALUES;Porc plat de côtes;Ingrédient;;Plat de côtes de porc;Plat de côtes de porc;Pork ribs
+VALUES;Porc travers de côtes;Ingrédient;;Travers de côtes de porc;Travers de côtes de porc;Pork ribs through
+VALUES;Porc gorge;Ingrédient;;Gorge de porc;Gorge de porc;Pork throat
+VALUES;Porc poitrine;Ingrédient;;Poitrine de porc;Poitrine de porc;Pork chest
+VALUES;Porc épaule;Ingrédient;;Épaule de porc;Épaule de porc;Pork shoulder
+VALUES;Porc tête;Ingrédient;;Tête de porc;Tête de porc;Pig head
+VALUES;Porc coeur;Ingrédient;;Coeur de porc;Coeur de porc;Pig heart
+VALUES;Porc foie;Ingrédient;;Foie de porc;Foie de porc;Pork liver
+VALUES;Porc rognons;Ingrédient;;Rognons de porc;Rognons de porc;Pig kidneys
+VALUES;Porc tête;Ingrédient;;Tête de porc;Tête de porc;Pig head
 ;;;;;;
 #;http://www.douce-france.fr/metier/volaille-morceaux.html;Ingrédient;;;;
-VALUES;Poulet poitrine;Ingrédient;;Poulet poitrine;Poulet poitrine;Chicken breast
-VALUES;Poulet haut de cuisse;Ingrédient;;Poulet haut de cuisse;Poulet haut de cuisse;Chicken thigh
-VALUES;Poulet pilon;Ingrédient;;Poulet pilon;Poulet pilon;Chicken drumstick
-VALUES;Poulet fouet;Ingrédient;;Poulet fouet;Poulet fouet;Chicken whip
-VALUES;Poulet médiane;Ingrédient;;Poulet médiane;Poulet médiane;Chicken median
-VALUES;Poulet blanquette;Ingrédient;;Poulet blanquette;Poulet blanquette;Chicken stew
-VALUES;Poulet croupion;Ingrédient;;Poulet croupion;Poulet croupion;Chicken rump
-VALUES;Canard cou;Ingrédient;;Canard cou;Canard cou;Duck neck
-VALUES;Canard filet;Ingrédient;;Canard filet;Canard filet;Duck fillet
-VALUES;Canard pilon;Ingrédient;;Canard pilon;Canard pilon;Duck drumstick
-VALUES;Canard croupion;Ingrédient;;Canard croupion;Canard croupion;Duck tail
-VALUES;Canard fouet;Ingrédient;;Canard fouet;Canard fouet;Duck whip
-VALUES;Canard aileron;Ingrédient;;Canard aileron;Canard aileron;Duck wing
-VALUES;Canard manchon ;Ingrédient;;Canard manchon ;Canard manchon ;Duck sleeve
-VALUES;Dinde cou;Ingrédient;;Dinde cou;Dinde cou;Turkey neck
-VALUES;Dinde poitrine;Ingrédient;;Dinde poitrine;Dinde poitrine;Turkey breast
-VALUES;Dinde haut de cuisse;Ingrédient;;Dinde haut de cuisse;Dinde haut de cuisse;Turkey thigh
-VALUES;Dinde pilon;Ingrédient;;Dinde pilon;Dinde pilon;Turkey drumstick
-VALUES;Dinde croupion;Ingrédient;;Dinde croupion;Dinde croupion;Turkey tail
-VALUES;Dinde fouet;Ingrédient;;Dinde fouet;Dinde fouet;Turkey whip
-VALUES;Dinde aileron;Ingrédient;;Dinde aileron;Dinde aileron;Turkey wing
-VALUES;Dinde blanquette;Ingrédient;;Dinde blanquette;Dinde blanquette;Turkey stew
+VALUES;Poulet poitrine;Ingrédient;;Poitrine de poulet;Poitrine de poulet;Chicken breast
+VALUES;Poulet haut de cuisse;Ingrédient;;Haut de cuisse de poulet;Haut de cuisse de poulet;Chicken thigh
+VALUES;Poulet pilon;Ingrédient;;Pilon de poulet;Pilon de poulet;Chicken drumstick
+VALUES;Poulet fouet;Ingrédient;;Fouet de poulet;Fouet de poulet;Chicken whip
+VALUES;Poulet médiane;Ingrédient;;Médiane de poulet;Médiane de poulet;Chicken median
+VALUES;Poulet blanquette;Ingrédient;;Blanquette de poulet;Blanquette de poulet;Chicken stew
+VALUES;Poulet croupion;Ingrédient;;Croupion de poulet;Croupion de poulet;Chicken rump
+VALUES;Canard cou;Ingrédient;;Cou de canard;Cou de canard;Duck neck
+VALUES;Canard filet;Ingrédient;;Filet de canard;Filet de canard;Duck fillet
+VALUES;Canard pilon;Ingrédient;;Pilon de canard;Pilon de canard;Duck drumstick
+VALUES;Canard croupion;Ingrédient;;Croupion de canard;Croupion de canard;Duck tail
+VALUES;Canard fouet;Ingrédient;;Fouet de canard;Fouet de canard;Duck whip
+VALUES;Canard aileron;Ingrédient;;Aileron de canard;Aileron de canard;Duck wing
+VALUES;Canard manchon ;Ingrédient;;Manchon  de canard;Manchon  de canard;Duck sleeve
+VALUES;Dinde cou;Ingrédient;;Cou de dinde;Cou de dinde;Turkey neck
+VALUES;Dinde poitrine;Ingrédient;;Poitrine de dinde;Poitrine de dinde;Turkey breast
+VALUES;Dinde haut de cuisse;Ingrédient;;Haut de cuisse de dinde;Haut de cuisse de dinde;Turkey thigh
+VALUES;Dinde pilon;Ingrédient;;Pilon de dinde;Pilon de dinde;Turkey drumstick
+VALUES;Dinde croupion;Ingrédient;;Croupion de dinde;Croupion de dinde;Turkey tail
+VALUES;Dinde fouet;Ingrédient;;Fouet de dinde;Fouet de dinde;Turkey whip
+VALUES;Dinde aileron;Ingrédient;;Aileron de dinde;Aileron de dinde;Turkey wing
+VALUES;Dinde blanquette;Ingrédient;;Blanquette de dinde;Blanquette de dinde;Turkey stew
 ;;;;;;
 ;;;;;;
 VALUES;Abricot;Ingrédient;;Abricot;Abricot;Apricot
@@ -1659,7 +1659,6 @@ VALUES;Figue morceau;Ingrédient;;Figue morceau;Figue morceau;Fig piece
 VALUES;Figue purée;Ingrédient;;Figue purée;Figue purée;Fig puree
 VALUES;Figue purée concentrée;Ingrédient;;Figue purée concentrée;Figue purée concentrée;Fig puree concentrate
 VALUES;Figue séchée;Ingrédient;;Figue séchée;Figue séchée;Dried fig
-VALUES;Filtre tous;Ingrédient;;Filtre tous;Filtre tous;Filter all
 VALUES;Flageolet;Ingrédient;;Flageolet;Flageolet;Flageolet
 VALUES;Flocons d'avoine;Ingrédient;;Flocons d'avoine;Flocons d'avoine;Oatmeal
 VALUES;Flocons de blé;Ingrédient;;Flocons de blé;Flocons de blé;Wheat flakes
@@ -2380,7 +2379,6 @@ VALUES;Rocouyer;Ingrédient;;Rocouyer;Rocouyer;Annatto
 VALUES;Romarin;Ingrédient;;Romarin;Romarin;Rosemary
 VALUES;Romarin extrait;Ingrédient;;Romarin extrait;Romarin extrait;Rosemary extract
 VALUES;Roquefort;Ingrédient;;Roquefort;Roquefort;Roquefort
-VALUES;Rouge de betterave;Ingrédient;;Rouge de betterave;Rouge de betterave;Beet red
 VALUES;Rouget barbet de Thaïlande filet;Ingrédient;;Rouget barbet de Thaïlande filet;Rouget barbet de Thaïlande filet;Red mullet fillet of thailand
 VALUES;Rouget barbet filet;Ingrédient;;Rouget barbet filet;Rouget barbet filet;Red mullet fillet
 VALUES;Saccharine et ses sels de na, k et ca;Ingrédient;;Saccharine et ses sels de na, k et ca;Saccharine et ses sels de na, k et ca;Saccharin and its salts na, k and c
@@ -2536,7 +2534,6 @@ VALUES;Tourteau chair brune;Ingrédient;;Tourteau chair brune;Tourteau chair bru
 VALUES;Transglutaminase;Ingrédient;;Transglutaminase;Transglutaminase;Transglutaminase
 VALUES;Triacétine;Ingrédient;;Triacétine;Triacétine;Triacetin
 VALUES;Triglycéride;Ingrédient;;Triglycéride;Triglycéride;Triglyceride
-VALUES;Triglycéride a chaine moyenne;Ingrédient;;Triglycéride a chaine moyenne;Triglycéride a chaine moyenne;Medium chain triglyceride
 VALUES;Triglycérides a chaine moyenne;Ingrédient;;Triglycérides a chaine moyenne;Triglycérides a chaine moyenne;Medium chain triglycerides
 VALUES;Triphosphate pentasodique;Ingrédient;;Triphosphate pentasodique;Triphosphate pentasodique;Pentasodium triphosphate
 VALUES;Triphosphates;Ingrédient;;Triphosphates;Triphosphates;Triphosphates
@@ -2602,6 +2599,4 @@ VALUES;Volvaire;Ingrédient;;Volvaire;Volvaire;Rice straw mushrooms
 VALUES;Whisky;Ingrédient;;Whisky;Whisky;Whiskey
 VALUES;Xanthane gomme;Ingrédient;;Xanthane gomme;Xanthane gomme;Xanthan gum
 VALUES;Yaourt;Ingrédient;;Yaourt;Yaourt;Yoghurt
-VALUES;Yaourt poudre;Ingrédient;;Yaourt poudre;Yaourt poudre;Yogurt powder
-VALUES;Yaourt poudre de lait écrémé;Ingrédient;;Yaourt poudre de lait écrémé;Yaourt poudre de lait écrémé;Yogurt skim milk powder
 VALUES;Zygochlamys patagonica;Ingrédient;;Zygochlamys patagonica;Zygochlamys patagonica;Zygochlamys patagonica

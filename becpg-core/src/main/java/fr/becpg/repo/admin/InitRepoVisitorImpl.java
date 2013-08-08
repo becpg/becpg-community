@@ -474,13 +474,19 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}
 		
 		else if (folderName == RepoConsts.PATH_NC) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimMgr.toString(),
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimAnalysis.toString(),
 					PermissionService.WRITE, true);
+			
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClassification.toString(),
+					PermissionService.WRITE, true);						
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(),
 					PermissionService.WRITE, true);
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(),
+					PermissionService.WRITE, true);
+			
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClosing.toString(),
 					PermissionService.WRITE, true);
 		}
 	}
@@ -906,8 +912,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
 				SystemGroup.Production.toString(),
 				SystemGroup.ProductionUser.toString(), SystemGroup.ProductionMgr.toString(),
-			   SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString()
-			   ,NCGroup.ClaimMgr.toString(), NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString()
+				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(),
+				NCGroup.ClaimAnalysis.toString(),NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(), 
+				NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString()
 					};
 
 		Set<String> zones = new HashSet<String>();
