@@ -534,7 +534,13 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					(defaultVariantNodeRef == null || dataItem.getVariants() == null || dataItem.getVariants().contains(defaultVariantNodeRef)) &&
 					!BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeType)){
 				
-				Double tare = FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
+				Double tare = null;				
+				if(FormulationHelper.isPackagingListUnitKg(dataItem.getPackagingListUnit())){
+					tare = FormulationHelper.getQty(dataItem);
+				}else{
+					tare = FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
+				}
+				
 				if(tare != null){
 					tare = FormulationHelper.getQty(dataItem) * tare;
 					logger.debug("Tare " + partName + " " + tare);

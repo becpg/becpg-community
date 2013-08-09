@@ -136,9 +136,15 @@ public class FormulationHelper {
 		Double qty = packagingListDataItem.getQty()!=null ? packagingListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY ;	
 		PackagingListUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
 		
-		if(packagingListUnit == PackagingListUnit.PP && qty>0){
-			qty = 1 / qty;
+		if(qty>0 && packagingListUnit != null){
+			if(packagingListUnit.equals(PackagingListUnit.PP)){
+				qty = 1 / qty;
+			}
+			else if(packagingListUnit.equals(PackagingListUnit.g)){
+				qty = qty / 1000;
+			}
 		}
+		
 		
 		return qty;
 	}
@@ -205,7 +211,11 @@ public class FormulationHelper {
 	public static boolean isCompoUnitP(CompoListUnit unit) {
 		return unit != null && unit.equals(CompoListUnit.P);
 	}
-
+	
+	public static boolean isPackagingListUnitKg(PackagingListUnit unit) {
+		return unit != null && (unit.equals(PackagingListUnit.kg) || unit.equals(PackagingListUnit.g));
+	}
+	
 	/**
 	 * 
 	 * @param productData

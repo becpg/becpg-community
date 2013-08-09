@@ -193,12 +193,6 @@
                     <text-property name="heading">packagingDescription</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">alcoholContent</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">alcoholContent</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">numberOfServings</property>
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
@@ -207,12 +201,19 @@
                 <structure>
                     <property name="columnName">precautionOfUseDescription</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">precautionOfUseDescription</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">storageConditionsDescription</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">storageConditionsDescription</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">netWeight</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">netWeight</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -355,23 +356,23 @@
                     </structure>
                     <structure>
                         <property name="position">28</property>
-                        <property name="name">alcoholContent</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">29</property>
                         <property name="name">numberOfServings</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">30</property>
+                        <property name="position">29</property>
                         <property name="name">precautionOfUseDescription</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">31</property>
+                        <property name="position">30</property>
                         <property name="name">storageConditionsDescription</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">31</property>
+                        <property name="name">netWeight</property>
+                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -568,34 +569,34 @@
                 </structure>
                 <structure>
                     <property name="position">28</property>
-                    <property name="name">alcoholContent</property>
-                    <property name="nativeName">alcoholContent</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">29</property>
                     <property name="name">numberOfServings</property>
                     <property name="nativeName">numberOfServings</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">30</property>
+                    <property name="position">29</property>
                     <property name="name">precautionOfUseDescription</property>
                     <property name="nativeName">precautionOfUseDescription</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
-                    <property name="position">31</property>
+                    <property name="position">30</property>
                     <property name="name">storageConditionsDescription</property>
                     <property name="nativeName">storageConditionsDescription</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">31</property>
+                    <property name="name">netWeight</property>
+                    <property name="nativeName">netWeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;STRING;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{alcoholContent;STRING;/alcoholContent},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;STRING;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6336,12 +6337,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                         <structure>
                                             <property name="name">productQty</property>
                                             <text-property name="displayName">productQty</text-property>
-                                            <expression name="expression" type="javascript">if(dataSetRow["productUnit"] == "P"){
-dataSetRow["productDensity"] + " kg"
-}
-else{
-dataSetRow["productQty"] + " " + dataSetRow["productUnit"]
-}</expression>
+                                            <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["netWeigh"] != null ? dataSetRow["netWeigh"] + "kg" : "")</expression>
                                             <property name="dataType">string</property>
                                             <property name="allowExport">true</property>
                                         </structure>
@@ -7108,6 +7104,16 @@ dataSetRow["illValue"]
                                 <property name="allowExport">true</property>
                             </structure>
                         </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <expression name="expr" type="javascript">row["language"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"français"</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
                         <column id="1706"/>
                         <header>
                             <row id="1693">
@@ -7143,6 +7149,108 @@ dataSetRow["illValue"]
                                         <property name="resultSetColumn">illGrp</property>
                                     </data>
                                     <data id="1713">
+                                        <property name="resultSetColumn">illValue</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
+                    <table id="3226">
+                        <property name="borderBottomColor">#FFFFFF</property>
+                        <property name="borderLeftColor">#FFFFFF</property>
+                        <property name="borderRightColor">#FFFFFF</property>
+                        <property name="borderTopColor">#FFFFFF</property>
+                        <property name="verticalAlign">top</property>
+                        <property name="dataSet">ingLabelingList</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["Count"]==0</expression>
+                            </structure>
+                        </list-property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">language</property>
+                                <text-property name="displayName">language</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["language"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illGrp</property>
+                                <text-property name="displayName">illGrp</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["illGrp"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">illValue</property>
+                                <text-property name="displayName">illValue</text-property>
+                                <expression name="expression" type="javascript">if(dataSetRow["illManualValue"] != null &amp;&amp; dataSetRow["illManualValue"] != ""){
+dataSetRow["illManualValue"]
+}
+else{
+dataSetRow["illValue"]
+}</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Count</property>
+                                <property name="dataType">integer</property>
+                                <property name="aggregateFunction">COUNT</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                        <expression name="value" type="javascript">row["language"]</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">ne</property>
+                                <expression name="expr" type="javascript">row["language"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"français"</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                        </list-property>
+                        <column id="3238"/>
+                        <header>
+                            <row id="3227">
+                                <cell id="3228"/>
+                            </row>
+                        </header>
+                        <group id="3229">
+                            <property name="groupName">NewTableGroup1</property>
+                            <expression name="keyExpr" type="javascript">row["language"]</expression>
+                            <structure name="toc">
+                                <expression name="expressionValue" type="javascript">row["language"]</expression>
+                            </structure>
+                            <property name="hideDetail">false</property>
+                            <header>
+                                <row id="3230">
+                                    <cell id="3231">
+                                        <label id="3232"/>
+                                        <data id="3233">
+                                            <property name="fontSize">12pt</property>
+                                            <property name="fontWeight">bold</property>
+                                            <property name="fontStyle">italic</property>
+                                            <property name="resultSetColumn">language</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </header>
+                        </group>
+                        <detail>
+                            <row id="3234">
+                                <cell id="3235">
+                                    <data id="3236">
+                                        <property name="fontWeight">bold</property>
+                                        <property name="resultSetColumn">illGrp</property>
+                                    </data>
+                                    <data id="3237">
                                         <property name="resultSetColumn">illValue</property>
                                     </data>
                                 </cell>

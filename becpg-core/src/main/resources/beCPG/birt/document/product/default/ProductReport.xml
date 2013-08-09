@@ -51,7 +51,6 @@ Pour 4 personnes]]></description>
 	<plants><![CDATA[beCPG Montrouge]]></plants>
 	<clients><![CDATA[Intermarché]]></clients>
 	<productQty><![CDATA[0,2]]></productQty>
-	<alcoholContent><![CDATA[1.2]]></alcoholContent>
 	<unitPrice><![CDATA[7]]></unitPrice>
 	<unitTotalCost><![CDATA[0,7452]]></unitTotalCost>
 	<reports><![CDATA[Quiche lorraineMDD 200g - Fiche Technique Client.pdf, Quiche lorraineMDD 200g - Fiche Technique Production.pdf]]></reports>
@@ -64,6 +63,7 @@ Pour 4 personnes]]></description>
 	<autoVersionOnUpdateProps><![CDATA[Faux]]></autoVersionOnUpdateProps>
 	<created><![CDATA[mer. 3 avr. 2013 13:17:42]]></created>
 	<productDensity><![CDATA[1]]></productDensity>
+	<netWeight><![CDATA[1.2]]></netWeight>
 	<breakEven><![CDATA[0]]></breakEven>
 	<productSpecifications><![CDATA[Intermarché - Plat cuisiné, Intermarché - Fromages blancs]]></productSpecifications>
 	<locale><![CDATA[fr]]></locale>
