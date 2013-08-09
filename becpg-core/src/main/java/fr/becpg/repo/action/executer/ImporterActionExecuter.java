@@ -151,7 +151,11 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
 				public Object doWork() throws Exception
                 {
                 	// import file
-        			String log = LOG_STARTING_DATE + Calendar.getInstance().getTime();
+                	String startlog = LOG_STARTING_DATE + Calendar.getInstance().getTime();
+                	String endlog;
+                	String unhandledLog = null;
+                	String first50ErrorsLog = ""; // log stored in title, first 50 errors
+                	String after50ErrorsLog = ""; // log store in 
         			boolean hasFailed = false;
                 	
                 	try
@@ -176,17 +180,19 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
                     	 * do it in several transaction to avoid timeout connection
                     	 */
                     	List<String> errors = importService.importText(nodeRef, true, true);
-                          
+                    	logger.info("###DDDDD ");
                         if(errors != null && !errors.isEmpty()){
          	                int limit = 0;
                          	for(String error : errors){
-         	                	if(limit>ERROR_LOGS_LIMIT){
-         	                		log += LOG_SEPARATOR;
-             	                    log += LOG_ERROR_MAX_REACHED;
-             	                    break;
+                         		logger.info("###error: " + error);
+         	                	if(limit<=ERROR_LOGS_LIMIT){
+         	                		first50ErrorsLog += LOG_SEPARATOR;
+         	                		first50ErrorsLog += error;
          	                	}
-                         		log += LOG_SEPARATOR;
-         	                    log += error;
+         	                	else{
+         	                		after50ErrorsLog += LOG_ERROR;
+         	                		after50ErrorsLog += error;
+         	                	}                         		
          	                    limit++;
          	                }
                          
@@ -202,18 +208,35 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
                     	StringWriter sw = new StringWriter();
                         PrintWriter pw = new PrintWriter(sw);
                         e.printStackTrace(pw);                           
-                        String stackTrace = sw.toString();
-            			
-            			log += LOG_SEPARATOR;
-            			log += LOG_ERROR + stackTrace;
+                        String stackTrace = sw.toString();            			
+                        unhandledLog = LOG_ERROR + stackTrace;
         			} 
         			finally{
-        				log += LOG_SEPARATOR;
-        				log += LOG_ENDING_DATE + Calendar.getInstance().getTime();
+        				endlog = LOG_ENDING_DATE + Calendar.getInstance().getTime().toString();
         			}
+                	
+                	String log = startlog + 
+                				LOG_SEPARATOR +
+                				(unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") +
+                				first50ErrorsLog +    
+                				LOG_SEPARATOR +
+                				(after50ErrorsLog.isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) +                				
+                				endlog;
+                	                	
+        			String allLog = startlog + 
+            				LOG_SEPARATOR +
+            				(unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") +
+            				first50ErrorsLog +
+            				LOG_SEPARATOR +
+            				after50ErrorsLog +
+            				LOG_SEPARATOR +
+            				endlog;
+        			
+        			logger.info("###first50ErrorsLog: " + first50ErrorsLog);
+        			logger.info("###log: " + log);
         			
         			// set log, stackTrace and move file
-                    importService.moveImportedFile(nodeRef, hasFailed, log);   
+                    importService.moveImportedFile(nodeRef, hasFailed, log, allLog);   
                     
                     return null;
                 }

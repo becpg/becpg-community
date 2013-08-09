@@ -8,6 +8,7 @@ VALUES;Produit bio;Produit issu de l'agriculture biologique;Certification;
 VALUES;Commerce équitable;Produit issu du commerce équitable;Certification;
 VALUES;Casher;Produit casher;Certification;
 VALUES;Halal;Produit halal;Certification;
+VALUES;Agréé contact alimentaire;Agréé contact alimentaire;Certification;
 ;;;;
 #;source : institut de la qualité de l'aliment (vendée);;;
 VALUES;Faible valeur énergétique;Faible valeur énergétique;Nutritionnelle;Une allégation selon laquelle une denrée alimentaire a une faible valeur énergétique, ou toute autre allégation susceptible d'avoir le même sens pour le consommateur, ne peut être faite que pour un produit contenant au maximum 40 kcal (170 kJ)/100 g dans le cas des solides ou au maximum 20 kcal (80 kJ)/100 ml dans le cas des liquides. Dans le cas des édulcorants de table, la limite de 4 kcal (17 kJ)/portion, avec des propriétés édulcorantes équivalentes à 6 g de saccharose (approximativement 1 petite cuillérée de saccharose), s'applique.   

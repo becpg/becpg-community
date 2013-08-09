@@ -193,6 +193,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_DO);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_SUCCEEDED);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_LOG);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_USER);
 
 		// Products
