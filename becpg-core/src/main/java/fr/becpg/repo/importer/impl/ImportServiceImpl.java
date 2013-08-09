@@ -3,9 +3,11 @@
  */
 package fr.becpg.repo.importer.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -13,10 +15,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -24,8 +29,10 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -37,10 +44,10 @@ import org.dom4j.io.SAXReader;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportService;
@@ -251,7 +258,7 @@ public class ImportServiceImpl implements ImportService {
 	}
 
 	@Override
-	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String log) {
+	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String titleLog, final String fileLog) {
 
 		RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
 			@Override
@@ -260,35 +267,41 @@ public class ImportServiceImpl implements ImportService {
 
 					// delete files that have the same name before moving it in
 					// the succeeded or failed folder
-					String queryPath = "";
-					NodeRef failedFolder = null;
-					NodeRef succeededFolder = null;
 					List<NodeRef> resultSet = null;
-
+					String csvFileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					
 					// failed
-					queryPath = RepoConsts.PATH_QUERY_IMPORT_FAILED_FOLDER;
-					resultSet = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-					failedFolder = resultSet.get(0);
+					resultSet = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_FAILED_FOLDER, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+					NodeRef failedFolder = resultSet.isEmpty() ? null : resultSet.get(0);
 
-					if (failedFolder != null) {
-						NodeRef targetNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS,
-								(String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+					if (failedFolder != null) {											
+						NodeRef csvNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS,
+								csvFileName);
+						if (csvNodeRef != null) {
+							nodeService.deleteNode(csvNodeRef);
+						}											
+					}
+					
+					// succeeded
+					resultSet = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_SUCCEEDED_FOLDER, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+					NodeRef succeededFolder = resultSet.isEmpty() ? null : resultSet.get(0);
+
+					if (succeededFolder != null) {
+						NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS,
+								csvFileName);
 						if (targetNodeRef != null) {
 							nodeService.deleteNode(targetNodeRef);
 						}
 					}
-
-					// succeeded
-					queryPath = RepoConsts.PATH_QUERY_IMPORT_SUCCEEDED_FOLDER;
-					resultSet = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-					succeededFolder = resultSet.get(0);
-
-					if (succeededFolder != null) {
-						NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS,
-								(String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-						if (targetNodeRef != null) {
-							nodeService.deleteNode(targetNodeRef);
-						}
+					
+					// log					
+					if(fileLog != null && !fileLog.isEmpty()){
+						resultSet = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_LOG_FOLDER, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+						NodeRef logFolder = resultSet.isEmpty() ? null : resultSet.get(0);
+						if(logFolder != null){
+							String logFileName = csvFileName.substring(0, csvFileName.length()-4) + RepoConsts.EXTENSION_LOG;
+							createLogFile(logFolder, logFileName, fileLog);
+						}				
 					}
 
 					// move nodeRef in the right folder
@@ -297,7 +310,7 @@ public class ImportServiceImpl implements ImportService {
 						nodeService.moveNode(nodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(nodeRef));
 					}
 
-					nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
+					nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, titleLog);
 				}
 
 				return null;
@@ -305,7 +318,7 @@ public class ImportServiceImpl implements ImportService {
 		};
 		serviceRegistry.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
-
+	
 	/**
 	 * Import text.
 	 * 
@@ -651,4 +664,28 @@ public class ImportServiceImpl implements ImportService {
 		return mappingElt;
 	}
 
+	private void createLogFile(NodeRef parentNodeRef, String fileName, String content){
+		
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+    	properties.put(ContentModel.PROP_NAME, fileName);
+    	
+    	NodeRef nodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, fileName);    	
+    	if(nodeRef == null){
+    		nodeRef = nodeService.createNode(parentNodeRef, 
+    				ContentModel.ASSOC_CONTAINS, 
+    				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), 
+    				ContentModel.TYPE_CONTENT, properties).getChildRef();   		
+    	}    	
+    	
+    	InputStream is = null;
+    	try{
+    		ContentWriter contentWriter = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+    		contentWriter.setEncoding("UTF-8");
+            contentWriter.setMimetype(MimetypeMap.MIMETYPE_TEXT_PLAIN);
+        	is = new ByteArrayInputStream(content.getBytes());
+        	contentWriter.putContent(is);
+    	} finally {
+			IOUtils.closeQuietly(is);
+		}    	
+	}
 }

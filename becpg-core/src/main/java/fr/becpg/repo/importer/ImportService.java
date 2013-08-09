@@ -31,7 +31,7 @@ public interface ImportService {
 	 * @param nodeRef
 	 * @param hasFailed
 	 */
-	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String log);
+	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String titleLog, String fileLog);
 	
 	public List<String> importCSV(ImportContext importContext) throws IOException, ImporterException, ParseException, Exception;
 }

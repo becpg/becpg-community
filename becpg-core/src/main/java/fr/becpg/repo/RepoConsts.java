@@ -31,6 +31,7 @@ public class RepoConsts {
 	public static final String QUERY_FILTER_PRODUCT_STATE = " -@bcpg\\:productState:%s -@bcpg\\:productState:%s";
 	public static final String PATH_QUERY_LIST_CONSTRAINTS = "+PATH:\"/app:company_home/%s/*\" +TYPE:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_FAILED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed\"";
+	public static final String PATH_QUERY_IMPORT_LOG_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportLog\"";
 	public static final String PATH_QUERY_IMPORT_SUCCEEDED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded\"";	
 	public static final String PATH_QUERY_REPORT_COMPARE_ENTITIES = "+PATH:\"/app:company_home/cm:System/cm:Reports/cm:CompareProducts/*\" +@cm\\:name:\"CompareProducts*rptdesign\"";	
 	public static final String QUERY_CHARACT_BY_TYPE_AND_NAME = " +TYPE:\"%s\" +@cm\\:name:\"%s\"";	
@@ -83,7 +84,8 @@ public class RepoConsts {
 	public static final String PATH_IMPORT_TO_TREAT	= "ImportToTreat";
 	public static final String PATH_IMPORT_TO_DO	= "ImportToDo";
 	public static final String PATH_IMPORT_SUCCEEDED = "ImportSucceeded";
-	public static final String PATH_IMPORT_FAILED = "ImportFailed";		
+	public static final String PATH_IMPORT_FAILED = "ImportFailed";
+	public static final String PATH_IMPORT_LOG = "ImportLog";
 	public static final String PATH_IMPORT_USER = "ImportUser";
 	public static final String PATH_IMPORT_SAMPLES = "ImportSamples";
 	public static final String PATH_MAPPING = "Mapping";
@@ -180,6 +182,7 @@ public class RepoConsts {
 	public static final String REPORT_EXTENSION_BIRT = "rptdesign";
 	public static final String REPORT_EXTENSION_PDF = ".PDF";
 	public static final String REPORT_EXTENSION_XLS = ".XLS";
+	public static final String EXTENSION_LOG = ".log";
 	
 	// FORMAT
 	public static final String FORMAT_DATE = "EEE d MMM yyyy";	
