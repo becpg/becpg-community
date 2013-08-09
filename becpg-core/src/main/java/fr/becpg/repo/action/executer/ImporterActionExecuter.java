@@ -180,11 +180,10 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
                     	 * do it in several transaction to avoid timeout connection
                     	 */
                     	List<String> errors = importService.importText(nodeRef, true, true);
-                    	logger.info("###DDDDD ");
+
                         if(errors != null && !errors.isEmpty()){
          	                int limit = 0;
                          	for(String error : errors){
-                         		logger.info("###error: " + error);
          	                	if(limit<=ERROR_LOGS_LIMIT){
          	                		first50ErrorsLog += LOG_SEPARATOR;
          	                		first50ErrorsLog += error;
@@ -231,9 +230,6 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
             				after50ErrorsLog +
             				LOG_SEPARATOR +
             				endlog;
-        			
-        			logger.info("###first50ErrorsLog: " + first50ErrorsLog);
-        			logger.info("###log: " + log);
         			
         			// set log, stackTrace and move file
                     importService.moveImportedFile(nodeRef, hasFailed, log, allLog);   
