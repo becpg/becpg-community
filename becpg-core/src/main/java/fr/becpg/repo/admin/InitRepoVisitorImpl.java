@@ -675,14 +675,14 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				dataLists.add(BeCPGModel.TYPE_LABEL_CLAIM);
+				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)) {
 
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_PRICELIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				dataLists.add(BeCPGModel.TYPE_LABEL_CLAIM);
+				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_RESOURCEPRODUCT)) {
 
@@ -712,6 +712,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGKIT)) {
 
