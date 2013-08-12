@@ -5,6 +5,8 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.formulation.FormulateException;
+
 
 public interface EntityTplService {
 
@@ -22,4 +24,8 @@ public interface EntityTplService {
 	 * @return
 	 */
 	public NodeRef getEntityTpl(QName nodeType);
+	
+	public void synchronizeEntities(NodeRef tplNodeRef);
+	
+	public void formulateEntities(NodeRef tplNodeRef) throws FormulateException;
 }

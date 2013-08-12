@@ -19,8 +19,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -36,7 +34,6 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(ReportTplWebScript.class);
 
-	private static final int BATCH_SIZE = 25;
 	private static final String ACTION_REFRESH = "refresh";
 	private static final String ACTION_DISABLE = "disable";
 	private static final String ACTION_ENABLE = "enable";
@@ -119,20 +116,18 @@ public class ReportTplWebScript extends AbstractWebScript {
 			
 			logger.info("Refresh reports of " + entityNodeRefs.size() + " entities. action: " + action);
 
-			for (List<NodeRef> batch : Lists.partition(entityNodeRefs, BATCH_SIZE)) {
-				for (NodeRef entityNodeRef : batch) {
-					if(ACTION_REFRESH.equals(action)){
-						entityReportService.generateReport(entityNodeRef);
-					} else if(ACTION_UPDATE_PERMISSIONS.equals(action)){						
-						List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-						for(NodeRef report : reports){
-							NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
-							if(nodeRef.equals(tplNodeRef)){
-								entityReportService.setPermissions(nodeRef, report);
-							}							
-						}						
-					}					
-				}
+			for (NodeRef entityNodeRef : entityNodeRefs) {
+				if(ACTION_REFRESH.equals(action)){
+					entityReportService.generateReport(entityNodeRef);
+				} else if(ACTION_UPDATE_PERMISSIONS.equals(action)){						
+					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+					for(NodeRef report : reports){
+						NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
+						if(nodeRef.equals(tplNodeRef)){
+							entityReportService.setPermissions(nodeRef, report);
+						}							
+					}						
+				}					
 			}
 			
 			logger.info("Refresh reports done.");

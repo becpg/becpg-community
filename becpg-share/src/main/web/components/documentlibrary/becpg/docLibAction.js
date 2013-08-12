@@ -236,5 +236,67 @@
 	   }
 	});
 	
+	YAHOO.Bubbling.fire("registerAction", {
+	   actionName : "onActionEntityTplSynchronizeEntities",
+	   fn : function onActionEntityTplSynchronizeEntities(asset) {
+		   Alfresco.util.PopupManager.displayMessage({
+			   text : this.msg("message.synchronize-entities.please-wait")
+		   });
+
+		   Alfresco.util.Ajax.request({
+		      method : Alfresco.util.Ajax.GET,
+		      url : Alfresco.constants.PROXY_URI + "becpg/entity/entityTpl/" + asset.nodeRef.replace(":/", "")
+		            + "/synchronizeEntities",
+		      successCallback : {
+		         fn : function EntityDataListToolbar_onActionEntityTplSynchronizeEntities_success(response) {
+		         	Alfresco.util.PopupManager.displayMessage({
+				         text : this.msg("message.synchronize-entities.success")
+			         });
+		         },
+		         scope : this
+		      },
+		      failureCallback : {
+		         fn : function EntityDataListToolbar_onActionEntityTplSynchronizeEntities_failure(response) {
+			         Alfresco.util.PopupManager.displayMessage({
+				         text : this.msg("message.synchronize-entities.failure")
+			         });
+		         },
+		         scope : this
+		      }
+		   });
+	   }
+	});
+	
+	YAHOO.Bubbling.fire("registerAction", {
+	   actionName : "onActionEntityTplFormulateEntities",
+	   fn : function onActionEntityTplFormulateEntities(asset) {
+		   Alfresco.util.PopupManager.displayMessage({
+			   text : this.msg("message.formulate-entities.please-wait")
+		   });
+
+		   Alfresco.util.Ajax.request({
+		      method : Alfresco.util.Ajax.GET,
+		      url : Alfresco.constants.PROXY_URI + "becpg/entity/entityTpl/" + asset.nodeRef.replace(":/", "")
+		            + "/formulateEntities",
+		      successCallback : {
+		         fn : function EntityDataListToolbar_onActionEntityTplFormulateEntities_success(response) {
+		         	Alfresco.util.PopupManager.displayMessage({
+				         text : this.msg("message.formulate-entities.success")
+			         });
+		         },
+		         scope : this
+		      },
+		      failureCallback : {
+		         fn : function EntityDataListToolbar_onActionEntityTplFormulateEntities_failure(response) {
+			         Alfresco.util.PopupManager.displayMessage({
+				         text : this.msg("message.formulate-entities.failure")
+			         });
+		         },
+		         scope : this
+		      }
+		   });
+	   }
+	});
+	
 
 })();

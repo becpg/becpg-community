@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
+import fr.becpg.repo.repository.annotation.AlfIdentAttr;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -75,6 +76,11 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return readValueMap(entity, DataListView.class, BaseObject.class);
 	}
 
+	@Override
+	public Map<QName, Serializable> getIdentifierAttributes(T entity) {
+		return readValueMap(entity, AlfIdentAttr.class, Serializable.class);
+	}
+	
 	@Override
 	public QName getType(Class<? extends RepositoryEntity> clazz) {
 		if (clazz.getAnnotation(AlfQname.class) != null) {

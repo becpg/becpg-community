@@ -2,6 +2,7 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfIdentAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -18,6 +19,7 @@ public class LabelClaimListDataItem extends BeCPGDataObject {
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:lclLabelClaim")
+	@AlfIdentAttr
 	public NodeRef getLabelClaim() {
 		return labelClaim;
 	}

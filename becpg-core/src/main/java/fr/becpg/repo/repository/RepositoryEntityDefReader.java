@@ -21,6 +21,7 @@ public interface RepositoryEntityDefReader<T> {
     <R> Map<QName, List<? extends RepositoryEntity>> getDataLists(R entity);
     Map<QName, T> getSingleEntityAssociations(T entity);
     Map<QName, ?> getDataListViews(T entity);
+    Map<QName, Serializable> getIdentifierAttributes(T entity);
     
 	QName getType(Class<? extends RepositoryEntity> clazz);
 	QName readQName(Method method);
