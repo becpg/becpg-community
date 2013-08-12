@@ -282,7 +282,11 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />		
+		<property name="formulationService" ref="formulationService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
+		
 	</bean>
 	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />

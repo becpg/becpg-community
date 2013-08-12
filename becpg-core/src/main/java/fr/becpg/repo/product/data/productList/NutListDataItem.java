@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfIdentAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -99,6 +100,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:nutListNut")
+	@AlfIdentAttr
 	public NodeRef getNut() {
 		return nut;
 	}

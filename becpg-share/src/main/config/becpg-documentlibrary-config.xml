@@ -290,6 +290,7 @@
 				</permissions>
 				<!-- aspect check rep:reportEntityAspect -->
 				<evaluator>evaluator.becpg.doclib.action.generateReport</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entityTpl</evaluator>
 			</action>
 
 			<action id="entity-checkin" type="javascript"
@@ -401,7 +402,27 @@
             <evaluator>evaluator.doclib.metadata.isLocked</evaluator>
             <!-- patch #535 -->
             <evaluator>evaluator.doclib.action.isWorkingCopy</evaluator> 
-         </action>			
+         </action>	
+         
+         <action id="entityTpl-synchronize-entities" type="javascript"
+				icon="entity-refresh-reports" label="actions.entityTpl-synchronize-entities">
+				<param name="function">onActionEntityTplSynchronizeEntities</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
+			</action>
+			
+			<action id="entityTpl-formulate-entities" type="javascript"
+				icon="entity-refresh-reports" label="actions.entityTpl-formulate-entities">
+				<param name="function">onActionEntityTplFormulateEntities</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
+			</action>		
 
 		</actions>
 
@@ -449,6 +470,8 @@
 				<action index="105" id="entity-view-original" />
 				<action index="106" id="entity-view-working-copy" />
 				<action index="107" id="entity-refresh-reports" />
+				<action index="108" id="entityTpl-synchronize-entities" />
+				<action index="109" id="entityTpl-formulate-entities" />
             <action index="110" id="document-approve" icon="folder-approve" />
             <action index="120" id="document-reject" icon="folder-reject" />
             <action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />

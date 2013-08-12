@@ -133,7 +133,6 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
 
-
 	<bean id="webscript.fr.becpg.report.exportSearchTpls.get"
 		class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript"
 		parent="webscript">
@@ -150,7 +149,6 @@
 	</bean>
 
 	<!-- Report -->
-
 	<bean id="webscript.fr.becpg.report.reportDataSource.get"
 		class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript"
 		parent="webscript">
@@ -164,6 +162,13 @@
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="beCPGSearchService" ref="BeCPGSearchService" />
 		<property name="associationService" ref="associationService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.entityTpl.get"
+		class="fr.becpg.repo.web.scripts.entity.EntityTplWebScript"
+		parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityTplService" ref="entityTplService" />		
 	</bean>
 
 	<!-- Migration -->
