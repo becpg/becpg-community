@@ -247,7 +247,7 @@
             case "document":
             case "entity":
                imageUrl = Alfresco.constants.PROXY_URI_RELATIVE + "api/node/" + nodeRef.replace(":/", "");
-               imageUrl += "/content/thumbnails/doclib?c=queue&ph=true&lastModified=" + Alfresco.util.encodeHTML(modifiedOn);
+               imageUrl += "/content/thumbnails/doclib?c=queue&ph=true&lastModified=" + encodeURIComponent(Alfresco.util.encodeHTML(modifiedOn));
                break;
    
             case "folder":
