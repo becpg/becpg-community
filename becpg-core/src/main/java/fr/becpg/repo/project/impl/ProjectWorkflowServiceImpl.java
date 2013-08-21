@@ -7,10 +7,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.workflow.NodeConverter;
-import org.alfresco.repo.workflow.WorkflowConstants;
 import org.alfresco.repo.workflow.WorkflowModel;
-import org.alfresco.repo.workflow.WorkflowNodeConverter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
@@ -47,7 +44,6 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 	
 	private WorkflowService workflowService;
 	private NodeService nodeService;
-	private WorkflowNodeConverter nodeConverter;
 	
 	public void setWorkflowService(WorkflowService workflowService) {
 		this.workflowService = workflowService;

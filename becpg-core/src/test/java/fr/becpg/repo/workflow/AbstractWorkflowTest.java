@@ -96,6 +96,7 @@ public abstract class AbstractWorkflowTest extends RepoBaseTestCase {
 						return task;
 					}
 				}
+				logger.error("No task "+taskName+" found");
 				return null;
 
 			}

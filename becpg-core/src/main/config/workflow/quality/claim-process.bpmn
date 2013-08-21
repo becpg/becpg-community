@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.bcpg.fr/model/workflow/1.0">
-  <signal id="endClassificationSignal" name="endClassificationSignal"></signal>
   <process id="claimProcess" name="Claim Process" isExecutable="true">
     <documentation>Place documentation for the 'claim-process' process here.</documentation>
     <startEvent id="startClaimProcess" name="Saisie réclamation" activiti:formKey="ncwf:claimStartTask"></startEvent>
@@ -156,7 +155,7 @@
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <sequenceFlow id="toDispatchTreatmentGateway" sourceRef="endOrientationGateway" targetRef="dispatchTreatmentGateway">
+    <sequenceFlow id="toDispatchTreatmentGateway" sourceRef="endOrientationGateway" targetRef="subprocess1">
       <extensionElements>
         <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
@@ -170,170 +169,6 @@
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'entry' && ncwf_claimRejectedState != 'analysis'}]]></conditionExpression>
     </sequenceFlow>
-    <inclusiveGateway id="dispatchTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
-    <sequenceFlow id="toTreatmentFlow" name="Si acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimTreatmentTask">
-      <extensionElements>
-        <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
-          <activiti:field name="script">
-            <activiti:string>logger.info("Go To traitement "+qa_claimTreatmentActor);</activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
-      </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimTreatmentActor!=null && ncwf_claimRejectedState !='classification' && ncwf_claimRejectedState !='response'  }]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="toClassificationFlow" name="Dans tous les cas" sourceRef="dispatchTreatmentGateway" targetRef="classificationTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${skipClassification == false && (  ncwf_claimRejectedState =='classification' ||   ncwf_claimRejectedState =='none') }]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="toResponseWithoutTraitementFlow" name="Si acteur réponse et pas d'acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimResponseTask">
-      <extensionElements>
-        <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
-          <activiti:field name="script">
-            <activiti:string>logger.info("Go To response"+qa_claimResponseActor);</activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
-      </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(qa_claimTreatmentActor == null &&  qa_claimResponseActor!=null && ncwf_claimRejectedState =='none') 
-      ||  (  qa_claimResponseActor!=null && ncwf_claimRejectedState =='response')}]]></conditionExpression>
-    </sequenceFlow>
-    <userTask id="claimTreatmentTask" name="Traitement" activiti:assignee="${qa_claimTreatmentActor.properties.userName}" activiti:formKey="ncwf:claimTreatmentTask">
-      <extensionElements>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-            if (typeof ncwf_claimTreatmentDueDate != 'undefined') task.dueDate = ncwf_claimTreatmentDueDate;
-            if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-					
-					task.setVariable('bpm_comment', '');
-
-               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-            	task.setVariable('ncwf_claimRejectedState', 'none');
-            	
-            	if (bcpgwf_notifyAssignee) {
-						sendMail(qa_claimTreatmentActor,initiator,  
-								 bcpg.getMessage('claimProcess.mail.action.treatment.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.action.treatment.message'),
-								 true);	
-		          }</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-              
-               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
-            
-	            if(task.getVariable('ncwf_claimRejectedState') == 'none'){
-	              task.setVariable('qa_claimTreatmentDate', new  java.util.Date());
-	              if(execution.getVariable('qa_claimResponseActor')!=null){
-	               task.setVariable('ncwf_ncState','response');
-	              } else {
-	               task.setVariable('ncwf_ncState','closing');
-	              }
-	               execution.setVariable('ncwf_claimRejectedCause',  '');
-	               
-	              if (bcpgwf_notifyUsers != null)  {
-			          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-							 sendMail(bcpgwf_notifyUsers.get(i),initiator,  
-		             		 bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.notify.treatment.end.message')
-								); 
-						}
-		          }
-		          
-		          if(bcpgwf_notifyMe){
-		               sendMail(initiator,initiator, 
-		                   bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.notify.treatment.end.message')); 
-					  }
-	               
-               } else {
-                 execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
-               }
-              
-          	  execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
-          	  execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
-        
-        			execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
-      </extensionElements>
-    </userTask>
-    <sequenceFlow id="toValidateTreatement1" sourceRef="claimTreatmentTask" targetRef="validateTreatementGateway"></sequenceFlow>
-    <userTask id="claimResponseTask" name="Réponse" activiti:assignee="${qa_claimResponseActor.properties.userName}" activiti:formKey="ncwf:claimResponseTask">
-      <extensionElements>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-            if (typeof ncwf_claimResponseDueDate != 'undefined') task.dueDate = ncwf_claimResponseDueDate;
-            if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-					
-					task.setVariable('bpm_comment', '');
-					
-               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-               task.setVariable('ncwf_claimRejectedState', 'none');
-              
-               task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
-            	
-            	if (bcpgwf_notifyAssignee) {
-						sendMail(qa_claimResponseActor,initiator, 
-						       bcpg.getMessage('claimProcess.mail.action.response.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.action.response.message'),
-								 true);  
-		          }</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-						
-            	if(task.getVariable('ncwf_claimRejectedState') == 'none'){
-	              task.setVariable('qa_claimResponseDate', new  java.util.Date());
-	              task.setVariable('ncwf_ncState','closing');
-	              execution.setVariable('ncwf_claimRejectedCause',  '');
-	                
-	                
-			              if (bcpgwf_notifyUsers != null)  {
-					          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-										sendMail(bcpgwf_notifyUsers.get(i),initiator,
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.subject',bpm_workflowDescription),
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));  
-									}	
-				          	}
-				           if(bcpgwf_notifyMe){
-				               sendMail(initiator,initiator,
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.subject',bpm_workflowDescription),
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
-							  }
-	             
-	            } else {
-	               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
-	               execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
-	            }
-	            
-	            execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
-        			
-	            execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
-           		execution.setVariable('qa_claimResponseState', task.getVariable('qa_claimResponseState'));
-			      execution.setVariable('qa_claimResponseDetails', task.getVariable('qa_claimResponseDetails'));</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
-      </extensionElements>
-    </userTask>
-    <sequenceFlow id="toResponseFlow" name="Si acteur réponse ou refus" sourceRef="validateTreatementGateway" targetRef="claimResponseTask">
-      <extensionElements>
-        <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
-          <activiti:field name="script">
-            <activiti:string>logger.info("Go To response"+qa_claimResponseActor);</activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
-      </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimResponseActor!=null && !(  ncwf_claimRejectedState == 'treatment'  ||   ncwf_claimRejectedState == 'analysis')}]]></conditionExpression>
-    </sequenceFlow>
-    <exclusiveGateway id="validateTreatementGateway" name="Exclusive Gateway"></exclusiveGateway>
     <userTask id="claimClosingTask" name="Clôture réclamation" activiti:candidateGroups="GROUP_ClaimClosing" activiti:formKey="ncwf:claimClosingTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -406,52 +241,14 @@
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_ClaimClassification" activiti:formKey="ncwf:claimClassificationTask">
-      <extensionElements>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
-              if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-					
-					task.setVariable('bpm_comment', '');
-
-					task.setVariable('ncwf_ncState','classification');</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>execution.setVariable('qa_claimType', task.getVariable('qa_claimType'));
-            			execution.setVariable('qa_claimOriginHierarchy1', task.getVariable('qa_claimOriginHierarchy1'));
-        		  	      execution.setVariable('qa_claimOriginHierarchy2', task.getVariable('qa_claimOriginHierarchy2'));
-            			
-		              execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        		  	     execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
-        		  	     if(execution.getVariable('ncwf_claimRejectedState') == 'classification'){
-        		  	     	execution.setVariable('ncwf_claimRejectedState', 'none');
-        		  	     }</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
-      </extensionElements>
-    </userTask>
-    <inclusiveGateway id="jointTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
-    <sequenceFlow id="toValidateTreatement2" sourceRef="validateResponseGateway" targetRef="validateTreatementGateway">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ ncwf_claimRejectedState != 'none' }]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="toNotificationFlow" sourceRef="endTreatmentChoice" targetRef="claimClosingTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none' }]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="backToAnalysisFlow1" name="Refus ou demande complémentaire" sourceRef="endTreatmentChoice" targetRef="analysisTask">
+    <sequenceFlow id="backToAnalysisFlow1" name="Refus ou demande complémentaire" sourceRef="boundaryerror1" targetRef="analysisTask">
       <extensionElements>
         <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string>logger.info("Go to analysis");
-					execution.setVariable('skipClassification',true);</activiti:string>
+            <activiti:string>logger.info("Go to analysis");</activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ ncwf_claimRejectedState == 'analysis'  ||   (ncwf_claimRejectedState == 'treatment'  &&  qa_claimTreatmentActor==null )
- || (ncwf_claimRejectedState == 'response' && qa_claimTreatmentActor==null  && qa_claimResponseActor==null) }]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="toAnalysisFlow2" sourceRef="enteringClaimTask" targetRef="analysisTask"></sequenceFlow>
     <exclusiveGateway id="endOrientationGateway" name="Exclusive Gateway"></exclusiveGateway>
@@ -465,39 +262,16 @@
       <extensionElements>
         <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string>logger.info("Go to analysis");
-if(ncwf_claimRejectedState!='classification'){
-   execution.setVariable('skipClassification',true);
-} else {
-  execution.setVariable('skipClassification',false);
-}</activiti:string>
+            <activiti:string>logger.info("Go to analysis");</activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'none' }]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="backToTraitementFlow3" name="Refus ou demande complémentaire" sourceRef="validateTreatementGateway" targetRef="claimTreatmentTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(ncwf_claimRejectedState == 'treatment' && qa_claimTreatmentActor!=null)
-  || (ncwf_claimRejectedState == 'response' && qa_claimResponseActor==null) }]]></conditionExpression>
-    </sequenceFlow>
     <sequenceFlow id="toEndFlow" sourceRef="validateClosingGateway" targetRef="endevent1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none' }]]></conditionExpression>
     </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <sequenceFlow id="endTreatmentFlow" sourceRef="validateTreatementGateway" targetRef="jointTreatmentGateway">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none' ||
-    ncwf_claimRejectedState == 'analysis'  || 
-(ncwf_claimRejectedState == 'treatment' && qa_claimTreatmentActor==null ) ||
- (ncwf_claimRejectedState == 'response' && qa_claimTreatmentActor==null  && qa_claimResponseActor==null) }]]></conditionExpression>
-    </sequenceFlow>
-    <exclusiveGateway id="validateResponseGateway" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="toValidateResponse" sourceRef="claimResponseTask" targetRef="validateResponseGateway"></sequenceFlow>
-    <sequenceFlow id="flow63" sourceRef="validateResponseGateway" targetRef="jointTreatmentGateway">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none' }]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="endClassificationFlow" sourceRef="classificationTask" targetRef="jointTreatmentGateway"></sequenceFlow>
-    <exclusiveGateway id="endTreatmentChoice" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow64" sourceRef="jointTreatmentGateway" targetRef="endTreatmentChoice"></sequenceFlow>
     <sequenceFlow id="flow65" sourceRef="endOrientationGateway" targetRef="analysisTask">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ ncwf_claimRejectedState == 'analysis'  ||   (ncwf_claimRejectedState == 'treatment'  &&  qa_claimTreatmentActor==null ) || (ncwf_claimRejectedState == 'response' && qa_claimTreatmentActor==null  && qa_claimResponseActor==null) }]]></conditionExpression>
     </sequenceFlow>
@@ -509,6 +283,234 @@ if(ncwf_claimRejectedState!='classification'){
     <sequenceFlow id="isNotDraftFlow" sourceRef="testDraftGateway" targetRef="analysisTask">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimStartAsDraft == false}]]></conditionExpression>
     </sequenceFlow>
+    <subProcess id="subprocess1" name="Traitement réclammation">
+      <userTask id="classificationTask" name="Classification" activiti:candidateGroups="GROUP_ClaimClassification" activiti:formKey="ncwf:claimClassificationTask">
+        <extensionElements>
+          <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+            <activiti:field name="script">
+              <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+              if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+					
+					task.setVariable('bpm_comment', '');
+
+					task.setVariable('ncwf_ncState','classification');</activiti:string>
+            </activiti:field>
+          </activiti:taskListener>
+          <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+            <activiti:field name="script">
+              <activiti:string>execution.setVariable('qa_claimType', task.getVariable('qa_claimType'));
+            			execution.setVariable('qa_claimOriginHierarchy1', task.getVariable('qa_claimOriginHierarchy1'));
+        		  	      execution.setVariable('qa_claimOriginHierarchy2', task.getVariable('qa_claimOriginHierarchy2'));
+            			
+		              execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        		  	     execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+        		  	     if(execution.getVariable('ncwf_claimRejectedState') == 'classification'){
+        		  	     	execution.setVariable('ncwf_claimRejectedState', 'none');
+        		  	     }
+        		  	     execution.setVariable('skipClassification',true);
+        		  	     </activiti:string>
+            </activiti:field>
+          </activiti:taskListener>
+          <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
+      <sequenceFlow id="endClassificationFlow" name="OK" sourceRef="classificationTask" targetRef="jointTreatmentGateway"></sequenceFlow>
+      <inclusiveGateway id="dispatchTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
+      <sequenceFlow id="toTreatmentFlow" name="Si acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimTreatmentTask">
+        <extensionElements>
+          <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
+            <activiti:field name="script">
+              <activiti:string>logger.info("Go To traitement "+qa_claimTreatmentActor);</activiti:string>
+            </activiti:field>
+          </activiti:executionListener>
+        </extensionElements>
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimTreatmentActor!=null && ncwf_claimRejectedState !='classification' && ncwf_claimRejectedState !='response'  }]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="toClassificationFlow" name="Dans tous les cas" sourceRef="dispatchTreatmentGateway" targetRef="classificationTask">
+      	<conditionExpression xsi:type="tFormalExpression"><![CDATA[${skipClassification == false || ncwf_claimRejectedState =='classification'   }]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="toResponseWithoutTraitementFlow" name="Si acteur réponse et pas d'acteur traitement" sourceRef="dispatchTreatmentGateway" targetRef="claimResponseTask">
+        <extensionElements>
+          <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
+            <activiti:field name="script">
+              <activiti:string>logger.info("Go To response"+qa_claimResponseActor);</activiti:string>
+            </activiti:field>
+          </activiti:executionListener>
+        </extensionElements>
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(qa_claimTreatmentActor == null &&  qa_claimResponseActor!=null && ncwf_claimRejectedState =='none') 
+      ||  (  qa_claimResponseActor!=null && ncwf_claimRejectedState =='response')}]]></conditionExpression>
+      </sequenceFlow>
+      <userTask id="claimTreatmentTask" name="Traitement" activiti:assignee="${qa_claimTreatmentActor.properties.userName}" activiti:formKey="ncwf:claimTreatmentTask">
+        <extensionElements>
+          <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+            <activiti:field name="script">
+              <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+            if (typeof ncwf_claimTreatmentDueDate != 'undefined') task.dueDate = ncwf_claimTreatmentDueDate;
+            if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+					
+					task.setVariable('bpm_comment', '');
+
+               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
+            	task.setVariable('ncwf_claimRejectedState', 'none');
+            	
+            	if (bcpgwf_notifyAssignee) {
+						sendMail(qa_claimTreatmentActor,initiator,  
+								 bcpg.getMessage('claimProcess.mail.action.treatment.subject',bpm_workflowDescription),
+								 bcpg.getMessage('claimProcess.mail.action.treatment.message'),
+								 true);	
+		          }</activiti:string>
+            </activiti:field>
+          </activiti:taskListener>
+          <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+            <activiti:field name="script">
+              <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+              
+               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
+            
+	            if(task.getVariable('ncwf_claimRejectedState') == 'none'){
+	              task.setVariable('qa_claimTreatmentDate', new  java.util.Date());
+	              if(execution.getVariable('qa_claimResponseActor')!=null){
+	               task.setVariable('ncwf_ncState','response');
+	              } else {
+	               task.setVariable('ncwf_ncState','closing');
+	              }
+	               execution.setVariable('ncwf_claimRejectedCause',  '');
+	               
+	              if (bcpgwf_notifyUsers != null)  {
+			          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
+							 sendMail(bcpgwf_notifyUsers.get(i),initiator,  
+		             		 bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject',bpm_workflowDescription),
+								 bcpg.getMessage('claimProcess.mail.notify.treatment.end.message')
+								); 
+						}
+		          }
+		          
+		          if(bcpgwf_notifyMe){
+		               sendMail(initiator,initiator, 
+		                   bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject',bpm_workflowDescription),
+								 bcpg.getMessage('claimProcess.mail.notify.treatment.end.message')); 
+					  }
+	               
+               } else {
+                 execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
+               }
+              
+          	  execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
+          	  execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
+        
+        			execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));</activiti:string>
+            </activiti:field>
+          </activiti:taskListener>
+          <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
+      <sequenceFlow id="toValidateTreatement1" sourceRef="claimTreatmentTask" targetRef="validateTreatementGateway"></sequenceFlow>
+      <exclusiveGateway id="validateResponseGateway" name="Exclusive Gateway"></exclusiveGateway>
+      <sequenceFlow id="toValidateTreatement2" sourceRef="validateResponseGateway" targetRef="validateTreatementGateway">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ ncwf_claimRejectedState != 'none' }]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="flow63" name="OK" sourceRef="validateResponseGateway" targetRef="jointTreatmentGateway">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none' }]]></conditionExpression>
+      </sequenceFlow>
+      <userTask id="claimResponseTask" name="Réponse" activiti:assignee="${qa_claimResponseActor.properties.userName}" activiti:formKey="ncwf:claimResponseTask">
+        <extensionElements>
+          <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+            <activiti:field name="script">
+              <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+            if (typeof ncwf_claimResponseDueDate != 'undefined') task.dueDate = ncwf_claimResponseDueDate;
+            if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+					
+					task.setVariable('bpm_comment', '');
+					
+               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
+               task.setVariable('ncwf_claimRejectedState', 'none');
+              
+               task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
+            	
+            	if (bcpgwf_notifyAssignee) {
+						sendMail(qa_claimResponseActor,initiator, 
+						       bcpg.getMessage('claimProcess.mail.action.response.subject',bpm_workflowDescription),
+								 bcpg.getMessage('claimProcess.mail.action.response.message'),
+								 true);  
+		          }</activiti:string>
+            </activiti:field>
+          </activiti:taskListener>
+          <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+            <activiti:field name="script">
+              <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+						
+            	if(task.getVariable('ncwf_claimRejectedState') == 'none'){
+	              task.setVariable('qa_claimResponseDate', new  java.util.Date());
+	              task.setVariable('ncwf_ncState','closing');
+	              execution.setVariable('ncwf_claimRejectedCause',  '');
+	                
+	                
+			              if (bcpgwf_notifyUsers != null)  {
+					          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
+										sendMail(bcpgwf_notifyUsers.get(i),initiator,
+										  bcpg.getMessage('claimProcess.mail.notify.response.end.subject',bpm_workflowDescription),
+										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));  
+									}	
+				          	}
+				           if(bcpgwf_notifyMe){
+				               sendMail(initiator,initiator,
+										  bcpg.getMessage('claimProcess.mail.notify.response.end.subject',bpm_workflowDescription),
+										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
+							  }
+	             
+	            } else {
+	               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
+	               execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
+	            }
+	            
+	            execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
+        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+        			
+	            execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
+           		execution.setVariable('qa_claimResponseState', task.getVariable('qa_claimResponseState'));
+			      execution.setVariable('qa_claimResponseDetails', task.getVariable('qa_claimResponseDetails'));</activiti:string>
+            </activiti:field>
+          </activiti:taskListener>
+          <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
+      <sequenceFlow id="toValidateResponse" sourceRef="claimResponseTask" targetRef="validateResponseGateway"></sequenceFlow>
+      <inclusiveGateway id="jointTreatmentGateway" name="Inclusive Gateway"></inclusiveGateway>
+      <endEvent id="endevent2" name="End"></endEvent>
+      <sequenceFlow id="flow66" sourceRef="jointTreatmentGateway" targetRef="endevent2"></sequenceFlow>
+      <startEvent id="startevent1" name="Start"></startEvent>
+      <sequenceFlow id="flow67" sourceRef="startevent1" targetRef="dispatchTreatmentGateway"></sequenceFlow>
+      <endEvent id="errorendevent1" name="ErrorEnd">
+        <errorEventDefinition errorRef="errorRejected"></errorEventDefinition>
+      </endEvent>
+      <exclusiveGateway id="validateTreatementGateway" name="Exclusive Gateway"></exclusiveGateway>
+      <sequenceFlow id="toResponseFlow" name="Si acteur réponse ou refus" sourceRef="validateTreatementGateway" targetRef="claimResponseTask">
+        <extensionElements>
+          <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
+            <activiti:field name="script">
+              <activiti:string>logger.info("Go To response"+qa_claimResponseActor);</activiti:string>
+            </activiti:field>
+          </activiti:executionListener>
+        </extensionElements>
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${qa_claimResponseActor!=null && !(  ncwf_claimRejectedState == 'treatment'  ||   ncwf_claimRejectedState == 'analysis')}]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="backToTraitementFlow3" name="Refus ou demande complémentaire" sourceRef="validateTreatementGateway" targetRef="claimTreatmentTask">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${(ncwf_claimRejectedState == 'treatment' && qa_claimTreatmentActor!=null)
+  || (ncwf_claimRejectedState == 'response' && qa_claimResponseActor==null) }]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="endTreatmentFlow" name="OK" sourceRef="validateTreatementGateway" targetRef="jointTreatmentGateway">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState == 'none' }]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="flow68" sourceRef="validateTreatementGateway" targetRef="errorendevent1">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ ncwf_claimRejectedState == 'analysis'  ||   (ncwf_claimRejectedState == 'treatment'  &&  qa_claimTreatmentActor==null )
+ || (ncwf_claimRejectedState == 'response' && qa_claimTreatmentActor==null  && qa_claimResponseActor==null) }]]></conditionExpression>
+      </sequenceFlow>
+    </subProcess>
+    <sequenceFlow id="flow64" sourceRef="subprocess1" targetRef="claimClosingTask"></sequenceFlow>
+    <boundaryEvent id="boundaryerror1" name="Error" attachedToRef="subprocess1">
+      <errorEventDefinition errorRef="errorRejected"></errorEventDefinition>
+    </boundaryEvent>
     <textAnnotation id="textannotation1">
       <text>Assigné au groupe Orientation réclamation </text>
     </textAnnotation>
@@ -519,7 +521,7 @@ if(ncwf_claimRejectedState!='classification'){
         <omgdc:Bounds height="55.0" width="105.0" x="186.0" y="319.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="claimClosingTask" id="BPMNShape_claimClosingTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="848.0" y="323.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="978.0" y="222.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="1100.0" y="333.0"></omgdc:Bounds>
@@ -531,19 +533,19 @@ if(ncwf_claimRejectedState!='classification'){
         <omgdc:Bounds height="35.0" width="35.0" x="-160.0" y="329.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="claimTreatmentTask" id="BPMNShape_claimTreatmentTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="427.0" y="230.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="510.0" y="148.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="classificationTask" id="BPMNShape_classificationTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="505.0" y="399.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="648.0" y="354.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="claimResponseTask" id="BPMNShape_claimResponseTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="650.0" y="110.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="778.0" y="70.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="textannotation1" id="BPMNShape_textannotation1">
         <omgdc:Bounds height="50.0" width="100.0" x="131.0" y="252.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="validateTreatementGateway" id="BPMNShape_validateTreatementGateway">
-        <omgdc:Bounds height="40.0" width="40.0" x="569.0" y="237.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="680.0" y="230.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="enteringClaimTask" id="BPMNShape_enteringClaimTask">
         <omgdc:Bounds height="55.0" width="105.0" x="50.0" y="414.0"></omgdc:Bounds>
@@ -552,37 +554,50 @@ if(ncwf_claimRejectedState!='classification'){
         <omgdc:Bounds height="40.0" width="40.0" x="310.0" y="326.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="dispatchTreatmentGateway" id="BPMNShape_dispatchTreatmentGateway">
-        <omgdc:Bounds height="40.0" width="40.0" x="370.0" y="326.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="450.0" y="238.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="jointTreatmentGateway" id="BPMNShape_jointTreatmentGateway">
-        <omgdc:Bounds height="40.0" width="40.0" x="682.0" y="330.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="810.0" y="230.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="validateClosingGateway" id="BPMNShape_validateClosingGateway">
         <omgdc:Bounds height="40.0" width="40.0" x="1010.0" y="330.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="validateResponseGateway" id="BPMNShape_validateResponseGateway">
-        <omgdc:Bounds height="40.0" width="40.0" x="682.0" y="197.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="endTreatmentChoice" id="BPMNShape_endTreatmentChoice">
-        <omgdc:Bounds height="40.0" width="40.0" x="761.0" y="330.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="810.0" y="155.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="testDraftGateway" id="BPMNShape_testDraftGateway">
         <omgdc:Bounds height="40.0" width="40.0" x="83.0" y="326.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subprocess1" id="BPMNShape_subprocess1" isExpanded="false">
+        <omgdc:Bounds height="431.0" width="533.0" x="390.0" y="38.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="870.0" y="233.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="400.0" y="241.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="errorendevent1" id="BPMNShape_errorendevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="770.0" y="320.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundaryerror1" id="BPMNShape_boundaryerror1">
+        <omgdc:Bounds height="30.0" width="30.0" x="910.0" y="48.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="toDispatchTreatmentGateway" id="BPMNEdge_toDispatchTreatmentGateway">
         <omgdi:waypoint x="350.0" y="346.0"></omgdi:waypoint>
-        <omgdi:waypoint x="370.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="389.0" y="346.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="253.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toValidateClosingGateway" id="BPMNEdge_toValidateClosingGateway">
-        <omgdi:waypoint x="953.0" y="350.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1010.0" y="350.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1030.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1030.0" y="330.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toResponseWithoutTraitementFlow" id="BPMNEdge_toResponseWithoutTraitementFlow">
-        <omgdi:waypoint x="390.0" y="326.0"></omgdi:waypoint>
-        <omgdi:waypoint x="390.0" y="137.0"></omgdi:waypoint>
-        <omgdi:waypoint x="650.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="238.0"></omgdi:waypoint>
+        <omgdi:waypoint x="469.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="778.0" y="97.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="52.0" width="100.0" x="-49.0" y="2.0"></omgdc:Bounds>
+          <omgdc:Bounds height="52.0" width="100.0" x="-40.0" y="-17.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="startFlow" id="BPMNEdge_startFlow">
@@ -590,24 +605,25 @@ if(ncwf_claimRejectedState!='classification'){
         <omgdi:waypoint x="-77.0" y="346.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toTreatmentFlow" id="BPMNEdge_toTreatmentFlow">
-        <omgdi:waypoint x="390.0" y="326.0"></omgdi:waypoint>
-        <omgdi:waypoint x="390.0" y="257.0"></omgdi:waypoint>
-        <omgdi:waypoint x="427.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="238.0"></omgdi:waypoint>
+        <omgdi:waypoint x="469.0" y="174.0"></omgdi:waypoint>
+        <omgdi:waypoint x="510.0" y="175.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="13.0" width="93.0" x="-49.0" y="22.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toClassificationFlow" id="BPMNEdge_toClassificationFlow">
-        <omgdi:waypoint x="390.0" y="366.0"></omgdi:waypoint>
-        <omgdi:waypoint x="390.0" y="426.0"></omgdi:waypoint>
-        <omgdi:waypoint x="505.0" y="426.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="469.0" y="381.0"></omgdi:waypoint>
+        <omgdi:waypoint x="648.0" y="381.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="13.0" width="83.0" x="-59.0" y="-39.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toResponseFlow" id="BPMNEdge_toResponseFlow">
-        <omgdi:waypoint x="589.0" y="237.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="700.0" y="230.0"></omgdi:waypoint>
+        <omgdi:waypoint x="700.0" y="135.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="125.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="39.0" width="100.0" x="-44.0" y="-11.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
@@ -616,24 +632,21 @@ if(ncwf_claimRejectedState!='classification'){
         <omgdi:waypoint x="1050.0" y="350.0"></omgdi:waypoint>
         <omgdi:waypoint x="1100.0" y="350.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="toNotificationFlow" id="BPMNEdge_toNotificationFlow">
-        <omgdi:waypoint x="801.0" y="350.0"></omgdi:waypoint>
-        <omgdi:waypoint x="848.0" y="350.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toValidateTreatement1" id="BPMNEdge_toValidateTreatement1">
-        <omgdi:waypoint x="532.0" y="257.0"></omgdi:waypoint>
-        <omgdi:waypoint x="569.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="562.0" y="203.0"></omgdi:waypoint>
+        <omgdi:waypoint x="639.0" y="218.0"></omgdi:waypoint>
+        <omgdi:waypoint x="700.0" y="230.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toValidateTreatement2" id="BPMNEdge_toValidateTreatement2">
-        <omgdi:waypoint x="702.0" y="237.0"></omgdi:waypoint>
-        <omgdi:waypoint x="614.0" y="257.0"></omgdi:waypoint>
-        <omgdi:waypoint x="609.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="195.0"></omgdi:waypoint>
+        <omgdi:waypoint x="700.0" y="230.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="backToAnalysisFlow1" id="BPMNEdge_backToAnalysisFlow1">
-        <omgdi:waypoint x="781.0" y="330.0"></omgdi:waypoint>
-        <omgdi:waypoint x="780.0" y="65.0"></omgdi:waypoint>
-        <omgdi:waypoint x="588.0" y="65.0"></omgdi:waypoint>
-        <omgdi:waypoint x="238.0" y="65.0"></omgdi:waypoint>
+        <omgdi:waypoint x="940.0" y="63.0"></omgdi:waypoint>
+        <omgdi:waypoint x="995.0" y="62.0"></omgdi:waypoint>
+        <omgdi:waypoint x="995.0" y="-1.0"></omgdi:waypoint>
+        <omgdi:waypoint x="598.0" y="-1.0"></omgdi:waypoint>
+        <omgdi:waypoint x="238.0" y="-1.0"></omgdi:waypoint>
         <omgdi:waypoint x="238.0" y="319.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="39.0" width="100.0" x="58.0" y="-45.0"></omgdc:Bounds>
@@ -649,10 +662,10 @@ if(ncwf_claimRejectedState!='classification'){
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="backToTraitementFlow3" id="BPMNEdge_backToTraitementFlow3">
-        <omgdi:waypoint x="589.0" y="277.0"></omgdi:waypoint>
-        <omgdi:waypoint x="588.0" y="319.0"></omgdi:waypoint>
-        <omgdi:waypoint x="485.0" y="319.0"></omgdi:waypoint>
-        <omgdi:waypoint x="479.0" y="285.0"></omgdi:waypoint>
+        <omgdi:waypoint x="720.0" y="250.0"></omgdi:waypoint>
+        <omgdi:waypoint x="692.0" y="244.0"></omgdi:waypoint>
+        <omgdi:waypoint x="562.0" y="244.0"></omgdi:waypoint>
+        <omgdi:waypoint x="562.0" y="203.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="39.0" width="100.0" x="-52.0" y="8.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
@@ -662,22 +675,30 @@ if(ncwf_claimRejectedState!='classification'){
         <omgdi:waypoint x="238.0" y="374.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endTreatmentFlow" id="BPMNEdge_endTreatmentFlow">
-        <omgdi:waypoint x="609.0" y="257.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="257.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="720.0" y="250.0"></omgdi:waypoint>
+        <omgdi:waypoint x="810.0" y="250.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="15.0" x="10.0" y="0.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow63" id="BPMNEdge_flow63">
-        <omgdi:waypoint x="702.0" y="237.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="195.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="230.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="15.0" x="10.0" y="0.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toValidateResponse" id="BPMNEdge_toValidateResponse">
-        <omgdi:waypoint x="702.0" y="165.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="197.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="125.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="155.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endClassificationFlow" id="BPMNEdge_endClassificationFlow">
-        <omgdi:waypoint x="610.0" y="426.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="426.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="370.0"></omgdi:waypoint>
+        <omgdi:waypoint x="753.0" y="381.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="382.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="270.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="15.0" x="10.0" y="0.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="toEndOrientationGateway" id="BPMNEdge_toEndOrientationGateway">
         <omgdi:waypoint x="291.0" y="346.0"></omgdi:waypoint>
@@ -693,8 +714,8 @@ if(ncwf_claimRejectedState!='classification'){
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow64" id="BPMNEdge_flow64">
-        <omgdi:waypoint x="722.0" y="350.0"></omgdi:waypoint>
-        <omgdi:waypoint x="761.0" y="350.0"></omgdi:waypoint>
+        <omgdi:waypoint x="923.0" y="253.0"></omgdi:waypoint>
+        <omgdi:waypoint x="978.0" y="249.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow65" id="BPMNEdge_flow65">
         <omgdi:waypoint x="330.0" y="326.0"></omgdi:waypoint>
@@ -713,6 +734,18 @@ if(ncwf_claimRejectedState!='classification'){
       <bpmndi:BPMNEdge bpmnElement="isNotDraftFlow" id="BPMNEdge_isNotDraftFlow">
         <omgdi:waypoint x="123.0" y="346.0"></omgdi:waypoint>
         <omgdi:waypoint x="186.0" y="346.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow66" id="BPMNEdge_flow66">
+        <omgdi:waypoint x="850.0" y="250.0"></omgdi:waypoint>
+        <omgdi:waypoint x="870.0" y="250.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow67" id="BPMNEdge_flow67">
+        <omgdi:waypoint x="435.0" y="258.0"></omgdi:waypoint>
+        <omgdi:waypoint x="450.0" y="258.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow68" id="BPMNEdge_flow68">
+        <omgdi:waypoint x="700.0" y="270.0"></omgdi:waypoint>
+        <omgdi:waypoint x="787.0" y="320.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
