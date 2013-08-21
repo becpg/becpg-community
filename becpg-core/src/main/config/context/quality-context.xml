@@ -16,10 +16,10 @@
 
     <bean id="nonConformityService" class="fr.becpg.repo.quality.impl.NonConformityServiceImpl">
 		<property name="repoService" ref="repoService" />				
-		<property name="repositoryHelper" ref="repositoryHelper" />				
+		<property name="repositoryHelper" ref="repositoryHelper" />		
+		<property name="workflowService" ref="WorkflowService"/>		
 	</bean>
-    <bean id="nonConformityPolicies" class="fr.becpg.repo.quality.policy.NonConformityPolicies" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
+    <bean id="nonConformityPolicies"  class="fr.becpg.repo.quality.policy.NonConformityPolicies" parent="abstractBeCPGPolicy">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nonConformityService" ref="nonConformityService" />					
 	</bean>	

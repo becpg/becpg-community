@@ -49,11 +49,6 @@
 						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn</prop>
 						<prop key="mimetype">text/xml</prop>
 					</props>	
-					<props>
-						<prop key="engineId">activiti</prop>
-						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
-						<prop key="mimetype">text/xml</prop>
-					</props>	
             </list>
         </property>
     </bean> 
@@ -202,5 +197,22 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+	<bean id="patch.bcpg.redeployClaimWf" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployClaimWf</value></property>
+        <property name="description"><value>patch.bcpg.redeployClaimWf.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10013</value></property>
+        <property name="workflowDefinitions">
+            <list>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>	
+            </list>
+        </property>
+    </bean> 
 	
 </beans>
