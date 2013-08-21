@@ -28,6 +28,8 @@
           <activiti:field name="script">
             <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
             task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
+            task.setVariable('bpm_workflowDueDate',  execution.getVariable('bpm_workflowDueDate'));
+            task.setVariable('bpm_workflowPriority',  execution.getVariable('bpm_workflowPriority'));
             		for (var i = 0; i &lt; bpm_package.children.length; i++)
 						{
 							var nc = bpm_package.children[i];
@@ -60,6 +62,9 @@
                   execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
         			   execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
         			   execution.setVariable('bcpgwf_notifyMe', task.getVariable('bcpgwf_notifyMe'));
+        			   
+        			   execution.setVariable('bpm_workflowDueDate', task.getVariable('bpm_workflowDueDate'));
+        			   execution.setVariable('bpm_workflowPriority', task.getVariable('bpm_workflowPriority'));
                   
                   execution.setVariable('skipClassification',false);
                    

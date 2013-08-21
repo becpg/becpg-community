@@ -178,6 +178,7 @@
             <mandatory-aspects>
             	<aspect>qa:claimAspect</aspect>
             	<aspect>qa:batchAspect</aspect>
+            	<aspect>ncwf:claimRejectedAspect</aspect>
             	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>

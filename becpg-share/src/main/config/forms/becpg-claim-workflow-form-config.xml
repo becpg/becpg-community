@@ -206,57 +206,12 @@
 			</form>
 			<form id="workflow-details">
 				<field-visibility>
-					<show force="true" id="qa:claimSource" />
-					<!-- <show force="true" id="qa:claimDistributionNetwork" /> -->
-					<show force="true" id="bcpg:clients" />
-					<show force="true" id="qa:claimCustomerInformation" />
-
-					<show force="true" id="qa:product" />
-					<!-- <show force="true" id="qa:productType" /> -->
-					<show force="true" id="qa:batchId" />
-					<show force="true" id="qa:productUseByDate" />
-
-					<show force="true" id="qa:claimDescription" />
-					<show force="true" id="qa:claimTradeContact" />
-					<show force="true" id="qa:claimTradeContactCheck" />
-					<show force="true" id="qa:claimTracking" />
-
-
 					<show force="false" id="packageItems" />
 				</field-visibility>
 				<appearance>
-					<set id="info" appearance="title" label-id="workflow.set.general" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set appearance="" id="response" />
 					<set appearance="title" id="items" label-id="workflow.set.items" />
 
-					<field id="qa:claimSource" mandatory="true" read-only="false" set="info" />
-					<!-- <field id="qa:claimDistributionNetwork" mandatory="true" read-only="false" set="info" /> -->
-
-					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="info">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-
-					<field id="qa:claimCustomerInformation" mandatory="false" read-only="false" set="info">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-
-					<field id="qa:product" mandatory="true" read-only="false" set="info" />
-					<!-- <field id="qa:productType" mandatory="true" read-only="false" set="info" /> -->
-					<field id="qa:batchId" mandatory="false" read-only="false" set="info" />
-					<field id="qa:productUseByDate" mandatory="false" read-only="false" set="info" />
-
-
-					<field id="qa:claimDescription" mandatory="true" read-only="false" set="info">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-
-					<field id="qa:claimTradeContact" mandatory="false" read-only="false" set="info" />
-					<field id="qa:claimTradeContactCheck" mandatory="false" read-only="false" set="info" />
-					<field id="qa:claimTracking" mandatory="true" read-only="false" set="info" />
-
-
 					<field id="packageItems" mandatory="false" read-only="false" set="items" />
-
 				</appearance>
 			</form>
 		</forms>
