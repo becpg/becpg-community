@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -67,6 +68,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_CALLBACK_USER = "callbackUser";
 	
 	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
+
+	private static final String PARAM_MAX_RESULTS = "maxResults";
 	
 	/** Services **/
 
@@ -101,6 +104,21 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		String path = req.getParameter(PARAM_PATH);
 		String query = req.getParameter(PARAM_QUERY);
+		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
+		
+		Integer maxResults = null;
+		if (maxResultsString != null) {
+			try {
+				maxResults = Integer.parseInt(maxResultsString);
+			} catch (NumberFormatException e) {
+				logger.error("Cannot parse page argument", e);
+			}
+		}
+		
+		if(maxResults==null){
+			maxResults = RepoConsts.MAX_RESULTS_256;
+		}
+		
 		String runnedQuery = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_V2))
 				+ LuceneHelper.DEFAULT_IGNORE_QUERY;
 		
@@ -115,7 +133,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		}
 		
-		List<NodeRef> refs = beCPGSearchService.luceneSearch(runnedQuery,RepoConsts.MAX_RESULTS_256);
+		List<NodeRef> refs = beCPGSearchService.luceneSearch(runnedQuery,LuceneHelper.getSort(ContentModel.PROP_MODIFIED) ,maxResults );
 		if (refs!=null && !refs.isEmpty()) {
 			return refs;
 		}

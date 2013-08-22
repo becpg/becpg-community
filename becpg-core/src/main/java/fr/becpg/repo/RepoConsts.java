@@ -5,7 +5,6 @@ package fr.becpg.repo;
 
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.StoreRef;
-import org.alfresco.service.namespace.QName;
 
 /**
  * beCPG constants for repository
