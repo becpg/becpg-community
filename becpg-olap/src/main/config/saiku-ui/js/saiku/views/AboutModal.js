@@ -32,6 +32,6 @@ var AboutModal = Modal.extend({
     
     type: "info",
     
-    message: "Saiku 2.4 for "+Settings.VERSION + "<br>" + 
+    message: "Saiku 2.5 for "+Settings.VERSION + "<br>" + 
         "<a href='http://www.becpg.fr'>http://www.becpg.fr/</a>"
 });

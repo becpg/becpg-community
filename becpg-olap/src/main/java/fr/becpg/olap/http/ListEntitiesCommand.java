@@ -3,7 +3,7 @@ package fr.becpg.olap.http;
 public class ListEntitiesCommand extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/becpg/remote/entity/list?query=%s";
+	private static String COMMAND_URL_TEMPLATE = "/becpg/remote/entity/list?query=%s&maxResults=-1";
 
 	
 	public ListEntitiesCommand(String serverUrl) {
