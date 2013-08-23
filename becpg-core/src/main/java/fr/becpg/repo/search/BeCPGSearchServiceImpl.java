@@ -69,10 +69,15 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService {
 	public List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort, int maxResults) {
 		return search(runnedQuery, sort, maxResults, SearchService.LANGUAGE_LUCENE);
 	}
+	
+	@Override
+	public List<NodeRef> lucenePaginatedSearch(String runnedQuery, Map<String, Boolean> sort, int page, int pageSize) {
+		return search(runnedQuery, sort, page , pageSize, SearchService.LANGUAGE_LUCENE, RepoConsts.SPACES_STORE);
+	}
 
 	@Override
 	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults, String searchLanguage) {
-		return search(runnedQuery, sort, maxResults, searchLanguage, RepoConsts.SPACES_STORE);
+		return search(runnedQuery, sort, -1, maxResults, searchLanguage, RepoConsts.SPACES_STORE);
 	}
 
 	@Override
@@ -83,9 +88,10 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService {
 	}
 	
 	
+	
 
 	@Override
-	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults, String searchLanguage, StoreRef storeRef) {
+	public List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page,  int maxResults, String searchLanguage, StoreRef storeRef) {
 
 		List<NodeRef> nodes = new LinkedList<NodeRef>();
 
@@ -98,7 +104,7 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService {
 		sp.setQuery(runnedQuery);
 		sp.addLocale(Locale.getDefault());
 		sp.excludeDataInTheCurrentTransaction(false);
-		// sp.setDefaultOperator(Operator.AND);
+
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
@@ -107,6 +113,12 @@ public class BeCPGSearchServiceImpl implements BeCPGSearchService {
 			sp.setMaxItems(maxResults);
 			sp.setLimitBy(LimitBy.FINAL_SIZE);
 		}
+		
+       if(page >0){
+			sp.setSkipCount((page-1)*maxResults);
+			sp.setMaxPermissionChecks(page*1000);
+       } 
+		
 
 		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(searchLanguage)) {
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);

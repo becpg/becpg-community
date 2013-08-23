@@ -15,13 +15,17 @@ public interface BeCPGSearchService {
 	List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort);
 	
 	List<NodeRef> luceneSearch(String runnedQuery, Map<String, Boolean> sort, int maxResults);
+	
+	List<NodeRef> lucenePaginatedSearch(String runnedQuery, Map<String, Boolean> sort, int page, int pageSize);
 
 	List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults,
 			String searchLanguage);
 	
-	List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int maxResults,
+	List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults,
 			String searchLanguage, StoreRef storeRef);
 
 	List<NodeRef> searchByPath(NodeRef parentNodeRef, String xPath);
+
+	
 
 }
