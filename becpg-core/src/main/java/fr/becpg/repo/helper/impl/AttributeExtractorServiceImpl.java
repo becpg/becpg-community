@@ -22,6 +22,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.tagging.TaggingService;
@@ -630,9 +631,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId + ".person", new BeCPGCacheDataProviderCallBack<String>() {
 			public String getData() {
 				String displayName = "";
-				NodeRef personNodeRef = personService.getPerson(userId);
-				if (personNodeRef != null) {
-					displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
+				try {
+					NodeRef personNodeRef = personService.getPerson(userId);
+					if (personNodeRef != null) {
+						displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
+					}
+				} catch (NoSuchPersonException e){
+					//Case person was deleted
+					return userId;
 				}
 				return displayName;
 			}
