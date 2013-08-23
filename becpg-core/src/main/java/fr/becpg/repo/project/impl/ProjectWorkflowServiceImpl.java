@@ -249,7 +249,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 			Map<QName, Serializable> newProperties){
 		
 		Serializable dbValue = dbProperties.get(propertyQName);
-		if((dbValue == null && value != null) || (dbValue != null && value == null) || !value.equals(dbValue)){
+		if((dbValue == null && value != null) || (dbValue != null && value == null) || (value!=null && !value.equals(dbValue))){
 			newProperties.put(propertyQName, value);
 		}
 		return newProperties;
