@@ -205,7 +205,13 @@ public class ProjectListExtractor extends SimpleExtractor {
 						TaskState taskState = null;
 						if (pagination.getPageSize() > 10) {
 							DataListFilter filter = (DataListFilter) props.get(FILTER_DATA);
-							taskState = TaskState.valueOf(filter.getFilterData());
+							if(filter.getFilterData()!=null){
+								try {
+									taskState = TaskState.valueOf(filter.getFilterData());
+								} catch (Exception e){
+									//Case filter data is incorrect
+								}
+							}
 						}
 
 						for (NodeRef itemNodeRef : results) {
