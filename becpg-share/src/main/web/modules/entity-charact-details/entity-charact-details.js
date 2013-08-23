@@ -219,7 +219,21 @@
 		   this.barChartSeriesDef = [];
 
 		   for (i in data.metadatas) {
-			   myFieldDefs.push("col" + i);
+			   myFieldDefs.push({key : "col" + i ,
+                  parser : function(oData) {
+                     if(!YAHOO.lang.isValue(oData) || (oData === "")) {
+                        return null;
+                    }
+
+                    //Convert to number
+                    var number = oData * 1;
+                   
+                    // Validate
+                    if(YAHOO.lang.isNumber(number)) {
+                        return Math.floor(number*10000)/10000;
+                    }
+                    return oData;
+                }});
 			   this.columnDefs.push({
 			      key : "col" + i,
 			      label : data.metadatas[i].colName

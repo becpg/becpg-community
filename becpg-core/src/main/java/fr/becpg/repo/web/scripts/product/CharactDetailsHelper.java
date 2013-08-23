@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.product.data.CharactDetails;
 
 /**
@@ -35,6 +36,7 @@ public class CharactDetailsHelper {
 	
 	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService) throws JSONException {
 
+		
 		JSONObject obj = new JSONObject();
 
 		JSONArray metadatas = new JSONArray();
@@ -71,7 +73,7 @@ public class CharactDetailsHelper {
 		
 		for (NodeRef compoEl : compEls) {
 			List<Object> tmp = new ArrayList<Object>();
-			tmp.add(nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
+			tmp.add((String)nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl)) {
 						tmp.add(entry.getValue().get(compoEl));
@@ -89,6 +91,8 @@ public class CharactDetailsHelper {
 	}
 
 	public static void writeCSV(CharactDetails charactDetails,final NodeService nodeService, Writer writer) {
+		
+		 PropertyFormats propertyFormats = new PropertyFormats(false);
 		
 		CSVConfig csvConfig = new CSVConfig();
 		csvConfig.setDelimiter(';');
@@ -126,7 +130,7 @@ public class CharactDetailsHelper {
 			tmp.put(getYAxisLabel(),(String)nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl)) {
-						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME), ""+entry.getValue().get(compoEl));
+						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME), propertyFormats.getDecimalFormat().format(entry.getValue().get(compoEl)));
 					} else {
 						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME),"0");
 					}
