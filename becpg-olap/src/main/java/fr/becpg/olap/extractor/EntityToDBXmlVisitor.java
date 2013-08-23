@@ -186,17 +186,18 @@ public class EntityToDBXmlVisitor {
 		// TODO look if already exist aka same nodeRef same date modification or
 		// creation
 
+		JdbcUtils.update(connection, "update  `becpg_datalist` set is_last_version = ? where  datalist_id = ? and instance_id = ?", new Object[] { false, dataListItemNodeRef,
+				instance.getId() });
 
-		JdbcUtils.update(connection,"update  `becpg_datalist` set is_last_version = ? where  datalist_id = ? and instance_id = ?", new Object[]{false, dataListItemNodeRef, instance.getId()});
-		
-		Long columnId = JdbcUtils.update(connection,"insert into `becpg_datalist` " + "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`,`is_last_version`) "
-				+ " values (?,?,?,?,?,?,?)", new Object[] { dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId() ,true});
+		Long columnId = JdbcUtils.update(connection, "insert into `becpg_datalist` "
+				+ "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`,`is_last_version`) " + " values (?,?,?,?,?,?,?)", new Object[] {
+				dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId(), true });
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
 			if (column.value != null) {
 
-				JdbcUtils.update(connection,"insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
+				JdbcUtils.update(connection, "insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
 						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
 			}
 		}
@@ -227,18 +228,17 @@ public class EntityToDBXmlVisitor {
 
 		// TODO look if already exist aka same nodeRef same date modification or
 		// creation
-		
-		JdbcUtils.update(connection,"update  `becpg_entity` set is_last_version = ? where  entity_id = ? and instance_id = ?", new Object[]{false, nodeRef, instance.getId()});
 
-		Long columnId = JdbcUtils.update(connection,"insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) " 
-				+ " values (?,?,?,?,?,?)",
-				new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId(),true });
+		JdbcUtils.update(connection, "update  `becpg_entity` set is_last_version = ? where  entity_id = ? and instance_id = ?", new Object[] { false, nodeRef, instance.getId() });
+
+		Long columnId = JdbcUtils.update(connection, "insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) "
+				+ " values (?,?,?,?,?,?)", new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId(), true });
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
 			if (column.value != null) {
-				JdbcUtils.update(connection,"insert into `becpg_property` " + "(`entity_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
-						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getId() });
+				JdbcUtils.update(connection, "insert into `becpg_property` " + "(`entity_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
+						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
 			}
 		}
 		return columnId;
@@ -249,62 +249,75 @@ public class EntityToDBXmlVisitor {
 
 		NodeList properties = entity.getChildNodes();
 		for (int j = 0; j < properties.getLength(); j++) {
-			Element property = ((Element) properties.item(j));
-			if (!ignoredProperties.contains(property.getNodeName())) {
-				String type = property.getAttribute(ATTR_TYPE);
-				switch (type) {
-				case "d:text":
-				case "d:mltext":
-				case "d:qname":
-					if (property.getTextContent() != null) {
-						ret.add(new Column(property.getNodeName(), property.getTextContent()));
-					}
-					break;
-				case "d:datetime":
-				case "d:date":
-					if (property.getTextContent() != null) {
-						ret.add(new Column(property.getNodeName(), parse(property.getTextContent())));
-					}
-					break;
-				case "d:double":
-					if (property.getTextContent() != null) {
-						ret.add(new Column(property.getNodeName(), Double.parseDouble(property.getTextContent())));
-					}
-					break;
-				case "d:float":
-					if (property.getTextContent() != null) {
-						ret.add(new Column(property.getNodeName(), Float.parseFloat(property.getTextContent())));
-					}
-					break;
-				case "d:int":
-				case "d:long":
-					if (property.getTextContent() != null) {
-						ret.add(new Column(property.getNodeName(), Long.parseLong(property.getTextContent())));
-					}
-					break;
-				case "d:noderef":
-				case "assoc":
-					NodeList propertiesAssoc = property.getChildNodes();
-					for (int i = 0; i < propertiesAssoc.getLength(); i++) {
-						if (propertiesAssoc.item(i) instanceof Element) {
-							Element assoc = ((Element) propertiesAssoc.item(i));
-							if (!assoc.getAttribute(ATTR_NODEREF).isEmpty() || !assoc.getAttribute(ATTR_NAME).isEmpty()) {
-								ret.add(new Column(property.getNodeName(), assoc.getAttribute(ATTR_NODEREF), assoc.getAttribute(ATTR_NAME)));
+			if (properties.item(j) instanceof Element) {
+				Element property = ((Element) properties.item(j));
+				if (!ignoredProperties.contains(property.getNodeName())) {
+					String type = property.getAttribute(ATTR_TYPE);
+					switch (type) {
+					case "d:text":
+					case "d:mltext":
+					case "d:qname":
+						if (property.getTextContent() != null) {
+							ret.add(new Column(property.getNodeName(), property.getTextContent()));
+						}
+						break;
+					case "d:datetime":
+					case "d:date":
+						if (property.getTextContent() != null) {
+							ret.add(new Column(property.getNodeName(), parse(property.getTextContent())));
+						}
+						break;
+					case "d:double":
+						if (property.getTextContent() != null) {
+							Double val = Double.parseDouble(property.getTextContent());
+							if(Double.isNaN(val) || Double.isInfinite(val)){
+								val = null;
+							}
+							ret.add(new Column(property.getNodeName(), val));
+						}
+						break;
+					case "d:float":
+						if (property.getTextContent() != null) {
+							Float val =  Float.parseFloat(property.getTextContent());
+							if(Float.isNaN(val) || Float.isInfinite(val)){
+								val = null;
+							}
+							ret.add(new Column(property.getNodeName(),val));
+						}
+						break;
+					case "d:int":
+					case "d:long":
+						if (property.getTextContent() != null) {
+							ret.add(new Column(property.getNodeName(), Long.parseLong(property.getTextContent())));
+						}
+						break;
+					case "d:noderef":
+					case "assoc":
+						NodeList propertiesAssoc = property.getChildNodes();
+						for (int i = 0; i < propertiesAssoc.getLength(); i++) {
+							if (propertiesAssoc.item(i) instanceof Element) {
+								Element assoc = ((Element) propertiesAssoc.item(i));
+								if (!assoc.getAttribute(ATTR_NODEREF).isEmpty() || !assoc.getAttribute(ATTR_NAME).isEmpty()) {
+									ret.add(new Column(property.getNodeName(), assoc.getAttribute(ATTR_NODEREF), assoc.getAttribute(ATTR_NAME)));
+								}
 							}
 						}
-					}
-					break;
-				case "d:boolean":
-					if (property.getTextContent() != null) {
-						ret.add(new Column(property.getNodeName(), Boolean.parseBoolean(property.getTextContent())));
+						break;
+					case "d:boolean":
+						if (property.getTextContent() != null) {
+							ret.add(new Column(property.getNodeName(), Boolean.parseBoolean(property.getTextContent())));
+						}
+
+						break;
+
+					default:
+						break;
 					}
 
-					break;
-
-				default:
-					break;
 				}
-
+			} else {
+				logger.error("Cannot read property "+properties.item(j).getTextContent());
+				return new ArrayList<>();
 			}
 		}
 
