@@ -64,17 +64,17 @@
    <#escape x as jsonUtils.encodeJSONString(x)>
 {
       <#if data.value?is_boolean>
-   "value": ${data.value?string},
+       "value": ${data.value?string},
       <#elseif data.value?is_number>
-   "value": ${data.value?c},
+       "value": ${data.value?c},
       <#else>
-   "value": "${data.value}",
+       "value": "${data.value}",
       </#if>
       <#if data.metadata??>
-   "metadata": "${data.metadata}",
+       "metadata": "${data.metadata}",
       </#if>
       <#if data.siteId??>
-   "siteId": "${data.siteId}",
+       "siteId": "${data.siteId}",
       </#if>
       <#if data.displayValue?exists >
 	      <#if data.displayValue?is_boolean>
@@ -87,7 +87,7 @@
 	   "displayValue": "${data.displayValue}"
 	      </#if>
 	   <#else>
-	       "displayValue": " ${data.value?string}"
+	    "displayValue": " ${data.value?string}"
       </#if>
       
 }
