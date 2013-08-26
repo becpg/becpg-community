@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -787,8 +788,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
-		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME);
-		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME);
+		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME,Locale.getDefault());
+		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME,Locale.getDefault());
 		
 		try {
 
@@ -927,7 +928,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		for (String group : groups) {
 
 			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase());
+			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase(), Locale.getDefault());
 
 			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
 				logger.debug("create group: " + groupName);
