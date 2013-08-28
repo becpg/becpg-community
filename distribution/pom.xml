@@ -31,25 +31,25 @@
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-core</artifactId>
 			<type>amp</type>
-			<version>1.5.2</version>
+			<version>${becpg.contribs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-share</artifactId>
 			<type>amp</type>
-			<version>1.5.2</version>
+			<version>${becpg.contribs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-core</artifactId>
 			<type>amp</type>
-			<version>1.5.2</version>
+			<version>${becpg.contribs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-share</artifactId>
 			<type>amp</type>
-			<version>1.5.2</version>
+			<version>${becpg.contribs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
