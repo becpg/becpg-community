@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -45,7 +44,7 @@ import fr.becpg.report.client.ReportParams;
 public class EntityReportServiceImpl implements EntityReportService {
 
 	private static final String DEFAULT_EXTRACTOR = "default";
-	private static final String REPORT_NAME = "%s - %s";	
+	private static final String REPORT_NAME = "%s - %s";
 
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
@@ -69,7 +68,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
 	private PermissionService permissionService;
-	
+
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
 		logger.debug("Register report extractor :" + typeName + " - " + extractor.getClass().getSimpleName());
@@ -129,9 +128,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
 
-		// #366 : force to use server locale for mlText fields 
+		// #366 : force to use server locale for mlText fields
 		I18NUtil.setLocale(Locale.getDefault());
-		
+
 		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
 		// TODO here plug a template filter base on entityNodeRef
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
@@ -178,20 +177,19 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		return ret;
 	}
-	
-	
+
 	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat) {
-		
+
 		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
 				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
 		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-		if(documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null){
+		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null) {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
 		return documentName;
 	}
-	
-	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef,String documentName){
+
+	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName) {
 
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
@@ -203,15 +201,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 		if (documentNodeRef == null) {
 			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
-			//We don't update permissions. If permissions are modified -> admin should use the action update-permissions from the reportTpl
+			// We don't update permissions. If permissions are modified -> admin
+			// should use the action update-permissions from the reportTpl
 			setPermissions(tplNodeRef, documentNodeRef);
 			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);
 		}
-		
+
 		return documentNodeRef;
 	}
-
-	
 
 	/**
 	 * Method that generates reports.
@@ -243,54 +240,44 @@ public class EntityReportServiceImpl implements EntityReportService {
 			if (nodeElt == null) {
 				throw new IllegalArgumentException("nodeElt is null");
 			}
-			
-			// prepare			
+
+			// prepare
 			final String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 			final String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
-			
-			final NodeRef documentNodeRef  = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
-			
+
+			final NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+
 			// Run report
-			AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Object>()
-            {
-                public Object doWork() throws Exception 
-                {
-                	try {
-	                	ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
-	
-	    				if (writer != null) {
-	    					String mimetype = mimetypeService.guessMimetype(documentName);
-	    					writer.setMimetype(mimetype);
-	    					Map<String, Object> params = new HashMap<String, Object>();
-	
-	    					params.put(ReportParams.PARAM_IMAGES, images);
-	    					params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-	
-	    					logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
-	    					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
-	    				
-	    				}
-    				} catch (ReportException e) {
-    					logger.error("Failed to execute report for template : " + tplNodeRef, e);
-    				}
-    				
-                    return null;
-                }
-            }, 
-            AuthenticationUtil.getSystemUserName());
-			
-			//Set Assoc
-			newReports.add(documentNodeRef);			
+			try {
+				ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+
+				if (writer != null) {
+					String mimetype = mimetypeService.guessMimetype(documentName);
+					writer.setMimetype(mimetype);
+					Map<String, Object> params = new HashMap<String, Object>();
+
+					params.put(ReportParams.PARAM_IMAGES, images);
+					params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+
+					logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
+
+				}
+			} catch (ReportException e) {
+				logger.error("Failed to execute report for template : " + tplNodeRef, e);
+			}
+
+			// Set Assoc
+			newReports.add(documentNodeRef);
 		}
 
-		updateReportsAssoc(entityNodeRef, newReports);		
+		updateReportsAssoc(entityNodeRef, newReports);
 	}
-	
 
+	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
 
-	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports){
-		
-		// #417 : refresh reports assoc (delete obsolete reports if we rename entity)
+		// #417 : refresh reports assoc (delete obsolete reports if we rename
+		// entity)
 		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 		for (NodeRef dbReport : dbReports) {
 			if (!newReports.contains(dbReport)) {
@@ -334,27 +321,27 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return tplsToReturnNodeRef;
 	}
 
-	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef){
-		
+	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef) {
+
 		Set<AccessPermission> tplAccessPermissions = permissionService.getAllSetPermissions(tplNodeRef);
-		permissionService.deletePermissions(documentNodeRef);	
+		permissionService.deletePermissions(documentNodeRef);
 		boolean inheritParentPermissions = true;
-		
-		if(!tplAccessPermissions.isEmpty()){		
+
+		if (!tplAccessPermissions.isEmpty()) {
 			logger.debug("set permissions size " + tplAccessPermissions.size());
-			if(logger.isDebugEnabled()){
-				for(AccessPermission a : tplAccessPermissions){
+			if (logger.isDebugEnabled()) {
+				for (AccessPermission a : tplAccessPermissions) {
 					logger.debug("Authority: " + a.getAuthority() + " status " + a.getAccessStatus() + " " + a.getPermission());
-				}	
+				}
 			}
-			for(AccessPermission tplAccessPermission : tplAccessPermissions){	
-				if(!tplAccessPermission.isInherited()){
+			for (AccessPermission tplAccessPermission : tplAccessPermissions) {
+				if (!tplAccessPermission.isInherited()) {
 					permissionService.setPermission(documentNodeRef, tplAccessPermission.getAuthority(), tplAccessPermission.getPermission(), true);
 					inheritParentPermissions = false;
-				}				
+				}
 			}
 		}
-		
+
 		permissionService.setInheritParentPermissions(documentNodeRef, inheritParentPermissions);
 	}
 }
