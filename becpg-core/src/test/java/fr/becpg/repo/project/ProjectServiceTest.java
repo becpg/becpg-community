@@ -957,7 +957,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, new Date(),
 								null, null, 2, ProjectState.InProgress, null, 0, rawMaterialNodeRef);
 

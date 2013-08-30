@@ -72,7 +72,23 @@
             <version>${alfresco.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        
+        
+        <!-- Test -->
+        <dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-remote-api</artifactId>
+            <version>${alfresco.version}</version>
+            <scope>test</scope>
+            <classifier>config</classifier>
+        </dependency>
+        
+         <dependency>
+		    <groupId>org.apache.chemistry</groupId>
+		    <artifactId>chemistry-tck-atompub</artifactId>
+		    <version>0.1-incubating-unreleased</version>
+		    <scope>test</scope>
+		 </dependency>
 		
 
 		<dependency>
@@ -98,44 +114,22 @@
 <!-- 		  <version>0.5.1</version> -->
 <!-- 		  <scope>runtime</scope> -->
 <!-- 		</dependency>  -->
-		
-<!-- 
-		<dependency>
-			<groupId>jmock</groupId>
-			<artifactId>jmock</artifactId>
-			<version>1.2.0</version>
-			<scope>test</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-mock</artifactId>
-			<version>2.0.8</version>
-			<scope>test</scope>
-		</dependency> -->
 
-		<!-- Insight 
-		<dependency>
-        <groupId>com.springsource.insight</groupId> 
-        <artifactId>insight-annotation</artifactId>
-        <version>1.5.0.RELEASE</version>
-        <scope>provided</scope>
-      </dependency>
-	-->
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.13</version>
+				<version>2.16</version>
 				<configuration>
 					<argLine>${app.testing.jvm.args}</argLine>
 					<excludes>
-						<exclude>**/*WebScriptTest.java</exclude>
-						<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
+						<!-- <exclude>**/*WebScriptTest.java</exclude> -->
+					   <exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 						<exclude>fr/becpg/repo/importer/UserImportServiceTest.java</exclude>
-						<exclude>fr/becpg/repo/product/ProductVersionServiceTest.java</exclude>
+						<!-- <exclude>fr/becpg/repo/product/ProductVersionServiceTest.java</exclude>  -->
 					</excludes>
 				</configuration>
 			</plugin>
@@ -159,7 +153,7 @@
 			
 		</plugins>
 	</build>
-	<profiles>
+	<!-- <profiles>
 		<profile>
 			<id>test-webscripts</id>
 			<build>
@@ -167,26 +161,20 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.12</version>
+						<version>2.16</version>
 						<configuration>
 							<argLine>${app.testing.jvm.args}</argLine>
 							<includes>
 								<include>**/*WebScriptTest.java</include>
 							</includes>
-								<excludes>
+							<excludes>
 									<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 									<exclude>fr/becpg/repo/importer/UserImportServiceTest.java</exclude>
-								</excludes>
-							<excludes>
 							</excludes>
-                		<parallel>classes</parallel>
-            			<useUnlimitedThreads>true</useUnlimitedThreads>
-	                  <threadCount>80</threadCount>
-	                  <perCoreThreadCount>true</perCoreThreadCount>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+	</profiles> -->
 </project>

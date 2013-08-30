@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -23,6 +22,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.model.ClaimWorkflowModel;
@@ -35,10 +35,6 @@ import fr.becpg.test.BeCPGTestHelper;
 
 public class ClaimWorkflowTest extends AbstractWorkflowTest {
 
-	
-	private static String PATH_NCFOLDER = "TestFolder";
-
-
 	@Resource
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
@@ -46,16 +42,13 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ClaimWorkflowTest.class);
 
-	private NodeRef folderNodeRef;
 
 	private NodeRef rawMaterial1NodeRef;
-
 	
 	private String workflowInstanceId = null;
 
 	@Resource
 	private NonConformityService nonConformityService;
-
 
 	
 	@Test
@@ -65,25 +58,17 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				BeCPGTestHelper.createUsers(repoBaseTestCase);
-
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-						ContentModel.ASSOC_CONTAINS, PATH_NCFOLDER);
-				if (folderNodeRef != null) {
-					nodeService.deleteNode(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_NCFOLDER,
-						ContentModel.TYPE_FOLDER).getNodeRef();
+				BeCPGTestHelper.createUsers();
 
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				rawMaterial1NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
+				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 
-				alfrescoRepository.create(folderNodeRef, rawMaterial2).getNodeRef();
+				alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 				
 				// clean default storage folder
 				NodeRef folderNodeRef = nonConformityService.getStorageFolder(null);
@@ -97,7 +82,7 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 
 		authenticationComponent.setCurrentUser(BeCPGTestHelper.USER_ONE);
 		
-		//executeClaimWF(true);
+		executeClaimWF(true);
 
 		executeClaimWF(false);
 		
@@ -166,7 +151,7 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 			}
 		}, false, true);
 		
-		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
+		Assert.assertFalse("Workflow is still active",workflowService.getWorkflowById(workflowInstanceId).isActive());
 		
 	}
 

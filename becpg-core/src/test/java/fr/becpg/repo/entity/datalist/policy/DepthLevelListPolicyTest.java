@@ -46,13 +46,11 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 
 		logger.debug("testChangeParentLevelCompoList");
 
-
-		final RepoBaseTestCase repoBaseTestCase = this;
 		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);
 		
@@ -197,7 +195,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				
-				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);		
 		
@@ -247,7 +245,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);		
 		
@@ -397,7 +395,7 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				
-				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);		
 		

@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -135,7 +136,7 @@ public class AlfrescoRepositoryTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 				ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
 
 				NodeRef costNodeRef = costs.get(3);

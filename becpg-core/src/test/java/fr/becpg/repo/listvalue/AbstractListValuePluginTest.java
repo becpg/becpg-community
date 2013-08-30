@@ -40,7 +40,7 @@ public abstract class AbstractListValuePluginTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				BeCPGTestHelper.createUsers(repoBaseTestCase);
+				BeCPGTestHelper.createUsers();
 				initProducts();
 
 				return null;
@@ -51,9 +51,9 @@ public abstract class AbstractListValuePluginTest extends RepoBaseTestCase {
 
 	public void initProducts() {
 		authenticationComponent.setSystemUserAsCurrentUser();
-		rawMaterial1NodeRef = createRawMaterial(testFolderNodeRef, "RM1");
-		rawMaterial2NodeRef = createRawMaterial(testFolderNodeRef, "RM2");
-		rawMaterial3NodeRef = createRawMaterial(testFolderNodeRef, "RM3");
+		rawMaterial1NodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "RM1");
+		rawMaterial2NodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "RM2");
+		rawMaterial3NodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "RM3");
 
 		authenticationComponent.setCurrentUser(BeCPGTestHelper.USER_ONE);
 		/*-- Local semi finished product 1 --*/

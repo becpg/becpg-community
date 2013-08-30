@@ -25,6 +25,7 @@ import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 public class QualityControlTest extends RepoBaseTestCase {
@@ -120,7 +121,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 				List<NodeRef> controlPlansNodeRef = new ArrayList<NodeRef>();
 				controlPlansNodeRef.add(controlPlanNodeRef);
 
-				NodeRef productNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+				NodeRef productNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "Raw material");
 
 				createQualityControl(testFolderNodeRef, controlPlansNodeRef, productNodeRef);
 

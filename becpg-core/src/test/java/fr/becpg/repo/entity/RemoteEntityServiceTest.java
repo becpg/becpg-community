@@ -46,12 +46,11 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 	@Test
 	public void testRemoteEntity() throws FileNotFoundException {
 		
-		final RepoBaseTestCase repoBaseTestCase = this;
 		// create product
 		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);
 
@@ -62,11 +61,12 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 				try {
 					
 					File tempFile = File.createTempFile("remoteEntity", "xml");
+					File tempFile2 = File.createTempFile("remoteEntity2", "xml");
 					
 					List<NodeRef> entities = new ArrayList<NodeRef>();
 					entities.add(sfNodeRef);
 					
-					remoteEntityService.listEntities(entities, System.out,  RemoteEntityFormat.xml);
+					remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2),  RemoteEntityFormat.xml);
 					
 					remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
 
@@ -74,9 +74,9 @@ public class RemoteEntityServiceTest extends RepoBaseTestCase {
 					
 					sfNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml,null);
 					
-					remoteEntityService.getEntity(sfNodeRef, System.out, RemoteEntityFormat.xml);
+					remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
 					
-					remoteEntityService.getEntityData(sfNodeRef, System.out, RemoteEntityFormat.xml);
+					remoteEntityService.getEntityData(sfNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
 					
 					remoteEntityService.getEntityData(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
 					

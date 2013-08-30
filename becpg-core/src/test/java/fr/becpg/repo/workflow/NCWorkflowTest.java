@@ -38,8 +38,6 @@ import fr.becpg.test.BeCPGTestHelper;
 public class NCWorkflowTest extends AbstractWorkflowTest {
 
 	
-	private static String PATH_NCFOLDER = "TestFolder";
-
 	private static final String NC_URI = "http://www.bcpg.fr/model/nc-workflow/1.0";
 	private static final QName PROP_NEED_PREV_ACTION = QName.createQName(NC_URI, "needPrevAction");
 	private static final QName PROP_STATE = QName.createQName(NC_URI, "ncState");
@@ -54,8 +52,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NCWorkflowTest.class);
-
-	private NodeRef folderNodeRef;
 
 	private NodeRef rawMaterial1NodeRef;
 
@@ -75,25 +71,18 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				BeCPGTestHelper.createUsers(repoBaseTestCase);
+				BeCPGTestHelper.createUsers();
 
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-						ContentModel.ASSOC_CONTAINS, PATH_NCFOLDER);
-				if (folderNodeRef != null) {
-					nodeService.deleteNode(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_NCFOLDER,
-						ContentModel.TYPE_FOLDER).getNodeRef();
-
+				
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				rawMaterial1NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
+				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 
-				rawMaterial2NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial2).getNodeRef();
+				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 				
 				// clean default storage folder
 				NodeRef folderNodeRef = nonConformityService.getStorageFolder(null);

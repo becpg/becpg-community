@@ -25,9 +25,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -62,8 +60,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
-import fr.becpg.report.client.ReportFormat;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -116,7 +113,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				createRawMaterial(testFolderNodeRef, "MP test report");
+				BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 
 				return null;
 
@@ -144,7 +141,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Create product --*/
 				logger.debug("Create product");
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 
 				/*-- Generate report --*/
 				entityReportService.generateReport(rawMaterialNodeRef);

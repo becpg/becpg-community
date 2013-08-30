@@ -38,7 +38,7 @@ public class CopyEntityServiceTest extends RepoBaseTestCase {
 		final NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
+				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);
 		

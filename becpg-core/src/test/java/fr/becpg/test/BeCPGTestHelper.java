@@ -1,5 +1,6 @@
 package fr.becpg.test;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,9 +16,14 @@ import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 
 public class BeCPGTestHelper {
 
@@ -32,30 +38,22 @@ public class BeCPGTestHelper {
 	private static Log logger = LogFactory.getLog(BeCPGTestHelper.class);
 	
 	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
-	private static String PATH_CONTEXT_TEST_FOLDER = "ContextTestFolder";
+	public static String PATH_TESTFOLDER = "TestFolder";
 	
 	public static String PRODUCT_NAME = "Finished Product";
 	
-	public static NodeRef createTestFolder(RepoBaseTestCase repoBaseTestCase) {
-		return createTestFolder(repoBaseTestCase, PATH_TESTFOLDER, true);
+	public static NodeRef createTestFolder() {
+		return createTestFolder( PATH_TESTFOLDER);
 	}
 
-	public static NodeRef createContextTestFolder(RepoBaseTestCase repoBaseTestCase) {
-		return createTestFolder(repoBaseTestCase, PATH_CONTEXT_TEST_FOLDER, false);
-	}
 
-	public static NodeRef createTestFolder(RepoBaseTestCase repoBaseTestCase, String folderName, boolean deleteExistingFolder) {
+	public static NodeRef createTestFolder( String folderName) {
 
-		NodeRef folderNodeRef = repoBaseTestCase.nodeService.getChildByName(
-				repoBaseTestCase.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, folderName);
-		if (deleteExistingFolder && folderNodeRef != null) {
-			repoBaseTestCase.fileFolderService.delete(folderNodeRef);
-			folderNodeRef = null;
-		}
+		NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.nodeService.getChildByName(
+				RepoBaseTestCase.INSTANCE.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, folderName);
 		
 		if(folderNodeRef == null){
-			folderNodeRef = repoBaseTestCase.fileFolderService.create(repoBaseTestCase.repositoryHelper.getCompanyHome(),
+			folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(RepoBaseTestCase.INSTANCE.repositoryHelper.getCompanyHome(),
 					folderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		
@@ -63,38 +61,38 @@ public class BeCPGTestHelper {
 	}
 	
 	
-	public static NodeRef createMultiLevelProduct(NodeRef testFolder, RepoBaseTestCase repoBaseTestCase){
+	public static NodeRef createMultiLevelProduct(NodeRef testFolder){
 
 		/*-- Create raw material --*/		
 		logger.debug("/*-- Create raw material --*/");
 		RawMaterialData rawMaterial1 = new RawMaterialData();
 		rawMaterial1.setName("Raw material 1");
-		NodeRef rawMaterial1NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, rawMaterial1).getNodeRef();
+		NodeRef rawMaterial1NodeRef = RepoBaseTestCase.INSTANCE.alfrescoRepository.create(testFolder, rawMaterial1).getNodeRef();
 		RawMaterialData rawMaterial2 = new RawMaterialData();
 		rawMaterial2.setName("Raw material 2");
-		NodeRef rawMaterial2NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, rawMaterial2).getNodeRef();
+		NodeRef rawMaterial2NodeRef = RepoBaseTestCase.INSTANCE.alfrescoRepository.create(testFolder, rawMaterial2).getNodeRef();
 		LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 		lSF1.setName("Local semi finished 1");
-		NodeRef lSF1NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF1).getNodeRef();
+		NodeRef lSF1NodeRef = RepoBaseTestCase.INSTANCE.alfrescoRepository.create(testFolder, lSF1).getNodeRef();
 
 		LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 		lSF2.setName("Local semi finished 2");
-		NodeRef lSF2NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF2).getNodeRef();
+		NodeRef lSF2NodeRef = RepoBaseTestCase.INSTANCE.alfrescoRepository.create(testFolder, lSF2).getNodeRef();
 		
 		LocalSemiFinishedProductData lSF3 = new LocalSemiFinishedProductData();
 		lSF3.setName("Local semi finished 3");
-		NodeRef lSF3NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF3).getNodeRef();
+		NodeRef lSF3NodeRef = RepoBaseTestCase.INSTANCE.alfrescoRepository.create(testFolder, lSF3).getNodeRef();
 		
 		LocalSemiFinishedProductData lSF4 = new LocalSemiFinishedProductData();
 		lSF4.setName("Local semi finished 4");
-		NodeRef lSF4NodeRef = repoBaseTestCase.alfrescoRepository.create(testFolder, lSF4).getNodeRef();
+		NodeRef lSF4NodeRef = RepoBaseTestCase.INSTANCE.alfrescoRepository.create(testFolder, lSF4).getNodeRef();
 
 		/*-- Create finished product --*/
 		logger.debug("/*-- Create finished product --*/");
 		FinishedProductData finishedProduct = new FinishedProductData();
 		finishedProduct.setName("Finished Product");
-		finishedProduct.setHierarchy1(repoBaseTestCase.HIERARCHY1_FROZEN_REF);
-		finishedProduct.setHierarchy2(repoBaseTestCase.HIERARCHY2_PIZZA_REF);
+		finishedProduct.setHierarchy1(RepoBaseTestCase.INSTANCE.HIERARCHY1_FROZEN_REF);
+		finishedProduct.setHierarchy2(RepoBaseTestCase.INSTANCE.HIERARCHY2_PIZZA_REF);
 		List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
 		CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
 		CompoListDataItem child1 =new CompoListDataItem(null,parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
@@ -114,13 +112,13 @@ public class BeCPGTestHelper {
 		
 
 		finishedProduct.getCompoListView().setCompoList(compoList);
-		return repoBaseTestCase.alfrescoRepository.create(testFolder, finishedProduct).getNodeRef();
+		return RepoBaseTestCase.INSTANCE.alfrescoRepository.create(testFolder, finishedProduct).getNodeRef();
 		
 	}
 	
 	
 	
-	public static void createUsers(RepoBaseTestCase repoBaseTestCase) {
+	public static void createUsers() {
 
 		/*
 		 * Matthieu : user Philippe : validators
@@ -128,44 +126,44 @@ public class BeCPGTestHelper {
 
 		for (String group : groups) {
 
-			if (!repoBaseTestCase.authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
+			if (!RepoBaseTestCase.INSTANCE.authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
 				logger.debug("create group: " + group);
-				repoBaseTestCase.authorityService.createAuthority(AuthorityType.GROUP, group);
+				RepoBaseTestCase.INSTANCE.authorityService.createAuthority(AuthorityType.GROUP, group);
 			}
 		}
 
 		// USER_ONE
-		NodeRef userOne = repoBaseTestCase.personService.getPerson(USER_ONE);
+		NodeRef userOne = RepoBaseTestCase.INSTANCE.personService.getPerson(USER_ONE);
 		if (userOne != null) {
-			repoBaseTestCase.personService.deletePerson(userOne);
+			RepoBaseTestCase.INSTANCE.personService.deletePerson(userOne);
 		}
 
-		if (!repoBaseTestCase.authenticationDAO.userExists(USER_ONE)) {
-			createUser(USER_ONE,repoBaseTestCase);
+		if (!RepoBaseTestCase.INSTANCE.authenticationDAO.userExists(USER_ONE)) {
+			createUser(USER_ONE);
 		}
 
 		// USER_TWO
-		NodeRef userTwo = repoBaseTestCase.personService.getPerson(USER_TWO);
+		NodeRef userTwo = RepoBaseTestCase.INSTANCE.personService.getPerson(USER_TWO);
 		if (userTwo != null) {
-			repoBaseTestCase.personService.deletePerson(userTwo);
+			RepoBaseTestCase.INSTANCE.personService.deletePerson(userTwo);
 		}
 
-		if (!repoBaseTestCase.authenticationDAO.userExists(USER_TWO)) {
-			createUser(USER_TWO,repoBaseTestCase);
+		if (!RepoBaseTestCase.INSTANCE.authenticationDAO.userExists(USER_TWO)) {
+			createUser(USER_TWO);
 
-			repoBaseTestCase.authorityService
+			RepoBaseTestCase.INSTANCE.authorityService
 					.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString(), USER_TWO);
 		}
 
-		for (String s : repoBaseTestCase.authorityService.getAuthoritiesForUser(USER_ONE)) {
+		for (String s : RepoBaseTestCase.INSTANCE.authorityService.getAuthoritiesForUser(USER_ONE)) {
 			logger.debug("user in group: " + s);
 		}
 
 	}
 
-	public static NodeRef createUser(String userName,RepoBaseTestCase repoBaseTestCase) {
-		if (repoBaseTestCase.authenticationService.authenticationExists(userName) == false) {
-			repoBaseTestCase.authenticationService.createAuthentication(userName, "PWD".toCharArray());
+	public static NodeRef createUser(String userName) {
+		if (RepoBaseTestCase.INSTANCE.authenticationService.authenticationExists(userName) == false) {
+			RepoBaseTestCase.INSTANCE.authenticationService.createAuthentication(userName, "PWD".toCharArray());
 
 			PropertyMap ppOne = new PropertyMap(4);
 			ppOne.put(ContentModel.PROP_USERNAME, userName);
@@ -174,13 +172,77 @@ public class BeCPGTestHelper {
 			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
 			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
 
-			return repoBaseTestCase.personService.createPerson(ppOne);
+			return RepoBaseTestCase.INSTANCE.personService.createPerson(ppOne);
 		} else {
-			return repoBaseTestCase.personService.getPerson(userName);
+			return RepoBaseTestCase.INSTANCE.personService.getPerson(userName);
 		}
 	}
 	
+	/**
+	 * Create a raw material.
+	 * 
+	 * @param parentNodeRef
+	 *            the parent node ref
+	 * @param name
+	 *            the name
+	 * @return the node ref
+	 */
+	public static NodeRef createRawMaterial(NodeRef parentNodeRef, String name) {
 
+		logger.debug("createRawMaterial");
+
+		logger.debug("Create MP");
+		RawMaterialData rawMaterial = new RawMaterialData();
+		rawMaterial.setName(name);
+		rawMaterial.setHierarchy1(RepoBaseTestCase.INSTANCE.HIERARCHY1_SEA_FOOD_REF);
+		rawMaterial.setHierarchy2(RepoBaseTestCase.INSTANCE.HIERARCHY2_FISH_REF);
+
+		// Allergens
+		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+		for (int j = 0; j < RepoBaseTestCase.INSTANCE.allergens.size(); j++) {
+			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, false, false, null, null, RepoBaseTestCase.INSTANCE.allergens.get(j), false);
+			allergenList.add(allergenListItemData);
+		}
+		rawMaterial.setAllergenList(allergenList);
+
+		// Costs
+		List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+		for (int j = 0; j < RepoBaseTestCase.INSTANCE.costs.size(); j++) {
+			CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, RepoBaseTestCase.INSTANCE.costs.get(j), false);
+			costList.add(costListItemData);
+		}
+		rawMaterial.setCostList(costList);
+
+		// Ings
+		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
+		for (int j = 0; j < RepoBaseTestCase.INSTANCE.ings.size(); j++) {
+			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, RepoBaseTestCase.INSTANCE.ings.get(j), false);
+			ingList.add(ingListItemData);
+		}
+		rawMaterial.setIngList(ingList);
+
+		// Nuts
+		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+		for (int j = 0; j < RepoBaseTestCase.INSTANCE.nuts.size(); j++) {
+			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", RepoBaseTestCase.INSTANCE.nuts.get(j), false);
+			nutList.add(nutListItemData);
+		}
+		rawMaterial.setNutList(nutList);
+
+		// Organos
+		List<OrganoListDataItem> organoList = new ArrayList<OrganoListDataItem>();
+		for (int j = 0; j < RepoBaseTestCase.INSTANCE.organos.size(); j++) {
+			OrganoListDataItem organoListItemData = new OrganoListDataItem(null, "Descr organo....", RepoBaseTestCase.INSTANCE.organos.get(j));
+			organoList.add(organoListItemData);
+		}
+		rawMaterial.setOrganoList(organoList);
+
+		rawMaterial.setParentNodeRef(parentNodeRef);
+		rawMaterial = (RawMaterialData) RepoBaseTestCase.INSTANCE.alfrescoRepository.save(rawMaterial);
+
+		return rawMaterial.getNodeRef();
+
+	}
 
 
 	
