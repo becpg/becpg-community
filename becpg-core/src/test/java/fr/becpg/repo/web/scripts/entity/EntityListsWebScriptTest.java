@@ -1,39 +1,15 @@
-/*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
- */
 package fr.becpg.repo.web.scripts.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.repo.web.scripts.BaseWebScriptTest;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.test.BaseWebScriptTest;
+import fr.becpg.test.BeCPGTestHelper;
 
 /**
  * The Class EntityListsWebScriptTest.
@@ -42,75 +18,14 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class EntityListsWebScriptTest extends BaseWebScriptTest{
 
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScriptTest.class);
 	
-	
-	/** The Constant PATH_TEMPFOLDER. */
-	private static final String PATH_TEMPFOLDER = "TempFolder";
-	
-	/** The Constant USER_ADMIN. */
-	private static final String USER_ADMIN = "admin";
-	
-
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-
-    /** The authentication component. */
-    private AuthenticationComponent authenticationComponent;
-    
-
-    /** The product dao. */
-    private AlfrescoRepository<ProductData> alfrescoRepository;
-    
-    
-    /** The transaction service. */
-    private TransactionService transactionService;
-    
-    /** The repository helper. */
-    private Repository repositoryHelper;
-    
-	/** The raw material node ref. */
 	private NodeRef rawMaterialNodeRef = null;
 	
-	/** The finished product node ref. */
 	private NodeRef finishedProductNodeRef = null;
 	
-	/* (non-Javadoc)
-	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception
-	{
-		super.setUp();
-		nodeService = (NodeService)getServer().getApplicationContext().getBean("NodeService");
-		fileFolderService = (FileFolderService)getServer().getApplicationContext().getBean("FileFolderService");		
-		authenticationComponent = (AuthenticationComponent)getServer().getApplicationContext().getBean("authenticationComponent");
-		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
-		transactionService = (TransactionService)getServer().getApplicationContext().getBean("transactionService");
-		repositoryHelper = (Repository)getServer().getApplicationContext().getBean("repositoryHelper");
-		
-	    // Authenticate as user
-	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
-	}
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception
-	{
-		super.tearDown();
-	}	
-		
-	/**
-	 * Test entity list.
-	 *
-	 * @throws Exception the exception
-	 */
+
+	@Test
 	public void testProductList() throws Exception {
 		
 		
@@ -118,67 +33,9 @@ public class EntityListsWebScriptTest extends BaseWebScriptTest{
 				@Override
 				public NodeRef execute() throws Throwable {					   
 			
-					/*-- create folders --*/
-					logger.debug("/*-- create folders --*/");
-					NodeRef tempFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMPFOLDER);    	
-			    	if(tempFolder != null){
-			    		fileFolderService.delete(tempFolder);    		
-			    	}
-			    	tempFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TEMPFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-			    	    	
-			    	NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));    	
-			    	if(systemFolder == null){
-			    		systemFolder = fileFolderService.create(repositoryHelper.getCompanyHome(), TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM), ContentModel.TYPE_FOLDER).getNodeRef();    		
-			    	}
-			    	NodeRef productTemplateFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_TEMPLATES));    	
-			    	if(productTemplateFolder != null){
-			    		nodeService.deleteNode(productTemplateFolder);    		
-			    	}
-			    	productTemplateFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_TEMPLATES), ContentModel.TYPE_FOLDER).getNodeRef();    	
-			   	
-			    	/*-- characteristics --*/
-			    	logger.debug("/*-- characteristics --*/");
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-					//Costs
-					properties.put(ContentModel.PROP_NAME, "cost1");			 					 				
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");					
-					NodeRef cost1 = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "cost2");			 					 				
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-					NodeRef cost2 = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
-					//Nuts
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "nut1");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					NodeRef nut1 = nodeService.createNode(tempFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();		
+					rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "Test MP");
+					finishedProductNodeRef = BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef);
 					
-					/*-- Create raw material Tpl --*/
-					logger.debug("/*-- Create raw material Tpl --*/");
-					RawMaterialData rawMaterialTpl = new RawMaterialData();
-					rawMaterialTpl.setName("Raw material Tpl");
-					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 3d, "€/kg", null, cost1, false));
-					costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
-					rawMaterialTpl.setCostList(costList);
-					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-					nutList.add(new NutListDataItem(null, 1d, "kJ/100g", 0d,  0d, "Groupe 1", nut1, false));
-					rawMaterialTpl.setNutList(nutList);		
-					
-					alfrescoRepository.create(productTemplateFolder, rawMaterialTpl).getNodeRef();
-					
-					/*-- Create raw material --*/
-					logger.debug("/*-- Create raw material --*/");
-					RawMaterialData rawMaterial = new RawMaterialData();
-					rawMaterial.setName("Raw material");
-					rawMaterialNodeRef = alfrescoRepository.create(tempFolder, rawMaterial).getNodeRef();
-					
-					/*-- Create finished product --*/
-					logger.debug("/*-- Create finished product --*/");
-					FinishedProductData finishedProduct = new FinishedProductData();
-					finishedProduct.setName("Finished Product");
-					finishedProductNodeRef = alfrescoRepository.create(tempFolder, finishedProduct).getNodeRef();
-
 					return null;
 
 				}},false,true);

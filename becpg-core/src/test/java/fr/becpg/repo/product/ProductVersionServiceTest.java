@@ -40,6 +40,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
@@ -151,7 +152,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create raw material --*/
-				NodeRef r = createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef r = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 				
 				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
@@ -320,7 +321,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create raw material --*/
-				return createRawMaterial(testFolderNodeRef, "MP test report");				
+				return BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");				
 
 			}
 		}, false, true);
@@ -380,7 +381,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 				Map<String, Serializable> properties = new HashMap<String, Serializable>();
 				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				Version vRawMaterialNodeRef = versionService.createVersion(rawMaterialNodeRef, properties);
@@ -415,7 +416,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 
 				// Valid it
 				nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);
@@ -460,7 +461,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 
 				ProductData fpData = new FinishedProductData();
 				fpData.setName("FP");
@@ -529,7 +530,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 				
 				// suppliers
 				String []supplierNames = {"Supplier1", "Supplier2", "Supplier3"};

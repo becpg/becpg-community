@@ -1,6 +1,3 @@
-/*
- * 
- */
 package fr.becpg.test;
 
 import java.io.Serializable;
@@ -33,6 +30,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -40,14 +38,15 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.subethamail.wiser.Wiser;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
@@ -62,17 +61,12 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
 
-// TODO: Auto-generated Javadoc
 /**
  * base class of test cases for product classes.
  * 
@@ -80,57 +74,50 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:alfresco/application-context.xml")
-public abstract class RepoBaseTestCase extends TestCase implements ApplicationContextAware {
+//@ContextConfiguration(locations = "classpath:alfresco/application-context.xml")
+@ContextConfiguration(locations = {"classpath:alfresco/application-context.xml",
+			"classpath:alfresco/web-scripts-application-context.xml",
+			"classpath:alfresco/web-scripts-application-context-test.xml"})
+public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
-	/** The Constant HIERARCHY1_SEA_FOOD. */
-	protected static final String HIERARCHY1_SEA_FOOD = "Sea food";
-
-	/** The Constant HIERARCHY2_FISH. */
-	protected static final String HIERARCHY2_FISH = "Fish";
-
-	/** The Constant HIERARCHY2_CRUSTACEAN. */
-	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
-
-	/** The Constant HIERARCHY1_FROZEN. */
-	protected static final String HIERARCHY1_FROZEN = "Frozen";
-
-	/** The Constant HIERARCHY2_PIZZA. */
-	protected static final String HIERARCHY2_PIZZA = "Pizza";
-
-	/** The Constant HIERARCHY2_QUICHE. */
-	protected static final String HIERARCHY2_QUICHE = "Quiche";
-
-	protected NodeRef HIERARCHY1_SEA_FOOD_REF;
-
-	protected NodeRef HIERARCHY2_FISH_REF;
-
-	protected NodeRef HIERARCHY2_CRUSTACEAN_REF;
-
-	protected NodeRef HIERARCHY1_FROZEN_REF;
-
-	protected NodeRef HIERARCHY2_PIZZA_REF;
-
-	protected NodeRef HIERARCHY2_QUICHE_REF;
-	
-	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
-
-	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
-
-	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
-	
-	protected NodeRef testFolderNodeRef;
-	
-	protected boolean forceInit = false;
-
-	private static String VALUE_COST_CURRENCY = "€";
-
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
+	protected static final String HIERARCHY1_SEA_FOOD = "Sea food";
+	protected static final String HIERARCHY2_FISH = "Fish";
+	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
+	protected static final String HIERARCHY1_FROZEN = "Frozen";
+	protected static final String HIERARCHY2_PIZZA = "Pizza";
+	protected static final String HIERARCHY2_QUICHE = "Quiche";
+	protected static final String VALUE_COST_CURRENCY = "€";
 
-	protected RepoBaseTestCase repoBaseTestCase;
-	
+	protected NodeRef HIERARCHY1_SEA_FOOD_REF;
+	protected NodeRef HIERARCHY2_FISH_REF;
+	protected NodeRef HIERARCHY2_CRUSTACEAN_REF;
+	protected NodeRef HIERARCHY1_FROZEN_REF;
+	protected NodeRef HIERARCHY2_PIZZA_REF;
+	protected NodeRef HIERARCHY2_QUICHE_REF;
+	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
+	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
+	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
+
+	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
+	protected List<NodeRef> costs = new ArrayList<NodeRef>();
+	protected List<NodeRef> ings = new ArrayList<NodeRef>();
+
+	protected List<NodeRef> nuts = new ArrayList<NodeRef>();
+	protected List<NodeRef> taskLegends = new ArrayList<NodeRef>();
+	protected List<NodeRef> organos = new ArrayList<NodeRef>();
+
+	protected NodeRef ingWater;
+	protected NodeRef labelingTemplateNodeRef = null;
+
+	protected NodeRef testFolderNodeRef;
+	protected NodeRef systemFolderNodeRef;
+
+	public static RepoBaseTestCase INSTANCE;
+
+	public static Wiser wiser = new Wiser(2500);
+
 	@Resource
 	protected MimetypeService mimetypeService;
 
@@ -157,7 +144,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	@Resource
 	protected ServiceRegistry serviceRegistry;
-	
+
 	@Resource
 	protected InitVisitor initRepoVisitor;
 
@@ -175,185 +162,165 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 	@Resource
 	protected RetryingTransactionHelper retryingTransactionHelper;
-	
-	
+
 	@Resource
 	protected AuthorityService authorityService;
-	
+
 	@Resource
 	protected MutableAuthenticationDao authenticationDAO;
-	
+
 	@Resource
 	protected MutableAuthenticationService authenticationService;
-	
+
 	@Resource
 	protected PersonService personService;
-	
+
 	@Resource
 	protected BeCPGSearchService beCPGSearchService;
-	
+
 	@Resource
 	protected EntityTplService entityTplService;
-
-	/** The allergens. */
-	protected List<NodeRef> allergens = new ArrayList<NodeRef>();
-
-	/** The costs. */
-	protected List<NodeRef> costs = new ArrayList<NodeRef>();
-
-	/** The ings. */
-	protected List<NodeRef> ings = new ArrayList<NodeRef>();
-	protected NodeRef ingWater;
 	
-	/** The nuts. */
-	protected List<NodeRef> nuts = new ArrayList<NodeRef>();
-	
-	protected List<NodeRef> taskLegends = new ArrayList<NodeRef>();
-
-	/** The organos. */
-	protected List<NodeRef> organos = new ArrayList<NodeRef>();
-	
-	protected NodeRef labelingTemplateNodeRef = null;
-
-	protected ApplicationContext ctx;
+	@Resource
+	protected PermissionService permissionService;
 
 	@Override
-	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-		this.ctx = ctx;
-		
+	public void afterPropertiesSet() throws Exception {
+		INSTANCE = this;
 	}
-	
+
+	@BeforeClass
+	public static void setupBeforeClass() {
+		try {
+			logger.debug("setupBeforeClass : Start wiser");
+			wiser.start();
+		} catch (Exception e) {
+			logger.warn("cannot open wiser!",e);
+		}
+	}
+
+	@AfterClass
+	public static void tearDownBeforeClass() {
+		try {
+			logger.debug("tearDownBeforeClass : Stop wiser");
+			wiser.stop();
+		} catch (Exception e) {
+			logger.warn("cannot stop wiser!",e);
+		}
+
+	}
 
 	@Before
 	public void setUp() throws Exception {
-
-
-		repoBaseTestCase = this;
-
+		
 		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				 // As system user
-                AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
-        
-//                // products
-//                NodeRef productsFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
-//                if(productsFolder != null && nodeService.exists(productsFolder)){
-//					nodeService.deleteNode(productsFolder);
-//				}
-                
-                // products
-                String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT)) +
-						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)) +
-						LuceneHelper.exclude(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, "Eau"));
-                List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(query);
-                
-				for(NodeRef productNodeRef : productNodeRefs){
-					if(nodeService.exists(productNodeRef)){
-						nodeService.deleteNode(productNodeRef);
-					}
-				}
-                
-                // test folder
-				return BeCPGTestHelper.createTestFolder(repoBaseTestCase);
+				// As system user
+				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
+
+				// test folder
+				return BeCPGTestHelper.createTestFolder();
 			}
 		}, false, true);
-		
-		doInitRepo();
-		
-				
-	}
-	
-	private void doInitRepo(){
 
-	 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+		boolean shouldInit = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 
-				if(shouldInit()){
-					// Delete initialyzed repo
-					deleteSystemFolder();
-					// Init repo for test
-					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());										
-					org.junit.Assert.assertEquals(4, entitySystemService.getSystemEntities().size());
-					
-					initConstraints();
-					initTasks();
-					return true;
-				}
+				return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
+			}
+		}, false, true);
 
-				return false;
+		logger.debug("setUp shouldInit :" + shouldInit);
+
+		systemFolderNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
 			}
 		}, false, true);
 
+	
+		doInitRepo(shouldInit);
+		
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-				public NodeRef execute() throws Throwable {
+	}
+
+	private void doInitRepo(final boolean shouldInit) {
+
+		if(shouldInit){
+			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+				public Boolean execute() throws Throwable {
 	
-					dictionaryDAO.reset();
+					
+					// Init repo for test
+					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 	
-					initCharacteristics();
-					initEntityTemplates();
-					initHierarchyLists();
-					initSystemProducts();
-					initLabelingTemplate();
-					// reset dictionary to reload constraints on list_values
-					dictionaryDAO.reset();
-					return null;
+					Assert.assertEquals(4, entitySystemService.getSystemEntities().size());
+	
+					initConstraints();
+					initTasks();
+	
+					return false;
 	
 				}
+			}, false, true);
+		}
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				if(shouldInit){
+					dictionaryDAO.reset();
+				}
+				initCharacteristics();
+				if(shouldInit){
+					initEntityTemplates();
+				}
+				initHierarchyLists();
+				// initSystemProducts();
+				initLabelingTemplate();
+				// reset dictionary to reload constraints on list_values
+				dictionaryDAO.reset();
+				return null;
+
+			}
 		}, false, true);
+
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		logger.debug("TearDown :");
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+			public Boolean execute() throws Throwable {
 
-	}
+				// products
+				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT))
+						+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL))
+						+ LuceneHelper.exclude(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, "Eau"));
+				List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(query);
 
-	/**
-	 * Delete the product report tpls.
-	 */
-	protected void deleteReportTpls() {
-
-		NodeRef systemFolder = nodeService
-				.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		if (systemFolder != null) {
-
-			NodeRef reportsNodeRef = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-
-			if (reportsNodeRef != null) {
-
-				NodeRef productReportTplsNodeRef = nodeService.getChildByName(reportsNodeRef, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
-
-				if (productReportTplsNodeRef != null) {
-					nodeService.deleteNode(productReportTplsNodeRef);
+				for (NodeRef productNodeRef : productNodeRefs) {
+					if (nodeService.exists(productNodeRef)) {
+						
+						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService );
+					//	if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
+							logger.debug("   - Deleting :"+nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
+							logger.debug("   - PATH :"+path);
+							nodeService.deleteNode(productNodeRef);
+					//	}
+					}
 				}
+				logger.debug("   - Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME));
+				nodeService.deleteNode(testFolderNodeRef);
+				return true;
+
 			}
-		}
-
-	}
-
-	private boolean shouldInit(){
-		return forceInit || nodeService
-		.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM))==null;
-	}
-	
-	private void deleteSystemFolder() {
-		NodeRef systemFolder = nodeService
-				.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		if (systemFolder != null) {
-			nodeService.deleteNode(systemFolder);
-		}
-
+		}, false, true);
 	}
 
 	private void initConstraints() {
 
-		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_LISTS);
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
 
 		// nutGroups
 		NodeRef nutGroupsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_GROUPS);
@@ -382,24 +349,24 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			nodeService.createNode(nutFactsMethodsFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
-		
+
 		// ingTypes
 		NodeRef ingTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ING_TYPES);
-		String[] ingTypes = { "Epaississant"};
+		String[] ingTypes = { "Epaississant" };
 		for (String ingType : ingTypes) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, ingType);
 			nodeService.createNode(ingTypesFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
-		
+
 		// allergenTypes
 		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ALLERGEN_TYPES);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, AllergenType.Major.toString());
 		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
-		
+
 		// labelingPosition
 		NodeRef labelingPositionFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_LABELING_POSITIONS);
 		String[] labelingPositions = { "Côté de la boîte", "Dessus de la boite" };
@@ -410,12 +377,10 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 	}
-	
+
 	private void initTasks() {
 
-		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_PROJECT_LISTS);
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PROJECT_LISTS);
 
 		// taskLegends
 		NodeRef taskLegendsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASK_LEGENDS);
@@ -424,28 +389,28 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, taskLegendName);
 			nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();			
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties)
+					.getChildRef();
 		}
-		
+
 		// score criteria
 		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_SCORE_CRITERIA);
-		for (int i=0;i<5;i++) {
+		for (int i = 0; i < 5; i++) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, "Criterion" + i);
 			nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();			
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties)
+					.getChildRef();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Initialize the characteristics of the repository.
 	 */
 	private void initCharacteristics() {
 
-		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		NodeRef charactsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_CHARACTS);
+		NodeRef charactsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_CHARACTS);
 
 		// allergens
 		NodeRef allergenFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_ALLERGENS);
@@ -501,20 +466,21 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 				ings.add(fileInfo.getNodeRef());
 			}
 		}
-		
+
 		ingWater = nodeService.getChildByName(ingFolder, ContentModel.ASSOC_CONTAINS, "eau");
-		
-		if(ingWater == null){
+
+		if (ingWater == null) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, "eau");
 			MLText mlName = new MLText();
 			mlName.addValue(Locale.getDefault(), "eau default");
 			mlName.addValue(Locale.ENGLISH, "eau english");
-			mlName.addValue(Locale.FRENCH, "eau french");	
+			mlName.addValue(Locale.FRENCH, "eau french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			ingWater = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();	
+			ingWater = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 		}
-		
+
 		// nuts
 		NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_NUTS);
 		List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
@@ -550,119 +516,56 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 				organos.add(fileInfo.getNodeRef());
 			}
 		}
-		
+
 		// taskLegends
-		NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_PROJECT_LISTS);
+		NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PROJECT_LISTS);
 		NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, RepoConsts.PATH_TASK_LEGENDS);
-		List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);		
+		List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);
 		for (FileInfo fileInfo : taskLegendsFileInfo) {
 			taskLegends.add(fileInfo.getNodeRef());
-		}		
-	}
-	
-	private void initSystemProducts(){
-		
-		NodeRef contextTestFolderNodeRef = BeCPGTestHelper.createContextTestFolder(repoBaseTestCase);
-		
-		/*-- Raw material Water --*/
-		NodeRef rawMaterialWaterNodeRef = nodeService.getChildByName(contextTestFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Eau réseau");
-		
-		if(rawMaterialWaterNodeRef == null){
-			RawMaterialData rawMaterialWater = new RawMaterialData();
-			rawMaterialWater.setName("Eau réseau");
-			MLText legalName = new MLText("Legal Raw material Eau");
-			legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
-			legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
-			rawMaterialWater.setLegalName(legalName);
-			List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
-			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
-			rawMaterialWater.setIngList(ingList);		
-			alfrescoRepository.create(contextTestFolderNodeRef, rawMaterialWater).getNodeRef();
-		}		
+		}
 	}
 
-	/**
-	 * Create a raw material.
-	 * 
-	 * @param parentNodeRef
-	 *            the parent node ref
-	 * @param name
-	 *            the name
-	 * @return the node ref
-	 */
-	protected NodeRef createRawMaterial(NodeRef parentNodeRef, String name) {
+	// private void initSystemProducts(){
+	//
+	// NodeRef contextTestFolderNodeRef =
+	// BeCPGTestHelper.createContextTestFolder(repoBaseTestCase);
+	//
+	// /*-- Raw material Water --*/
+	// NodeRef rawMaterialWaterNodeRef =
+	// nodeService.getChildByName(contextTestFolderNodeRef,
+	// ContentModel.ASSOC_CONTAINS, "Eau réseau");
+	//
+	// if(rawMaterialWaterNodeRef == null){
+	// RawMaterialData rawMaterialWater = new RawMaterialData();
+	// rawMaterialWater.setName("Eau réseau");
+	// MLText legalName = new MLText("Legal Raw material Eau");
+	// legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
+	// legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
+	// rawMaterialWater.setLegalName(legalName);
+	// List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
+	// ingList.add(new IngListDataItem(null, 100d, null, null, false, false,
+	// ingWater, false));
+	// rawMaterialWater.setIngList(ingList);
+	// alfrescoRepository.create(contextTestFolderNodeRef,
+	// rawMaterialWater).getNodeRef();
+	// }
+	// }
 
-		logger.debug("createRawMaterial");
+	private void initEntityTemplates() {
 
-		logger.debug("Create MP");
-		RawMaterialData rawMaterial = new RawMaterialData();
-		rawMaterial.setName(name);
-		rawMaterial.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-		rawMaterial.setHierarchy2(HIERARCHY2_FISH_REF);
-
-		// Allergens
-		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-		for (int j = 0; j < allergens.size(); j++) {
-			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, false, false, null, null, allergens.get(j), false);
-			allergenList.add(allergenListItemData);
-		}
-		rawMaterial.setAllergenList(allergenList);
-
-		// Costs
-		List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-		for (int j = 0; j < costs.size(); j++) {
-			CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, costs.get(j), false);
-			costList.add(costListItemData);
-		}
-		rawMaterial.setCostList(costList);
-
-		// Ings
-		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
-		for (int j = 0; j < ings.size(); j++) {
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, ings.get(j), false);
-			ingList.add(ingListItemData);
-		}
-		rawMaterial.setIngList(ingList);
-
-		// Nuts
-		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-		for (int j = 0; j < nuts.size(); j++) {
-			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", nuts.get(j), false);
-			nutList.add(nutListItemData);
-		}
-		rawMaterial.setNutList(nutList);
-
-		// Organos
-		List<OrganoListDataItem> organoList = new ArrayList<OrganoListDataItem>();
-		for (int j = 0; j < organos.size(); j++) {
-			OrganoListDataItem organoListItemData = new OrganoListDataItem(null, "Descr organo....", organos.get(j));
-			organoList.add(organoListItemData);
-		}
-		rawMaterial.setOrganoList(organoList);
-
-	
-		
-		rawMaterial.setParentNodeRef(parentNodeRef);
-		rawMaterial = (RawMaterialData) alfrescoRepository.save(rawMaterial);
-		
-		return rawMaterial.getNodeRef();
-
-	}
-	
-	private void initEntityTemplates(){
-		
 		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_RAWMATERIAL);
-		ProductData rawMaterialData = (ProductData)alfrescoRepository.findOne(rawMaterialTplNodeRef);		
+		ProductData rawMaterialData = (ProductData) alfrescoRepository.findOne(rawMaterialTplNodeRef);
 		rawMaterialData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(0), null));
 		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
 		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
 		alfrescoRepository.save(rawMaterialData);
-		
+
 		NodeRef packMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_PACKAGINGMATERIAL);
-		ProductData packMaterialTplData = (ProductData)alfrescoRepository.findOne(packMaterialTplNodeRef);
+		ProductData packMaterialTplData = (ProductData) alfrescoRepository.findOne(packMaterialTplNodeRef);
 		packMaterialTplData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(3), null));
 		alfrescoRepository.save(packMaterialTplData);
-		
+
 	}
 
 	/**
@@ -672,12 +575,7 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 
 		logger.debug("initHierarchyLists");
 
-		// check init repo
-		NodeRef systemNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		Assert.assertNotNull("System folder not found", systemNodeRef);
-		NodeRef productHierarchyNodeRef = entitySystemService.getSystemEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
+		NodeRef productHierarchyNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 
 		Assert.assertNotNull("Product hierarchy system entity not found", productHierarchyNodeRef);
 
@@ -699,22 +597,19 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 		HIERARCHY1_FROZEN_REF = hierarchyService.createRootHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
 		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
 		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
-		
-		// Project		
-		NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemNodeRef, RepoConsts.PATH_PROJECT_LISTS);
-		NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef,
-				HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));		
+
+		// Project
+		NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PROJECT_LISTS);
+		NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef, HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));
 		PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.createRootHierarchy(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
 		PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
-		PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);		
-		
+		PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+
 	}
 
 	private void initLabelingTemplate() {
 
-		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolder, RepoConsts.PATH_CHARACTS);
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_CHARACTS);
 
 		// labelingTemplate
 		NodeRef labelingTemplateFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_LABELING_TEMPLATES);
@@ -724,7 +619,8 @@ public abstract class RepoBaseTestCase extends TestCase implements ApplicationCo
 			properties.put(ContentModel.PROP_NAME, "Marquage 1");
 			properties.put(ContentModel.PROP_DESCRIPTION, "N° de lot : AAJJJ (AA : derniers chiffres de l’année ; JJJ : quantième du jour de fabrication)");
 			labelingTemplateNodeRef = nodeService.createNode(labelingTemplateFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PackModel.TYPE_LABELING_TEMPLATE, properties).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PackModel.TYPE_LABELING_TEMPLATE, properties)
+					.getChildRef();
 		} else {
 			labelingTemplateNodeRef = labelingTemplatesFileInfo.get(0).getNodeRef();
 		}

@@ -66,7 +66,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 				AuthorityType.GROUP, "GRP_3");
 
 		if (!authenticationDAO.userExists(USER_ONE)) {
-			BeCPGTestHelper.createUser(USER_ONE,repoBaseTestCase);
+			BeCPGTestHelper.createUser(USER_ONE);
 			
 			authorityService.addAuthority(grp1, USER_ONE);
 
@@ -75,7 +75,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		}
 
 		if (!authenticationDAO.userExists(USER_TWO)) {
-			BeCPGTestHelper.createUser(USER_TWO,repoBaseTestCase);
+			BeCPGTestHelper.createUser(USER_TWO);
 			
 			authorityService.addAuthority(grp3, USER_TWO);
 		}

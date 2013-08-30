@@ -12,24 +12,18 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.repo.web.scripts.BaseWebScriptTest;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
+import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
@@ -38,10 +32,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -50,7 +42,6 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.report.client.ReportFormat;
 
 // TODO: Auto-generated Javadoc
@@ -59,44 +50,15 @@ import fr.becpg.report.client.ReportFormat;
  *
  * @author querephi
  */
-public class ExportSearchWebScriptTest extends BaseWebScriptTest{
+public class ExportSearchWebScriptTest extends fr.becpg.test.BaseWebScriptTest{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ExportSearchWebScriptTest.class);
 	
-	/** The app ctx. */
-	private  ApplicationContext appCtx = getServer().getApplicationContext();
 	
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	
-	/** The PAT h_ testfolder. */
-	private static String PATH_TESTFOLDER = "TestFolder";
-	
-	/** The Constant USER_ADMIN. */
-	private static final String USER_ADMIN = "admin";
-	
-	/** The node service. */
-	private NodeService nodeService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-
-    /** The authentication component. */
-    private AuthenticationComponent authenticationComponent;
-
-    /** The product dao. */
-    private AlfrescoRepository<ProductData> alfrescoRepository;
-    
-    /** The product dictionary service. */
-    private ProductDictionaryService productDictionaryService;
-    
-    /** The transaction service. */
-    private TransactionService transactionService;
-    
-    /** The repository. */
-    private Repository repository;
-    
     private ReportTplService reportTplService;
     
     /** The content service. */
@@ -107,8 +69,6 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
     
     private RepoService repoService;
     	
-	/** The folder node ref. */
-	private NodeRef folderNodeRef;
 	
 	/** The local s f1 node ref. */
 	private NodeRef  localSF1NodeRef;
@@ -133,49 +93,6 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
     /** The export product report tpl. */
     private NodeRef exportProductReportTpl;
     
-    
-    /** The costs. */
-    private List<NodeRef> costs = new ArrayList<NodeRef>();
-    
-    private List<NodeRef> nuts = new ArrayList<NodeRef>();
-	
-	/** The allergens. */
-	private List<NodeRef> allergens = new ArrayList<NodeRef>();
-	
-	/* (non-Javadoc)
-	 * @see org.alfresco.repo.web.scripts.BaseWebScriptTest#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception
-	{
-		super.setUp();
-				
-		nodeService = (NodeService)appCtx.getBean("NodeService");
-		fileFolderService = (FileFolderService)appCtx.getBean("FileFolderService");		
-		authenticationComponent = (AuthenticationComponent)appCtx.getBean("authenticationComponent");
-		alfrescoRepository = (AlfrescoRepository) getServer().getApplicationContext().getBean("alfrescoRepository");
-		productDictionaryService = (ProductDictionaryService)appCtx.getBean("productDictionaryService");
-		transactionService = (TransactionService)appCtx.getBean("transactionService");
-		repository = (Repository)appCtx.getBean("repositoryHelper");
-		contentService = (ContentService)appCtx.getBean("contentService");
-		mimetypeService = (MimetypeService)appCtx.getBean("mimetypeService");
-		reportTplService = (ReportTplService)appCtx.getBean("reportTplService");
-		repoService = (RepoService)appCtx.getBean("repoService");
-		
-	    // Authenticate as user
-	    this.authenticationComponent.setCurrentUser(USER_ADMIN);
-		
-	}
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception
-	{
-		super.tearDown();
-	}	
-	
 	/**
 	 * Inits the objects.
 	 */
@@ -185,17 +102,10 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				/*-- Create test folder --*/
-				folderNodeRef = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);			
-				if(folderNodeRef != null)
-				{
-					fileFolderService.delete(folderNodeRef);    		
-				}			
-				folderNodeRef = fileFolderService.create(repository.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-													
+									
 		
 				//costs
-				NodeRef systemFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));				
 				if(costFolder != null){
 					fileFolderService.delete(costFolder);
@@ -263,43 +173,43 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 				rawMaterial1.setLegalName("Legal Raw material 1");				
-				rawMaterial1NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
+				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 				
 				/*-- Raw material 2 --*/
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 				rawMaterial2.setLegalName("Legal Raw material 2");					
-				rawMaterial2NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial2).getNodeRef();
+				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 				
 				/*-- Raw material 3 --*/
 				RawMaterialData rawMaterial3 = new RawMaterialData();
 				rawMaterial3.setName("Raw material 3");
 				rawMaterial3.setLegalName("Legal Raw material 3");				
-				rawMaterial3NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial3).getNodeRef();
+				rawMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial3).getNodeRef();
 				
 				/*-- Raw material 4 --*/
 				RawMaterialData rawMaterial4 = new RawMaterialData();
 				rawMaterial4.setName("Raw material 4");
 				rawMaterial4.setLegalName("Legal Raw material 4");					
-				rawMaterial4NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial4).getNodeRef();
+				rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
 				
 				/*-- Raw material 5 --*/
 				RawMaterialData rawMaterial5 = new RawMaterialData();
 				rawMaterial5.setName("Raw material 5");
 				rawMaterial5.setLegalName("Legal Raw material 5");				
-				 alfrescoRepository.create(folderNodeRef, rawMaterial5).getNodeRef();
+				 alfrescoRepository.create(testFolderNodeRef, rawMaterial5).getNodeRef();
 				
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 				localSF1.setName("Local semi finished 1");
 				localSF1.setLegalName("Legal Local semi finished 1");
-				localSF1NodeRef = alfrescoRepository.create(folderNodeRef, localSF1).getNodeRef();
+				localSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF1).getNodeRef();
 				
 				/*-- Local semi finished product 1 --*/
 				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 				localSF2.setName("Local semi finished 2");
 				localSF2.setLegalName("Legal Local semi finished 2");							
-				localSF2NodeRef = alfrescoRepository.create(folderNodeRef, localSF2).getNodeRef();	
+				localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();	
 		
 		return null;
 		
@@ -315,12 +225,10 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 		
 		logger.debug("look for report template");
 	   	
-		// system folder
-		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-	   	assertNotNull("Check system folder", systemFolder);
+		
 	   	
 	   	// reports folder
-	   	NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));    	
+	   	NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolderNodeRef, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));    	
 	   	assertNotNull("Check reports folder", reportsFolder);
 	   	
 	   	// export search report
@@ -378,6 +286,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 	/**
 	 * Test export search.
 	 */
+	@Test
 	public void testExportSearch(){
 	
 		//TODO : merge CompareProductReportWebScript avec CompareProductServiceTest => beaucoup de code en commun !
@@ -408,7 +317,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				// create an MP for the allergens
 				RawMaterialData allergenRawMaterial = new RawMaterialData();
 				allergenRawMaterial.setName("MP allergen");
-				NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(folderNodeRef, allergenRawMaterial).getNodeRef();
+				NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, allergenRawMaterial).getNodeRef();
 				
 				//Allergens
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();		    		
@@ -430,7 +339,7 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				fp1.getCompoListView().setCompoList(compoList);
 				
-				 alfrescoRepository.create(folderNodeRef, fp1).getNodeRef();
+				 alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
 				
 				logger.debug("create FP 2");
 				
@@ -474,10 +383,10 @@ public class ExportSearchWebScriptTest extends BaseWebScriptTest{
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
 				fp2.getCompoListView().setCompoList(compoList);
 				
-				alfrescoRepository.create(folderNodeRef, fp2).getNodeRef();
+				alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
 				
 				/*-- Create images folder --*/					
-				NodeRef imagesNodeRef = fileFolderService.create(folderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();					
+				NodeRef imagesNodeRef = fileFolderService.create(testFolderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();					
 				addProductImage(imagesNodeRef);
 				
 				return null;

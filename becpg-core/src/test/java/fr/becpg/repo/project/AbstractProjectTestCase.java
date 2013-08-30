@@ -16,11 +16,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.subethamail.wiser.Wiser;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityTplService;
@@ -37,10 +32,6 @@ import fr.becpg.test.RepoBaseTestCase;
 public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 
 
-	protected Wiser wiser = new Wiser(2500);
-
-
-	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 	
 	@Resource
 	protected AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -62,34 +53,6 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef rawMaterialNodeRef;
 	protected NodeRef projectNodeRef;
 	
-	
-	@Override
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-
-		// First start wiser
-		try {
-			wiser.start();
-		} catch (Exception e) {
-			logger.warn("cannot open wiser!");
-		}
-
-	}
-
-	@Override
-	@After
-	public void tearDown() throws Exception {
-
-		super.tearDown();
-		try {
-			wiser.stop();
-		} catch (Exception e) {
-			logger.warn("cannot stop wiser!");
-		}
-
-	}
-	
 	protected void initTest() {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -97,8 +60,8 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				
-				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE,repoBaseTestCase);
-				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO,repoBaseTestCase);
+				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
+				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
 
 				assigneesOne = new ArrayList<NodeRef>();
 				assigneesOne.add(userOne);
@@ -228,7 +191,7 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+						rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "Raw material");
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
 								endDate, null, 2, projectState, projectTplNodeRef, 0, rawMaterialNodeRef);
 
