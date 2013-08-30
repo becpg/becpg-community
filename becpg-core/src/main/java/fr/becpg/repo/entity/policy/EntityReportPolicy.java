@@ -6,6 +6,7 @@ package fr.becpg.repo.entity.policy;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.model.ContentModel;
@@ -47,6 +48,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	/** The entityReportService **/
 	private EntityReportService entityReportService;
+
+	private ConcurrentLinkedQueue<NodeRef> reportsQueue = new ConcurrentLinkedQueue<>();
 
 	/**
 	 * Sets the transaction service.
@@ -99,7 +102,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 
-		onUpdateProduct(assocRef.getSourceRef());		
+		onUpdateProduct(assocRef.getSourceRef());
 	}
 
 	private void onUpdateProduct(NodeRef entityNodeRef) {
@@ -140,8 +143,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 
-			Runnable runnable = new ProductReportGenerator(pendingNodes, AuthenticationUtil.getSystemUserName());
-			threadExecuter.execute(runnable);
+		Runnable runnable = new ProductReportGenerator(pendingNodes, reportsQueue);
+		threadExecuter.execute(runnable);
 
 	}
 
@@ -154,17 +157,20 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 		/** The product node ref. */
 		private Set<NodeRef> entityNodeRefs;
-		private String runAsUser;
+
+		private ConcurrentLinkedQueue<NodeRef> reportsQueue;
 
 		/**
 		 * Instantiates a new product report generator.
 		 * 
+		 * @param reportsQueue
+		 * 
 		 * @param entityNodeRef
 		 *            the product node ref
 		 */
-		private ProductReportGenerator(Set<NodeRef> entityNodeRefs, String runAsUser) {
+		private ProductReportGenerator(Set<NodeRef> entityNodeRefs, ConcurrentLinkedQueue<NodeRef> reportsQueue) {
 			this.entityNodeRefs = entityNodeRefs;
-			this.runAsUser = runAsUser;
+			this.reportsQueue = reportsQueue;
 		}
 
 		/*
@@ -174,50 +180,58 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 		 */
 		@Override
 		public void run() {
-			try {
-				RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-					@Override
-					public Object doWork() throws Exception {
-						RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+			for (final NodeRef entityNodeRef : entityNodeRefs) {
+
+				if (!reportsQueue.contains(entityNodeRef)) {
+					try {
+						reportsQueue.add(entityNodeRef);
+						RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 							@Override
-							public Object execute() {
-								for (NodeRef entityNodeRef : entityNodeRefs) {
-									if (nodeService.exists(entityNodeRef) && !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && isNotLocked(entityNodeRef)
-											&& !isVersionStoreNode(entityNodeRef)) {
+							public Object doWork() throws Exception {
+								RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+									@Override
+									public Object execute() {
 
-										try {
-											// Ensure that the policy doesn't
-											// refire for this node
-											// on this thread
-											// This won't prevent background
-											// processes from
-											// refiring, though
-											policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-											policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-											policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+										if (nodeService.exists(entityNodeRef) && !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && isNotLocked(entityNodeRef)
+												&& !isVersionStoreNode(entityNodeRef)) {
 
-											if (logger.isDebugEnabled()) {
-												logger.info("generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+											try {
+
+												policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+												policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+												policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+
+												if (logger.isDebugEnabled()) {
+													logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+												}
+												entityReportService.generateReport(entityNodeRef);
+
+											} finally {
+												policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+												policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+												policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 											}
-											entityReportService.generateReport(entityNodeRef);
-
-										} finally {
-											policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-											policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-											policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 										}
+
+										return null;
 									}
-								}
-								return null;
+								};
+								return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 							}
 						};
-						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
+						AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+
+					} catch (Exception e) {
+						logger.error("Unable to generate product reports ", e);
+					} finally {
+						reportsQueue.remove(entityNodeRef);
 					}
-				};
-				AuthenticationUtil.runAs(actionRunAs, runAsUser);
-			} catch (Throwable e) {
-				logger.error("Unable to generate product reports ", e);
+
+				} else {
+					logger.warn("NodeRef already in queue: "+entityNodeRef);
+				}
 			}
+
 		}
 	}
 }

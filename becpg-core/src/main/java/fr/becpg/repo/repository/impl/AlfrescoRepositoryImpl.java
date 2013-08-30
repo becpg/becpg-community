@@ -517,7 +517,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				if (caches.containsKey(prop)) {
 					PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));
 				} else {
-					PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
+					if(!entity.getNodeRef().equals((NodeRef) prop)){
+						PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
+					} else {
+						logger.warn("Cyclic detected for :"+entity.getName()+" prop "+pd.getName()+" type "+entity.getClass().getSimpleName());
+						PropertyUtils.setProperty(entity, pd.getName(), entity);
+					}
+					
 				}
 			} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
 				PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
