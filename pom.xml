@@ -90,7 +90,8 @@
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -XX:MaxPermSize=256m
 			-Duser.language=fr</app.testing.jvm.args>
 			
-		 <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		 <!-- <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis> -->
+		 <sonar.jacoco.excludes>org/alfresco/**</sonar.jacoco.excludes>
 	</properties>
 	<!-- <dependencyManagement>
 		<dependencies>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<bcpg:rawMaterial path="/app:company_home/cm:TempFolder" type="node" name="Abricot, nectar, pasteurisé" nodeRef="workspace://SpacesStore/4ae3952f-6851-41e9-9046-daab3b99fa85" code="MP2043">
+<bcpg:rawMaterial path="/app:company_home/cm:TestFolder" type="node" name="Abricot, nectar, pasteurisé" nodeRef="workspace://SpacesStore/4ae3952f-6851-41e9-9046-daab3b99fa85" code="MP2043">
   <bcpg:legalName type="d:mltext">Abricot, nectar, pasteurisé</bcpg:legalName>
   <cm:name type="d:text">Abricot, nectar, pasteurisé</cm:name>
   <bcpg:productUnit type="d:text">kg</bcpg:productUnit>

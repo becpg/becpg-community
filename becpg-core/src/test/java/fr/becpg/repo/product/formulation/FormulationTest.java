@@ -3075,7 +3075,6 @@ public class FormulationTest extends AbstractFinishedProductTest {
 		logger.info("testCheckPropertiesOfComponents");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {					   
 			
 			FinishedProductData finishedProduct = new FinishedProductData();
