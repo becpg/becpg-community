@@ -43,35 +43,36 @@ public class RemoteEntityWebScriptTest extends fr.becpg.test.BaseWebScriptTest {
 		Resource data = new ClassPathResource("beCPG/remote/data.xml");
 
 		Response response = sendRequest(new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"), 200, "admin");
-		logger.debug("Resp : " + response.getContentAsString());
+		logger.info("Resp : " + response.getContentAsString());
 
-		final NodeRef nodeRef = parseNodeRef(response.getContentAsString());
-
+		 NodeRef nodeRef = parseNodeRef(response.getContentAsString());
+		
+		logger.info("Name : " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+		logger.info("Path : " + nodeService.getPath(nodeRef).toPrefixString(serviceRegistry.getNamespaceService()));
+		
 		Assert.assertTrue(nodeService.exists(nodeRef));
 
-		NodeRef imageNodeRef = null;
-		for (FileInfo fi : fileFolderService.list(testFolderNodeRef)) {
-			logger.error("Create Image Folder : " + fi.getName() + " " + fi.getType());
-			imageNodeRef = nodeService.getChildByName(fi.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Images");
-			if (imageNodeRef != null) {
-				fileFolderService.delete(imageNodeRef);
-			}
-			imageNodeRef = fileFolderService.create(fi.getNodeRef(), "Images", ContentModel.TYPE_FOLDER).getNodeRef();
-		}
-
+		NodeRef imageNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, "Images");
+		
+		Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
+		
 		response = sendRequest(new PostRequest(url + "/data?nodeRef=" + nodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200, "admin");
-		logger.debug("Resp : " + response.getContentAsString());
-
+		logger.info("Resp : " + response.getContentAsString());
+		
+		for(FileInfo file : fileFolderService.list(nodeRef)){
+			logger.info(file.getName());
+			for(FileInfo file2 : fileFolderService.list(file.getNodeRef())){
+				logger.info("-- "+file2.getName());
+			}
+		}
+		
+		
 		Assert.assertEquals(1, fileFolderService.list(imageNodeRef).size());
 
 	}
 
 	private NodeRef parseNodeRef(String contentAsString) {
 		return new NodeRef(contentAsString);
-	}
-
-	public void testFormulateEntity() throws Exception {
-
 	}
 
 	public String convertStreamToString(InputStream is) throws IOException {
