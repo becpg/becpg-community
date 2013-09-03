@@ -2,16 +2,16 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.annotation.AlfIdentAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends BeCPGDataObject {
+public class LabelClaimListDataItem extends AbstractManualDataItem {
 
 	private NodeRef labelClaim;
 	private String type;
@@ -46,27 +46,15 @@ public class LabelClaimListDataItem extends BeCPGDataObject {
 	}
 	
 	public LabelClaimListDataItem(){
-		
+		super();
 	}
 	
-	public LabelClaimListDataItem(NodeRef nodeRef, NodeRef labelClaim, String type, Boolean isClaimed){
-		setNodeRef(nodeRef);
-		setLabelClaim(labelClaim);
-		setType(type);
-		setIsClaimed(isClaimed);
-	}
 	
-	public LabelClaimListDataItem(LabelClaimListDataItem l){
-		setNodeRef(l.getNodeRef());
-		setLabelClaim(l.getLabelClaim());
-		setType(l.getType());
-		setIsClaimed(l.getIsClaimed());
-	}
-		
-	@Override
-	public String toString() {
-		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", isClaimed=" + isClaimed
-				+ ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
+	public LabelClaimListDataItem(NodeRef labelClaim, String type, Boolean isClaimed) {
+		super();
+		this.labelClaim = labelClaim;
+		this.type = type;
+		this.isClaimed = isClaimed;
 	}
 	
 	@Override
@@ -78,7 +66,6 @@ public class LabelClaimListDataItem extends BeCPGDataObject {
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -105,5 +92,10 @@ public class LabelClaimListDataItem extends BeCPGDataObject {
 			return false;
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", isClaimed=" + isClaimed + "]";
+	}
+		
 
 }

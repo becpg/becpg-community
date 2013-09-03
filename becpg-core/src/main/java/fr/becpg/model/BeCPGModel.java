@@ -669,6 +669,7 @@ public interface BeCPGModel {
 
 	QName TYPE_LABEL_CLAIM = QName.createQName(BECPG_URI, "labelClaim");
 	QName PROP_LABEL_CLAIM_TYPE = QName.createQName(BECPG_URI, "labelClaimType");
+	QName PROP_LABEL_CLAIM_FORMULA = QName.createQName(BECPG_URI, "labelClaimFormula");
 	
 	/**
 	 * legalName aspect
@@ -699,4 +700,6 @@ public interface BeCPGModel {
 	QName ASSOC_STORAGE_CONDITIONS = QName.createQName(BECPG_URI, "storageConditions");
 	QName TYPE_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
 	QName ASSOC_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
+
+	
 }

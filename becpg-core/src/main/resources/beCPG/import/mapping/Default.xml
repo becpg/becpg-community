@@ -88,6 +88,16 @@
 			<columns>
 			</columns>
 		</mapping>
+		
+		<mapping name="bcpg:labelClaim">
+			<nodeColumnKeys>
+				<nodeColumnKey attribute="cm:name" />
+			</nodeColumnKeys>
+			<columns>
+				<column id="labelClaimFormula" type="Formula"
+					attribute="bcpg:labelClaimFormula" />
+			</columns>
+		</mapping>
 	
 	<!-- Sample for multi-hierarchy
 		
