@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PackModel;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -773,4 +772,19 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 
 			}},false,true);
 	}	
+	
+	public void checkILL(String expectedStr1, String expectedStr2, String actualStr){
+		
+		String expectedStr = "";
+		
+		if(actualStr.startsWith(expectedStr1)){
+			expectedStr = expectedStr1 + ", " + expectedStr2;
+		}
+		else{
+			expectedStr = expectedStr2 + ", " + expectedStr1;
+		}
+		
+		assertEquals(expectedStr, actualStr);
+	}
+
 }

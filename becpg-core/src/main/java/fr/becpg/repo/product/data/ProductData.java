@@ -472,6 +472,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return Arrays.asList(compoListView, packagingListView, processListView);
 	}
 	
+	public boolean isLiquid(){
+		return unit!=null && (unit == ProductUnit.L || unit == ProductUnit.mL);
+	}
+	
+	
 	/**
 	 * Instantiates a new product data.
 	 */
