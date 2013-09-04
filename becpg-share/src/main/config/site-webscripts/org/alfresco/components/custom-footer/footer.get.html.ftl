@@ -1,7 +1,7 @@
 
 
 <@markup id="google-analytics"  target="js" action="after">
-   <#assign fc=config.scoped["Edition"]["footer"]>
+   <#assign fc=config.scoped["Analytics"]["provider"]>
 	<#if fc.getChildValue("analytics-id")??>
 		<script type="text/javascript">
 			//<![CDATA[ 
