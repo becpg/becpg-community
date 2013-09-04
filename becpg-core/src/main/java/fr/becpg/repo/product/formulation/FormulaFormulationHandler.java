@@ -1,10 +1,14 @@
 package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -16,10 +20,10 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
@@ -27,7 +31,10 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
 /**
@@ -108,21 +115,40 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
+				labelClaimListDataItem.setIsFormulated(false);
+				labelClaimListDataItem.setErrorLog(null);
 				if ((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual()) && labelClaimListDataItem.getLabelClaim() != null) {
 
 					String formula = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_LABEL_CLAIM_FORMULA);
 					if (formula != null && formula.length() > 0) {
 						try {
+							labelClaimListDataItem.setIsFormulated(true);
 							Expression exp = parser.parseExpression(formatFormula(formula));
 							Object ret = exp.getValue(context);
 							if (ret instanceof Boolean) {
 								labelClaimListDataItem.setIsClaimed((Boolean) ret);
+							} else {
+								labelClaimListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
 							}
+
 						} catch (Exception e) {
-							logger.warn("Error in formula :" + formatFormula(formula), e);
+							labelClaimListDataItem.setErrorLog(e.getLocalizedMessage());
+							if(logger.isDebugEnabled()){
+								logger.info("Error in formula :" + formatFormula(formula), e);
+							}
 						}
 					}
 				}
+
+				if (labelClaimListDataItem.getErrorLog() != null) {
+					
+					String message = I18NUtil.getMessage("message.formulate.labelCLaim.error",Locale.getDefault(), nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),labelClaimListDataItem.getErrorLog());
+					productData
+							.getCompoListView()
+							.getReqCtrlList()
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,message, new ArrayList<NodeRef>()));
+				}
+
 			}
 		}
 
@@ -177,7 +203,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 					dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
-					logger.warn("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
+					if(logger.isDebugEnabled()){
+						logger.debug("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
+					}
 				}
 			}
 

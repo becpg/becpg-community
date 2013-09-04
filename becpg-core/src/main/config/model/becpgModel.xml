@@ -1508,6 +1508,14 @@
 					<type>d:boolean</type>
 					<default>true</default>
 				</property>
+				<property name="bcpg:lclIsFormulated">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="bcpg:lclFormulaErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:lclLabelClaim">
