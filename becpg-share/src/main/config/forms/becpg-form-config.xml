@@ -5067,7 +5067,13 @@
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclIsClaimed" />	
+					<show id="bcpg:lclIsFormulated" />
+					<show id="bcpg:lclFormulaErrorLog" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:lclIsFormulated" label="hidden"/>
+					<field id="bcpg:lclFormulaErrorLog" label="hidden"/>
+				</appearance>
 			</form>
 		</forms>
 	</config>

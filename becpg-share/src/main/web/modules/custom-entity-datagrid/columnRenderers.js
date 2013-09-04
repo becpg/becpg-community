@@ -56,15 +56,12 @@ if (beCPG.module.EntityDataGridRenderers) {
    });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary" ],
+      propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary", "boolean_bcpg:lclIsClaimed" ],
       renderer : function(oRecord, data, label, scope) {
-         var booleanValueTrue = scope.msg("data.boolean.true");
-         var booleanValueFalse = scope.msg("data.boolean.false");
          if (data.value) {
-            return '<span class="presentAllergen">' + Alfresco.util.encodeHTML(data.value == true ? booleanValueTrue
-                  : booleanValueFalse) + '</span>';
+            return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
          }
-         return Alfresco.util.encodeHTML(data.value == true ? booleanValueTrue : booleanValueFalse);
+         return Alfresco.util.encodeHTML(data.displayValue);
       }
 
    });
@@ -95,10 +92,8 @@ if (beCPG.module.EntityDataGridRenderers) {
       	if(data.metadata == "ing"){
       		return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
       	}
-      	else{
-      		return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityCharactURL(data.siteId, data.value) + '">' + Alfresco.util
-            .encodeHTML(data.displayValue) + '</a></span>';
-      	}      	
+      	return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityCharactURL(data.siteId, data.value) + '">' + Alfresco.util
+            .encodeHTML(data.displayValue) + '</a></span>';	
       }
 
    });
@@ -164,7 +159,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:cost", "bcpg:allergen", "bcpg:nut", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin",
-            "bcpg:geo", "bcpg:microbio", "bcpg:physicoChem", "bcpg:organo", "bcpg:labelClaim" ],
+            "bcpg:geo", "bcpg:microbio", "bcpg:physicoChem", "bcpg:organo" ],
       renderer : function(oRecord, data, label, scope) {
          return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
       }
@@ -211,6 +206,29 @@ if (beCPG.module.EntityDataGridRenderers) {
                   }
 
                });
+   
+
+   YAHOO.Bubbling
+   .fire(
+         "registerDataGridRenderer",
+         {
+            propertyName : "bcpg:labelClaim",
+            renderer : function(oRecord, data, label, scope) {
+               var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value;
+               if (isFormulated) {
+                  var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value;
+                  if (error == null) {
+                     return '<span class="lcl-formulated"  title="'+scope.msg("data.formulated")+'">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+                  }
+
+                  return '<span class="lcl-formulated-error" title="' + Alfresco.util
+                        .encodeHTML(error) + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+               }
+               return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            }
+
+         });
+   
 
    YAHOO.Bubbling
          .fire(
@@ -260,9 +278,6 @@ if (beCPG.module.EntityDataGridRenderers) {
                scope.widgets.dataTable.showColumn(oColumn);
                Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
             }
-            // if (scope.afterRenderShowColumns.indexOf(oColumn) == -1) {
-            // scope.afterRenderShowColumns.push(oColumn);
-            // }
             Dom.setStyle(elCell, "width", "16px");
             Dom.setStyle(elCell.parentNode, "width", "16px");
          }
@@ -319,9 +334,6 @@ if (beCPG.module.EntityDataGridRenderers) {
             "bcpg:dynamicCharactColumn4", "bcpg:dynamicCharactColumn5" ],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          if (data.value != null) {
-            // if (scope.afterRenderShowColumns.indexOf(oColumn) == -1) {
-            // scope.afterRenderShowColumns.push(oColumn);
-            // }
             if (oColumn.hidden) {
                scope.widgets.dataTable.showColumn(oColumn);
                Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
