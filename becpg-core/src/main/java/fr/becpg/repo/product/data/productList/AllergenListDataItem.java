@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfIdentAttr;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -28,6 +29,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListVoluntary")
+	@AlfEnforced
 	public Boolean getVoluntary() {
 		return voluntary;
 	}
@@ -41,6 +43,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListInVoluntary")
+	@AlfEnforced
 	public Boolean getInVoluntary() {
 		return inVoluntary;
 	}
