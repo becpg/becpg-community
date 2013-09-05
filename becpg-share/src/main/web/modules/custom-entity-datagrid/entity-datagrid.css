@@ -19,7 +19,6 @@
 	padding-left: 20px;
 }
 
-
 .datagrid span.localSemiFinishedProduct-Valid {
 	background: url(../../components/images/states/valid-10.png),
 		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
@@ -132,7 +131,6 @@
 	padding-left: 20px;
 }
 
-
 .datagrid span.localSemiFinishedProduct-Refused {
 	background: url(../../components/images/states/stop-10.png),
 		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
@@ -190,13 +188,19 @@
 	padding-left: 20px;
 }
 
-.datagrid .reqTypeTolerated,.datagrid span.dynaError, .datagrid span.lcl-formulated-error {
+.datagrid .reqTypeTolerated,.datagrid span.dynaError,.datagrid span.lcl-formulated-error
+	{
 	background: url(../../components/images/states/warning-16.png) no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid .reqTypeInfo, .datagrid span.lcl-formulated {
+.datagrid .reqTypeInfo {
 	background: url(../../components/images/states/info-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.lcl-formulated {
+	background: url(../../components/entity-data-lists/images/formulate-16.png) no-repeat;
 	padding-left: 20px;
 }
 
@@ -358,7 +362,8 @@
 	background-image: url(../../components/images/comment-16.png);
 }
 
-.datagrid-bar .onActionManageAspects,.datagrid .onActionManageAspects a {
+.datagrid-bar .onActionManageAspects,.datagrid .onActionManageAspects a
+	{
 	background-image: url(../../components/images/aspect-16.png);
 }
 

@@ -1,12 +1,9 @@
 /**
  Yui 
 **/
-
-
 .formulation-view  .yui-g .yui-u {
 	width: 49.5%;
 }
-
 
 .formulation-view  .yui-skin-default .yui-button {
 	margin: 0px;
@@ -15,13 +12,11 @@
 /**
  Dashlet
 **/
-
 .formulation-view  .datagrid .scrollableList {
 	padding: 0;
 	height: 260px;
 }
 
- 
 .formulation-view  .datagrid {
 	padding: 0px;
 }
@@ -35,7 +30,6 @@
 	margin: 0px;
 	padding: 0x;
 }
-
 
 /**
  Bar
@@ -69,31 +63,28 @@
 	padding-left: 22px;
 }
 
+.datagrid-bar .onAddLabelingAspect, .datagrid .onAddLabelingAspect a
+	{
+	background: transparent url(../images/tag-16.png) no-repeat 12px 4px;
+	padding-left: 22px;
+}
+
+.datagrid .labeling-aspect {
+	background: url("../images/tag-16.png") no-repeat scroll 0 0 transparent;
+   padding-left: 14px;
+}
 
 /* Hide New Item */
 .constraintsList .datagrid .datagrid-bar .new-row {
 	display: none;
 }
 
-
 /** Full screen mode */
-
-
-/* .full-screen  .formulation-view  .datagrid .scrollableList {
-	height: 350px;
+.full-screen .sticky-footer,.full-screen  .sticky-push {
+	height: 0px;
 }
- */
-
-.full-screen .sticky-footer, .full-screen  .sticky-push {
-    height: 0px;
-}
-
-
-
-
 
 /** Full screen form */
-
 div#full-screen-form {
 	border: 1px solid #CCCCCC;
 	box-shadow: 0 1px 2px #CCCCCC;
@@ -102,9 +93,6 @@ div#full-screen-form {
 	padding: 6px;
 	border-radius: 4px;
 }
-
-
-
 
 #full-screen-form  div.form-fields {
 	float: left;
@@ -122,11 +110,11 @@ div#full-screen-form {
 }
 
 #full-screen-form  .clear {
-	height:0px;	
+	height: 0px;
 }
 
 #full-screen-form   .yui-ac .ac-body {
-    min-height: 18px;
+	min-height: 18px;
 }
 
 #full-screen-form form {
@@ -144,13 +132,11 @@ div#full-screen-form {
 }
 
 #full-screen-form .ac-toogle {
-    height: 18px;
+	height: 18px;
 }
 
-
-.yui-skin-lightTheme #full-screen-form   .yui-ac-container,
-#full-screen-form  .yui-ac-container
-{
+.yui-skin-lightTheme #full-screen-form   .yui-ac-container,#full-screen-form  .yui-ac-container
+	{
 	width: 35em;
 }
 
@@ -174,7 +160,6 @@ div#full-screen-form {
 	display: none;
 }
 
-
 #full-screen-form  .yui-submit-button span.first-child {
 	background: url("../images/add-row-16.png") no-repeat scroll 12px 4px
 		transparent;
@@ -182,6 +167,6 @@ div#full-screen-form {
 }
 
 #full-screen-form  form .mandatory,#full-screen-form  .form-fields .mandatory,#full-screen-form  .form-fields input.mandatory[type="text"],#full-screen-form  .form-fields .input.mandatory input[type="text"],#full-screen-form  .form-fields .input .mandatory input[type="text"]
-{
+	{
 	background-color: transparent;
 }
