@@ -3978,6 +3978,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true"/>
+					<show id="pack:labelingPosition" force="true"/>
 					<show id="bcpg:packagingListProduct" />
 					<show id="bcpg:packagingListQty" />
 					<show id="bcpg:packagingListUnit" />
@@ -3993,6 +3994,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="pack:labelingPosition" label="hidden"/>
 					<field id="bcpg:dynamicCharactColumn1" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn2" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
@@ -4026,8 +4028,8 @@
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
 					<show id="bcpg:variantIds" force="true"/>
-					<show id="pack:labelingPosition" force="true" />
-					<show id="pack:labelingTemplate" force="true" />
+					<show id="pack:labelingPosition"  />
+					<show id="pack:labelingTemplate"  />
 				</field-visibility>
 
 				<appearance>

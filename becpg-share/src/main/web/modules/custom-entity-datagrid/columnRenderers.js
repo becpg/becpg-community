@@ -33,7 +33,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                         var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
                         return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">' + Alfresco.util
-                        				.encodeHTML(data.displayValue) + '</a></span>' + version;
+                              .encodeHTML(data.displayValue) + '</a></span>' + version;
                      }
                      return '<span class="' + data.metadata + '" ><a href="' + url + '">' + Alfresco.util
                            .encodeHTML(data.displayValue) + '</a></span>' + version;
@@ -56,7 +56,8 @@ if (beCPG.module.EntityDataGridRenderers) {
    });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary", "boolean_bcpg:lclIsClaimed" ],
+      propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary",
+            "boolean_bcpg:lclIsClaimed","boolean_bcpg:packagingListIsMaster" ],
       renderer : function(oRecord, data, label, scope) {
          if (data.value) {
             return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
@@ -65,38 +66,43 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
-   
+
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:allergenListDecisionTree",
       renderer : function(oRecord, data, label, scope) {
-         var ret =  "";
-         if(data.value){
+         var ret = "";
+         if (data.value) {
             var values = eval(data.value);
-         
-            for(var i =0 ; i<values.length;i++){
-               if(ret.length>0){
-                  ret+=", ";
+
+            for ( var i = 0; i < values.length; i++) {
+               if (ret.length > 0) {
+                  ret += ", ";
                }
-               var msgKey  =  values[i].cid == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree.allergenList."+values[i].qid+"."+values[i].cid;
-               
-               ret+= values[i].qid.toUpperCase()+": "+scope.msg(msgKey);
-            }        
+               var msgKey = values[i].cid == "-" ? "form.control.decision-tree.empty"
+                     : "form.control.decision-tree.allergenList." + values[i].qid + "." + values[i].cid;
+
+               ret += values[i].qid.toUpperCase() + ": " + scope.msg(msgKey);
+            }
          }
          return ret;
       }
    });
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources" ],
-      renderer : function(oRecord, data, label, scope) {
-      	if(data.metadata == "ing"){
-      		return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-      	}
-      	return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityCharactURL(data.siteId, data.value) + '">' + Alfresco.util
-            .encodeHTML(data.displayValue) + '</a></span>';	
-      }
 
-   });
+   YAHOO.Bubbling
+         .fire(
+               "registerDataGridRenderer",
+               {
+                  propertyName : [ "cm:cmobject_bcpg:allergenListVolSources",
+                        "cm:cmobject_bcpg:allergenListInVolSources" ],
+                  renderer : function(oRecord, data, label, scope) {
+                     if (data.metadata == "ing") {
+                        return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+                     }
+                     return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityCharactURL(data.siteId,
+                           data.value) + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+                  }
+
+               });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:rclReqType", "bcpg:filReqType", "ecm:culReqType" ],
@@ -206,29 +212,28 @@ if (beCPG.module.EntityDataGridRenderers) {
                   }
 
                });
-   
 
    YAHOO.Bubbling
-   .fire(
-         "registerDataGridRenderer",
-         {
-            propertyName : "bcpg:labelClaim",
-            renderer : function(oRecord, data, label, scope) {
-               var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value;
-               if (isFormulated) {
-                  var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value;
-                  if (error == null) {
-                     return '<span class="lcl-formulated"  title="'+scope.msg("data.formulated")+'">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+         .fire(
+               "registerDataGridRenderer",
+               {
+                  propertyName : "bcpg:labelClaim",
+                  renderer : function(oRecord, data, label, scope) {
+                     var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value;
+                     if (isFormulated) {
+                        var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value;
+                        if (error == null) {
+                           return '<span class="lcl-formulated"  title="' + scope.msg("data.formulated") + '">' + Alfresco.util
+                                 .encodeHTML(data.displayValue) + '</span>';
+                        }
+
+                        return '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">' + Alfresco.util
+                              .encodeHTML(data.displayValue) + '</span>';
+                     }
+                     return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
                   }
 
-                  return '<span class="lcl-formulated-error" title="' + Alfresco.util
-                        .encodeHTML(error) + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-               }
-               return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-            }
-
-         });
-   
+               });
 
    YAHOO.Bubbling
          .fire(
@@ -304,30 +309,49 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
-   
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "fm:commentCount",
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-        
-         if (data.value != null &&  data.value!="" && data.value!="0") {
 
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "pack:labelingPosition",
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+         if (data.value != null) {
             if (oColumn.hidden) {
                scope.widgets.dataTable.showColumn(oColumn);
                Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
             }
-            Dom.setStyle(elCell, "width", "32px");
-            Dom.setStyle(elCell.parentNode, "width", "32px");
-            return '<div class="onActionShowComments"><a class="'+scope.id+'-action-link action-link" title="'+scope.msg("actions.comment")+'" href="" rel="edit"><span>'+data.displayValue+'</span></a></div>';
-
+            Dom.setStyle(elCell, "width", "16px");
+            Dom.setStyle(elCell.parentNode, "width", "16px");
+            return "<span title=\"" + data.displayValue + "\" class='labeling-aspect'>&nbsp;</span>";
          }
-
          return "";
-         
-
       }
 
    });
+
+   YAHOO.Bubbling
+         .fire(
+               "registerDataGridRenderer",
+               {
+                  propertyName : "fm:commentCount",
+                  renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+
+                     if (data.value != null && data.value != "" && data.value != "0") {
+
+                        if (oColumn.hidden) {
+                           scope.widgets.dataTable.showColumn(oColumn);
+                           Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                        }
+                        Dom.setStyle(elCell, "width", "32px");
+                        Dom.setStyle(elCell.parentNode, "width", "32px");
+                        return '<div class="onActionShowComments"><a class="' + scope.id + '-action-link action-link" title="' + scope
+                              .msg("actions.comment") + '" href="" rel="edit"><span>' + data.displayValue + '</span></a></div>';
+
+                     }
+
+                     return "";
+
+                  }
+
+               });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3",
@@ -372,17 +396,20 @@ if (beCPG.module.EntityDataGridRenderers) {
          return Alfresco.util.encodeHTML(qty);
       }
    });
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "bcpg:compoListDeclType", "bcpg:packagingListPkgLevel" ],
-      renderer : function(oRecord, data, label, scope) {      	
-      	if(data.displayValue != null){
-      		var msgKey = "data." + label.replace(":","_").toLowerCase() + "." + data.displayValue.toLowerCase(), msgValue = scope.msg(msgKey);
-      		if(msgKey != msgValue){
-      			return Alfresco.util.encodeHTML(msgValue);
-      		}      		
-      	}
-      	return Alfresco.util.encodeHTML(data.displayValue);
-      }
-   });
+
+   YAHOO.Bubbling
+         .fire("registerDataGridRenderer",
+               {
+                  propertyName : [ "bcpg:compoListDeclType", "bcpg:packagingListPkgLevel" ],
+                  renderer : function(oRecord, data, label, scope) {
+                     if (data.displayValue != null) {
+                        var msgKey = "data." + label.replace(":", "_").toLowerCase() + "." + data.displayValue
+                              .toLowerCase(), msgValue = scope.msg(msgKey);
+                        if (msgKey != msgValue) {
+                           return Alfresco.util.encodeHTML(msgValue);
+                        }
+                     }
+                     return Alfresco.util.encodeHTML(data.displayValue);
+                  }
+               });
 }
