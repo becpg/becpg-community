@@ -4,21 +4,16 @@
 package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -26,7 +21,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 
 /**
  * Generate documents when product properties are updated.
@@ -40,41 +35,10 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityReportPolicy.class);
 
-	/** The transaction service. */
-	private TransactionService transactionService;
+	private EntityReportAsyncGenerator entityReportAsyncGenerator;
 
-	/** The thread pool executor. */
-	private ThreadPoolExecutor threadExecuter;
-
-	/** The entityReportService **/
-	private EntityReportService entityReportService;
-
-	private ConcurrentLinkedQueue<NodeRef> reportsQueue = new ConcurrentLinkedQueue<>();
-
-	/**
-	 * Sets the transaction service.
-	 * 
-	 * @param transactionService
-	 *            the new transaction service
-	 */
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
-
-	/**
-	 * @param threadExecuter
-	 *            the threadExecuter to set
-	 */
-	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
-		this.threadExecuter = threadExecuter;
-	}
-
-	/**
-	 * @param entityReportService
-	 *            the entityReportService to set
-	 */
-	public void setEntityReportService(EntityReportService entityReportService) {
-		this.entityReportService = entityReportService;
+	public void setEntityReportAsyncGenerator(EntityReportAsyncGenerator entityReportAsyncGenerator) {
+		this.entityReportAsyncGenerator = entityReportAsyncGenerator;
 	}
 
 	/**
@@ -106,8 +70,10 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 	}
 
 	private void onUpdateProduct(NodeRef entityNodeRef) {
-
-		queueNode(entityNodeRef);
+		if (nodeService.exists(entityNodeRef) && !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && isNotLocked(entityNodeRef)
+				&& !isVersionStoreNode(entityNodeRef)) {
+			queueNode(entityNodeRef);
+		}
 	}
 
 	@Override
@@ -143,95 +109,8 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 
-		Runnable runnable = new ProductReportGenerator(pendingNodes, reportsQueue);
-		threadExecuter.execute(runnable);
+		entityReportAsyncGenerator.queueNodes(new ArrayList<>(pendingNodes));
 
 	}
 
-	/**
-	 * The Class ProductReportGenerator.
-	 * 
-	 * @author querephi
-	 */
-	private class ProductReportGenerator implements Runnable {
-
-		/** The product node ref. */
-		private Set<NodeRef> entityNodeRefs;
-
-		private ConcurrentLinkedQueue<NodeRef> reportsQueue;
-
-		/**
-		 * Instantiates a new product report generator.
-		 * 
-		 * @param reportsQueue
-		 * 
-		 * @param entityNodeRef
-		 *            the product node ref
-		 */
-		private ProductReportGenerator(Set<NodeRef> entityNodeRefs, ConcurrentLinkedQueue<NodeRef> reportsQueue) {
-			this.entityNodeRefs = entityNodeRefs;
-			this.reportsQueue = reportsQueue;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			for (final NodeRef entityNodeRef : entityNodeRefs) {
-
-				if (!reportsQueue.contains(entityNodeRef)) {
-					try {
-						reportsQueue.add(entityNodeRef);
-						RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-							@Override
-							public Object doWork() throws Exception {
-								RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-									@Override
-									public Object execute() {
-
-										if (nodeService.exists(entityNodeRef) && !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && isNotLocked(entityNodeRef)
-												&& !isVersionStoreNode(entityNodeRef)) {
-
-											try {
-
-												policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-												policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-												policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-
-												if (logger.isDebugEnabled()) {
-													logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-												}
-												entityReportService.generateReport(entityNodeRef);
-
-											} finally {
-												policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-												policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-												policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-											}
-										}
-
-										return null;
-									}
-								};
-								return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
-							}
-						};
-						AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-
-					} catch (Exception e) {
-						logger.error("Unable to generate product reports ", e);
-					} finally {
-						reportsQueue.remove(entityNodeRef);
-					}
-
-				} else {
-					logger.warn("NodeRef already in queue: "+entityNodeRef);
-				}
-			}
-
-		}
-	}
 }

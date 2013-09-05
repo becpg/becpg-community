@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -48,14 +49,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
-	/** The node service. */
 	private NodeService nodeService;
 
-	/** The content service. */
 	private ContentService contentService;
 
-	/** The file folder service. */
 	private FileFolderService fileFolderService;
+	
+	private BehaviourFilter policyBehaviourFilter;
 
 	private ReportTplService reportTplService;
 
@@ -75,22 +75,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 		entityExtractors.put(typeName, extractor);
 	}
 
-	/**
-	 * Sets the node service.
-	 * 
-	 * @param nodeService
-	 *            the new node service
-	 */
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	/**
-	 * Sets the content service.
-	 * 
-	 * @param contentService
-	 *            the new content service
-	 */
+
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
@@ -99,12 +89,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		this.mimetypeService = mimetypeService;
 	}
 
-	/**
-	 * Sets the file folder service.
-	 * 
-	 * @param fileFolderService
-	 *            the new file folder service
-	 */
+	
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
@@ -124,9 +109,39 @@ public class EntityReportServiceImpl implements EntityReportService {
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
+	
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
 
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
+
+		try {
+
+			policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+			}
+
+			if(nodeService.exists(entityNodeRef)){
+				generateReportImpl(entityNodeRef);
+			}
+
+		} finally {
+			policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+		}
+
+	}
+
+	private void generateReportImpl(NodeRef entityNodeRef) {
 
 		// #366 : force to use server locale for mlText fields
 		I18NUtil.setLocale(Locale.getDefault());
