@@ -253,7 +253,7 @@ public class EntityServiceImpl implements EntityService {
 					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
 				}
 			} catch (IOException e) {
-				logger.error("Failed to get the content", e);
+				logger.error("Failed to get the content for "+nodeRef, e);
 			} finally {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(out);

@@ -23,6 +23,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -50,8 +51,14 @@ public class ReportTplWebScript extends AbstractWebScript {
 	private EntityReportService entityReportService;
 
 	private BeCPGSearchService beCPGSearchService;
-	
+
 	private AssociationService associationService;
+
+	private EntityReportAsyncGenerator entityReportAsyncGenerator;
+
+	public void setEntityReportAsyncGenerator(EntityReportAsyncGenerator entityReportAsyncGenerator) {
+		this.entityReportAsyncGenerator = entityReportAsyncGenerator;
+	}
 
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
@@ -91,7 +98,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 				updateReports(nodeRef, ACTION_REFRESH);
 			} else if (ACTION_DELETE_REPORTS.equals(action)) {
 				deleteReports(nodeRef);
-			} else if(ACTION_UPDATE_PERMISSIONS.equals(action)){
+			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
 				updateReports(nodeRef, ACTION_UPDATE_PERMISSIONS);
 			} else {
 				String error = "Unsupported action: " + action;
@@ -108,28 +115,27 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		if (isSystem != null && isSystem && classType != null) {
 
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType))
-					+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY))
+			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) + LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY))
 					+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
 
 			List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
-			
+
 			logger.info("Refresh reports of " + entityNodeRefs.size() + " entities. action: " + action);
 
-			for (NodeRef entityNodeRef : entityNodeRefs) {
-				if(ACTION_REFRESH.equals(action)){
-					entityReportService.generateReport(entityNodeRef);
-				} else if(ACTION_UPDATE_PERMISSIONS.equals(action)){						
+			if (ACTION_REFRESH.equals(action)) {
+				entityReportAsyncGenerator.queueNodes(entityNodeRefs);
+			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
+				for (NodeRef entityNodeRef : entityNodeRefs) {
 					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-					for(NodeRef report : reports){
+					for (NodeRef report : reports) {
 						NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
-						if(nodeRef.equals(tplNodeRef)){
+						if (nodeRef.equals(tplNodeRef)) {
 							entityReportService.setPermissions(nodeRef, report);
-						}							
-					}						
-				}					
+						}
+					}
+				}
 			}
-			
+
 			logger.info("Refresh reports done.");
 		}
 	}
@@ -137,18 +143,17 @@ public class ReportTplWebScript extends AbstractWebScript {
 	private void deleteReports(NodeRef nodeRef) {
 
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, ReportModel.ASSOC_REPORT_TPL);
-		
+
 		logger.info("Delete " + assocRefs.size() + " reports.");
 
 		for (AssociationRef assocRef : assocRefs) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Delete report " + assocRef.getSourceRef() + " - name: "
-						+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
+				logger.debug("Delete report " + assocRef.getSourceRef() + " - name: " + nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
 			}
 			nodeService.addAspect(assocRef.getSourceRef(), ContentModel.ASPECT_TEMPORARY, null);
 			nodeService.deleteNode(assocRef.getSourceRef());
 		}
-		
+
 		logger.info("Reports deleted.");
 	}
 }
