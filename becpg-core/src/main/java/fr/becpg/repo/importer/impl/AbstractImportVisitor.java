@@ -45,12 +45,17 @@ import org.dom4j.Node;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
+import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
@@ -102,6 +107,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	/** The Constant QUERY_XPATH_COLUMNS_ATTRIBUTE. */
 	protected static final String QUERY_XPATH_COLUMNS_ATTRIBUTE = "columns/column[@type='Attribute']";
+
+	protected static final String QUERY_XPATH_COLUMNS_FORMULA = "columns/column[@type='Formula']";
 
 	/** The Constant QUERY_XPATH_COLUMNS_DATALIST. */
 	protected static final String QUERY_XPATH_COLUMNS_DATALIST = "columns/column[@type='Characteristic']"; // productLists,
@@ -160,6 +167,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";
 	protected static final String MSG_ERROR_NO_DOCS_BASE_PATH_SET = "import_service.error.err_no_docs_base_path_set";
 
+
 	private static Log logger = LogFactory.getLog(AbstractImportVisitor.class);
 
 	protected NodeService nodeService;
@@ -181,7 +189,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected EntityListDAO entityListDAO;
 
 	protected AutoNumService autoNumService;
-	
+
 	protected HierarchyService hierarchyService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
@@ -341,7 +349,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);
 
-			if (attributeMapping instanceof AttributeMapping || attributeMapping instanceof HierarchyMapping) {
+			if (attributeMapping instanceof AttributeMapping || attributeMapping instanceof HierarchyMapping || attributeMapping instanceof FormulaMapping) {
 				ClassAttributeDefinition column = attributeMapping.getAttribute();
 
 				if (column instanceof PropertyDefinition) {
@@ -363,9 +371,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								for (String v : arrValue) {
 									if (!v.isEmpty()) {
 										NodeRef nodeRef = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, v, properties);
-										if(nodeRef!=null){
-											if(value==null){
-												value= new ArrayList<NodeRef>();
+										if (nodeRef != null) {
+											if (value == null) {
+												value = new ArrayList<NodeRef>();
 											}
 											((List<NodeRef>) value).add(nodeRef);
 										}
@@ -377,7 +385,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								value = findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, values.get(z_idx), properties);
 							}
 						} else {
+
 							value = ImportHelper.loadPropertyValue(importContext, values, z_idx);
+
+							if (value instanceof String && attributeMapping instanceof FormulaMapping) {
+								value = parseFormula((String) value);
+							}
+
 						}
 
 					}
@@ -391,6 +405,43 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 
 		return properties;
+	}
+	
+
+
+	private String parseFormula(String formula) throws ImporterException {
+		try {
+			ExpressionParser parser = new SpelExpressionParser();
+			StandardEvaluationContext context = new StandardEvaluationContext(this);
+
+			return parser.parseExpression(formula, new ParserContext() {
+
+				public String getExpressionPrefix() {
+					return "${";
+				}
+
+				public String getExpressionSuffix() {
+					return "}";
+				}
+
+				public boolean isTemplate() {
+					return true;
+				}
+			}).getValue(context, String.class);
+		} catch (Exception e) {
+			logger.error("Cannot parse formula :" + formula,e);
+			throw new ImporterException("Cannot parse formula :" + formula,e);
+		}
+	}
+
+	public  String findCharact(String type, String name) {
+		NodeRef ret = getItemByTypeAndName(QName.createQName(type, namespaceService), name);
+		if(ret==null){
+			logger.error("Cannot find ("+type+","+name+")");
+			return null;
+		}
+		return ret.toString();
+
 	}
 
 	/**
@@ -430,14 +481,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							logger.debug("Assoc already present");
 							targetRefs.remove(targetRef);
 						} else {
-							logger.debug("Remove assocs :"+ assocDef.getName());
+							logger.debug("Remove assocs :" + assocDef.getName());
 							nodeService.removeAssociation(nodeRef, targetRef, assocDef.getName());
 						}
 					}
 
 					// add new associations, the rest
 					for (NodeRef targetRef : targetRefs) {
-						logger.debug("Add assocs :"+ assocDef.getName());
+						logger.debug("Add assocs :" + assocDef.getName());
 						nodeService.createAssociation(nodeRef, targetRef, assocDef.getName());
 					}
 				}
@@ -732,6 +783,24 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				classMapping.getColumns().add(attributeMapping);
 			}
 
+			// Formula
+			columnNodes = mappingNode.selectNodes(QUERY_XPATH_COLUMNS_FORMULA);
+			for (Node columnNode : columnNodes) {
+				QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
+
+				ClassAttributeDefinition attributeDef = dictionaryService.getProperty(attribute);
+				if (attributeDef == null) {
+
+					attributeDef = dictionaryService.getAssociation(attribute);
+					if (attributeDef == null) {
+						throw new MappingException(I18NUtil.getMessage(MSG_ERROR_MAPPING_ATTR_FAILED, typeQName, attribute));
+					}
+				}
+
+				AbstractAttributeMapping attributeMapping = new FormulaMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef);
+				classMapping.getColumns().add(attributeMapping);
+			}
+
 			// characteristics
 			columnNodes = mappingNode.selectNodes(QUERY_XPATH_COLUMNS_DATALIST);
 			for (Node columnNode : columnNodes) {
@@ -992,8 +1061,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								LuceneHelper.Operator.AND);
 					}
 					doQuery = true;
-				}
-				else{
+				} else {
 					logger.warn("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
 				}
 			}
@@ -1101,12 +1169,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				hierarchyNodeRef = hierarchyService.getHierarchyByPath(importContext.getPath(), null, value);
 			}
 
-			if(hierarchyNodeRef != null){
+			if (hierarchyNodeRef != null) {
 				return hierarchyNodeRef;
-			}
-			else{
+			} else {
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
-			}			
+			}
 		}
 
 		return findTargetNodeByValue(importContext, propDef.getDataType().getName(), value);
@@ -1279,7 +1346,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
 
 		queryPath += DEFAULT_IGNORE_QUERY;
-
+		
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
 		if (!nodes.isEmpty()) {

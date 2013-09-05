@@ -6,13 +6,21 @@
 			<logo>becpg-footer-logo.png</logo>
 			<alt-text>beCPG for Alfresco Share</alt-text>
 			<css-class>footer-becpg</css-class>
-			<label>beCPG @2010-2012</label>
-			<!-- <analytics-id>UA-33644643-1</analytics-id> -->
+			<label>beCPG @2010-2013</label>
 		</footer>
 		<about>
 			<css-class>logo-com</css-class>
 		</about>
 	</config>
+	
+	<config evaluator="string-compare" condition="Analytics" >
+		<provider>
+			<provider-id>none</provider-id>
+	   <!-- 	<provider-id>google</provider-id>
+			<analytics-id>UA-33644643-1</analytics-id>  -->
+		</provider>
+	</config> 
+	
 
 	<!-- Global config section -->
 	<config replace="true">

@@ -2,20 +2,22 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.annotation.AlfIdentAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends BeCPGDataObject {
+public class LabelClaimListDataItem extends AbstractManualDataItem {
 
 	private NodeRef labelClaim;
 	private String type;
 	private Boolean isClaimed;
+	private Boolean isFormulated;
+	private String errorLog;
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:lclLabelClaim")
@@ -45,40 +47,51 @@ public class LabelClaimListDataItem extends BeCPGDataObject {
 		this.isClaimed = isClaimed;
 	}
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lclIsFormulated")
+	public Boolean getIsFormulated() {
+		return isFormulated;
+	}
+	
+	public void setIsFormulated(Boolean isFormulated) {
+		this.isFormulated = isFormulated;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lclFormulaErrorLog")
+	public String getErrorLog() {
+		return errorLog;
+	}
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
+	}
+	
+	
 	public LabelClaimListDataItem(){
-		
+		super();
 	}
 	
-	public LabelClaimListDataItem(NodeRef nodeRef, NodeRef labelClaim, String type, Boolean isClaimed){
-		setNodeRef(nodeRef);
-		setLabelClaim(labelClaim);
-		setType(type);
-		setIsClaimed(isClaimed);
-	}
 	
-	public LabelClaimListDataItem(LabelClaimListDataItem l){
-		setNodeRef(l.getNodeRef());
-		setLabelClaim(l.getLabelClaim());
-		setType(l.getType());
-		setIsClaimed(l.getIsClaimed());
-	}
-		
-	@Override
-	public String toString() {
-		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", isClaimed=" + isClaimed
-				+ ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
+	public LabelClaimListDataItem(NodeRef labelClaim, String type, Boolean isClaimed) {
+		super();
+		this.labelClaim = labelClaim;
+		this.type = type;
+		this.isClaimed = isClaimed;
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
 		result = prime * result + ((isClaimed == null) ? 0 : isClaimed.hashCode());
+		result = prime * result + ((isFormulated == null) ? 0 : isFormulated.hashCode());
 		result = prime * result + ((labelClaim == null) ? 0 : labelClaim.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -88,10 +101,20 @@ public class LabelClaimListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		LabelClaimListDataItem other = (LabelClaimListDataItem) obj;
+		if (errorLog == null) {
+			if (other.errorLog != null)
+				return false;
+		} else if (!errorLog.equals(other.errorLog))
+			return false;
 		if (isClaimed == null) {
 			if (other.isClaimed != null)
 				return false;
 		} else if (!isClaimed.equals(other.isClaimed))
+			return false;
+		if (isFormulated == null) {
+			if (other.isFormulated != null)
+				return false;
+		} else if (!isFormulated.equals(other.isFormulated))
 			return false;
 		if (labelClaim == null) {
 			if (other.labelClaim != null)
@@ -105,5 +128,11 @@ public class LabelClaimListDataItem extends BeCPGDataObject {
 			return false;
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", isClaimed=" + isClaimed + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog
+				+ "]";
+	}
+		
 
 }
