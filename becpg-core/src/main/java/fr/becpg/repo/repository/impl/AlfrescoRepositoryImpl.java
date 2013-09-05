@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -105,17 +106,27 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Override
 	public T save(T entity) {
-		
-		if(entity.isTransient()){
+
+		if (entity.isTransient()) {
 			return entity;
 		}
 
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
+
+			Map<QName, Serializable> properties = extractProperties(entity);
+
 			if (entity.getNodeRef() == null) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create instanceOf :" + entity.getClass().getName());
 				}
-				Map<QName, Serializable> properties = extractProperties(entity);
+
+				for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+					Map.Entry<QName, Serializable> prop = iterator.next();
+					if (prop.getValue() == null) {
+						iterator.remove();
+					}
+
+				}
 
 				String name = entity.getName();
 				if (entity.getName() == null) {
@@ -132,7 +143,16 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			} else {
 				logger.debug("Update instanceOf :" + entity.getClass().getName());
 
-				nodeService.addProperties(entity.getNodeRef(), extractProperties(entity));
+				for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+					Map.Entry<QName, Serializable> prop = iterator.next();
+					if (prop.getValue() == null && !repositoryEntityDefReader.isEnforced(entity.getClass(), prop.getKey())) {
+						iterator.remove();
+						nodeService.removeProperty(entity.getNodeRef(), prop.getKey());
+					}
+
+				}
+
+				nodeService.addProperties(entity.getNodeRef(), properties);
 			}
 
 			saveAssociations(entity);
@@ -159,9 +179,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	// For now only add aspect
 	private void saveAspects(T entity) {
-		if(entity instanceof AspectAwareDataItem){
-			if (((AspectAwareDataItem)entity).getAspects() != null) {
-				for (QName aspect : ((AspectAwareDataItem)entity).getAspects()) {
+		if (entity instanceof AspectAwareDataItem) {
+			if (((AspectAwareDataItem) entity).getAspects() != null) {
+				for (QName aspect : ((AspectAwareDataItem) entity).getAspects()) {
 					if (!nodeService.hasAspect(entity.getNodeRef(), aspect)) {
 						nodeService.addAspect(entity.getNodeRef(), aspect, new HashMap<QName, Serializable>());
 					}
@@ -175,25 +195,25 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
 
 		for (Map.Entry<QName, T> prop : repositoryEntityDefReader.getEntityProperties(entity).entrySet()) {
-			if(prop.getValue() == null || !prop.getValue().isTransient()){
+			if (prop.getValue() == null || !prop.getValue().isTransient()) {
 				properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
 			}
 		}
-		
-		if(entity.getExtraProperties()!=null){
+
+		if (entity.getExtraProperties() != null) {
 			properties.putAll(entity.getExtraProperties());
 		}
-		
+
 		return properties;
 
 	}
 
 	private void saveAssociations(T entity) {
 
-		//TODO manage child assocs
-		
+		// TODO manage child assocs
+
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
-			if(association.getValue()==null || !association.getValue().isTransient()){
+			if (association.getValue() == null || !association.getValue().isTransient()) {
 				associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
 			}
 		}
@@ -249,7 +269,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 	}
-	
+
 	@Override
 	public NodeRef getOrCreateDataListContainer(T entity) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entity.getNodeRef());
@@ -292,13 +312,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
-					if(dataListItem!=null && !dataListItem.isTransient()){
+					if (dataListItem != null && !dataListItem.isTransient()) {
 						nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(dataListItem.getNodeRef());
 					}
 				}
 
-				
 				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
 
 			} else {
@@ -371,8 +390,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				if (readMethod != null) {
 					if (readMethod.isAnnotationPresent(AlfProp.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						loadProperties(entity, pd, readMethod, properties, caches);
-					}
-					else if (readMethod.isAnnotationPresent(AlfSingleAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
+					} else if (readMethod.isAnnotationPresent(AlfSingleAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						loadAssoc(entity, pd, readMethod, caches, false, readMethod.getAnnotation(AlfSingleAssoc.class).isChildAssoc());
 					} else if (readMethod.isAnnotationPresent(AlfMultiAssoc.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						loadAssoc(entity, pd, readMethod, caches, true, readMethod.getAnnotation(AlfMultiAssoc.class).isChildAssoc());
@@ -393,7 +411,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 			}
-			
+
 			loadAspects(entity);
 
 			caches.put(id, entity);
@@ -408,8 +426,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	private void loadAspects(T entity) {
-		if(entity instanceof AspectAwareDataItem){
-			((AspectAwareDataItem)entity).setAspects(nodeService.getAspects(entity.getNodeRef()));
+		if (entity instanceof AspectAwareDataItem) {
+			((AspectAwareDataItem) entity).setAspects(nodeService.getAspects(entity.getNodeRef()));
 		}
 
 	}
@@ -462,18 +480,18 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				logger.trace("read multi assoc : " + pd.getName());
 			}
 			List<NodeRef> assocRefs = null;
-			if(!isChildAssoc){
-				assocRefs =  associationService.getTargetAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
+			if (!isChildAssoc) {
+				assocRefs = associationService.getTargetAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			} else {
 				assocRefs = associationService.getChildAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			}
-			
-			if( assocRefs != null && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()){
+
+			if (assocRefs != null && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()) {
 				List<RepositoryEntity> entities = new LinkedList<>();
-				for(NodeRef nodeRef : assocRefs){
-					entities.add(findOne(nodeRef,caches));
+				for (NodeRef nodeRef : assocRefs) {
+					entities.add(findOne(nodeRef, caches));
 				}
-				PropertyUtils.setProperty(entity, pd.getName(),entities);
+				PropertyUtils.setProperty(entity, pd.getName(), entities);
 			} else {
 				PropertyUtils.setProperty(entity, pd.getName(), assocRefs);
 			}
@@ -484,7 +502,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 
 			NodeRef assocRef = null;
-			if(!isChildAssoc){
+			if (!isChildAssoc) {
 				assocRef = associationService.getTargetAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			} else {
 				assocRef = associationService.getChildAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
@@ -517,13 +535,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				if (caches.containsKey(prop)) {
 					PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));
 				} else {
-					if(!entity.getNodeRef().equals((NodeRef) prop)){
+					if (!entity.getNodeRef().equals((NodeRef) prop)) {
 						PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
 					} else {
-						logger.warn("Cyclic detected for :"+entity.getName()+" prop "+pd.getName()+" type "+entity.getClass().getSimpleName());
+						logger.warn("Cyclic detected for :" + entity.getName() + " prop " + pd.getName() + " type " + entity.getClass().getSimpleName());
 						PropertyUtils.setProperty(entity, pd.getName(), entity);
 					}
-					
+
 				}
 			} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
 				PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));

@@ -93,6 +93,7 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
 					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+					<property name="nodeService" ref="nodeService" />
 				</bean>
 			</list>
 		</property>
@@ -131,21 +132,6 @@
 		<property name="chainId" value="fastProductFormulationChain"/>
 		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
 	</bean>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

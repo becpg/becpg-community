@@ -1,5 +1,6 @@
 package fr.becpg.repo.repository.model;
 
+import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 
@@ -10,6 +11,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 	protected Integer sort;
 
 	@AlfProp
+	@AlfEnforced
 	@AlfQname(qname="bcpg:isManualListItem")
 	public Boolean getIsManual() {
 		return isManual;

@@ -63,5 +63,15 @@
 			<column id="img1Name" attribute="cm:name" path="Images/product.jpg" type="File" />
 		</columns>
 	</mapping>
+	
+	<mapping name="bcpg:labelClaim">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="labelClaimFormula" type="Formula"
+				attribute="bcpg:labelClaimFormula" />
+		</columns>
+	</mapping>
 
 </mappings>

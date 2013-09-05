@@ -107,6 +107,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	protected List<NodeRef> nuts = new ArrayList<NodeRef>();
 	protected List<NodeRef> taskLegends = new ArrayList<NodeRef>();
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
+	protected List<NodeRef> labelClaims = new ArrayList<NodeRef>();
 
 	protected NodeRef ingWater;
 	protected NodeRef labelingTemplateNodeRef = null;
@@ -524,6 +525,28 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		for (FileInfo fileInfo : taskLegendsFileInfo) {
 			taskLegends.add(fileInfo.getNodeRef());
 		}
+		
+		
+		// claim labelling
+		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_LABELCLAIMS);
+		List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
+		if (labelClaimsFileInfo.size() == 0) {
+
+			String[] labelClaimNames = { "Faible valeur énergétique","Sans apport énergétique" };
+			for (String labelClaim : labelClaimNames) {
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, labelClaim);
+				properties.put(BeCPGModel.PROP_LABEL_CLAIM_TYPE, "Nutritionnelle");
+				ChildAssociationRef childAssocRef = nodeService.createNode(labelClaimListsFolder, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LABEL_CLAIM, properties);
+				labelClaims.add(childAssocRef.getChildRef());
+			}
+		} else {
+			for (FileInfo fileInfo : labelClaimsFileInfo) {
+				labelClaims.add(fileInfo.getNodeRef());
+			}
+		}
+		
 	}
 
 	// private void initSystemProducts(){

@@ -181,7 +181,7 @@
 	padding-left: 20px;
 }
 
-.datagrid .presentAllergen {
+.datagrid .red {
 	color: red;
 }
 
@@ -190,12 +190,12 @@
 	padding-left: 20px;
 }
 
-.datagrid .reqTypeTolerated,.datagrid span.dynaError {
+.datagrid .reqTypeTolerated,.datagrid span.dynaError, .datagrid span.lcl-formulated-error {
 	background: url(../../components/images/states/warning-16.png) no-repeat;
 	padding-left: 20px;
 }
 
-.datagrid .reqTypeInfo {
+.datagrid .reqTypeInfo, .datagrid span.lcl-formulated {
 	background: url(../../components/images/states/info-16.png) no-repeat;
 	padding-left: 20px;
 }

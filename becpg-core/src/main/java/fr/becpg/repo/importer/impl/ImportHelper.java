@@ -106,7 +106,9 @@ public class ImportHelper{
 					value = mlText;
 				}
 				// Text
-				else if(dataType.isMatch(DataTypeDefinition.TEXT)){					
+				else if(dataType.isMatch(DataTypeDefinition.TEXT)){
+					
+					
 					
 					if (propertyDef.isMultiValued())
                 	{
@@ -120,8 +122,9 @@ public class ImportHelper{
                 	}
 					
 					// clean name
-					if(qName.getLocalName().equals(ContentModel.PROP_NAME.getLocalName()))
+					if(qName.getLocalName().equals(ContentModel.PROP_NAME.getLocalName())){
 						value = PropertiesHelper.cleanName((String)value);
+					}
 				}
 				// Date
 				else if(dataType.isMatch(DataTypeDefinition.DATE) || dataType.isMatch(DataTypeDefinition.DATETIME)){
@@ -175,8 +178,9 @@ public class ImportHelper{
 	 }
 	
 	
-	
-	
+
+
+
 	public static Charset guestCharset(InputStream is, String readerCharset){
 		Charset defaultCharset = Charset.forName(RepoConsts.ISO_CHARSET);
 		if(RepoConsts.ISO_CHARSET.equals(readerCharset)){
