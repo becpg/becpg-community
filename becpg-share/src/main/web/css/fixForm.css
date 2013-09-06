@@ -16,6 +16,12 @@
 	margin-left: 0px;
 }
 
+.yui-dialog .yui-g .form-field input[type="text"], 
+.yui-dialog .form-container .yui-g .form-field select {
+	width: 12em;
+}
+
+
 .alfresco-share .yui-panel .bd .form-container .yui-u.first {
 	text-align: left;
 }

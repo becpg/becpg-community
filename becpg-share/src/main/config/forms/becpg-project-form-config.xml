@@ -418,12 +418,13 @@
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlWorkflowName" />
 					
+					<show id="pjt:tlStart" read-only="true" />
+					<show id="pjt:tlEnd"   read-only="true" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />									
 					<show id="pjt:tlState" />
 					<show id="pjt:tlManualDate" />					
-					<show id="pjt:tlStart" read-only="true" />
-					<show id="pjt:tlEnd"   read-only="true" />
+					
 					<show id="pjt:completionPercent" read-only="true" />
 				</field-visibility>
 				<appearance>
@@ -431,7 +432,7 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" />					
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
 						
 					<field id="pjt:tlTaskName" set="mainInfo"/>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
@@ -449,7 +450,8 @@
 							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct</control-param>
 						</control>
 					</field>
-					
+					<field id="pjt:tlStart" set="planning"/>
+					<field id="pjt:tlEnd" set="planning"/>
 					<field id="pjt:tlIsMilestone" set="planning"/>
 					<field id="pjt:tlDuration" set="planning"/>
 					<field id="pjt:tlState" set="planning">
@@ -463,8 +465,7 @@
 							<control-param name="options">,Start|data.manualdate.start,End|data.manualdate.end</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlStart" set="planning"/>
-					<field id="pjt:tlEnd" set="planning"/>
+					
 					<field id="pjt:completionPercent" set="planning"/>
 				</appearance>
 			</form>
@@ -480,12 +481,13 @@
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlWorkflowName" />
 					
+					<show id="pjt:tlStart" read-only="true" />
+					<show id="pjt:tlEnd"   read-only="true" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />									
 					<show id="pjt:tlState" />
 					<show id="pjt:tlManualDate" />					
-					<show id="pjt:tlStart" read-only="true" />
-					<show id="pjt:tlEnd"   read-only="true" />
+					
 					<show id="pjt:completionPercent" read-only="true" />
 				</field-visibility>
 				<appearance>
@@ -493,7 +495,7 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
 					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" />					
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
 						
 					<field id="pjt:tlTaskName" set="mainInfo"/>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
@@ -510,7 +512,8 @@
 							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
 						</control>
 					</field>
-					
+					<field id="pjt:tlStart" set="planning"/>
+					<field id="pjt:tlEnd" set="planning"/>
 					<field id="pjt:tlIsMilestone" set="planning"/>
 					<field id="pjt:tlDuration" set="planning"/>
 					<field id="pjt:tlState" set="planning">
@@ -524,8 +527,7 @@
 							<control-param name="options">,Start|data.manualdate.start,End|data.manualdate.end</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlStart" set="planning"/>
-					<field id="pjt:tlEnd" set="planning"/>
+					
 					<field id="pjt:completionPercent" set="planning"/>
 					
 				</appearance>
