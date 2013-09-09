@@ -93,7 +93,7 @@
 					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:plants" force="true" />					
 					<show id="bcpg:clients" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />					
 										
 					<!-- Consumer -->
@@ -888,7 +888,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					
 					<!-- pallet -->
@@ -1153,7 +1153,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					
 					<!-- pallet -->
@@ -1198,7 +1198,7 @@
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					
 					<!-- Tare -->
@@ -1484,7 +1484,7 @@
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />					
 					<show id="rep:reportTpls" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />					
+					<show id="bcpg:entityTplRef" force="true" />					
 					
 					<!-- Consumer -->
 					<show id="bcpg:productQty" />
@@ -1840,7 +1840,7 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					
 					<!-- formulation -->
@@ -2238,7 +2238,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
-					<show id="bcpg:entityTplRef" force="true" for-mode="view" />
+					<show id="bcpg:entityTplRef" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -4477,6 +4477,7 @@
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -4488,6 +4489,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListGeoOrigin">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListGeoTransfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -4510,6 +4515,7 @@
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -4533,6 +4539,7 @@
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListGeoOrigin" />
+					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListSubIng" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -4544,6 +4551,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:ingListGeoOrigin">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListGeoTransfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -4638,6 +4649,7 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -4659,6 +4671,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListGroup" />
+					<show id="bcpg:nutListMethod" />					
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -4680,6 +4693,7 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5417,59 +5431,6 @@
 					<field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
 				</appearance>
-			</form>
-		</forms>
-	</config>
-	
-	<config evaluator="node-type" condition="pack:labelingTemplate">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-				</field-visibility>
-				<appearance>
-					<field id="cm:description">
-                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
-                  <control-param name="editorHeight">4</control-param>
-               </control>
-               </field>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-
-	<config evaluator="model-type" condition="pack:labelingTemplate">
-		<forms>
-			<!-- Create item form -->
-			<form>
-
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-				</field-visibility>
-
-				<appearance>
-					<field id="cm:description">
-                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
-                  <control-param name="editorHeight">4</control-param>
-               </control>
-               </field>
-				</appearance>
-			</form>
-
-			<!-- Data Grid view -->
-			<form id="filter">
-				<field-visibility>
-					<show id="cm:name" />
-				</field-visibility>
-			</form>
-
-			<form id="datagrid">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" force="true" />
-				</field-visibility>
 			</form>
 		</forms>
 	</config>

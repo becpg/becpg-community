@@ -1,0 +1,35 @@
+PATH;/System/Characts/bcpg:entityLists/Labels;
+TYPE;pack:label;
+COLUMNS;cm:name;pack:labelType
+VALUES;Alimentation 100% végétale;Engagement
+VALUES;Né et élevé en Bretagne;Origine
+VALUES;Liste ingrédients sachet;Caractéristique produit
+VALUES;Prix;Caractéristique produit
+VALUES;Prix/kg;Caractéristique produit
+VALUES;Poids net;Caractéristique produit
+VALUES;N°lot;Caractéristique produit
+VALUES;A consommer jusqu'au;Caractéristique produit
+VALUES;A consommer de préférence avant fin;Caractéristique produit
+VALUES;Expédié le;Caractéristique produit
+VALUES;Date de fabrication;Caractéristique produit
+VALUES;Produit frais;Mention de conservation
+VALUES;A conserver dans son emballage jusqu'à préparation;Mention de conservation
+VALUES;Produit conditionné sous AT;Mention de conservation
+VALUES;A conserver entre 0° et 4°C / +4°C MAX;Mention de conservation
+VALUES;Conserver à -18°C;Mention de conservation
+VALUES;Ne pas recongeler un produit congelé;Mention de conservation
+VALUES;Pictos Nbre pers. / Tps préparation / Mode de cuisson;Conseil préparation
+VALUES;Titre recette;Conseil préparation
+VALUES;Liste ingrédients recette;Conseil préparation
+VALUES;Détail recette;Conseil préparation
+VALUES;A consommer cuit à cœur;Conseil préparation
+VALUES;Sans huile de palme;Logo
+VALUES;Garanti sans porc;Logo
+VALUES;Code barre;Logo
+VALUES;100% viande de lapin;Logo
+VALUES;Stick BBQ intégré;Logo
+VALUES;Infos Conso;Coordonnées
+VALUES;Estampille sanitaire;Coordonnées
+VALUES;Adresse L&P;Coordonnées
+VALUES;Site internet;Coordonnées
+VALUES;Traçabilité sur l'étiquette poids/prix;Coordonnées

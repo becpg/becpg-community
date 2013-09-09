@@ -46,11 +46,71 @@
 				<value>cm:name</value>
 			</parameter>
 		</constraint>
+		<constraint name="pack:labelTypes"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/LabelTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
      </constraints>		
      
      <types>
      	<type name="pack:labelingTemplate">
 			<parent>bcpg:entityListItem</parent>
+		</type>
+		
+		<type name="pack:label">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pack:labelType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+		
+		<type name="pack:labelingList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="pack:llType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelTypes" />
+					</constraints>
+				</property>
+				<property name="pack:llPosition">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelingPositions" />
+					</constraints>
+				</property>				
+			</properties>
+			<associations>
+				<association name="pack:llLabel">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pack:label</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
      </types>
 
