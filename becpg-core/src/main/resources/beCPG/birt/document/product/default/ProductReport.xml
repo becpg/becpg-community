@@ -498,10 +498,10 @@ Commentaire 2]]></productComments>
 				pclMaxi="" />
 		</physicoChemList>
 		<labelClaimList>
-			<labelClaim name="Sans BPA" lclIsClaimed="true" lclType="Santé" />
-			<labelClaim name="Sans huile de palme" lclIsClaimed="true"
+			<labelClaim lclLabelClaim="Sans BPA" lclIsClaimed="true" lclType="Santé" />
+			<labelClaim lclLabelClaim="Sans huile de palme" lclIsClaimed="true"
 				lclType="Santé" />
-			<labelClaim name="Produit exempt de matières grasses de palme"
+			<labelClaim lclLabelClaim="Produit exempt de matières grasses de palme"
 				lclIsClaimed="true" lclType="Environnementale" />
 		</labelClaimList>
 	</dataLists>
