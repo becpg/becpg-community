@@ -7,7 +7,9 @@
 	<!-- Abstract bean -->
 	<bean id="beCPGBasePatch" abstract="true" class="fr.becpg.repo.admin.patch.AbstractBeCPGPatch" parent="basePatch">
 		<property name="repository" ref="repositoryHelper"/>
-		<property name="contentHelper" ref="contentHelper"/>		
+		<property name="contentHelper" ref="contentHelper"/>	
+		<property name="entitySystemService" ref="entitySystemService"/>
+		<property name="repoService" ref="repoService"/>	
 	</bean>
 	
 	<bean id="patch.bcpg.emailTemplatesPatch" class="fr.becpg.repo.admin.patch.EmailTemplatesPatch" parent="beCPGBasePatch" >
@@ -214,5 +216,18 @@
             </list>
         </property>
     </bean> 
+	
+	<bean id="patch.bcpg.qualityListPatch" class="fr.becpg.repo.admin.patch.QualityListPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.qualityListPatch</value></property>
+        <property name="description"><value>patch.bcpg.qualityListPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10014</value></property>
+        <property name="initRepoVisitor" ref="initRepoVisitor"/>
+        <property name="fileFolderService" ref="fileFolderService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+	
 	
 </beans>
