@@ -224,24 +224,28 @@ public class FormulationHelper {
 	public static Double getNetWeight(NodeRef nodeRef, NodeService nodeService) {
 		
 		Double netWeight = (Double)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_NET_WEIGHT);
-		if(netWeight != null){
+		if(netWeight != null){	
 			return netWeight;
 		}
-		else{
-			Double qty = getProductQty(nodeRef, nodeService);
-			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);						
-			
-			if(qty != null && productUnit != null){
-				if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
-					if(productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)){
-						qty = qty / 1000;
-					}
-					if(FormulationHelper.isProductUnitLiter(productUnit)){
-						Double density = FormulationHelper.getDensity(nodeRef, nodeService);
-						qty = qty * density;
-					}
-					return  qty;
-				}				
+		else{			
+			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);									
+			if(productUnit != null){
+				Double qty = getProductQty(nodeRef, nodeService);
+				if(qty != null){
+					if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
+						if(productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)){
+							qty = qty / 1000;
+						}
+						if(FormulationHelper.isProductUnitLiter(productUnit)){
+							Double density = FormulationHelper.getDensity(nodeRef, nodeService);
+							qty = qty * density;
+						}
+						return qty;
+					}						
+				}
+				else if(FormulationHelper.isProductUnitP(productUnit)){
+					return QTY_FOR_PIECE;
+				}								
 			}
 		}	
 				

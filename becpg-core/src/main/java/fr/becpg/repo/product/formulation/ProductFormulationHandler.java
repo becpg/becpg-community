@@ -9,6 +9,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
@@ -92,13 +93,24 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	
 	private void checkFormulatedProduct(ProductData formulatedProduct){
 		
-		Double qty = FormulationHelper.getProductQty(formulatedProduct.getNodeRef(), nodeService);
-		if(qty == null || qty.equals(0d)){
-			addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), formulatedProduct.getNodeRef(), MESSAGE_MISSING_QTY);
+		NodeRef productNodeRef = formulatedProduct.getNodeRef();
+		List<ReqCtrlListDataItem> reqCtrlList = null;
+		if(BeCPGModel.TYPE_PACKAGINGKIT.isMatch(nodeService.getType(productNodeRef))){
+			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
+		}
+		else{
+			Double qty = FormulationHelper.getProductQty(productNodeRef, nodeService);
+			if(qty == null || qty.equals(0d)){
+				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_QTY);
+			}			
+			checkNetWeight(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef);
+			reqCtrlList = formulatedProduct.getCompoListView().getReqCtrlList();
 		}
 		
-		checkNetWeight(formulatedProduct.getCompoListView().getReqCtrlList(), formulatedProduct.getNodeRef());
-		checkCompositionItem(formulatedProduct.getCompoListView().getReqCtrlList(), formulatedProduct.getNodeRef(), null);
+		ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
+		if(productUnit == null){	
+			addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT);
+		}
 	}
 	
 	private void checkCompositionItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c){
@@ -106,10 +118,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))){
 			
 			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
-			if(productUnit == null){	
-				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT);
-			}			
-			
 			if(c != null){
 				
 				if(FormulationHelper.isCompoUnitP(c.getCompoListUnit())){
@@ -164,10 +172,12 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 		}
 		
-		Double tare = FormulationHelper.getTareInKg(productNodeRef, nodeService);
-		if(tare == null){
-			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_TARE);
-		}
+		if(!nodeService.hasAspect(p.getProduct(), PackModel.ASPECT_PALLET)){
+			Double tare = FormulationHelper.getTareInKg(productNodeRef, nodeService);
+			if(tare == null){
+				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_TARE);
+			}
+		}		
 	}
 		
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg){
