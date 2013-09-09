@@ -100,7 +100,16 @@ public class RepoConsts {
 	public static final String PATH_CONTROL_METHODS = "ControlMethods";
 	public static final String PATH_QUALITY_CONTROLS = "QualityControls";	
 	public static final String PATH_NC = "NonConformities";
+	
+	//Quality Lists
+	public static final String PATH_QUALITY_LISTS = "QualityLists";
 	public static final String PATH_CLAIM_ORIGIN_HIERARCHY = "claimOrigin_Hierarchy";
+	public static final String PATH_CLAIM_SOURCES = "ClaimSources";
+	public static final String PATH_CLAIM_TRACKING_VALUES = "ClaimTrackingValues";
+	public static final String PATH_CLAIM_TYPES = "ClaimTypes";
+	public static final String PATH_CLAIM_RESPONSES_STATES = "ClaimResponseStates";
+	
+	
 	
 	//Project
 	public static final String PATH_PROJECTS = "Projects";
@@ -113,6 +122,8 @@ public class RepoConsts {
 	public static final String PATH_REQUEST_ORIGINS = "RequestOrigins";
 	public static final String PATH_SCORE_CRITERIA = "ScoreCriteria";
 	public static final String PATH_SPONSORS = "Sponsors";
+	
+
 	
 	
 	//Security
@@ -215,6 +226,7 @@ public class RepoConsts {
 	public static final String ISO_CHARSET = "ISO-8859-15";
 	
 	public static final Integer DATA_LISTS_PAGESIZE = 25;
+	
 
 	
 

@@ -9,13 +9,21 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.ContentHelper;
+import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.TranslateHelper;
 
 public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
 	private static Log logger = LogFactory.getLog(EmailTemplatesPatch.class);
 
 	protected Repository repository;
+	
+	protected RepoService repoService;
+	
+	protected EntitySystemService entitySystemService;
 
 	protected ContentHelper contentHelper;
 
@@ -25,6 +33,15 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
 	public void setContentHelper(ContentHelper contentHelper) {
 		this.contentHelper = contentHelper;
+	}
+	
+	public void setEntitySystemService(EntitySystemService entitySystemService) {
+		this.entitySystemService = entitySystemService;
+	}
+
+	
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
 	}
 
 	protected NodeRef searchFolder(String xpath) {
@@ -48,5 +65,32 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 			contentHelper.addFilesResources(nodeRef, resourcePath, true);
 		}
 	}
+	
+
+
+	public NodeRef getSystemCharactsEntity(NodeRef parentNodeRef) {
+		return entitySystemService.getSystemEntity(parentNodeRef, RepoConsts.PATH_CHARACTS);
+	}
+
+	public NodeRef getSystemListValuesEntity(NodeRef parentNodeRef) {
+		return entitySystemService.getSystemEntity(parentNodeRef, RepoConsts.PATH_LISTS);
+	}
+
+	public NodeRef getSystemHierachiesEntity(NodeRef parentNodeRef) {
+		return entitySystemService.getSystemEntity(parentNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
+	}
+
+	public NodeRef getCharactDataList(NodeRef systemEntityNodeRef, String dataListPath) {
+		return entitySystemService.getSystemEntityDataList(systemEntityNodeRef, dataListPath);
+	}
+
+	public NodeRef getFolder(NodeRef parentNodeRef, String folderPath) {
+		String folderName = TranslateHelper.getTranslatedPath(folderPath);
+		if (folderName == null) {
+			folderName = folderPath;
+		}
+		return repoService.getFolderByPath(parentNodeRef, folderPath);
+	}
+
 
 }
