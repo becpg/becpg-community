@@ -1,0 +1,49 @@
+PATH;/System/QualityLists/bcpg:entityLists/ClaimSources
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Mail autre
+VALUES;Courrier
+VALUES;Appel reçu au centre d'appels
+VALUES;Mail reçu du site internet
+VALUES;Appel autre
+;
+;
+PATH;/System/QualityLists/bcpg:entityLists/ClaimTrackingValues
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Enregistrement de la réclamation + réponse pour information
+VALUES;Enregistrement de la réclamation + envoi au commercial de la réponse à transmettre au client
+VALUES;Enregistrement de la réclamation
+;
+;
+PATH;/System/QualityLists/bcpg:entityLists/ClaimTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;NC colis (pb sur colis,scannage,manque UVC dans colis...)
+VALUES;Personne malade sans hospitalisation 
+VALUES;Personne malade avec hospitalisation
+VALUES;NC emballage UVC (percé, abîmé, non scellé, difficulté ouverture de pack...)
+VALUES;NC Erreur de contrat date
+VALUES;NC étiquetage (absence ou erreur étiquette , absence ou erreur DLC lot)
+VALUES;Non justifiée (réclamation récurrente du même consommateur sans justificatif)
+VALUES;Corps étranger majeur interne (Os, arêtes...)
+VALUES;NC Corps étranger mineur interne (Plumes...)
+VALUES;NC Corps étranger majeur externe (lame, caillou, plastique dur...)
+VALUES;NC Corps étranger mineur interne (cheveux, plastique souple...)
+VALUES;NC garniture (manque MP, mauvaise répartition ingrédients...)
+VALUES;NC organoleptique (gout odeur texture et ou aspect suspect (produit détrempé, sec…))
+VALUES;NC Présence de moisissure
+VALUES;NC Produit gonflé
+VALUES;Appréciation produit non satisfaisante (pour des problèmes de conception recette)
+VALUES;NC Analyse bactério NC sur germes  pathogènes
+VALUES;NC Analyse bactério NC sur autres germes
+VALUES;NC Analyse physico chimique NC
+VALUES;Autre motif (information, étiquetage...)
+;
+PATH;/System/QualityLists/bcpg:entityLists/ClaimResponseStates
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Réponse effectuée - envoyé par mail au client - cf mail en pièce jointe
+VALUES;Réponse effectuée - envoyé par courrier au client- cf mail en pièce jointe
+VALUES;Eléments de réponse consultables ci dessous
+VALUES;Courrier type de réponse mis en pièce jointe - Reste à l'envoyer

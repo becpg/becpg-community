@@ -581,6 +581,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(RepoConsts.PATH_STORAGE_CONDITIONS,BeCPGModel.TYPE_STORAGE_CONDITIONS);
 		entityLists.put(RepoConsts.PATH_PRECAUTION_OF_USE,BeCPGModel.TYPE_PRECAUTION_OF_USE);
 		entityLists.put(RepoConsts.PATH_LABELING_TEMPLATES,PackModel.TYPE_LABELING_TEMPLATE);
+		entityLists.put(RepoConsts.PATH_LABEL,PackModel.TYPE_LABEL);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -621,7 +622,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(RepoConsts.PATH_NUT_GROUPS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_NUT_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_NUT_FACTS_METHODS,BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(RepoConsts.PATH_LABELING_POSITIONS,BeCPGModel.TYPE_LIST_VALUE);		
+		entityLists.put(RepoConsts.PATH_LABELING_POSITIONS,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_LABEL_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -707,6 +709,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_PRICELIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PackModel.TYPE_LABELING_LIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_RESOURCEPRODUCT)) {
 
