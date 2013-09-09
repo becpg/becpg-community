@@ -31,10 +31,9 @@
                : this.datalistMeta.itemType) + "&dataListName=" + encodeURIComponent(this.datalistMeta.name) + "&dataListItems=" + nodeRefs
                .join(",");
 
-         this._showPanel(url,this.id);
+         this._showPanel(url, this.id);
 
       },
-
       onActionBulkEdit : function EntityDataGrid_onActionShowDetails(p_items) {
          var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
@@ -54,16 +53,100 @@
 
       onActionShowComments : function EntityDataGrid_onActionShowComments(item) {
 
-         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + item.nodeRef + "&activityType=datalist"+(item.siteId ? "&site="+item.siteId:"")+(this.options.entityNodeRef?"&entityNodeRef="+ this.options.entityNodeRef:"");
+         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + item.nodeRef + "&activityType=datalist" + (item.siteId ? "&site=" + item.siteId
+               : "") + (this.options.entityNodeRef ? "&entityNodeRef=" + this.options.entityNodeRef : "");
 
-         this._showPanel(url ,this.id+"_comments", item.nodeRef);
+         this._showPanel(url, this.id + "_comments", item.nodeRef);
 
       },
 
+      onAddLabelingAspect : function EntityDataGrid_onActionShowDetails(p_items) {
+         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
+
+         for ( var i = 0, ii = items.length; i < ii; i++) {
+            this._manageAspect(items[i].nodeRef, "pack:labelingAspect");
+         }
+      },
+
+      _manageAspect : function EntityDataGrid_manageAspect(itemNodeRef, aspect) {
+         var itemUrl = itemNodeRef.replace(":/", ""), me = this;
+
+         Alfresco.util.Ajax
+               .request({
+                  url : Alfresco.constants.PROXY_URI + "/slingshot/doclib/aspects/node/" + itemUrl,
+                  method : Alfresco.util.Ajax.GET,
+                  successCallback : {
+                     fn : function(response) {
+
+                        if (response.json) {
+                           var dataObj = null;
+                           var msgKey = "delete-aspect";
+
+                           if (beCPG.util.contains(response.json.current, "pack:labelingAspect")) {
+
+                              dataObj = {
+                                 added : [],
+                                 removed : [ aspect ]
+                              };
+
+                           } else {
+                              msgKey = "add-aspect";
+                              dataObj = {
+                                 added : [ aspect ],
+                                 removed : []
+                              };
+                           }
+
+                           Alfresco.util.PopupManager
+                                 .displayPrompt({
+                                    title : me.msg("message.confirm." + msgKey + ".title", me.msg("aspect." + aspect
+                                          .replace(":", "_"))),
+                                    text : me.msg("message.confirm." + msgKey + ".description", me
+                                          .msg("aspect." + aspect.replace(":", "_"))),
+                                    buttons : [
+                                          {
+                                             text : me.msg("button." + msgKey),
+                                             handler : function EntityDataGrid__onActionDelete_delete() {
+                                                this.destroy();
+                                                Alfresco.util.Ajax
+                                                      .request({
+                                                         url : Alfresco.constants.PROXY_URI + "slingshot/doclib/action/aspects/node/" + itemUrl,
+                                                         method : Alfresco.util.Ajax.POST,
+                                                         requestContentType : Alfresco.util.Ajax.JSON,
+                                                         dataObj : dataObj,
+                                                         successCallback : {
+                                                            fn : function() {
+                                                               YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+                                                                  nodeRef : itemNodeRef
+                                                               });
+                                                            },
+                                                            scope : this
+                                                         },
+                                                         successMessage : me.msg("message.success." + msgKey, me
+                                                               .msg("aspect." + aspect.replace(":", "_")))
+                                                      });
+                                             }
+                                          }, {
+                                             text : this.msg("button.cancel"),
+                                             handler : function EntityDataGrid__onActionDelete_cancel() {
+                                                this.destroy();
+                                             },
+                                             isDefault : true
+                                          } ]
+                                 });
+
+                        }
+
+                     },
+                     scope : this
+                  },
+               });
+      },
+
       _showPanel : function EntityDataGrid__showPanel(url, htmlid, itemNodeRef) {
-         
+
          var me = this;
-         
+
          Alfresco.util.Ajax.request({
             url : url,
             dataObj : {
@@ -84,13 +167,13 @@
                      width : "50em"
                   });
 
-                  this.widgets.panel.subscribe("hide", function (){
+                  this.widgets.panel.subscribe("hide", function() {
                      YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
-                     nodeRef : itemNodeRef });
+                        nodeRef : itemNodeRef
+                     });
                   });
-                  
+
                   this.widgets.panel.show();
-                  
 
                },
                scope : this

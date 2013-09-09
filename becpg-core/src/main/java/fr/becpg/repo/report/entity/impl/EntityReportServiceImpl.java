@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -48,14 +49,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
-	/** The node service. */
 	private NodeService nodeService;
 
-	/** The content service. */
 	private ContentService contentService;
 
-	/** The file folder service. */
 	private FileFolderService fileFolderService;
+
+	private BehaviourFilter policyBehaviourFilter;
 
 	private ReportTplService reportTplService;
 
@@ -75,22 +75,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 		entityExtractors.put(typeName, extractor);
 	}
 
-	/**
-	 * Sets the node service.
-	 * 
-	 * @param nodeService
-	 *            the new node service
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	/**
-	 * Sets the content service.
-	 * 
-	 * @param contentService
-	 *            the new content service
-	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
@@ -99,12 +87,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 		this.mimetypeService = mimetypeService;
 	}
 
-	/**
-	 * Sets the file folder service.
-	 * 
-	 * @param fileFolderService
-	 *            the new file folder service
-	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
@@ -125,8 +107,36 @@ public class EntityReportServiceImpl implements EntityReportService {
 		this.permissionService = permissionService;
 	}
 
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
 	@Override
 	public void generateReport(NodeRef entityNodeRef) {
+
+		try {
+
+			policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+			}
+
+			if (nodeService.exists(entityNodeRef)) {
+				generateReportImpl(entityNodeRef);
+			}
+
+		} finally {
+			policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+		}
+
+	}
+
+	private void generateReportImpl(NodeRef entityNodeRef) {
 
 		// #366 : force to use server locale for mlText fields
 		I18NUtil.setLocale(Locale.getDefault());
@@ -194,8 +204,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
 		if (documentsFolderNodeRef == null) {
-
-			documentsFolderNodeRef = fileFolderService.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			logger.warn("No folder: " + documentsFolderName + " found ");
+			return null;
+			// documentsFolderNodeRef = fileFolderService.create(entityNodeRef,
+			// documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
@@ -242,33 +254,34 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 
 			// prepare
-			final String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-			final String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
+			String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+			String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
 
-			final NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+			NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+			if (documentNodeRef != null) {
+				// Run report
+				try {
+					ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 
-			// Run report
-			try {
-				ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+					if (writer != null) {
+						String mimetype = mimetypeService.guessMimetype(documentName);
+						writer.setMimetype(mimetype);
+						Map<String, Object> params = new HashMap<String, Object>();
 
-				if (writer != null) {
-					String mimetype = mimetypeService.guessMimetype(documentName);
-					writer.setMimetype(mimetype);
-					Map<String, Object> params = new HashMap<String, Object>();
+						params.put(ReportParams.PARAM_IMAGES, images);
+						params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 
-					params.put(ReportParams.PARAM_IMAGES, images);
-					params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+						logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+						beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
 
-					logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
-					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
-
+					}
+				} catch (ReportException e) {
+					logger.error("Failed to execute report for template : " + tplNodeRef, e);
 				}
-			} catch (ReportException e) {
-				logger.error("Failed to execute report for template : " + tplNodeRef, e);
-			}
 
-			// Set Assoc
-			newReports.add(documentNodeRef);
+				// Set Assoc
+				newReports.add(documentNodeRef);
+			}
 		}
 
 		updateReportsAssoc(entityNodeRef, newReports);

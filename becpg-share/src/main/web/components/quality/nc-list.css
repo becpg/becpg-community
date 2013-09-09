@@ -42,3 +42,8 @@
 	padding-left: 20px;
 }
 
+.yui-dialog .yui-g .form-field input[type="text"], 
+.yui-dialog .form-container .yui-g .form-field select {
+	width: 27em;
+}
+
