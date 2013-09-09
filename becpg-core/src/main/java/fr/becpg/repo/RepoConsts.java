@@ -72,7 +72,9 @@ public class RepoConsts {
 	public static final String PATH_STORAGE_CONDITIONS = "StorageConditions";
 	public static final String PATH_PRECAUTION_OF_USE = "PrecautionOfUse";
 	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
-	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";	
+	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
+	public static final String PATH_LABEL = "Labels";
+	public static final String PATH_LABEL_TYPES = "LabelTypes";
 	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";

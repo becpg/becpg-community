@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -73,12 +74,16 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
 				BeCPGModel.TYPE_LABELCLAIMLIST, BeCPGModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
 
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
+				PackModel.TYPE_LABELING_LIST, PackModel.ASSOC_LL_LABEL, new JavaBehaviour(this, "onCreateAssociation"));
+		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_PRODUCT, new JavaBehaviour(this, "onUpdateProperties"));
 
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_NUTLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_LABELCLAIMLIST);
+		super.disableOnCopyBehaviour(PackModel.TYPE_LABELING_LIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PRODUCT);
 
 		// transaction listeners
@@ -273,6 +278,10 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							// labelClaimType
 							String labelClaimType = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_LABEL_CLAIM_TYPE);
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_LCL_TYPE, labelClaimType);
+						} else if(type.equals(PackModel.TYPE_LABELING_LIST)){								
+							// labelingList
+							String labelType = (String)nodeService.getProperty(targetNodeRef, PackModel.PROP_LABEL_TYPE);
+							nodeService.setProperty(productListItemNodeRef, PackModel.PROP_LL_TYPE, labelType);
 						}
 					}
 				}

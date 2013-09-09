@@ -41,6 +41,7 @@
             <value>classpath:alfresco/forms/becpg-project-form-config.xml</value>
             <value>classpath:alfresco/forms/becpg-project-workflow-form-config.xml</value>
             <value>classpath:alfresco/forms/becpg-claim-workflow-form-config.xml</value>
+            <value>classpath:alfresco/forms/becpg-pack-form-config.xml</value>
          </list>
       </property>
    </bean>
