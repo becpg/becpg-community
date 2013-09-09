@@ -6337,7 +6337,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                         <structure>
                                             <property name="name">productQty</property>
                                             <text-property name="displayName">productQty</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["netWeigh"] != null ? dataSetRow["netWeigh"] + "kg" : "")</expression>
+                                            <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g"  ? " - " + dataSetRow["netWeight"] + "kg" : "")</expression>
                                             <property name="dataType">string</property>
                                             <property name="allowExport">true</property>
                                         </structure>

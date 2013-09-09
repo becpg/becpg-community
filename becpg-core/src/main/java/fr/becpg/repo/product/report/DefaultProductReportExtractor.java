@@ -430,7 +430,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				String labelClaim = (String)nodeService.getProperty(l.getLabelClaim(), ContentModel.PROP_NAME);
 				
 				Element labelClaimElt = labelClaimListElt.addElement(BeCPGModel.TYPE_LABEL_CLAIM.getLocalName());				
-				labelClaimElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), labelClaim);
+				labelClaimElt.addAttribute(BeCPGModel.ASSOC_LCL_LABELCLAIM.getLocalName(), labelClaim);
 				labelClaimElt.addAttribute(BeCPGModel.PROP_LCL_IS_CLAIMED.getLocalName(), Boolean.toString(l.getIsClaimed()));
 				labelClaimElt.addAttribute(BeCPGModel.PROP_LCL_TYPE.getLocalName(), l.getType());
 			}
