@@ -158,10 +158,11 @@
 	<bean id="webscript.fr.becpg.report.reportTpl.get"
 		class="fr.becpg.repo.web.scripts.report.ReportTplWebScript"
 		parent="webscript">
-		<property name="nodeService" ref="nodeService" />
+		<property name="nodeService" ref="NodeService" />
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="beCPGSearchService" ref="BeCPGSearchService" />
 		<property name="associationService" ref="associationService" />
+		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.entity.entityTpl.get"
