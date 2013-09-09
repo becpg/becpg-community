@@ -1733,7 +1733,6 @@
 				</property>
 				<property name="bcpg:productDensity">
 					<type>d:double</type>
-					<default>1</default>
 				</property>
 			</properties>
 		</aspect>
