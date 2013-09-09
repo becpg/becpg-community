@@ -79,7 +79,7 @@
 		<alfresco.groupId>org.alfresco</alfresco.groupId>
 		<alfresco.version>4.2.c</alfresco.version>
 		
-		<birt.version>4.3.0</birt.version>
+		<birt.version>4.2.2</birt.version>
 		<becpg.contribs.version>1.5.3</becpg.contribs.version>
 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
