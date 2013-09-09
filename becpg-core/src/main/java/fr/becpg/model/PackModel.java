@@ -47,4 +47,11 @@ public class PackModel {
 			"labelingAspect");
 	public static final QName ASSOC_LABELING_TEMPLATE = QName.createQName(PACK_URI, "labelingTemplate");
 	public static final QName PROP_LABELING_POSITION = QName.createQName(PACK_URI, "labelingPosition");
+	
+	public static final QName TYPE_LABEL = QName.createQName(PACK_URI, "label");
+	public static final QName PROP_LABEL_TYPE = QName.createQName(PACK_URI, "labelType");
+	
+	public static final QName TYPE_LABELING_LIST = QName.createQName(PACK_URI, "labelingList");
+	public static final QName ASSOC_LL_LABEL = QName.createQName(PACK_URI, "llLabel");
+	public static final QName PROP_LL_TYPE = QName.createQName(PACK_URI, "llType");
 }
