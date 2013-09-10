@@ -1,6 +1,6 @@
 PATH;/System/Characts/bcpg:entityLists/Ings;;;;
 TYPE;bcpg:ing;;;;
-COLUMNS;cm:name;bcpg:ingType;bcpg:ingCEECode;bcpg:legalName;bcpg:legalname_en_US
+COLUMNS;cm:name;bcpg:ingType;bcpg:ingCEECode;bcpg:legalName;bcpg:legalName_en
 ;;;;;
 #;http://passion-cuisine.skynetblogs.be/archive/2008/01/05/les-parties-du-boeuf.html;;;;
 VALUES;Entrecôte de boeuf;Ingrédient;;Entrecôte de boeuf;Beef steak

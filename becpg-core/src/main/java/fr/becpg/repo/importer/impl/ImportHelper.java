@@ -85,7 +85,7 @@ public class ImportHelper{
 							String transLocalName = transColumn.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1] : null;			
 							// default locale
 							if(first){
-								mlText.addValue(Locale.getDefault(), values.get(z_idx));
+								mlText.addValue(new Locale(Locale.getDefault().getLanguage()), values.get(z_idx));
 								first = false;
 							}
 							// other locales
