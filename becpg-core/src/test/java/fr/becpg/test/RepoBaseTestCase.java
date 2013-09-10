@@ -256,7 +256,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 					// Init repo for test
 					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
 	
-					Assert.assertEquals(4, entitySystemService.getSystemEntities().size());
+					Assert.assertEquals(5, entitySystemService.getSystemEntities().size());
 	
 					initConstraints();
 					initTasks();
