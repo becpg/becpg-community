@@ -19,6 +19,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.RepoConsts;
 
@@ -139,14 +140,19 @@ public class CompositeIng extends AbstractIng {
 	
 	public Set<Locale> getLocales(){
 		
-		Set<Locale> locales = new HashSet<Locale>();
+		Set<Locale> temp = new HashSet<Locale>();
 		
 		for(AbstractIng ing : ingList.values()){
 			
-			if(ing.getMLName() != null)
-				locales.addAll(ing.getMLName().getLocales());
+			if(ing.getMLName() != null){
+				temp.addAll(ing.getMLName().getLocales());
+			}				
 		}
 		
+		Set<Locale> locales = new HashSet<Locale>();		
+		for(Locale locale : temp){
+			locales.add(new Locale(locale.getLanguage()));
+		}		
 		return locales;
 	}
 		
@@ -197,7 +203,11 @@ public class CompositeIng extends AbstractIng {
 				if(ing.getQty() != null && ing.getQty() != 0d){
 					//Double ingQty = (ing instanceof CompositeIng) ? ((CompositeIng)ing).getQtyUsed() : ing.getQty();
 					qtyPerc = SPACE + df.format(100 * ing.getQty() / getQtyRMUsed()) + SPACE + PERCENTAGE;
-				}						
+				}				
+				
+				if(logger.isDebugEnabled()){
+					logger.debug(ingName + " qtyRMUsed: " + getQtyRMUsed() + " qtyPerc " + qtyPerc);
+				}
 				
 				if(ingName == null){
 					logger.warn("Ing '" + ing.getIng() + "' doesn't have a value for this locale '" + locale + "'.");
@@ -225,7 +235,7 @@ public class CompositeIng extends AbstractIng {
 		}
 		
 		if(logger.isDebugEnabled()){
-			logger.debug("getIngLabeling(), ing: " + this.getName(Locale.getDefault()) + "- ing list size: " + ingList.values().size() + " - getQtyRMUsed: " + getQtyRMUsed());
+			logger.debug("getIngLabeling(), ing: " + this.getName(I18NUtil.getContentLocaleLang()) + "- ing list size: " + ingList.values().size() + " - getQtyRMUsed: " + getQtyRMUsed());
 			logger.debug("getIngLabeling(), ingredients: " + ingredients);
 		}
 				

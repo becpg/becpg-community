@@ -89,12 +89,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					sl.setValue(null);
 					sl.setMini(null);
 					sl.setMaxi(null);
-				}
-				
-				// add detailable aspect
-				if(!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
-					sl.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
-				}				
+					
+					// add detailable aspect
+					if(!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
+						sl.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+					}
+				}							
 			}
 		}
 				

@@ -16,6 +16,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -126,7 +127,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		for(CompositeIng compositeIng : compositeIngs){
 						
 			MLText mlTextILL = new MLText();			
-			mlTextILL.addValue(Locale.getDefault(), compositeIng.getIngLabeling(Locale.getDefault()));
+			mlTextILL.addValue(I18NUtil.getContentLocaleLang(), compositeIng.getIngLabeling(I18NUtil.getContentLocaleLang()));
 
 			for(Locale locale : compositeIng.getLocales()){
 				mlTextILL.addValue(locale, compositeIng.getIngLabeling(locale));
@@ -169,23 +170,31 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 		}
 		
+		Double totalQtyUsed = 0d;
 		if(compoList != null){
-			for(CompoListDataItem compoItem : compoList){
+			for(CompoListDataItem compoItem : compoList){				
 				visitILOfPart(productSpecicationDataList, compoItem, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, reqCtrlMap);
+				
+				QName type = nodeService.getType(compoItem.getProduct());
+				if(type != null && (type.isMatch(BeCPGModel.TYPE_RAWMATERIAL) ||
+								type.isMatch(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT) ||
+								type.isMatch(BeCPGModel.TYPE_FINISHEDPRODUCT)) &&
+								compoItem.getDeclType() != DeclarationType.Omit){
+					Double qty = FormulationHelper.getQtyInKg(compoItem);
+					if(qty != null){
+						totalQtyUsed += qty;
+					}					
+				}
 			}
 		}		
 		
 		formulatedProduct.getIngList().retainAll(retainNodes);
-				
-		Double totalQty = 0d;
-		for(Double totalQtyIng : totalQtyIngMap.values())
-			totalQty += totalQtyIng;
-				
-		if(totalQty != 0){
+		
+		if(totalQtyUsed != 0){
 			for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){
 				// qtyPerc
 				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getIng());
-				ingListDataItem.setQtyPerc(100 * totalQtyIng / totalQty);
+				ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
 				
 				// add detailable aspect
 				if(!ingListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
@@ -211,7 +220,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void visitILOfPart(List<ProductData> productSpecicationDataList, CompoListDataItem compoListDataItem, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
+	private void visitILOfPart(List<ProductData> productSpecicationDataList, 
+			CompoListDataItem compoListDataItem, 
+			List<IngListDataItem> ingList, 
+			List<IngListDataItem> retainNodes, 
+			Map<NodeRef, Double> totalQtyIngMap,
+			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
 		@SuppressWarnings("unchecked")
 		List<IngListDataItem> componentIngList = (List)alfrescoRepository.loadDataList(compoListDataItem.getProduct(), BeCPGModel.TYPE_INGLIST, BeCPGModel.TYPE_INGLIST);
@@ -239,7 +253,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void calculateILOfPart(CompoListDataItem compoListDataItem, List<IngListDataItem> componentIngList, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes, Map<NodeRef, Double> totalQtyIngMap) throws FormulateException{
+	private void calculateILOfPart(CompoListDataItem compoListDataItem, 
+			List<IngListDataItem> componentIngList, 
+			List<IngListDataItem> ingList, 
+			List<IngListDataItem> retainNodes, 
+			Map<NodeRef, Double> totalQtyIngMap) throws FormulateException{
 		
 		//OMIT is not taken in account
 		if(compoListDataItem.getDeclType() == DeclarationType.Omit){			
@@ -270,15 +288,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 			
 			//Calculate qty
-			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+			Double qty = FormulationHelper.getQtyInKg(compoListDataItem);			
 			Double qtyIng = ingListDataItem.getQtyPerc();
-						
+			
 			if(qty != null && qtyIng != null){
-				
 				Double valueToAdd = qty * qtyIng;
 				totalQtyIng += valueToAdd;
-				totalQtyIngMap.put(ingNodeRef, totalQtyIng);				
-			}
+				totalQtyIngMap.put(ingNodeRef, totalQtyIng);
+			}			
 			
 			//Calculate geo origins
 			for(NodeRef geoOrigin : ingListDataItem.getGeoOrigin()){
@@ -540,7 +557,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		CompositeIng compositeIng = new CompositeIng(grpNodeRef, mlText, qtyUsed, null);		
 		
 		if(logger.isDebugEnabled()){
-			logger.debug("New compositeIng " + compositeIng.getName(Locale.getDefault()) + " qtyUsed: " + qtyUsed);
+			logger.debug("New compositeIng " + compositeIng.getName(I18NUtil.getContentLocaleLang()) + " qtyUsed: " + qtyUsed);
 		}		
 		
 		int startIndex = parentIndex;
@@ -578,8 +595,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		CompositeIng compositeIng = parentIng;
 		
 		//Calculate qtyRMUsed
-		Double qty = FormulationHelper.getQty(compoListDataItem);
-		addQtyRMUsed(compoListDataItem, compositeIng, mlNodeService);
+		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);		
 		
 		//OMIT, DETAIL
 		if(declarationType == DeclarationType.Omit){
@@ -595,7 +611,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			logger.debug("Add detailed ing : " + mlText.getDefaultValue() + " qty: " + qty);
 		}		
 		
-		if(ingList != null){
+		if(ingList != null && !ingList.isEmpty()){
+			
+			addQtyRMUsed(compoListDataItem, parentIng, mlNodeService);
 		
 			for(IngListDataItem ingListDataItem : ingList){						
 				
@@ -626,7 +644,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							
 							Double valueToAdd = qty * qtyPerc / 100;
 							totalQtyIng += valueToAdd;
-							ingItem.setQty(totalQtyIng);				
+							ingItem.setQty(totalQtyIng);
+							
+							if(logger.isDebugEnabled()){
+								logger.debug("ILL valueToAdd " + ingItem.getName(I18NUtil.getContentLocaleLang()) + " " + valueToAdd);
+							}
 						}
 					}
 				}								
@@ -662,10 +684,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	
 	private void addQtyRMUsed(CompoListDataItem compoListDataItem, CompositeIng compositeIng, NodeService nodeService) throws FormulateException{
 		
-		Double qty = FormulationHelper.getQty(compoListDataItem);
-		Double qtyRMUsed = compositeIng.getQtyRMUsed();
-		qtyRMUsed += qty;
-		compositeIng.setQtyRMUsed(qtyRMUsed);
+		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+		if(qty != null){
+			Double qtyRMUsed = compositeIng.getQtyRMUsed();		
+			qtyRMUsed += qty;
+			compositeIng.setQtyRMUsed(qtyRMUsed);
+		}		
 	}
 	
 	/**
