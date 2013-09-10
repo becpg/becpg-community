@@ -44,6 +44,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
@@ -474,9 +475,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, "eau");
 			MLText mlName = new MLText();
-			mlName.addValue(Locale.getDefault(), "eau default");
+			mlName.addValue(I18NUtil.getContentLocaleLang(), "eau default");
 			mlName.addValue(Locale.ENGLISH, "eau english");
-			mlName.addValue(Locale.FRENCH, "eau french");
 			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 			ingWater = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
