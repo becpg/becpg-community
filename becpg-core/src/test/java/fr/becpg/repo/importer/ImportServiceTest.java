@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
@@ -167,7 +168,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		MLText mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
-		assertEquals("Check default value", "Abricot default", mlText.getValue(Locale.getDefault()));
+		assertEquals("Check default value", "Abricot default", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Abricot english", mlText.getValue(Locale.ENGLISH));
 		assertEquals("Check french value", "Abricot french", mlText.getValue(Locale.FRENCH));
 
@@ -177,7 +178,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
-		assertEquals("Check default value", "Acerola default", mlText.getValue(Locale.getDefault()));
+		assertEquals("Check default value", "Acerola default", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Acerola english", mlText.getValue(Locale.ENGLISH));
 		assertEquals("Check french value", "Acerola french", mlText.getValue(Locale.FRENCH));
 
@@ -187,7 +188,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
-		assertEquals("Check default value", "Abricot1 default", mlText.getValue(Locale.getDefault()));
+		assertEquals("Check default value", "Abricot1 default", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Abricot1 english", mlText.getValue(Locale.ENGLISH));
 		assertEquals("Check french value", "Abricot1 french", mlText.getValue(Locale.FRENCH));
 
@@ -197,7 +198,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		mlText = (MLText) mlNodeServiceImpl.getProperty(ingNodeRef, BeCPGModel.PROP_LEGAL_NAME);
 		assertNotNull("MLText exist", mlText);
 		assertEquals("MLText exist has 3 Locales", 3, mlText.getLocales().size());
-		assertEquals("Check default value", "Acerola1 default", mlText.getValue(Locale.getDefault()));
+		assertEquals("Check default value", "Acerola1 default", mlText.getValue(I18NUtil.getContentLocaleLang()));
 		assertEquals("Check english value", "Acerola1 english", mlText.getValue(Locale.ENGLISH));
 		assertEquals("Check french value", "Acerola1 french", mlText.getValue(Locale.FRENCH));
 	}

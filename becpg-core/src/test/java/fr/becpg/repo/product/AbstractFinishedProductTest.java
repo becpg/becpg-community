@@ -18,6 +18,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -245,7 +246,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing1");
 					MLText mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "ing1 default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing1 default");
 					mlName.addValue(Locale.ENGLISH, "ing1 english");
 					mlName.addValue(Locale.FRENCH, "ing1 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
@@ -253,7 +254,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing2");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "ing2 default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing2 default");
 					mlName.addValue(Locale.ENGLISH, "ing2 english");
 					mlName.addValue(Locale.FRENCH, "ing2 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
@@ -261,7 +262,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing3");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "ing3 default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing3 default");
 					mlName.addValue(Locale.ENGLISH, "ing3 english");
 					mlName.addValue(Locale.FRENCH, "ing3 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
@@ -269,7 +270,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing4");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "ing4 default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing4 default");
 					mlName.addValue(Locale.ENGLISH, "ing4 english");
 					mlName.addValue(Locale.FRENCH, "ing4 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
@@ -278,7 +279,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					properties.put(ContentModel.PROP_NAME, "ing5");
 					properties.put(BeCPGModel.PROP_ING_TYPE, "Epaississant");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "ing5 default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing5 default");
 					mlName.addValue(Locale.ENGLISH, "ing5 english");
 					mlName.addValue(Locale.FRENCH, "ing5 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
@@ -560,7 +561,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 					localSF1.setName("Local semi finished 1");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "Pâte default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "Pâte default");
 					mlName.addValue(Locale.ENGLISH, "Pâte english");
 					mlName.addValue(Locale.FRENCH, "Pâte french");				
 					localSF1.setLegalName(mlName);
@@ -570,7 +571,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 					localSF2.setName("Local semi finished 2");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "Garniture default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "Garniture default");
 					mlName.addValue(Locale.ENGLISH, "Garniture english");
 					mlName.addValue(Locale.FRENCH, "Garniture french");
 					localSF2.setLegalName(mlName);							
@@ -670,7 +671,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					LocalSemiFinishedProductData localSF11 = new LocalSemiFinishedProductData();
 					localSF11.setName("Local semi finished 11");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "Pâte default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "Pâte default");
 					mlName.addValue(Locale.ENGLISH, "Pâte english");
 					mlName.addValue(Locale.FRENCH, "Pâte french");
 					localSF11.setLegalName(mlName);			
@@ -680,7 +681,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					LocalSemiFinishedProductData localSF12 = new LocalSemiFinishedProductData();
 					localSF12.setName("Local semi finished 12");
 					mlName = new MLText();
-					mlName.addValue(Locale.getDefault(), "Garniture default");
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "Garniture default");
 					mlName.addValue(Locale.ENGLISH, "Garniture english");
 					mlName.addValue(Locale.FRENCH, "Garniture french");
 					localSF12.setLegalName(mlName);					
