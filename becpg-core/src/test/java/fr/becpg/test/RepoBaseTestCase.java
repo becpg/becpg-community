@@ -62,8 +62,10 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -276,6 +278,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				initCharacteristics();
 				if(shouldInit){
 					initEntityTemplates();
+					initSystemProducts();
 				}
 				initHierarchyLists();
 				// initSystemProducts();
@@ -549,31 +552,21 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		
 	}
 
-	// private void initSystemProducts(){
-	//
-	// NodeRef contextTestFolderNodeRef =
-	// BeCPGTestHelper.createContextTestFolder(repoBaseTestCase);
-	//
-	// /*-- Raw material Water --*/
-	// NodeRef rawMaterialWaterNodeRef =
-	// nodeService.getChildByName(contextTestFolderNodeRef,
-	// ContentModel.ASSOC_CONTAINS, "Eau réseau");
-	//
-	// if(rawMaterialWaterNodeRef == null){
-	// RawMaterialData rawMaterialWater = new RawMaterialData();
-	// rawMaterialWater.setName("Eau réseau");
-	// MLText legalName = new MLText("Legal Raw material Eau");
-	// legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
-	// legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
-	// rawMaterialWater.setLegalName(legalName);
-	// List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
-	// ingList.add(new IngListDataItem(null, 100d, null, null, false, false,
-	// ingWater, false));
-	// rawMaterialWater.setIngList(ingList);
-	// alfrescoRepository.create(contextTestFolderNodeRef,
-	// rawMaterialWater).getNodeRef();
-	// }
-	// }
+	private void initSystemProducts() {
+
+		/*-- Raw material Water --*/					
+		RawMaterialData rawMaterialWater = new RawMaterialData();
+		rawMaterialWater.setName("Eau réseau");
+		rawMaterialWater.setDensity(1d);
+		MLText legalName = new MLText("Legal Raw material Eau");
+		legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
+		legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
+		rawMaterialWater.setLegalName(legalName);
+		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
+		ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
+		rawMaterialWater.setIngList(ingList);		
+		alfrescoRepository.create(repositoryHelper.getCompanyHome(), rawMaterialWater).getNodeRef();
+	}
 
 	private void initEntityTemplates() {
 

@@ -95,7 +95,16 @@ public abstract class AbstractIng extends BaseObject implements Ing, Comparable<
 	 */
 	@Override
 	public int compareTo(Ing ing) {
-		return (ing.getQty() != null && this.getQty() != null) ? Double.compare(ing.getQty(), this.getQty()) : 0;
+		if(ing.getQty() != null && this.getQty() != null){
+			return Double.compare(ing.getQty(), this.getQty());		
+		}
+		else if(this.getQty() == null && ing.getQty() != null){
+			return 1; //after
+		}
+		else if(this.getQty() != null && ing.getQty() == null){
+			return -1; //before
+		}
+		return 0;//equals
 	}
 
 	@Override

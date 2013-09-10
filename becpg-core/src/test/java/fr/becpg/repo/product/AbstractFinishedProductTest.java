@@ -687,19 +687,6 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					localSF12.setLegalName(mlName);					
 					localSF12NodeRef = alfrescoRepository.create(folderNodeRef, localSF12).getNodeRef();
 					
-					/*-- Raw material Water --*/					
-					RawMaterialData rawMaterialWater = new RawMaterialData();
-					rawMaterialWater.setName("Eau réseau");
-					rawMaterialWater.setDensity(1d);
-					legalName = new MLText("Legal Raw material Eau");
-					legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
-					legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
-					rawMaterialWater.setLegalName(legalName);
-					ingList = new ArrayList<IngListDataItem>();
-					ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
-					rawMaterialWater.setIngList(ingList);		
-					alfrescoRepository.create(folderNodeRef, rawMaterialWater).getNodeRef();
-					
 					/*-- Raw material 15 --*/
 					RawMaterialData rawMaterial15 = new RawMaterialData();
 					rawMaterial15.setName("Raw material 15");

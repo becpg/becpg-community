@@ -972,12 +972,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 				
@@ -1067,10 +1067,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				}
 				
 				//verify IngList
-				// 1 * RM1				, ingList : 		1 ing1 ; bio1 ; geo1		// 2 ing2 ; bio1 ; geo1|geo2	//
-				// 2 * RM2				, ingList : 		1 ing1 ; bio1 ; geo1		// 3 ing2 ; bio2 ; geo1|geo2	//
-				// 3 * RM3				, ingList : 											//											//	4 ing3 ; bio1|bio2 ; geo2
-				// 3 * RM4 [OMIT]	, ingList : 											//											//	4 ing3 ; bio1|bio2 ; geo2
+				// 1 * RM1				, ingList : 		1/3 ing1 ; bio1 ; geo1		// 2/3 ing2 ; bio1 ; geo1|geo2	//
+				// 2 * RM2				, ingList : 		1/4 ing1 ; bio1 ; geo1		// 3/4 ing2 ; bio2 ; geo1|geo2	//
+				// 3 * RM3				, ingList : //											//	1 ing3 ; bio1|bio2 ; geo2
+				// 3 * RM4 [OMIT]	, ingList : 	//											//	1 ing3 ; bio1|bio2 ; geo2
+				
+				// (1 * (1/3 Ing1 + 2/3 Ing2) + 2 * (1/4 Ing1 + 3/4 Ing2) + 3 * Ing3 + 3 * (0 * Ing3 + 0,3 * Ing2 + 0 * ing4)) / (1+2+3+3)
+				// Ing1 =(1/3+2*1/4)/6
+				// Ing2 =(2/3+2*3/4)/6
+				// Ing3 =(3)/6
 				int checks=0;
 				assertNotNull("IngList is null", formulatedProduct.getIngList());
 				for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){
@@ -1137,11 +1142,11 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					if(illDataItem.getGrp() == null){		
 						
 						checkILL("Pâte french 50,00 % (Legal Raw material 2 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)",
-								"Garniture french 50,00 % (ing3 french 50,00 %)",
+								"Garniture french 50,00 % (ing3 french 100,00 %)",
 								illDataItem.getValue().getValue(Locale.FRENCH));
 						
 						checkILL("Pâte english 50.00 % (Legal Raw material 2 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
-								"Garniture english 50.00 % (ing3 english 50.00 %)", 
+								"Garniture english 50.00 % (ing3 english 100.00 %)", 
 								illDataItem.getValue().getValue(Locale.ENGLISH));						
 						checks++;
 					}
@@ -2447,15 +2452,34 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					//Garniture french 50,00 % (ing3 french 50,00 %, Legal Raw material 100 50,00 % (ing3 french, ing2 french 30,00 %, ing4 french)), Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)
 					if(illDataItem.getGrp() == null){
 						
-						checkILL("Garniture french 50,00 % (ing3 french 50,00 %, Legal Raw material 100 50,00 % (ing3 french, ing2 french 30,00 %, ing4 french))", 
+						checkILL("Garniture french 50,00 % (ing3 french 50,00 %, Legal Raw material 100 50,00 % (ing2 french 30,00 %, ing3 french, ing4 french))", 
 								"Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)", 
 								illDataItem.getValue().getValue(Locale.FRENCH));
 						
-						checkILL("Garniture english 50.00 % (ing3 english 50.00 %, Legal Raw material 100 50.00 % (ing3 english, ing2 english 30.00 %, ing4 english))", 
+						checkILL("Garniture english 50.00 % (ing3 english 50.00 %, Legal Raw material 100 50.00 % (ing2 english 30.00 %, ing3 english, ing4 english))", 
 								"Pâte english 50.00 % (Legal Raw material 12 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
 								illDataItem.getValue().getValue(Locale.ENGLISH));					
 					}
 				}				
+				// (1 * (1/3 Ing1 + 2/3 Ing2) + 2 * (1/4 Ing1 + 3/4 Ing2) + 3 * Ing3 + 3 * (0 * Ing3 + 0,3 * Ing2 + 0 * ing4)) / (1+2+3+3)
+				// Ing1 =(1/3+2*1/4+3)/9
+				// Ing2 =(2/3+2*3/4+3*0,3)/9
+				// no detail
+				finishedProduct1.getCompoListView().getCompoList().get(0).setDeclType(DeclarationType.Declare);
+				finishedProduct1.getCompoListView().getCompoList().get(2).setDeclType(DeclarationType.Declare);
+				finishedProduct1.getCompoListView().getCompoList().get(3).setDeclType(DeclarationType.Declare);
+				finishedProduct1.getCompoListView().getCompoList().get(5).setDeclType(DeclarationType.Declare);
+				alfrescoRepository.save(finishedProduct1);
+				
+				productService.formulate(finishedProductNodeRef1);
+
+				formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
+				
+				//verify IngLabelingList
+				assertNotNull("IngLabelingList is null", formulatedProduct1.getIngLabelingList());
+				assertEquals(1, formulatedProduct1.getIngLabelingList().size());
+				assertEquals("ing2 french 34,07 %, ing1 french 9,26 %, ing3 french, ing4 french", 
+						formulatedProduct1.getIngLabelingList().get(0).getValue().getValue(Locale.FRENCH));				
 				
 				return null;
 
