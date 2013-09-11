@@ -39,16 +39,39 @@ Pour 4 personnes]]></description>
 		<creator>admin</creator>
 		<description>* 3 jours dans le compartiment à glace du réfrigérateur à
 			-6°C
-			*** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée sur
+			*** Plusieurs mois au congélateur à -18°C, jusqu’à la date
+			indiquée sur
 			le côté de la boite.
 
-			Après décongélation, à conserver au réfrigérateur et à consommer dans la
+			Après décongélation, à conserver au
+			réfrigérateur et à consommer dans la
 			journée.
 		</description>
 		<modified>jeu. 25 juil. 2013 16:24:03</modified>
 		<name>Pâtisserie surgelée</name>
 	</storageConditions>
-	<plants><![CDATA[beCPG Montrouge]]></plants>
+	<plants>
+		<plant>
+			<locationZip>92120</locationZip>
+			<editInline>Vrai</editInline>
+			<modifier>admin</modifier>
+			<plantCertifications>IFS, BRC, ISO 22000</plantCertifications>
+			<description></description>
+			<creator>admin</creator>
+			<locationAddress2></locationAddress2>
+			<plantTel>01 57 21 23 47</plantTel>
+			<locationAddress3>92120 MONTROUGE</locationAddress3>
+			<created>jeu. 24 nov. 2011 12:20:54</created>
+			<name>beCPG Montrouge</name>
+			<locationCity></locationCity>
+			<locationAddress1>16, rue Gabriel Péri</locationAddress1>
+			<plantApprovalNumbers>FR 10.375.003 CE</plantApprovalNumbers>
+			<locale>fr_FR</locale>
+			<title></title>
+			<locationCountry>FRANCE</locationCountry>
+			<modified>ven. 17 mai 2013 15:25:07</modified>
+		</plant>
+	</plants>
 	<clients><![CDATA[Intermarché]]></clients>
 	<productQty><![CDATA[0,2]]></productQty>
 	<unitPrice><![CDATA[7]]></unitPrice>
@@ -432,7 +455,8 @@ Commentaire 2]]></productComments>
 		</ingLabelingList>
 		<nutList energiekj="1238.42" energiekcal="373.4239999999999"
 			glucides="24.937639997019765" lipides="18.622500007748606" protéines="8.233499998569489"
-			agsaturés="9.9" sodium="514.455004529953" sucres="0.12996" phosphore="58.015125" alcooléthanol="1.25">
+			agsaturés="9.9" sodium="514.455004529953" sucres="0.12996" phosphore="58.015125"
+			alcooléthanol="1.25">
 			<nut nutListNut="Energie kJ" nutListValue="1238.42" nutListUnit="kJ/100g"
 				nutListGroup="Groupe 1" />
 			<nut nutListNut="Energie kcal" nutListValue="373.4239999999999"
@@ -498,9 +522,10 @@ Commentaire 2]]></productComments>
 				pclMaxi="" />
 		</physicoChemList>
 		<labelClaimList>
-			<labelClaim lclLabelClaim="Sans BPA" lclIsClaimed="true" lclType="Santé" />
-			<labelClaim lclLabelClaim="Sans huile de palme" lclIsClaimed="true"
+			<labelClaim lclLabelClaim="Sans BPA" lclIsClaimed="true"
 				lclType="Santé" />
+			<labelClaim lclLabelClaim="Sans huile de palme"
+				lclIsClaimed="true" lclType="Santé" />
 			<labelClaim lclLabelClaim="Produit exempt de matières grasses de palme"
 				lclIsClaimed="true" lclType="Environnementale" />
 		</labelClaimList>
