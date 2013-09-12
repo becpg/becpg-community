@@ -362,9 +362,12 @@
 	background-image: url(../../components/images/comment-16.png);
 }
 
-.datagrid-bar .onActionManageAspects,.datagrid .onActionManageAspects a
-	{
+.datagrid-bar .onActionManageAspects,.datagrid .onActionManageAspects a {
 	background-image: url(../../components/images/aspect-16.png);
+}
+
+.datagrid-bar .onActionShowWused,.datagrid .onActionShowWused a {
+	background-image: url(../../components/images/create-rule-16.png);
 }
 
 .datagrid span.document-version {

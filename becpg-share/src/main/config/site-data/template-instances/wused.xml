@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<template-instance>
+	<template-type>org/alfresco/wused</template-type>
+	<components>
+
+		<!-- Title -->
+		<component>
+			<region-id>title</region-id>
+			<sub-components>
+				<sub-component id="default">
+					<evaluations>
+						<!-- if in site: Site title -->
+						<evaluation id="site">
+							<evaluators>
+								<evaluator type="site.component.evaluator" />
+							</evaluators>
+							<url>/components/title/collaboration-title</url>
+						</evaluation>
+						<!-- otherwise: Repository title -->
+						<evaluation id="repo">
+							<url>/components/title/simple-title</url>
+							<properties>
+								<title>header.wused.description</title>
+							</properties>
+						</evaluation>
+					</evaluations>
+				</sub-component>
+			</sub-components>
+		</component>
+
+
+		<!-- Site Navigation -->
+		<component>
+			<region-id>navigation</region-id>
+			<sub-components>
+				<sub-component id="default">
+					<evaluations>
+						<!-- if in site: Site navigation -->
+						<evaluation id="site">
+							<evaluators>
+								<evaluator type="site.component.evaluator" />
+							</evaluators>
+							<url>/components/navigation/collaboration-navigation</url>
+						</evaluation>
+					</evaluations>
+				</sub-component>
+			</sub-components>
+		</component>
+
+		
+		<component>
+			<region-id>wused-form</region-id>
+			<url>/components/wused/wused-form</url>
+		</component>
+
+		<component>
+			<region-id>wused-toolbar</region-id>
+			<url>/components/entity-data-lists/entity-toolbar</url>
+		</component>
+		
+
+		<component>
+			<region-id>wused-list</region-id>
+			<url>/components/entity-charact-views/entity-datagrid-view</url>
+			<properties>
+				<pagination>true</pagination>
+				<filter>true</filter>
+				<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+				<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
+			</properties>
+		</component>
+	</components>
+</template-instance>

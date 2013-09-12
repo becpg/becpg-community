@@ -60,6 +60,96 @@
 
       },
 
+      onActionShowWused : function EntityDataGrid_onActionShowWused(p_items) {
+         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], nodeRefs = [];
+
+         for ( var i = 0, ii = items.length; i < ii; i++) {
+            nodeRefs.push(items[i].nodeRef);
+         }
+
+
+         function onActionShowWused_redirect(itemAssocName, assocName ){
+            if(!assocName){
+               window.location = Alfresco.constants.URL_PAGECONTEXT + "wused?type=" + items[0].itemType + "&nodeRefs=" + nodeRefs
+               .join();
+            } else {
+               nodeRefs = [];
+               if(items[0].itemData[itemAssocName].value){
+                  nodeRefs.push(items[0].itemData[itemAssocName].value);
+               }else {
+                  for ( var j in items[0].itemData[itemAssocName]) {
+                     nodeRefs.push(items[0].itemData[itemAssocName][j].value);
+                  }
+               }
+               window.location = Alfresco.constants.URL_PAGECONTEXT + "wused?assocName=" + assocName + "&nodeRefs=" + nodeRefs
+                     .join();
+            }
+         }
+         var showPopup = false;
+
+         
+         var html = '<div class="hd">' + this.msg("header.wused.picker") + '</div>';
+         html += '<div class="bd">';
+         html += '<form  class="form-container">';
+         html += '<div class="form-fields">';
+         html += '   <div class="set">';
+         html += '        <div class="form-field">';
+         html += '            <select  id="wused-selected-picker">';
+         html += '                  <option value="">' + this.msg("wused.picker.choose") + '</option>';
+         html += '                  <option value="selectlines">' + this.msg("wused.picker.selectedlines") + '</option>';
+         for ( var key in items[0].itemData) {
+            if (key.contains("assoc_")) {
+               showPopup = true;
+               html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
+            }
+         }
+         html += '            </select>';
+         html += '          </div>';
+         html += '       </div>';
+         html += '    </div>';
+         html += '</form></div>';
+
+
+         if (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0) {
+            var containerDiv = document.createElement("div");
+            containerDiv.innerHTML = html;
+
+            this.widgets.panel = Alfresco.util.createYUIPanel(containerDiv, {
+               draggable : true,
+               width : "25em"
+            });
+
+            this.widgets.panel.show();
+
+            YAHOO.util.Event
+                  .on(
+                        YAHOO.util.Dom.get("wused-selected-picker"),
+                        'change',
+                        function(e) {
+                           var val = this.value == "selectlines" ? null : this.value;
+                           onActionShowWused_redirect(val,val);
+                        });
+         } else {
+            
+            var val = null;
+            
+            if(this.datalistMeta.name.indexOf("WUsed") == 0){
+               if(this.datalistMeta.name.indexOf("|")>0){
+                  val ="assoc_"+this.datalistMeta.name.split("|")[1].replace(":","_");
+               } else {
+                  val = "assoc_bcpg_compoListProduct";
+               }
+               onActionShowWused_redirect(val,"assoc_bcpg_compoListProduct");
+            } else {
+               onActionShowWused_redirect();
+            }
+            
+           
+            
+         }
+
+      },
+
       onAddLabelingAspect : function EntityDataGrid_onActionShowDetails(p_items) {
          var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 

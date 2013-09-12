@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -29,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.DataListSortRegistry;
@@ -52,7 +52,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	private NamespaceService namespaceService;
 
 	protected DataListSortRegistry dataListSortRegistry;
-
+	
+	protected EntityDictionaryService entityDictionaryService;
+	
 	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
@@ -74,6 +76,12 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
+	
+	
+
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
 
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess) {
@@ -94,9 +102,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
 				if (FORMAT_CSV.equals(dataListFilter.getFormat())) {
-					ret.getItems().add(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
+					ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
 				} else {
-					ret.getItems().add(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
+					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
 				}
 			}
 		}
@@ -112,7 +120,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		if (dataListFilter.isAllFilter()) {
 
-			Collection<QName> qnames = attributeExtractorService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("DataType to filter :" + dataListFilter.getDataType());
@@ -234,8 +242,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	}
 
 	@Override
-	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
+	public boolean applyTo(DataListFilter dataListFilter) {
 		return false;
+	}
+
+	@Override
+	public boolean hasWriteAccess() {
+		return true;
 	}
 
 }

@@ -2,6 +2,7 @@ package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 			DataListFilter dataListFilter = new DataListFilter();
 			dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
-			dataListFilter.setEntityNodeRef(entityNodeRef);
+			dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
 
 			// need to load assoc so we use the MultiLevelDataListService
 			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
