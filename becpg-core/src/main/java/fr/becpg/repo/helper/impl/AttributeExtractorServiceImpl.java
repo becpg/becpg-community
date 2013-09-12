@@ -41,6 +41,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
@@ -54,9 +55,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	private NodeService nodeService;
 
-	private DictionaryService dictionaryService;
 
 	private BeCPGCacheService beCPGCacheService;
+	
+	private EntityDictionaryService entityDictionaryService;
 
 	private AssociationService associationService;
 
@@ -80,8 +82,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		this.nodeService = nodeService;
 	}
 
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
@@ -304,14 +306,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					dLFields.add(tokeniser.nextToken());
 				}
 
-				if (isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, false));
 
-				} else if (isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2)) {
+				} else if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2)) {
 					ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), fieldQname, dLFields, true));
 				} else {
 					// nested assoc
-					ClassAttributeDefinition propDef = getPropDef(fieldQname);
+					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(fieldQname);
 					if (hasReadAccess(itemType, dlField)) {
 						if (isAssoc(propDef)) {
 							ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), ((AssociationDefinition) propDef).getTargetClass().getName(), propDef,
@@ -327,7 +329,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				if (hasReadAccess(itemType, field)) {
 
-					ClassAttributeDefinition prodDef = getPropDef(fieldQname);
+					ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
 					String prefix = "prop_";
 					if (isAssoc(prodDef)) {
 						prefix = "assoc_";
@@ -389,40 +391,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return propDef instanceof AssociationDefinition;
 	}
 
-	private ClassAttributeDefinition getPropDef(final QName fieldQname) {
-
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString() + ".propDef",
-				new BeCPGCacheDataProviderCallBack<ClassAttributeDefinition>() {
-					public ClassAttributeDefinition getData() {
-						ClassAttributeDefinition propDef = dictionaryService.getProperty(fieldQname);
-						if (propDef == null) {
-							propDef = dictionaryService.getAssociation(fieldQname);
-						}
-
-						return propDef;
-					}
-				});
-
-	}
-
-	private boolean isSubClass(final QName fieldQname, final QName typeEntitylistItem) {
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString() + "_" + typeEntitylistItem.toString() + ".isSubClass",
-				new BeCPGCacheDataProviderCallBack<Boolean>() {
-					public Boolean getData() {
-						return dictionaryService.isSubClass(fieldQname, typeEntitylistItem);
-					}
-				});
-	}
-
-	@Override
-	public Collection<QName> getSubTypes(final QName typeQname) {
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), typeQname.toString() + ".getSubTypes",
-				new BeCPGCacheDataProviderCallBack<Collection<QName>>() {
-					public Collection<QName> getData() {
-						return dictionaryService.getSubTypes(typeQname, true);
-					}
-				});
-	}
+	
 
 	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, ClassAttributeDefinition attribute, AttributeExtractorMode mode, int order) {
 
@@ -590,7 +559,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			metadata = "container";
 		} else {
 			metadata = type.toPrefixString(namespaceService).split(":")[1];
-			if (isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
+			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 				metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
 			}
 		}

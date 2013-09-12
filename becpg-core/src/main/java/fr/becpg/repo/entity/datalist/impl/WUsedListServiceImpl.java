@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -32,6 +33,8 @@ public class WUsedListServiceImpl implements WUsedListService {
 	private EntityListDAO entityListDAO;
 
 	private PermissionService permissionService;
+	
+	private DictionaryService dictionaryService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -43,6 +46,10 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 
 	@Override
@@ -64,6 +71,9 @@ public class WUsedListServiceImpl implements WUsedListService {
 		for (NodeRef entityNodeRef : entityNodeRefs) {
 			if (first) {
 				associationRefs = nodeService.getSourceAssocs(entityNodeRef, associationName);
+				if(logger.isDebugEnabled()){
+					logger.debug("associationRefs size" + associationRefs.size()+ "  for entityNodeRef "+entityNodeRef+" and assocs"+associationName);
+				}
 				first = false;
 			} else {
 				//Test for join
@@ -72,7 +82,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 					boolean delete = true;
 					for (AssociationRef associationRef2 : nodeService.getSourceAssocs(entityNodeRef, associationName)) {
 						//Test that assoc is also include in product
-						if (entityListDAO.getEntity(associationRef.getSourceRef()).equals(entityListDAO.getEntity(associationRef2.getSourceRef()))) {
+						if (getEntity(associationRef.getSourceRef()).equals(getEntity(associationRef2.getSourceRef()))) {
 							// TODO Test same parent
 				
 							delete = false;
@@ -86,15 +96,13 @@ public class WUsedListServiceImpl implements WUsedListService {
 			}
 		}
 
-		logger.debug("associationRefs size" + associationRefs.size());
-
 		for (AssociationRef associationRef : associationRefs) {
 
 			NodeRef nodeRef = associationRef.getSourceRef();
 
 			// we display nodes that are in workspace
 			if (nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE) && permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
-				NodeRef rootNodeRef = entityListDAO.getEntity(nodeRef);
+				NodeRef rootNodeRef = getEntity(nodeRef);
 
 				// we don't display history version and simulation entities
 				if (!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && permissionService.hasReadPermission(rootNodeRef) == AccessStatus.ALLOWED) {
@@ -111,6 +119,14 @@ public class WUsedListServiceImpl implements WUsedListService {
 			}
 		}
 		return ret;
+	}
+
+	private NodeRef getEntity(NodeRef sourceRef) {
+		//TODO use cached version if perfs slow aka attribute extractor subClass
+		if(dictionaryService.isSubClass(nodeService.getType(sourceRef), BeCPGModel.TYPE_ENTITY_V2)){
+			return sourceRef;
+		} 
+		return entityListDAO.getEntity(sourceRef);
 	}
 
 	@Override

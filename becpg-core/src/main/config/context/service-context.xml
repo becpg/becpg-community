@@ -64,7 +64,7 @@
 	</bean>
 	<bean id="attributeExtractorService" class="fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl">
 		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="permissionService" ref="permissionService" />
@@ -348,6 +348,7 @@
 		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
 		<property name="fileFolderService" ref="FileFolderService"/>
 		<property name="associationService" ref="associationService"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="defaultExtractor" value="true"/>
 	</bean>
 
@@ -360,7 +361,6 @@
 	<bean id="wUsedExtractor" class="fr.becpg.repo.entity.datalist.impl.WUsedExtractor" parent="multiLevelExtractor">
 		<property name="wUsedListService" ref="wUsedListService" />
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 	</bean>
 
 
@@ -378,6 +378,8 @@
 	</bean>
 
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 	
   <bean id="autoNumService" class="fr.becpg.repo.entity.impl.AutoNumServiceImpl">
@@ -394,6 +396,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="permissionService" ref="permissionService"/>
 		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 
 

@@ -28,10 +28,16 @@ public class DataListFilter {
 	public static final String FORM_FILTER = "filterform";
 
 	public static final String FTS_FILTER = "fts";
-
+	
+	public static final String PROP_DEPTH_LEVEL = "prop_bcpg_depthLevel";
+	
+	private String filterId = ALL_FILTER;
+	
 	private String filterQuery = null;
 	
-	private NodeRef entityNodeRef= null;
+	private String dataListName = null; 
+	
+	private List<NodeRef> entityNodeRefs= null;
 	
 	private NodeRef parentNodeRef= null;
 	
@@ -50,8 +56,6 @@ public class DataListFilter {
 	private String containerId = SiteService.DOCUMENT_LIBRARY;
 	
 	private boolean allFilter = false;
-	
-	private String filterId = ALL_FILTER;
 	
 	private String filterData = null;
 	
@@ -82,8 +86,8 @@ public class DataListFilter {
 		return filterQuery;
 	}
 
-	public NodeRef getEntityNodeRef() {
-		return entityNodeRef;
+	public List<NodeRef> getEntityNodeRefs() {
+		return entityNodeRefs;
 	}
 
 	public String getFilterId() {
@@ -108,7 +112,7 @@ public class DataListFilter {
 
 	public boolean isDepthDefined(){
 		return criteriaMap!=null &&
-				criteriaMap.get("prop_bcpg_depthLevel")!=null;
+				criteriaMap.get(PROP_DEPTH_LEVEL)!=null;
 	}
 	
 	
@@ -144,6 +148,15 @@ public class DataListFilter {
 	}
 
 	
+
+	public String getDataListName() {
+		return dataListName;
+	}
+
+	public void setDataListName(String dataListName) {
+		this.dataListName = dataListName;
+	}
+
 	public String getFilterData() {
 		return filterData;
 	}
@@ -164,8 +177,8 @@ public class DataListFilter {
 		this.filterQuery = filterQuery;
 	}
 
-	public void setEntityNodeRef(NodeRef entityNodeRef) {
-		this.entityNodeRef = entityNodeRef;
+	public void setEntityNodeRefs(List<NodeRef> entityNodeRefs) {
+		this.entityNodeRefs = entityNodeRefs;
 	}
 
 	public void setCriteriaMap(Map<String, String> criteriaMap) {
@@ -301,15 +314,125 @@ public class DataListFilter {
 
 	@Override
 	public String toString() {
-		return "DataListFilter [filterQuery=" + filterQuery + ", entityNodeRef=" + entityNodeRef + ", parentNodeRef=" + parentNodeRef + ", nodeRef=" + nodeRef + ", criteriaMap="
-				+ criteriaMap + ", sortMap=" + sortMap + ", dataType=" + dataType + ", isRepo=" + isRepo + ", siteId=" + siteId + ", containerId=" + containerId + ", allFilter="
-				+ allFilter + "]";
+		return "DataListFilter [filterId=" + filterId + ", filterQuery=" + filterQuery + ", dataListName=" + dataListName + ", entityNodeRefs=" + entityNodeRefs
+				+ ", parentNodeRef=" + parentNodeRef + ", nodeRef=" + nodeRef + ", criteriaMap=" + criteriaMap + ", sortMap=" + sortMap + ", dataType=" + dataType + ", isRepo="
+				+ isRepo + ", siteId=" + siteId + ", containerId=" + containerId + ", allFilter=" + allFilter + ", filterData=" + filterData + ", sortId=" + sortId + ", format="
+				+ format + "]";
 	}
 
 
 	
 
+
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (allFilter ? 1231 : 1237);
+		result = prime * result + ((containerId == null) ? 0 : containerId.hashCode());
+		result = prime * result + ((criteriaMap == null) ? 0 : criteriaMap.hashCode());
+		result = prime * result + ((dataListName == null) ? 0 : dataListName.hashCode());
+		result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
+		result = prime * result + ((entityNodeRefs == null) ? 0 : entityNodeRefs.hashCode());
+		result = prime * result + ((filterData == null) ? 0 : filterData.hashCode());
+		result = prime * result + ((filterId == null) ? 0 : filterId.hashCode());
+		result = prime * result + ((filterQuery == null) ? 0 : filterQuery.hashCode());
+		result = prime * result + ((format == null) ? 0 : format.hashCode());
+		result = prime * result + (isRepo ? 1231 : 1237);
+		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((parentNodeRef == null) ? 0 : parentNodeRef.hashCode());
+		result = prime * result + ((siteId == null) ? 0 : siteId.hashCode());
+		result = prime * result + ((sortId == null) ? 0 : sortId.hashCode());
+		result = prime * result + ((sortMap == null) ? 0 : sortMap.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DataListFilter other = (DataListFilter) obj;
+		if (allFilter != other.allFilter)
+			return false;
+		if (containerId == null) {
+			if (other.containerId != null)
+				return false;
+		} else if (!containerId.equals(other.containerId))
+			return false;
+		if (criteriaMap == null) {
+			if (other.criteriaMap != null)
+				return false;
+		} else if (!criteriaMap.equals(other.criteriaMap))
+			return false;
+		if (dataListName == null) {
+			if (other.dataListName != null)
+				return false;
+		} else if (!dataListName.equals(other.dataListName))
+			return false;
+		if (dataType == null) {
+			if (other.dataType != null)
+				return false;
+		} else if (!dataType.equals(other.dataType))
+			return false;
+		if (entityNodeRefs == null) {
+			if (other.entityNodeRefs != null)
+				return false;
+		} else if (!entityNodeRefs.equals(other.entityNodeRefs))
+			return false;
+		if (filterData == null) {
+			if (other.filterData != null)
+				return false;
+		} else if (!filterData.equals(other.filterData))
+			return false;
+		if (filterId == null) {
+			if (other.filterId != null)
+				return false;
+		} else if (!filterId.equals(other.filterId))
+			return false;
+		if (filterQuery == null) {
+			if (other.filterQuery != null)
+				return false;
+		} else if (!filterQuery.equals(other.filterQuery))
+			return false;
+		if (format == null) {
+			if (other.format != null)
+				return false;
+		} else if (!format.equals(other.format))
+			return false;
+		if (isRepo != other.isRepo)
+			return false;
+		if (nodeRef == null) {
+			if (other.nodeRef != null)
+				return false;
+		} else if (!nodeRef.equals(other.nodeRef))
+			return false;
+		if (parentNodeRef == null) {
+			if (other.parentNodeRef != null)
+				return false;
+		} else if (!parentNodeRef.equals(other.parentNodeRef))
+			return false;
+		if (siteId == null) {
+			if (other.siteId != null)
+				return false;
+		} else if (!siteId.equals(other.siteId))
+			return false;
+		if (sortId == null) {
+			if (other.sortId != null)
+				return false;
+		} else if (!sortId.equals(other.sortId))
+			return false;
+		if (sortMap == null) {
+			if (other.sortMap != null)
+				return false;
+		} else if (!sortMap.equals(other.sortMap))
+			return false;
+		return true;
+	}
 
 
 	

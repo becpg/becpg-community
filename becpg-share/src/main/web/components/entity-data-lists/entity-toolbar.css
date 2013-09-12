@@ -34,6 +34,14 @@
 }
 
 
+.datalist-toolbar .export-csv span.first-child
+{
+	background: url(../images/filetypes/xls-file-16.png) no-repeat 12px 4px;
+   padding-left: 12px;
+}
+
+
+
 .datalist-toolbar .formulate span.first-child
 {
    background: url(images/formulate-16.png) no-repeat 12px 4px;
@@ -82,4 +90,9 @@ div.flat-button  span.yui-checkbox-button-checked {
 .datalist-toolbar .onActionShowDetails
 {
    background-image: url(../images/show-details-16.png);
+}
+
+
+.datalist-toolbar .onActionShowWused {
+	background-image: url(../images/create-rule-16.png);
 }
