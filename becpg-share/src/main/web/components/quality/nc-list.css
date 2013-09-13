@@ -6,24 +6,9 @@
    padding-left: 22px;
 }
 
-
 .datalist-toolbar div.new-row 
 {
    display:none;
-}
-
-.datalist-toolbar .export-csv span.first-child
-{
-   background-position: 50% 50%;
-   background-repeat: no-repeat;
-   min-height: 16px;
-   padding: 0 2px;
-}
-
-
-.datalist-toolbar .export-csv span.first-child
-{
-   background-image: url(../../components/images/filetypes/xls-file-16.png);
 }
 
 .datagrid table a.folder-link {

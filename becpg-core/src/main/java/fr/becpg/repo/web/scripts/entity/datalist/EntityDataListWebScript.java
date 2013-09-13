@@ -4,6 +4,7 @@
 package fr.becpg.repo.web.scripts.entity.datalist;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -175,9 +176,10 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		pagination.setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
 		pagination.setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
 		pagination.setQueryExecutionId(req.getParameter(PARAM_QUERY_EXECUTION_ID));
+		
 
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
-		String dataListName = req.getParameter(PARAM_DATA_LIST_NAME);
+		dataListFilter.setDataListName(req.getParameter(PARAM_DATA_LIST_NAME));
 		// String argDays = req.getParameter(PARAM_DAYS);
 		QName dataType = QName.createQName(itemType, namespaceService);
 		dataListFilter.setDataType(dataType);
@@ -216,9 +218,13 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			}
 		}
 
-		String entityNodeRef = req.getParameter(PARAM_ENTITY_NODEREF);
-		if (entityNodeRef != null) {
-			dataListFilter.setEntityNodeRef(new NodeRef(entityNodeRef));
+		String entityNodeRefs = req.getParameter(PARAM_ENTITY_NODEREF);
+		List<NodeRef> entityNodeRefsList = new ArrayList<>();
+		if (entityNodeRefs != null && !entityNodeRefs.isEmpty()) {
+			for(String entityNodeRef :  entityNodeRefs.split(",")){
+				entityNodeRefsList.add(new NodeRef(entityNodeRef));
+			}
+			dataListFilter.setEntityNodeRefs(entityNodeRefsList);
 		}
 
 		String filterId = req.getParameter(PARAM_FILTER);
@@ -284,14 +290,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				}
 			}
 
-			boolean hasWriteAccess = true;
-			if (entityNodeRef != null) {
-				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(new NodeRef(entityNodeRef)), itemType) == SecurityService.WRITE_ACCESS;
-			}
-
-			if (dataListName != null && dataListName.equals("WUsed")) {
-				hasWriteAccess = false;
-			}
+			
 
 			dataListFilter.buildQueryFilter(filterId, filterData, filterParams);
 
@@ -302,7 +301,14 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				logger.debug("SearchQuery:" + dataListFilter.getSearchQuery());
 			}
 
-			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter, dataListName);
+			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
+			
+			
+			boolean hasWriteAccess = true;
+			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
+				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
+			}
+
 
 			Date lastModified = extractor.computeLastModified(dataListFilter);
 
@@ -366,7 +372,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				JSONObject permissions = new JSONObject();
 				JSONObject userAccess = new JSONObject();
 
-				userAccess.put("create", (hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+				userAccess.put("create", ( extractor.hasWriteAccess() && hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
 
 				permissions.put("userAccess", userAccess);
 
@@ -376,7 +382,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 				ret.put("metadata", metadata);
 				if (dataListFilter.isSimpleItem()) {
-					Map<String, Object> item = extractedItems.getItems().get(0);
+					Map<String, Object> item = extractedItems.getPageItems().get(0);
 					ret.put("item", new JSONObject(item));
 					ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef) item.get(AbstractDataListExtractor.PROP_NODE)));
 				} else {
@@ -432,7 +438,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 		JSONArray items = new JSONArray();
 
-		for (Map<String, Object> item : extractedItems.getItems()) {
+		for (Map<String, Object> item : extractedItems.getPageItems()) {
 			items.put(new JSONObject(item));
 		}
 
@@ -441,7 +447,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	}
 
 	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVWriter csvWriter) {
-		for (Map<String, Object> item : extractedItems.getItems()) {
+		for (Map<String, Object> item : extractedItems.getPageItems()) {
 			csvWriter.writeRecord(item);
 		}
 	}

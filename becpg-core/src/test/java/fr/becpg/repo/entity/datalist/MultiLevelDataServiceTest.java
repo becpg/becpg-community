@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.entity.datalist;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -114,7 +115,7 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 				
 				DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
-				dataListFilter.setEntityNodeRef(finishedProductNodeRef);
+				dataListFilter.setEntityNodeRefs(Arrays.asList(finishedProductNodeRef));
 				
 				MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 				int checks = 0;

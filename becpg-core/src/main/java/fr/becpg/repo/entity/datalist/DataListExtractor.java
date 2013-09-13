@@ -15,10 +15,12 @@ public interface DataListExtractor {
 
 	PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess);
 
-	boolean applyTo(DataListFilter dataListFilter, String dataListName);
+	boolean applyTo(DataListFilter dataListFilter);
 
 	boolean isDefaultExtractor();
 
 	Date computeLastModified(DataListFilter dataListFilter);
+
+	boolean hasWriteAccess();
 
 }

@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>EntityDictionnary</shortname>
+	<description>Entity Dictionnary Component - retrieve association definition</description>
+	<url>/becpg/dictionnary/entity?itemType={itemType}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readonly" buffersize="0">required</transaction>
+</webscript>

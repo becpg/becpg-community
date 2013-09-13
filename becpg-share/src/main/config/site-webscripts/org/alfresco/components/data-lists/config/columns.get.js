@@ -164,23 +164,22 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig) {
  * @method main
  */
 function main() {
-   var itemType = getArgument("itemType"), list = getArgument("list"),
-        formId = getArgument("formId");// beCPG
+   var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId");// beCPG
 
    cache.maxAge = 3600; // in seconds
-   
+
    // pass form ui model to FTL
-   model.columns = getColumns(itemType, list,formId);
+   model.columns = getColumns(itemType, list, formId);
 }
 
-function getColumns(itemType, list , formIdArgs) {
+function getColumns(itemType, list, formIdArgs) {
    var columns = [], ret = [];
 
    if (itemType != null && itemType.length > 0) {
       // get the config for the form
       // beCPG : WUsed
       var formId = "datagrid";
-      if(formIdArgs == null){
+      if (formIdArgs == null) {
          if (list == "WUsed") {
             formId = "datagridWUsed";
          } else if (list == "sub-datagrid") {
@@ -208,18 +207,18 @@ function getColumns(itemType, list , formIdArgs) {
       if (json.status == 401) {
          status.setCode(json.status, "Not authenticated");
          return;
-      } else {
-         var formModel = eval('(' + json + ')');
+      }
 
-         // if we got a successful response attempt to render the form
-         if (json.status == 200) {
-            columns = formModel.data.definition.fields;
-         } else {
-            if (logger.isLoggingEnabled()) {
-               logger.log("error = " + formModel.message);
-            }
-            columns = [];
+      var formModel = eval('(' + json + ')');
+
+      // if we got a successful response attempt to render the form
+      if (json.status == 200) {
+         columns = formModel.data.definition.fields;
+      } else {
+         if (logger.isLoggingEnabled()) {
+            logger.log("error = " + formModel.message);
          }
+         columns = [];
       }
 
       for ( var i in visibleFields) {
@@ -239,7 +238,7 @@ function getColumns(itemType, list , formIdArgs) {
 
             ret.push(column);
 
-         }else if (fieldId.indexOf("entity_") == 0) {
+         } else if (fieldId.indexOf("entity_") == 0) {
             var splitted = fieldId.replace("entity_", "").split("_");
             var name = splitted[0], column = {
                type : "entity",
@@ -248,15 +247,15 @@ function getColumns(itemType, list , formIdArgs) {
                      : formConfig.fields[fieldId].label),
                "dataType" : "nested"
             };
-            if(formId!=null){
-               column.columns = getColumns(splitted[1] + "", "sub-datagrid","sub-datagrid-"+formId);
+            if (formId != null) {
+               column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formId);
             } else {
                column.columns = getColumns(splitted[1] + "", "sub-datagrid");
             }
 
             ret.push(column);
 
-         }  else {
+         } else {
 
             for ( var j in columns) {
                if (columns[j].name == fieldId) {
@@ -264,7 +263,7 @@ function getColumns(itemType, list , formIdArgs) {
                      columns[j].label = formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId
                            : formConfig.fields[fieldId].label;
                   }
-                  
+
                   columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
 
                   ret.push(columns[j]);

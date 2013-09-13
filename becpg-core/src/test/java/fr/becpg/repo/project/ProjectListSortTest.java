@@ -75,8 +75,8 @@ public class ProjectListSortTest extends RepoBaseTestCase {
 					logger.debug("project " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
 				}
 
-				String dataListName = "projectList";
 				DataListFilter dataListFilter = new DataListFilter();
+				dataListFilter.setDataListName( "projectList");
 				dataListFilter.setDataType(ProjectModel.TYPE_PROJECT);
 				dataListFilter.setFilterQuery(query);
 				dataListFilter.setSortId("ProjectList");
@@ -92,14 +92,14 @@ public class ProjectListSortTest extends RepoBaseTestCase {
 				metadataFields.add("pjt:projectHierarchy1");
 				metadataFields.add("pjt:projectHierarchy2");
 
-				DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter, dataListName);
+				DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
 				PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination,
 						true);
 				
-				assertEquals(25, extractedItems.getItems().size());
+				assertEquals(25, extractedItems.getPageItems().size());
 
-				for (int i = 0; i < extractedItems.getItems().size(); i++) {
-					Map<String, Object> item = (Map<String, Object>) extractedItems.getItems().get(i);
+				for (int i = 0; i < extractedItems.getPageItems().size(); i++) {
+					Map<String, Object> item = (Map<String, Object>) extractedItems.getPageItems().get(i);
 					Map<String, Object> itemData = (Map<String, Object>) item.get("itemData");
 					Map<String, Object> nameData = (Map<String, Object>) itemData.get("prop_cm_name");
 					Map<String, Object> hierarchy2Data = (Map<String, Object>) itemData.get("prop_pjt_projectHierarchy2");					

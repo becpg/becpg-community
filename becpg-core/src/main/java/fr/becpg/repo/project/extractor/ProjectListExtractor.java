@@ -45,6 +45,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 	private static final String VIEW_TASKS = "tasks";
 	private static final String VIEW_MY_TASKS = "my-tasks";
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
+	private static final String PROJECT_LIST = "projectList";
 
 	private PersonService personService;
 
@@ -91,7 +92,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 						ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 					}
 					if (FORMAT_CSV.equals(dataListFilter.getFormat())) {
-						ret.getItems().add(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
+						ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
 					} else {
 						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);
 						if (favorites.contains(nodeRef)) {
@@ -100,7 +101,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 							extracted.put(PROP_IS_FAVOURITE, false);
 						}
 
-						ret.getItems().add(extracted);
+						ret.addItem(extracted);
 					}
 
 				}
@@ -145,7 +146,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 		String query = dataListFilter.getSearchQuery();
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
-			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
+			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRefs().get(0), ProjectModel.ASSOC_PROJECT_ENTITY);
 		} else {
 			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
 				dataType = ProjectModel.TYPE_TASK_LIST;
@@ -273,8 +274,8 @@ public class ProjectListExtractor extends SimpleExtractor {
 	}
 
 	@Override
-	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
-		return dataListName != null && dataListName.equals("projectList");
+	public boolean applyTo(DataListFilter dataListFilter) {
+		return dataListFilter.getDataListName() != null && dataListFilter.getDataListName().equals(PROJECT_LIST);
 	}
 
 	@Override

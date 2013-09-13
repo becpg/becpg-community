@@ -338,9 +338,15 @@
                                  // $html(list.name);
                                  elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef=" + $html(this.options.entityNodeRef);
                                  
+                                 elLink.className =  list.name;
+                                 
                                  if(list.state && list.state.length>0){
-                                    elLink.className = list.state;
-                                 }
+                                    elLink.className += " "+list.state;
+                                 } 
+                                 
+                                 
+                                 
+                                
                                  
                                  elText = document.createTextNode(list.title);
 

@@ -29,10 +29,10 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
 
 	@Override
-	public DataListExtractor getExtractor(DataListFilter dataListFilter,String dataListName) {
+	public DataListExtractor getExtractor(DataListFilter dataListFilter) {
 	
 		for(DataListExtractor extractor : extractors){
-			 if(extractor.applyTo(dataListFilter, dataListName )){
+			 if(extractor.applyTo(dataListFilter )){
 				 return extractor;
 			 }
 		}
