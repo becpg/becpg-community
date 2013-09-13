@@ -291,7 +291,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		// #417 : refresh reports assoc (delete obsolete reports if we rename
 		// entity)
-		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
 		for (NodeRef dbReport : dbReports) {
 			if (!newReports.contains(dbReport)) {
 				logger.debug("delete old report: " + dbReport);
