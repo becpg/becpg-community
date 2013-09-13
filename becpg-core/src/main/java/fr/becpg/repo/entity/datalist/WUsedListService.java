@@ -30,6 +30,7 @@ public interface WUsedListService {
      * @param targetNodeRef
      * @return
      */
+    @Deprecated
     public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef);
     
     /**
@@ -37,6 +38,7 @@ public interface WUsedListService {
      * @param associationName
      * @return
      */
+    @Deprecated
     public QName evaluateListFromAssociation(QName associationName);
 
 	

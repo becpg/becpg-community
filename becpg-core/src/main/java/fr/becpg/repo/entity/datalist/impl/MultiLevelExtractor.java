@@ -10,8 +10,6 @@ import java.util.Map.Entry;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -31,8 +29,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public static final String PROP_ENTITYNODEREF = "entityNodeRef";
 
 	public static final String PROP_REVERSE_ASSOC = "reverseAssoc";
-	
-	private static Log logger = LogFactory.getLog(MultiLevelExtractor.class);
 
 	MultiLevelDataListService multiLevelDataListService;
 
@@ -58,7 +54,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				.getMultiLevelListData(dataListFilter);
 
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
+		props.put(PROP_ACCESSRIGHT, false);
 		
 		
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
@@ -70,7 +66,6 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex, int startIndex, int pageSize,
 			Map<String, Object> props,String format) {
-		logger.debug("appendNextLevel :" + currIndex);
 		
 		Map<NodeRef,Map<String, Object>> cache = new HashMap<>();
 		
@@ -79,15 +74,16 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			NodeRef nodeRef = entry.getKey();
 			props.put(PROP_DEPTH, entry.getValue().getDepth());
 			props.put(PROP_ENTITYNODEREF, entry.getValue().getEntityNodeRef());
-			props.put(PROP_ACCESSRIGHT, false);
+
 			if(currIndex>=startIndex && currIndex< (startIndex+pageSize)){
 				if(ret.getComputedFields() == null){
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
+				
 				if(FORMAT_CSV.equals(format)){
-					ret.getItems().add(extractCSV(nodeRef, ret.getComputedFields(), props,cache));
+					ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props,cache));
 				} else {
-					ret.getItems().add(extractJSON(nodeRef, ret.getComputedFields(), props,cache));
+					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props,cache));
 				}
 			} else if(currIndex >= (startIndex+pageSize)){
 				return currIndex;
@@ -101,44 +97,49 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,AttributeExtractorMode mode, Map<QName, Serializable> properties , Map<String, Object> extraProps,Map<NodeRef,Map<String, Object>> cache) {
 
 		Map<String, Object> tmp = super.doExtract(nodeRef, itemType, metadataFields,mode, properties , extraProps, cache);
-		if(extraProps.get(PROP_DEPTH)!=null){
-			@SuppressWarnings("unchecked")
-			Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
-			if (depth == null) {
-				depth = new HashMap<String, Object>();
-			}
-			
-			Integer value = (Integer) extraProps.get(PROP_DEPTH);
-			depth.put("value", value);
-			depth.put("displayValue", value);
-			
-			tmp.put("prop_bcpg_depthLevel", depth);
-			
-		}
 		
-		if(extraProps.get(PROP_ENTITYNODEREF)!=null && extraProps.get(PROP_REVERSE_ASSOC)!=null){
-			NodeRef entityNodeRef  = (NodeRef) extraProps.get(PROP_ENTITYNODEREF);
-			Map<String, Object> entity = new HashMap<String, Object>();
-			entity.put("value",entityNodeRef);
-			entity.put("displayValue",(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-			entity.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(entityNodeRef), entityNodeRef));
-			String siteId = attributeExtractorService.extractSiteId(entityNodeRef);
-			if(siteId!=null){
-				entity.put("siteId",siteId);
+		if(AttributeExtractorMode.JSON.equals(mode)){
+			if(extraProps.get(PROP_DEPTH)!=null ){
+				@SuppressWarnings("unchecked")
+				Map<String, Object> depth = (Map<String, Object>) tmp.get("prop_bcpg_depthLevel");
+				if (depth == null) {
+					depth = new HashMap<String, Object>();
+				}
+				
+				Integer value = (Integer) extraProps.get(PROP_DEPTH);
+				depth.put("value", value);
+				depth.put("displayValue", value);
+				
+				tmp.put("prop_bcpg_depthLevel", depth);
+				
 			}
 			
-			String assocName  = (String) extraProps.get(PROP_REVERSE_ASSOC);	
-			
-			tmp.put("assoc_"+assocName.replaceFirst(":", "_"), entity);
+			if(extraProps.get(PROP_ENTITYNODEREF)!=null && extraProps.get(PROP_REVERSE_ASSOC)!=null){
+				NodeRef entityNodeRef  = (NodeRef) extraProps.get(PROP_ENTITYNODEREF);
+				Map<String, Object> entity = new HashMap<String, Object>();
+				entity.put("value",entityNodeRef);
+				entity.put("displayValue",(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+				entity.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(entityNodeRef), entityNodeRef));
+				String siteId = attributeExtractorService.extractSiteId(entityNodeRef);
+				if(siteId!=null){
+					entity.put("siteId",siteId);
+				}
+				
+				String assocName  = (String) extraProps.get(PROP_REVERSE_ASSOC);	
+				
+				tmp.put("assoc_"+assocName.replaceFirst(":", "_"), entity);
+			}
+		} else {
+			//TODO
 		}
 
 		return tmp;
 	}
 	
 	@Override
-	public boolean applyTo(DataListFilter dataListFilter, String dataListName) {
+	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && dataListFilter.getDataType()!=null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_COMPOLIST)
-				 && !dataListName.equals("WUsed");
+				 && !dataListFilter.getDataListName().startsWith(WUsedExtractor.WUSED_PREFIX);
 	}
 
 	

@@ -501,7 +501,7 @@
          right : true,
          actionName : "datalist-state",
          evaluate : function(asset, entity) {
-            return entity != null && asset.state !== null;
+            return entity != null && asset.state !== null && asset.name.indexOf("WUsed")<0;
          },
          createWidget : function(containerDiv, instance) {
 
@@ -543,6 +543,27 @@
             return stateCkeckbox;
          }
       });
+      
+      
+      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+         actionName : "export-csv",
+         right : true,
+         evaluate : function(asset, entity) {
+            return asset.name !== null && asset.name.indexOf("WUsed")>-1;
+         },
+         fn : function(instance) {
+            
+            var dt = Alfresco.util.ComponentManager.find({
+               name : "beCPG.module.EntityDataGrid"
+            })[0];
+            
+            var PAGE_SIZE = 5000;
+            
+            document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON.stringify(dt
+                  ._buildDataGridParams()));
+         }
+      });
+      
    }
 
 })();

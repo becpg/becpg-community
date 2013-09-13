@@ -25,6 +25,8 @@
 
       // Initialise prototype properties
       this.toolbarButtonActions = {};
+      
+      this.widgets.actionButtons = {};
 
       // Renderers
       Bubbling.on("registerToolbarButtonAction", this.onRegisterToolbarButtonAction, this);
@@ -113,7 +115,7 @@
 
       populateToolbar : function EntityDataGrid_populateDataGrid() {
 
-         this.widgets.actionButtons = {};
+         //
 
          if (!YAHOO.lang.isObject(this.datalistMeta)) {
             return;
@@ -123,7 +125,8 @@
 
          for (var actionName in this.toolbarButtonActions) {
             var action = this.toolbarButtonActions[actionName];
-            if (action.evaluate === null || action.evaluate(this.datalistMeta, this.entity)) {
+            if (this.widgets.actionButtons[actionName] == null 
+                  && ( action.evaluate === null || action.evaluate(this.datalistMeta, this.entity))) {
                
                if(action.createWidget){
                   if (action.right !== null && action.right === true) {
@@ -174,6 +177,7 @@
 
          this.deferredToolbarPopulation.fulfil("onReady");
 
+        
          // Finally show the component body here to prevent UI artifacts on YUI
          // button decoration
          Dom.setStyle(this.id + "-body", "visibility", "visible");

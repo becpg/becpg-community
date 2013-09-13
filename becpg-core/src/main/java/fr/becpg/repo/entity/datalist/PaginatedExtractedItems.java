@@ -7,6 +7,7 @@ import java.util.Map;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 public class PaginatedExtractedItems {
+	
 
 	List<Map<String,Object>> items;
 	
@@ -19,13 +20,15 @@ public class PaginatedExtractedItems {
 		items = new ArrayList<Map<String,Object>>(pageSize);
 	}
 
-	public List<Map<String, Object>> getItems() {
+	
+	public boolean addItem(Map<String, Object> item){
+		return items.add(item);
+	}
+	
+	public List<Map<String, Object>> getPageItems() {
 		return items;
 	}
 
-	public void setItems(List<Map<String, Object>> items) {
-		this.items = items;
-	}
 
 	public int getFullListSize() {
 		return fullListSize;
