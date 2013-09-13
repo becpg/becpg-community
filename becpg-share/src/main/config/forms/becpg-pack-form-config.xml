@@ -121,7 +121,11 @@
 					<show id="pack:llType" />
 					<show id="pack:llPosition" />
 					<show id="pack:llLabel" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
+				</appearance>
 			</form>
 		</forms>
 	</config>
