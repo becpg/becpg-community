@@ -69,13 +69,15 @@ public class HierarchyServiceImpl implements HierarchyService{
 		return getHierarchiesByPath(HierarchyHelper.getHierarchyPath(type,namespaceService), parentNodeRef, value);
 	}
 	
+	
+	
 	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value){
 		
-		NodeRef hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_CODE, value), value);
+		NodeRef hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_CODE, value, false), value);
 		
 		if(hierarchyNodeRef == null){
-			hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value), value);
+			hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false), value);
 		}
 		
 		return hierarchyNodeRef;
@@ -83,7 +85,12 @@ public class HierarchyServiceImpl implements HierarchyService{
 	
 	@Override
 	public List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value){		
-		return beCPGSearchService.luceneSearch(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value), RepoConsts.MAX_SUGGESTIONS);
+		return beCPGSearchService.luceneSearch(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value,false), RepoConsts.MAX_SUGGESTIONS);
+	}	
+	
+	@Override
+	public List<NodeRef> getAllHierarchiesByPath(String path, String value) {
+		return beCPGSearchService.luceneSearch(getLuceneQuery(path, null, BeCPGModel.PROP_LKV_VALUE, value, true), RepoConsts.MAX_SUGGESTIONS);
 	}	
 	
 	@Override
@@ -130,7 +137,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 		return null;
 	}
 	
-	private String getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value){
+	private String getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all){
 		
 		String query = LuceneHelper.getCondPath(LuceneHelper.encodePath(path), null) +
 				LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_LINKED_VALUE));
@@ -138,7 +145,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 		if(parentNodeRef != null){
 			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString()));
 		}
-		else{
+		else if(!all){
 			query += LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL));
 		}
 		
@@ -175,5 +182,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 	
 	protected boolean isAllQuery(String query) {
 		return query != null && query.trim().equals(SUFFIX_ALL);
-	}	
+	}
+
+	
 }
