@@ -701,5 +701,7 @@ public interface BeCPGModel {
 	QName TYPE_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
 	QName ASSOC_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
 
+	QName ASPECT_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
 	
+	QName PROP_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
 }

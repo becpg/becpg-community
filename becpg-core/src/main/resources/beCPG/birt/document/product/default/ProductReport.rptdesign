@@ -758,7 +758,7 @@
                     <property name="nativeDataType">0</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutList/nut]#:#{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListNut;STRING;/@nutListNut}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListNut;STRING;/@nutListNut}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -861,7 +861,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/organoList/organo]#:#{organoListValue;STRING;/organoListValue},{organoListOrgano;STRING;/@organoListOrgano}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/organoLists/organoList]#:#{organoListValue;STRING;/organoListValue},{organoListOrgano;STRING;/@organoListOrgano}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1024,7 +1024,7 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList/allergen]#:#{allergenListAllergen;STRING;/@allergenListAllergen},{allergenListInVoluntary;STRING;/@allergenListInVoluntary},{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVolSources;STRING;/@allergenListInVolSources},{allergenListVolSources;STRING;/@allergenListVolSources},{allergenType;STRING;/@allergenType}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenLists/allergenList]#:#{allergenListAllergen;STRING;/@allergenListAllergen},{allergenListInVoluntary;STRING;/@allergenListInVoluntary},{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVolSources;STRING;/@allergenListInVolSources},{allergenListVolSources;STRING;/@allergenListVolSources},{allergenType;STRING;/@allergenType}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>1.0</Version>
@@ -1202,7 +1202,7 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingList/ing]#:#{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIng;STRING;/@ingListIng},{ingListCEECode;STRING;/@ingListCEECode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIng;STRING;/@ingListIng},{ingListCEECode;STRING;/@ingListCEECode}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>1.0</Version>
@@ -1431,7 +1431,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/microbioList/microbio]#:#{mblMicrobio;STRING;/@mblMicrobio},{mblValue;STRING;/@mblValue},{mblUnit;STRING;/@mblUnit},{mblMaxi;STRING;/@mblMaxi},{mblTextCriteria;STRING;/@mblTextCriteria}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/microbioLists/microbioList]#:#{mblMicrobio;STRING;/@mblMicrobio},{mblValue;STRING;/@mblValue},{mblUnit;STRING;/@mblUnit},{mblMaxi;STRING;/@mblMaxi},{mblTextCriteria;STRING;/@mblTextCriteria}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1613,7 +1613,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemList/physicoChem]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemLists/physicoChemList]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1770,7 +1770,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costList/cost]#:#{costListValue;DOUBLE;/@costListValue},{costListUnit;STRING;/@costListUnit},{costListCost;STRING;/@costListCost}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListValue;DOUBLE;/@costListValue},{costListUnit;STRING;/@costListUnit},{costListCost;STRING;/@costListCost}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>1.0</Version>
@@ -1925,7 +1925,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingList/ingLabeling]#:#{language;STRING;/@language},{illGrp;STRING;/@illGrp},{illValue;STRING;/@illValue},{illManualValue;STRING;/@illManualValue}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingLists/ingLabelingList]#:#{language;STRING;/@language},{illGrp;STRING;/@illGrp},{illValue;STRING;/@illValue},{illManualValue;STRING;/@illManualValue}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2114,7 +2114,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoList/entity]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2258,7 +2258,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/dynamicCharactList/dynamicCharact]#:#{dynamicCharactTitle;STRING;/@dynamicCharactTitle},{dynamicCharactValue;STRING;/@dynamicCharactValue}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/dynamicCharactLists/dynamicCharactList]#:#{dynamicCharactTitle;STRING;/@dynamicCharactTitle},{dynamicCharactValue;STRING;/@dynamicCharactValue}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2499,7 +2499,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenList]#:#{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVoluntary;STRING;/@allergenListInVoluntary}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/allergenLists]#:#{allergenListVoluntary;STRING;/@allergenListVoluntary},{allergenListInVoluntary;STRING;/@allergenListInVoluntary}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2841,7 +2841,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList/entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3223,7 +3223,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3613,7 +3613,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{nbFinishedProductThirdLevel;STRING;/@nbFinishedProductThirdLevel}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{nbFinishedProductThirdLevel;STRING;/@nbFinishedProductThirdLevel}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4061,7 +4061,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4457,7 +4457,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">4</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList//entity]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{palletHeight;INT;@palletHeight}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{pmDimensions;STRING;/@pmDimensions},{tare;STRING;/@tare},{palletLayers;STRING;/@palletLayers},{palletBoxesPerLayer;STRING;/@palletBoxesPerLayer},{palletBoxesPerPallet;STRING;/@palletBoxesPerPallet},{palletHeight;INT;@palletHeight}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4864,7 +4864,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList]#:#{tarePkgLevel1;DOUBLE;/@tarePkgLevel1},{netWeightPkgLevel1;DOUBLE;/@netWeightPkgLevel1},{grossWeightPkgLevel1;DOUBLE;/@grossWeightPkgLevel1},{tarePkgLevel2;DOUBLE;/@tarePkgLevel2},{netWeightPkgLevel2;DOUBLE;/@netWeightPkgLevel2},{grossWeightPkgLevel2;DOUBLE;/@grossWeightPkgLevel2},{tarePkgLevel3;DOUBLE;/@tarePkgLevel3},{netWeightPkgLevel3;DOUBLE;/@netWeightPkgLevel3},{grossWeightPkgLevel3;DOUBLE;/@grossWeightPkgLevel3},{nbProductsPkgLevel2;DOUBLE;/@nbProductsPkgLevel2},{nbProductsPkgLevel3;DOUBLE;/@nbProductsPkgLevel3}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists]#:#{tarePkgLevel1;DOUBLE;/@tarePkgLevel1},{netWeightPkgLevel1;DOUBLE;/@netWeightPkgLevel1},{grossWeightPkgLevel1;DOUBLE;/@grossWeightPkgLevel1},{tarePkgLevel2;DOUBLE;/@tarePkgLevel2},{netWeightPkgLevel2;DOUBLE;/@netWeightPkgLevel2},{grossWeightPkgLevel2;DOUBLE;/@grossWeightPkgLevel2},{tarePkgLevel3;DOUBLE;/@tarePkgLevel3},{netWeightPkgLevel3;DOUBLE;/@netWeightPkgLevel3},{grossWeightPkgLevel3;DOUBLE;/@grossWeightPkgLevel3},{nbProductsPkgLevel2;DOUBLE;/@nbProductsPkgLevel2},{nbProductsPkgLevel3;DOUBLE;/@nbProductsPkgLevel3}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5100,7 +5100,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimList/labelClaim]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclIsClaimed}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclIsClaimed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5249,7 +5249,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingList/entity/labelingTemplate]#:#{packagingListProduct;STRING;../@packagingListProduct},{legalName;STRING;../@legalName},{labelingPosition;STRING;../@labelingPosition},{description;STRING;/description}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList/labelingTemplate]#:#{packagingListProduct;STRING;../@packagingListProduct},{legalName;STRING;../@legalName},{labelingPosition;STRING;../@labelingPosition},{description;STRING;/description}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5509,7 +5509,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutList]#:#{energiekj;STRING;/@energiekj},{energiekcal;STRING;/@energiekcal},{glucides;STRING;/@glucides},{lipides;STRING;/@lipides},{protéines;STRING;/@protéines},{agsaturés;STRING;/@agsaturés},{sodium;STRING;/@sodium},{sucres;STRING;/@sucres},{phosphore;STRING;/@phosphore},{alcooléthanol;DOUBLE;/@alcooléthanol}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists]#:#{energiekj;STRING;/@energiekj},{energiekcal;STRING;/@energiekcal},{glucides;STRING;/@glucides},{lipides;STRING;/@lipides},{protéines;STRING;/@protéines},{agsaturés;STRING;/@agsaturés},{sodium;STRING;/@sodium},{sucres;STRING;/@sucres},{phosphore;STRING;/@phosphore},{alcooléthanol;DOUBLE;/@alcooléthanol}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>

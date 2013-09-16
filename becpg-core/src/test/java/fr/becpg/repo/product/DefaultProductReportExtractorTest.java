@@ -110,6 +110,10 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 				finishedProduct.getPackagingListView().setPackagingList(packagingList);
+				costList.clear();
+				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
+				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
+				finishedProduct.setCostList(costList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
 				
 				// add labelingTemplate aspect

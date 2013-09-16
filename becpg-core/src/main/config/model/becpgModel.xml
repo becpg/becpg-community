@@ -745,7 +745,7 @@
 				</property>
 				<property name="bcpg:compoListVolume">
 					<type>d:double</type>
-				</property>
+				</property>				
 			</properties>
 			<associations>
 				<!-- assoc used to store the product -->
@@ -2358,6 +2358,14 @@
 				remove bcpg:entityVersionable -->
 			<!-- <parent>cm:versionable</parent> <overrides> <property name="cm:autoVersion"> 
 				<default>false</default> </property> </overrides> -->
+		</aspect>
+		
+		<aspect name="bcpg:instructionAspect">
+			<properties>
+				<property name="bcpg:instruction">
+					<type>d:text</type>
+				</property>
+			</properties>
 		</aspect>
 
 	</aspects>
