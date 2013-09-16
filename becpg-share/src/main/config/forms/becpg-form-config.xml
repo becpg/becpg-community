@@ -5230,7 +5230,7 @@
 				<appearance>
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue</control-param>
 							<control-param name="urlParamsToPass">destination,itemId</control-param>
 						</control>
 					</field>
@@ -5252,7 +5252,7 @@
 				<appearance>
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue</control-param>							
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue</control-param>							
 							<control-param name="urlParamsToPass">destination,itemId</control-param>
 						</control>
 					</field>

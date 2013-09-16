@@ -114,6 +114,17 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				pfData.setAllergenList(allergenList);
 
 				pfNodeRef = alfrescoRepository.create(testFolderNodeRef, pfData).getNodeRef();				
+				
+
+				return null;
+			}
+		});
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
 				createdDate = new Date();				
 				entityReportService.generateReport(pfNodeRef);
 

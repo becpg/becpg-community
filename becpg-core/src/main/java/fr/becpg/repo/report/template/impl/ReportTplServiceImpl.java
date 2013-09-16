@@ -385,7 +385,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 
 	@Override
 	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef) {
-		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL);
+		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL,false);
 		
 	}	
 }
