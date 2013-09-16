@@ -3,16 +3,7 @@
 
 <beans>
    
-    <bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
-      <property name="resourceBundles">
-         <list>
-            <value>alfresco.messages.becpg-model</value>
-            <value>alfresco.messages.becpg-pages</value>
-            <value>alfresco.messages.becpg-controls</value>
-            <value>alfresco.messages.becpg-forms</value>
-         </list>
-      </property>
-   </bean>
+   
 
    <!-- Provide becpg form config -->
    <bean id="becpgFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" 
@@ -42,9 +33,37 @@
             <value>classpath:alfresco/forms/becpg-project-workflow-form-config.xml</value>
             <value>classpath:alfresco/forms/becpg-claim-workflow-form-config.xml</value>
             <value>classpath:alfresco/forms/becpg-pack-form-config.xml</value>
+            
+            
+              <!-- Share custom config -->
+            <value>classpath:alfresco/web-extension/becpg-config-custom.xml</value>
+            <value>jar:*!/META-INF/becpg-config-custom.xml</value>
          </list>
       </property>
    </bean>
+   
+   
+    <bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+      <property name="resourceBundles">
+         <list>
+            <value>alfresco.messages.becpg-model</value>
+            <value>alfresco.messages.becpg-pages</value>
+            <value>alfresco.messages.becpg-controls</value>
+            <value>alfresco.messages.becpg-forms</value>
+         </list>
+      </property>
+   </bean>
+   
+   <!-- Extension unsure is loaded last and override current keys-->
+    <bean id="becpgCustomResourceBundle" depends-on="becpgResourceBundle" class="fr.becpg.util.ResourceBundleBootstrapComponent">
+      <property name="resourceBundles">
+         <list>
+            <value>alfresco.messages.becpg-custom</value>
+         </list>
+      </property>
+   </bean>   
+           
+   
 
 	<!-- Action group resolver -->
 

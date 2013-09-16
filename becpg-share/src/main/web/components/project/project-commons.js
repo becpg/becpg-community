@@ -239,7 +239,7 @@
       },
 
       getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, full, start, large) {
-         var ret = '<span class="' + this.getTaskAdvancementClass(task) + (large ? "-32" : "") + '" title="' + this
+         var ret = '<span class="' + this.getTaskAdvancementClass(task) + (large ? "-32" : "") + ' task-title" title="' + this
                .getTaskAdvancement(task) + '">';
 
          if (full && this.taskLegends) {

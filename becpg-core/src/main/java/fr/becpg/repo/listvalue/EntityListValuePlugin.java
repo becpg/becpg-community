@@ -71,6 +71,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	/** The Constant SOURCE_TYPE_LINKED_VALUE. */
 	private static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
+	
+	private static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 
 	/** The Constant SOURCE_TYPE_LIST_VALUE. */
 	private static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
@@ -146,7 +148,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	}
 
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_PRODUCT, SOURCE_TYPE_LINKED_VALUE,
+		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_PRODUCT, SOURCE_TYPE_LINKED_VALUE, SOURCE_TYPE_LINKED_VALUE_ALL,
 				SOURCE_TYPE_PRODUCT_REPORT, SOURCE_TYPE_LIST_VALUE };
 	}
 
@@ -165,7 +167,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
 			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE)) {
-			return suggestLinkedValue(path, query, pageNum, pageSize, props);
+			return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
+		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE_ALL)) {
+			return suggestLinkedValue(path, query, pageNum, pageSize, props, true);
 		} else if (sourceType.equals(SOURCE_TYPE_LIST_VALUE)) {
 			return suggestListValue(path, query, pageNum, pageSize);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
@@ -279,10 +283,11 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the parent
 	 * @param query
 	 *            the query
+	 * @param b 
 	 * @return the map
 	 */
 	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize,
-			Map<String, Serializable> props) {
+			Map<String, Serializable> props, boolean all) {
 
 		NodeRef itemIdNodeRef = null;
 
@@ -304,11 +309,16 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			}
 		}
 
-		String parent = (String) props.get(ListValueService.PROP_PARENT);
-		NodeRef parentNodeRef = parent != null && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+		query = prepareQuery(query);	
+		List<NodeRef> ret = null;
 		
-		query = prepareQuery(query);		
-		List<NodeRef> ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
+		if(!all){
+			String parent = (String) props.get(ListValueService.PROP_PARENT);
+			NodeRef parentNodeRef = parent != null && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+			ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
+		} else {
+			ret = hierarchyService.getAllHierarchiesByPath(path, query);
+		}
 
 		// avoid cycle: when editing an item, cannot select itself as parent
 		if (itemIdNodeRef != null && ret.contains(itemIdNodeRef)) {

@@ -4,11 +4,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,8 +19,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  *
  */
 public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerator {
-
-	private TransactionService transactionService;
+	
 
 	private ThreadPoolExecutor threadExecuter;
 
@@ -33,10 +28,6 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 	private ConcurrentLinkedQueue<NodeRef> reportsQueue = new ConcurrentLinkedQueue<>();
 
 	private static Log logger = LogFactory.getLog(EntityReportAsyncGeneratorImpl.class);
-
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
 
 	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
 		this.threadExecuter = threadExecuter;
@@ -71,20 +62,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 				if (!reportsQueue.contains(entityNodeRef)) {
 					try {
 						reportsQueue.add(entityNodeRef);
-						RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-							@Override
-							public Object doWork() throws Exception {
-								RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-									@Override
-									public Object execute() {
-										entityReportService.generateReport(entityNodeRef);
-										return null;
-									}
-								};
-								return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
-							}
-						};
-						AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+						entityReportService.generateReport(entityNodeRef);
 
 					} catch (Exception e) {
 						logger.error("Unable to generate product reports ", e);
