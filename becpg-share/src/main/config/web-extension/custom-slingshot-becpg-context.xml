@@ -3,16 +3,7 @@
 
 <beans>
    
-    <bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
-      <property name="resourceBundles">
-         <list>
-            <value>alfresco.messages.becpg-model</value>
-            <value>alfresco.messages.becpg-pages</value>
-            <value>alfresco.messages.becpg-controls</value>
-            <value>alfresco.messages.becpg-forms</value>   
-         </list>
-      </property>
-   </bean>
+   
 
    <!-- Provide becpg form config -->
    <bean id="becpgFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" 
@@ -50,6 +41,29 @@
          </list>
       </property>
    </bean>
+   
+   
+    <bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+      <property name="resourceBundles">
+         <list>
+            <value>alfresco.messages.becpg-model</value>
+            <value>alfresco.messages.becpg-pages</value>
+            <value>alfresco.messages.becpg-controls</value>
+            <value>alfresco.messages.becpg-forms</value>
+         </list>
+      </property>
+   </bean>
+   
+   <!-- Extension unsure is loaded last and override current keys-->
+    <bean id="becpgCustomResourceBundle" depends-on="becpgResourceBundle" class="fr.becpg.util.ResourceBundleBootstrapComponent">
+      <property name="resourceBundles">
+         <list>
+            <value>alfresco.messages.becpg-custom</value>
+         </list>
+      </property>
+   </bean>   
+           
+   
 
 	<!-- Action group resolver -->
 
