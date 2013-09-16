@@ -10,6 +10,9 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -20,6 +23,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -65,14 +69,21 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private AssociationService associationService;
 
+	private PermissionService permissionService;
+	
+	private TransactionService transactionService;
+	
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
-	private PermissionService permissionService;
 
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
 		logger.debug("Register report extractor :" + typeName + " - " + extractor.getClass().getSimpleName());
 		entityExtractors.put(typeName, extractor);
+	}
+	
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
 	}
 
 	public void setNodeService(NodeService nodeService) {
@@ -112,27 +123,40 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
-	public void generateReport(NodeRef entityNodeRef) {
+	public void generateReport(final NodeRef entityNodeRef) {
 
-		try {
+		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+			@Override
+			public Object doWork() throws Exception {
+				RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+					@Override
+					public Object execute() {
+						try {
 
-			policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-			policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+							policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+							policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+							if (logger.isDebugEnabled()) {
+								logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+							}
+
+							if (nodeService.exists(entityNodeRef)) {
+								generateReportImpl(entityNodeRef);
+							}
+
+						} finally {
+							policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+							policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+						}
+						return null;
+					}
+				};
+				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
 			}
-
-			if (nodeService.exists(entityNodeRef)) {
-				generateReportImpl(entityNodeRef);
-			}
-
-		} finally {
-			policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-			policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-		}
+		};
+		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
 
 	}
 
