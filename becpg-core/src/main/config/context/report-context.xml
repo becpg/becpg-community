@@ -8,9 +8,7 @@
 	 <property name="reportServerUrl" value="${becpg.reportServerUrl}"/>
 	 <property name="contentService" ref="contentService"/>
 	</bean>
-		
-		
-   
+
 	<!-- Report -->
 	<bean id="reportTplService" class="fr.becpg.repo.report.template.impl.ReportTplServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -47,10 +45,10 @@
 		<property name="associationService" ref="associationService"/>
 		<property name="permissionService" ref="permissionService"/>		
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>	
+		<property name="transactionService" ref="transactionService" />
 	</bean>
 	
 	<bean id="entityReportAsyncGenerator" class="fr.becpg.repo.report.entity.impl.EntityReportAsyncGeneratorImpl">
-		<property name="transactionService" ref="transactionService" />
 		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>
