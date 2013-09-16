@@ -1,6 +1,8 @@
 package fr.becpg.repo.report.entity.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
@@ -69,6 +72,15 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	
 	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
 
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(
+			ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID,
+			ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL,
+			ContentModel.PROP_CONTENT));
+	
+	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(
+			ContentModel.PROP_NAME, ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR,
+			ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+
 	protected DictionaryService dictionaryService;
 	
 	protected NamespaceService namespaceService;
@@ -85,42 +97,22 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	
 	protected AssociationService associationService;
 
-	/**
-	 * @param nodeService the nodeService to set
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	
-	/**
-	 * @param dictionaryService the dictionaryService to set
-	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-
-	/**
-	 * @param namespaceService the namespaceService to set
-	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-
-	/**
-	 * @param attributeExtractorService the propertyService to set
-	 */
 
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
-
-
-	/**
-	 * @param entityService the entityService to set
-	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
@@ -147,7 +139,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		
 		// add attributes at <product/> tag
-		loadNodeAttributes(entityNodeRef, entityElt);
+		loadNodeAttributes(entityNodeRef, entityElt, true);
 		
 		Element aspectsElt = entityElt.addElement(ATTR_ASPECTS);
 		aspectsElt.addCDATA(extractAspects(entityNodeRef));
@@ -204,7 +196,18 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
 	}
 	
-	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {		
+	}
+	
+	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {		
+		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes);		
+	}
+	
+	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {
+		List<QName> hiddentAttributes = new ArrayList<>();
+		hiddentAttributes.addAll(hiddenNodeAttributes);
+		hiddentAttributes.addAll(hiddenDataListItemAttributes);
+		loadAttributes(nodeRef, nodeElt, useCData, hiddentAttributes);			
 	}
 	
 	/**
@@ -214,7 +217,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	 * @param elt the elt
 	 * @return the element
 	 */
-	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt) {
+	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
 		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();		
@@ -224,13 +227,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
-			if(!(property.getKey().equals(ContentModel.PROP_NODE_REF) || 
-			property.getKey().equals(ContentModel.PROP_NODE_DBID) ||
-			property.getKey().equals(ContentModel.PROP_NODE_UUID) ||
-			property.getKey().equals(ContentModel.PROP_STORE_IDENTIFIER) ||
-			property.getKey().equals(ContentModel.PROP_STORE_NAME) ||
-			property.getKey().equals(ContentModel.PROP_STORE_PROTOCOL) ||
-			property.getKey().equals(ContentModel.PROP_CONTENT))){
+			if(!hiddenAttributes.contains(property.getKey())){
 			
 				PropertyDefinition propertyDef =  dictionaryService.getProperty(property.getKey());
 				if(propertyDef == null){
@@ -289,9 +286,15 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		
 		for (Map.Entry<ClassAttributeDefinition, String> attrKV : values.entrySet()) {
 
-			if(attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition)attrKV.getKey(), nodeElt)){
-				Element cDATAElt = nodeElt.addElement(attrKV.getKey().getName().getLocalName());
-				cDATAElt.addCDATA(attrKV.getValue());	
+			if(attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition)attrKV.getKey(), nodeElt)){				
+				
+				if(useCData || 
+						attrKV.getKey().getName().isMatch(BeCPGModel.PROP_INSTRUCTION)){
+					addCDATA(nodeElt, attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+				}				
+				else{
+					nodeElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+				}
 			}				
 		}
 	}	
@@ -312,8 +315,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());			
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
-				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
-				
+				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));				
 				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
 						attributeExtractorService.getPropertyFormats().getDateFormat().format(version.getFrozenModifiedDate()));
 			}
@@ -355,7 +357,12 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 			QName qName = nodeService.getType(nodeRef);
 			Element nodeElt = rootElt.addElement(qName.getLocalName());					
-			loadNodeAttributes(nodeRef, nodeElt);
+			loadNodeAttributes(nodeRef, nodeElt, true);
 		}
+	}
+	
+	protected void addCDATA(Element nodeElt, String eltName, String eltValue){
+		Element cDATAElt = nodeElt.addElement(eltName);
+		cDATAElt.addCDATA(eltValue);
 	}
 }

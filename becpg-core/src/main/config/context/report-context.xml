@@ -33,6 +33,7 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="versionService" ref="versionService"/>
 		<property name="associationService" ref="associationService"/>
+		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/>
 	</bean>
 
 

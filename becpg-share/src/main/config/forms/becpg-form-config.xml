@@ -3746,7 +3746,7 @@
 					<show id="bcpg:compoListDeclType" />					
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:variantIds" force="true"/>
-					<!-- <show id="bcpg:compoListPlants"/> -->
+					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -3776,6 +3776,11 @@
 							<control-param name="ds">becpg/autocomplete/variantList</control-param>
 						</control>
 					</field>
+					<field id="bcpg:instruction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<form id="full-screen">
@@ -3788,7 +3793,6 @@
 					<show id="bcpg:compoListOverrunPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
-					<!-- <show id="bcpg:compoListPlants"/> -->
 				</field-visibility>
 
 				<appearance>
@@ -3855,8 +3859,8 @@
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
 					<show id="bcpg:dynamicCharactColumn5" force="true"/>
-					<show id="fm:commentCount" force="true" />
-					<!-- <show id="bcpg:compoListPlants"/> -->					
+					<show id="bcpg:instruction" force="true"/>
+					<show id="fm:commentCount" force="true" />					
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
@@ -3867,6 +3871,7 @@
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="bcpg:instruction" label="hidden" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>				
 			</form>
@@ -3900,7 +3905,7 @@
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:variantIds" force="true"/>
-					<!-- <show id="bcpg:compoListPlants"/> -->					
+					<show id="bcpg:instruction" force="true"/>					
 				</field-visibility>
 
 				<appearance>					
@@ -3930,7 +3935,12 @@
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList</control-param>
 						</control>
-					</field> 					
+					</field> 				
+					<field id="bcpg:instruction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>	
 				</appearance>
 			</form>
 		</forms>
@@ -3950,6 +3960,7 @@
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
 					<show id="bcpg:variantIds" force="true"/>
+					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -3971,6 +3982,11 @@
 							<control-param name="ds">becpg/autocomplete/variantList</control-param>
 						</control>
 					</field>
+					<field id="bcpg:instruction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -3990,6 +4006,7 @@
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
 					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="bcpg:instruction" force="true"/>
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -4000,6 +4017,7 @@
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="bcpg:instruction" label="hidden" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
@@ -4030,6 +4048,7 @@
 					<show id="bcpg:variantIds" force="true"/>
 					<show id="pack:labelingPosition"  />
 					<show id="pack:labelingTemplate"  />
+					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -4049,6 +4068,11 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList</control-param>
+						</control>
+					</field>
+					<field id="bcpg:instruction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
 						</control>
 					</field>
 				</appearance>
