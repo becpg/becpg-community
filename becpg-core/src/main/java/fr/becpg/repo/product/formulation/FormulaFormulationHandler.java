@@ -184,10 +184,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							nullDynColumnNames.remove(columnName);
 						}
 						for (CompositionDataItem dataListItem : view.getMainDataList()) {
-							EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(productData, dataListItem));
-							Object value = exp.getValue(dataContext);
-							dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-							logger.debug("Value :" + value);
+							// check node is not in memory (water when yield)
+							if(dataListItem.getNodeRef() != null){
+								EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(productData, dataListItem));
+								Object value = exp.getValue(dataContext);
+								dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+								logger.debug("Value :" + value);
+							}							
 						}
 						dynamicCharactListItem.setValue(null);
 					} else {
