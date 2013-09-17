@@ -5,7 +5,6 @@
 </@>
 
 <@markup id="js">
-	<@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="form"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/project/project-commons.js" group="form" />
 	<@script type="text/javascript" src="${url.context}/res/components/form/controls/workflow/project-task.js" group="form" />
 	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
