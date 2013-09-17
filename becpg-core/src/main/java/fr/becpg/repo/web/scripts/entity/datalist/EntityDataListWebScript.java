@@ -424,8 +424,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	
 	private void appendCSVHeader(Map<String,String> headers, List<AttributeExtractorStructure> fields, String fieldNamePrefix, String titlePrefix) {
 		for (AttributeExtractorStructure field : fields) {
-			if (field.isNested() ) {
-				appendCSVHeader(headers, field.getChildrens(), field.getFieldName(), field.getFieldDef().getTitle());
+			if (field.isNested()) {
+				appendCSVHeader(headers, field.getChildrens(), field.getFieldName(),field.getFieldDef()!=null ? field.getFieldDef().getTitle(): null);
 			} else {
 				String fieldName = fieldNamePrefix != null ? fieldNamePrefix + "_" + field.getFieldName() : field.getFieldName();
 				String fullTitle = titlePrefix != null ? titlePrefix + " - " + field.getFieldDef().getTitle() : field.getFieldDef().getTitle();				
