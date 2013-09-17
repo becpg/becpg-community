@@ -1,7 +1,6 @@
 <#include "include/alfresco-template.ftl" />
 <@templateHeader>
-    <@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js"></@script>
-    <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js"></@script>
+      <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js"  />
 </@>
 
 <@templateBody>
