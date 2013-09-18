@@ -99,7 +99,7 @@ public class Composite<T extends CompositeDataItem<T>> {
 	}
 
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
-		sb.append(prefix + (isTail ? "└──[" : "├──[") + (data==null ? "root" : data)  +"]\n");
+		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (data==null ? "root" : data)  +"]\n");
         for (Iterator<Composite<T>> iterator = children.iterator(); iterator.hasNext(); ) {
             iterator.next().print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
         }
