@@ -131,7 +131,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	@Test
 	public void testReportProduct() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rawMaterialNodeRef =	transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create images folder --*/
@@ -141,7 +141,16 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Create product --*/
 				logger.debug("Create product");
-				NodeRef rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				return BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				
+
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 
 				/*-- Generate report --*/
 				entityReportService.generateReport(rawMaterialNodeRef);

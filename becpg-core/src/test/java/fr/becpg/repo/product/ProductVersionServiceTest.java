@@ -157,9 +157,17 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 				nodeService.addAspect(r, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-				entityReportService.generateReport(r);
+				
 				
 				return r;
+			}
+		}, false, true);	
+		
+		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				entityReportService.generateReport(rawMaterialNodeRef);
+				return null;
 			}
 		}, false, true);	
 		
@@ -573,7 +581,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				
 				// check
 				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
-				assertEquals("", 3, targetNodeRefs.size());
+				assertEquals("Assert 3", 3, targetNodeRefs.size());
 				
 				//Check out
 				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
