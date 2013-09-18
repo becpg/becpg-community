@@ -2600,12 +2600,14 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3330">
                         <label id="3340">
-                            <text-property name="text">Prix €/ kg du mélange</text-property>
+                            <text-property name="text">Coût 
+€/kg</text-property>
                         </label>
                     </cell>
                     <cell id="3462">
                         <label id="3465">
-                            <text-property name="text">Coût matière €/UVC</text-property>
+                            <text-property name="text">Coût 
+€/UVC</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2669,12 +2671,32 @@ MP/UVC (g/UVC)</text-property>
                         </data>
                     </cell>
                     <cell id="3331">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FFFF00</property>
+                                <expression name="testExpr" type="javascript">row["depthLevel"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"1"</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
                         <data id="3467">
                             <property name="style">becpg-data</property>
                             <property name="resultSetColumn">dynamicCharactColumn6</property>
                         </data>
                     </cell>
                     <cell id="3463">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FFFF00</property>
+                                <expression name="testExpr" type="javascript">row["depthLevel"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">"1"</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
                         <data id="3468">
                             <property name="style">becpg-data</property>
                             <property name="resultSetColumn">dynamicCharactColumn7</property>
@@ -2779,13 +2801,13 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3512">
                         <label id="3544">
-                            <text-property name="text">Coût unitaire 
-Emb €</text-property>
+                            <text-property name="text">Coût
+€/Emb</text-property>
                         </label>
                     </cell>
                     <cell id="3513">
                         <label id="3546">
-                            <text-property name="text">Coût Emb/UVC
+                            <text-property name="text">Coût
 €/UVC</text-property>
                         </label>
                     </cell>

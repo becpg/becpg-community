@@ -3,10 +3,13 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import java.text.Normalizer.Form;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.FormulaError;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
@@ -81,10 +84,12 @@ public class FormulationHelper {
 				return qty / 1000;
 			}
 			else if(compoListUnit.equals(CompoListUnit.P)){
-				Double productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
-				if(productQty == null){
-					productQty = 1d;
+				Double productQty = 1d;
+				ProductUnit productUnit = FormulationHelper.getProductUnit(compoListDataItem.getProduct(), nodeService);				
+				if(productUnit != null && productUnit.equals(ProductUnit.P)){
+					productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
 				}
+				
 				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService) * qty / productQty;
 			}
 			else if(compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)){
