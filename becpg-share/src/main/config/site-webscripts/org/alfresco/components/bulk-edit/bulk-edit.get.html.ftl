@@ -8,7 +8,6 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${url.context}/res/modules/simple-dialog.js" group="bulk-edit"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/bulk-edit/bulk-edit.js" group="bulk-edit"></@script>
 </@>
 

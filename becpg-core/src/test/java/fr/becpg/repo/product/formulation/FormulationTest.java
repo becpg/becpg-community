@@ -309,13 +309,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 				//Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %), Garniture french 50,00 % (ing3 french 50,00 %)
 				if(illDataItem.getGrp() == null){
+	
 					checkILL("Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)", 
 							"Garniture french 50,00 % (ing3 french 50,00 %)", 
 							illDataItem.getValue().getValue(Locale.FRENCH));
 					
 					checkILL("Pâte english 50.00 % (Legal Raw material 12 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
 							"Garniture english 50.00 % (ing3 english 50.00 %)", 
-							illDataItem.getValue().getValue(Locale.ENGLISH));										
+							illDataItem.getValue().getValue(Locale.ENGLISH));					
 				}
 			}
 			

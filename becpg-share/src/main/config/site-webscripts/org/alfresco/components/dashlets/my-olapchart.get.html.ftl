@@ -2,11 +2,8 @@
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
-	<@script type="text/javascript" src="${url.context}/res/yui/datasource/datasource.js" group="my-olapchart"></@script>
-	<@script type="text/javascript" src="${url.context}/res/yui/json/json.js" group="my-olapchart"></@script>
 	<@script type="text/javascript" src="${url.context}/res/yui/swf/swf.js" group="my-olapchart"></@script>
 	<@script type="text/javascript" src="${url.context}/res/yui/charts/charts.js" group="my-olapchart"></@script>
-	<@script type="text/javascript" src="${url.context}/res/yui/tabview/tabview.js" group="my-olapchart"></@script>
 	<@script type="text/javascript" src="${url.context}/components/dashlets/my-olapchart.js" group="my-olapchart"></@script>
 </@>
 

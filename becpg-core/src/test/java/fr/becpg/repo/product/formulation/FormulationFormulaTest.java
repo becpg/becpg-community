@@ -47,6 +47,7 @@ public class FormulationFormulaTest extends AbstractFinishedProductTest {
 		initParts();
 	}
 
+	
 	/**
 	 * Test formulate product.
 	 * 
@@ -124,8 +125,17 @@ public class FormulationFormulaTest extends AbstractFinishedProductTest {
 
 				DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1", "entity.costList[0].value + dataListItem.qty");
 				dynCol.setColumnName("bcpg_dynamicCharactColumn1");
-
 				dynamicCharactListItems.add(dynCol);
+				
+				dynCol = new DynamicCharactListItem("Col Dyn 2", "dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
+				
+						
+				//"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(children(dataListItem),\"entity.costList[0].value + dataListItem.qty\" )"
+				//"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )"
+				
+				dynCol.setColumnName("bcpg_dynamicCharactColumn2");
+				dynamicCharactListItems.add(dynCol);
+				
 				finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 
 				// Claim List

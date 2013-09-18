@@ -33,6 +33,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
+import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
@@ -75,37 +76,14 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.nodeService = nodeService;
 	}
 
-	public class FormulaFormulationContext {
-		ProductData entity;
-		CompositionDataItem dataListItem;
-
-		public FormulaFormulationContext(ProductData entity, CompositionDataItem dataListItem) {
-			super();
-			this.entity = entity;
-			this.dataListItem = dataListItem;
-		}
-
-		public ProductData getEntity() {
-			return entity;
-		}
-
-		public CompositionDataItem getDataListItem() {
-			return dataListItem;
-		}
-
-		public ProductData getDataListItemEntity() {
-			return dataListItem.getProduct() != null ? alfrescoRepository.findOne(dataListItem.getProduct()) : null;
-		}
-
-	}
-
+	
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
 		copyTemplateDynamicCharactLists(productData);
 
 		ExpressionParser parser = new SpelExpressionParser();
-		EvaluationContext context = new StandardEvaluationContext(createSecurityProxy(productData));
+		StandardEvaluationContext context = new StandardEvaluationContext(createSecurityProxy(productData));
 
 		for (AbstractProductDataView view : productData.getViews()) {
 			computeFormula(productData, parser, context, view);
@@ -133,7 +111,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 						} catch (Exception e) {
 							labelClaimListDataItem.setErrorLog(e.getLocalizedMessage());
-							if(logger.isDebugEnabled()){
+							if (logger.isDebugEnabled()) {
 								logger.info("Error in formula :" + formatFormula(formula), e);
 							}
 						}
@@ -141,12 +119,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 
 				if (labelClaimListDataItem.getErrorLog() != null) {
-					
-					String message = I18NUtil.getMessage("message.formulate.labelCLaim.error",Locale.getDefault(), nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),labelClaimListDataItem.getErrorLog());
-					productData
-							.getCompoListView()
-							.getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,message, new ArrayList<NodeRef>()));
+
+					String message = I18NUtil.getMessage("message.formulate.labelCLaim.error", Locale.getDefault(),
+							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME), labelClaimListDataItem.getErrorLog());
+					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
 				}
 
 			}
@@ -185,12 +161,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 						for (CompositionDataItem dataListItem : view.getMainDataList()) {
 							// check node is not in memory (water when yield)
-							if(dataListItem.getNodeRef() != null){
-								EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(productData, dataListItem));
+							if (dataListItem.getNodeRef() != null) {
+								EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,productData, dataListItem));
 								Object value = exp.getValue(dataContext);
 								dataListItem.getExtraProperties().put(columnName, (Serializable) value);
 								logger.debug("Value :" + value);
-							}							
+							}
 						}
 						dynamicCharactListItem.setValue(null);
 					} else {
@@ -206,7 +182,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 					dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
 					}
 				}
@@ -225,6 +201,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	private String formatFormula(String formula) {
 		return formula.replace("&lt;", "<").replace("&gt;", ">");
 	}
+
+	// Formule.Si("Mon tableau de compoList", "Ma formule de calcul",
+	// "MonOperateur") par ex:
+	//
+	// Je veux la somme des poids net (g) des enfants de "Légumes" qui est
+	// "2631,58" (cf. copie d'écran)
+	//
 
 	/**
 	 * Copy missing item from template

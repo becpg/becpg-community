@@ -76,14 +76,16 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 		JSONObject ret = new JSONObject();
 		JSONArray items = new JSONArray();
 		for(AssociationDefinition assocDef : entityDictionaryService.getPivotAssocDefs(dataType)){
-			JSONObject item = new JSONObject();
-			item.put("label",assocDef.getTitle()+" - "+assocDef.getSourceClass().getTitle());
-			item.put("assocType",assocDef.getName().toPrefixString(namespaceService));
-			item.put("itemType",assocDef.getSourceClass().getName().toPrefixString(namespaceService));
-			if(assocQname!=null && assocQname.equals(assocDef.getName())){
-				item.put("selected",true);
+			if(assocDef.getTitle()!=null && assocDef.getSourceClass().getTitle()!=null){
+				JSONObject item = new JSONObject();
+				item.put("label",assocDef.getTitle()+" - "+assocDef.getSourceClass().getTitle());
+				item.put("assocType",assocDef.getName().toPrefixString(namespaceService));
+				item.put("itemType",assocDef.getSourceClass().getName().toPrefixString(namespaceService));
+				if(assocQname!=null && assocQname.equals(assocDef.getName())){
+					item.put("selected",true);
+				}
+				items.put(item);
 			}
-			items.put(item);
 		}
 		ret.put("type",dataType.toPrefixString());
 		ret.put("items",items);
