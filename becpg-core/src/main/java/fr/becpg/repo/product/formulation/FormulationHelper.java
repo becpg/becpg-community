@@ -81,7 +81,11 @@ public class FormulationHelper {
 				return qty / 1000;
 			}
 			else if(compoListUnit.equals(CompoListUnit.P)){
-				return qty * FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService);
+				Double productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
+				if(productQty == null){
+					productQty = 1d;
+				}
+				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService) * qty / productQty;
 			}
 			else if(compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)){
 				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);

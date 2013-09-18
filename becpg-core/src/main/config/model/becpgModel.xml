@@ -351,6 +351,11 @@
 					<value>bcpg_dynamicCharactColumn3</value>
 					<value>bcpg_dynamicCharactColumn4</value>
 					<value>bcpg_dynamicCharactColumn5</value>
+					<value>bcpg_dynamicCharactColumn6</value>
+					<value>bcpg_dynamicCharactColumn7</value>
+					<value>bcpg_dynamicCharactColumn8</value>
+					<value>bcpg_dynamicCharactColumn9</value>
+					<value>bcpg_dynamicCharactColumn10</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -2344,6 +2349,26 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:dynamicCharactColumn5">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn6">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn7">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn8">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn9">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn10">
 					<type>d:any</type>
 					<index enabled="false" />
 				</property>

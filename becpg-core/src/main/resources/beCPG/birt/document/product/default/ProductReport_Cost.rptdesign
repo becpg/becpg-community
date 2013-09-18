@@ -685,307 +685,6 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="OrganoList" id="633">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">organoListOrgano</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">organoListOrgano</text-property>
-                    <property name="analysisColumn">organoListOrgano</property>
-                </structure>
-                <structure>
-                    <property name="columnName">organoListValue</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">organoListValue</text-property>
-                    <property name="analysisColumn">organoListValue</property>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">organoListOrgano</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">organoListValue</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">organoListOrgano</property>
-                    <property name="nativeName">organoListOrgano</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">organoListValue</property>
-                    <property name="nativeName">organoListValue</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/organoLists/organoList]#:#{organoListOrgano;STRING;/@organoListOrgano},{organoListValue;STRING;/@organoListValue}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>organoListValue</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>organoListValue</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>organoListOrgano</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>organoListOrgano</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="physicoChemList" id="1038">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">pclPhysicoChem</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">pclPhysicoChem</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">pclValue</property>
-                    <property name="analysis">measure</property>
-                    <text-property name="heading">pclValue</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">pclUnit</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">pclUnit</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">pclMaxi</property>
-                    <property name="analysis">measure</property>
-                    <text-property name="heading">pclMaxi</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">pclMini</property>
-                    <property name="analysis">measure</property>
-                    <text-property name="heading">pclMini</text-property>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">pclPhysicoChem</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">pclValue</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">pclUnit</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">pclMaxi</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">pclMini</property>
-                        <property name="dataType">float</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">pclPhysicoChem</property>
-                    <property name="nativeName">pclPhysicoChem</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">pclValue</property>
-                    <property name="nativeName">pclValue</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">pclUnit</property>
-                    <property name="nativeName">pclUnit</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">pclMaxi</property>
-                    <property name="nativeName">pclMaxi</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">pclMini</property>
-                    <property name="nativeName">pclMini</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemLists/physicoChemList]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pclPhysicoChem</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pclPhysicoChem</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pclValue</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pclValue</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pclUnit</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pclUnit</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pclMaxi</design:name>
-              <design:position>4</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pclMaxi</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>pclMini</design:name>
-              <design:position>5</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>pclMini</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="CompoList" id="1724">
             <list-property name="columnHints">
                 <structure>
@@ -1004,8 +703,7 @@
                 </structure>
                 <structure>
                     <property name="columnName">compoListQtySubFormula</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">compoListQtySubFormula</text-property>
                 </structure>
                 <structure>
@@ -1086,6 +784,24 @@
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">instruction</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">dynamicCharactColumn5</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">dynamicCharactColumn5</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">dynamicCharactColumn6</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">dynamicCharactColumn6</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">dynamicCharactColumn7</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">dynamicCharactColumn7</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1171,6 +887,21 @@
                         <property name="name">instruction</property>
                         <property name="dataType">string</property>
                     </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">dynamicCharactColumn5</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">dynamicCharactColumn6</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">dynamicCharactColumn7</property>
+                        <property name="dataType">string</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">DataXml</property>
@@ -1194,7 +925,7 @@
                     <property name="name">compoListQtySubFormula</property>
                     <property name="nativeName">compoListQtySubFormula</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="nativeDataType">2</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
@@ -1287,8 +1018,29 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">dynamicCharactColumn5</property>
+                    <property name="nativeName">dynamicCharactColumn5</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">dynamicCharactColumn6</property>
+                    <property name="nativeName">dynamicCharactColumn6</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">19</property>
+                    <property name="name">dynamicCharactColumn7</property>
+                    <property name="nativeName">dynamicCharactColumn7</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;STRING;/@compoListLossPerc},{dynamicCharactColumn1;STRING;/@dynamicCharactColumn1},{dynamicCharactColumn2;STRING;/@dynamicCharactColumn2},{dynamicCharactColumn3;STRING;/@dynamicCharactColumn3},{dynamicCharactColumn4;STRING;/@dynamicCharactColumn4},{instruction;STRING;/instruction}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;STRING;/@compoListLossPerc},{dynamicCharactColumn1;STRING;/@dynamicCharactColumn1},{dynamicCharactColumn2;STRING;/@dynamicCharactColumn2},{dynamicCharactColumn3;STRING;/@dynamicCharactColumn3},{dynamicCharactColumn4;STRING;/@dynamicCharactColumn4},{instruction;STRING;/instruction},{dynamicCharactColumn5;STRING;/@dynamicCharactColumn5},{dynamicCharactColumn6;STRING;/@dynamicCharactColumn6},{dynamicCharactColumn7;STRING;/@dynamicCharactColumn7}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1628,18 +1380,36 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="processList" id="3343">
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="cost" id="3470">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">costPerProduct</property>
+                    <expression name="expression">row["costListValue"] /  ( row["productUnit"] == "g" || row["productUnit"] == "mL" ? row["productQty"] / 1000 : row["productQty"])</expression>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
             <list-property name="columnHints">
                 <structure>
-                    <property name="columnName">instruction</property>
+                    <property name="columnName">costListCost</property>
                     <property name="analysis">dimension</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">instruction</text-property>
+                    <text-property name="heading">costListCost</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">plStep</property>
+                    <property name="columnName">costListValue</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">costListValue</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productQty</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">productQty</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productUnit</property>
                     <property name="analysis">dimension</property>
-                    <text-property name="heading">plStep</text-property>
+                    <text-property name="heading">productUnit</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1647,12 +1417,180 @@
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">instruction</property>
+                        <property name="name">costListCost</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
-                        <property name="name">plStep</property>
+                        <property name="name">costListValue</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">productQty</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">productUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">costPerProduct</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">costListCost</property>
+                    <property name="nativeName">costListCost</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">costListValue</property>
+                    <property name="nativeName">costListValue</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">productQty</property>
+                    <property name="nativeName">productQty</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">productUnit</property>
+                    <property name="nativeName">productUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListCost;STRING;/@costListCost},{costListValue;DOUBLE;/@costListValue},{productQty;DOUBLE;../../../productQty},{productUnit;STRING;../../../productUnit}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>costListCost</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>costListCost</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>costListValue</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>costListValue</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="packList" id="3505">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">erpCode</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">erpCode</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListProduct</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">packagingListProduct</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">dynamicCharactColumn1</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">dynamicCharactColumn1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">dynamicCharactColumn2</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">dynamicCharactColumn2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListQty</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">packagingListQty</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">packagingListUnit</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">packagingListUnit</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">erpCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">packagingListProduct</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">dynamicCharactColumn1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">dynamicCharactColumn2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">packagingListQty</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">packagingListUnit</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -1661,20 +1599,139 @@
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
-                    <property name="name">instruction</property>
-                    <property name="nativeName">instruction</property>
+                    <property name="name">erpCode</property>
+                    <property name="nativeName">erpCode</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
-                    <property name="name">plStep</property>
-                    <property name="nativeName">plStep</property>
+                    <property name="name">packagingListProduct</property>
+                    <property name="nativeName">packagingListProduct</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">dynamicCharactColumn1</property>
+                    <property name="nativeName">dynamicCharactColumn1</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">dynamicCharactColumn2</property>
+                    <property name="nativeName">dynamicCharactColumn2</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">packagingListQty</property>
+                    <property name="nativeName">packagingListQty</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">packagingListUnit</property>
+                    <property name="nativeName">packagingListUnit</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{instruction;STRING;/instruction},{plStep;STRING;/@plStep}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{dynamicCharactColumn1;STRING;/@dynamicCharactColumn1},{dynamicCharactColumn2;STRING;/@dynamicCharactColumn2},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>packagingListProduct</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>packagingListProduct</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>dynamicCharactColumn1</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>dynamicCharactColumn1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>dynamicCharactColumn2</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>dynamicCharactColumn2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>packagingListQty</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>packagingListQty</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>packagingListUnit</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>packagingListUnit</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
             <list-property name="privateDriverProperties">
                 <ex-property>
                     <name>MAX_ROW</name>
@@ -1755,7 +1812,7 @@
         </style>
         <style name="becpg-col-header" id="1479">
             <property name="fontWeight">bold</property>
-            <property name="textAlign">left</property>
+            <property name="textAlign">center</property>
         </style>
         <style name="becpg-chapter-header" id="1482">
             <property name="backgroundColor">#EEEEEE</property>
@@ -1811,7 +1868,9 @@
         <style name="becpg-data-unit" id="2604">
             <property name="textAlign">center</property>
         </style>
-        <style name="becpg-data" id="3015"/>
+        <style name="becpg-data" id="3015">
+            <property name="textAlign">center</property>
+        </style>
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
@@ -1863,7 +1922,8 @@
                                 <property name="fontSize">14pt</property>
                                 <property name="fontWeight">bold</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Fiche Technique R&amp;D</text-property>
+                                <text-property name="text">Fiche Technique 
+Prix de revient</text-property>
                             </label>
                             <data id="3383">
                                 <property name="dataSet">Product</property>
@@ -2191,66 +2251,157 @@
             </row>
         </grid>
         <label id="1768"/>
-        <label id="2700">
+        <label id="3469">
             <property name="style">becpg-chapter-header</property>
-            <text-property name="text">RECETTE</text-property>
+            <text-property name="text">SYNTHÈSE</text-property>
         </label>
-        <table id="3384">
-            <property name="width">6.885496183206107in</property>
-            <property name="dataSet">dynamicCharactList</property>
+        <label id="3502"/>
+        <table id="3471">
+            <property name="width">50%</property>
+            <property name="dataSet">cost</property>
             <list-property name="boundDataColumns">
                 <structure>
-                    <property name="name">dynamicCharactTitle</property>
-                    <text-property name="displayName">dynamicCharactTitle</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactTitle"]</expression>
+                    <property name="name">costListCost</property>
+                    <text-property name="displayName">costListCost</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["costListCost"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">dynamicCharactValue</property>
-                    <text-property name="displayName">dynamicCharactValue</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactValue"]</expression>
+                    <property name="name">costListValue</property>
+                    <text-property name="displayName">costListValue</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["costListValue"]</expression>
                     <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costListValue"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">costPerProduct</property>
+                    <text-property name="displayName">costPerProduct</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["costPerProduct"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation_1</property>
+                    <text-property name="displayName">totalCostPerProduct</text-property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costPerProduct"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
                 </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
-                    <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">if(row["dynamicCharactTitle"] == "Nb Ech" || row["dynamicCharactTitle"] == "Qte totale MeO"){
-true
-}
-else{
-false
-}</expression>
+                    <property name="operator">is-not-null</property>
+                    <expression name="expr" type="javascript">row["costListValue"]</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
-            <column id="3394">
-                <property name="width">1.3893129770992367in</property>
-            </column>
-            <column id="3395">
-                <property name="width">5.4961832061068705in</property>
-            </column>
+            <column id="3481"/>
+            <column id="3482"/>
+            <column id="3491"/>
+            <header>
+                <row id="3493">
+                    <cell id="3494"/>
+                    <cell id="3495">
+                        <label id="3497">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">€/kg</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3496">
+                        <label id="3498">
+                            <property name="style">becpg-col-header</property>
+                            <text-property name="text">€/UVC</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
             <detail>
-                <row id="3388">
-                    <cell id="3389">
-                        <data id="3397">
+                <row id="3475">
+                    <cell id="3476">
+                        <data id="3484">
                             <property name="style">becpg-row-header</property>
-                            <property name="resultSetColumn">dynamicCharactTitle</property>
+                            <property name="resultSetColumn">costListCost</property>
                         </data>
                     </cell>
-                    <cell id="3390">
-                        <data id="3399">
-                            <property name="resultSetColumn">dynamicCharactValue</property>
+                    <cell id="3477">
+                        <data id="3486">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="resultSetColumn">costListValue</property>
+                        </data>
+                    </cell>
+                    <cell id="3489">
+                        <data id="3500">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="resultSetColumn">costPerProduct</property>
                         </data>
                     </cell>
                 </row>
             </detail>
+            <footer>
+                <row id="3478">
+                    <cell id="3479">
+                        <label id="3488">
+                            <property name="style">becpg-row-header</property>
+                            <text-property name="text">Coût total</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3480">
+                        <data id="3487">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation</property>
+                        </data>
+                    </cell>
+                    <cell id="3490">
+                        <data id="3501">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation_1</property>
+                        </data>
+                    </cell>
+                </row>
+            </footer>
         </table>
+        <label id="3503"/>
+        <label id="2700">
+            <property name="style">becpg-chapter-header</property>
+            <text-property name="text">RECETTE</text-property>
+        </label>
         <label id="3400"/>
         <table id="2890">
             <property name="style">becpg-table</property>
             <property name="pageBreakInside">avoid</property>
-            <property name="width">6.778625954198473in</property>
+            <property name="width">6.885496183206107in</property>
             <property name="dataSet">CompoList</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -2274,7 +2425,7 @@ BirtMath.multiply(dataSetRow["compoListQtySubFormula"], 1000)
 else{
 dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
 }</expression>
-                    <property name="dataType">string</property>
+                    <property name="dataType">float</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
@@ -2344,41 +2495,63 @@ dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
                     <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn4"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">dynamicCharactColumn5</property>
+                    <text-property name="displayName">dynamicCharactColumn5</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn5"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">dynamicCharactColumn6</property>
+                    <text-property name="displayName">dynamicCharactColumn6</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn6"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">dynamicCharactColumn7</property>
+                    <text-property name="displayName">dynamicCharactColumn7</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn7"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="2910">
                 <property name="width">0.4732824427480916in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2906">
-                <property name="width">2.6793893129770994in</property>
+                <property name="width">2.4198473282442747in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2969">
-                <property name="width">0.6259541984732825in</property>
+                <property name="width">0.5801526717557252in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3287">
-                <property name="width">0.5190839694656488in</property>
+                <property name="width">0.45038167938931295in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3290">
-                <property name="width">0.48854961832061067in</property>
+                <property name="width">0.5038167938931297in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3323">
-                <property name="width">0.42748091603053434in</property>
+                <property name="width">0.37404580152671757in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3326">
-                <property name="width">0.5419847328244275in</property>
+                <property name="width">0.46564885496183206in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3329">
-                <property name="width">0.5190839694656488in</property>
+                <property name="width">0.5648854961832062in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3332">
-                <property name="width">0.5038167938931297in</property>
+                <property name="width">0.5267175572519084in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3464">
+                <property name="width">0.5267175572519084in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <header>
@@ -2422,12 +2595,17 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3327">
                         <label id="3337">
-                            <text-property name="text">Poids net MeO (g)</text-property>
+                            <text-property name="text">Coût matière (€/kg)</text-property>
                         </label>
                     </cell>
                     <cell id="3330">
                         <label id="3340">
-                            <text-property name="text">% PF</text-property>
+                            <text-property name="text">Prix €/ kg du mélange</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3462">
+                        <label id="3465">
+                            <text-property name="text">Coût matière €/UVC</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2454,17 +2632,18 @@ MP/UVC (g/UVC)</text-property>
                                 <property name="category">Fixed</property>
                                 <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
                             </structure>
-                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListQty</property>
                         </data>
                     </cell>
                     <cell id="3286">
                         <data id="3292">
+                            <property name="style">becpg-data</property>
                             <property name="resultSetColumn">compoListYieldPerc</property>
                         </data>
                     </cell>
                     <cell id="3289">
                         <data id="3294">
+                            <property name="style">becpg-data</property>
                             <property name="resultSetColumn">compoListLossPerc</property>
                         </data>
                     </cell>
@@ -2475,6 +2654,7 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3325">
                         <data id="3336">
+                            <property name="style">becpg-data</property>
                             <structure name="numberFormat">
                                 <property name="category">General Number</property>
                                 <property name="pattern">General Number</property>
@@ -2483,431 +2663,175 @@ MP/UVC (g/UVC)</text-property>
                         </data>
                     </cell>
                     <cell id="3328">
-                        <data id="3338">
-                            <structure name="numberFormat">
-                                <property name="category">General Number</property>
-                                <property name="pattern">General Number</property>
-                            </structure>
-                            <property name="resultSetColumn">dynamicCharactColumn3</property>
+                        <data id="3466">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">dynamicCharactColumn5</property>
                         </data>
                     </cell>
                     <cell id="3331">
-                        <data id="3341">
-                            <property name="resultSetColumn">dynamicCharactColumn4</property>
+                        <data id="3467">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">dynamicCharactColumn6</property>
+                        </data>
+                    </cell>
+                    <cell id="3463">
+                        <data id="3468">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">dynamicCharactColumn7</property>
                         </data>
                     </cell>
                 </row>
             </detail>
         </table>
-        <grid id="3091">
-            <property name="pageBreakBefore">always</property>
-            <column id="3092"/>
-            <row id="3095">
-                <cell id="3096">
-                    <label id="969">
-                        <property name="style">becpg-chapter-header</property>
-                        <property name="marginTop">0pt</property>
-                        <property name="marginBottom">0pt</property>
-                        <property name="textAlign">center</property>
-                        <property name="display">block</property>
-                        <text-property name="text">INSTRUCTIONS</text-property>
-                    </label>
-                    <label id="2567"/>
-                    <table id="3249">
-                        <property name="style">becpg-table</property>
-                        <property name="width">100%</property>
-                        <property name="dataSet">CompoList</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">compoListProduct</property>
-                                <text-property name="displayName">compoListProduct</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["compoListProduct"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">itemType</property>
-                                <text-property name="displayName">itemType</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">instruction</property>
-                                <text-property name="displayName">instruction</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["instruction"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">depthLevel</property>
-                                <text-property name="displayName">depthLevel</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">is-true</property>
-                                <expression name="expr" type="javascript">if(row["instruction"] == null || row["instruction"] == ""){
-false
-}
-else{
-true
-}</expression>
-                                <property name="updateAggregation">true</property>
-                            </structure>
-                        </list-property>
-                        <column id="3259">
-                            <property name="width">1.3358778625954197in</property>
-                        </column>
-                        <column id="3260">
-                            <property name="width">5.4961832061068705in</property>
-                            <property name="style">becpg-col-border</property>
-                        </column>
-                        <detail>
-                            <row id="3253">
-                                <property name="style">becpg-row-border</property>
-                                <cell id="3254">
-                                    <text id="3449">
-                                        <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["compoListProduct"]</VALUE-OF>]]></text-property>
-                                    </text>
-                                </cell>
-                                <cell id="3255">
-                                    <data id="3342">
-                                        <property name="resultSetColumn">instruction</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </detail>
-                    </table>
-                    <label id="3461"/>
-                    <table id="3267">
-                        <property name="style">becpg-table</property>
-                        <property name="pageBreakInside">avoid</property>
-                        <property name="width">40%</property>
-                        <property name="dataSet">physicoChemList</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">pclPhysicoChem</property>
-                                <text-property name="displayName">pclPhysicoChem</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["pclPhysicoChem"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">pclValue</property>
-                                <text-property name="displayName">pclValue</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["pclValue"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">pclUnit</property>
-                                <text-property name="displayName">pclUnit</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["pclUnit"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">pclMaxi</property>
-                                <text-property name="displayName">pclMaxi</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["pclMaxi"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">pclMini</property>
-                                <text-property name="displayName">pclMini</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["pclMini"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">like</property>
-                                <expression name="expr" type="javascript">row["pclPhysicoChem"]</expression>
-                                <simple-property-list name="value1">
-                                    <value>"%sauce%"</value>
-                                </simple-property-list>
-                                <property name="updateAggregation">true</property>
-                            </structure>
-                        </list-property>
-                        <column id="3280">
-                            <property name="width">50%</property>
-                        </column>
-                        <column id="3281">
-                            <property name="width">50%</property>
-                            <property name="style">becpg-col-border</property>
-                        </column>
-                        <header>
-                            <row id="3268">
-                                <cell id="3269">
-                                    <property name="colSpan">2</property>
-                                    <property name="rowSpan">1</property>
-                                </cell>
-                            </row>
-                            <row id="3270">
-                                <cell id="3271">
-                                    <label id="3272">
-                                        <property name="style">becpg-col-header</property>
-                                        <property name="paddingLeft">5pt</property>
-                                        <property name="textAlign">left</property>
-                                        <text-property name="text">Critères</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="3273">
-                                    <label id="3274">
-                                        <property name="style">becpg-col-header</property>
-                                        <property name="paddingLeft">5pt</property>
-                                        <property name="textAlign">left</property>
-                                        <text-property name="text">Valeur</text-property>
-                                    </label>
-                                </cell>
-                            </row>
-                        </header>
-                        <detail>
-                            <row id="3275">
-                                <property name="style">becpg-row-border</property>
-                                <cell id="3276">
-                                    <data id="3277">
-                                        <property name="style">becpg-row-header</property>
-                                        <property name="fontSize">9pt</property>
-                                        <property name="whiteSpace">nowrap</property>
-                                        <property name="resultSetColumn">pclPhysicoChem</property>
-                                    </data>
-                                </cell>
-                                <cell id="3278">
-                                    <data id="3279">
-                                        <property name="fontSize">9pt</property>
-                                        <structure name="numberFormat">
-                                            <property name="category">Fixed</property>
-                                            <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
-                                        </structure>
-                                        <property name="textAlign">center</property>
-                                        <property name="whiteSpace">nowrap</property>
-                                        <property name="resultSetColumn">pclValue</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </detail>
-                    </table>
-                    <label id="3282"/>
-                    <table id="3344">
-                        <property name="style">becpg-table</property>
-                        <property name="width">100%</property>
-                        <property name="dataSet">processList</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">instruction</property>
-                                <text-property name="displayName">instruction</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["instruction"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">plStep</property>
-                                <text-property name="displayName">plStep</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["plStep"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">is-true</property>
-                                <expression name="expr" type="javascript">if(row["instruction"] == null || row["instruction"] == ""){
-false
-}
-else{
-true
-}</expression>
-                                <property name="updateAggregation">true</property>
-                            </structure>
-                        </list-property>
-                        <column id="3354">
-                            <property name="width">1.3435114503816794in</property>
-                        </column>
-                        <column id="3355">
-                            <property name="width">5.488549618320611in</property>
-                            <property name="style">becpg-col-border</property>
-                        </column>
-                        <detail>
-                            <row id="3348">
-                                <property name="style">becpg-row-border</property>
-                                <cell id="3349">
-                                    <data id="3401">
-                                        <property name="resultSetColumn">plStep</property>
-                                    </data>
-                                </cell>
-                                <cell id="3350">
-                                    <data id="3359">
-                                        <property name="resultSetColumn">instruction</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </detail>
-                    </table>
-                    <label id="3284"/>
-                    <label id="960">
-                        <property name="style">becpg-chapter-header</property>
-                        <property name="marginTop">0pt</property>
-                        <property name="marginBottom">0pt</property>
-                        <property name="paddingTop">1pt</property>
-                        <text-property name="text">VALIDATION ECHANTILLONS</text-property>
-                    </label>
-                    <label id="3239"/>
-                    <grid id="3402">
-                        <property name="width">6.885496183206107in</property>
-                        <column id="3403">
-                            <property name="width">5.083969465648855in</property>
-                        </column>
-                        <column id="3404">
-                            <property name="width">1.8015267175572518in</property>
-                        </column>
-                        <row id="3405">
-                            <cell id="3406">
-                                <label id="3240">
-                                    <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Dégustateurs :</text-property>
-                                </label>
-                                <label id="2557"/>
-                                <table id="1526">
-                                    <property name="style">becpg-table</property>
-                                    <property name="width">100%</property>
-                                    <property name="dataSet">OrganoList</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">organoListValue</property>
-                                            <text-property name="displayName">organoListValue</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["organoListValue"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                        <structure>
-                                            <property name="name">organoListOrgano</property>
-                                            <text-property name="displayName">organoListOrgano</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["organoListOrgano"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
-                                    <column id="1536">
-                                        <property name="width">1.1221374045801527in</property>
-                                    </column>
-                                    <column id="1537">
-                                        <property name="style">becpg-col-border</property>
-                                    </column>
-                                    <detail>
-                                        <row id="1530">
-                                            <property name="style">becpg-row-border</property>
-                                            <cell id="1531">
-                                                <data id="1541">
-                                                    <property name="style">becpg-row-header</property>
-                                                    <property name="whiteSpace">nowrap</property>
-                                                    <property name="resultSetColumn">organoListOrgano</property>
-                                                </data>
-                                            </cell>
-                                            <cell id="1532">
-                                                <data id="3455">
-                                                    <property name="resultSetColumn">organoListValue</property>
-                                                </data>
-                                            </cell>
-                                        </row>
-                                    </detail>
-                                </table>
-                                <label id="3241"/>
-                                <label id="3242">
-                                    <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Modifications - Conclusions :</text-property>
-                                </label>
-                                <label id="2558"/>
-                            </cell>
-                            <cell id="3437">
-                                <table id="3438">
-                                    <property name="borderBottomColor">#FFFFFF</property>
-                                    <property name="borderLeftColor">#FFFFFF</property>
-                                    <property name="borderRightColor">#FFFFFF</property>
-                                    <property name="borderTopColor">#FFFFFF</property>
-                                    <property name="dataSet">images</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">name</property>
-                                            <text-property name="displayName">name</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                        <structure>
-                                            <property name="name">title</property>
-                                            <text-property name="displayName">title</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["title"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                        <structure>
-                                            <property name="name">img</property>
-                                            <text-property name="displayName">img</text-property>
-                                            <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                            <property name="dataType">blob</property>
-                                            <property name="allowExport">true</property>
-                                        </structure>
-                                        <structure>
-                                            <property name="name">runningCount</property>
-                                            <text-property name="displayName">runningCount</text-property>
-                                            <property name="dataType">integer</property>
-                                            <property name="aggregateFunction">RUNNINGCOUNT</property>
-                                            <list-property name="arguments">
-                                                <structure>
-                                                    <property name="name">Expression</property>
-                                                    <expression name="value" type="javascript">row["name"]</expression>
-                                                </structure>
-                                            </list-property>
-                                            <property name="allowExport">true</property>
-                                        </structure>
-                                    </list-property>
-                                    <list-property name="sort">
-                                        <structure>
-                                            <expression name="key" type="javascript">row["name"]</expression>
-                                            <property name="direction">asc</property>
-                                            <property name="strength">-1</property>
-                                        </structure>
-                                    </list-property>
-                                    <list-property name="filter">
-                                        <structure>
-                                            <property name="operator">is-true</property>
-                                            <expression name="expr" type="javascript">BirtStr.indexOf("produit.", row["name"], 0) == 0 || BirtStr.indexOf("product.", row["name"], 0) == 0</expression>
-                                            <property name="updateAggregation">true</property>
-                                        </structure>
-                                    </list-property>
-                                    <column id="3447"/>
-                                    <header>
-                                        <row id="3439">
-                                            <cell id="3440">
-                                                <label id="3448">
-                                                    <property name="fontWeight">bold</property>
-                                                    <text-property name="text">Photo du produit</text-property>
-                                                </label>
-                                            </cell>
-                                        </row>
-                                    </header>
-                                    <detail>
-                                        <row id="3441">
-                                            <property name="pageBreakInside">avoid</property>
-                                            <cell id="3442">
-                                                <property name="textAlign">center</property>
-                                                <image id="3444">
-                                                    <property name="backgroundColor">white</property>
-                                                    <property name="height">1.0916030534351144in</property>
-                                                    <property name="width">1.5648854961832062in</property>
-                                                    <structure name="toc"/>
-                                                    <property name="source">expr</property>
-                                                    <expression name="valueExpr">row["img"]</expression>
-                                                </image>
-                                            </cell>
-                                        </row>
-                                    </detail>
-                                    <footer>
-                                        <row id="3445">
-                                            <cell id="3446"/>
-                                        </row>
-                                    </footer>
-                                </table>
-                            </cell>
-                        </row>
-                    </grid>
-                </cell>
-            </row>
-        </grid>
         <label id="3174"/>
+        <label id="3504">
+            <property name="style">becpg-chapter-header</property>
+            <text-property name="text">CONDITIONNEMENT</text-property>
+        </label>
+        <label id="3550"/>
+        <table id="3506">
+            <property name="style">becpg-table</property>
+            <property name="width">6.885496183206107in</property>
+            <property name="dataSet">packList</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">erpCode</property>
+                    <text-property name="displayName">erpCode</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">packagingListProduct</property>
+                    <text-property name="displayName">packagingListProduct</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">packagingListQty</property>
+                    <text-property name="displayName">packagingListQty</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["packagingListQty"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">packagingListUnit</property>
+                    <text-property name="displayName">packagingListUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["packagingListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">dynamicCharactColumn1</property>
+                    <text-property name="displayName">dynamicCharactColumn1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">dynamicCharactColumn2</property>
+                    <text-property name="displayName">dynamicCharactColumn2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="3528">
+                <property name="width">0.48854961832061067in</property>
+            </column>
+            <column id="3529">
+                <property name="width">1.816793893129771in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3530">
+                <property name="width">1.1450381679389312in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3531">
+                <property name="width">1.1450381679389312in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3532">
+                <property name="width">1.1450381679389312in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3533">
+                <property name="width">1.1450381679389312in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <header>
+                <row id="3507">
+                    <property name="style">becpg-col-header</property>
+                    <cell id="3508">
+                        <label id="3549">
+                            <text-property name="text">Code ERP</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3509">
+                        <label id="3536">
+                            <text-property name="text">Emballage</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3510">
+                        <label id="3540">
+                            <text-property name="text">Qté</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3511">
+                        <label id="3542">
+                            <text-property name="text">Unité</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3512">
+                        <label id="3544">
+                            <text-property name="text">Coût unitaire 
+Emb €</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3513">
+                        <label id="3546">
+                            <text-property name="text">Coût Emb/UVC
+€/UVC</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="3514">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="3515">
+                        <data id="3535">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">erpCode</property>
+                        </data>
+                    </cell>
+                    <cell id="3516">
+                        <data id="3539">
+                            <property name="resultSetColumn">packagingListProduct</property>
+                        </data>
+                    </cell>
+                    <cell id="3517">
+                        <data id="3541">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">packagingListQty</property>
+                        </data>
+                    </cell>
+                    <cell id="3518">
+                        <data id="3543">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">packagingListUnit</property>
+                        </data>
+                    </cell>
+                    <cell id="3519">
+                        <data id="3545">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">dynamicCharactColumn1</property>
+                        </data>
+                    </cell>
+                    <cell id="3520">
+                        <data id="3547">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">dynamicCharactColumn2</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
     </body>
     <list-property name="images">
         <structure>
