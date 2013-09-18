@@ -361,6 +361,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@SuppressWarnings({ "unchecked" })
 	private T findOne(NodeRef id, Map<NodeRef, RepositoryEntity> caches) {
 
+		
 		if (caches.containsKey(id)) {
 			return (T) caches.get(id);
 		}
@@ -381,6 +382,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 
 			entity.setNodeRef(id);
+			
+			caches.put(id, entity);
 
 			Map<QName, Serializable> properties = nodeService.getProperties(id);
 
@@ -398,13 +401,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 						QName datalistViewQname = repositoryEntityDefReader.readQName(readMethod);
 
-						PropertyUtils.setProperty(entity, pd.getName(), loadDataListView(entity, datalistViewQname, readMethod.getReturnType()));
+						PropertyUtils.setProperty(entity, pd.getName(), loadDataListView(entity, datalistViewQname, readMethod.getReturnType(),caches));
 
 					} else if (readMethod.isAnnotationPresent(DataList.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 
 						QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, datalistQname));
+						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, datalistQname, caches));
 
 					}
 
@@ -413,8 +416,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 
 			loadAspects(entity);
-
-			caches.put(id, entity);
 
 			return entity;
 
@@ -432,7 +433,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
-	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType) throws InstantiationException, IllegalAccessException,
+	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType, Map<NodeRef, RepositoryEntity> caches ) throws InstantiationException, IllegalAccessException,
 			IntrospectionException, InvocationTargetException, NoSuchMethodException {
 
 		R ret = returnType.newInstance();
@@ -445,7 +446,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 					final QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-					PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistContainerQname, datalistQname));
+					PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistContainerQname, datalistQname,caches));
 				}
 			}
 		}
@@ -453,7 +454,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return ret;
 	}
 
-	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final QName datalistContainerQname, final QName datalistQname) {
+	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final QName datalistContainerQname, final QName datalistQname, final  Map<NodeRef, RepositoryEntity> caches ) {
 		if (logger.isTraceEnabled()) {
 			logger.debug("read dataList : " + pd.getName());
 		}
@@ -461,7 +462,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		LazyLoadingDataList<T> dataList = new LazyLoadingDataList<T>();
 		dataList.setDataProvider(new LazyLoadingDataList.DataProvider<T>() {
 			public List<T> getData() {
-				return loadDataList(entity.getNodeRef(), datalistContainerQname, datalistQname);
+				return loadDataList(entity.getNodeRef(), datalistContainerQname, datalistQname, caches);
 			}
 
 			@Override
@@ -532,16 +533,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
 				}
 			} else if (prop != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
-				if (caches.containsKey(prop)) {
-					PropertyUtils.setProperty(entity, pd.getName(), caches.get(prop));
+				if (!entity.getNodeRef().equals((NodeRef) prop)) {
+					PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
 				} else {
-					if (!entity.getNodeRef().equals((NodeRef) prop)) {
-						PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
-					} else {
-						logger.warn("Cyclic detected for :" + entity.getName() + " prop " + pd.getName() + " type " + entity.getClass().getSimpleName());
-						PropertyUtils.setProperty(entity, pd.getName(), entity);
-					}
-
+					//TODO Remove that should never append NOW
+					logger.warn("Cyclic detected for :" + entity.getName() + " prop " + pd.getName() + " type " + entity.getClass().getSimpleName());
+					PropertyUtils.setProperty(entity, pd.getName(), entity);
 				}
 			} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
 				PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
@@ -556,6 +553,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Override
 	public List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname) {
+		return loadDataList(entityNodeRef, datalistContainerQname, datalistQname,L2CacheSupport.getCurrentThreadCache());
+	}
+	
+	
+	private List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname, Map<NodeRef, RepositoryEntity> caches) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 
 		if (listContainerNodeRef != null) {
@@ -565,7 +567,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				LinkedList<T> dataList = new LinkedList<T>();
 				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dataListNodeRef, datalistQname);
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
-					T item = findOne(listItemNodeRef);
+					T item = findOne(listItemNodeRef,caches);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Load item :" + item.toString());
 					}

@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.lang.ObjectUtils;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -197,6 +198,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return result;
 	}
 
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -251,7 +254,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	@Override
 	public String toString() {
 		return "CompoListDataItem [depthLevel=" + depthLevel + ", qty=" + qty + ", qtySubFormula=" + qtySubFormula + ", compoListUnit="
-				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product + ", parent=" + parent + "]";
+				+ compoListUnit + ", lossPerc=" + lossPerc + ", yieldPerc=" + yieldPerc + ", declType=" + declType + ", product=" + product + ", parent=" +parent + "]";
 	}
 
 	@Override
