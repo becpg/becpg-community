@@ -62,6 +62,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			}
 		}
 
+		removeCachedAssoc(assocCacheName(),nodeRef, qName);
 	}
 
 	@Override
@@ -81,6 +82,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		if (createAssoc && assocNodeRef != null) {
 			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
 		}
+		
+		removeCachedAssoc(assocCacheName(),nodeRef, qName);
 
 	}
 
