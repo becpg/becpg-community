@@ -3859,6 +3859,11 @@
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
 					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true"/>
 					<show id="bcpg:instruction" force="true"/>
 					<show id="fm:commentCount" force="true" />					
 				</field-visibility>
@@ -3871,6 +3876,11 @@
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn6" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn7" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn8" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn9" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn10" label="hidden" ></field>
 					<field id="bcpg:instruction" label="hidden" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>				
@@ -4006,6 +4016,11 @@
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
 					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true"/>
 					<show id="bcpg:instruction" force="true"/>
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -4017,6 +4032,11 @@
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn6" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn7" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn8" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn9" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn10" label="hidden" ></field>
 					<field id="bcpg:instruction" label="hidden" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>

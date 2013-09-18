@@ -407,7 +407,7 @@
 				compoListProduct="Fond de quiche" locale="fr" compoListQty="0,1"
 				compoListQtyAfterProcess="" compoListQtySubFormula="0,1"
 				compoListOverrunPerc="" sort="100" startEffectivity="sam. 8 sept. 2012 10:48:57"
-				dynamicCharactColumn5="0,55" itemType="bcpg:semiFinishedProduct"
+				dynamicCharactColumn5="5" dynamicCharactColumn6="3" dynamicCharactColumn7="0,375" itemType="bcpg:semiFinishedProduct"
 				aspects="referenceable, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect">
 				<instruction>Laisser reposer la pâte 10 min.</instruction>
 			</compoList>
@@ -526,7 +526,7 @@
 			grossWeightPkgLevel2="4.8012" tarePkgLevel3="33.843199999999996"
 			netWeightPkgLevel3="144.0" grossWeightPkgLevel3="177.8432"
 			nbProductsPkgLevel2="20" nbProductsPkgLevel3="720">
-			<packagingList labelingTemplate="Marquage standard"
+			<packagingList erpCode="1256" labelingTemplate="Marquage standard"
 				packagingListIsMaster="Vrai" packagingListUnit="P" labelingPosition="Largeur de la boîte"
 				packagingListQty="1" locale="fr" startEffectivity="sam. 8 sept. 2012 10:49:00"
 				sort="100" packagingListProduct="Boite tarte" packagingListPkgLevel="Primary"

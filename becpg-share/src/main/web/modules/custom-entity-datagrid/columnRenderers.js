@@ -355,7 +355,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3",
-            "bcpg:dynamicCharactColumn4", "bcpg:dynamicCharactColumn5"],
+            "bcpg:dynamicCharactColumn4", "bcpg:dynamicCharactColumn5", "bcpg:dynamicCharactColumn6", "bcpg:dynamicCharactColumn7", "bcpg:dynamicCharactColumn8",
+            "bcpg:dynamicCharactColumn9", "bcpg:dynamicCharactColumn10"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          if (data.value != null) {
             if (oColumn.hidden) {
