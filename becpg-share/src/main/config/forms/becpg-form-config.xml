@@ -3742,7 +3742,6 @@
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListOverrunPerc" />
 					<show id="bcpg:compoListDeclType" />					
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:variantIds" force="true"/>
@@ -3790,7 +3789,6 @@
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListOverrunPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
@@ -3851,8 +3849,6 @@
 					<show id="bcpg:compoListQty" />					
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListOverrunPerc" />
-					<show id="bcpg:compoListVolume" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
@@ -3893,8 +3889,6 @@
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListOverrunPerc" />
-					<show id="bcpg:compoListVolume" />
 					<show id="bcpg:compoListDeclType" />
 				</field-visibility>				
 			</form>
@@ -3911,7 +3905,6 @@
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListOverrunPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:variantIds" force="true"/>
