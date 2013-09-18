@@ -167,6 +167,55 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return fieldQname;
 		}
 
+		
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
+			result = prime * result + ((fieldQname == null) ? 0 : fieldQname.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			AttributeExtractorStructure other = (AttributeExtractorStructure) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (fieldName == null) {
+				if (other.fieldName != null)
+					return false;
+			} else if (!fieldName.equals(other.fieldName))
+				return false;
+			if (fieldQname == null) {
+				if (other.fieldQname != null)
+					return false;
+			} else if (!fieldQname.equals(other.fieldQname))
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "AttributeExtractorStructure [fieldName=" + fieldName + ", callback=" + callback + ", isEntityField=" + isEntityField + ", fieldDef=" + fieldDef
+					+ ", childrens=" + childrens + ", fieldQname=" + fieldQname + "]";
+		}
+
+		private AttributeExtractorServiceImpl getOuterType() {
+			return AttributeExtractorServiceImpl.this;
+		}
+
+
+		
+		
 	}
 
 	@Override
@@ -645,5 +694,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return null;
 	}
+	
+	
 
 }

@@ -112,4 +112,6 @@ public interface CrudRepository<T, ID extends Serializable>  {
 	 * Deletes all entities managed by the repository.
 	 */
 	void deleteAll();
+
+
 }
