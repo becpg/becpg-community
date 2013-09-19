@@ -33,9 +33,9 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
-public class FormulationFormulaTest extends AbstractFinishedProductTest {
+public class FormulationFullTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationFormulaTest.class);
+	protected static Log logger = LogFactory.getLog(FormulationFullTest.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -55,9 +55,9 @@ public class FormulationFormulaTest extends AbstractFinishedProductTest {
 	 *             the exception
 	 */
 	@Test
-	public void testFormulateProduct() throws Exception {
+	public void testFormulationFull() throws Exception {
 
-		logger.info("testFormulateProduct");
+		logger.info("testFormulationFull");
 
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -234,6 +234,162 @@ public class FormulationFormulaTest extends AbstractFinishedProductTest {
 					assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());
 				}
 				assertEquals(2, checks);
+
+				// allergens
+				checks = 0;
+				assertNotNull("AllergenList is null", formulatedProduct.getAllergenList());
+				for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
+					String voluntarySources = "";
+					for (NodeRef part : allergenListDataItem.getVoluntarySources())
+						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+
+					String inVoluntarySources = "";
+					for (NodeRef part : allergenListDataItem.getInVoluntarySources())
+						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+
+					String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: "
+							+ allergenListDataItem.getVoluntary().booleanValue() + " - involuntary: " + allergenListDataItem.getInVoluntary().booleanValue()
+							+ " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					logger.debug(trace);
+
+					// allergen1 - voluntary: true - involuntary: false -
+					// voluntary sources:Raw material 1, Raw material 2 -
+					// involuntary sources:
+					if (allergenListDataItem.getAllergen().equals(allergen1)) {
+						assertEquals("allergen1.getVoluntary().booleanValue() == true, actual values: " + trace, true, allergenListDataItem.getVoluntary().booleanValue());
+						assertEquals("allergen1.getInVoluntary().booleanValue() == false, actual values: " + trace, false, allergenListDataItem.getInVoluntary().booleanValue());
+						assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace, true,
+								allergenListDataItem.getVoluntarySources().contains(rawMaterial1NodeRef));
+						assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace, true,
+								allergenListDataItem.getVoluntarySources().contains(rawMaterial2NodeRef));
+						assertEquals("allergen1.getInVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getInVoluntarySources().size());
+						checks++;
+					}
+					// allergen2 - voluntary: false - involuntary: true -
+					// voluntary sources: - involuntary sources:Raw material 2,
+					if (allergenListDataItem.getAllergen().equals(allergen2)) {
+						assertEquals("allergen2.getVoluntary().booleanValue() == false, actual values: " + trace, false, allergenListDataItem.getVoluntary().booleanValue());
+						assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace, true, allergenListDataItem.getInVoluntary().booleanValue());
+						assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace, true, allergenListDataItem.getInVoluntarySources()
+								.contains(rawMaterial2NodeRef));
+						assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getVoluntarySources().size());
+						checks++;
+					}
+					// allergen: allergen3 - voluntary: true - involuntary: true
+					// - voluntary sources:Raw material 3, - involuntary
+					// sources:Raw material 3,
+					if (allergenListDataItem.getAllergen().equals(allergen3)) {
+						assertEquals("allergen3.getVoluntary().booleanValue() == true, actual values: " + trace, true, allergenListDataItem.getVoluntary().booleanValue());
+						assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace, true, allergenListDataItem.getInVoluntary().booleanValue());
+						assertEquals("allergen3.getVoluntarySources() contains Raw material 3, actual values: " + trace, true,
+								allergenListDataItem.getVoluntarySources().contains(rawMaterial3NodeRef));
+						assertEquals("allergen3.getInVoluntarySources() contains Raw material 3, actual values: " + trace, true, allergenListDataItem.getInVoluntarySources()
+								.contains(rawMaterial3NodeRef));
+						checks++;
+					}
+					// allergen4 - voluntary: false - involuntary: false -
+					// voluntary sources: - involuntary sources:
+					if (allergenListDataItem.getAllergen().equals(allergen4)) {
+						assertEquals("allergen4.getVoluntary().booleanValue() == false, actual values: " + trace, false, allergenListDataItem.getVoluntary().booleanValue());
+						assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace, false, allergenListDataItem.getInVoluntary().booleanValue());
+						assertEquals("allergen4.getVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getVoluntarySources().size());
+						assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getInVoluntarySources().size());
+						checks++;
+					}
+				}
+				assertEquals(4, checks);
+
+				// verify IngList
+				// 1 * RM1 , ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ;
+				// geo1|geo2 //
+				// 2 * RM2 , ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ;
+				// geo1|geo2 //
+				// 3 * RM3 , ingList : // // 4 ing3 ; bio1|bio2 ; geo2
+				// 3 * RM4 [OMIT] , ingList : // // 4 ing3 ; bio1|bio2 ; geo2
+				checks = 0;
+				assertNotNull("IngList is null", formulatedProduct.getIngList());
+				for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+
+					String geoOriginsText = "";
+					for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
+						geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+
+					String bioOriginsText = "";
+					for (NodeRef bioOrigin : ingListDataItem.getBioOrigin())
+						bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+
+					String trace = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc()
+							+ " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO().booleanValue() + " is ionized: "
+							+ ingListDataItem.getIsIonized().booleanValue();
+					logger.debug(trace);
+
+					df = new DecimalFormat("0.000000");
+
+					// ing: ing1 - qty: 13.88888888888889 - geo origins:
+					// geoOrigin1, - bio origins: bioOrigin1, is gmo: true
+					if (ingListDataItem.getIng().equals(ing1)) {
+						assertEquals("ing1.getQtyPerc() == 13.88888888888889, actual values: " + trace, df.format(13.88888888888889), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing1.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
+						assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
+						assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
+						assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false, ingListDataItem.getBioOrigin().contains(bioOrigin2));
+						assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue() == true);
+						assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue() == true);
+						checks++;
+					}
+					// ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1,
+					// geoOrigin2, - bio origins: bioOrigin1, bioOrigin2, is
+					// gmo: false
+					if (ingListDataItem.getIng().equals(ing2)) {
+						assertEquals("ing2.getQtyPerc() == 36.111111111111114, actual values: " + trace, df.format(36.111111111111114), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing2.getGeoOrigin() contains geo1, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
+						assertEquals("ing2.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
+						assertEquals("ing2.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
+						assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
+						assertEquals("ing2.getIsGMO() is false, actual values: " + trace, false, ingListDataItem.getIsGMO().booleanValue());
+						assertEquals("ing2.getIsIonized().booleanValue() is false, actual values: " + trace, false, ingListDataItem.getIsIonized().booleanValue());
+						checks++;
+					}
+					// ing3 - qty: 50 - geo origins: geoOrigin2, - bio origins:
+					// bioOrigin1, bioOrigin2, is gmo: true
+					if (ingListDataItem.getIng().equals(ing3)) {
+						assertEquals("ing3.getQtyPerc() == 50, actual values: " + trace, df.format(50), df.format(ingListDataItem.getQtyPerc()));
+						assertEquals("ing3.getGeoOrigin() doesn't contain geo1, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin1));
+						assertEquals("ing3.getGeoOrigin() contains geo2, actual values: " + trace, true, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
+						assertEquals("ing3.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
+						assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin2));
+						assertEquals("ing3.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
+						assertEquals("ing3.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
+						checks++;
+					}
+				}
+				assertEquals(3, checks);
+
+				// verify IngLabelingList
+				checks = 0;
+				assertNotNull("IngLabelingList is null", formulatedProduct.getIngLabelingList());
+
+				for (IngLabelingListDataItem illDataItem : formulatedProduct.getIngLabelingList()) {
+
+					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
+					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
+
+					// Pâte 50 % (Legal Raw material 2 66,67 % (ing2 75,00 %,
+					// ing1 25,00 %), ing2 22,22 %, ing1 11,11 %), Garniture 50
+					// % (ing3 50,00 %)
+					if (illDataItem.getGrp() == null) {
+
+						checkILL("Pâte french 50,00 % (Legal Raw material 2 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)",
+								"Garniture french 50,00 % (ing3 french 100,00 %)", 
+								illDataItem.getValue().getValue(Locale.FRENCH));
+
+						checkILL("Pâte english 50.00 % (Legal Raw material 2 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)",
+								"Garniture english 50.00 % (ing3 english 100.00 %)", 
+								illDataItem.getValue().getValue(Locale.ENGLISH));
+						checks++;
+					}
+				}
+				assertEquals(1, checks);
 
 				// ReqCtrlList
 				checks = 0;
