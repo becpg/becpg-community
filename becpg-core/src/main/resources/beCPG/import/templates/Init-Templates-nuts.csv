@@ -1,7 +1,0 @@
-STOP_ON_FIRST_ERROR;false;;;;;;;;;;;
-PATH;/Temp;;;;;;;;;;;
-TYPE;bcpg:product;;;;;;;;;;;
-DISABLED_POLICIES;rep:reportEntityAspect;;;;;;;;;;;
-MAPPING;NutDatabaseFrench;;;;;;;;;;;
-COLUMNS;bcpg:code;Protéines;Glucides;Lipides;Sucres;AG saturés;AG polyinsaturés;AG monoinsaturés;Fibres alimentaires;Sodium;Energie kcal;Energie kJ
-VALUES;SF4;;;;;;;;;;;

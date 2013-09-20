@@ -7,6 +7,7 @@ VALUES;Energie kJ;kJ;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, a
 VALUES;Energie kcal;kcal;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, avec fibres;Energie, N x facteur Jones, avec fibres;Energy, N x Jones' factor, with fibres
 VALUES;Eau;g;Nutriment;Autre;Eau;Eau;Water
 VALUES;Sodium;mg;Minéraux;Groupe 2;Sodium;Sodium;Sodium
+VALUES;Sel;g;Minéraux;Groupe 2;Sel;Sel;salt
 VALUES;Magnésium;mg;Minéraux;Autre;Magnésium;Magnésium;Magnesium
 VALUES;Phosphore;mg;Minéraux;Autre;Phosphore;Phosphore;Phosphorus
 VALUES;Potassium;mg;Minéraux;Autre;Potassium;Potassium;Potassium
