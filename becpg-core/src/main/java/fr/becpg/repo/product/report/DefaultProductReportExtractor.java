@@ -224,10 +224,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		
 
 		// IngLabelingList
-		if (productData.getIngLabelingList() != null) {
+		if (productData.getLabelingListView().getIngLabelingList() != null) {
 			Element ingListElt = dataListsElt.addElement(BeCPGModel.TYPE_INGLABELINGLIST.getLocalName()+"s");
 
-			for (IngLabelingListDataItem dataItem : productData.getIngLabelingList()) {
+			for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
 
 				List<String> locales = new ArrayList<String>();
 				for (Locale locale : dataItem.getValue().getLocales()) {

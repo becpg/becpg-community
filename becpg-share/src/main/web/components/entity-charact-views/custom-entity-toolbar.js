@@ -294,7 +294,7 @@
                   {
                      actionName : "formulate",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList") && entity != null && entity.userAccess.edit;
+                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" || asset.name === "ingLabelingList") && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 

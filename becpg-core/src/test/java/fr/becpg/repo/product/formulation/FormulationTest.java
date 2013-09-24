@@ -184,25 +184,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				}
 			}
 			
-			//verify IngLabelingList
-			assertNotNull("IngLabelingList is null", formulatedProduct1.getIngLabelingList());
-			for(IngLabelingListDataItem illDataItem : formulatedProduct1.getIngLabelingList()){				
-				
-				String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-				logger.debug(trace);			
-				
-				//Garniture default 50,00 % (ing3 default 83,33 %, ing4 default 16,67 %), Pâte default 50,00 % (Legal Raw material 12 66,67 % (ing2 default 75,00 %, ing1 default 25,00 %), ing2 default 22,22 %, ing1 default 11,11 %)
-				if(illDataItem.getGrp() == null){
-					
-					checkILL("Garniture french 50,00 % (ing3 french 83,33 %, ing4 french 16,67 %)", 
-							"Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)", 
-							illDataItem.getValue().getValue(Locale.FRENCH));
-					
-					checkILL("Garniture english 50.00 % (ing3 english 83.33 %, ing4 english 16.67 %)", 
-							"Pâte english 50.00 % (Legal Raw material 12 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
-							illDataItem.getValue().getValue(Locale.ENGLISH));					
-				}
-			}
+			
 			
 			/**
 			 *  		Finished product 2
@@ -300,25 +282,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				}
 			}
 			
-			//verify IngLabelingList
-			assertNotNull("IngLabelingList is null", formulatedProduct2.getIngLabelingList());
-			for(IngLabelingListDataItem illDataItem : formulatedProduct2.getIngLabelingList()){				
-				
-				String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
-				logger.debug(trace);			
-				
-				//Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %), Garniture french 50,00 % (ing3 french 50,00 %)
-				if(illDataItem.getGrp() == null){
-	
-					checkILL("Pâte french 50,00 % (Legal Raw material 12 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)", 
-							"Garniture french 50,00 % (ing3 french 50,00 %)", 
-							illDataItem.getValue().getValue(Locale.FRENCH));
-					
-					checkILL("Pâte english 50.00 % (Legal Raw material 12 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
-							"Garniture english 50.00 % (ing3 english 50.00 %)", 
-							illDataItem.getValue().getValue(Locale.ENGLISH));					
-				}
-			}
+			
 			
 			return null;
 
@@ -1130,29 +1094,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				}
 				assertEquals(3, checks);
 				
-				//verify IngLabelingList
-				checks=0;
-				assertNotNull("IngLabelingList is null", formulatedProduct.getIngLabelingList());
-
-				for(IngLabelingListDataItem illDataItem : formulatedProduct.getIngLabelingList()){				
-					
-					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
-					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
-					
-					//Pâte 50 % (Legal Raw material 2 66,67 % (ing2 75,00 %, ing1 25,00 %), ing2 22,22 %, ing1 11,11 %), Garniture 50 % (ing3 50,00 %)
-					if(illDataItem.getGrp() == null){		
-						
-						checkILL("Pâte french 50,00 % (Legal Raw material 2 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)",
-								"Garniture french 50,00 % (ing3 french 100,00 %)",
-								illDataItem.getValue().getValue(Locale.FRENCH));
-						
-						checkILL("Pâte english 50.00 % (Legal Raw material 2 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)", 
-								"Garniture english 50.00 % (ing3 english 100.00 %)", 
-								illDataItem.getValue().getValue(Locale.ENGLISH));						
-						checks++;
-					}
-				}
-				assertEquals(1, checks);
+			
 								
 				return null;
 
@@ -2444,8 +2386,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
 				
 				//verify IngLabelingList
-				assertNotNull("IngLabelingList is null", formulatedProduct1.getIngLabelingList());
-				for(IngLabelingListDataItem illDataItem : formulatedProduct1.getIngLabelingList()){				
+				assertNotNull("IngLabelingList is null", formulatedProduct1.getLabelingListView().getIngLabelingList());
+				for(IngLabelingListDataItem illDataItem : formulatedProduct1.getLabelingListView().getIngLabelingList()){				
 					
 					String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
 					logger.debug(trace);			
@@ -2477,10 +2419,10 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
 				
 				//verify IngLabelingList
-				assertNotNull("IngLabelingList is null", formulatedProduct1.getIngLabelingList());
-				assertEquals(1, formulatedProduct1.getIngLabelingList().size());
+				assertNotNull("IngLabelingList is null", formulatedProduct1.getLabelingListView().getIngLabelingList());
+				assertEquals(1, formulatedProduct1.getLabelingListView().getIngLabelingList().size());
 				assertEquals("ing2 french 34,07 %, ing1 french 9,26 %, ing3 french, ing4 french", 
-						formulatedProduct1.getIngLabelingList().get(0).getValue().getValue(Locale.FRENCH));				
+						formulatedProduct1.getLabelingListView().getIngLabelingList().get(0).getValue().getValue(Locale.FRENCH));				
 				
 				return null;
 
@@ -2531,8 +2473,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			
 			
 			//verify IngLabelingList
-			assertNotNull("IngLabelingList is null", formulatedProduct1.getIngLabelingList());
-			for(IngLabelingListDataItem illDataItem : formulatedProduct1.getIngLabelingList()){				
+			assertNotNull("IngLabelingList is null", formulatedProduct1.getLabelingListView().getIngLabelingList());
+			for(IngLabelingListDataItem illDataItem : formulatedProduct1.getLabelingListView().getIngLabelingList()){				
 				
 				String trace= "grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH);
 				logger.debug(trace);			

@@ -30,7 +30,7 @@ public class VariantFilters implements DataListFilter<ProductData> {
 	@Override
 	public Predicate createPredicate(final ProductData entity) {
 
-		if (variantNodeRef == null) {
+		if (variantNodeRef == null && entity.getVariants()!=null) {
 			for (VariantData variant : entity.getVariants()) {
 				if (variant.getIsDefaultVariant()) {
 					this.variantNodeRef = variant.getNodeRef();
@@ -44,7 +44,7 @@ public class VariantFilters implements DataListFilter<ProductData> {
 			@Override
 			public boolean evaluate(Object obj) {
 
-				if (obj instanceof VariantDataItem) {
+				if (variantNodeRef!=null && obj instanceof VariantDataItem) {
 					VariantDataItem item = ((VariantDataItem) obj);
 
 					if (isDefaultVariant != null) {

@@ -22,7 +22,7 @@
 <@markup id="html">
    <@uniqueIdDiv>
 			<#assign el = args.htmlid?html>
-			<#include "include/formulation.lib.ftl" />
+			<#include "include/dashlet-view.lib.ftl" />
 			<!--[if IE]>
 			<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
 			<![endif]-->

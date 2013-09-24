@@ -2737,7 +2737,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
-					<show id="bcpg:ingType" />
+					<show id="bcpg:ingTypeV2" />
 				</field-visibility>
 
 				<appearance>
@@ -2749,7 +2749,11 @@
 						</control>
 					</field>
 					<field id="bcpg:ingCEECode" />
-					<field id="bcpg:ingType" />
+					<field id="bcpg:ingTypeV2" >
+					 <control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -2765,7 +2769,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
-					<show id="bcpg:ingType" />
+					<show id="bcpg:ingTypeV2" />
 				</field-visibility>
 
 				<appearance>
@@ -2777,7 +2781,11 @@
 						</control>
 					</field>
 					<field id="bcpg:ingCEECode" />
-					<field id="bcpg:ingType" />
+					<field id="bcpg:ingTypeV2" >
+					 <control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -2785,14 +2793,14 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:ingType" />
+					<show id="bcpg:ingTypeV2" />
 				</field-visibility>
 				<appearance>
-				<field id="bcpg:ingType">
-					<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
+					<field id="bcpg:ingTypeV2">
+					 <control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
 						</control>
-				</field>
+					</field>
 				</appearance>
 			</form>
 
@@ -2801,7 +2809,7 @@
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
-					<show id="bcpg:ingType" />
+					<show id="bcpg:ingTypeV2" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -4467,6 +4475,18 @@
 				</field-visibility>
 
 				<appearance>
+					<field id="bcpg:illValue">
+						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                     <control-param name="editorAppearance">explorer</control-param>
+                     <control-param name="forceEditor">true</control-param>
+                  </control>
+					</field>
+					<field id="bcpg:illManualValue">
+						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                     <control-param name="editorAppearance">explorer</control-param>
+                     <control-param name="forceEditor">true</control-param>
+                  </control>
+					</field>
 				</appearance>
 			</form>
 
@@ -4497,7 +4517,105 @@
 					<show id="bcpg:illManualValue" />
 				</field-visibility>
 
+					<appearance>
+					<field id="bcpg:illValue">
+						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                     <control-param name="editorAppearance">explorer</control-param>
+                     <control-param name="forceEditor">true</control-param>
+                  </control>
+					</field>
+					<field id="bcpg:illManualValue">
+						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
+                     <control-param name="editorAppearance">explorer</control-param>
+                     <control-param name="forceEditor">true</control-param>
+                  </control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:labelingRuleList type -->
+	<config evaluator="model-type" condition="bcpg:labelingRuleList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:lrFormula" />
+					<show id="bcpg:lrComponents" />
+					<show id="bcpg:lrReplacements" />
+					<show id="bcpg:lrType" />
+				</field-visibility>
 				<appearance>
+					<field id="bcpg:lrFormula">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:lrComponents"  >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lrReplacements">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:lrComponents" />
+					<show id="bcpg:lrReplacements" />
+					<show id="bcpg:lrErrorLog" />
+					<show id="bcpg:lrType" />
+				</field-visibility>
+				<appearance>
+				   <field id="bcpg:lrErrorLog" label="hidden" />
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:lrType" />
+				</field-visibility>
+			</form>
+
+		</forms>
+	</config>
+	<!-- bcpg:labelingRuleList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:labelingRuleList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+			<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:lrFormula" />
+					<show id="bcpg:lrComponents" />
+					<show id="bcpg:lrReplacements" />
+					<show id="bcpg:lrType" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:lrFormula">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:lrComponents"  >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lrReplacements">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -4513,6 +4631,7 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
@@ -4551,6 +4670,7 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
@@ -4575,6 +4695,7 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
+					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />

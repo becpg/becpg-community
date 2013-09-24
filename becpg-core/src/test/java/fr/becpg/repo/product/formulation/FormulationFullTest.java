@@ -367,9 +367,9 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 				// verify IngLabelingList
 				checks = 0;
-				assertNotNull("IngLabelingList is null", formulatedProduct.getIngLabelingList());
+				assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
 
-				for (IngLabelingListDataItem illDataItem : formulatedProduct.getIngLabelingList()) {
+				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
 
 					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
 					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));

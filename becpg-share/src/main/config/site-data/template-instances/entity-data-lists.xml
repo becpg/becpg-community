@@ -107,10 +107,6 @@
 								</evaluator>
 							</evaluators>
 							<url>/components/entity-charact-views/formulation-view</url>
-							<properties>
-								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-							</properties>
 						</evaluation>
 						<evaluation id="process">
 							<evaluators>
@@ -121,10 +117,6 @@
 								</evaluator>
 							</evaluators>
 							<url>/components/entity-charact-views/formulation-view</url>
-							<properties>
-								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-							</properties>
 						</evaluation>
 						<evaluation id="packaging">
 							<evaluators>
@@ -135,10 +127,16 @@
 								</evaluator>
 							</evaluators>
 							<url>/components/entity-charact-views/formulation-view</url>
-							<properties>
-								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-							</properties>
+						</evaluation>
+						<evaluation id="labeling">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.params.equal">
+									<params>
+										<list>ingLabelingList</list>
+									</params>
+								</evaluator>
+							</evaluators>
+							<url>/components/entity-charact-views/labeling-view</url>
 						</evaluation>
 						<evaluation id="datagrid">
 							<url>/components/entity-charact-views/entity-datagrid-view</url>

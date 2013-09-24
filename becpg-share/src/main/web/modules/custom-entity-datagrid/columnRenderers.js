@@ -327,6 +327,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
 
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName :  "bcpg:illValue" ,
+      renderer : function(oRecord, data, label, scope) {
+         return '<div class="note rounded"> '+data.displayValue+'</div>';
+      }
+
+   });
+   
+   
    YAHOO.Bubbling
          .fire(
                "registerDataGridRenderer",
