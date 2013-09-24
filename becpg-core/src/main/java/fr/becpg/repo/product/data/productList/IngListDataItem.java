@@ -34,7 +34,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	private NodeRef ing;
 	
 	private Boolean isManual;
-	
+
+	private Boolean isProcessingAid = false;
 	
 	
 	@AlfProp
@@ -82,6 +83,21 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		this.isGMO = isGMO;
 	}
 	
+	
+	
+	@AlfProp
+	@AlfEnforced
+	@AlfQname(qname="bcpg:ingListIsProcessingAid")
+	public Boolean getIsProcessingAid() {
+		return isProcessingAid;
+	}
+
+
+	public void setIsProcessingAid(Boolean isProcessingAid) {
+		this.isProcessingAid = isProcessingAid;
+	}
+
+
 	@AlfProp
 	@AlfEnforced
 	@AlfQname(qname="bcpg:ingListIsIonized")
@@ -188,6 +204,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
 		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
+		result = prime * result + ((isProcessingAid == null) ? 0 : isProcessingAid.hashCode());
 		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
 		return result;
 	}
@@ -231,6 +248,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				return false;
 		} else if (!isManual.equals(other.isManual))
 			return false;
+		if (isProcessingAid == null) {
+			if (other.isProcessingAid != null)
+				return false;
+		} else if (!isProcessingAid.equals(other.isProcessingAid))
+			return false;
 		if (qtyPerc == null) {
 			if (other.qtyPerc != null)
 				return false;
@@ -241,8 +263,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	@Override
 	public String toString() {
-		return "IngListDataItem [nodeRef=" + nodeRef + ", qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized="
-				+ isIonized + ", ing=" + ing + ", isManual=" + isManual + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing
+				+ ", isManual=" + isManual + ", isProcessingAid=" + isProcessingAid + "]";
 	}
 
 
