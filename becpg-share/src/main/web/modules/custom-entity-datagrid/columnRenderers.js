@@ -57,7 +57,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary",
-            "boolean_bcpg:lclIsClaimed","boolean_bcpg:packagingListIsMaster" ],
+            "boolean_bcpg:lclIsClaimed", "boolean_bcpg:packagingListIsMaster" ],
       renderer : function(oRecord, data, label, scope) {
          if (data.value) {
             return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
@@ -364,8 +364,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3",
-            "bcpg:dynamicCharactColumn4", "bcpg:dynamicCharactColumn5", "bcpg:dynamicCharactColumn6", "bcpg:dynamicCharactColumn7", "bcpg:dynamicCharactColumn8",
-            "bcpg:dynamicCharactColumn9", "bcpg:dynamicCharactColumn10"],
+            "bcpg:dynamicCharactColumn4", "bcpg:dynamicCharactColumn5", "bcpg:dynamicCharactColumn6",
+            "bcpg:dynamicCharactColumn7", "bcpg:dynamicCharactColumn8", "bcpg:dynamicCharactColumn9",
+            "bcpg:dynamicCharactColumn10" ],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
          if (data.value != null) {
             if (oColumn.hidden) {
