@@ -402,7 +402,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query;
 	}
 
-	private boolean isQueryCode(String query, QName type, String[] arrClassNames) {
+	protected boolean isQueryCode(String query, QName type, String[] arrClassNames) {
 		boolean ret = Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query);
 		if (arrClassNames != null) {
 			for (int i = 0; i < arrClassNames.length; i++) {
