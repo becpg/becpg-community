@@ -2752,6 +2752,7 @@
 					<field id="bcpg:ingTypeV2" >
 					 <control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -2784,6 +2785,7 @@
 					<field id="bcpg:ingTypeV2" >
 					 <control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -2799,6 +2801,7 @@
 					<field id="bcpg:ingTypeV2">
 					 <control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4147,14 +4150,14 @@
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 					</field>
@@ -4233,14 +4236,14 @@
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:content?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 					</field>
@@ -4554,13 +4557,13 @@
 					<field id="bcpg:lrComponents"  >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 					<field id="bcpg:lrReplacements">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4607,13 +4610,13 @@
 					<field id="bcpg:lrComponents"  >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 					<field id="bcpg:lrReplacements">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/speleditor?className=bcpg:ing</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing,bcpg:ingTypeItem&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 				</appearance>

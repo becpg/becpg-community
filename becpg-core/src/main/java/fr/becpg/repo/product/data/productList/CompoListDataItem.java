@@ -261,8 +261,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return new CompoListDataItem(this);
 	}
 
-
-	
 	
 	
 }

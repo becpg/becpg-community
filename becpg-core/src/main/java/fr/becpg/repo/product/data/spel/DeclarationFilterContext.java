@@ -19,6 +19,10 @@ public class DeclarationFilterContext {
 		this.ingListDataItem = ingListDataItem;
 	}
 
+	public DeclarationFilterContext() {
+		super();
+	}
+
 	public CompoListDataItem getCompoListDataItem() {
 		return compoListDataItem;
 	}
