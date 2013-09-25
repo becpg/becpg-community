@@ -361,7 +361,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (ingListDataItem == null) {
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
 				DeclarationFilter declarationFilter = labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct());
-				if (declarationFilter.getFormula() == null || matchFormule(declarationFilter.getFormula(), compoListDataItem, ingListDataItem)) {
+				if (declarationFilter.getFormula() == null || labelingFormulaContext.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
 					return declarationFilter.getDeclarationType();
 				}
 			}
@@ -369,28 +369,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
 				DeclarationFilter declarationFilter = labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng());
-				if (declarationFilter.getFormula() == null || matchFormule(declarationFilter.getFormula(), compoListDataItem, ingListDataItem)) {
+				if (declarationFilter.getFormula() == null || labelingFormulaContext.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
 					return declarationFilter.getDeclarationType();
 				}
 			}
 
 			for (DeclarationFilter declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
-				if (declarationFilter.getFormula() != null && matchFormule(declarationFilter.getFormula(), compoListDataItem, ingListDataItem)) {
+				if (declarationFilter.getFormula() != null && labelingFormulaContext.matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
 					return declarationFilter.getDeclarationType();
 				}
 			}
 		}
 
 		return compoListDataItem.getDeclType();
-	}
-
-	private boolean matchFormule(String formula, CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem) {
-		ExpressionParser parser = new SpelExpressionParser();
-		StandardEvaluationContext dataContext = new StandardEvaluationContext(new DeclarationFilterContext(compoListDataItem, ingListDataItem));
-
-		Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
-
-		return exp.getValue(dataContext, Boolean.class);
 	}
 
 	private void addQtyRMUsed(CompoListDataItem compoListDataItem, CompositeLabeling compositeLabeling) throws FormulateException {

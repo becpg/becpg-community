@@ -19,6 +19,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -28,7 +32,11 @@ import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * 
@@ -43,6 +51,8 @@ public class LabelingFormulaContext {
 
 	private NodeService mlNodeService;
 
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
 	public void setCompositeIngs(List<CompositeLabeling> compositeLabelings) {
 		this.compositeLabelings = compositeLabelings;
 	}
@@ -55,17 +65,6 @@ public class LabelingFormulaContext {
 	/*
 	 * FORMAT
 	 */
-
-	// private Map<NodeRef, String> valueFormaters = new HashMap<>();
-	//
-	// // Exemple '#',##
-	// public boolean formatValue(List<NodeRef> components, String
-	// decimalFormat) {
-	// for (NodeRef component : components) {
-	// valueFormaters.put(component, decimalFormat);
-	// }
-	// return true;
-	// }
 
 	private Map<NodeRef, String> textFormaters = new HashMap<>();
 
@@ -86,11 +85,11 @@ public class LabelingFormulaContext {
 		}
 
 		if (lblComponent instanceof CompositeLabeling) {
-			if (((CompositeLabeling)lblComponent).isGroup()) {
+			if (((CompositeLabeling) lblComponent).isGroup()) {
 				return new MessageFormat("<b>{0} ({1,number,percent}):</b>");
 			}
 			return new MessageFormat("{0} {1,number,percent} ({2})");
-		} else if(lblComponent instanceof IngTypeItem){
+		} else if (lblComponent instanceof IngTypeItem) {
 			return new MessageFormat("{0}: {1}");
 		}
 
@@ -128,12 +127,14 @@ public class LabelingFormulaContext {
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			return renameRules.get(lblComponent.getNodeRef()).getValue(I18NUtil.getLocale());
 		}
-		
-//		if (ingName == null || ingName.length() < 0) {
-//			// TODO exigence non respecté ?
-//			logger.warn("Ing '" + ing.getIng() + "' doesn't have a value for this locale '" + I18NUtil.getLocale() + "'.");
-//		}
-		
+
+		// if (ingName == null || ingName.length() < 0) {
+		// // TODO exigence non respecté ?
+		// logger.warn("Ing '" + ing.getIng() +
+		// "' doesn't have a value for this locale '" + I18NUtil.getLocale() +
+		// "'.");
+		// }
+
 		return lblComponent.getLegalName(I18NUtil.getLocale());
 	}
 
@@ -148,6 +149,10 @@ public class LabelingFormulaContext {
 	/*
 	 * AGGREGATE
 	 */
+	
+	private Map<NodeRef, NodeRef> replacements = new HashMap<>();
+	
+	
 
 	public void aggregate(List<NodeRef> components, String label) {
 		// components peut être ING, SF ou MP
@@ -171,8 +176,8 @@ public class LabelingFormulaContext {
 
 	/*
 	 * Selector : (ing.type == « gélifiant », ingListItem.value < 5 ,
-	 * ingListDataItem.isProcessingAid == true) Type : Declare, Detail, Group, Omit,
-	 * DoNotDeclare Scope: PF , MP
+	 * ingListDataItem.isProcessingAid == true) Type : Declare, Detail, Group,
+	 * Omit, DoNotDeclare Scope: PF , MP
 	 */
 	public boolean declare(List<NodeRef> components, String selector, DeclarationType declarationType) {
 		if (components != null) {
@@ -196,15 +201,14 @@ public class LabelingFormulaContext {
 		if (logger.isDebugEnabled()) {
 			logger.debug(" Render label (showGroup:" + showGroup + "): ");
 		}
-		
-		
-		if(showGroup){
+
+		if (showGroup) {
 			for (CompositeLabeling compositeLabeling : compositeLabelings) {
 				ret.append(renderCompositeIng(compositeLabeling));
 				ret.append("<br/>");
 			}
 		} else {
-			CompositeLabeling merged  = new CompositeLabeling();
+			CompositeLabeling merged = new CompositeLabeling();
 			for (CompositeLabeling compositeLabeling : compositeLabelings) {
 				merged.getIngList().putAll(compositeLabeling.getIngList());
 				merged.setQtyRMUsed(100d);
@@ -223,11 +227,11 @@ public class LabelingFormulaContext {
 		}
 
 		for (CompositeLabeling compositeLabeling : compositeLabelings) {
-			if(compositeLabeling.getNodeRef()!=null){
-				if(ret.length()>0){
+			if (compositeLabeling.getNodeRef() != null) {
+				if (ret.length() > 0) {
 					ret.append(RepoConsts.LABEL_SEPARATOR);
 				}
-				ret.append(getIngTextFormat(compositeLabeling).format(new Object[] { getIngName(compositeLabeling), compositeLabeling.getQty()  }));
+				ret.append(getIngTextFormat(compositeLabeling).format(new Object[] { getIngName(compositeLabeling), compositeLabeling.getQty() }));
 			}
 		}
 
@@ -255,9 +259,9 @@ public class LabelingFormulaContext {
 		StringBuffer ret = new StringBuffer();
 
 		if (compositeLabeling.isGroup() && compositeLabeling.getNodeRef() != null) {
-			ret.append(getIngTextFormat(compositeLabeling).format(new Object[] { getIngName(compositeLabeling), compositeLabeling.getQty()  }));
+			ret.append(getIngTextFormat(compositeLabeling).format(new Object[] { getIngName(compositeLabeling), compositeLabeling.getQty() }));
 		}
-		
+
 		boolean first = true;
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 
@@ -266,10 +270,10 @@ public class LabelingFormulaContext {
 			for (AbstractLabelingComponent ing : kv.getValue()) {
 
 				Double qtyPerc = ing.getQty();
-				if( compositeLabeling.getQtyRMUsed()>0){
-					qtyPerc =qtyPerc / compositeLabeling.getQtyRMUsed()*100;
+				if (compositeLabeling.getQtyRMUsed() > 0) {
+					qtyPerc = qtyPerc / compositeLabeling.getQtyRMUsed() * 100;
 				}
-					
+
 				String ingName = getIngName(ing);
 
 				if (logger.isDebugEnabled()) {
@@ -293,9 +297,8 @@ public class LabelingFormulaContext {
 			if (!first) {
 				ret.append(RepoConsts.LABEL_SEPARATOR);
 			}
-			
 
-			if (kv.getKey() != null && ! IngTypeItem.DEFAULT.equals(kv.getKey())) {
+			if (kv.getKey() != null && !IngTypeItem.DEFAULT.equals(kv.getKey())) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("      - append sub label [" + subList.toString() + "] for type : " + kv.getKey());
@@ -312,18 +315,27 @@ public class LabelingFormulaContext {
 		return ret.toString();
 	}
 
-
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
 
 		Map<IngTypeItem, List<AbstractLabelingComponent>> sortedIngListByType = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
 
-		// TODO opère type change and rename
 		for (AbstractLabelingComponent lblComponent : compositeLabeling.getIngList().values()) {
 			IngTypeItem ingType = IngTypeItem.DEFAULT;
-			if(lblComponent instanceof IngItem){
-				ingType = ((IngItem)lblComponent).getIngType();
+			if (lblComponent instanceof IngItem) {
+				ingType = ((IngItem) lblComponent).getIngType();
+				// First aggregate
+				if (replacements.containsKey(ingType.getNodeRef())) {
+					ingType = (IngTypeItem) alfrescoRepository.findOne(replacements.get(ingType.getNodeRef()));
+				}
+				//If Omit
+				if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
+					DeclarationFilter declarationFilter = nodeDeclarationFilters.get(ingType.getNodeRef());
+					if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType()) && matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())) {
+						ingType = IngTypeItem.DEFAULT;
+					}
+				}
 			}
-			
+
 			List<AbstractLabelingComponent> subSortedList = sortedIngListByType.get(ingType);
 
 			if (subSortedList == null) {
@@ -336,6 +348,18 @@ public class LabelingFormulaContext {
 
 		return sortedIngListByType;
 
+	}
+
+	public boolean matchFormule(String formula, DeclarationFilterContext declarationFilterContext) {
+		if (formula != null && !formula.isEmpty()) {
+			ExpressionParser parser = new SpelExpressionParser();
+			StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
+
+			Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
+
+			return exp.getValue(dataContext, Boolean.class);
+		}
+		return true;
 	}
 
 	public Set<Locale> getLocales() {
