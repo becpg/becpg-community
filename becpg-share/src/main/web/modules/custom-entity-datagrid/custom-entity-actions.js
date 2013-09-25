@@ -98,7 +98,7 @@
          html += '                  <option value="">' + this.msg("wused.picker.choose") + '</option>';
          html += '                  <option value="selectlines">' + this.msg("wused.picker.selectedlines") + '</option>';
          for ( var key in items[0].itemData) {
-            if (key.contains("assoc_")) {
+            if (key.indexOf("assoc_")>-1) {
                showPopup = true;
                html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
             }
