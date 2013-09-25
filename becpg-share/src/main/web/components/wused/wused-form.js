@@ -1,8 +1,5 @@
 (function() {
-   /**
-    * YUI Library aliases
-    */
-   var Dom = YAHOO.util.Dom;
+
    /**
     * WUsedForm constructor.
     * 
@@ -137,7 +134,7 @@
                me.widgets.typeSelect.set("label", typeSelected.cfg.getProperty("text"));
                var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
                this._extractValues(className);
-               if (className.contains("selected")) {
+               if (className.indexOf("selected")>-1) {
                   onShow();
                   break;
                }
@@ -157,6 +154,7 @@
          this.options.itemType = className.split("#")[0];
          this.options.assocType = className.split("#")[1];
       },
+      
       _getNodeRefs : function WUsedForm__getNodeRefs() {
          return this.widgets.entitiesPicker.getValues();
       }
