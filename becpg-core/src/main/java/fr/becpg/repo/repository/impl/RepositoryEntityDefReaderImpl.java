@@ -1,6 +1,5 @@
 package fr.becpg.repo.repository.impl;
 
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -12,9 +11,10 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -81,28 +81,24 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	public Map<QName, Serializable> getIdentifierAttributes(T entity) {
 		return readValueMap(entity, AlfIdentAttr.class, Serializable.class);
 	}
-	
+
 	@Override
 	public boolean isEnforced(Class<? extends RepositoryEntity> clazz, QName propName) {
-		try {
-			for (PropertyDescriptor pd : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {
-				Method readMethod = pd.getReadMethod();
-				if (readMethod != null) {
-					if (readMethod.isAnnotationPresent(AlfEnforced.class) 
-							&& readMethod.isAnnotationPresent(AlfQname.class) 
-							&& !readMethod.isAnnotationPresent(AlfReadOnly.class)
-							&& propName.equals(readQName(readMethod))) {
-						return true;
-					}
+		BeanWrapper beanWrapper = new BeanWrapperImpl(clazz);
+
+		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+			Method readMethod = pd.getReadMethod();
+			if (readMethod != null) {
+				if (readMethod.isAnnotationPresent(AlfEnforced.class) && readMethod.isAnnotationPresent(AlfQname.class) && !readMethod.isAnnotationPresent(AlfReadOnly.class)
+						&& propName.equals(readQName(readMethod))) {
+					return true;
 				}
 			}
-		} catch (Exception e) {
-			logger.error(e, e);
 		}
+
 		return false;
 	}
-	
-	
+
 	@Override
 	public QName getType(Class<? extends RepositoryEntity> clazz) {
 		if (clazz.getAnnotation(AlfQname.class) != null) {
@@ -123,12 +119,13 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	@SuppressWarnings("unchecked")
 	private <R, Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
 		Map<QName, R> ret = new HashMap<QName, R>();
-		try {
-			for (PropertyDescriptor pd : Introspector.getBeanInfo(entity.getClass()).getPropertyDescriptors()) {
+		
+			BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
+			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 				Method readMethod = pd.getReadMethod();
 				if (readMethod != null) {
 					if (readMethod.isAnnotationPresent(annotationClass) && readMethod.isAnnotationPresent(AlfQname.class) && !readMethod.isAnnotationPresent(AlfReadOnly.class)) {
-						Object o = evaluateObject(pd.getPropertyType(), PropertyUtils.getProperty(entity, pd.getName()));
+						Object o = evaluateObject(pd.getPropertyType(), beanWrapper.getPropertyValue(pd.getName()));
 						QName qname = readQName(readMethod);
 						if (o != null) {
 							if (returnType.isAssignableFrom(o.getClass())) {
@@ -142,9 +139,6 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 					}
 				}
 			}
-		} catch (Exception e) {
-			logger.error(e, e);
-		}
 		return ret;
 	}
 
@@ -154,7 +148,5 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		}
 		return o;
 	}
-
-	
 
 }
