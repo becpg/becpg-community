@@ -372,8 +372,9 @@ if (beCPG.module.EntityDataGridRenderers) {
                scope.widgets.dataTable.showColumn(oColumn);
                Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
             }
+            return data.displayValue;
          }
-         return data.value;
+         return "";
 
       }
 
