@@ -39,7 +39,6 @@ import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
 import fr.becpg.config.mapping.MappingException;
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -102,9 +101,11 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	
 	/** The Constant TAG_NODES. */
 	private static final String TAG_NODES = "nodes";
+	private static final String TAG_FILES = "files";
 	
 	/** The Constant TAG_NODE. */
 	private static final String TAG_NODE = "node";
+	private static final String TAG_FILE = "file";
 	
 	/** The Constant ATTR_ID. */
 	private static final String ATTR_ID = "id";
@@ -113,7 +114,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	public static final String VALUE_NULL = "";
 	
 	/** The Constant KEY_IMAGE_NODE_IMG. */
-	public static final String KEY_IMAGE_NODE_IMG = "node%s-%s";
+	public static final String KEY_IMAGE_NODE_IMG = "%s-%s";
 	
 	
 	/** The logger. */
@@ -251,7 +252,9 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			Element exportElt = document.addElement(TAG_EXPORT);
 			params = loadReportData(exportSearchCtx, exportElt, params, searchResults);
 			
-			//logger.trace("Xml data: " + exportElt.asXML());
+			if(logger.isDebugEnabled()){
+				logger.debug("Xml data: " + exportElt.asXML());
+			}			
 			
 			beCPGReportEngine.createReport(templateNodeRef, exportElt, outputStream, params);
 				
@@ -274,6 +277,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		
 		logger.debug("start loadReportData");		
 		Element nodesElt = exportElt.addElement(TAG_NODES);
+		Element filesElt = exportElt.addElement(TAG_FILES);
 		Integer z_idx = 1;
 		
 		for(NodeRef nodeRef : nodeRefList){
@@ -281,12 +285,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			Element nodeElt = nodesElt.addElement(TAG_NODE);
 			nodeElt.addAttribute(ATTR_ID, z_idx.toString());
 			
-			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)){
-				params = exportProduct(exportSearchCtx, nodeElt, params, nodeRef);
-			}
-			else{
-				params = exportNode(exportSearchCtx, nodeElt, params, nodeRef);
-			}
+			params = exportNode(exportSearchCtx, nodeElt, filesElt, params, nodeRef);
 			
 			z_idx++;
 		}
@@ -305,7 +304,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 * @param nodeRef the node ref
 	 * @return the i run and render task
 	 */
-	private  Map<String,Object> exportNode(ExportSearchContext exportSearchCtx, Element nodeElt,  Map<String,Object> params, NodeRef nodeRef){				
+	private  Map<String,Object> exportNode(ExportSearchContext exportSearchCtx, Element nodeElt, Element filesElt, Map<String,Object> params, NodeRef nodeRef){				
 		
 		
 		// export class attributes
@@ -315,20 +314,49 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			nodeElt.addAttribute(attributeMapping.getId(), value);
 		}
 		
-    	
+		// export charact		
+		if(!exportSearchCtx.getCharacteristicsColumns().isEmpty()){
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+			
+			if(listContainerNodeRef != null){
+				for(CharacteristicMapping characteristicMapping : exportSearchCtx.getCharacteristicsColumns()){
+		    		
+		    		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, characteristicMapping.getDataListQName());
+		    		NodeRef linkNodeRef = entityListDAO.getListItem(listNodeRef, characteristicMapping.getCharactQName(), characteristicMapping.getCharactNodeRef());
+		    		
+		    		if(linkNodeRef != null){
+		    			
+		    			String value = getColumnValue(exportSearchCtx, linkNodeRef, characteristicMapping.getAttribute());
+		    			nodeElt.addAttribute(characteristicMapping.getId(), value);
+		    		}
+				}
+			}			
+		}
+		
     	// export file
+		Map<NodeRef, Map<String, String>> filesAttributes = new HashMap<NodeRef, Map<String, String>>();
 		for(FileMapping fileMapping : exportSearchCtx.getFileColumns()){
 						   
-    		NodeRef tempNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+    		NodeRef tempNodeRef = nodeRef;
 			for(String p : fileMapping.getPath()){
 				
-				if(tempNodeRef != null)
+				if(tempNodeRef != null){
 					tempNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, p);
+				}					
 			}
 			
 			logger.debug("tempNodeRef: " + tempNodeRef);
 			
 			if(tempNodeRef != null){
+				
+				Map<String, String> fileAttributes = filesAttributes.get(tempNodeRef);
+				if(fileAttributes == null){
+					fileAttributes = new HashMap<String, String>();
+					filesAttributes.put(tempNodeRef, fileAttributes);
+				}
+								
+				String id = String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId());
+				fileAttributes.put(ATTR_ID, id);
 							
 				// file content
 				if(fileMapping.getAttribute().getName().isMatch(ContentModel.PROP_CONTENT)){
@@ -337,17 +365,26 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 					if (imageBytes != null){
 								
 						@SuppressWarnings("unchecked")
-						Map<String,byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
-						images.put(String.format(KEY_IMAGE_NODE_IMG, nodeElt.valueOf(QUERY_ATTR_GET_ID), fileMapping.getId()), imageBytes);				
+						Map<String,byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);						
+						images.put(id, imageBytes);
 					}
 				}
 				// class attribute
 				else{
-					String value = getColumnValue(exportSearchCtx, nodeRef, fileMapping.getAttribute());
-		    		nodeElt.addAttribute(fileMapping.getId(), value);
+					String value = getColumnValue(exportSearchCtx, nodeRef, fileMapping.getAttribute());					
+					fileAttributes.put(fileMapping.getId(), value);
 				}
 			}
     	}
+		
+		if(!filesAttributes.isEmpty()){
+			for(Map<String, String> fileAttributes : filesAttributes.values()){
+				Element fileElt = filesElt.addElement(TAG_FILE);
+				for(Map.Entry<String, String>kv : fileAttributes.entrySet()){
+					fileElt.addAttribute(kv.getKey(), kv.getValue());
+				}
+			}			
+		}
     	
     	return params;
 	}
@@ -384,38 +421,6 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		}
 		
 		return value;
-	}
-	
-	/**
-	 * Export product.
-	 *
-	 * @param queryElt the query elt
-	 * @param nodeElt the node elt
-	 * @param task the task
-	 * @param productNodeRef the product node ref
-	 * @return the i run and render task
-	 */
-	private  Map<String,Object> exportProduct(ExportSearchContext exportSearchCtx, Element nodeElt,  Map<String,Object> params, NodeRef productNodeRef){
-		
-		// export node
-		exportNode(exportSearchCtx, nodeElt, params, productNodeRef);
-		
-		// export charact		
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-		
-		for(CharacteristicMapping characteristicMapping : exportSearchCtx.getCharacteristicsColumns()){
-    		
-    		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, characteristicMapping.getDataListQName());
-    		NodeRef linkNodeRef = entityListDAO.getListItem(listNodeRef, characteristicMapping.getCharactQName(), characteristicMapping.getCharactNodeRef());
-    		
-    		if(linkNodeRef != null){
-    			
-    			String value = getColumnValue(exportSearchCtx, linkNodeRef, characteristicMapping.getAttribute());
-    			nodeElt.addAttribute(characteristicMapping.getId(), value);
-    		}
-		}	    				    
-		
-    	return params;
 	}
 	
 	
@@ -553,7 +558,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
-		if (nodes.size() > 0) {
+		if (nodes!=null && !nodes.isEmpty()) {
 			return nodes.get(0);
 		}
 

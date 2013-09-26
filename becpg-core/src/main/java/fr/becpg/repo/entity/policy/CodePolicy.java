@@ -73,83 +73,41 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_CODE, new JavaBehaviour(this, "onAddAspect"));
 
 	}
-
-//	@Override
-//	public void onAddAspect(NodeRef nodeRef, QName type) {
-//		
-//		// check code is already taken. If yes : this object is
-//		// a copy of an
-//		// existing node
-//		String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
-//		boolean generateCode = true;
-//		QName typeQName = nodeService.getType(nodeRef);
-//
-//		if (code != null && !code.isEmpty()) {
-//
-//			List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-//
-//			generateCode = ret != null && ret.size() > 0;
-//
-//		}
-//
-//		// generate a new code
-//		if (generateCode) {
-//
-//			String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
-//			nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
-//		} else {
-//			// store autoNum in db
-//			autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
-//			// Add Prefix to code if none
-//			// FIX: nodeService.setProperty(nodeRef,
-//			// BeCPGModel.PROP_CODE,
-//			// c);
-//		}
-//	}
 	
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName type) {
+		
+		// need to queue it in order to wait cm:workingCopy aspect is added
 		queueNode(nodeRef);
 	}
 
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
+		
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
 
-					// check code is already taken. If yes : this object is
-					// a copy of an
-					// existing node
-					String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
-					boolean generateCode = true;
-					QName typeQName = nodeService.getType(nodeRef);
+				// check code is already taken. If yes : this object is
+				// a copy of an
+				// existing node
+				String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+				boolean generateCode = true;
+				QName typeQName = nodeService.getType(nodeRef);
 
-					if (code != null && !code.isEmpty()) {
-
-						List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code, nodeRef.getId()), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-						generateCode = ret != null && ret.size() > 0;
-
-					}
-
-					// generate a new code
-					if (generateCode) {
-
-						String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
-						nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
-					} else {
-						// store autoNum in db
-
-						autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
-						// Add Prefix to code if none
-						// FIX: nodeService.setProperty(nodeRef,
-						// BeCPGModel.PROP_CODE,
-						// c);
-					}
+				if (code != null && !code.isEmpty()) {
+					List<NodeRef> ret = beCPGSearchService.luceneSearch(String.format(QUERY_NODE_BY_CODE, typeQName, code, nodeRef.getId()), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+					generateCode = ret != null && !ret.isEmpty();
 				}
-			
-		}
-	}
 
+				// generate a new code
+				if (generateCode) {
+					String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
+					nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
+				} else {
+					// store autoNum in db
+					autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
+				}
+			}
+		}		
+	}
 }

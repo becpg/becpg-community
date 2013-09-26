@@ -249,8 +249,8 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 */
 	private Long createAutoNum(QName className, QName propertyName, Long autoNumValue, String autoNumPrefix) {
 			
-		NodeRef systemNodeRef = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-    	NodeRef autoNumFolderNodeRef = repoService.createFolderByPath(systemNodeRef, RepoConsts.PATH_AUTO_NUM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_AUTO_NUM));
+		NodeRef systemNodeRef = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+    	NodeRef autoNumFolderNodeRef = repoService.getOrCreateFolderByPath(systemNodeRef, RepoConsts.PATH_AUTO_NUM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_AUTO_NUM));
     	
     	String name = String.format(NAME, className.getLocalName(), propertyName.getLocalName());
     	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();

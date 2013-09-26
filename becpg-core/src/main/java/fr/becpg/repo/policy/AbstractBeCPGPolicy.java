@@ -1,11 +1,16 @@
 package fr.becpg.repo.policy;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
+import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
@@ -23,7 +28,8 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 
-public abstract class AbstractBeCPGPolicy {
+public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy,
+													CopyServicePolicies.OnCopyCompletePolicy{
 
 	protected BehaviourFilter policyBehaviourFilter;
 
@@ -68,12 +74,28 @@ public abstract class AbstractBeCPGPolicy {
 	}
 
 	public void disableOnCopyBehaviour(QName type) {
-		DisableBehaviourOnCopy disableBehaviourOnCopy = new DisableBehaviourOnCopy(type, policyBehaviourFilter);
+		//DisableBehaviourOnCopy disableBehaviourOnCopy = new DisableBehaviourOnCopy(type, policyBehaviourFilter);
 
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, type, new JavaBehaviour(disableBehaviourOnCopy, "getCopyCallback"));
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, type, new JavaBehaviour(disableBehaviourOnCopy, "onCopyComplete"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, type, new JavaBehaviour(this, "getCopyCallback"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, type, new JavaBehaviour(this, "onCopyComplete"));
 
 	}
+	
+	@Override
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		policyBehaviourFilter.disableBehaviour(copyDetails.getTargetNodeRef(), classRef);
+		return new DefaultCopyBehaviourCallback();
+	}
+	
+	@Override
+	public void onCopyComplete(QName classRef,
+            NodeRef sourceNodeRef,
+            NodeRef destinationRef,
+            boolean copyToNewNode,
+            Map<NodeRef, NodeRef> copyMap){
+		
+		policyBehaviourFilter.enableBehaviour(destinationRef, classRef);     
+    }
 
 	protected boolean isWorkingCopyOrVersion(NodeRef nodeRef) {
 
@@ -83,19 +105,23 @@ public abstract class AbstractBeCPGPolicy {
 		return workingCopy || isVersionNode(nodeRef);
 	}
 
+	protected boolean isBeCPGVersion(NodeRef nodeRef) {
+		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+	}
+	
+	protected boolean isVersionStoreNode(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
+	}
+	
 	protected boolean isVersionNode(NodeRef nodeRef) {
-		boolean isBeCPGVersion = nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
-		boolean isVersionNode = nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
-
 		// Ignore if the node is a working copy or version node
-		return isBeCPGVersion || isVersionNode;
+		return isBeCPGVersion(nodeRef) || isVersionStoreNode(nodeRef);
 	}
 
 	protected boolean isNotLocked(NodeRef nodeRef) {
 		return nodeService.exists(nodeRef) && lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK;
-
 	}
-
+	
 	public abstract void doInit();
 
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
@@ -114,16 +140,17 @@ public abstract class AbstractBeCPGPolicy {
 		@SuppressWarnings("unchecked")
 		Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
 		if (pendingNodes == null) {
-			pendingNodes = new CopyOnWriteArraySet<NodeRef>();
+			pendingNodes = new LinkedHashSet<NodeRef>();
 			if(logger.isDebugEnabled()){
 				logger.debug("Bind key to transaction : "+key);
 			}
 			keys.add(key);
 			AlfrescoTransactionSupport.bindResource(key, pendingNodes);
 		}
-		pendingNodes.add(nodeRef);
+		if(!pendingNodes.contains(nodeRef)){
+			pendingNodes.add(nodeRef);
+		}	
 		
-
 		AlfrescoTransactionSupport.bindListener(this.transactionListener);
 
 	}
@@ -157,6 +184,16 @@ public abstract class AbstractBeCPGPolicy {
 		return "KEY_"+this.getClass().getName();
 	}
 	
+	protected boolean isPropChanged(Map<QName, Serializable> before, Map<QName, Serializable> after,
+			QName propertyQName) {
+		Serializable beforeProp = before.get(propertyQName);
+		Serializable afterProp = after.get(propertyQName);
+
+		if (afterProp != null && !afterProp.equals(beforeProp)) {
+			return true;
+		}
+		return false;
+	}
 
 	class AbstractBeCPGPolicyTransactionListener extends TransactionListenerAdapter {
 

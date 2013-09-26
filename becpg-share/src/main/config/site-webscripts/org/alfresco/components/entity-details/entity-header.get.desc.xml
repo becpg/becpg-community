@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>entity-header</shortname>
+  <description>Node header component - a header component which can handle both folders and documents.</description>
+  <url>/components/entity-details/entity-header</url>
+</webscript>

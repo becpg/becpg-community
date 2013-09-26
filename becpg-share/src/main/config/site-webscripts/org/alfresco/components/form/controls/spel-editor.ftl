@@ -2,28 +2,40 @@
 <#if field.control.params.rows??><#assign rows=field.control.params.rows><#else><#assign rows=2></#if>
 <#if field.control.params.columns??><#assign columns=field.control.params.columns><#else><#assign columns=60></#if>
 
+<#--
+<@markup id="css" >
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/spel-editor/spel-editor.css" group="form" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/spel-editor/shThemeDefault.css" group="form" />
+</@>
 
-<script type="text/javascript">//<![CDATA[
-(function()
-{
-   new beCPG.SpelEditor("${controlId}", "${fieldHtmlId}").setOptions(
-   {
-      <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled: true,</#if>
-      field: "${field.name}",
-   <#if field.mandatory??>
-      mandatory: ${field.mandatory?string},
-    </#if>
-    <#if args.entityNodeRef??>
-      entityNodeRef : "${args.entityNodeRef}",
-    </#if>
-      currentValue: "${field.value?js_string}",
-   }).setMessages(
-      ${messages}
-   );
-  
-  
-})();
-//]]></script>
+<@markup id="js">
+	<@script type="text/javascript" src="${url.context}/res/yui/editor/editor.js" group="form" />
+	<@script type="text/javascript" src="${url.context}/res/modules/spel-editor/spel-editor.js" group="form" />
+	<@script type="text/javascript" src="${url.context}/res/modules/spel-editor/shCore.js" group="form" />
+	<@script type="text/javascript" src="${url.context}/res/modules/spel-editor/shBrushJScript.js" group="form" />
+</@>
+-->
+
+
+<@markup id="widgets">
+   	<@inlineScript group="form">
+		   new beCPG.SpelEditor("${controlId}", "${fieldHtmlId}").setOptions(
+		   {
+		      <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled: true,</#if>
+		      field: "${field.name}",
+		   <#if field.mandatory??>
+		      mandatory: ${field.mandatory?string},
+		    </#if>
+		    <#if args.entityNodeRef??>
+		      entityNodeRef : "${args.entityNodeRef}",
+		    </#if>
+		    <#if args.dataListsName??>
+		      currentList : "${args.dataListsName}",
+		    </#if>
+		      currentValue: "${field.value?js_string}",
+		   }).setMessages( ${messages});
+		</@>
+</@>
 
 <div class="form-field">
    <#if form.mode == "view">

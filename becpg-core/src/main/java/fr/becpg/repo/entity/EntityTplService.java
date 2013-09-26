@@ -5,30 +5,17 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.formulation.FormulateException;
+
 
 public interface EntityTplService {
 
-	/**
-	 * Create the entity folderTpl
-	 * @param entityTplsNodeRef
-	 * @param entityType
-	 */
-	public NodeRef createFolderTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<String> subFolders);
-	
 	/**
 	 * Create the entityTpl
 	 * @param entityTplsNodeRef
 	 * @param entityType
 	 */
-	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists);
-	
-	/**
-	 * Look for the entity folderTpl
-	 * @param isContainer
-	 * @param nodeType
-	 * @return
-	 */
-	public NodeRef getFolderTpl(QName nodeType);
+	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders);
 	
 	/**
 	 * Look for the entityTpl
@@ -37,4 +24,8 @@ public interface EntityTplService {
 	 * @return
 	 */
 	public NodeRef getEntityTpl(QName nodeType);
+	
+	public void synchronizeEntities(NodeRef tplNodeRef);
+	
+	public void formulateEntities(NodeRef tplNodeRef) throws FormulateException;
 }

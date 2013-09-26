@@ -12,6 +12,8 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -25,8 +27,8 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.extractors.ContentDataExtractor;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
-import fr.becpg.repo.web.scripts.search.data.ContentDataExtractor;
 
 /**
  * return product history
@@ -50,6 +52,9 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	private ServiceRegistry serviceRegistry;
 
+	private static int DOCKBAR_SIZE = 6;
+	
+	
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -74,78 +79,78 @@ public class DockBarWebScript extends AbstractWebScript {
 		}
 
 		NodeRef productNodeRef = null;
-		if(entityNodeRef!=null && !entityNodeRef.isEmpty()){
+		if (entityNodeRef != null && !entityNodeRef.isEmpty()) {
 			productNodeRef = new NodeRef(entityNodeRef);
 		}
 		List<String> metadataFields = WebscriptHelper.extractMetadataFields(req);
 
 		try {
-			
-			if(req.getParameter("clear")!=null){
+
+			if (req.getParameter("clear") != null) {
 				preferenceService.clearPreferences(AuthenticationUtil.getFullyAuthenticatedUser());
 			}
-			
+
 			String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
 			Map<String, Serializable> histories = preferenceService.getPreferences(username);
 
 			String nodeRefs = (String) histories.get(PREF_DOCKBAR_HISTORY);
-			if(logger.isDebugEnabled()){
-				logger.debug("Getting :"+nodeRefs+" from history for "+username);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Getting :" + nodeRefs + " from history for " + username);
 			}
-			
+
 			LinkedList<NodeRef> elements = new LinkedList<NodeRef>();
 
 
-			boolean addNodeRef = productNodeRef != null;
-
-			
 			if (nodeRefs != null && nodeRefs.length() > 0) {
 				String[] splitted = nodeRefs.split(",");
-				for(String field : splitted) {
-					NodeRef nodeRef = new NodeRef(field);
-					elements.add(nodeRef);
-					if (nodeRef.equals(productNodeRef)) {
-						addNodeRef = false;
+				for (String field : splitted) {
+					NodeRef el = new NodeRef(field);
+					if(!el.equals(productNodeRef)){
+						elements.add(el);
 					}
+					
 				}
 			}
 
-			if(logger.isDebugEnabled()){
-				logger.debug("Entity NodeRef empty : "+productNodeRef != null);
-				logger.debug("Already added : "+addNodeRef);
-				if(addNodeRef){
-					logger.debug("Subclass of product :"+serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT));
-					logger.debug("Element.size(): "+elements.size());
-				}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Entity NodeRef empty : " + productNodeRef != null);
+				logger.debug("Subclass of product :"
+							+ serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT));
+				logger.debug("Element.size(): " + elements.size());
 			}
-			
-			
-			if (addNodeRef && serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT)) {
-				if (elements.size() > 4) {
-					elements.remove(4);
-				}
-				elements.add(0,productNodeRef);
 
-				nodeRefs = "";
-				for (NodeRef nodeRef : elements) {
-					if (nodeRefs.length() > 0) {
-						nodeRefs += ",";
+			if (productNodeRef != null) {
+
+				QName type = serviceRegistry.getNodeService().getType(productNodeRef);
+
+				if ( (serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_PRODUCT) || (serviceRegistry.getDictionaryService().isSubClass(type,
+								BeCPGModel.TYPE_ENTITY_V2) && !serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_SYSTEM_ENTITY)))) {
+					if (elements.size() > DOCKBAR_SIZE - 1) {
+						elements.remove(DOCKBAR_SIZE - 1 );
 					}
-					nodeRefs += nodeRef.toString();
-				}
+					elements.add(0, productNodeRef);
 
-				if(logger.isDebugEnabled()){
-					logger.debug("Setting :"+nodeRefs+" to history");
+					nodeRefs = "";
+					for (NodeRef nodeRef : elements) {
+						if (nodeRefs.length() > 0) {
+							nodeRefs += ",";
+						}
+						nodeRefs += nodeRef.toString();
+					}
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Setting :" + nodeRefs + " to history");
+					}
+
+					histories.put(PREF_DOCKBAR_HISTORY, nodeRefs);
+					preferenceService.setPreferences(username, histories);
 				}
-				
-				histories.put(PREF_DOCKBAR_HISTORY, nodeRefs);
-				preferenceService.setPreferences(username, histories);
 			}
 
 			JSONObject ret = processResults(elements, metadataFields);
 			ret.put("page", 1);
-			ret.put("pageSize", 5);
+			ret.put("pageSize", DOCKBAR_SIZE);
 			ret.put("fullListSize", elements.size());
 
 			res.setContentType("application/json");
@@ -169,7 +174,7 @@ public class DockBarWebScript extends AbstractWebScript {
 
 		for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 			NodeRef nodeRef = (NodeRef) iterator.next();
-			if (serviceRegistry.getNodeService().exists(nodeRef)) {
+			if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				items.put(new ContentDataExtractor(metadataFields, serviceRegistry, attributeExtractorService).extract(nodeRef));
 			}
 		}

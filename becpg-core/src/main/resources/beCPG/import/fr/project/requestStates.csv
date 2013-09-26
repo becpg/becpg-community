@@ -1,0 +1,8 @@
+PATH;/System/ProjectLists/bcpg:entityLists/RequestStates
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;A étudier
+VALUES;En projet
+VALUES;Refusé
+VALUES;En attente
+VALUES;Terminé

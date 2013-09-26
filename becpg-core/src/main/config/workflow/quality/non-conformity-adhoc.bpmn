@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
-  <process id="nonConformityAdhoc" name="nonConformityAdhoc">
+  <process isExecutable="true" id="nonConformityAdhoc" name="nonConformityAdhoc">
     <userTask id="workTask" name="Travail NC" activiti:formKey="ncwf:workTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
@@ -43,7 +43,7 @@ for each (user in usersToNotify)
  mail.parameters.to = user.properties.email;
  mail.parameters.subject = "beCPG NC : " + bpm_workflowDescription;
  mail.parameters.from = initiator.properties.email;
- mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:non-conformity-notify-task-email.ftl")[0];
+ mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:non-conformity-notify-task-email.ftl")[0];
  mail.parameters.text = "Vous êtes assigné à une non-conformité";
  mail.parameters.template_model = templateModel;
  mail.execute(bpm_package);
@@ -84,7 +84,7 @@ for each (user in usersToNotify)
  mail.parameters.to = user.properties.email;
  mail.parameters.subject = "beCPG NC : " + bpm_workflowDescription;
  mail.parameters.from = initiator.properties.email;
- mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/app:workflow/cm:non-conformity-state-changed-email.ftl")[0];
+ mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:non-conformity-state-changed-email.ftl")[0];
  mail.parameters.text = "Vous êtes assigné à une non-conformité";
  mail.parameters.template_model = templateModel;
  mail.execute(bpm_package);

@@ -3,14 +3,14 @@
    <script type="text/javascript">//<![CDATA[
       new Alfresco.widget.Resizer("projectList");
    //]]></script>
-    <@script type="text/javascript" src="${page.url.context}/res/modules/simple-dialog.js"></@script>
-    <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js"></@script>
+    <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js" />
 </@>
 
 <@templateBody>
    <div id="alf-hd">
-   <@region id="header" scope="global"/>
-   <@region id="task-title" scope="template" />
+	   <@region id="header" scope="global"/>
+	   <@region id="title" scope="template" />
+	   <@region id="navigation" scope="template" />
    </div>
    <div id="bd">
       <div class="yui-t1" id="alfresco-project-list">

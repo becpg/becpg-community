@@ -5,75 +5,41 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfIdentAttr;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class OrganoListDataItem.
- *
- * @author querephi
- */
-public class OrganoListDataItem extends BaseObject {
+@AlfType
+@AlfQname(qname = "bcpg:organoList")
+public class OrganoListDataItem extends BeCPGDataObject {
 
-	/** The node ref. */
-	private NodeRef nodeRef;	
-	
-	/** The value. */
 	private String value;
 	
-	/** The organo. */
 	private NodeRef organo;
 	
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-	
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:organoListValue")
 	public String getValue() {
 		return value;
 	}
 	
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+	
 	public void setValue(String value) {
 		this.value = value;
 	}
 	
-	/**
-	 * Gets the organo.
-	 *
-	 * @return the organo
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:organoListOrgano")
+	@AlfIdentAttr
 	public NodeRef getOrgano() {
 		return organo;
 	}
 	
-	/**
-	 * Sets the organo.
-	 *
-	 * @param organo the new organo
-	 */
+	
 	public void setOrgano(NodeRef organo) {
 		this.organo = organo;
 	}	

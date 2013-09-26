@@ -2,7 +2,7 @@ package fr.becpg.repo.product;
 
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulateException;
 
 public interface CharactDetailsVisitorFactory {
 

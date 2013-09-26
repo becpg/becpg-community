@@ -1,6 +1,17 @@
-.datalist-toolbar .finish span.first-child
+
+.datalist-toolbar .right div {
+	float:left;
+}
+
+.datalist-toolbar .view-details span.first-child
 {
-   background: url(images/finish-16.png) no-repeat 12px 4px;
+   background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .view-documents span.first-child
+{
+   background: url(../documentlibrary/actions/entity-view-documents-16.png) no-repeat 12px 4px;
    padding-left: 24px;
 }
 
@@ -23,10 +34,40 @@
 }
 
 
+.datalist-toolbar .export-csv span.first-child
+{
+	background: url(../images/filetypes/xls-file-16.png) no-repeat 12px 4px;
+   padding-left: 12px;
+}
+
+
+
 .datalist-toolbar .formulate span.first-child
 {
    background: url(images/formulate-16.png) no-repeat 12px 4px;
    padding-left: 24px;
+}
+
+.datalist-toolbar .full-screen span.first-child
+{
+   background: url(../images/full-screen-16.png) no-repeat 5px 4px;
+}
+
+
+div.flat-button  span.yui-checkbox-button-checked {
+	 background: none repeat scroll 0 0 transparent;
+}
+
+
+.datalist-toolbar div.flat-button .stateCkeckbox  span.yui-checkbox-button
+{
+   background: url(../images/job-running-16.png) no-repeat 4px 4px;
+}
+
+
+.datalist-toolbar div.flat-button  .stateCkeckbox span.yui-checkbox-button.yui-checkbox-button-checked 
+{
+   background: url(../images/job-success-16.png) no-repeat 4px 4px;
 }
 
 .datalist-toolbar .import span.first-child
@@ -49,4 +90,9 @@
 .datalist-toolbar .onActionShowDetails
 {
    background-image: url(../images/show-details-16.png);
+}
+
+
+.datalist-toolbar .onActionShowWused {
+	background-image: url(../images/create-rule-16.png);
 }

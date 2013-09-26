@@ -1,0 +1,22 @@
+STOP_ON_FIRST_ERROR;false;;;;;;;;;;;;;
+IMPORT_TYPE;EntityListItem;;;;;;;;;;;;;
+PATH;/Temp/Products;;;;;;;;;;;;;
+TYPE;bcpg:physicoChemList;;;;;;;;;;;;;
+#;Conductivité;Granulométrie;Gras sur sec;Humidité;pH;Point de fusion;Pourcentage de corps étrangers;Solubilité;Point de congélation;Matière sèche;Extrait sec;Matière grasse;Pouvoir sucrant;Température de cuve
+#;-;-;-;-;-;°C;%;-;°C;%;%;%;%;°C
+MAPPING;Products;;;;;;;;;;;;;
+COLUMNS;bcpg:erpCode;bcpg:pclPhysicoChem;bcpg:pclValue;bcpg:pclMini;bcpg:pclMaxi;;;;;;;;;
+VALUES;ERP code 1;Conductivité;1;;;;;;;;;;;
+VALUES;ERP code 1;Granulométrie;2;;;;;;;;;;;
+VALUES;ERP code 1;Gras sur sec;3;;;;;;;;;;;
+VALUES;ERP code 1;Humidité;4;;;;;;;;;;;
+VALUES;ERP code 1;pH;5;;;;;;;;;;;
+VALUES;ERP code 1;Point de fusion;6;;;;;;;;;;;
+VALUES;ERP code 1;Pourcentage de corps étrangers;7;;;;;;;;;;;
+VALUES;ERP code 1;Solubilité;8;;;;;;;;;;;
+VALUES;ERP code 1;Point de congélation;9;;;;;;;;;;;
+VALUES;ERP code 1;Matière sèche;10;;;;;;;;;;;
+VALUES;ERP code 1;Extrait sec;11;;;;;;;;;;;
+VALUES;ERP code 1;Matière grasse;12;;;;;;;;;;;
+VALUES;ERP code 1;Pouvoir sucrant;13;;;;;;;;;;;
+VALUES;ERP code 1;Température de cuve;14;;;;;;;;;;;

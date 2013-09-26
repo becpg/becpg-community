@@ -7,6 +7,28 @@
    </properties>
    <components>
 
+      <!-- Mobile App Launch -->
+      <component>
+         <region-id>mobile-app</region-id>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if User Agent matches: iPad, iPhone, iPod -->
+                  <evaluation id="useragent">
+                     <evaluators>
+                        <evaluator type="useragent.component.evaluator">
+                           <params>
+                              <useragent>iPhone|iPod|iPad</useragent>
+                           </params>
+                        </evaluator>
+                     </evaluators>
+                     <url>/components/mobile-app-support/ios-mobile</url>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+      </component>
+
       <!-- Title -->
       <component>
          <region-id>title</region-id>
@@ -62,7 +84,7 @@
                      <evaluators>
                         <evaluator type="site.component.evaluator"/>
                      </evaluators>
-                     <url>/components/node-details/node-header</url>
+                     <url>/components/entity-details/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <rootPage>documentlibrary</rootPage>
@@ -71,7 +93,7 @@
                   </evaluation>
                   <!-- otherwise: Repo header -->
                   <evaluation id="repo">
-                     <url>/components/node-details/node-header</url>
+                     <url>/components/entity-details/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <rootPage>repository</rootPage>
@@ -100,6 +122,9 @@
                      <url>/components/preview/web-preview</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
+                        <api>api</api>
+                        <proxy>alfresco</proxy>
+                        <dependencyGroup>document-details</dependencyGroup>
                      </properties>
                   </evaluation>
                </evaluations>
@@ -113,7 +138,21 @@
          <url>/components/comments/list</url>
          <properties>
             <nodeRef>{nodeRef}</nodeRef>
-            <activityType>document</activityType>
+            <activityType>entity</activityType>
+         </properties>
+      </component>
+      <component>
+         <region-id>document-attachments</region-id>
+         <url>/components/document-details/document-attachments</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>     
+      <component>
+         <region-id>repo-document-attachments</region-id>
+         <url>/components/document-details/document-attachments</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
          </properties>
       </component>
 
@@ -130,6 +169,7 @@
          <url>/components/documentlibrary/actions-common</url>
          <properties>
             <nodeRef>{nodeRef}</nodeRef>
+            <dependencyGroup>document-details</dependencyGroup>
          </properties>
       </component>
 
@@ -172,6 +212,15 @@
          </properties>
       </component>
 
+      <!-- Document Sync -->
+      <component>
+         <region-id>document-sync</region-id>
+         <url>/components/document-details/document-sync</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>
+
       <!-- Document Permissions -->
       <component>
          <region-id>document-permissions</region-id>
@@ -197,6 +246,14 @@
       <component>
          <region-id>document-workflows</region-id>
          <url>/components/document-details/document-workflows</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>
+      
+       <component>
+         <region-id>entity-projects</region-id>
+         <url>/components/entity-details/entity-projects</url>
          <properties>
             <nodeRef>{nodeRef}</nodeRef>
          </properties>
@@ -232,6 +289,14 @@
       <component>
          <region-id>file-upload</region-id>
          <url>/components/upload/file-upload</url>
+      </component>
+      <component>
+         <region-id>dnd-upload</region-id>
+         <url>/components/upload/dnd-upload</url>
+      </component>
+      <component>
+         <region-id>archive-and-download</region-id>
+         <url>/components/download/archive</url>
       </component>
 
       <!-- Custom Code -->

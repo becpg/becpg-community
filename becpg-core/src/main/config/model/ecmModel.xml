@@ -13,6 +13,7 @@
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
 	
 	<!-- Introduction of new namespaces defined by this model -->
@@ -54,13 +55,17 @@
 				</list>
 			</parameter>
 		</constraint>
+		 <constraint name="ecm:percentCstrt" type="MINMAX">
+      	 <parameter name="minValue"><value>0</value></parameter>
+          <parameter name="maxValue"><value>100</value></parameter>
+      </constraint>
 	</constraints>
 
 	<types>
 		
 		<!-- type change order -->
 		<type name="ecm:changeOrder">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>										
 				<property name="ecm:ecoState">
 					<type>d:text</type>
@@ -98,6 +103,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>rep:reportEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 				
@@ -113,17 +119,26 @@
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
 				</property>
+				<property name="ecm:rlQtyPerc">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+					<default>100</default>
+					<index enabled="false"/>
+					<constraints>
+						<constraint ref="ecm:percentCstrt"></constraint>
+					</constraints>
+				</property>
 			</properties>
 			<associations>
-				<association name="ecm:rlSourceItem">
+				<association name="ecm:rlSourceItems">
 					<source>
 						<mandatory>true</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="ecm:rlTargetItem">
@@ -132,7 +147,19 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<!-- deprecated -->
+				<association name="ecm:rlSourceItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -166,17 +193,29 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="ecm:wulSourceItems">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>	
+				<!-- deprecated -->
 				<association name="ecm:wulSourceItem">
 					<source>
 						<mandatory>true</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
-				</association>				
+				</association>			
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
@@ -221,7 +260,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -232,9 +271,21 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
+					</target>
+				</association>
+				<!-- Deprecated -->
+				<association name="ecm:culSourceItems">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="ecm:culSimulationItem">
@@ -243,11 +294,12 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
+				
 			</associations>	
 		</type>
 		
@@ -271,7 +323,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
@@ -317,6 +369,7 @@
 <!-- 		</aspect> -->
 
 		<!-- simulation entity aspect -->
+		<!-- Deprecated -->
 		<aspect name="ecm:simulationEntityAspect">		
 			<associations>
 				<association name="ecm:simulationSourceItem">
@@ -325,7 +378,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>

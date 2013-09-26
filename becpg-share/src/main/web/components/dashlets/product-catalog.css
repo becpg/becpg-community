@@ -34,15 +34,15 @@
    background-image: url(../documentlibrary/images/detailed-view-on-16.png);
 }
 
-.product-catalog .document-characts
+.product-catalog .view-characts
 {
-	background-image: url("../documentlibrary/actions/entity-view-datalist-16.png");
+	background-image: url("../documentlibrary/actions/entity-view-datalists-16.png");
 	padding: 2px 0 2px 24px;
 }
 
-.product-catalog .document-download
+.product-catalog .view-documents
 {
-	background-image: url("../documentlibrary/actions/document-download-16.png");
+	background-image: url("../documentlibrary/actions/entity-view-documents-16.png");
 	padding: 2px 0 2px 24px;
 }
 
@@ -92,10 +92,9 @@
 {
    border-color: white;
    display: inline-block;
-   margin-right: 6px;
    padding: 0;
    position: relative;
-   top: -2px;
+   top: -1px;
 }
 
 .product-catalog  div.search-box input.faded

@@ -9,9 +9,9 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 public class ProductDataTest extends TestCase {
 	
@@ -54,11 +54,11 @@ public class ProductDataTest extends TestCase {
 		item.setEndEffectivity(nowplus2h);
 		compoList.add(item);
 		
-		productData.setCompoList(compoList);
+		productData.getCompoListView().setCompoList(compoList);
 		
 		Assert.assertTrue(productData.hasCompoListEl(EffectiveFilters.ALL));
 		
-		Assert.assertEquals(5, productData.getCompoList().size());
+		Assert.assertEquals(5, productData.getCompoListView().getCompoList().size());
 		
 		Assert.assertEquals(5, productData.getCompoList(EffectiveFilters.ALL).size());
 		

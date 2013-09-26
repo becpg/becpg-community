@@ -6,10 +6,11 @@ var Filters =
     */
    TYPE_MAP:
    {
-      "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder")',
+      "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder" )',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
       "images": '+@cm\\:content.mimetype:image/*',
-      "product": '+(TYPE:"bcpg:product")'
+      "product": '+(TYPE:"bcpg:product")',
+      "project": '+(TYPE:"pjt:project")'
    },
    
    /**
@@ -28,7 +29,8 @@ var Filters =
    IGNORED_ASPECTS:
    [
       "bcpg:compositeVersion", //beCPG
-      "bcpg:hiddenFolder"
+      "bcpg:hiddenFolder",
+      "bcpg:entityTplAspect"
    ],
 
 
@@ -114,10 +116,9 @@ var Filters =
       {
          case "all":
             filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += " +TYPE:\"cm:content\"";
+            filterQuery += " +(TYPE:\"cm:content\" OR  TYPE:\"bcpg:entityV2\")";
             filterParams.query = filterQuery + filterQueryDefaults;
             break;
-
          case "recentlyAdded":
          case "recentlyModified":
          case "recentlyCreatedByMe":
@@ -151,7 +152,7 @@ var Filters =
             {
                filterQuery += " +@cm\\:" + ownerField + ":\"" + person.properties.userName + '"';
             }
-            filterQuery += " +TYPE:\"cm:content\"";
+            filterQuery += " +(TYPE:\"cm:content\" OR  TYPE:\"bcpg:entityV2\")";
 
             filterParams.sort = [
             {
@@ -184,6 +185,15 @@ var Filters =
          	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
             filterParams.query = filterQuery + filterQueryDefaults;
          	break;
+         case "Planned":
+         case "InProgress":
+         case "OnHold":
+         case "Cancelled":
+         case "Completed":
+         	filterQuery += this.constructPathQuery(parsedArgs);
+         	filterQuery += " +@pjt\\:projectState:\""+filter+"\"";
+            filterParams.query = filterQuery + filterQueryDefaults;
+         	break; 	
          case "favourites":
 
             for (var favourite in favourites)
@@ -258,7 +268,7 @@ var Filters =
       {
          filterParams.query += " " + (Filters.TYPE_MAP[parsedArgs.type] || "");
          if(args.searchTerm!=null &&  args.searchTerm != "" ){
-         	filterParams.query += " AND ("+args.searchTerm+")";
+         	filterParams.query += " AND ALL:\""+args.searchTerm+"\"";
          }
          
       }

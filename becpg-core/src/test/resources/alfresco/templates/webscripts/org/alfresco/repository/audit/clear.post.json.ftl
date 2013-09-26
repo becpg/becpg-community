@@ -1,3 +1,0 @@
-{
-   "cleared" : ${cleared}
-}

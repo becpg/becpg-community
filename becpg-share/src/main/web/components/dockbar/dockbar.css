@@ -123,16 +123,16 @@ div.dockbar {
 	top: 51px;
 }
 
-.dockbar .document-characts {
+.dockbar .view-characts {
 	background-image:
-		url("../documentlibrary/actions/entity-view-datalist-16.png");
+		url("../documentlibrary/actions/entity-view-datalists-16.png");
 	background-repeat: no-repeat;
 	padding: 2px 0 2px 25px;
 }
 
-.dockbar .document-download {
+.dockbar .view-documents {
 	background-image:
-		url("../documentlibrary/actions/document-download-16.png");
+		url("../documentlibrary/actions/entity-view-documents-16.png");
 	background-repeat: no-repeat;
 	padding: 2px 0 2px 24px;
 }

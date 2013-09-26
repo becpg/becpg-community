@@ -1,0 +1,12 @@
+STOP_ON_FIRST_ERROR;false;;;;
+IMPORT_TYPE;EntityListItem;;;;
+PATH;/Temp/Products;;;;
+TYPE;bcpg:costList;;;;
+MAPPING;Products;;;;
+COLUMNS;bcpg:erpCode;bcpg:costListCost;bcpg:costListValue;;
+VALUES;ERP code component1;Cost packaging;0.1;;Boite
+VALUES;ERP code component2;Cost packaging;0.01;;Etiquettes
+VALUES;ERP code component3;Cost packaging;0.01;;Films
+VALUES;ERP code component4;Cost packaging;1;;Carton
+VALUES;ERP code component5;Cost packaging;0.08;;Intercallaire
+VALUES;ERP code component6;Cost packaging;0;;Palette

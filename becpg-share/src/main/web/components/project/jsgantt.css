@@ -1,6 +1,10 @@
+#rightside {
+	width:68%;
+	margin:auto;
+}
 
-.projects  .yui-g .yui-u{
-    width: 50%;
+.projects .yui-gd .yui-u {
+    margin:none;
 }
 
 .gdatehead {
@@ -39,8 +43,12 @@ tr.gheader {
 	white-space:nowrap;
    text-overflow:ellipsis;
    overflow:hidden;
-   width:200px;
+   width:230px;
    display: inline-block;
+}
+
+.projects  span.task-title a{
+	cursor: pointer;
 }
 
 
@@ -63,7 +71,6 @@ tr.gheader {
 .ggtask {
  	 background: none repeat scroll 0 0 #FFBC00;
     border: 1px solid red;
-    cursor: pointer;
     height: 7px;
     color:red;
 }
@@ -81,7 +88,6 @@ tr.gheader {
 	 background: none repeat scroll 0 0 #E5ECF5;
     border: 1px solid #3172D7;
     border-radius: 5px;
-    cursor: move;
     height: 13px;
     opacity: 0.8;
 }
@@ -122,7 +128,6 @@ div.scroll {
 }
 
 .projects .gicon {
-    cursor: pointer;
     height: 15px;
     width: 18px;
     display: inline-block;
@@ -137,3 +142,15 @@ div.scroll {
     background-image: url("./images/dt-group-arrow-up.png");
     background-repeat: no-repeat;
 }
+
+.projects div.milestone {
+	height: 16px; width:16px; overflow:hidden;
+	background: url(../images/filetypes/generic-task-milestone-16.png) no-repeat;
+}
+
+.projects div.completed.milestone {
+	height: 16px; width:16px; overflow:hidden;
+	background: url(../images/filetypes/generic-task-milestone-completed-16.png) no-repeat;
+}
+
+

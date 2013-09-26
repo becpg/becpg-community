@@ -227,6 +227,11 @@
 							 * Parent nodeRef
 							 */
 							nodeRef : null,
+							
+							/**
+							 * Display thumbnail column
+							 */
+							showThumbnails : false,
 						},
 
 						/**
@@ -357,6 +362,48 @@
 							};
 						},
 						/**
+                         * Returns selector custom datacell formatter
+                         * 
+                         * @method fnRenderCellSelected
+                         */
+                        fnRenderCellThumbnail : function BulkEdit_fnRenderCellThumbnail() {
+                 
+                            /**
+                             * Selector custom datacell formatter
+                             * 
+                             * @method renderCellSelected
+                             * @param elCell
+                             *            {object}
+                             * @param oRecord
+                             *            {object}
+                             * @param oColumn
+                             *            {object}
+                             * @param oData
+                             *            {object|string}
+                             */
+                            return function BulkEdit_function_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
+                               var columnWidth = 100, record = oRecord.getData(), desc = "";
+
+                               record.jsNode = {};
+                               record.jsNode.type = record.nodeType;
+
+                               var thumbName = record.itemData["prop_cm_name"].value, nodeRef = new Alfresco.util.NodeRef(
+                                        record.nodeRef), extn = thumbName.substring(thumbName.lastIndexOf("."));
+
+                                desc = '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri + '/content/thumbnails/doclib?c=queue&ph=true" alt="' + extn + '" title="' + $html(thumbName) + '" /></span>';
+                               
+                               
+
+                               oColumn.width = columnWidth;
+
+                               Dom.setStyle(elCell, "width", oColumn.width + "px");
+                               Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+
+                               elCell.innerHTML = desc;
+                            };
+                        },
+						
+						/**
 						 * Returns actions custom datacell formatter
 						 * 
 						 * @method fnRenderCellActions
@@ -389,7 +436,7 @@
 											+ '-actions-'
 											+ oRecord.getId()
 											+ '" class="action-set simple" >'
-											+ '<div class="onActionEdit"><a title="Modifier"  class="action-link" href="" rel="edit"><span>Modifier</span></a></div>'
+											+ '<div class="onActionEdit"><a title="'+scope.msg("action.modify")+'"  class="action-link" href="" rel="edit"><span>'+scope.msg("action.modify")+'</span></a></div>'
 											+ '</div>';
 								}
 							};
@@ -472,7 +519,7 @@
 												break;
 											case "category":
 												if (datalistColumn.name == "cm:taggable") {
-													html += '<img width="16" title="pwet" alt="" src="/share/res/components/images/filetypes/generic-tag-16.png">&nbsp;'
+													html += '<img width="16" title="category" alt="" src="/share/res/components/images/filetypes/generic-tag-16.png">&nbsp;'
 															+ oRecord.getData("tags");
 												} else {
 													html += $html(data.displayValue);
@@ -496,7 +543,7 @@
 															+ '" style="padding-left:'
 															+ padding
 															+ 'px;"><a href="'
-															+ Alfresco.util.siteURL('document-details?nodeRef='
+															+ Alfresco.util.siteURL('entity-details?nodeRef='
 																	+ data.value) + '">' + $html(data.displayValue)
 															+ '</a></span>';
 												} else if (datalistColumn.name == "bcpg:packagingListProduct") {
@@ -571,7 +618,7 @@
 												} else if (datalistColumn.name == "qa:sdlControlPoint"
 														|| datalistColumn.name == "qa:slControlPoint") {
 													html += '<span class="sample"><a href="'
-															+ Alfresco.util.siteURL('document-details?nodeRef='
+															+ Alfresco.util.siteURL('entity-details?nodeRef='
 																	+ data.value) + '">' + $html(data.displayValue)
 															+ '</a></span>';
 												} else if (datalistColumn.name == "qa:clCharacts") {
@@ -580,7 +627,7 @@
 												} else if (datalistColumn.name == "bcpg:code"
 														|| datalistColumn.name == "cm:name") {
 													html += '<a href="'
-															+ Alfresco.util.siteURL('document-details?nodeRef='
+															+ Alfresco.util.siteURL('entity-details?nodeRef='
 																	+ oRecord.getData("nodeRef")) + '">'
 															+ $html(data.displayValue) + '</a>';
 												} else if(datalistColumn.name == "bcpg:productState" && data.value!=null){
@@ -916,6 +963,9 @@
 								this.getDataTable()._oCellEditor = null;
 							};
 
+							editor.LABEL_CANCEL = this.msg("button.cancel");
+							editor.LABEL_SAVE = this.msg("button.save");
+							
 							return editor;
 						},
 
@@ -1040,6 +1090,13 @@
 										disabled : true,
 										value : "export"
 									});
+							
+							this.widgets.showThumbnailsButton = Alfresco.util.createYUIButton(this, "show-thumbnails",
+                                  this.onShowThumbnails, {
+   							         type:"checkbox",  
+   							         value:this.options.showThumbnails,  
+   							         checked:this.options.showThumbnails 
+                                  });
 
 							// Assume no list chosen for now
 							Dom.removeClass(this.id + "-selectTypeMessage", "hidden");
@@ -1254,9 +1311,9 @@
 						 * @protected
 						 */
 						_setupPropsPicker : function BulkEdit__setupDataTable(columns) {
-							var containerEl = Dom.get(this.id + "-itemProps-container");
+							var containerEl = Dom.get(this.id + "-itemProps-container"),
+							     html = "";
 							if (containerEl != null) {
-								containerEl.innerHTML = "<ul>";
 								var inc = 0;
 								var colCount = 0;
 								for ( var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
@@ -1274,7 +1331,7 @@
 										colCount = Math.floor(inc / 5);
 										className += "column-" + colCount;
 
-										containerEl.innerHTML += '<li class="' + className
+										html += '<li class="' + className
 												+ '"><input id="propSelected-' + i
 												+ '" type="checkbox" name="propChecked" value="' + propName
 												+ '" /><label for="propSelected-' + i + '" >' + propLabel
@@ -1282,7 +1339,8 @@
 										inc++;
 									}
 								}
-								containerEl.innerHTML += "</ul>";
+								 
+								 containerEl.innerHTML = "<ul style=\"width:"+((colCount+1)*20)+"em;\">"+html+"</ul>";
 
 								this.selectedFields = Selector.query('input[type="checkbox"]', containerEl);
 							}
@@ -1304,6 +1362,17 @@
 								formatter : this.fnRenderCellSelected(),
 								width : 16
 							} ];
+							
+							if(this.options.showThumbnails){
+							   columnDefinitions.push({
+							         key : "thumbnail",
+		                             label : "",
+		                             sortable : false,
+		                             formatter : this.fnRenderCellThumbnail(),
+		                             width : 100  } 
+							   
+							   );
+							}
 
 							var column;
 							for ( var i = 0, ii = this.dataTableColumn.length; i < ii; i++) {
@@ -1335,6 +1404,12 @@
 								} else if (keyB == "nodeRef") {
 									return 1;
 								}
+								
+								if (keyA == "thumbnail") {
+                                   return -1;
+                                } else if (keyB == "thumbnail") {
+                                   return 1;
+                                }
 
 								if (keyA == "prop_cm_name" && keyB != "prop_bcpg_code") {
 									return -1;
@@ -1632,7 +1707,6 @@
 						 */
 						_updateBulkEdit : function BulkEdit__updateBulkEdit(p_obj) {
 							p_obj = p_obj || {};
-							Alfresco.logger.debug("BulkEdit__updateBulkEdit: ", p_obj.filter);
 							var successFilter = YAHOO.lang.merge({}, p_obj.filter !== undefined ? p_obj.filter
 									: this.currentFilter), loadingMessage = null, timerShowLoadingMessage = null, me = this, params = {
 								filter : successFilter
@@ -1641,8 +1715,6 @@
 							// Clear the current document list if the data
 							// webscript is taking too long
 							var fnShowLoadingMessage = function BulkEdit_fnShowLoadingMessage() {
-								Alfresco.logger
-										.debug("BulkEdit__uDG_fnShowLoadingMessage: slow data webscript detected.");
 								// Check the timer still exists. This is to
 								// prevent IE firing the event after we
 								// cancelled it. Which is "useful".
@@ -1697,7 +1769,6 @@
 							var successHandler = function BulkEdit__uDG_successHandler(sRequest, oResponse, oPayload) {
 								destroyLoaderMessage();
 
-								Alfresco.logger.debug("currentFilter was:", this.currentFilter, "now:", successFilter);
 								this.currentFilter = successFilter;
 								this.currentPage = p_obj.page || 1;
 								this.widgets.dataTable.onDataReturnInitializeTable.call(this.widgets.dataTable,
@@ -1797,6 +1868,10 @@
 							window.location = Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/export.csv?"
 									+ this._buildDataParamsUrl() + "&fields=" + fields;
 						},
+						onShowThumbnails : function BulkEdit_onShowThumbnails() {
+						  this.options.showThumbnails = ! this.options.showThumbnails;
+                          this.onBulkEditShow.call(this);
+                       },
 
 						onEditSelected : function BulkEdit_onEditSelected() {
 
@@ -1947,13 +2022,13 @@
 															+ new Alfresco.util.NodeRef(item.nodeRef).uri,
 													dataObj : this._buildBulkEditParams(),
 													successCallback : {
-														fn : function DataGrid_onActionEdit_refreshSuccess(response) {
+														fn : function DataGrid_onActionEdit_refreshSuccess(resp) {
 
 															// Fire
 															// "itemUpdated"
 															// event
 															Bubbling.fire("dataItemUpdated", {
-																item : response.json.item
+																item : resp.json.item
 															});
 
 															// recall edit for
@@ -1963,7 +2038,7 @@
 
 															if (checkBoxEl && checkBoxEl.checked) {
 																var recordFound = scope._findNextItemByParameter(
-																		response.json.item.nodeRef, "nodeRef");
+																      resp.json.item.nodeRef, "nodeRef");
 																if (recordFound != null) {
 																	scope.onActionEdit(recordFound);
 																}
@@ -1979,7 +2054,7 @@
 														scope : this
 													},
 													failureCallback : {
-														fn : function DataGrid_onActionEdit_refreshFailure(response) {
+														fn : function DataGrid_onActionEdit_refreshFailure(resp) {
 															Alfresco.util.PopupManager.displayMessage({
 																text : this.msg("message.details.failure")
 															});
@@ -1991,7 +2066,7 @@
 											scope : this
 										},
 										onFailure : {
-											fn : function DataGrid_onActionEdit_failure(response) {
+											fn : function DataGrid_onActionEdit_failure(resp) {
 												Alfresco.util.PopupManager.displayMessage({
 													text : this.msg("message.details.failure")
 												});

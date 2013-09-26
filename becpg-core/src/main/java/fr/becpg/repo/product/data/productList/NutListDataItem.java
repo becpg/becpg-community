@@ -5,91 +5,60 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfIdentAttr;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class NutListDataItem.
- *
- * @author querephi
- */
-public class NutListDataItem extends BaseObject  implements SimpleListDataItem, IManualDataItem, SimpleCharactDataItem{
+@AlfType
+@AlfQname(qname = "bcpg:nutList")
+public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem {
 
-	/** The node ref. */
-	private NodeRef nodeRef;
 	
-	/** The value. */
+	
 	private Double value;
 	
-	/** The unit. */
 	private String unit;
 	
 	private Double mini;
 	
 	private Double maxi;
-	
-	/** The group. */
+
 	private String group;
 	
-	/** The nut. */
+	private String method;
+	
 	private NodeRef nut;
 	
-	private Boolean isManual;
 			
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
 		
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListValue")
 	public Double getValue() {
 		return value;
 	}
 	
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+	
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
-	/**
-	 * Gets the unit.
-	 *
-	 * @return the unit
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListUnit")
 	public String getUnit() {
 		return unit;
 	}
 	
-	/**
-	 * Sets the unit.
-	 *
-	 * @param unit the new unit
-	 */
+	
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListMini")
 	public Double getMini() {
 		return mini;
 	}
@@ -98,6 +67,8 @@ public class NutListDataItem extends BaseObject  implements SimpleListDataItem, 
 		this.mini = mini;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListMaxi")
 	public Double getMaxi() {
 		return maxi;
 	}
@@ -106,33 +77,34 @@ public class NutListDataItem extends BaseObject  implements SimpleListDataItem, 
 		this.maxi = maxi;
 	}
 
-	/**
-	 * Gets the group.
-	 *
-	 * @return the group
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListGroup")
 	public String getGroup() {
 		return group;
 	}
 	
-	/**
-	 * Sets the group.
-	 *
-	 * @param group the new group
-	 */
+	
 	public void setGroup(String group) {
 		this.group = group;
 	}
 	
-	/**
-	 * Gets the nut.
-	 *
-	 * @return the nut
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListMethod")
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:nutListNut")
+	@AlfIdentAttr
 	public NodeRef getNut() {
 		return nut;
 	}
-	
+
 	@Override
 	public NodeRef getCharactNodeRef() {
 		return getNut();
@@ -151,18 +123,7 @@ public class NutListDataItem extends BaseObject  implements SimpleListDataItem, 
 	public void setNut(NodeRef nut) {
 		this.nut = nut;
 	}	
-	
-	@Override
-	public Boolean getIsManual() {
 
-		return isManual;
-	}
-
-	@Override
-	public void setIsManual(Boolean isManual) {
-		
-		this.isManual = isManual;		
-	}
 	
 	/**
 	 * Instantiates a new nut list data item.
@@ -224,12 +185,10 @@ public class NutListDataItem extends BaseObject  implements SimpleListDataItem, 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((group == null) ? 0 : group.hashCode());
-		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
 		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((nut == null) ? 0 : nut.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -240,7 +199,7 @@ public class NutListDataItem extends BaseObject  implements SimpleListDataItem, 
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -249,11 +208,6 @@ public class NutListDataItem extends BaseObject  implements SimpleListDataItem, 
 			if (other.group != null)
 				return false;
 		} else if (!group.equals(other.group))
-			return false;
-		if (isManual == null) {
-			if (other.isManual != null)
-				return false;
-		} else if (!isManual.equals(other.isManual))
 			return false;
 		if (maxi == null) {
 			if (other.maxi != null)
@@ -264,11 +218,6 @@ public class NutListDataItem extends BaseObject  implements SimpleListDataItem, 
 			if (other.mini != null)
 				return false;
 		} else if (!mini.equals(other.mini))
-			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
 			return false;
 		if (nut == null) {
 			if (other.nut != null)

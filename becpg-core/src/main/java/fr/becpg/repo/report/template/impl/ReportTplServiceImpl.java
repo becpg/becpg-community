@@ -27,6 +27,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -35,7 +36,7 @@ import fr.becpg.report.client.ReportFormat;
 
 public class ReportTplServiceImpl implements ReportTplService{
 
-	private static final String QUERY_REPORTTEMPLATE = " +TYPE:\"rep:reportTpl\" +@rep\\:reportTplType:%s +@rep\\:reportTplIsSystem:%s";
+	private static final String QUERY_REPORTTEMPLATE = " +TYPE:\"rep:reportTpl\" +@rep\\:reportTplType:%s +@rep\\:reportTplIsSystem:%s AND (@rep\\:reportTplIsDisabled:false ISNULL:rep\\:reportTplIsDisabled)";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
@@ -50,7 +51,17 @@ public class ReportTplServiceImpl implements ReportTplService{
 	
 	/** The mimetype service. */
 	private MimetypeService mimetypeService;
+	
+	
+	private AssociationService associationService;
 			
+	
+	
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	/**
 	 * Sets the node service.
 	 *
@@ -114,7 +125,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
         List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);       
-        return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;        
+        return !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;        
 	}
 	
 	/**
@@ -164,7 +175,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
 		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		return tplsNodeRef.size() > 0 ? tplsNodeRef.get(0) : null;		
+		return !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;		
 	}
 	
 	/**
@@ -197,10 +208,11 @@ public class ReportTplServiceImpl implements ReportTplService{
 		if(resource.exists()){
 			try {
 				in = new BufferedInputStream(resource.getInputStream());
-				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplName);
+				String tplFullName = tplName + "." + RepoConsts.REPORT_EXTENSION_BIRT;
+				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplFullName);
 				
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, tplName);	    		
+				properties.put(ContentModel.PROP_NAME, tplFullName);	    		
 				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
 				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
 				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
@@ -210,16 +222,16 @@ public class ReportTplServiceImpl implements ReportTplService{
 				if(reportTplNodeRef != null){
 					
 					if(overrideTpl){
-						logger.debug("override report Tpl, name: " + tplName);
+						logger.debug("override report Tpl, name: " + tplFullName);
 						
-						nodeService.setProperties(reportTplNodeRef, properties);
+						nodeService.addProperties(reportTplNodeRef, properties);
 					}
 					else{
 						return reportTplNodeRef;
 					}
 				}
 				else{
-					logger.debug("Create report Tpl, name: " + tplName);
+					logger.debug("Create report Tpl, name: " + tplFullName);
 					
 					reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
@@ -319,7 +331,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
 		// no user default tpl, take the first system default
-		if(userDefaultTplNodeRef == null && defaultTplsNodeRef.size() > 0){
+		if(userDefaultTplNodeRef == null && !defaultTplsNodeRef.isEmpty()){
 			userDefaultTplNodeRef = defaultTplsNodeRef.get(0);
 			defaultTplsNodeRef.remove(0);
 		}
@@ -369,5 +381,11 @@ public class ReportTplServiceImpl implements ReportTplService{
 		}
 		
 		return query;
+	}
+
+	@Override
+	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef) {
+		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL,false);
+		
 	}	
 }

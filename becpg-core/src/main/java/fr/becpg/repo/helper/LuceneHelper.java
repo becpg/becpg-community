@@ -6,7 +6,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
-import org.alfresco.web.bean.repository.Repository;
 
 import fr.becpg.repo.RepoConsts;
 
@@ -18,16 +17,23 @@ import fr.becpg.repo.RepoConsts;
  */
 public class LuceneHelper {
 
-	private static final String QUERY_COND_PROP_EQUAL_VALUE = " %s +@%s:\"%s\"";
+	private static final String QUERY_COND_PROP_EQUAL_VALUE = "@%s:\"%s\"";
+	
 	private static final String QUERY_COND_PROP_CONTAINS_VALUE = " %s +@%s:%s";
-	private static final String QUERY_COND_PROP_ISNULL_VALUE = " %s ISNULL:\"%s\"";
+	private static final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
 	private static final String QUERY_COND_PATH = " %s +PATH:\"/app:company_home/%s/*\"";
 	private static final String QUERY_COND_ID = " %s ID:\"%s\"";
 	private static final String QUERY_COND_BY_SORT = " %s +@%s:[%s TO %s]";
 	private static final String QUERY_COND_PARENT = " %s +PARENT:\"%s\"";
-	private static final String QUERY_COND_TYPE = " %s +TYPE:\"%s\"";
+	private static final String QUERY_COND_TYPE = "TYPE:\"%s\"";
+	private static final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
 	private static final String QUERY_COND = " %s %s";
+	public static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" -ASPECT:\"bcpg:entityTplAspect\" "  
+				+ " -@cm\\:lockType:READ_ONLY_LOCK"
+				+ " -ASPECT:\"bcpg:compositeVersion\""
+				+ " -ASPECT:\"bcpg:hiddenFolder\"";
 
+	
 	/**
 	 * Return an equal condition on a property
 	 * 
@@ -37,9 +43,20 @@ public class LuceneHelper {
 	 */
 	public static String getCondEqualValue(QName property, String value, Operator operator) {
 
-		return String.format(QUERY_COND_PROP_EQUAL_VALUE, operator != null ? operator : "", Repository.escapeQName(property), value);
+		return getCond(getCondEqualValue( property,  value), operator);
+		
 	}
 
+	
+	public static String getCondEqualValue(QName property, String value) {
+		if(value == null || value.isEmpty()){
+			return getCondIsNullValue(property);
+		}
+		else{
+			return String.format(QUERY_COND_PROP_EQUAL_VALUE, escapeQName(property), value);
+		}	
+	}
+	
 	/**
 	 * Return an equal condition on ID of nodeRef
 	 * 
@@ -61,7 +78,7 @@ public class LuceneHelper {
 	 */
 	public static String getCondContainsValue(QName property, String value, Operator operator) {
 
-		return String.format(QUERY_COND_PROP_CONTAINS_VALUE, operator != null ? operator : "", Repository.escapeQName(property), value);
+		return String.format(QUERY_COND_PROP_CONTAINS_VALUE, operator != null ? operator : "", escapeQName(property), value);
 	}
 
 	/**
@@ -71,33 +88,41 @@ public class LuceneHelper {
 	 * @param value
 	 * @return
 	 */
-	public static String getCondIsNullValue(QName property, Operator operator) {
+	public static String getCondIsNullValue(QName property) {
 
-		return String.format(QUERY_COND_PROP_ISNULL_VALUE, operator != null ? operator : "", Repository.escapeQName(property));
+		return String.format(QUERY_COND_PROP_ISNULL_VALUE, escapeQName(property));
 	}
 	
+	
+	public static String getCondIsNullValue(QName property,Operator operator) {
+
+		return getCond(String.format(QUERY_COND_PROP_ISNULL_VALUE, escapeQName(property)),operator);
+	}
+
 	/**
 	 * Return a +PATH condition (encode path)
+	 * 
 	 * @param path
 	 * @param operator
 	 * @return
 	 */
-	public static String getCondPath(String path, Operator operator){
-		
+	public static String getCondPath(String path, Operator operator) {
+
 		return String.format(QUERY_COND_PATH, operator != null ? operator : "", encodePath(path));
 	}
-	
+
 	/**
 	 * Get conditions on sort
+	 * 
 	 * @param min
 	 * @param max
 	 * @return
 	 */
 	public static String getCondMinMax(QName property, String min, String max, Operator operator) {
 
-		return String.format(QUERY_COND_BY_SORT, operator != null ? operator : "", Repository.escapeQName(property), min, max);
+		return String.format(QUERY_COND_BY_SORT, operator != null ? operator : "", escapeQName(property), min, max);
 	}
-	
+
 	/**
 	 * Return a parent condition on nodeRef
 	 * 
@@ -109,7 +134,7 @@ public class LuceneHelper {
 
 		return String.format(QUERY_COND_PARENT, operator != null ? operator : "", nodeRef);
 	}
-	
+
 	/**
 	 * Return a type condition on QName
 	 * 
@@ -117,17 +142,27 @@ public class LuceneHelper {
 	 * @param operator
 	 * @return
 	 */
-	public static String getCondType(QName type, Operator operator) {
+	public static String getCondType(QName type) {
 
-		return String.format(QUERY_COND_TYPE, operator != null ? operator : "", type);
+		return String.format(QUERY_COND_TYPE, type);
 	}
 	
-	
+	/**
+	 * Return an aspect condition on QName
+	 * 
+	 * @param type
+	 * @param operator
+	 * @return
+	 */
+	public static String getCondAspect(QName aspect) {
+
+		return String.format(QUERY_COND_ASPECT, aspect);
+	}
+
 	public static String getCond(String cond, Operator operator) {
 
 		return String.format(QUERY_COND, operator != null ? operator : "", cond);
 	}
-	
 
 	public enum Operator {
 		AND, OR, NOT
@@ -157,6 +192,9 @@ public class LuceneHelper {
 		// remove 1st character '/'
 		return pathBuffer.substring(1);
 	}
+	
+
+	
 
 	public static Map<String, Boolean> getSort(QName field, boolean asc) {
 
@@ -170,5 +208,52 @@ public class LuceneHelper {
 
 		return getSort(field, true);
 	}
+
+	public static String escapeQName(QName qName) {
+		String string = qName.toString();
+		StringBuilder buf = new StringBuilder(string.length() + 4);
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			if ((c == '{') || (c == '}') || (c == ':') || (c == '-')) {
+				buf.append('\\');
+			}
+
+			buf.append(c);
+		}
+		return buf.toString();
+	}
+
+	public static String getSiteSearchPath(String siteId, String containerId) {
+
+		String path = SiteHelper.SITES_SPACE_QNAME_PATH;
+		if (siteId != null && siteId.length() > 0) {
+			path += "cm:" + ISO9075.encode(siteId) + "/";
+		} else {
+			path += "*/";
+		}
+		if (containerId != null && containerId.length() > 0) {
+			path += "cm:" + ISO9075.encode(containerId) + "/";
+		} else {
+			path += "*/";
+		}
+		
+		return "PATH:\"" + path + "/*\"" ;
+	}
+
+	public static String mandatory(String condType) {
+		
+		return " +"+condType;
+	}
+
+	public static String exclude(String condType) {
+		return " -"+condType;
+	}
+
+
+	public static String getGroup(String op1, String op2) {
+		return " ("+op1+" "+op2+")";
+	}
+
+	
 
 }

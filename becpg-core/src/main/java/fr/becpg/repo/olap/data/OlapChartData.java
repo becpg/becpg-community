@@ -25,7 +25,7 @@ public class OlapChartData {
 	}
 
 	public void shiftMetadata() {
-		if(metadatas.size()>0){
+		if(!metadatas.isEmpty()){
 			metadatas.remove(0);
 		}
 	}

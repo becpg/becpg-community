@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Report Tpl</shortname>
+	<description>Report Tpl - manage actions done on reportTpl</description>	
+	<url>/becpg/report/reportTpl/{store_type}/{store_id}/{id}/{action}</url>
+	<format default="json">argument</format>
+	<authentication>admin</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

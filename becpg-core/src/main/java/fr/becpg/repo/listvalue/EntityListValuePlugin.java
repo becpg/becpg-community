@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -33,6 +34,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.LuceneHelper.Operator;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 import fr.becpg.repo.listvalue.impl.ListValueServiceImpl;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -59,8 +61,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	/** The Constant SUFFIX_SIMPLE_QUOTE. */
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 
-	private static final String QUERY_TYPE = " TYPE:\"%s\"";
-
 	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 
 	/** The Constant SOURCE_TYPE_TARGET_ASSOC. */
@@ -71,6 +71,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	/** The Constant SOURCE_TYPE_LINKED_VALUE. */
 	private static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
+	
+	private static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 
 	/** The Constant SOURCE_TYPE_LIST_VALUE. */
 	private static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
@@ -98,6 +100,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private AutoNumService autoNumService;
 
 	private Analyzer luceneAnaLyzer = null;
+	
+	private HierarchyService hierarchyService;
 
 	/**
 	 * Sets the namespace service.
@@ -139,8 +143,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
+	}
+
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_PRODUCT, SOURCE_TYPE_LINKED_VALUE,
+		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_PRODUCT, SOURCE_TYPE_LINKED_VALUE, SOURCE_TYPE_LINKED_VALUE_ALL,
 				SOURCE_TYPE_PRODUCT_REPORT, SOURCE_TYPE_LIST_VALUE };
 	}
 
@@ -159,7 +167,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
 			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE)) {
-			return suggestLinkedValue(path, query, pageNum, pageSize, props);
+			return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
+		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE_ALL)) {
+			return suggestLinkedValue(path, query, pageNum, pageSize, props, true);
 		} else if (sourceType.equals(SOURCE_TYPE_LIST_VALUE)) {
 			return suggestListValue(path, query, pageNum, pageSize);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
@@ -198,8 +208,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		// Is code or name search
 		if (isQueryCode(query, type, arrClassNames)) {
-			query = prepareQueryCode(query, type, arrClassNames);
-			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, query);
+			String codeQuery = prepareQueryCode(query, type, arrClassNames);
+			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, codeQuery,  query, query);
 		} else if (isAllQuery(query)) {
 			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_ALL, type);
 		} else {
@@ -216,6 +226,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		List<NodeRef> ret = null;
 
 		if (props != null) {
+			
+			// exclude class
+			String excludeClassNames = (String) props.get(ListValueService.PROP_EXCLUDE_CLASS_NAMES);
+			String[] arrExcludeClassNames = excludeClassNames != null ? excludeClassNames.split(PARAM_VALUES_SEPARATOR) : null;
+			queryPath = excludeByClass(queryPath, arrExcludeClassNames);
+			
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
 				String filterByAssoc = (String) extras.get(PROP_FILTER_BY_ASSOC);
@@ -267,10 +283,11 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 *            the parent
 	 * @param query
 	 *            the query
+	 * @param b 
 	 * @return the map
 	 */
 	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize,
-			Map<String, Serializable> props) {
+			Map<String, Serializable> props, boolean all) {
 
 		NodeRef itemIdNodeRef = null;
 
@@ -292,38 +309,24 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			}
 		}
 
-		logger.debug("suggestLinkedValue for path:" + path);
-
-		String queryPath = "";
-
-		String parent = (String) props.get(ListValueService.PROP_PARENT);
-		path = LuceneHelper.encodePath(path);
-		if (!isAllQuery(query)) {
-			query = prepareQuery(query);
-
-			if (parent == null) {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ROOT, path, query);
-			} else {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE, path, parent, query);
-			}
+		query = prepareQuery(query);	
+		List<NodeRef> ret = null;
+		
+		if(!all){
+			String parent = (String) props.get(ListValueService.PROP_PARENT);
+			NodeRef parentNodeRef = parent != null && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+			ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 		} else {
-			if (parent == null) {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT, path);
-			} else {
-				queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_ALL, path, parent);
-			}
+			ret = hierarchyService.getAllHierarchiesByPath(path, query);
 		}
 
 		// avoid cycle: when editing an item, cannot select itself as parent
-		if (itemIdNodeRef != null) {
-			queryPath += LuceneHelper.getCondEqualID(itemIdNodeRef, Operator.NOT);
+		if (itemIdNodeRef != null && ret.contains(itemIdNodeRef)) {
+			ret.remove(itemIdNodeRef);
 		}
-
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE,
 				nodeService));
-
 	}
 
 	/**
@@ -399,14 +402,14 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query;
 	}
 
-	private boolean isQueryCode(String query, QName type, String[] arrClassNames) {
+	protected boolean isQueryCode(String query, QName type, String[] arrClassNames) {
 		boolean ret = Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query);
 		if (arrClassNames != null) {
 			for (int i = 0; i < arrClassNames.length; i++) {
 				QName filteredType = QName.createQName(arrClassNames[i], namespaceService);
 				ret = ret
 						|| Pattern.matches(autoNumService.getAutoNumMatchPattern(filteredType, BeCPGModel.PROP_CODE),
-								query);
+								query);			
 			}
 		} else {
 			ret = ret || Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE), query);
@@ -532,17 +535,40 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		if (arrClassNames != null) {
 
 			String queryClassNames = "";
+			boolean isFirst = true;
 
-			for (String className : arrClassNames) {
+			for (String className : arrClassNames) {				
+				
+				QName classQName = QName.createQName(className, namespaceService);
+				ClassDefinition classDef = dictionaryService.getClass(classQName);
+				LuceneHelper.Operator op = isFirst ? null : LuceneHelper.Operator.OR;
+				isFirst = false;
 
-				if (queryClassNames.isEmpty()) {
-					queryClassNames += String.format(QUERY_TYPE, className);
-				} else {
-					queryClassNames += " OR " + String.format(QUERY_TYPE, className);
+				if(classDef.isAspect()){
+					queryClassNames += LuceneHelper.mandatory(LuceneHelper.getCondAspect(classQName));
 				}
+				else{
+					queryClassNames += LuceneHelper.getCond(LuceneHelper.getCondType(classQName),op);
+				}				
 			}
 
 			query += " AND (" + queryClassNames + ")";
+		}
+
+		return query;
+	}
+	
+	private String excludeByClass(String query, String[] arrClassNames) {
+
+		if (arrClassNames != null) {
+
+			for (String className : arrClassNames) {				
+				
+				QName classQName = QName.createQName(className, namespaceService);
+				ClassDefinition classDef = dictionaryService.getClass(classQName);
+
+				query += LuceneHelper.exclude(classDef.isAspect() ? LuceneHelper.getCondAspect(classQName) : LuceneHelper.getCondType(classQName));				
+			}
 		}
 
 		return query;
@@ -552,7 +578,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query != null && query.trim().equals(SUFFIX_ALL);
 	}
 
-	boolean isQueryMath(String query, String entityName) {
+	boolean isQueryMatch(String query, String entityName) {
 
 		if (query != null) {
 
@@ -637,7 +663,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		query = prepareQuery(query);
 		
-		queryPath += LuceneHelper.getCondType(datalistType, null);
+		queryPath += LuceneHelper.mandatory(LuceneHelper.getCondType(datalistType));
 		queryPath += LuceneHelper.getCondContainsValue(propertyQName, query, Operator.AND);
 		queryPath += LuceneHelper.getCond(String.format(" +PATH:\"%s/*/*/*\"", nodeService.getPath(entityNodeRef).toPrefixString(namespaceService)), Operator.AND);		
 		

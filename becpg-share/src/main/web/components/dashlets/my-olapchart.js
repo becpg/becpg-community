@@ -7,388 +7,395 @@
  */
 (function() {
 
-	/**
-	 * YUI Chart SWF
-	 */
-	YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "/res/yui/charts/assets/charts.swf";
+   /**
+    * YUI Chart SWF
+    */
+   YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "res/yui/charts/assets/charts.swf";
 
-	/**
-	 * Preferences
-	 */
-	var PREFERENCES_OLAP = "fr.becpg.olap.chart.dashlet", PREF_QUERY = "query", PREF_CHART_TYPE = "chartType";
+   /**
+    * Preferences
+    */
+   var PREFERENCES_OLAP = "fr.becpg.olap.chart.dashlet", PREF_QUERY = "query", PREF_CHART_TYPE = "chartType";
 
-	/**
-	 * Dashboard OlapChart constructor.
-	 * 
-	 * @param {String}
-	 *           htmlId The HTML id of the parent element
-	 * @return {beCPG.component.OlapChart } The new component instance
-	 * @constructor
-	 */
-	beCPG.dashlet.OlapChart = function(fieldHtmlId) {
-		this.id = fieldHtmlId;
+   /**
+    * Dashboard OlapChart constructor.
+    * 
+    * @param {String}
+    *            htmlId The HTML id of the parent element
+    * @return {beCPG.component.OlapChart } The new component instance
+    * @constructor
+    */
+   beCPG.dashlet.OlapChart = function(fieldHtmlId) {
+      this.id = fieldHtmlId;
 
-		beCPG.dashlet.OlapChart.superclass.constructor.call(this, "beCPG.dashlet.OlapChart", fieldHtmlId, [ "button",
-		      "container", "menu", "datasource" ]);
+      beCPG.dashlet.OlapChart.superclass.constructor.call(this, "beCPG.dashlet.OlapChart", fieldHtmlId, [ "button",
+            "container", "menu", "datasource" ]);
 
-		// Initialise prototype properties
-		this.preferencesService = new Alfresco.service.Preferences();
+      // Initialise prototype properties
+      this.preferencesService = new Alfresco.service.Preferences();
 
-	};
+   };
 
-	YAHOO.extend(beCPG.dashlet.OlapChart, Alfresco.component.Base, {
+   YAHOO.extend(beCPG.dashlet.OlapChart, Alfresco.component.Base, {
 
-	   /**
-		 * dataSource
-		 */
-	   dataSource : null,
+      /**
+       * dataSource
+       */
+      dataSource : null,
 
-	   /**
-		 * Object container for initialization options
-		 * 
-		 * @property options
-		 * @type object
-		 */
-	   options : {
+      /**
+       * saiku-ui
+       */
+      saikuUrl : null,
 
-	      /**
-			 * Current siteId.
-			 * 
-			 * @property siteId
-			 * @type string
-			 */
-	      siteId : "",
+      /**
+       * currentUser
+       */
 
-	      /**
-			 * Component region ID.
-			 * 
-			 * @property regionId
-			 * @type string
-			 */
-	      regionId : ""
-	   },
+      saikuUser : null,
 
-	   /**
-		 * 
-		 * @param menuItem
-		 */
-	   onChartSelected : function OlapChart_onChartSelected(menuItem) {
-		   var scope = this;
-		   if (menuItem) {
-			   scope.chartPicker.value = encodeURIComponent(menuItem.value);
-			   scope.preferencesService.set(scope.getPreference(PREF_QUERY), scope.chartPicker.value, {
-				   successCallback : {
-				      fn : scope.onChartClicked(scope),
-				      scope : this
-				   }
-			   });
-		   }
+      /**
+       * Object container for initialization options
+       * 
+       * @property options
+       * @type object
+       */
+      options : {
 
-	   },
+         /**
+          * Current siteId.
+          * 
+          * @property siteId
+          * @type string
+          */
+         siteId : "",
 
-	   /**
-		 * 
-		 * @param ev
-		 */
-	   onChartClicked : function(ev) {
-		   this.loadChartData();
-	   },
-	   /**
-		 * 
-		 * @param menuItem
-		 */
-	   onChartTypeSelected : function OlapChart_onChartSelected(menuItem) {
-		   var scope = this;
-		   if (menuItem) {
-			   scope.chartTypePicker.value = menuItem.value;
-			   scope.preferencesService.set(scope.getPreference(PREF_CHART_TYPE), scope.chartTypePicker.value, {
-				   successCallback : {
-				      fn : scope.render(),
-				      scope : this
-				   }
-			   });
-		   }
-	   },
-	   /**
-		 * 
-		 * @param suffix
-		 * @returns {String}
-		 */
-	   getPreference : function OlapChart_getPreference(suffix) {
-		   var opt = this.options;
-		   return PREFERENCES_OLAP + "." + opt.regionId + (opt.siteId ? ("." + opt.siteId) : "")
-		         + (suffix ? "." + suffix : "");
+         /**
+          * Component region ID.
+          * 
+          * @property regionId
+          * @type string
+          */
+         regionId : ""
+      },
 
-	   },
+      /**
+       * @param menuItem
+       */
+      onChartSelected : function OlapChart_onChartSelected(menuItem) {
+         var scope = this;
+         if (menuItem) {
+            scope.chartPicker.value = encodeURIComponent(menuItem.value);
+            scope.preferencesService.set(scope.getPreference(PREF_QUERY), scope.chartPicker.value, {
+               successCallback : {
+                  fn : scope.onChartClicked(scope),
+                  scope : this
+               }
+            });
+         }
 
-	   /**
-		 * 
-		 * @param ev
-		 */
-	   onChartTypeClicked : function OlapChart_onChartTypeClicked(ev) {
-		   this.render();
-	   },
+      },
 
-	   /**
-		 * @returns {OlapChart_onReady}
-		 */
-	   onReady : function OlapChart_onReady() {
+      /**
+       * @param ev
+       */
+      onChartClicked : function(ev) {
+         this.loadChartData();
+      },
+      /**
+       * @param menuItem
+       */
+      onChartTypeSelected : function OlapChart_onChartSelected(menuItem) {
+         var scope = this;
+         if (menuItem) {
+            scope.chartTypePicker.value = menuItem.value;
+            scope.preferencesService.set(scope.getPreference(PREF_CHART_TYPE), scope.chartTypePicker.value, {
+               successCallback : {
+                  fn : scope.render(),
+                  scope : this
+               }
+            });
+         }
+      },
+      /**
+       * @param suffix
+       * @returns {String}
+       */
+      getPreference : function OlapChart_getPreference(suffix) {
+         var opt = this.options;
+         return PREFERENCES_OLAP + "." + opt.regionId + (opt.siteId ? ("." + opt.siteId) : "") + (suffix ? "." + suffix
+               : "");
 
-		   var me = this;
+      },
 
-		   this.chartPicker = new YAHOO.widget.Button(me.id + "-charPicker-button", {
-		      type : "split",
-		      menu : me.id + "-charPicker-select",
-		      lazyloadmenu : false
-		   });
+      /**
+       * @param ev
+       */
+      onChartTypeClicked : function OlapChart_onChartTypeClicked(ev) {
+         this.render();
+      },
 
-		   this.chartTypePicker = new YAHOO.widget.Button(me.id + "-chartTypePicker-button", {
-		      type : "split",
-		      menu : me.id + "-chartTypePicker-select",
-		      lazyloadmenu : false
-		   });
+      /**
+       * @returns {OlapChart_onReady}
+       */
+      onReady : function OlapChart_onReady() {
 
-		   this.chartPicker.on("click", me.onChartClicked, me, true);
-		   this.chartTypePicker.on("click", me.onChartTypeClicked, me, true);
+         var me = this;
 
-		   this.chartPicker.getMenu().subscribe("click", function(p_sType, p_aArgs) {
-			   var menuItem = p_aArgs[1];
-			   if (menuItem) {
-				   me.chartPicker.set("label", menuItem.cfg.getProperty("text"));
-				   me.onChartSelected.call(me, menuItem);
-			   }
-		   });
+         this.chartPicker = new YAHOO.widget.Button(me.id + "-charPicker-button", {
+            type : "split",
+            menu : me.id + "-charPicker-select",
+            lazyloadmenu : true
+         });
 
-		   this.chartTypePicker.getMenu().subscribe("click", function(p_sType, p_aArgs) {
-			   var menuItem = p_aArgs[1];
-			   if (menuItem) {
-				   me.chartTypePicker.set("label", menuItem.cfg.getProperty("text"));
-				   me.onChartTypeSelected.call(me, menuItem);
-			   }
-		   });
+         this.chartTypePicker = new YAHOO.widget.Button(me.id + "-chartTypePicker-button", {
+            type : "split",
+            menu : me.id + "-chartTypePicker-select",
+            lazyloadmenu : false
+         });
 
-		   Alfresco.util.Ajax.request({
-		      url : Alfresco.constants.PROXY_URI + "becpg/olap/chart",
-		      successCallback : {
-		         fn : me.fillQueries,
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function() {
-			         // DO nothing
-		         },
-		         scope : this
-		      }
-		   });
+         this.chartPicker.on("click", me.onChartClicked, me, true);
+         this.chartTypePicker.on("click", me.onChartTypeClicked, me, true);
 
-	   },
+         this.chartPicker.getMenu().subscribe("click", function(p_sType, p_aArgs) {
+            var menuItem = p_aArgs[1];
+            if (menuItem) {
+               me.chartPicker.set("label", menuItem.cfg.getProperty("text"));
+               me.onChartSelected.call(me, menuItem);
+            }
+         });
 
-	   /**
-		 * 
-		 * @param response
-		 */
-	   fillQueries : function OlapChart_fillQueries(response) {
+         this.chartTypePicker.getMenu().subscribe("click", function(p_sType, p_aArgs) {
+            var menuItem = p_aArgs[1];
+            if (menuItem) {
+               me.chartTypePicker.set("label", menuItem.cfg.getProperty("text"));
+               me.onChartTypeSelected.call(me, menuItem);
+            }
+         });
 
-		   var me = this, json = response.json;
+         Alfresco.util.Ajax.request({
+            url : Alfresco.constants.PROXY_URI + "becpg/olap/chart",
+            successCallback : {
+               fn : me.fillQueries,
+               scope : this
+            },
+            failureCallback : {
+               fn : function() {
+                  // DO nothing
+               },
+               scope : this
+            }
+         });
 
-		   if (json != null) {
-			   var items = [];
-			   var firstQueryId = "";
-			   for (i in json.queries) {
-				   if (i == 0) {
-					   firstQueryId = json.queries[i].queryId;
-				   }
-				   items.push({
-				      text : json.queries[i].queryName,
-				      value : json.queries[i].queryId
-				   });
-			   }
-			   this.chartPicker.getMenu().addItems(items);
-			   this.chartPicker.getMenu().render(document.body);
-			   me.selectMenuValue(me.chartPicker, encodeURIComponent(firstQueryId));
-		   }
+      },
 
-		   // Load preferences to override default filter and range
-		   me.selectMenuValue(me.chartTypePicker, "barChart");
+      /**
+       * @param response
+       */
+      fillQueries : function OlapChart_fillQueries(response) {
 
-		   this.preferencesService.request(me.getPreference(), {
-		      successCallback : {
-		         fn : function(p_oResponse) {
-			         var queryPreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me
-			               .getPreference(PREF_QUERY), null);
-			         if (queryPreference !== null) {
-				         me.selectMenuValue(me.chartPicker, queryPreference);
-			         }
+         var me = this, json = response.json,items = [],firstQueryId = "";
 
-			         var chartTypePreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me
-			               .getPreference(PREF_CHART_TYPE), null);
-			         if (chartTypePreference !== null) {
-				         me.selectMenuValue(me.chartTypePicker, chartTypePreference);
+         if (json !== null) {
+            for (var i in json.queries) {
+               if (i === 0) {
+                  firstQueryId = json.queries[i].queryId;
+               }
+               items.push({
+                  text : json.queries[i].queryName,
+                  value : json.queries[i].queryId
+               });
+            }
+            me.chartPicker.getMenu().addItems(items);
+            me.chartPicker.getMenu().render(document.body);
+            me.selectMenuValue(me.chartPicker, encodeURIComponent(firstQueryId));
 
-			         }
-			         me.loadChartData();
-		         },
-		         scope : this
-		      },
-		      failureCallback : {
-		         fn : function() {
-			         me.loadChartData();
-		         },
-		         scope : this
-		      }
-		   });
+            me.saikuUrl = json.metadata.olapServerUrl;
+            me.saikuUser = json.metadata.currentUserName;
 
-	   },
+         }
 
-	   /**
-		 * 
-		 * @param picker
-		 * @param value
-		 */
-	   selectMenuValue : function OlapChart_selectMenuValue(picker, value) {
-		   picker.value = value;
-		   // set the correct menu label
-		   var menuItems = picker.getMenu().getItems();
-		   for (index in menuItems) {
-			   if (menuItems.hasOwnProperty(index)) {
-				   if (menuItems[index].value === value) {
-					   picker.set("label", menuItems[index].cfg.getProperty("text"));
-					   break;
-				   }
-			   }
-		   }
+         // Load preferences to override default filter and range
+         me.selectMenuValue(me.chartTypePicker, "barChart");
 
-	   },
+         this.preferencesService.request(me.getPreference(), {
+            successCallback : {
+               fn : function(p_oResponse) {
+                  var queryPreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me
+                        .getPreference(PREF_QUERY), null);
+                  if (queryPreference !== null) {
+                     me.selectMenuValue(me.chartPicker, queryPreference);
+                  }
 
-	   /**
-		 * 
-		 */
-	   loadChartData : function OlapChart_loadChartData() {
-		   if (this.chartPicker.value != null && this.chartPicker.value.length > 0) {
-			   Alfresco.util.Ajax.request({
-			      url : Alfresco.constants.PROXY_URI + "becpg/olap/chart?olapQueryId=" + this.chartPicker.value,
-			      successCallback : {
-			         fn : this.processData,
-			         scope : this
-			      },
-			      failureCallback : {
-			         fn : function() {
-				         // DO nothing
-			         },
-			         scope : this
-			      }
-			   });
-		   }
-	   },
-	   /**
-		 * 
-		 * @param response
-		 * @returns {OlapChart_processData}
-		 */
-	   processData : function OlapChart_processData(response) {
+                  var chartTypePreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me
+                        .getPreference(PREF_CHART_TYPE), null);
+                  if (chartTypePreference !== null) {
+                     me.selectMenuValue(me.chartTypePicker, chartTypePreference);
 
-		   this.data = response.json;
+                  }
+                  me.loadChartData();
+               },
+               scope : this
+            },
+            failureCallback : {
+               fn : function() {
+                  me.loadChartData();
+               },
+               scope : this
+            }
+         });
 
-		   var myFieldDefs = [];
-		   this.columnDefs = [];
-		   this.seriesDef = [];
-		   this.barChartSeriesDef = [];
+      },
 
-		   for (i in this.data.metadatas) {
-			   myFieldDefs.push("col" + i);
-			   this.columnDefs.push({
-			      key : "col" + i,
-			      label : this.data.metadatas[i].colName
-			   });
-			   if (i > 0) {
-				   this.seriesDef.push({
-				      displayName : this.data.metadatas[i].colName,
-				      yField : "col" + i
-				   });
-				   this.barChartSeriesDef.push({
-				      displayName : this.data.metadatas[i].colName,
-				      xField : "col" + i
-				   });
-			   }
-		   }
+      /**
+       * @param picker
+       * @param value
+       */
+      selectMenuValue : function OlapChart_selectMenuValue(picker, value) {
+         picker.value = value;
+         // set the correct menu label
+         var menuItems = picker.getMenu().getItems();
+         for (var index in menuItems) {
+            if (menuItems.hasOwnProperty(index)) {
+               if (menuItems[index].value === value) {
+                  picker.set("label", menuItems[index].cfg.getProperty("text"));
+                  break;
+               }
+            }
+         }
 
-		   this.dataSource = new YAHOO.util.DataSource(this.data.resultsets);
-		   this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-		   this.dataSource.responseSchema = {
-			   fields : myFieldDefs
-		   };
+      },
 
-		   this.render();
+      /**
+       * 
+       */
+      loadChartData : function OlapChart_loadChartData() {
+         if (this.chartPicker.value !== null && this.chartPicker.value.length > 0) {
+            Alfresco.util.Ajax.request({
+               url : Alfresco.constants.PROXY_URI + "becpg/olap/chart?olapQueryId=" + this.chartPicker.value,
+               successCallback : {
+                  fn : this.processData,
+                  scope : this
+               },
+               failureCallback : {
+                  fn : function() {
+                     // DO nothing
+                  },
+                  scope : this
+               }
+            });
+         }
+      },
+      /**
+       * @param response
+       * @returns {OlapChart_processData}
+       */
+      processData : function OlapChart_processData(response) {
 
-	   },
-	   /**
-		 * Render OLAP Chart
-		 */
-	   render : function OlapChart_render() {
+         this.data = response.json;
 
-		   if (this.dataSource != null) {
+         var myFieldDefs = [];
+         this.columnDefs = [];
+         this.seriesDef = [];
+         this.barChartSeriesDef = [];
 
-			   if (this.chartTypePicker.value == "lineChart") {
-				   new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource, {
-				      series : this.seriesDef,
-				      xField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "bottom"
-					      }
-				      }
-				   });
+         for (var i in this.data.metadatas) {
+            myFieldDefs.push("col" + i);
+            this.columnDefs.push({
+               key : "col" + i,
+               label : this.data.metadatas[i].colName
+            });
+            if (i > 0) {
+               this.seriesDef.push({
+                  displayName : this.data.metadatas[i].colName,
+                  yField : "col" + i
+               });
+               this.barChartSeriesDef.push({
+                  displayName : this.data.metadatas[i].colName,
+                  xField : "col" + i
+               });
+            }
+         }
 
-			   } else if (this.chartTypePicker.value == "barChart") {
+         this.dataSource = new YAHOO.util.DataSource(this.data.resultsets);
+         this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+         this.dataSource.responseSchema = {
+            fields : myFieldDefs
+         };
 
-				   new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource, {
-				      series : this.barChartSeriesDef,
-				      yField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "bottom"
-					      }
-				      }
-				   });
+         this.render();
 
-			   } else if (this.chartTypePicker.value == "columnChart") {
-				   new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource, {
-				      series : this.seriesDef,
-				      xField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "bottom"
-					      }
-				      }
-				   });
+      },
+      /**
+       * Render OLAP Chart
+       */
+      render : function OlapChart_render() {
 
-			   } else if (this.chartTypePicker.value == "pieChart") {
-				   new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource, {
-				      dataField : "col1",
-				      categoryField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "right"
-					      }
-				      }
-				   });
-			   } else if (this.chartTypePicker.value == "chartData") {
-				   new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
-			   }
-		   }
+         if (this.dataSource !== null) {
 
-	   },
-	   /**
-		 * 
-		 */
-	   openSaikuClick : function OlapChart_openSaikuClick() {
-		   window.open("/saiku-ui");
-	   }
+            if (this.chartTypePicker.value == "lineChart") {
+               new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource, {
+                  series : this.seriesDef,
+                  xField : "col0",
+                  wmode : "opaque",
+                  style : {
+                     legend : {
+                        display : "bottom"
+                     }
+                  }
+               });
 
-	});
+            } else if (this.chartTypePicker.value == "barChart") {
+
+               new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource, {
+                  series : this.barChartSeriesDef,
+                  yField : "col0",
+                  wmode : "opaque",
+                  style : {
+                     legend : {
+                        display : "bottom"
+                     }
+                  }
+               });
+
+            } else if (this.chartTypePicker.value == "columnChart") {
+               new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource, {
+                  series : this.seriesDef,
+                  xField : "col0",
+                  wmode : "opaque",
+                  style : {
+                     legend : {
+                        display : "bottom"
+                     }
+                  }
+               });
+
+            } else if (this.chartTypePicker.value == "pieChart") {
+               new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource, {
+                  dataField : "col1",
+                  categoryField : "col0",
+                  wmode : "opaque",
+                  style : {
+                     legend : {
+                        display : "right"
+                     }
+                  }
+               });
+            } else if (this.chartTypePicker.value == "chartData") {
+               new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
+            }
+         }
+
+      },
+      /**
+       * 
+       */
+      openSaikuClick : function OlapChart_openSaikuClick() {
+         if (this.saikuUrl !== null) {
+            window.open(this.saikuUrl + "?username=" + this.saikuUser);
+         }
+      }
+
+   });
 
 })();

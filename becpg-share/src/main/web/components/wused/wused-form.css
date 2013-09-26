@@ -1,0 +1,18 @@
+.datalist-toolbar div.new-row 
+{
+   display:none;
+}
+
+.wused-form.form-container .object-finder {
+	margin: 0px;
+}
+
+.wused-form.form-container .form-fields  {
+	border: none;
+}
+
+
+.wused-form .yui-ac .ac-body{
+	width:50em;
+	max-width:50em;
+}

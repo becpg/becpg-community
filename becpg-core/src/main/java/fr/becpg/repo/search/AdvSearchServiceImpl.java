@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
@@ -35,11 +35,7 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 @Service
 public class AdvSearchServiceImpl implements AdvSearchService {
 
-	/** The Constant SITES_SPACE_QNAME_PATH. */
-	private static final String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
 
-	/** The Constant PRODUCTS_TO_EXCLUDE. */
-	private static final String PRODUCTS_TO_EXCLUDE = " AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 
@@ -58,6 +54,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private BeCPGSearchService beCPGSearchService;
 
 	private PermissionService permissionService;
+	
+	private HierarchyService hierarchyService;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -77,6 +75,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
+	}
+
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
 	}
 
 	@Override
@@ -110,46 +112,34 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		String ftsQuery = "";
 		// Simple keyword search and tag specific search
 		if (term != null && term.length() != 0) {
-			ftsQuery = "(" + term + ") PATH:\"/cm:taggable/cm:" + ISO9075.encode(term) + "/member\" ";
+			ftsQuery =  term + " ";
 		} else if (tag != null && tag.length() != 0) {
-			ftsQuery = "PATH:\"/cm:taggable/cm:" + ISO9075.encode(tag) + "/member\" ";
+			ftsQuery = "TAG:"+ tag ;
 		}
 
 		// we processed the search terms, so suffix the PATH query
-		String path = null;
+	
+		String pathQuery = "PATH:\"/app:company_home//*\"";
 		if (!isRepo) {
-
-			path = SITES_SPACE_QNAME_PATH;
-			if (siteId != null && siteId.length() > 0) {
-				path += "cm:" + ISO9075.encode(siteId) + "/";
-			} else {
-				path += "*/";
-			}
-			if (containerId != null && containerId.length() > 0) {
-				path += "cm:" + ISO9075.encode(containerId) + "/";
-			} else {
-				path += "*/";
-			}
-
-			if (path != null) {
-				ftsQuery = "PATH:\"" + path + "/*\"" + (ftsQuery.length() != 0 ? " AND " + ftsQuery : "");
-			}
-
-		}
-
-		String typeQuery = "";
+			pathQuery =  LuceneHelper.getSiteSearchPath(siteId, containerId);
+		}	
+		
+		ftsQuery = pathQuery + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
+		
 		if (datatype != null) {
-			typeQuery = "+TYPE:\"" + datatype + "\"";
-		} else {
-			typeQuery = "-TYPE:\"cm:thumbnail\"";
+			ftsQuery = "TYPE:\"" + datatype + "\"" + " AND " + ftsQuery;
 		}
+		
+		ftsQuery += " AND -TYPE:\"cm:thumbnail\" AND -TYPE:\"cm:failedThumbnail\" AND -TYPE:\"cm:rating\" AND -TYPE:\"bcpg:entityListItem\" AND -TYPE:\"systemfolder\" AND -TYPE:\"rep:report\"";
+//		ftsQuery += " TYPE:\"" + BeCPGModel.TYPE_PRODUCT + "\"^4";
+			
 
 		// extract data type for this search - advanced search query is type
 		// specific
-		ftsQuery = typeQuery + (ftsQuery.length() != 0 ? " AND (" + ftsQuery + ")" : "");
-
-		// beCPG : now, exclude always product history
-		ftsQuery += PRODUCTS_TO_EXCLUDE;
+		ftsQuery += " AND -ASPECT:\"ecm:simulationEntityAspect\""
+				    +" AND -ASPECT: \"bcpg:hiddenFolder\""
+				    +" AND -ASPECT:\"bcpg:compositeVersion\""
+				    +" AND -ASPECT:\"bcpg:entityTplAspect\"";
 
 		if(logger.isDebugEnabled()){
 			logger.debug(" build searchQueryByProperties :" +ftsQuery );
@@ -158,6 +148,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return ftsQuery;
 	}
 
+	
 	private boolean isAssocSearch(Map<String, String> criteria) {
 		if (criteria != null) {
 			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
@@ -292,7 +283,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						} else {
 							// pseudo cm:content property - e.g. mimetype, size
 							// or encoding
-							formQuery += operator + "m:content." + propName + ":\"" + propValue + "\"";
+							formQuery += operator + "cm:content." + propName + ":\"" + propValue + "\"";
 						}
 					}
 				}
@@ -313,6 +304,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		List<NodeRef> nodes = null;
 		
 		if(!NodeRef.isNodeRef(hierachyName)){
+			
+			//TODO use HierarchyService, not generic
 			String searchQuery = String.format(
 					RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
 					LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/" + BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)
@@ -324,7 +317,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			nodes =  beCPGSearchService.luceneSearch(searchQuery, -1);
 		}
 		String ret = "";
-		if (nodes != null && nodes.size() > 0) {
+		if (nodes != null && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {
 				ret += " \"" + node.toString() + "\"";
 			}

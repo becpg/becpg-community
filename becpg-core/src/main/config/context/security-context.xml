@@ -4,15 +4,8 @@
 <beans>
     
 
-	<bean id="aclGroupDao" class="fr.becpg.repo.security.impl.ACLGroupDAOImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="associationService" ref="associationService" />
-		<property name="authorityDAO" ref="authorityDAO" />
-	</bean>
 	<bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl" >
-		<property name="aclGroupDao" ref="aclGroupDao" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="authorityService" ref="authorityService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="dictionaryService" ref="dictionaryService"/>
@@ -36,23 +29,13 @@
 	</bean>
     
    	
-   	<!-- Constraints -->
+   	<!-- List Value -->
    	
-   
-	<bean id="dynPropsConstraint" class="fr.becpg.repo.security.constraint.DynPropsConstraint">
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="securityService" ref="securityService"/>
+   <bean id="securityListValuePlugin" parent="baseListValuePlugin"
+		init-method="init" class="fr.becpg.repo.security.listvalue.SecurityListValuePlugin">
+      <property name="serviceRegistry" ref="ServiceRegistry"/>
+
 	</bean>
-   
-   <!-- policy useless
-   
-   <bean id="aclGroupPolicies" class="fr.becpg.repo.security.policy.AclGroupPolicies" init-method="init">
-		<property name="policyComponent" ref="policyComponent" />
-		<property name="dictionaryDAO" ref="dictionaryDAO" />		
-		<property name="threadExecuter" ref="defaultAsyncThreadPool"/>	
-  </bean>
-  
-   -->
    
    <!-- script context -->
    
@@ -67,5 +50,12 @@
             <ref bean="securityService"/>
         </property>
     </bean>
+    
+    <!-- AOP -->
+   <bean class="fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice" id="securityMethodBeforeAdvice">
+     <property name="namespaceService" ref="namespaceService" />
+     <property name="securityService" ref="securityService" />
+   </bean>
    
+ 
 </beans>

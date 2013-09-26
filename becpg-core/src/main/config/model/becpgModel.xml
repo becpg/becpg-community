@@ -8,12 +8,9 @@
 	<!-- Imports are required to allow references to definitions in other models -->
 	<imports>
 		<!-- Import Alfresco Dictionary Definitions -->
-		<import uri="http://www.alfresco.org/model/dictionary/1.0"
-			prefix="d" />
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
-		<import uri="http://www.alfresco.org/model/datalist/1.0"
-			prefix="dl" />
 		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
@@ -40,36 +37,42 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:entityDataListStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>ToValidate</value>
+					<value>Valid</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:productUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
 					<value>kg</value>
+					<value>g</value>
 					<value>L</value>
+					<value>mL</value>
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
+					<value>m3</value>
 					<value>h</value>
 				</list>
 			</parameter>
 		</constraint>
 
-		<constraint name="bcpg:ingType"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
+		<constraint name="bcpg:netWeightUnits" type="LIST">
+			<parameter name="allowedValues">
 				<list>
-					<value>/System/Lists/bcpg:entityLists/IngTypes</value>
+					<value></value>
+					<value>g</value>
+					<value>kg</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>cm:name</value>
-			</parameter>
 		</constraint>
-		<constraint name="bcpg:nutGroup"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+
+		<constraint name="bcpg:nutGroup" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/NutGroups</value>
@@ -82,8 +85,7 @@
 				<value>cm:name</value>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:nutType"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="bcpg:nutType" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/NutTypes</value>
@@ -121,7 +123,7 @@
 					<value>kcal/100g</value>
 					<value>µg/100g</value>
 					<value>IU/100g</value>
-					<value>mcg_DFE/100g</value>					
+					<value>mcg_DFE/100g</value>
 					<value>-/100mL</value>
 					<value>g/100mL</value>
 					<value>mg/100mL</value>
@@ -129,21 +131,50 @@
 					<value>kcal/100mL</value>
 					<value>µg/100mL</value>
 					<value>IU/100mL</value>
-					<value>mcg_DFE/100mL</value>					
+					<value>mcg_DFE/100mL</value>
 				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:nutListMethods" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/NutFactsMethods</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:allergenType" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>Major</value>
-					<value>Minor</value>					
+					<value>Minor</value>
 				</list>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:declarationTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>Declare</value>
+					<value>Detail</value>
+					<value>Group</value>
+					<value>Omit</value>
+					<value>DoNotDeclare</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:lrTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Format</value>
+					<value>Rename</value>
+					<value>Combine</value>
+					<value>Aggregate</value>
+					<value>Render</value>
 					<value>Declare</value>
 					<value>Detail</value>
 					<value>Group</value>
@@ -218,6 +249,12 @@
 					<value>%</value>
 					<value>°C</value>
 					<value>-</value>
+					<value>meqO2/kg</value>
+					<value>g/L</value>
+					<value>mPa.s</value>
+					<value>s</value>
+					<value>min</value>
+					<value>°B</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -244,13 +281,10 @@
 			</parameter>
 		</constraint>
 
-		<!-- <constraint name="bcpg:plant" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> 
-			<parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> 
-			<parameter name="constraintType"> <value>bcpg:plant</value> </parameter> 
-			<parameter name="constraintProp"> <value>cm:name</value> </parameter> </constraint> -->
-		<!-- <constraint name="bcpg:plant" type="LIST"> <parameter name="allowedValues"> 
-			<list> <value>Formulation</value> <value>Site A</value> <value>Site B</value> 
-			<value>Site C</value> <value></value> </list> </parameter> </constraint> -->
+		<!-- <constraint name="bcpg:plant" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> <parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> <parameter name="constraintType"> 
+			<value>bcpg:plant</value> </parameter> <parameter name="constraintProp"> <value>cm:name</value> </parameter> </constraint> -->
+		<!-- <constraint name="bcpg:plant" type="LIST"> <parameter name="allowedValues"> <list> <value>Formulation</value> <value>Site A</value> <value>Site B</value> <value>Site C</value> <value></value> </list> 
+			</parameter> </constraint> -->
 		<constraint name="bcpg:packagingListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -258,21 +292,19 @@
 					<value>PP</value>
 					<value>m</value>
 					<value>m2</value>
+					<value>kg</value>
+					<value>g</value>
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:packagingLevel"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
+		<constraint name="bcpg:packagingLevel" type="LIST">
+			<parameter name="allowedValues">
 				<list>
-					<value>/System/Lists/bcpg:entityLists/PackagingLevels</value>
+					<value></value>
+					<value>Primary</value>
+					<value>Secondary</value>
+					<value>Tertiary</value>
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>cm:name</value>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:reqTypes" type="LIST">
@@ -294,13 +326,42 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:labelClaimTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Nutritionnelle</value>
+					<value>Santé</value>
+					<value>Environnementale</value>
+					<value>Certification</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:dynamicCharactColumns" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>bcpg_dynamicCharactColumn1</value>
+					<value>bcpg_dynamicCharactColumn2</value>
+					<value>bcpg_dynamicCharactColumn3</value>
+					<value>bcpg_dynamicCharactColumn4</value>
+					<value>bcpg_dynamicCharactColumn5</value>
+					<value>bcpg_dynamicCharactColumn6</value>
+					<value>bcpg_dynamicCharactColumn7</value>
+					<value>bcpg_dynamicCharactColumn8</value>
+					<value>bcpg_dynamicCharactColumn9</value>
+					<value>bcpg_dynamicCharactColumn10</value>
+				</list>
+			</parameter>
+		</constraint>
+
 	</constraints>
 
 	<types>
 		<!-- _________________________________________________ PRODUCTS________________________________________________ -->
 
 		<type name="bcpg:productSpecification">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
@@ -308,7 +369,7 @@
 		</type>
 
 		<type name="bcpg:productMicrobioCriteria">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:pmcRegulation">
 					<type>d:text</type>
@@ -324,14 +385,15 @@
 		</type>
 
 		<type name="bcpg:product">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:productAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>rep:reportEntityAspect</aspect>
-			</mandatory-aspects>			
+			</mandatory-aspects>
 		</type>
 		<type name="bcpg:finishedProduct">
 			<parent>bcpg:product</parent>
@@ -379,8 +441,7 @@
 				<aspect>bcpg:suppliersAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		<!-- ________________________________________________________________ CARACTERISTIQUES 
-			________________________________________________________________ -->
+		<!-- ________________________________________________________________ CARACTERISTIQUES ________________________________________________________________ -->
 
 
 		<type name="bcpg:charact">
@@ -438,9 +499,20 @@
 				</property>
 				<property name="bcpg:costFixed">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
 				</property>
 			</properties>
 		</type>
+		
+		<type name="bcpg:ingTypeItem">
+			<parent>bcpg:listValue</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:legalNameAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
 
 		<type name="bcpg:ing">
 			<parent>bcpg:charact</parent>
@@ -448,12 +520,14 @@
 				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
 				</property>
+			  <property name="bcpg:ingTypeV2">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+				</property>
+				<!-- deprecated -->
 				<property name="bcpg:ingType">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="bcpg:ingType" />
-					</constraints>
+					<mandatory>false</mandatory>
 				</property>
 			</properties>
 		</type>
@@ -541,7 +615,7 @@
 		</type>
 		<!-- ______________________________________ FOURNISSEUR ______________________________________ -->
 		<type name="bcpg:supplier">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:supplierTel">
 					<type>d:text</type>
@@ -557,11 +631,12 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<!-- ______________________________________ CLIENT ______________________________________ -->
 		<type name="bcpg:client">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:clientTel">
 					<type>d:text</type>
@@ -574,6 +649,7 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<!-- ______________________________________ PLANT ______________________________________ -->
@@ -629,10 +705,6 @@
 			<parent>bcpg:entityListItem</parent>
 		</type>
 
-		<!-- Entity Charact View -->
-
-
-
 		<!-- _______________________________________ COMPO ________________________________________________ -->
 		<type name="bcpg:compoList">
 			<parent>bcpg:productListItem</parent>
@@ -640,22 +712,23 @@
 				<property name="bcpg:compoListQty">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:compoListQtySubFormula">
 					<type>d:double</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
+				<!-- @Deprecated - TODO : patch -->
 				<property name="bcpg:compoListQtyAfterProcess">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:compoListUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:compoListUnit" />
 					</constraints>
@@ -663,19 +736,25 @@
 				<property name="bcpg:compoListLossPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:compoListYieldPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:compoListDeclType">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
+				</property>
+				<property name="bcpg:compoListOverrunPerc">
+					<type>d:double</type>
+				</property>
+				<property name="bcpg:compoListVolume">
+					<type>d:double</type>
 				</property>
 			</properties>
 			<associations>
@@ -704,26 +783,33 @@
 				<property name="bcpg:packagingListQty">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:packagingListUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:packagingListUnit" />
 					</constraints>
 				</property>
+				<property name="bcpg:packagingListLossPerc">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:packagingListPkgLevel">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:packagingLevel" />
 					</constraints>
 				</property>
 				<property name="bcpg:packagingListIsMaster">
 					<type>d:boolean</type>
-					<index enabled="false"/>					
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -744,15 +830,14 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- ________________________________________________________________ LISTES 
-			DE CARACT. ________________________________________________________________ -->
+		<!-- ________________________________________________________________ LISTES DE CARACT. ________________________________________________________________ -->
 
 		<type name="bcpg:entityListItem">
 			<parent>cm:content</parent>
 		</type>
 
 		<type name="bcpg:productListItem">
-			<parent>bcpg:entityListItem</parent>bcpg:effectivityAspect
+			<parent>bcpg:entityListItem</parent>
 		</type>
 
 		<type name="bcpg:allergenList">
@@ -767,6 +852,11 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+				</property>
+				<property name="bcpg:allergenListDecisionTree">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -787,7 +877,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:content</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -798,7 +888,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:content</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -815,12 +905,12 @@
 				<property name="bcpg:costListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:costListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
@@ -828,7 +918,7 @@
 				<property name="bcpg:costListMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -849,19 +939,19 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- TODO : remove it -->
+		<!-- @Deprecated -->
 		<type name="bcpg:costDetailsList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:costDetailsListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:costDetailsListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
@@ -869,7 +959,7 @@
 				<property name="bcpg:costDetailsListPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -890,7 +980,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:content</class>
+						<class>bcpg:product</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
@@ -907,12 +997,12 @@
 				<property name="bcpg:priceListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:priceListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
@@ -920,12 +1010,12 @@
 				<property name="bcpg:priceListPurchaseQty">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:priceListPurchaseUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
@@ -933,7 +1023,7 @@
 				<property name="bcpg:priceListPrefRank">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -962,7 +1052,13 @@
 				<property name="bcpg:illValue">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:illManualValue">
+					<title>Etiquette retravaillée</title>
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -972,12 +1068,60 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>bcpg:labelingRuleList</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
 			</associations>
+		</type>
+
+		<type name="bcpg:labelingRuleList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:lrFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lrErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lrType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:lrTypes" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:lrComponents">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:cmobject</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:lrReplacements">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:cmobject</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:ingList">
@@ -986,19 +1130,25 @@
 				<property name="bcpg:ingListQtyPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListIsGMO">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="false"/>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListIsProcessingAid">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -1014,6 +1164,17 @@
 					</target>
 				</association>
 				<association name="bcpg:ingListGeoOrigin">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:ingListGeoTransfo">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
@@ -1058,11 +1219,11 @@
 				<property name="bcpg:mblValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:mblUnit">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:microbioUnit" />
 					</constraints>
@@ -1070,11 +1231,11 @@
 				<property name="bcpg:mblMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:mblTextCriteria">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -1101,12 +1262,12 @@
 				<property name="bcpg:nutListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>					
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nutListUnit" />
 					</constraints>
@@ -1114,19 +1275,26 @@
 				<property name="bcpg:nutListMini">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
+					</constraints>
+				</property>
+				<property name="bcpg:nutListMethod">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
 				</property>
 			</properties>
@@ -1154,7 +1322,7 @@
 				<property name="bcpg:organoListValue">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -1181,11 +1349,11 @@
 				<property name="bcpg:pclValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:pclUnit">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:physicoChemUnit" />
 					</constraints>
@@ -1193,12 +1361,12 @@
 				<property name="bcpg:pclMini">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:pclMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -1226,7 +1394,7 @@
 				<property name="bcpg:filReqType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -1234,17 +1402,17 @@
 				<property name="bcpg:filReqMessage">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:filIsGMO">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nullableBoolean" />
 					</constraints>
@@ -1252,7 +1420,7 @@
 				<property name="bcpg:filIsIonized">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nullableBoolean" />
 					</constraints>
@@ -1305,7 +1473,7 @@
 				<property name="bcpg:rclReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -1313,7 +1481,7 @@
 				<property name="bcpg:rclReqMessage">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -1342,51 +1510,92 @@
 					<title>First Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListLastName">
 					<title>Last Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListEmail">
 					<title>Email Address</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListJobTitle">
 					<title>Job Title</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListPhoneOffice">
 					<title>Phone (Office)</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListPhoneMobile">
 					<title>Phone (Mobile)</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListFax">
 					<title>Fax</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:contactListNotes">
 					<title>Notes</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 			</properties>
+		</type>
+
+		<!-- Data List - labelClaimList -->
+		<type name="bcpg:labelClaimList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:lclType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:labelClaimTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:lclIsClaimed">
+					<type>d:boolean</type>
+					<default>true</default>
+				</property>
+				<property name="bcpg:lclIsFormulated">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="bcpg:lclFormulaErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:lclLabelClaim">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:labelClaim</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<!-- Dynamic charact list -->
@@ -1401,11 +1610,21 @@
 				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:dynamicCharactValue">
 					<type>d:any</type>
-					<index enabled="false"/>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:dynamicCharactColumns" />
+					</constraints>
 				</property>
 				<property name="bcpg:dynamicCharactGroupColor">
 					<type>d:text</type>
@@ -1416,8 +1635,7 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		<!-- ________________________________________________________________ AUTO 
-			COMP ________________________________________________________________ -->
+		<!-- ________________________________________________________________ AUTO COMP ________________________________________________________________ -->
 
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
@@ -1441,8 +1659,9 @@
 			</mandatory-aspects>
 		</type>
 
+		<!-- Deprecated -->
 		<type name="bcpg:entityFolder">
-			<parent>cm:folder</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:entityFolderClassName">
 					<type>d:qname</type>
@@ -1456,7 +1675,9 @@
 				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
+		<!-- end deprecated -->
+
 		<type name="bcpg:entityV2">
 			<parent>cm:folder</parent>
 			<mandatory-aspects>
@@ -1465,7 +1686,7 @@
 		</type>
 
 		<type name="bcpg:systemEntity">
-			<parent>cm:content</parent>
+			<parent>bcpg:entityV2</parent>
 		</type>
 
 		<type name="bcpg:autoNum">
@@ -1487,6 +1708,38 @@
 					</constraints>
 				</property>
 			</properties>
+		</type>
+
+		<type name="bcpg:labelClaim">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:labelClaimType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:labelClaimTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:labelClaimFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</type>
+		<type name="bcpg:variant">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:isDefaultVariant">
+					<type>d:boolean</type>
+				</property>
+			</properties>
+		</type>
+
+		<type name="bcpg:storageConditions">
+			<parent>bcpg:entityListItem</parent>
+		</type>
+
+		<type name="bcpg:precautionOfUse">
+			<parent>bcpg:entityListItem</parent>
 		</type>
 
 	</types>
@@ -1523,6 +1776,10 @@
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
+				<property name="bcpg:productQty">
+					<type>d:double</type>
+					<mandatory>true</mandatory>
+				</property>
 				<property name="bcpg:productUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -1538,20 +1795,15 @@
 				</property>
 				<property name="bcpg:productDensity">
 					<type>d:double</type>
-					<mandatory>true</mandatory>
-					<default>1</default>
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:transformationAspect">
 			<properties>
-				<property name="bcpg:productQty">
-					<type>d:double</type>
-					<mandatory>true</mandatory>
-				</property>
 			</properties>
 			<associations>
+				<!-- @Deprecated -->
 				<association name="bcpg:productSpecification">
 					<source>
 						<mandatory>false</mandatory>
@@ -1561,6 +1813,17 @@
 						<class>bcpg:productSpecification</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:productSpecifications">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productSpecification</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
 					</target>
 				</association>
 			</associations>
@@ -1617,7 +1880,64 @@
 				<property name="bcpg:useByDate">
 					<type>d:int</type>
 				</property>
+				<property name="bcpg:bestBeforeDate">
+					<type>d:int</type>
+				</property>
+				<property name="bcpg:periodAfterOpening">
+					<type>d:int</type>
+				</property>
+				<property name="bcpg:netWeight">
+					<type>d:double</type>
+				</property>
+				<property name="bcpg:netWeightUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>kg</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:netWeightUnits" />
+					</constraints>
+				</property>
+				<property name="bcpg:numberOfServings">
+					<type>d:int</type>
+				</property>
+				<property name="bcpg:preparationTips">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:packagingDescription">
+					<type>d:mltext</type>
+				</property>
 			</properties>
+			<associations>
+				<association name="bcpg:storageConditions">
+					<title>Conditions de conservation</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:storageConditions</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:precautionOfUse">
+					<title>Précautions d’emploi</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:precautionOfUse</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:suppliersAspect">
@@ -1705,6 +2025,32 @@
 				</property>
 			</properties>
 		</aspect>
+		<!-- Variants -->
+		<aspect name="bcpg:entityVariantAspect">
+			<associations>
+				<child-association name="bcpg:variants">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:variant</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</child-association>
+			</associations>
+		</aspect>
+
+		<aspect name="bcpg:entityListVariantAspect">
+			<properties>
+				<property name="bcpg:variantIds">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:codeAspect">
 			<properties>
@@ -1761,8 +2107,7 @@
 			</properties>
 		</aspect>
 
-		<!-- Aspect used to store the entity type of the template (entityFolderTpl, 
-			entityTpl, etc...) -->
+		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
 		<aspect name="bcpg:entityTplAspect">
 			<properties>
 				<property name="bcpg:entityTplClassName">
@@ -1773,9 +2118,28 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
 				</property>
+				<property name="bcpg:entityTplIsDefault">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
 			</properties>
 		</aspect>
 
+		<aspect name="bcpg:entityTplRefAspect">
+			<associations>
+				<association name="bcpg:entityTplRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
 
 		<aspect name="bcpg:entityListsAspect">
 			<associations>
@@ -1793,7 +2157,21 @@
 				</child-association>
 			</associations>
 		</aspect>
-		
+
+		<aspect name="bcpg:entityDataListStateAspect">
+			<properties>
+				<property name="bcpg:entityDataListState">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<constraints>
+						<constraint ref="bcpg:entityDataListStates"></constraint>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
+
+
 		<aspect name="bcpg:hiddenFolder">
 		</aspect>
 
@@ -1828,14 +2206,10 @@
 		</aspect>
 
 		<!-- versionable with datalists -->
+		<!-- @Deprecated -->
 		<aspect name="bcpg:compositeVersionable">
 			<title>Versionable with datalists</title>
 			<properties>
-				<property name="bcpg:versionLabel">
-					<title>Version Label</title>
-					<type>d:text</type>
-					<protected>true</protected>
-				</property>
 				<property name="bcpg:initialVersion">
 					<title>Initial Version</title>
 					<type>d:boolean</type>
@@ -1849,6 +2223,11 @@
 			<title>Versionable with datalists</title>
 			<properties>
 				<property name="bcpg:versionDescription">
+					<title>Version Label</title>
+					<type>d:text</type>
+					<protected>true</protected>
+				</property>
+				<property name="bcpg:versionLabel">
 					<title>Version Label</title>
 					<type>d:text</type>
 					<protected>true</protected>
@@ -1974,10 +2353,20 @@
 			</properties>
 		</aspect>
 
+		<aspect name="bcpg:certificateDateAspect">
+			<properties>
+				<property name="bcpg:certificateDate">
+					<type>d:date</type>
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="bcpg:isDeletedAspect">
 			<properties>
 				<property name="bcpg:isDeleted">
 					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
 				</property>
 			</properties>
 		</aspect>
@@ -1987,6 +2376,73 @@
 				<property name="bcpg:color">
 					<type>d:text</type>
 					<default>000000</default>
+				</property>
+			</properties>
+		</aspect>
+
+
+		<aspect name="bcpg:systemFolderAspect">
+
+		</aspect>
+
+
+		<aspect name="bcpg:dynamicCharactColumnsAspect">
+			<properties>
+				<property name="bcpg:dynamicCharactColumn1">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn2">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn3">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn4">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn5">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn6">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn7">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn8">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn9">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:dynamicCharactColumn10">
+					<type>d:any</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- ALF-8143 -->
+		<!-- @Deprecated -->
+		<aspect name="bcpg:entityVersionable">
+			<title>Entity Versionable</title>
+			<!-- comment parent, otherwise when cm:versionable is removed when we remove bcpg:entityVersionable -->
+			<!-- <parent>cm:versionable</parent> <overrides> <property name="cm:autoVersion"> <default>false</default> </property> </overrides> -->
+		</aspect>
+
+		<aspect name="bcpg:instructionAspect">
+			<properties>
+				<property name="bcpg:instruction">
+					<type>d:text</type>
 				</property>
 			</properties>
 		</aspect>

@@ -1,0 +1,34 @@
+
+
+.datalist-toolbar  .create-nc span.first-child
+{
+   background: url("../images/workflow-16.png") no-repeat scroll 12px 4px transparent;
+   padding-left: 22px;
+}
+
+.datalist-toolbar div.new-row 
+{
+   display:none;
+}
+
+.datagrid table a.folder-link {
+	cursor: pointer;
+	padding-left: 24px;
+	text-decoration: none;
+	background: url("../images/folder-up-16.png") no-repeat;
+	display: inline-block;
+	height: 16px;
+}
+
+.datagrid span.nc.Claim {
+	background:
+		url(../../components/images/new-group-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.yui-dialog .yui-g .form-field input[type="text"], 
+.yui-dialog .form-container .yui-g .form-field select {
+	width: 27em;
+}
+

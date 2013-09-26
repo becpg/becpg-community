@@ -3,15 +3,18 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
@@ -51,6 +54,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 	private EntitySystemService entitySystemService;
 	
+	private AbstractAuthenticationService authenticationService;
+	
 	public void setEntitySystemService(EntitySystemService entitySystemService) {
 		this.entitySystemService = entitySystemService;
 	}
@@ -75,6 +80,10 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		this.repository = repository;
 	}
 
+	public void setAuthenticationService(AbstractAuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
+	}
+
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 		logger.debug("start admin webscript");
@@ -82,17 +91,21 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		String action = templateArgs.get(PARAM_ACTION);
 		Map<String, Object> ret = new HashMap<String, Object>();
-		ret.put("status", "SUCCESS");
+		
 
 		// Check arg
 		if (action == null || action.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
+		
+		// #378 : force to use server locale 
+		I18NUtil.setLocale(Locale.getDefault());
 
 		if (action.equals(ACTION_INIT_REPO)) {
 			logger.debug("Init repository");
 			initRepoVisitor.visitContainer(repository.getCompanyHome());
 		} else if (action.equals(ACTION_RELOAD_CACHE)) {
+			beCPGCacheService.printCacheInfos();
 			logger.debug("Delete all cache");
 			beCPGCacheService.clearAllCaches();
 		} else if (action.equals(ACTION_RELOAD_ACL)) {
@@ -103,18 +116,34 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			dictionaryDAO.reset();
 		} else if (action.equals(ACTION_GET_SYSTEM_ENTITIES)) {
 			logger.debug("Get system entities");
-			List<NodeRef> refs = entitySystemService.getSystemEntities();
-			if(logger.isDebugEnabled()){
-				logger.debug("System entities size:"+refs.size());
-			}
-			
-			ret.put("items", refs);
+			ret.put("systemEntities", entitySystemService.getSystemEntities());
+			ret.put("systemFolders", entitySystemService.getSystemFolders());
 		} else {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 		}
 
+		
+		//Add status
+		
+		ret.put("status", "SUCCESS");
+		
+		//Add system infos
+		
+		MemoryMXBean memoryMXBean=ManagementFactory.getMemoryMXBean();
+		
+		Runtime runtime = Runtime.getRuntime();
+		
+		ret.put("totalMemory", runtime.totalMemory()/ 1000000d);
+		ret.put("freeMemory", runtime.freeMemory()/ 1000000d);
+		ret.put("maxMemory", runtime.maxMemory()/ 1000000d);
+		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed()/ 1000000d);
+		ret.put("connectedUsers", authenticationService.getUsersWithTickets(true).size());
+		
+		
+		
 		return ret;
 
 	}
+	
 
 }

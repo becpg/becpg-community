@@ -22,7 +22,7 @@ public interface RepoService {
 	 * @param paths the paths
 	 * @return the node ref
 	 */
-	public NodeRef createFolderByPaths(NodeRef parentNodeRef, List<String> paths);
+	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths);
 	
 	/**
 	 * Creates the folder by path.
@@ -32,7 +32,7 @@ public interface RepoService {
 	 * @param name the name
 	 * @return the node ref
 	 */
-	public NodeRef createFolderByPath(NodeRef parentNodeRef, String path, String name);
+	public NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name);
 		
 	/**
 	 * Get the folder by path

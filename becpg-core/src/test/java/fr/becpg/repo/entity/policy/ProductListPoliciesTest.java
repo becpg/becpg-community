@@ -47,7 +47,7 @@ public class ProductListPoliciesTest extends RepoBaseTestCase {
 
 				RawMaterialData rawMaterialData = new RawMaterialData();
 				rawMaterialData.setName("RM");
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterialData, null);
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterialData).getNodeRef();
 
 				NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 

@@ -40,6 +40,23 @@
    padding: 0 0 0 24px;
 }
 
+.datalists li a.Valid
+{
+	background: url(../images/states/valid-10.png), url(../images/list-16.png) ;
+	background-repeat:  no-repeat;
+	background-position: 7px 3px, 4px 0;
+	padding-left: 24px;
+}
+
+.datalists li a.WUsed
+{
+    background-image: url("../images/create-rule-16.png"), url("../images/list-16.png");
+    background-position: 6px 3px, 4px 0;
+    background-repeat: no-repeat;
+    background-size: 12px 12px, auto auto;
+    padding-left: 24px;
+}
+
 .datalists li a.filter-link-editable-list
 {
    background: url(images/list-edit-16.png) no-repeat 4px 0;
@@ -83,6 +100,24 @@
    margin-left: -10px;
 }
 
+#alf-hd .node-header {
+    border-bottom: 1px solid #CCCCCC;
+    clear: left;
+    margin: 0 -10px;
+    min-height: 1em;
+    padding: ;
+}
+
+#alf-hd  .node-header .node-path {
+	 padding: 5px 0 6px;
+	 margin-left: -10px;
+}
+
+
+#alf-hd  .node-header .status-banner {
+    margin-top: 0;
+}
+
 .form-container .form-fields
 {
    border-bottom: medium none;
@@ -107,6 +142,9 @@
    min-height: 44px;
    padding: 4px 0 4px 44px;
 }
+
+
+
 
 
 

@@ -3,22 +3,29 @@
 	<config evaluator="string-compare" condition="Edition" replace="true">
 		<!-- footer logo and copyright text -->
 		<footer>
-			<logo>alfresco-share-logo.png</logo>
-			<alt-text>Alfresco Share</alt-text>
+			<logo>becpg-footer-logo.png</logo>
+			<alt-text>beCPG for Alfresco Share</alt-text>
 			<css-class>footer-becpg</css-class>
-			<label>beCPG @2010-2012</label>
-			<analytics-id>UA-33644643-1</analytics-id>
+			<label>beCPG @2010-2013</label>
 		</footer>
 		<about>
 			<css-class>logo-com</css-class>
 		</about>
 	</config>
+	
+	<config evaluator="string-compare" condition="Analytics" >
+		<provider>
+			<provider-id>none</provider-id>
+	   <!-- 	<provider-id>google</provider-id>
+			<analytics-id>UA-33644643-1</analytics-id>  -->
+		</provider>
+	</config> 
+	
 
 	<!-- Global config section -->
 	<config replace="true">
-
+	
 		<header>
-
 			<app-items>
 				<!-- defaults: icon="{id}.png" label="header.{id}.label" description="header.{id}.description" -->
 				<item type="link" id="my-dashboard">{userdashboardpage}</item>
@@ -27,12 +34,13 @@
 				<item type="link" id="repository" condition="conditionRepositoryRootNode">/repository</item>
 				<item type="container" id="more">
 					<container-group id="my">
-						<item type="link" id="my-tasks">/my-tasks</item>
-						<item type="link" id="my-workflows">/my-workflows</item>
+						<item type="link" id="my-tasks">/my-tasks#filter=workflows|active</item>
+						<item type="link" id="my-workflows">/my-workflows#filter=workflows|active</item>
 						<item type="link" id="my-content">/user/user-content</item>
 						<item type="link" id="my-sites">/user/user-sites</item>
-						<item type="link" id="my-profile">{userprofilepage}</item>
-						<item type="link" id="project-list">/project-list</item>
+					<!-- 	<item type="link" id="my-profile">{userprofilepage}</item> -->
+						<item type="link" id="project-list">/project-list#filter=projects|InProgress</item>
+						<item type="link" id="nc-list">/nc-list#filter=ncs|Claim</item>
 					</container-group>
 					<container-group id="tools" permission="admin">
 						<item type="link" id="application">/console/admin-console/application
@@ -43,9 +51,8 @@
 						<item type="link" id="repository">/console/admin-console/repository</item>
 						<item type="link" id="trashcan">/console/admin-console/trashcan</item>
 						<item type="link" id="users">/console/admin-console/users</item>
+						<item type="link" id="becpg-admin">/console/admin-console/becpg-admin</item>
 						<item type="link" id="model-designer">/model-designer</item>
-						<item type="link" id="becpg-admin">/console/admin-console/becpg-admin
-						</item>
 						<item type="link" id="more">/console/admin-console/</item>
 					</container-group>
 				</item>
@@ -69,15 +76,32 @@
 				<js src="/modules/header/sites.js" />
 			</dependencies>
 		</header>
+
 	</config>
 
 
-   <config evaluator="string-compare" condition="HelpPages" replace="true">
-      <help-pages>
-         <share-help>http://becpg.fr/google/support</share-help>
-         <share-tutorial>http://becpg.fr/documentation/starting-kit</share-tutorial>
-      </help-pages>
+	<config evaluator="string-compare" condition="HelpPages"
+		replace="true">
+		<help-pages>
+			<share-help>http://becpg.fr/google/support</share-help>
+			<share-tutorial>http://becpg.fr/documentation/starting-kit
+			</share-tutorial>
+		</help-pages>
+	</config>
+  
+  <config evaluator="string-compare" condition="SitePages">
+      <pages>
+         <page id="calendar">calendar</page>
+         <page id="wiki-page">wiki-page?title=Main_Page</page>
+         <page id="documentlibrary">documentlibrary</page>
+         <page id="discussions-topiclist">discussions-topiclist</page>
+         <page id="blog-postlist">blog-postlist</page>
+         <page id="links">links</page>
+         <page id="data-lists">data-lists</page>
+         <page id="project-list">project-list#filter=projects|InProgress</page>
+      </pages>
    </config>
+
 
 
 	<config evaluator="string-compare" condition="Workflow">
@@ -95,16 +119,18 @@
 			<workflow name="activiti$activitiInvitationNominated" />
 			<workflow name="activiti$activitiReviewPooled" />
 			<workflow name="activiti$activitiParallelGroupReview" />
-			<workflow name="activiti$activitiParallelReview" />
+<!-- 			<workflow name="activiti$activitiParallelReview" /> -->
 			<workflow name="activiti$activitiAdhoc" />
-			<workflow name="activiti$activitiReview" />		
-			<workflow name="activiti$projectAdhoc"/>
-			<workflow name="activiti$projectNewProduct"/>
-			<workflow name="jbpm$wf:adhoc" /> 
-			<workflow name="jbpm$wf:reviewpooled"	/> 
-			<workflow name="jbpm$wf:parallelgroupreview" /> 
-			<workflow name="jbpm$wf:review"/> 
+			<workflow name="activiti$activitiReview" />
+			<workflow name="activiti$projectAdhoc" />
+			<workflow name="activiti$projectNewProduct" />
+			<workflow name="jbpm$wf:adhoc" />
+			<workflow name="jbpm$wf:reviewpooled" />
+			<workflow name="jbpm$wf:parallelgroupreview" />
+			<workflow name="jbpm$wf:review" />
 			<workflow name="jbpm$wf:parallelreview" />
+			<workflow name="jbpm$bcpgwf:productValidationWF" />
+			<workflow name="jbpm$npdwf:newProductDevelopmentWF" />			
 		</hidden-workflows>
 	</config>
 
@@ -114,8 +140,7 @@
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
 			<itemType name="bcpg:finishedProduct" />
-			<itemType name="bcpg:finishedProduct" label="NPD" formId="bulk-edit-npd"
-				editSelectedFormId="bulk-edit-npd" />
+			<itemType name="pjt:project" />
 			<!-- <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
 			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
 			<!-- <itemType name="bcpg:allergenList" /> -->
@@ -124,10 +149,13 @@
 
 			<itemType name="bcpg:rawMaterial" />
 			<itemType name="bcpg:packagingMaterial" />
+			<itemType name="bcpg:packagingKit" />
 			<itemType name="bcpg:resourceProduct" />
 
 			<itemType name="bcpg:supplier" />
 			<itemType name="bcpg:client" />
+
+			<itemType name="cm:content" />
 
 			<itemType name="ext1:customType" />
 		</itemTypes>

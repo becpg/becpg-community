@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-  <classpathentry kind="src" path="src/main/config" output="target/classes/alfresco/module/alfresco-share-patch/config" excluding="**README-*|**/*.properties|**/*.java"/>
-  <classpathentry kind="src" path="src/main/web" output="target/classes/alfresco/module/alfresco-share-patch/web" excluding="**README-*|**/*.java"/>
-  <classpathentry kind="src" path="." output="target/alfresco-share-patch-1.4.0" including="file-mapping.properties" excluding="**/*.java"/>
-  <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-</classpath>

@@ -3,21 +3,19 @@
  */
 package fr.becpg.repo.workflow.activiti.project;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateExecution;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,10 +25,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.ProductService;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 
 /**
  * Create the product based on data
@@ -46,17 +44,12 @@ public class CreateProduct extends BaseJavaDelegate {
 	/** The node service. */
 	private NodeService nodeService;
 
-	/** The file folder service. */
-	private FileFolderService fileFolderService;
-
-	private ProductDAO productDAO;
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	/** The product DAO */
 	private EntityService entityService;
 
 	private ProductService productService;
-	
-	private BehaviourFilter policyBehaviourFilter;
 
 	private RepoService repoService;
 
@@ -65,12 +58,8 @@ public class CreateProduct extends BaseJavaDelegate {
 		this.nodeService = nodeService;
 	}
 
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
-	public void setProductDAO(ProductDAO productDAO) {
-		this.productDAO = productDAO;
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public void setEntityService(EntityService entityService) {
@@ -79,10 +68,6 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	public void setRepoService(RepoService repoService) {
@@ -98,17 +83,13 @@ public class CreateProduct extends BaseJavaDelegate {
 			@Override
 			public Object doWork() throws Exception {
 				try {
-
-					QName entityType = BeCPGModel.TYPE_FINISHEDPRODUCT;
 				
 					NodeRef projectNodeRef = null;
 					
-					List<FileInfo> files = fileFolderService.listFolders(pkgNodeRef);
-					for (FileInfo file : files) {
-						logger.error("List : "+file.getName());
-						if ( nodeService.getType(file.getNodeRef()).equals(ProjectModel.TYPE_PROJECT)) {
-							logger.error("Found project : "+file.getName());
-							projectNodeRef = file.getNodeRef();
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+					for (ChildAssociationRef childAssoc : childAssocs) {
+						if ( nodeService.getType(childAssoc.getChildRef()).equals(ProjectModel.TYPE_PROJECT)) {
+							projectNodeRef = childAssoc.getChildRef();
 							break;
 						}
 					}
@@ -146,20 +127,20 @@ public class CreateProduct extends BaseJavaDelegate {
 
 					NodeRef productNodeRef = null;
 					
-					try{
-						//disable classify
-						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
+//					try{
+//						//disable classify
+//						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
 						
 						
-						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, entityType,
+						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, nodeService.getType(sourceNodeRef),
 								repoService.getAvailableName(projectNodeRef, entityName));
 						
 						// change state: ToValidate
 						nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
-					}
-					finally{
-						policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
-					}					
+//					}
+//					finally{
+//						policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
+//					}					
 
 	
 					// Copy datalist
@@ -191,9 +172,9 @@ public class CreateProduct extends BaseJavaDelegate {
 					nodeService.createAssociation(projectNodeRef, productNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
 					
 					NodeRef projectTask = ((ActivitiScriptNode) task.getVariable("pjt_workflowTask")).getNodeRef();
-					nodeService.setProperty(projectTask, ProjectModel.PROP_TL_STATE, "Completed");
-					
-					
+					if(nodeService.exists(projectTask)){
+						nodeService.setProperty(projectTask, ProjectModel.PROP_TL_STATE, "Completed");
+					}
 					
 				} catch (Exception e) {
 					logger.error("Failed to create product", e);
@@ -209,20 +190,18 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void copyDataList(NodeRef productNodeRef, NodeRef sourceNodeRef, QName typeCompolist) {
 	
-	    Collection<QName> dataLists = new ArrayList<QName>();
-		 dataLists.add(typeCompolist);
-		 ProductData productData  = productDAO.find(productNodeRef, dataLists);
-		 ProductData sourceData = productDAO.find(sourceNodeRef, dataLists);
+		 ProductData productData  = alfrescoRepository.findOne(productNodeRef);
+		 ProductData sourceData = alfrescoRepository.findOne(sourceNodeRef);
 		 if (typeCompolist.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
- 			productData.setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
+ 			productData.getPackagingListView().setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
  		 }
 		 else if (typeCompolist.equals(BeCPGModel.TYPE_COMPOLIST)) {
- 			productData.setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
+ 			productData.getCompoListView().setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
  		 }
-		 
-		 productDAO.update(productNodeRef, productData, dataLists);
+		 alfrescoRepository.save(productData);
 
 	}
 

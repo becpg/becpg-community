@@ -1,90 +1,171 @@
-
-.yui-g.formulation .yui-u {
-    width: 49.5%;
+/**
+ Yui 
+**/
+.formulation-view  .yui-g .yui-u {
+	width: 49.5%;
 }
 
-.datagrid .scrollableList
-{
-   padding: 0;
-   height: 260px;
+.formulation-view  .yui-skin-default .yui-button {
+	margin: 0px;
 }
 
-.datagrid {
-	 padding:0px;
+/**
+ Dashlet
+**/
+.formulation-view  .datagrid .scrollableList {
+	padding: 0;
+	height: 260px;
 }
 
-.datagrid.dashlet {
-	   margin: 10px 0;
+.formulation-view  .datagrid {
+	padding: 0px;
 }
 
-.dashlet.datagrid  .toolbar {
-    min-height: 28px;
-    padding: 2px 0px 1px;
+.formulation-view  .dashlet {
+	margin: 10px 0;
 }
 
-
-.datagrid .datagrid-bar {
-    margin: 0px;
-    padding: 0x;
+.formulation-view  .dashlet  .toolbar {
+	height: 28px;
+	margin: 0px;
+	padding: 0x;
 }
 
 /**
  Bar
 */
-
-.datagrid .datagrid-bar .item-select
-{
-   float: inherit;
-   width: inherit;
+.formulation-view  .datagrid .datagrid-bar .item-select {
+	float: inherit;
+	width: inherit;
 }
 
-.datagrid .datagrid-bar .paginator
-{
-   float: inherit;
-   width: inherit;
+.formulation-view  .datagrid .datagrid-bar .paginator {
+	float: inherit;
+	width: inherit;
 }
 
-
-.datagrid-bar .left,
-.datagrid-bar .left div
-{
-   float: left;
+.formulation-view  .datagrid-bar .left,.datagrid-bar .left div {
+	float: left;
 }
 
-.datagrid-bar .right
-{
-   float: right;
+.formulation-view  .datagrid-bar .right {
+	float: right;
 }
 
-
-.datagrid-bar .new-row span.first-child
-{
-   background: url(../images/add-row-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
+.formulation-view  .datagrid-bar .new-row span.first-child {
+	background: url(../images/add-row-16.png) no-repeat 12px 4px;
+	padding-left: 24px;
 }
 
-
-.datagrid-bar  .onActionBulkEdit
-{
-   background: transparent url(../images/edit-inline-16.png) no-repeat 12px 4px;
-   padding-left: 22px; 
+.formulation-view  .datagrid-bar  .onActionBulkEdit {
+	background: transparent url(../images/edit-inline-16.png) no-repeat 12px
+		4px;
+	padding-left: 22px;
 }
 
-/* DataGrid bar */
+.datagrid-bar .onAddLabelingAspect, .datagrid .onAddLabelingAspect a
+	{
+	background: transparent url(../images/tag-16.png) no-repeat 12px 4px;
+	padding-left: 22px;
+}
 
-.datagrid .datagrid-bar-bottom
-{
-   display: none;
-   visibility: hidden;
+.datagrid .labeling-aspect {
+	background: url("../images/tag-16.png") no-repeat scroll 0 0 transparent;
+   padding-left: 14px;
 }
 
 /* Hide New Item */
-
 .constraintsList .datagrid .datagrid-bar .new-row {
-	display:none;
+	display: none;
 }
 
-.yui-skin-default .yui-button {
-	margin:0px;
+/** Full screen mode */
+.full-screen .sticky-footer,.full-screen  .sticky-push {
+	height: 0px;
 }
 
+/** Full screen form */
+div#full-screen-form {
+	border: 1px solid #CCCCCC;
+	box-shadow: 0 1px 2px #CCCCCC;
+	height: 50px;
+	margin-top: 6px;
+	padding: 6px;
+	border-radius: 4px;
+}
+
+#full-screen-form  div.form-fields {
+	float: left;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#full-screen-form  div.form-field {
+	float: left;
+	margin: 0px;
+	padding: 2px;
+}
+
+#full-screen-form  .clear {
+	height: 0px;
+}
+
+#full-screen-form   .yui-ac .ac-body {
+	min-height: 18px;
+}
+
+#full-screen-form form {
+	display: table;
+	margin: 0 15px;
+}
+
+#full-screen-form .help-icon {
+	display: none;
+}
+
+#full-screen-form  .yui-ac .ac-body {
+	width: 15em;
+	max-width: 15em;
+}
+
+#full-screen-form .ac-toogle {
+	height: 18px;
+}
+
+.yui-skin-lightTheme #full-screen-form   .yui-ac-container,#full-screen-form  .yui-ac-container
+	{
+	width: 35em;
+}
+
+#full-screen-form .yui-ac .ac-body .yui-ac-input {
+	width: 85%;
+}
+
+#full-screen-form .set {
+	padding: 0px;
+}
+
+#full-screen-form .form-buttons {
+	float: left;
+	margin-top: 10px;
+	padding: 10px;
+	height: 25px;
+}
+
+#full-screen-form span.yui-push-button {
+	display: none;
+}
+
+#full-screen-form  .yui-submit-button span.first-child {
+	background: url("../images/add-row-16.png") no-repeat scroll 12px 4px
+		transparent;
+	padding-left: 24px;
+}
+
+#full-screen-form  form .mandatory,#full-screen-form  .form-fields .mandatory,#full-screen-form  .form-fields input.mandatory[type="text"],#full-screen-form  .form-fields .input.mandatory input[type="text"],#full-screen-form  .form-fields .input .mandatory input[type="text"]
+	{
+	background-color: transparent;
+}

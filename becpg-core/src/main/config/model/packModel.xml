@@ -12,11 +12,107 @@
 			prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</imports>
 	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/pack/1.0" prefix="pack" />
 	</namespaces>
+	
+	 <constraints>
+		 <constraint name="pack:tareUnits" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>g</value>
+                    <value>kg</value>
+                    <value>g/m2</value>
+                </list>
+            </parameter>
+            <parameter name="caseSensitive">
+                <value>true</value>
+            </parameter>
+        </constraint>
+        <constraint name="pack:labelingPositions"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/LabelingPositions</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		<constraint name="pack:labelTypes"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/LabelTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+     </constraints>		
+     
+     <types>
+     	<type name="pack:labelingTemplate">
+			<parent>bcpg:entityListItem</parent>
+		</type>
+		
+		<type name="pack:label">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pack:labelType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
+		
+		<type name="pack:labelingList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="pack:llType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelTypes" />
+					</constraints>
+				</property>
+				<property name="pack:llPosition">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelingPositions" />
+					</constraints>
+				</property>				
+			</properties>
+			<associations>
+				<association name="pack:llLabel">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pack:label</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+     </types>
 
 	<aspects>
 		<!-- pallet -->
@@ -60,8 +156,7 @@
 		<!-- pallet -->
 		<aspect name="pack:palletAspect">
 			<title>Palettisation</title>
-			<properties>
-									
+			<properties>							
 				<property name="pack:palletLayers">
 					<title>Nombre de couches / palette</title>
 					<type>d:int</type>
@@ -70,15 +165,97 @@
 					<title>Nombre d'emb / couche</title>
 					<type>d:int</type>
 				</property>
+				<property name="pack:palletBoxesPerLastLayer">
+					<title>Nombre d'emb / dernière couche</title>
+					<type>d:int</type>
+				</property>
 				<property name="pack:palletBoxesPerPallet">
 					<title>Nombre d'emb / palette</title>
 					<type>d:int</type>
 				</property>
-				<property name="pack:palletDimensions">
+				<property name="pack:palletHeight">
+					<title>Hauteur pallette (mm)</title>
+					<type>d:int</type>
+				</property>
+				
+				<!-- <property name="pack:palletDimensions">
 					<title>Dimensions palette (mm)</title>
 					<type>d:text</type>
-				</property>
+				</property> -->
+				
 			</properties>			
 		</aspect>
+		
+		 <aspect name="pack:tareAspect">
+            <title>Emballage - Tare</title>
+            <properties>
+                <property name="pack:tare">
+                    <title>Tare</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                </property>
+                <property name="pack:tareUnit">
+                    <title>Unité de tare</title>
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <default>g</default>
+                    <constraints>
+                        <constraint ref="pack:tareUnits"/>
+                    </constraints>
+                </property>
+            </properties>
+            <associations/>
+            <overrides/>
+            <mandatory-aspects/>
+        </aspect>
+        
+        
+        <aspect name="pack:sizeAspect">
+            <title>Emballage - Dimensions</title>
+            <properties>
+                <property name="pack:length">
+                    <title>Longueur extérieur (mm)</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                </property>
+                <property name="pack:width">
+                    <title>Largeur extérieur (mm)</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                </property>
+                <property name="pack:height">
+                    <title>Hauteur extérieur (mm)</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                </property>
+            </properties>
+        </aspect>
+        
+        <aspect name="pack:labelingAspect">
+			<properties>			
+				<property name="pack:labelingPosition">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pack:labelingPositions" />
+					</constraints>					
+				</property>
+			</properties>
+			<associations>			
+				<association name="pack:labelingTemplate">
+					<title>Marquage</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pack:labelingTemplate</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+			</associations>
+		</aspect>
+        
+		
 	</aspects>
 </model>

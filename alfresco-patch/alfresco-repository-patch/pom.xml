@@ -5,61 +5,36 @@
 	<parent>
 		<groupId>fr.becpg</groupId>
 		<artifactId>alfresco-patch</artifactId>
-		<version>1.4.0</version>
+		<version>1.5.2</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>alfresco-repository</artifactId>
 	<version>${alfresco.version}</version>
-	<name>alfresco-patch-repository</name>
+	<name>alfresco-repository-patch</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<!-- alfresco -->
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>alfresco-sdk</artifactId>
-			<version>${alfresco.version}</version>
-			<type>pom</type>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.alfresco.sdk</groupId>
-					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.alfresco.sdk</groupId>
-			<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-			<version>${alfresco.version}</version>
-			<classifier>community</classifier>
-		</dependency>
-		
-		<!-- Servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-		
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
+		 <dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-repository</artifactId>
+            <version>${alfresco.version}</version>
+            <exclusions>
+			        <exclusion>
+			            <groupId>*</groupId>
+			            <artifactId>*</artifactId>
+			        </exclusion>
+			    </exclusions>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.5</version>
+				<version>2.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -67,42 +42,27 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<!-- <finalName>alfresco-repository-${alfresco.version}</finalName> 
-								<shadedArtifactAttached>true</shadedArtifactAttached> -->
-							<!-- <shadedArtifactId>alfresco-repository</shadedArtifactId> -->
+						  <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
+		              <shadedArtifactAttached>false</shadedArtifactAttached>
+		              <createDependencyReducedPom>false</createDependencyReducedPom>
 							<artifactSet>
 								<includes>
-									<include>org.alfresco.sdk:alfresco-repository-${alfresco.version}</include>
+									<include>org.alfresco:alfresco-repository</include>
 								</includes>
 							</artifactSet>
 							<filters>
 								<filter>
-									<artifact>org.alfresco.sdk:*</artifact>
+									<artifact>org.alfresco:alfresco-repository</artifact>
 									<excludes>																	
-										<exclude>org/alfresco/repo/forms/processor/node/ContentModelFormProcessor**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/AbstractAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/AddAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/AddChildAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/RemoveAssocCommand**</exclude>
-										<exclude>org/alfresco/repo/forms/processor/node/RemoveChildAssocCommand**</exclude>									
-										<exclude>org/alfresco/repo/invitation/InviteHelper**</exclude>
-										<exclude>org/alfresco/repo/jscript/ScriptNode**</exclude>
-										<exclude>org/alfresco/repo/model/Repository**</exclude>
-										<exclude>org/alfresco/repo/node/db/DbNodeServiceImpl**</exclude>
-										<exclude>org/alfresco/repo/thumbnail/ThumbnailRegistry**</exclude>
-										<exclude>org/alfresco/repo/workflow/jbpm/JBPMEngine**</exclude>
-										<exclude>org/alfresco/repo/security/authentication/AbstractChainingAuthenticationService**</exclude>
-										<exclude>org/alfresco/repo/security/authentication/RepositoryAuthenticationDao**</exclude>																				
-										<exclude>org/alfresco/repo/security/authority/AuthorityDAOImpl**</exclude>
-										<exclude>org/alfresco/repo/workflow/activiti/ActivitiWorkflowEngine**</exclude>
+										<exclude>org/alfresco/repo/forms/processor/node/TypeFormProcessor**</exclude>
+										<exclude>org/alfresco/repo/thumbnail/ThumbnailServiceImpl**</exclude>
+										<exclude>org/alfresco/repo/domain/node/AbstractNodeDAOImpl**</exclude>
+										<exclude>org/alfresco/repo/tagging/UpdateTagScopesActionExecuter**</exclude>
+										
+										<exclude>org/alfresco/repo/service/cmr/workflow/LazyActivitiWorkflowTask**</exclude>
+										<exclude>org/alfresco/repo/workflow/WorkflowObjectFactory**</exclude>
 										<exclude>org/alfresco/repo/workflow/activiti/ActivitiTypeConverter**</exclude>
-										<exclude>org/alfresco/repo/search/impl/lucene/index/IndexInfo**</exclude>
-										<exclude>org/alfresco/repo/search/impl/lucene/index/ReferenceCounting**</exclude>
-										<exclude>org/alfresco/repo/search/impl/lucene/index/ReferenceCountingReadOnlyIndexReaderFactory**</exclude>
-										<exclude>org/alfresco/repo/search/impl/lucene/AVMLuceneIndexerImpl**</exclude>
-										<exclude>org/alfresco/repo/search/impl/lucene/LuceneAlfrescoLuceneQueryLanguage**</exclude>
-										<exclude>org/alfresco/repo/audit/AuditMethodInterceptor**</exclude>
-										<exclude>org/alfresco/repo/management/subsystems/ChildApplicationContextFactory**</exclude>
+										<exclude>org/alfresco/repo/workflow/activiti/ActivitiWorkflowEngine**</exclude>
 									</excludes>
 								</filter>
 							</filters>

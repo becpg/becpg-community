@@ -3,33 +3,11 @@
  */
 package fr.becpg.repo.product.data;
 
-import fr.becpg.repo.product.ProductVisitor;
-import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
 
-// TODO: Auto-generated Javadoc
-/**
- * Class that represents a finished product.
- *
- * @author querephi
- */
-public class FinishedProductData extends ProductData implements ProductElement {
-
-
-	/**
-	 * Instantiates a new finished product data.
-	 */
-	public FinishedProductData(){
-				
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ProductData#accept(fr.becpg.repo.product.ProductVisitor)
-	 */
-	@Override
-	public void accept(ProductVisitor productVisitor) throws FormulateException {
-		
-		
-		productVisitor.visit(this);		
-	}
+@AlfType
+@AlfQname(qname = "bcpg:finishedProduct")
+public class FinishedProductData extends ProductData {
 
 }

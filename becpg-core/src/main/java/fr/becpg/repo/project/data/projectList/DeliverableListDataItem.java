@@ -1,16 +1,12 @@
 package fr.becpg.repo.project.data.projectList;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
-import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.data.DataItem;
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Deliverable list of project
@@ -18,23 +14,18 @@ import fr.becpg.repo.product.data.BaseObject;
  * @author quere
  * 
  */
-public class DeliverableListDataItem extends BaseObject implements DataItem {
+@AlfType
+@AlfQname(qname = "pjt:deliverableList")
+public class DeliverableListDataItem extends BeCPGDataObject {
 
-	private NodeRef nodeRef;
 	private NodeRef task;
 	private DeliverableState state = DeliverableState.Planned;
 	private String description;
 	private Integer completionPercent = 0;
 	private NodeRef content;
 
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:dlTask")
 	public NodeRef getTask() {
 		return task;
 	}
@@ -43,14 +34,19 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		this.task = task;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:dlState")
 	public DeliverableState getState() {
 		return state;
 	}
-
+	
+	
 	public void setState(DeliverableState state) {
 		this.state = state;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:dlDescription")
 	public String getDescription() {
 		return description;
 	}
@@ -59,6 +55,8 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		this.description = description;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:completionPercent")
 	public Integer getCompletionPercent() {
 		return completionPercent;
 	}
@@ -67,6 +65,8 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		this.completionPercent = completionPercent;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:dlContent")
 	public NodeRef getContent() {
 		return content;
 	}
@@ -75,11 +75,18 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		this.content = content;
 	}
 
-	public DeliverableListDataItem(NodeRef nodeRef, NodeRef task, DeliverableState state, String description, Integer completionPercent, NodeRef content) {
+	public DeliverableListDataItem() {
 		super();
+	}
+
+	public DeliverableListDataItem(NodeRef nodeRef, String name) {
+		super(nodeRef, name);
+	}
+
+	public DeliverableListDataItem(NodeRef nodeRef, NodeRef task, DeliverableState state, String description, Integer completionPercent, NodeRef content) {
 		this.nodeRef = nodeRef;
 		this.task = task;
-		this.state = state;
+		this.state = state!=null ? state : DeliverableState.Planned;
 		this.description = description;
 		this.completionPercent = completionPercent;
 		this.content = content;
@@ -92,33 +99,7 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 		this.state = d.getState();
 		this.description = d.getDescription();
 		this.completionPercent = d.getCompletionPercent();
-		this.content = d.content;
-	}
-
-	@Override
-	public Map<QName, Serializable> getProperties() {
-
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ProjectModel.PROP_DL_STATE, state);
-		properties.put(ProjectModel.PROP_DL_DESCRIPTION, description);
-		properties.put(ProjectModel.PROP_COMPLETION_PERCENT, completionPercent);
-		return properties;
-	}
-
-	@Override
-	public Map<QName, NodeRef> getSingleAssociations() {
-
-		Map<QName, NodeRef> associations = new HashMap<QName, NodeRef>();
-		associations.put(ProjectModel.ASSOC_DL_TASK, task);
-		associations.put(ProjectModel.ASSOC_DL_CONTENT, content);
-		return associations;
-	}
-
-	@Override
-	public Map<QName, List<NodeRef>> getMultipleAssociations() {
-
-		Map<QName, List<NodeRef>> associations = new HashMap<QName, List<NodeRef>>();
-		return associations;
+		this.content = d.getContent();
 	}
 
 	@Override
@@ -169,7 +150,6 @@ public class DeliverableListDataItem extends BaseObject implements DataItem {
 
 	@Override
 	public String toString() {
-		return "DeliverableListDataItem [nodeRef=" + nodeRef + ", task=" + task + ", state=" + state
-				+ ", description=" + description + ", content=" + content + "]";
+		return "DeliverableListDataItem [nodeRef=" + nodeRef + ", task=" + task + ", state=" + state + ", description=" + description + ", content=" + content + "]";
 	}
 }

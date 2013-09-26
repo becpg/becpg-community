@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -15,16 +20,20 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -37,73 +46,62 @@ import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
 @Service
-public class EntityReportServiceImpl implements EntityReportService{
+public class EntityReportServiceImpl implements EntityReportService {
 
-	
 	private static final String DEFAULT_EXTRACTOR = "default";
+	private static final String REPORT_NAME = "%s - %s";
 
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
-	
-	/** The node service. */
+
 	private NodeService nodeService;
-	
-	/** The content service. */
+
 	private ContentService contentService;
-	
-	/** The file folder service. */
-	private FileFolderService fileFolderService;		
-	
-	private ReportTplService reportTplService;
-	
-	private BeCPGReportEngine beCPGReportEngine;
-	
-	private MimetypeService mimetypeService;
-	
+
+	private FileFolderService fileFolderService;
+
 	private BehaviourFilter policyBehaviourFilter;
+
+	private ReportTplService reportTplService;
+
+	private BeCPGReportEngine beCPGReportEngine;
+
+	private MimetypeService mimetypeService;
+
+	private AssociationService associationService;
+
+	private PermissionService permissionService;
 	
-	private Map<String, EntityReportExtractor>  entityExtractors = new HashMap<String, EntityReportExtractor>();
+	private TransactionService transactionService;
 	
+	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
+
 
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
-		logger.debug("Register report extractor :"+typeName+" - "+extractor.getClass().getSimpleName());
+		logger.debug("Register report extractor :" + typeName + " - " + extractor.getClass().getSimpleName());
 		entityExtractors.put(typeName, extractor);
 	}
-			
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
+	
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
-	/**
-	 * Sets the content service.
-	 *
-	 * @param contentService the new content service
-	 */
+
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
-	
-	
-	
-	
+
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
-	/**
-	 * Sets the file folder service.
-	 *
-	 * @param fileFolderService the new file folder service
-	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}
-		
+
 	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
 		this.beCPGReportEngine = beCPGReportEngine;
 	}
@@ -112,229 +110,275 @@ public class EntityReportServiceImpl implements EntityReportService{
 		this.reportTplService = reportTplService;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	@Override
-	public void generateReport(NodeRef entityNodeRef) {
-		
-		try{
-    		// Ensure that the policy doesn't refire for this node
-			// on this thread
-			// This won't prevent background processes from
-			// refiring, though
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-            policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-     
-            /*
-             *  generate reports
-             */
-            
-            List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);			
-    		//TODO here plug a template filter base on entityNodeRef
-    		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);		
-    	
-    		if(!tplsNodeRef.isEmpty()){
-    			StopWatch watch = null;
-    			if (logger.isDebugEnabled()) {
-    				watch = new StopWatch();
-    				watch.start();
-    			}
-    	
-    			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
-    			
-    			generateReports(entityNodeRef, tplsNodeRef, reportData.getXmlDataSource() , reportData.getDataObjects());	
-    			if (logger.isDebugEnabled()) {
-    				watch.stop();
-    				logger.debug( "Reports generated in  "
-    						+ watch.getTotalTimeSeconds() + " seconds");
-    			}
-        	}
-    		else{
-    			logger.debug("No report tpls found");
-    		}
-            
-        	// set reportNodeGenerated property to now
-	        nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());
-        }
-        finally{
-        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);		
-        	policyBehaviourFilter.enableBehaviour(entityNodeRef,  ContentModel.ASPECT_AUDITABLE);
-        	policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-        }		
+	public void generateReport(final NodeRef entityNodeRef) {
+
+		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+			@Override
+			public Object doWork() throws Exception {
+				RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+					@Override
+					public Object execute() {
+						try {
+
+							policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+							policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+							}
+
+							if (nodeService.exists(entityNodeRef)) {
+								generateReportImpl(entityNodeRef);
+							}
+
+						} finally {
+							policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+							policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+						}
+						return null;
+					}
+				};
+				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
+			}
+		};
+		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+
 	}
-	
+
+	private void generateReportImpl(NodeRef entityNodeRef) {
+
+		// #366 : force to use server locale for mlText fields
+		I18NUtil.setLocale(Locale.getDefault());
+
+		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
+		// TODO here plug a template filter base on entityNodeRef
+		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
+		EntityReportData reportData = null;
+
+		if (!tplsNodeRef.isEmpty()) {
+			StopWatch watch = null;
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+
+			reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
+
+			generateReports(entityNodeRef, tplsNodeRef, reportData.getXmlDataSource(), reportData.getDataObjects());
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
+			}
+		} else {
+			logger.debug("No report tpls found, delete existing ones");
+			updateReportsAssoc(entityNodeRef, new ArrayList<NodeRef>());
+		}
+
+		// set reportNodeGenerated property to now
+		nodeService.setProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED, Calendar.getInstance().getTime());
+	}
+
 	@Override
-	public String getXmlReportDataSource(NodeRef entityNodeRef){
+	public String getXmlReportDataSource(NodeRef entityNodeRef) {
 		EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
-		
+
 		return reportData.getXmlDataSource().asXML();
 	}
-	
-	
-	
+
 	private EntityReportExtractor retrieveExtractor(NodeRef entityNodeRef) {
 		QName type = nodeService.getType(entityNodeRef);
-		
+
 		EntityReportExtractor ret = entityExtractors.get(type.getLocalName());
-		if(ret==null){
-			logger.debug("extractor :"+type.getLocalName()+ " not found returning "+DEFAULT_EXTRACTOR);
+		if (ret == null) {
+			logger.debug("extractor :" + type.getLocalName() + " not found returning " + DEFAULT_EXTRACTOR);
 			ret = entityExtractors.get(DEFAULT_EXTRACTOR);
 		}
 
 		return ret;
 	}
 
-	/**
-	 * Get the node where the document will we stored.
-	 *
-	 * @param nodeRef the node ref
-	 * @param tplNodeRef the tpl node ref
-	 * @return the document content writer
-	 */
-	public ContentWriter getDocumentContentWriter(NodeRef nodeRef, NodeRef tplNodeRef){
-		
-		ContentWriter contentWriter = null;
-		
-		if((Boolean)nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)){
-			contentWriter = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat) {
+
+		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
+				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null) {
+			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
-		else{
-			// the doc will be stored in the documents folder of the node			
-			NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-			
-			if(nodeService.getType(parentNodeRef).isMatch(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			
-				String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
-				NodeRef documentsFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);		
-				if(documentsFolderNodeRef == null){
-					
-					documentsFolderNodeRef = fileFolderService.create(parentNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
-				}
-				
-				String documentName = (String)nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME);
-				NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
-				if(documentNodeRef == null){
-					
-					documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ContentModel.TYPE_CONTENT).getNodeRef();
-				}
-				
-				contentWriter = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
-			}
-			else{
-				logger.debug("The node does not have a entityFolder so we cannot store doc in the folder 'Documents'.");
-			}			
-		}
-		
-		return contentWriter;
+		return documentName;
 	}
 
-		
+	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName) {
+
+		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
+		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
+		if (documentsFolderNodeRef == null) {
+			logger.warn("No folder: " + documentsFolderName + " found ");
+			return null;
+			// documentsFolderNodeRef = fileFolderService.create(entityNodeRef,
+			// documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+		}
+
+		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
+		if (documentNodeRef == null) {
+			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
+			// We don't update permissions. If permissions are modified -> admin
+			// should use the action update-permissions from the reportTpl
+			setPermissions(tplNodeRef, documentNodeRef);
+			associationService.update(documentNodeRef, ReportModel.ASSOC_REPORT_TPL, tplNodeRef);
+		}
+
+		return documentNodeRef;
+	}
 
 	/**
 	 * Method that generates reports.
-	 *
-	 * @param nodeRef the node ref
-	 * @param tplsNodeRef the tpls node ref
-	 * @param nodeElt the node elt
-	 * @param images the images
+	 * 
+	 * @param entityNodeRef
+	 *            the node ref
+	 * @param tplsNodeRef
+	 *            the tpls node ref
+	 * @param nodeElt
+	 *            the node elt
+	 * @param images
+	 *            the images
 	 */
-	public void generateReports(NodeRef nodeRef, List<NodeRef> tplsNodeRef, Element nodeElt, Map<String, byte[]> images) {
-		
-		if(nodeRef == null){
+	public void generateReports(final NodeRef entityNodeRef, List<NodeRef> tplsNodeRef, final Element nodeElt, final Map<String, byte[]> images) {
+
+		if (entityNodeRef == null) {
 			throw new IllegalArgumentException("nodeRef is null");
 		}
-		
-		if(tplsNodeRef.isEmpty()){
+
+		if (tplsNodeRef.isEmpty()) {
 			throw new IllegalArgumentException("tplsNodeRef is empty");
 		}
-		
-		if(nodeElt == null){
-			throw new IllegalArgumentException("nodeElt is null");
-		}		
-		
-		// calculate the visible datalists
-	//	NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-	//	List<QName> existingLists = entityListDAO.getExistingListsQName(listContainerNodeRef);		
-		
+
+		List<NodeRef> newReports = new ArrayList<NodeRef>();
+
 		// generate reports
-		for(NodeRef tplNodeRef : tplsNodeRef){        			
+		for (final NodeRef tplNodeRef : tplsNodeRef) {
 
-			//prepare
-			try{	
-				
-				//Run report		
-				ContentWriter writer = getDocumentContentWriter(nodeRef, tplNodeRef);
-						
-				if(writer != null){
-					String mimetype = mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF);
-					writer.setMimetype(mimetype);
-					Map<String,Object> params = new HashMap<String, Object>();
-
-					params.put(ReportParams.PARAM_IMAGES,images);
-					params.put(ReportParams.PARAM_FORMAT,ReportFormat.PDF);
-					
-					
-//					// hide all datalists and display visible ones
-//					for(Object key : paramTask.getDefaultValues().keySet()){
-//						if(((String)key).endsWith(PARAM_VALUE_HIDE_CHAPTER_SUFFIX)){
-//							params.put((String)key, Boolean.TRUE);
-//						}
-//					}							
-////					
-//					for(QName existingList : existingLists){
-//						params.put(existingList.getLocalName() + PARAM_VALUE_HIDE_CHAPTER_SUFFIX, Boolean.FALSE);
-//					}
-					
-					beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params );
-				 
-					
-					
-				}  				
+			if (nodeElt == null) {
+				throw new IllegalArgumentException("nodeElt is null");
 			}
-			catch(ReportException e){
-				logger.error("Failed to execute report for template : "+ tplNodeRef,  e);
-			} 
+
+			// prepare
+			String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+			String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
+
+			NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+			if (documentNodeRef != null) {
+				// Run report
+				try {
+					ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+
+					if (writer != null) {
+						String mimetype = mimetypeService.guessMimetype(documentName);
+						writer.setMimetype(mimetype);
+						Map<String, Object> params = new HashMap<String, Object>();
+
+						params.put(ReportParams.PARAM_IMAGES, images);
+						params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+
+						logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+						beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
+
+					}
+				} catch (ReportException e) {
+					logger.error("Failed to execute report for template : " + tplNodeRef, e);
+				}
+
+				// Set Assoc
+				newReports.add(documentNodeRef);
+			}
 		}
+
+		updateReportsAssoc(entityNodeRef, newReports);
 	}
-	
-	
-	
+
+	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
+
+		// #417 : refresh reports assoc (delete obsolete reports if we rename
+		// entity)
+		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
+		for (NodeRef dbReport : dbReports) {
+			if (!newReports.contains(dbReport)) {
+				logger.debug("delete old report: " + dbReport);
+				nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
+				nodeService.deleteNode(dbReport);
+			}
+		}
+		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
+	}
+
 	/**
 	 * Get the report templates to generate.
-	 *
-	 * @param nodeRef the product node ref
+	 * 
+	 * @param nodeRef
+	 *            the product node ref
 	 * @return the report tpls to generate
 	 */
 	public List<NodeRef> getReportTplsToGenerate(NodeRef nodeRef) {
-		
+
 		List<NodeRef> tplsToReturnNodeRef = new ArrayList<NodeRef>();
-		
+
 		// system reports
 		QName nodeType = nodeService.getType(nodeRef);
-		List<NodeRef> tplsNodeRef = reportTplService.getSystemReportTemplates(ReportType.Document, nodeType);										
-		
-		for(NodeRef tplNodeRef : tplsNodeRef){			
-			
+		List<NodeRef> tplsNodeRef = reportTplService.getSystemReportTemplates(ReportType.Document, nodeType);
+
+		for (NodeRef tplNodeRef : tplsNodeRef) {
+
 			tplsToReturnNodeRef.add(tplNodeRef);
 		}
-		
+
 		// selected user reports
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORT_TEMPLATES);
-		
-		for(AssociationRef assocRef : assocRefs){
-			
-			NodeRef tplNodeRef = assocRef.getTargetRef();			
+
+		for (AssociationRef assocRef : assocRefs) {
+
+			NodeRef tplNodeRef = assocRef.getTargetRef();
 			tplsToReturnNodeRef.add(tplNodeRef);
-		}		
-		
-		return tplsToReturnNodeRef;		
+		}
+
+		return tplsToReturnNodeRef;
 	}
-	
-	
 
+	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef) {
 
-	
+		Set<AccessPermission> tplAccessPermissions = permissionService.getAllSetPermissions(tplNodeRef);
+		permissionService.deletePermissions(documentNodeRef);
+		boolean inheritParentPermissions = true;
+
+		if (!tplAccessPermissions.isEmpty()) {
+			logger.debug("set permissions size " + tplAccessPermissions.size());
+			if (logger.isDebugEnabled()) {
+				for (AccessPermission a : tplAccessPermissions) {
+					logger.debug("Authority: " + a.getAuthority() + " status " + a.getAccessStatus() + " " + a.getPermission());
+				}
+			}
+			for (AccessPermission tplAccessPermission : tplAccessPermissions) {
+				if (!tplAccessPermission.isInherited()) {
+					permissionService.setPermission(documentNodeRef, tplAccessPermission.getAuthority(), tplAccessPermission.getPermission(), true);
+					inheritParentPermissions = false;
+				}
+			}
+		}
+
+		permissionService.setInheritParentPermissions(documentNodeRef, inheritParentPermissions);
+	}
 }

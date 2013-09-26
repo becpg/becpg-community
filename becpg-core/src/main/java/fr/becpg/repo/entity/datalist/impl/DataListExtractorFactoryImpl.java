@@ -1,8 +1,10 @@
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -11,38 +13,30 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
 
-	SimpleExtractor simpleExtractor;
-	
-	MultiLevelExtractor multiLevelExtractor;
-	
-	WUsedExtractor wUsedExtractor;
+	DataListExtractor defaultExtractor;
 	
 	
-	public void setSimpleExtractor(SimpleExtractor simpleExtractor) {
-		this.simpleExtractor = simpleExtractor;
-	}
-
-
-	public void setMultiLevelExtractor(MultiLevelExtractor multiLevelExtractor) {
-		this.multiLevelExtractor = multiLevelExtractor;
-	}
-
-
-	public void setwUsedExtractor(WUsedExtractor wUsedExtractor) {
-		this.wUsedExtractor = wUsedExtractor;
+	List<DataListExtractor> extractors = new ArrayList<>();
+	
+	@Override
+	public void registerExtractor(DataListExtractor extractor){
+		if(extractor.isDefaultExtractor()){
+			defaultExtractor = extractor;
+		}
+		
+		extractors.add(extractor);
 	}
 
 
 	@Override
-	public DataListExtractor getExtractor(DataListFilter dataListFilter,String dataListName) {
-		if(!dataListFilter.isSimpleItem()){
-			if(dataListName!=null && dataListName.equals("WUsed")){
-				return wUsedExtractor;
-			} else if(dataListFilter.getDataType()!=null && dataListFilter.getDataType().equals(BeCPGModel.TYPE_COMPOLIST)){
-				return multiLevelExtractor;
-			}
+	public DataListExtractor getExtractor(DataListFilter dataListFilter) {
+	
+		for(DataListExtractor extractor : extractors){
+			 if(extractor.applyTo(dataListFilter )){
+				 return extractor;
+			 }
 		}
-		return simpleExtractor;
+		return defaultExtractor;
 	}
 
 }

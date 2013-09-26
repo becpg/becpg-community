@@ -83,7 +83,7 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 		if(nodeService.exists(actionedUponNodeRef)){
    		 
 			_logger.debug("move file in folder. HasFailed: " + hasFailed);             		
-    		importService.moveImportedFile(actionedUponNodeRef, hasFailed, log);                		
+    		importService.moveImportedFile(actionedUponNodeRef, hasFailed, log, null);                		
     	}        
 	}
 

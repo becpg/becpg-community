@@ -19,8 +19,8 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -39,6 +39,8 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.policy.BeCPGPolicyHelper;
 import fr.becpg.repo.security.SecurityService;
 
@@ -72,8 +74,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	/** The Constant MODEL_KEY_NAME_LISTS. */
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 
-	private static final String MODEL_KEY_NAME_EDITABLE_LISTS = "editableLists";
-
 	/** The Constant MODEL_HAS_WRITE_PERMISSION. */
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
 
@@ -84,6 +84,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_WUSED_LIST = "wUsedList";
 	
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
+
+	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
@@ -108,6 +110,14 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	
 	private AuthorityService authorityService;
 	
+	private PermissionService permissionService;
+	
+	private AssociationService associationService;	
+	
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -144,6 +154,10 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		this.authorityService = authorityService;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	/**
 	 * Suggest values according to query
 	 * 
@@ -169,7 +183,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		logger.debug("entityListsWebScript executeImpl()");
 
 		List<NodeRef> listsNodeRef = new ArrayList<NodeRef>();
-		List<NodeRef> editableListsNodeRef = new ArrayList<NodeRef>();
 		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
@@ -179,11 +192,11 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		// We get datalist for a given aclGroup
-		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeService.getType(nodeRef))) {
+		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
 			logger.debug("We want to get datalist for current ACL entity");
 			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
-			QName aclTypeQname = DefaultTypeConverter.INSTANCE.convert(QName.class, aclType);
-			model.put(MODEL_KEY_ACL_TYPE, aclTypeQname.toPrefixString(namespaceService));
+			QName aclTypeQname = QName.createQName( aclType, namespaceService);
+			model.put(MODEL_KEY_ACL_TYPE, aclType);
 
 			NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
 			if (templateNodeRef != null) {
@@ -197,7 +210,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			skipFilter = true;
 		}
 		// We get datalist for entityTpl
-		else if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeService.getType(nodeRef))) {
+		else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) || 
+				BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
 
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 			if (listContainerNodeRef == null) {
@@ -206,12 +220,12 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	
 			// Add types that can be added
 	        Set<ClassDefinition> classDefinitions = new HashSet<ClassDefinition>();
-			Collection <QName> qname = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+			Collection <QName> entityListTypes = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
 			
-	        for(QName qnameObj: qname)
+	        for(QName entityListType: entityListTypes)
 		    {	
-	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(qnameObj) && !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(qnameObj)){
-	        		classDefinitions.add(dictionaryService.getClass(qnameObj));
+	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType) && !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(entityListType)){
+	        		classDefinitions.add(dictionaryService.getClass(entityListType));
 	        	}
 		    }
 	    	
@@ -223,10 +237,14 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		// We get datalist for entity
 		else {
 
-			final NodeRef templateNodeRef = entityTplService.getEntityTpl(nodeType);
+			NodeRef entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			if(entityTplNodeRef == null){
+				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
+			}
 
-			if (templateNodeRef != null) {
-
+			if (entityTplNodeRef != null) {
+				
+				final NodeRef templateNodeRef = entityTplNodeRef;
 				// Redmine #59 : copy missing datalists as admin, otherwise, if
 				// a datalist is added in product template, users cannot see
 				// datalists of valid products
@@ -291,31 +309,26 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 				int access_mode = securityService.computeAccessMode(nodeType, dataListType);
 
-				switch (access_mode) {
-				case SecurityService.NONE_ACCESS:
+				if( SecurityService.NONE_ACCESS == access_mode){
 					if (logger.isTraceEnabled()) {
 						logger.trace("Don't display dataList:" + dataListType);
 					}
 					it.remove();
-					break;
-				case SecurityService.WRITE_ACCESS:
-					if (logger.isTraceEnabled()) {
-						logger.trace("editable dataList:" + dataListType);
-					}
-					editableListsNodeRef.add(temp);
-					break;
-				default:
-					break;
 				}
 			}
 		}
+		
+		String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+		String displayPath = this.nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService);
 
+		String retPath = SiteHelper.extractDisplayPath(path,displayPath);
+
+		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
 		model.put(MODEL_WUSED_LIST, wUsedList);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
-		model.put(MODEL_KEY_NAME_EDITABLE_LISTS, editableListsNodeRef);
 
 		return model;
 	}

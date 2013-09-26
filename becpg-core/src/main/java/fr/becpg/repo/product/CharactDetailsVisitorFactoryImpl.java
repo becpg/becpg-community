@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulateException;
 
 public class CharactDetailsVisitorFactoryImpl implements CharactDetailsVisitorFactory{
 	

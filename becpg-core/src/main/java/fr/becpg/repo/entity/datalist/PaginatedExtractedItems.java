@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+
 public class PaginatedExtractedItems {
+	
 
 	List<Map<String,Object>> items;
+	
+	List<AttributeExtractorStructure> computedFields;
 	
 	int fullListSize;
 	
@@ -15,13 +20,15 @@ public class PaginatedExtractedItems {
 		items = new ArrayList<Map<String,Object>>(pageSize);
 	}
 
-	public List<Map<String, Object>> getItems() {
+	
+	public boolean addItem(Map<String, Object> item){
+		return items.add(item);
+	}
+	
+	public List<Map<String, Object>> getPageItems() {
 		return items;
 	}
 
-	public void setItems(List<Map<String, Object>> items) {
-		this.items = items;
-	}
 
 	public int getFullListSize() {
 		return fullListSize;
@@ -30,6 +37,14 @@ public class PaginatedExtractedItems {
 	public void setFullListSize(int fullListSize) {
 		this.fullListSize = fullListSize;
 	}
+
+	public List<AttributeExtractorStructure> getComputedFields() {
+		return computedFields;
+	}
+
+	public void setComputedFields(List<AttributeExtractorStructure> computedFields) {
+		this.computedFields = computedFields;
+	}
 	
-	
+
 }

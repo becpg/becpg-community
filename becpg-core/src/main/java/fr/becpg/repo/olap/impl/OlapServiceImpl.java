@@ -3,139 +3,147 @@ package fr.becpg.repo.olap.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AuthenticationService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
-import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.OlapUtils;
 import fr.becpg.repo.olap.data.OlapChart;
 import fr.becpg.repo.olap.data.OlapChartData;
 import fr.becpg.repo.olap.data.OlapChartMetadata;
+import fr.becpg.repo.olap.data.OlapContext;
 
 public class OlapServiceImpl implements OlapService {
 
-	private String olapUser;
-
-	private String olapPassword;
+	private String instanceName;
 
 	private String olapServerUrl;
+
+	private FileFolderService fileFolderService;
+
+	private ContentService contentService;
+
+	private RepoService repoService;
+
+	private AuthenticationService authenticationService;
 	
-	private BeCPGCacheService beCPGCacheService;
-	
+	private TenantService tenantService;
 
 	private static String ROW_HEADER = "ROW_HEADER_HEADER";
 
 	private static Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
-	public void setOlapUser(String olapUser) {
-		this.olapUser = olapUser;
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
+	
+	public void setTenantService(TenantService tenantService) {
+		this.tenantService = tenantService;
 	}
 
-	public void setOlapPassword(String olapPassword) {
-		this.olapPassword = olapPassword;
+	public void setAuthenticationService(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
 	}
 
 	public void setOlapServerUrl(String olapServerUrl) {
 		this.olapServerUrl = olapServerUrl;
 	}
 
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
 	
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
+	
+
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
 	}
 
 	@Override
 	public List<OlapChart> retrieveOlapCharts()  {
-		
-		return beCPGCacheService.getFromCache(OlapService.class.getName(),"olapCharts" , new BeCPGCacheDataProviderCallBack<List<OlapChart>>() {
+		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
 
-			@Override
-			public List<OlapChart> getData() {
-				HttpClient httpClient = getHttpClient();
+		for (FileInfo fileInfo : fileFolderService.list(getOlapQueriesFolder())) {
 
-				List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+			if (fileInfo.getName().endsWith(".saiku")) {
 				try {
-					JSONArray jsonArray = OlapUtils.readJsonArrayFromUrl(buildRepositoryUrl(),httpClient);
-				
-					if (jsonArray != null) {
-	
-						for (int row = 0; row < jsonArray.length(); row++) {
-							String queryName = jsonArray.getJSONObject(row).getString("name");
-							try {
-								
-								OlapChart chart = new OlapChart(queryName);
-								
-								JSONObject json = OlapUtils.readJsonObjectFromUrl(buildQueryUrl(queryName),httpClient);
-								
-								chart.load(json.getString("xml"));
-								olapCharts.add(chart);
-							} catch (Exception e) {
-								logger.error("Cannot load query :"+queryName);
-								logger.debug(e,e);
-							}
-						}
-	
-					}
+					OlapChart chart = new OlapChart(fileInfo);
+
+					ContentReader reader = contentService.getReader(fileInfo.getNodeRef(), ContentModel.PROP_CONTENT);
+
+					chart.load(reader.getContentString());
+
+					olapCharts.add(chart);
 				} catch (Exception e) {
-					logger.error(e,e);
+					logger.error(e, e);
 				}
-				
-				return olapCharts;
 			}
-			
-		});
-		
-		
+
+		}
+
+		return olapCharts;
 	}
 
-	
-	
-	
-	
+	@Override
+	public NodeRef getOlapQueriesFolder() {
+		return repoService.getFolderByPath("./cm:"+RepoConsts.PATH_SYSTEM +"/cm:" + RepoConsts.PATH_OLAP_QUERIES);
+	}
 
-	private String sendCreateQueryPostRequest(HttpClient httpclient, String xml) throws IOException {
-		String uuid = UUID.randomUUID().toString();
-		
-		String postUrl = buildCreateQueryUrl(uuid);
+	@Override
+	public List<OlapChart> retrieveOlapChartsFromSaiku() {
 
-		if(logger.isDebugEnabled()){
-			logger.debug("Send POST request:\n"+xml+"\n to "+postUrl);
+		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+		try {
+
+			OlapContext olapContext = OlapUtils.createOlapContext(getCurrentOlapUserName());
+
+			JSONArray jsonArray = OlapUtils.readJsonArrayFromUrl(buildRepositoryUrl(olapContext), olapContext);
+
+			if (jsonArray != null) {
+
+				for (int row = 0; row < jsonArray.length(); row++) {
+					String queryName = jsonArray.getJSONObject(row).getString("name");
+					try {
+
+						OlapChart chart = new OlapChart(queryName);
+
+						JSONObject json = OlapUtils.readJsonObjectFromUrl(buildQueryUrl(queryName, olapContext), olapContext);
+
+						chart.load(json.getString("xml"));
+						olapCharts.add(chart);
+					} catch (Exception e) {
+						logger.error("Cannot load query :" + queryName);
+						logger.debug(e, e);
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			logger.error(e, e);
 		}
-		
-		HttpPost httpPost = new HttpPost(postUrl);
 
-		
-		HttpEntity entity = new StringEntity("xml=" + xml,"UTF-8");
-		
-		httpPost.setEntity(entity);
-		HttpResponse response = httpclient.execute(httpPost);
-		//keep that as we should read the response
-		entity = response.getEntity();
-		String ret = EntityUtils.toString(entity);
-		logger.debug("Ret: "+ret);
-		
-		
-		return uuid;
+		return olapCharts;
+
 	}
 
 	/**
@@ -162,110 +170,82 @@ public class OlapServiceImpl implements OlapService {
 	@Override
 	public OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException {
 
-		
-		HttpClient httpclient = getHttpClient();
-		
+		OlapContext olapContext = OlapUtils.createOlapContext(getCurrentOlapUserName());
+
 		OlapChart chart = getOlapChart(olapQueryId);
-		
+
 		OlapChartData ret = new OlapChartData();
-		if(chart!=null){
-			String uuid = sendCreateQueryPostRequest(httpclient, chart.getXml());
-			JSONArray jsonArray = OlapUtils.readJsonObjectFromUrl(buildDataUrl(uuid),httpclient).getJSONArray("cellset");
-	
+		if (chart != null) {
+
+			OlapUtils.sendCreateQueryPostRequest(olapContext, buildCreateQueryUrl(olapQueryId, olapContext), chart.getXml());
+			JSONArray jsonArray = OlapUtils.readJsonObjectFromUrl(buildDataUrl(olapQueryId, olapContext), olapContext).getJSONArray("cellset");
+
 			if (jsonArray != null) {
-	
+
 				int lowest_level = 0;
-				for (int row = 0; row < jsonArray.length(); row++) {	
-					JSONArray cur =  jsonArray.getJSONArray(row);
+				for (int row = 0; row < jsonArray.length(); row++) {
+					JSONArray cur = jsonArray.getJSONArray(row);
 					if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
 						for (int field = 0; field < cur.length(); field++) {
 							if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
 								ret.shiftMetadata();
 								lowest_level = field;
 							}
-							ret.addMetadata(new OlapChartMetadata(field,
-									retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")),
-									cur.getJSONObject(field).getString("value")));
+							ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur
+									.getJSONObject(field).getString("value")));
 						}
 					} else if (cur.getJSONObject(0).getString("value") != null) {
 						List<Object> record = new ArrayList<Object>();
 						for (int col = lowest_level; col < cur.length(); col++) {
 							String value = cur.getJSONObject(col).getString("value");
-							record.add(convert(value));
+							record.add(OlapUtils.convert(value));
 						}
 						ret.getResultsets().add(record);
 					}
 				}
 			}
-		} 
+		}
 		return ret;
 	}
 
-	private HttpClient getHttpClient() {
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(olapUser, olapPassword);
-		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(
-			    new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), 
-			    creds);
-		
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		httpclient.setCredentialsProvider(credsProvider);
-		
-		
-		return httpclient;
+	@Override
+	public String getCurrentOlapUserName() {
+		String currentUserName = (instanceName != null ? instanceName : "default") + "$" + authenticationService.getCurrentUserName();
+		if (!currentUserName.contains("@") || !tenantService.isEnabled()) {
+			currentUserName += "@default";
+		}
+		return currentUserName;
 	}
 
 	private OlapChart getOlapChart(String olapQueryId) throws JSONException, IOException {
-		for(OlapChart chart : retrieveOlapCharts()){
-			if(chart.getQueryId().equals(olapQueryId)){
+		for (OlapChart chart : retrieveOlapCharts()) {
+			if (chart.getQueryId().equals(olapQueryId)) {
 				return chart;
 			}
 		}
-		logger.warn("No chart found for id:"+olapQueryId);
+		logger.warn("No chart found for id:" + olapQueryId);
 		return null;
 	}
 
-	//TODO crappy !!!
-	private Object convert(String value) {
-		if(value==null || value.isEmpty()){
-			return new Long(0);
-		}
-		try {
-			return Long.parseLong(value);
-		} catch (NumberFormatException e) {
-			try {
-				return Double.parseDouble(value.replace(",","."));
-			} catch (NumberFormatException e2) {
-			}
-		}
-		return value;
-	}
-
 	private String retrieveDataType(String value) {
-		return convert(value).getClass().getSimpleName();
+		return OlapUtils.convert(value).getClass().getSimpleName();
 	}
 
-	private String buildDataUrl(String olapQueryId) {
-		return  olapServerUrl + "/rest/saiku/"+olapUser+"/query/" + olapQueryId
+	private String buildDataUrl(String olapQueryId, OlapContext context) throws URIException {
+		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/query/" + URIUtil.encodeWithinPath(olapQueryId, "UTF-8")
 				+ "/result/cheat";
 	}
-	
-	private String buildCreateQueryUrl(String olapQueryId) {
-		return  olapServerUrl + "/rest/saiku/"+olapUser+"/query/" + olapQueryId;
-	}
-	
-	private String buildRepositoryUrl() {
-		return olapServerUrl + "/rest/saiku/"+olapUser+"/repository";
-	}
-	
 
-	private String buildQueryUrl(String queryName) throws  URIException {
-		return URIUtil.encodePath(buildRepositoryUrl()+"/"+queryName,"UTF-8");
+	private String buildCreateQueryUrl(String olapQueryId, OlapContext context) throws URIException {
+		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/query/" + URIUtil.encodeWithinPath(olapQueryId, "UTF-8");
 	}
 
-	
-	
-	
-	
+	private String buildRepositoryUrl(OlapContext context) throws URIException {
+		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/repository";
+	}
+
+	private String buildQueryUrl(String queryName, OlapContext context) throws URIException {
+		return buildRepositoryUrl(context) + "/" + URIUtil.encodeWithinPath(queryName, "UTF-8");
+	}
 
 }

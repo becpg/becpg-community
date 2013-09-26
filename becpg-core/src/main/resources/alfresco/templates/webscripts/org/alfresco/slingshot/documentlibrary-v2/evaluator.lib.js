@@ -7,7 +7,11 @@ var Evaluator =
    getNodeType: function Evaluator_getNodeType(node)
    {
       var nodeType = "document";
-      if (node.isContainer)
+      if (node.hasAspect("bcpg:entityListsAspect"))
+      {
+         nodeType = "entity";
+      }
+      else if (node.isContainer)
       {
          nodeType = "folder";
       }
@@ -55,6 +59,7 @@ var Evaluator =
             /**
              * SPECIFIC TO: DOCUMENTS
              */
+    	    case "entity":               
             case "document":
                // Working Copy?
                if (node.hasAspect("cm:workingcopy"))

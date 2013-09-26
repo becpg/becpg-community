@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Query name="CB36E1D7-70E8-FA5A-99F9-AE3D1D9A6936" type="QM" connection="beCPG" cube="[Produits]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+  <QueryModel>
+    <Axes>
+      <Axis location="ROWS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="Date de modification" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="Date de modification" type="level" node="[Date de modification.Date].[Mois]" operator="MEMBERS" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="COLUMNS" nonEmpty="true">
+        <Dimensions>
+          <Dimension name="Type de produit" hierarchizeMode="PRE" hierarchyConsistent="true">
+            <Inclusions>
+              <Selection dimension="Type de produit" type="level" node="[Type de produit].[Type]" operator="MEMBERS" />
+            </Inclusions>
+            <Exclusions />
+          </Dimension>
+        </Dimensions>
+      </Axis>
+      <Axis location="FILTER" nonEmpty="false" />
+    </Axes>
+  </QueryModel>
+  <MDX>SELECT
+NON EMPTY {Hierarchize({[Type de produit].[Type].Members})} ON COLUMNS,
+NON EMPTY {Hierarchize({[Date de modification.Date].[Mois].Members})} ON ROWS
+FROM [Produits]</MDX>
+</Query>
+

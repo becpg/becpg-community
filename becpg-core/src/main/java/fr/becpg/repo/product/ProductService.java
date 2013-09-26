@@ -7,10 +7,11 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.CharactDetails;
-import fr.becpg.repo.product.formulation.FormulateException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -18,6 +19,7 @@ import fr.becpg.repo.product.formulation.FormulateException;
  *
  * @author querephi
  */
+@Service
 public interface ProductService {
 		   	       
     /**
@@ -27,6 +29,15 @@ public interface ProductService {
      */
     public void formulate(NodeRef productNodeRef) throws FormulateException;
     
+
+    /**
+     * Use fast chain formulation handler if fast param is true
+     * @param productNodeRef
+     * @param fast
+     * @throws FormulateException
+     */
+	public void formulate(NodeRef productNodeRef, boolean fast)   throws FormulateException;
+    
     
     /**
      * Formulate the product (don't update DB)
@@ -35,6 +46,9 @@ public interface ProductService {
      * @throws FormulateException
      */
     public ProductData formulate(ProductData productData) throws FormulateException;
+    
+
+    
     
  
     /**
@@ -56,7 +70,8 @@ public interface ProductService {
      * @return 
      * @throws FormulateException
      */
-	public CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements) throws FormulateException;   
-    
+	public CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements) throws FormulateException;
+
+
    
 }

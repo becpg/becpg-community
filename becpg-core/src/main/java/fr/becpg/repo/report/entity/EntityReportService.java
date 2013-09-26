@@ -28,4 +28,5 @@ public interface EntityReportService {
 	 */
 	public String getXmlReportDataSource(NodeRef entityNodeRef);
 
+	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef);	
 }

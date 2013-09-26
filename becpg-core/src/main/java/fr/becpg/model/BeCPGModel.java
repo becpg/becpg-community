@@ -47,9 +47,8 @@ public interface BeCPGModel {
 	// product
 	/** The Constant TYPE_PRODUCT. */
 	QName TYPE_PRODUCT = QName.createQName(BECPG_URI, "product");
+	
 
-	/** The Constant PROP_PRODUCT_LEGALNAME. */
-	QName PROP_PRODUCT_LEGALNAME = QName.createQName(BECPG_URI, "legalName");
 
 	/** The Constant PROP_PRODUCT_HIERARCHY1. */
 	QName PROP_PRODUCT_HIERARCHY1 = QName.createQName(BECPG_URI, "productHierarchy1");
@@ -137,6 +136,10 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_COMPOLIST_DECL_TYPE. */
 	QName PROP_COMPOLIST_DECL_TYPE = QName.createQName(BECPG_URI, "compoListDeclType");
+	
+	QName PROP_COMPOLIST_OVERRUN_PERC = QName.createQName(BECPG_URI, "compoListOverrunPerc");
+	
+	QName PROP_COMPOLIST_VOLUME = QName.createQName(BECPG_URI, "compoListVolume");
 
 	// packagingList
 	QName TYPE_PACKAGINGLIST = QName.createQName(BECPG_URI, "packagingList");
@@ -176,9 +179,6 @@ public interface BeCPGModel {
 
 	/** The Constant ASSOC_COSTDETAILSLIST_COST. */
 	QName ASSOC_COSTDETAILSLIST_COST = QName.createQName(BECPG_URI, "costDetailsListCost");
-
-	/** The Constant ASSOC_COSTDETAILSLIST_SOURCE. */
-	QName ASSOC_COSTDETAILSLIST_SOURCE = QName.createQName(BECPG_URI, "costDetailsListSource");
 
 	// priceList
 	QName TYPE_PRICELIST = QName.createQName(BECPG_URI, "priceList");
@@ -253,6 +253,7 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_ILL_VALUE. */
 	QName PROP_ILL_VALUE = QName.createQName(BECPG_URI, "illValue");
+	QName PROP_ILL_MANUAL_VALUE = QName.createQName(BECPG_URI, "illManualValue");
 
 	// microbioList
 	/** The Constant TYPE_MICROBIOLIST. */
@@ -321,6 +322,16 @@ public interface BeCPGModel {
 	// contactList
 	QName TYPE_CONTACTLIST = QName.createQName(BECPG_URI, "contactList");
 
+	// labelClaimList
+	QName TYPE_LABELCLAIMLIST = QName.createQName(BECPG_URI,
+			"labelClaimList");
+	QName PROP_LCL_TYPE = QName.createQName(BECPG_URI,
+			"lclType");
+	QName PROP_LCL_IS_CLAIMED = QName.createQName(BECPG_URI,
+			"lclIsClaimed");	
+	QName ASSOC_LCL_LABELCLAIM = QName.createQName(BECPG_URI,
+			"lclLabelClaim");
+	
 	// allergen
 	/** The Constant TYPE_ALLERGEN. */
 	QName TYPE_ALLERGEN = QName.createQName(BECPG_URI, "allergen");
@@ -344,7 +355,14 @@ public interface BeCPGModel {
 	QName PROP_ING_CEECODE = QName.createQName(BECPG_URI, "ingCEECode");
 
 	/** The Constant PROP_ING_TYPE. */
+	@Deprecated
 	QName PROP_ING_TYPE = QName.createQName(BECPG_URI, "ingType");
+	
+
+	QName PROP_ING_TYPE_V2 = QName.createQName(BECPG_URI, "ingTypeV2");
+	
+
+	QName TYPE_ING_TYPE_ITEM = QName.createQName(BECPG_URI, "ingTypeItem");
 
 	// microbio
 	/** The Constant TYPE_MICROBIO. */
@@ -385,6 +403,7 @@ public interface BeCPGModel {
 	/** The Constant TYPE_PHYSICO_CHEM. */
 	QName TYPE_PHYSICO_CHEM = QName.createQName(BECPG_URI, "physicoChem");
 
+	QName PROP_PHYSICO_CHEM_UNIT = QName.createQName(BECPG_URI, "physicoChemUnit");
 	QName PROP_PHYSICO_CHEM_FORMULATED = QName.createQName(BECPG_URI, "physicoChemFormulated");
 
 	// linkedValue
@@ -400,17 +419,21 @@ public interface BeCPGModel {
 	QName TYPE_LIST_VALUE = QName.createQName(BECPG_URI, "listValue");
 
 	/** entityFolder */
+	@Deprecated
+	QName TYPE_ENTITY = QName.createQName(BECPG_URI, "entity");
+	
+	@Deprecated
 	QName TYPE_ENTITY_FOLDER = QName.createQName(BECPG_URI, "entityFolder");
 
+	@Deprecated
 	QName PROP_ENTITY_FOLDER_CLASS_NAME = QName.createQName(BECPG_URI, "entityFolderClassName");
 
 	/** entity */
-	QName TYPE_ENTITY = QName.createQName(BECPG_URI, "entity");
 	
 	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");
 
 	QName TYPE_SYSTEM_ENTITY = QName.createQName(BECPG_URI, "systemEntity");
-
+	
 	// autoNum
 	/** The Constant TYPE_AUTO_NUM. */
 	QName TYPE_AUTO_NUM = QName.createQName(BECPG_URI, "autoNum");
@@ -429,9 +452,15 @@ public interface BeCPGModel {
 
 	// entityTpl aspect
 	QName ASPECT_ENTITY_TPL = QName.createQName(BECPG_URI, "entityTplAspect");
+	@Deprecated
 	QName PROP_ENTITY_TPL_CLASS_NAME = QName.createQName(BECPG_URI, "entityTplClassName");
 	QName PROP_ENTITY_TPL_ENABLED = QName.createQName(BECPG_URI, "entityTplEnabled");
+	QName PROP_ENTITY_TPL_IS_DEFAULT = QName.createQName(BECPG_URI, "entityTplIsDefault");
 
+	// entityTplRef aspect
+	QName ASPECT_ENTITY_TPL_REF = QName.createQName(BECPG_URI, "entityTplRefAspect");
+	QName ASSOC_ENTITY_TPL_REF = QName.createQName(BECPG_URI, "entityTplRef");
+	
 	// supplier
 	/** The Constant ASPECT_SUPPLIERS. */
 	QName ASPECT_SUPPLIERS = QName.createQName(BECPG_URI, "suppliersAspect");
@@ -460,7 +489,10 @@ public interface BeCPGModel {
 	QName ASPECT_TRANSFORMATION = QName.createQName(BECPG_URI, "transformationAspect");
 	QName PROP_PRODUCT_QTY = QName.createQName(BECPG_URI, "productQty");
 	QName PROP_PRODUCT_DENSITY = QName.createQName(BECPG_URI, "productDensity");
+	QName PROP_PRODUCT_NET_WEIGHT = QName.createQName(BECPG_URI, "netWeight");
+	@Deprecated
 	QName ASSOC_PRODUCT_SPECIFICATION = QName.createQName(BECPG_URI, "productSpecification");
+	QName ASSOC_PRODUCT_SPECIFICATIONS = QName.createQName(BECPG_URI, "productSpecifications");
 	QName PROP_PRODUCT_COMMENTS = QName.createQName(BECPG_URI, "productComments");
 
 	// ean aspect
@@ -495,10 +527,6 @@ public interface BeCPGModel {
 	@Deprecated
 	QName ASPECT_COMPOSITE_VERSIONABLE = QName.createQName(BECPG_URI, "compositeVersionable");
 
-	/** The Constant PROP_VERSION_LABEL. */
-	@Deprecated
-	QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
-
 	/** The Constant PROP_INITIAL_VERSION. */
 	@Deprecated
 	QName PROP_INITIAL_VERSION = QName.createQName(BECPG_URI, "initialVersion");
@@ -507,6 +535,9 @@ public interface BeCPGModel {
 	/** The Constant ASPECT_COMPOSITE_VERSION. */
 	QName ASPECT_COMPOSITE_VERSION = QName.createQName(BECPG_URI, "compositeVersion");
 
+	/** The Constant PROP_VERSION_LABEL. */
+	QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
+	
 	/** The Constant PROP_VERSION_DESCRIPTION. */
 	@Deprecated
 	QName PROP_VERSION_DESCRIPTION = QName.createQName(BECPG_URI, "versionDescription");
@@ -566,6 +597,18 @@ public interface BeCPGModel {
 	QName ASPECT_ERP_CODE = QName.createQName(BECPG_URI, "erpCodeAspect");
 	QName PROP_ERP_CODE = QName.createQName(BECPG_URI, "erpCode");
 
+	/**
+	 * Variants
+	 */
+	QName TYPE_VARIANT = QName.createQName(BECPG_URI, "variant");
+	QName ASPECT_ENTITY_VARIANT = QName.createQName(BECPG_URI, "entityVariantAspect");
+	QName ASPECT_ENTITYLIST_VARIANT = QName.createQName(BECPG_URI, "entityListVariantAspect");
+	
+	
+	QName ASSOC_VARIANTS = QName.createQName(BECPG_URI, "variants");
+	QName PROP_VARIANTIDS = QName.createQName(BECPG_URI, "variantIds");
+	QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
+	
 	/**
 	 * Effectivity
 	 */
@@ -628,6 +671,10 @@ public interface BeCPGModel {
 	 */
 	QName TYPE_APPROVAL_NUMBER = QName.createQName(BECPG_URI, "approvalNumber");
 
+	QName TYPE_LABEL_CLAIM = QName.createQName(BECPG_URI, "labelClaim");
+	QName PROP_LABEL_CLAIM_TYPE = QName.createQName(BECPG_URI, "labelClaimType");
+	QName PROP_LABEL_CLAIM_FORMULA = QName.createQName(BECPG_URI, "labelClaimFormula");
+	
 	/**
 	 * legalName aspect
 	 */
@@ -638,11 +685,29 @@ public interface BeCPGModel {
 	QName PROP_IS_DELETED = QName.createQName(BECPG_URI, "isDeleted");
 	
 	/**
+	 * systemFolder
+	 */
+	
+	QName ASPECT_SYSTEM_FOLDER = QName.createQName(BECPG_URI, "systemFolderAspect");
+	
+	/**
 	 * Color
 	 */
 	QName ASPECT_COLOR = QName.createQName(BECPG_URI, "colorAspect");
 	
 	QName PROP_COLOR = QName.createQName(BECPG_URI, "color");
 	
+	@Deprecated
+	QName ASPECT_ENTITY_VERSIONABLE = QName.createQName(BECPG_URI, "entityVersionable");
+
+	QName TYPE_STORAGE_CONDITIONS = QName.createQName(BECPG_URI, "storageConditions");
+	QName ASSOC_STORAGE_CONDITIONS = QName.createQName(BECPG_URI, "storageConditions");
+	QName TYPE_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
+	QName ASSOC_PRECAUTION_OF_USE = QName.createQName(BECPG_URI, "precautionOfUse");
+
+	QName ASPECT_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
+	
+	QName PROP_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
+
 
 }

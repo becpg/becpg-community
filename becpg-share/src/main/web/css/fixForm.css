@@ -1,0 +1,27 @@
+
+/* Forms */
+.form-container .form-fields {
+	border-bottom: medium none;
+	padding: 1em;
+}
+
+/* Details Form */
+.form-container .edit-dataitem a {
+	background: transparent url("../components/images/edit-metadata-16.png") no-repeat
+		12px 4px;
+	padding-left: 32px;
+}
+
+.form-container .yui-u {
+	margin-left: 0px;
+}
+
+.yui-dialog .yui-g .form-field input[type="text"], 
+.yui-dialog .form-container .yui-g .form-field select {
+	width: 12em;
+}
+
+
+.alfresco-share .yui-panel .bd .form-container .yui-u.first {
+	text-align: left;
+}

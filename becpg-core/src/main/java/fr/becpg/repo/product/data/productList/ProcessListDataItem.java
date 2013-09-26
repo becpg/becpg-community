@@ -5,16 +5,15 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
 
-/**
- * The Class ProcessListDataItem.
- *
- * @author querephi
- */
-public class ProcessListDataItem extends AbstractEffectiveDataItem {
+@AlfType
+@AlfQname(qname = "mpm:processList")
+public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 	
-	private NodeRef nodeRef;		
 	private Double qty = 0d;	
 	private Double qtyResource = 0d;
 	private Double rateResource = 0d;
@@ -26,15 +25,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	private NodeRef product;
 	private NodeRef resource;
 
-
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfProp
+	@AlfQname(qname="mpm:plQty")
 	public Double getQty() {
 		return qty;
 	}
@@ -43,6 +35,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 		this.qty = qty;
 	}
 
+	@AlfProp
+	@AlfQname(qname="mpm:plQtyResource")
 	public Double getQtyResource() {
 		return qtyResource;
 	}
@@ -51,6 +45,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 		this.qtyResource = qtyResource;
 	}
 
+	@AlfProp
+	@AlfQname(qname="mpm:plRateResource")
 	public Double getRateResource() {
 		return rateResource;
 	}
@@ -58,7 +54,9 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	public void setRateResource(Double rateResource) {
 		this.rateResource = rateResource;
 	}
-
+	
+	@AlfProp
+	@AlfQname(qname="mpm:plYield")
 	public Double getYield() {
 		return yield;
 	}
@@ -66,7 +64,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	public void setYield(Double yield) {
 		this.yield = yield;
 	}
-
+	@AlfProp
+	@AlfQname(qname="mpm:plRateProcess")
 	public Double getRateProcess() {
 		return rateProcess;
 	}
@@ -74,7 +73,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	public void setRateProcess(Double rateProcess) {
 		this.rateProcess = rateProcess;
 	}
-
+	@AlfProp
+	@AlfQname(qname="mpm:plRateProduct")
 	public Double getRateProduct() {
 		return rateProduct;
 	}
@@ -82,7 +82,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	public void setRateProduct(Double rateProduct) {
 		this.rateProduct = rateProduct;
 	}
-
+	@AlfSingleAssoc
+	@AlfQname(qname="mpm:plStep")
 	public NodeRef getStep() {
 		return step;
 	}
@@ -90,7 +91,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	public void setStep(NodeRef step) {
 		this.step = step;
 	}
-
+	@AlfSingleAssoc
+	@AlfQname(qname="mpm:plProduct")
 	public NodeRef getProduct() {
 		return product;
 	}
@@ -98,7 +100,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
-
+	@AlfSingleAssoc
+	@AlfQname(qname="mpm:plResource")
 	public NodeRef getResource() {
 		return resource;
 	}
@@ -159,6 +162,12 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 		setResource(p.getResource());
 	}
 
+
+	@Override
+	public CompositionDataItem createCopy() {
+		return new ProcessListDataItem(this);
+	}
+	
 	@Override
 	public String toString() {
 		return "ProcessListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", qtyResource=" + qtyResource + ", rateResource=" + rateResource + ", yield=" + yield
@@ -243,6 +252,8 @@ public class ProcessListDataItem extends AbstractEffectiveDataItem {
 			return false;
 		return true;
 	}
+
+
 	
 	
 	

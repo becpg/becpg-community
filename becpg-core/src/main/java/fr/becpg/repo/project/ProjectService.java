@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.formulation.FormulateException;
+
 /**
  * Class used to manage a project
  * 
@@ -18,6 +20,12 @@ public interface ProjectService {
 	 * @param deliverableNodeRef
 	 */
 	public void openDeliverable(NodeRef deliverableNodeRef);
+	
+	/**
+	 * Open task in progress
+	 * @param deliverableNodeRef
+	 */
+	public void openTask(NodeRef taskNodeRef);
 
 	/**
 	 * Get the task legend list
@@ -45,7 +53,9 @@ public interface ProjectService {
 	 * Formulate a project
 	 * 
 	 * @param projectNodeRef
-	 * @throws ProjectException
+	 * @throws FormulateException 
 	 */
-	public void formulate(NodeRef projectNodeRef) throws ProjectException;
+	public void formulate(NodeRef projectNodeRef) throws FormulateException;
+
+	public void deleteTask(NodeRef taskListNodeRef);
 }

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-export LOCAL_SERVER=http://localhost:8082/alfresco/service/becpg/remote/entity
-export LOCAL_USER=philippe.quere@demo.becpg.fr
+export LOCAL_SERVER=http://localhost:8080/alfresco/service/becpg/remote/entity
+export LOCAL_USER=admin
 export LOCAL_PASSWORD=becpg
 export REMOTE_SERVER=http://82.237.72.111:8080/alfresco/service/becpg/remote/entity
 export REMOTE_USER=admin

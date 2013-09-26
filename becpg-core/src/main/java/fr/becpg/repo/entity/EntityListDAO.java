@@ -10,13 +10,22 @@ import org.alfresco.service.namespace.QName;
 
 public interface EntityListDAO {
 
+	
 	/**
-	 * Get the data list container.
-	 * 
-	 * @param nodeRef
-	 * @return the list container
+	 * Return entity containing this dataListItem
+	 * @param listItemNodeRef
+	 * @return
 	 */
+    public NodeRef getEntity(NodeRef listItemNodeRef);
+	
+
+    /*
+     * TODO Get List and create List should directly take entityNodeRef
+     */
+
 	public NodeRef getListContainer(NodeRef nodeRef);
+    
+	public NodeRef createListContainer(NodeRef dataNodeRef);
 
 	/**
 	 * Get dataList with specified name and type
@@ -47,14 +56,7 @@ public interface EntityListDAO {
 	 */
 	public NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);
 
-	/**
-	 * Create the data list container.
-	 * 
-	 * @param dataNodeRef
-	 *            the data node ref
-	 * @return the node ref
-	 */
-	public NodeRef createListContainer(NodeRef dataNodeRef);
+	
 
 	/**
 	 * Create the data list NodeRef.
@@ -129,18 +131,9 @@ public interface EntityListDAO {
 	 * @param override
 	 */
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, Collection<QName> listQNames, boolean override);
-
-	/**
-	 * Get the manual links
-	 * 
-	 * @param listContainerNodeRef
-	 * @param listQName
-	 * @return
-	 */
-	public List<NodeRef> getManualListItems(NodeRef listNodeRef, QName listQName);
 	
 	/**
-	 * Get the manual links
+	 * Get list items
 	 * 
 	 * @param listContainerNodeRef
 	 * @param listQName
@@ -150,9 +143,9 @@ public interface EntityListDAO {
 
 	/**
 	 * Move datalists
-	 * @param origNodeRef
-	 * @param nodeRef
+	 * @param sourceNodeRef
+	 * @param targetNodeRef
 	 */
-	public void moveDataLists(NodeRef origNodeRef, NodeRef nodeRef);
+	public void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
 
 }

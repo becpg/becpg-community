@@ -15,7 +15,6 @@ public interface SecurityModel {
 	public static final String SECURITY_PREFIX = "sec";
 	
 
-	
 	//
 	// Security Model Definitions
 	//
@@ -32,11 +31,6 @@ public interface SecurityModel {
 	public static final QName PROP_ACL_GROUP_NODE_TYPE = QName.createQName(SECURITY_URI,
 			"nodeType");
 
-	
-
-	public static final QName PROP_ACL_GROUP_NODE_ASPECTS = QName.createQName(SECURITY_URI,
-			"nodeAspects");
-	
 
    public static final QName ASSOC_GROUPS_ASSIGNEE = QName.createQName(SECURITY_URI,
 			"groupsAssignee");

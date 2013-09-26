@@ -1,0 +1,287 @@
+<alfresco-config>
+	
+	<!-- ecm:changeOrder type (creating nodes nodes) -->
+	<config evaluator="model-type" condition="ecm:changeOrder">
+		<forms>
+
+			<form id="create">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="cm:titled" />
+					
+					<show id="ecm:effectiveDate" />
+					<show id="ecm:ecoType"/>
+					<show id="ecm:calculatedCharacts" />							
+															
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>		
+					<field id="ecm:ecoType" read-only="true">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Replacement|Remplacement,Simulation|Simulation,Variant|Variante</control-param>
+						</control>
+					</field>					
+				</appearance>
+			</form>
+
+		</forms>
+	</config>
+	
+	<!-- ecm:changeOrder (existing nodes) -->
+	<config evaluator="node-type" condition="ecm:changeOrder">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="cm:titled" />
+					<show id="bcpg:code" />
+					<show id="ecm:ecoState" />
+					<show id="ecm:effectiveDate" />
+					<show id="ecm:ecoType" read-only="true"/>
+					<show id="ecm:calculatedCharacts" />							
+					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />								
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>		
+					<field id="ecm:ecoState">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">ToValidate|A valider,Valid|Validé,Refused|Refusé,ToCalculateWUsed|Calculer les cas d'emploi,WUsedCalculated|Cas d'emploi calculés,ToSimulate|Simuler,Simulated|Simulé,ToApply|Appliquer,Applied|Appliqué</control-param>
+						</control>
+					</field>
+					<field id="ecm:ecoType">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">Replacement|Remplacement,Simulation|Simulation,Variant|Variante</control-param>
+						</control>
+					</field>					
+				</appearance>
+			</form>
+		</forms>
+	</config>	
+	
+	<!-- ecm:replacementList type -->
+	<config evaluator="model-type" condition="ecm:replacementList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:rlRevisionType" />
+					<show id="ecm:rlSourceItems" />
+					<show id="ecm:rlTargetItem" />	
+					<show id="ecm:rlQtyPerc" />				
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="ecm:rlRevisionType">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
+						</control>
+					</field>						
+					<field id="ecm:rlSourceItems">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="ecm:rlTargetItem">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="ecm:rlRevisionType" />
+					<show id="ecm:rlSourceItems" />
+					<show id="ecm:rlTargetItem" />
+					<show id="ecm:rlQtyPerc" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- ecm:replacementList type (existing nodes) -->
+	<config evaluator="node-type" condition="ecm:replacementList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:rlRevisionType" />
+					<show id="ecm:rlSourceItems" />
+					<show id="ecm:rlTargetItem" />
+					<show id="ecm:rlQtyPerc" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="ecm:rlRevisionType">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
+						</control>
+					</field>
+					<field id="ecm:rlSourceItems">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="ecm:rlTargetItem">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- ecm:wUsedList type -->
+	<config evaluator="model-type" condition="ecm:wUsedList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:impactedDataList" />
+					<show id="ecm:isWUsedImpacted" />
+					<show id="ecm:wulSourceItems" />										
+				</field-visibility>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="ecm:wulSourceItems" />
+					<show id="ecm:isWUsedImpacted" />
+					<show id="ecm:impactedDataList" />		
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- ecm:wUsedList type (existing nodes) -->
+	<config evaluator="node-type" condition="ecm:wUsedList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:impactedDataList" />
+					<show id="ecm:isWUsedImpacted" />
+					<show id="ecm:wulSourceItems" />				
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+			</form>
+		</forms>
+	</config>
+	
+	<!-- ecm:changeUnitList type -->
+	<config evaluator="model-type" condition="ecm:changeUnitList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:culRevision" />
+					<show id="ecm:culSourceItem" />
+					<show id="ecm:culTargetItem" />	
+					<show id="ecm:culTreated" />
+					<show id="ecm:culReqType" />
+					<show id="ecm:culReqDetails" />												
+				</field-visibility>
+				<appearance>
+					<field id="ecm:culReqType">
+					<control
+						template="/org/alfresco/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
+					</control>
+				</field>
+				</appearance>							
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="ecm:culRevision" />
+					<show id="ecm:culSourceItem" />
+					<show id="ecm:culTargetItem" />	
+					<show id="ecm:culTreated" />
+					<show id="ecm:culReqType" />
+					<show id="ecm:culReqDetails" />		
+				</field-visibility>				
+			</form>
+		</forms>
+	</config>
+	<!-- ecm:changeUnitList type (existing nodes) -->
+	<config evaluator="node-type" condition="ecm:changeUnitList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:culRevision" />
+					<show id="ecm:culSourceItem" />
+					<show id="ecm:culTargetItem" />	
+					<show id="ecm:culTreated" />
+					<show id="ecm:culReqType" />
+					<show id="ecm:culReqDetails" />
+				</field-visibility>
+				<appearance>
+					<field id="ecm:culReqType">
+					<control
+						template="/org/alfresco/components/form/controls/selectone.ftl" >
+						 <control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info</control-param>
+					</control>
+				</field>
+				</appearance>				
+			</form>
+		</forms>
+	</config>
+		
+	<!-- ecm:calculatedCharactList type -->
+	<config evaluator="model-type" condition="ecm:calculatedCharactList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:cclSourceItem" />
+					<show id="ecm:cclCharact" />
+					<show id="ecm:cclSourceValue" />
+					<show id="ecm:cclTargetValue" />														
+				</field-visibility>		
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="ecm:cclSourceItem" />
+					<show id="ecm:cclCharact" />
+					<show id="ecm:cclSourceValue" />
+					<show id="ecm:cclTargetValue" />					
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<!-- ecm:calculatedCharactList type (existing nodes) -->
+	<config evaluator="node-type" condition="ecm:calculatedCharactList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="ecm:cclSourceItem" />
+					<show id="ecm:cclCharact" />
+					<show id="ecm:cclSourceValue" />
+					<show id="ecm:cclTargetValue" />										
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />				
+			</form>
+		</forms>
+	</config>
+	
+</alfresco-config>

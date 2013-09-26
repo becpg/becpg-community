@@ -27,9 +27,13 @@ public class ImportContext {
 	/** The parent node ref. */
 	private NodeRef parentNodeRef;	
 	
+	
+	private NodeRef entityNodeRef;	
 
 	/** The type. */
 	private QName type;
+	
+	private QName entityType;
 	
 	/** The do update. */
 	private boolean doUpdate;	
@@ -49,7 +53,7 @@ public class ImportContext {
 	private List<AbstractAttributeMapping> columns = new ArrayList<AbstractAttributeMapping>();
 	
 	/** The class mappings. */
-	private Map<QName, ClassMapping>classMappings = new HashMap<QName, ClassMapping>();	
+	private Map<QName, ClassMapping> classMappings = new HashMap<QName, ClassMapping>();	
 	
 	private Map<String, NodeRef> cacheNodes = new HashMap<String, NodeRef>();
 		
@@ -60,6 +64,8 @@ public class ImportContext {
 	private List<String> log = new ArrayList<String>();
 	
 	private String path;
+	
+	private String docsBasePath;
 	
 	private boolean requiresNewTransaction = false;
 	
@@ -103,6 +109,14 @@ public class ImportContext {
 		this.type = type;
 	}
 	
+	public QName getEntityType() {
+		return entityType;
+	}
+
+	public void setEntityType(QName entityType) {
+		this.entityType = entityType;
+	}
+
 	/**
 	 * Checks if is do update.
 	 *
@@ -258,6 +272,15 @@ public class ImportContext {
 		return lines;
 	}
 
+	
+	public NodeRef getEntityNodeRef() {
+		return entityNodeRef;
+	}
+
+	public void setEntityNodeRef(NodeRef entityNodeRef) {
+		this.entityNodeRef = entityNodeRef;
+	}
+
 	/**
 	 * Constructor
 	 * @param csvReader
@@ -307,6 +330,16 @@ public class ImportContext {
 	public void setPath(String path) {
 		this.path = path;
 	}
+
+	public String getDocsBasePath() {
+		return docsBasePath;
+	}
+
+	public void setDocsBasePath(String docsBasePath) {
+		this.docsBasePath = docsBasePath;
+	}
+
+	
 
 	
 }

@@ -2,13 +2,17 @@
 <mappings>
 
 	<!-- PRODUCT -->
-	<mapping name="bcpg:entity">
+	<mapping name="bcpg:rawMaterial">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
 
 			<column id="code" attribute="bcpg:code" type="Attribute" />
+			
+			<column id="hierarchy1"  type="Hierarchy" attribute="bcpg:productHierarchy1"   />
+			<column id="hierarchy2"  type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1" />
+	
 
 			<!-- costs -->
 			<column id="coutMP" dataListQName="bcpg:costList"
@@ -34,8 +38,51 @@
 			<column id="nutGlucides" dataListQName="bcpg:nutList"
 				charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue"
 				charactNodeRef="" charactName="Glucides" type="Characteristic" />
+				
+			<!-- files -->
+			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
+				type="File" />
+			<column id="img1Title" attribute="cm:title" path="Images/produit.jpg"
+				type="File" />
+				
 
 		</columns>
 	</mapping>
+	
+	<!-- COMPOSITION LIST -->
+	<mapping name="bcpg:compoList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:compoListProduct" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="level" attribute="bcpg:depthLevel" type="Attribute" />
+			<column id="compoListProduct" attribute="bcpg:compoListProduct"
+				type="Attribute" />
+			<column id="compoListQty" attribute="bcpg:compoListQty" type="Attribute" />
+			<column id="compoListUnit" attribute="bcpg:compoListUnit"
+				type="Attribute" />
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:client">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+
+	<mapping name="bcpg:supplier">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns />
+	</mapping>
+	
 
 </mappings>

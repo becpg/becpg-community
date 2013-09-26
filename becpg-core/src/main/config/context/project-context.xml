@@ -1,45 +1,65 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
 
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"   >
 
-	<bean id="projectDAO" class="fr.becpg.repo.project.impl.ProjectDAOImpl">
-		<property name="nodeService" ref="nodeService" />
+	<bean id="projectWorkflowService" class="fr.becpg.repo.project.impl.ProjectWorkflowServiceImpl">
+		<property name="workflowService" ref="WorkflowService" />
+		<property name="nodeService" ref="nodeService" />		
+	</bean>
+
+	<bean id="projectActivityService" class="fr.becpg.repo.project.impl.ProjectActivityServiceImpl">
+		<property name="activityService" ref="activityService"/>
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="associationService" ref="associationService" />
+		<property name="nodeService" ref="nodeService"/>
+		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 	</bean>
 
 	<bean id="projectService" class="fr.becpg.repo.project.impl.ProjectServiceImpl">
-		<property name="projectDAO" ref="projectDAO" />
-		<property name="workflowService" ref="WorkflowService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="associationService" ref="associationService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="repoService" ref="repoService" />
-		<property name="planningVisitor" ref="planningVisitor" />
-		<property name="taskStateVisitor" ref="taskStateVisitor" />
+		<property name="siteService" ref="siteService"/>
+		<property name="formulationService" ref="formulationService" />
+		<property name="projectWorkflowService" ref="projectWorkflowService"/>		
 	</bean>
 	
-	<bean id="planningVisitor" class="fr.becpg.repo.project.impl.PlanningVisitor">
-	</bean>
-	
-	<bean id="taskStateVisitor" class="fr.becpg.repo.project.impl.TaskStateVisitor">
-		<property name="workflowService" ref="WorkflowService" />
-		<property name="nodeService" ref="nodeService" />
+	<!-- Formulation -->
+	<bean id="projectFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
+		init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" />
+				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
+				<bean	class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
+					<property name="projectWorkflowService" ref="projectWorkflowService" />
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.project.data.ProjectData" />
 	</bean>
 
 	<!-- Policy -->
 	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="projectService" ref="projectService" />
-		<property name="wUsedListService" ref="wUsedListService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />	
+		<property name="projectActivityService" ref="projectActivityService"/>	
+		<property name="nodeArchiveService" ref="nodeArchiveService" />
+		<property name="projectWorkflowService" ref="projectWorkflowService"/>
 	</bean>
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="projectService" ref="projectService" />
 		<property name="associationService" ref="associationService" />
-		<property name="copyService" ref="copyService" />
+		<property name="projectActivityService" ref="projectActivityService"/>	
 	</bean>
 
 	<bean id="taskValuePlugin" parent="baseListValuePlugin"
@@ -51,14 +71,38 @@
 	</bean>
 
 	<!-- Workflow -->
-	<bean id="CreateProduct" parent="baseJavaDelegate" class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
-		<property name="nodeService" ref="nodeService"/>
-    	<property name="fileFolderService" ref="fileFolderService"/>
-    	<property name="productDAO" ref="productDAO"/>
-    	<property name="entityService" ref="entityService"/>
-    	<property name="productService" ref="productService"/>
-    	<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
-    	<property name="repoService" ref="repoService"/>
-    </bean> 
+	<bean id="CreateProduct" parent="baseJavaDelegate"
+		class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
+		<property name="nodeService" ref="nodeService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="entityService" ref="entityService" />
+		<property name="productService" ref="productService" />
+		<property name="repoService" ref="repoService" />
+	</bean>
+	
+	<!-- Worker -->
+	<bean id="projectFormulationWorker" class="fr.becpg.repo.project.impl.ProjectFormulationWorker">
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="projectService" ref="projectService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="transactionService" ref="transactionService" />		
+	</bean>
+	
+	<!-- project list sort -->
+	<bean id="ProjectListSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ProjectListSortPlugin">
+		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
+		<property name="nodeService" ref="nodeService" />		
+	</bean>
+
+	<!-- DataList Extractor -->
+	
+	 <bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="abstractDataListExtractor">
+		<property name="personService" ref="personService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="associationService" ref="associationService"/>
+		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>		
+		<property name="preferenceService" ref="preferenceService"/>
+	</bean>
+	
 
 </beans>

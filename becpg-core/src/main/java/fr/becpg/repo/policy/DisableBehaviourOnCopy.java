@@ -9,6 +9,8 @@ import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class DisableBehaviourOnCopy implements CopyServicePolicies.OnCopyNodePolicy,
 CopyServicePolicies.OnCopyCompletePolicy {
@@ -17,6 +19,7 @@ CopyServicePolicies.OnCopyCompletePolicy {
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
+	private static Log logger = LogFactory.getLog(DisableBehaviourOnCopy.class);
 	
 	public DisableBehaviourOnCopy(QName type, BehaviourFilter policyBehaviourFilter) {
 		super();
@@ -32,6 +35,12 @@ CopyServicePolicies.OnCopyCompletePolicy {
 
 		@Override
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("DisableBehaviourOnCopy :"+classQName.toPrefixString());
+				logger.debug("Force enable for transaction  :"+BeCPGPolicyHelper.isCopyBehaviourEnableForTransaction());
+			}
+			
 			if(!BeCPGPolicyHelper.isCopyBehaviourEnableForTransaction()){
 				NodeRef targetNodeRef = copyDetails.getTargetNodeRef();
 				policyBehaviourFilter.disableBehaviour(targetNodeRef, type);

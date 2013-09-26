@@ -6,92 +6,61 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfMlText;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class IngLabelingListDataItem.
- *
- * @author querephi
- */
-public class IngLabelingListDataItem extends BaseObject implements IManualDataItem{
+@AlfType
+@AlfQname(qname = "bcpg:ingLabelingList")
+public class IngLabelingListDataItem extends AbstractManualDataItem {
 
-	/** The node ref. */
-	private NodeRef nodeRef;	
 	
-	/** The grp. */
 	private NodeRef grp;
 	
-	/** The value. */
 	private MLText value;
 	
-	private Boolean isManual;
+	private MLText manualValue;
 	
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
-	/**
-	 * Gets the grp.
-	 *
-	 * @return the grp
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:illGrp")
 	public NodeRef getGrp() {
 		return grp;
 	}
 
-	/**
-	 * Sets the grp.
-	 *
-	 * @param grp the new grp
-	 */
+
 	public void setGrp(NodeRef grp) {
 		this.grp = grp;
 	}
 
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname="bcpg:illValue")
 	public MLText getValue() {
 		return value;
 	}
 
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+	
 	public void setValue(MLText value) {
 		this.value = value;
 	}
 	
-	@Override
-	public Boolean getIsManual() {
-
-		return isManual;
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname="bcpg:illManualValue")
+	public MLText getManualValue() {
+		return manualValue;
 	}
 
-	@Override
-	public void setIsManual(Boolean isManual) {
-		
-		this.isManual = isManual;		
+	
+	public void setManualValue(MLText manualValue) {
+		this.manualValue = manualValue;
 	}
+	
+	
 	
 	/**
 	 * Instantiates a new ing labeling list data item.
@@ -108,10 +77,10 @@ public class IngLabelingListDataItem extends BaseObject implements IManualDataIt
 	 * @param value the value
 	 */
 	public IngLabelingListDataItem(NodeRef nodeRef, NodeRef grp, MLText value, Boolean isManual){
-		setNodeRef(nodeRef);
-		setGrp(grp);
-		setValue(value);		
-		setIsManual(isManual);
+		this.nodeRef = nodeRef;;
+		this.grp=grp;
+		this.value=value;		
+		this.isManual=isManual;
 	}
 	
 	/**
@@ -119,10 +88,10 @@ public class IngLabelingListDataItem extends BaseObject implements IManualDataIt
 	 * @param i
 	 */
 	public IngLabelingListDataItem(IngLabelingListDataItem i){
-		setNodeRef(i.getNodeRef());
-		setGrp(i.getGrp());
-		setValue(i.getValue());
-		setIsManual(i.getIsManual());
+		this.nodeRef = i.nodeRef;;
+		this.grp = i.grp;
+		this.value = i.value;		
+		this.isManual = i.isManual;
 	}
 
 	@Override

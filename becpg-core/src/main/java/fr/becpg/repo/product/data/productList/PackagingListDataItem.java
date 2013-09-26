@@ -5,38 +5,30 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.annotation.AlfEnforced;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
 
-/**
- * The Class PackagingListDataItem.
- *
- * @author querephi
- */
-public class PackagingListDataItem extends AbstractEffectiveDataItem {
+@AlfType
+@AlfQname(qname = "bcpg:packagingList")
+public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 
-	/** The node ref. */
-	private NodeRef nodeRef;
-	
-	/** The qty. */
 	private Double qty = 0d;
-	
+
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;
 	
-	private String pkgLevel;	
-	
+	private Double lossPerc = 0d;
+
+	private PackagingLevel pkgLevel;
+
 	private Boolean isMaster;
-	
-	/** The product. */
+
 	private NodeRef product;
-	
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
 
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfProp
+	@AlfQname(qname = "bcpg:packagingListQty")
 	public Double getQty() {
 		return qty;
 	}
@@ -45,6 +37,8 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 		this.qty = qty;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:packagingListUnit")
 	public PackagingListUnit getPackagingListUnit() {
 		return packagingListUnit;
 	}
@@ -52,15 +46,30 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 	public void setPackagingListUnit(PackagingListUnit packagingListUnit) {
 		this.packagingListUnit = packagingListUnit;
 	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:packagingListLossPerc")
+	public Double getLossPerc() {
+		return lossPerc;
+	}
 
-	public String getPkgLevel() {
+	public void setLossPerc(Double lossPerc) {
+		this.lossPerc = lossPerc;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:packagingListPkgLevel")
+	public PackagingLevel getPkgLevel() {
 		return pkgLevel;
 	}
 
-	public void setPkgLevel(String pkgLevel) {
+	public void setPkgLevel(PackagingLevel pkgLevel) {
 		this.pkgLevel = pkgLevel;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:packagingListIsMaster")
+	@AlfEnforced
 	public Boolean getIsMaster() {
 		return isMaster;
 	}
@@ -69,47 +78,50 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 		this.isMaster = isMaster;
 	}
 
-	/**
-	 * Gets the product.
-	 *
-	 * @return the product
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:packagingListProduct")
 	public NodeRef getProduct() {
 		return product;
 	}
-	
-	/**
-	 * Sets the product.
-	 *
-	 * @param product the new product
-	 */
+
 	public void setProduct(NodeRef product) {
 		this.product = product;
-	}	
+	}
 
 	/**
 	 * Instantiates a new compo list data item.
 	 */
 	public PackagingListDataItem() {
-		
+
 	}
-	
+
 	/**
 	 * Instantiates a new packaging list data item.
+	 * 
 	 * @param nodeRef
 	 * @param qty
 	 * @param packagingListUnit
 	 * @param pkgLevel
 	 * @param product
 	 */
-	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, String pkgLevel, Boolean isMaster, NodeRef product){
-		
+	public PackagingListDataItem(NodeRef nodeRef, Double qty, PackagingListUnit packagingListUnit, PackagingLevel pkgLevel, Boolean isMaster, NodeRef product) {
+
 		setNodeRef(nodeRef);
 		setQty(qty);
 		setPackagingListUnit(packagingListUnit);
 		setPkgLevel(pkgLevel);
 		setIsMaster(isMaster);
 		setProduct(product);
+	}
+
+	public PackagingListDataItem(PackagingListDataItem c) {
+		super();
+		this.nodeRef = c.nodeRef;
+		this.qty = c.qty;
+		this.packagingListUnit = c.packagingListUnit;
+		this.pkgLevel = c.pkgLevel;
+		this.isMaster = c.isMaster;
+		this.product = c.product;
 	}
 
 	@Override
@@ -167,7 +179,11 @@ public class PackagingListDataItem extends AbstractEffectiveDataItem {
 	@Override
 	public String toString() {
 		return "PackagingListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", packagingListUnit=" + packagingListUnit + ", pkgLevel=" + pkgLevel + ", product=" + product + "]";
-	}	
-	
-	
+	}
+
+	@Override
+	public CompositionDataItem createCopy() {
+		return new PackagingListDataItem(this);
+	}
+
 }

@@ -1,20 +1,30 @@
 package fr.becpg.repo.cache.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
+import org.alfresco.repo.cache.SimpleCache;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
-import org.alfresco.util.PropertyCheck;
+import org.alfresco.repo.tenant.TenantUtil;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -22,98 +32,256 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 /**
  * 
  * @author matthieu
+ *
  */
 @Service
-public class BeCPGCacheServiceImpl implements InitializingBean, DisposableBean, BeCPGCacheService {
+public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
 
 	private static Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
-	private CacheManager cacheManager;
-	private Resource configLocation;
-	private TenantService tenantService;
-
-
+	private int maxCacheItems = 500;
 	
-	public void setTenantService(TenantService tenantService) {
-		this.tenantService = tenantService;
+	Map<String,Integer> cacheSizes = new HashMap<>(10);
+
+	private boolean isDebugEnable = false;
+	
+	private boolean disableAllCache = false;
+	
+	private TenantAdminService tenantAdminService;
+
+	private Map<String, DefaultSimpleCache<Serializable, ?>> caches = new ConcurrentHashMap<String, DefaultSimpleCache<Serializable, ?>>();
+
+	public void setMaxCacheItems(int maxCacheItems) {
+		this.maxCacheItems = maxCacheItems;
 	}
 
-	public void setConfigLocation(Resource configLocation) {
-		this.configLocation = configLocation;
+	public Map<String, DefaultSimpleCache<Serializable, ?>> getCaches() {
+		return  Collections.unmodifiableMap(caches);
 	}
 
 	@Override
-	public void afterPropertiesSet() throws IOException, CacheException {
-		PropertyCheck.mandatory(this, "configLocation", configLocation);
+	public void afterPropertiesSet() throws Exception {
+		isDebugEnable = logger.isDebugEnabled();
 
-		logger.debug("Init beCPG Cache");
-		cacheManager = new CacheManager(this.configLocation.getURL());
+	}
+	
+
+	public void setDisableAllCache(boolean disableAllCache) {
+		this.disableAllCache = disableAllCache;
 	}
 
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
+	}
+
+	public void setCacheSizes(Map<String, Integer> cacheSizes) {
+		this.cacheSizes = cacheSizes;
+	}
+
+
+	@Override
+	public <T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack) {
+		return getFromCache(cacheName, cacheKey, cacheDataProviderCallBack, false);
+	}
+	
+	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getFromCache(String cacheName, String cacheKey,
-			BeCPGCacheDataProviderCallBack<T> sigedCacheDataProviderCallBack) {
-		
+	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback) {
+	
 		cacheKey = computeCacheKey(cacheKey);
-		Cache cache = getCache(cacheName);
+		SimpleCache<Serializable, T> cache = (DefaultSimpleCache<Serializable,T>) getCache(cacheName);
 		T ret = null;
 		try {
-			
-			Element el = cache.get(cacheKey);
-			if (el != null) {
-				logger.debug("Getting values from " + cacheKey);
-				ret = (T) el.getObjectValue();
-			}
+			ret = disableAllCache? null : cache.get(cacheKey);
 		} catch (Exception e) {
 			logger.error("Cannot get " + cacheKey + " from cache " + cacheName, e);
 		}
 
+	
 		if (ret == null) {
-			ret = sigedCacheDataProviderCallBack.getData();
-			if(ret!=null){
-				logger.debug("Store values to " + cacheKey);
-				cache.put(new Element(cacheKey, ret));
+			if (isDebugEnable) {
+				logger.debug("Cache miss " + cacheKey);
 			}
+
+			ret = cacheDataProviderCallBack.getData();
+			if (!disableAllCache && ret != null) {
+				
+				if(deleteOnTxRollback  && AlfrescoTransactionSupport.isActualTransactionActive()){
+					Set<String> currentTransactionCacheKeys = (Set<String>) AlfrescoTransactionSupport.getResource(cacheName);
+					if (currentTransactionCacheKeys == null) {
+						currentTransactionCacheKeys = new LinkedHashSet<String>();
+						if (isDebugEnable) {
+							logger.debug("Bind key to transaction : "+cacheName);
+						}
+						AlfrescoTransactionSupport.bindResource(cacheName, currentTransactionCacheKeys);
+					}
+					currentTransactionCacheKeys.add(cacheKey);
+					
+					AlfrescoTransactionSupport.bindListener( new TransactionListenerAdapter() {
+	
+						@Override
+						public void afterRollback() {
+							
+							Set<String> txCacheKeys = (Set<String>) AlfrescoTransactionSupport.getResource(cacheName);
+							if (txCacheKeys != null) {
+								for (String txCacheKey : txCacheKeys) {
+									if (isDebugEnable) {
+										logger.debug("Remove tx assoc   "+cacheName+" "+txCacheKey);
+									}
+									removeFromCache(cacheName, txCacheKey);
+								}
+								
+							}
+							
+						}
+					});
+				}
+				
+				cache.put(cacheKey,ret);
+			}
+		} else if (isDebugEnable) {
+			logger.debug("Cache Hit " + cacheKey);
 		}
 
 		return ret;
 	}
-	
+
 	@Override
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
-		Cache cache = getCache(cacheName);
+		SimpleCache<Serializable, ?> cache = getCache(cacheName);
+		if(isDebugEnable && cache.get(cacheKey)==null){
+			logger.debug("Cache "+cacheKey+" object doesn't exists");
+		}
 		cache.remove(cacheKey);
-		
-	}
-	
-	@Override
-	public void destroy() {
-		logger.info("Close beCPG cache");
-		cacheManager.shutdown();
+
+
 	}
 
 	@Override
 	public void clearAllCaches() {
 		logger.info("Clear all cache");
-		cacheManager.clearAll();
-	}
+		for (SimpleCache<Serializable, ?> cache : caches.values()) {
+			cache.clear();
+		}
 
-	
+	}
 
 	private String computeCacheKey(String cacheKey) {
-		return cacheKey+"@"+tenantService.getCurrentUserDomain();
-	}
 
-	private Cache getCache(String cacheName) {
-		if(!cacheManager.cacheExists(cacheName)){
-			cacheManager.addCache(cacheName);
+		final String tenantDomain = TenantUtil.getCurrentDomain();
+		if (!tenantDomain.equals(TenantService.DEFAULT_DOMAIN)) {
+			return cacheKey + "@" + tenantDomain;
 		}
-		return cacheManager.getCache(cacheName);
+		return cacheKey;
 	}
 
-	
-	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private DefaultSimpleCache<Serializable, ?> getCache(String cacheName) {
+		DefaultSimpleCache<Serializable, ?> cache = caches.get(cacheName);
+		
+		if (cache == null) {
+			Integer cacheSize = cacheSizes.get(cacheName);
+			if(cacheSize == null){
+				cacheSize = maxCacheItems;
+			}
+			
+			if(tenantAdminService.isEnabled()){
+				cacheSize *= tenantAdminService.getAllTenants().size();
+			}
+			
+			cache = new DefaultSimpleCache(cacheSize, cacheName);
+			
+			caches.put(cacheName,cache );
+		}
+		return cache;
+	}
+
+	@Override
+	public void printCacheInfos() {
+		for (String cacheName : caches.keySet()) {
+			logger.info("Cache - " + cacheName);
+			logger.info(" - Elements - " + caches.get(cacheName).getBackingMap().size());
+			logger.info(" - Capacity - " + caches.get(cacheName).getBackingMap().capacity());
+			logger.info(" - WeightedSize - " + caches.get(cacheName).getBackingMap().weightedSize());
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(caches.get(cacheName).getBackingMap());
+				oos.close();
+				logger.info(" - Data Size: " + baos.size() + "bytes");
+			} catch (IOException e) {
+				logger.warn(" - Data Size: (no serializable data)");
+			}
+		}
+
+	}
+
+	public final class DefaultSimpleCache<K extends Serializable, V extends Object> implements SimpleCache<K, V> {
+		private ConcurrentLinkedHashMap<K, AbstractMap.SimpleImmutableEntry<K, V>> map;
+
+		/**
+		 * Construct a cache using the specified capacity and name.
+		 * 
+		 * @param maxItems
+		 *            The cache capacity.
+		 */
+		public DefaultSimpleCache(int maxItems, String cacheName) {
+			if (maxItems < 1) {
+				throw new IllegalArgumentException("maxItems must be a positive integer, but was " + maxItems);
+			}
+
+			// The map will have a bounded size determined by the maxItems
+			// member variable.
+			map = new ConcurrentLinkedHashMap.Builder<K, AbstractMap.SimpleImmutableEntry<K, V>>().maximumWeightedCapacity(maxItems).build();
+		}
+
+		@Override
+		public boolean contains(K key) {
+			return map.containsKey(key);
+		}
+
+		@Override
+		public Collection<K> getKeys() {
+			return map.keySet();
+		}
+
+		public ConcurrentLinkedHashMap<K, AbstractMap.SimpleImmutableEntry<K, V>> getBackingMap() {
+			return map;
+		}
+
+		@Override
+		public V get(K key) {
+			AbstractMap.SimpleImmutableEntry<K, V> kvp = map.get(key);
+			if (kvp == null) {
+				return null;
+			}
+			return kvp.getValue();
+		}
+
+		@Override
+		public void put(K key, V value) {
+			AbstractMap.SimpleImmutableEntry<K, V> kvp = new AbstractMap.SimpleImmutableEntry<K, V>(key, value);
+			map.put(key, kvp);
+		}
+
+		@Override
+		public void remove(K key) {
+			map.remove(key);
+		}
+
+		@Override
+		public void clear() {
+			map.clear();
+		}
+
+		@Override
+		public String toString() {
+			return "DefaultSimpleCache[maxItems=" + map.capacity() + "]";
+		}
+
+	}
+
 
 }

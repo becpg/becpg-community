@@ -1,17 +1,20 @@
 package fr.becpg.repo.project.data;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.project.impl.PlanningVisitor;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * ProjectData used to manipulate project
@@ -19,11 +22,13 @@ import fr.becpg.repo.project.impl.PlanningVisitor;
  * @author quere
  * 
  */
-public class ProjectData extends AbstractProjectData {
+@AlfType
+@AlfQname(qname = "pjt:project")
+public class ProjectData extends BeCPGDataObject {
 
-	private static Log logger = LogFactory.getLog(PlanningVisitor.class);
 	
-	private String hierarchy1;
+	private NodeRef hierarchy1;
+	private NodeRef hierarchy2;
 	private Date startDate;
 	private Date dueDate;
 	private Date completionDate;
@@ -32,15 +37,60 @@ public class ProjectData extends AbstractProjectData {
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
 	private NodeRef entity;
+	private List<NodeRef> legends = new ArrayList<NodeRef>();
+	private Integer overdue = 0;
+	private Integer score = 0;
+	private Date created;
+	private Date modified;
+	private String creator;
+	private String modifier;
+	private NodeRef projectManager;
+	
+	private List<TaskListDataItem> taskList;
+	private List<DeliverableListDataItem> deliverableList;
+	private List<ScoreListDataItem> scoreList;
 
-	public String getHierarchy1() {
+	public ProjectData() {
+		super();
+	}
+
+	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate, Integer priority,ProjectState projectState,
+			NodeRef projectTpl, Integer completionPercent, NodeRef entity) {
+		super(nodeRef, name);
+		this.hierarchy1 = hierarchy1;
+		this.hierarchy2 = hierarchy2;
+		this.startDate = startDate;
+		this.dueDate = dueDate;
+		this.completionDate = completionDate;
+		this.priority = priority;
+		this.projectState = projectState;
+		this.projectTpl = projectTpl;
+		this.completionPercent = completionPercent;
+		this.entity = entity;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectHierarchy1")
+	public NodeRef getHierarchy1() {
 		return hierarchy1;
 	}
 
-	public void setHierarchy1(String hierarchy1) {
+	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:projectHierarchy2")
+	public NodeRef getHierarchy2() {
+		return hierarchy2;
+	}
+
+	public void setHierarchy2(NodeRef hierarchy2) {
+		this.hierarchy2 = hierarchy2;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectStartDate")
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -49,6 +99,8 @@ public class ProjectData extends AbstractProjectData {
 		this.startDate = startDate;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:projectDueDate")
 	public Date getDueDate() {
 		return dueDate;
 	}
@@ -57,6 +109,8 @@ public class ProjectData extends AbstractProjectData {
 		this.dueDate = dueDate;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:projectCompletionDate")
 	public Date getCompletionDate() {
 		return completionDate;
 	}
@@ -65,6 +119,8 @@ public class ProjectData extends AbstractProjectData {
 		this.completionDate = completionDate;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:projectPriority")
 	public Integer getPriority() {
 		return priority;
 	}
@@ -73,7 +129,9 @@ public class ProjectData extends AbstractProjectData {
 		this.priority = priority;
 	}
 
-	public ProjectState getProjectState() {
+	@AlfProp
+	@AlfQname(qname = "pjt:projectState")
+		public ProjectState getProjectState() {
 		return projectState;
 	}
 
@@ -81,6 +139,8 @@ public class ProjectData extends AbstractProjectData {
 		this.projectState = projectState;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:entityTplRef")
 	public NodeRef getProjectTpl() {
 		return projectTpl;
 	}
@@ -89,6 +149,8 @@ public class ProjectData extends AbstractProjectData {
 		this.projectTpl = projectTpl;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:completionPercent")
 	public Integer getCompletionPercent() {
 		return completionPercent;
 	}
@@ -96,23 +158,9 @@ public class ProjectData extends AbstractProjectData {
 	public void setCompletionPercent(Integer completionPercent) {
 		this.completionPercent = completionPercent;
 	}
-	
-	
 
-	public ProjectData(NodeRef nodeRef, String name, String hierarchy1, Date startDate, Date dueDate, Date completionDate, Integer priority, ProjectState projectState, NodeRef projectTpl,
-			Integer completionPercent, NodeRef entity) {
-		super(nodeRef, name);
-		this.hierarchy1 = hierarchy1;
-		this.startDate = startDate;
-		this.dueDate = dueDate;
-		this.completionDate = completionDate;
-		this.priority = priority;
-		this.projectState = projectState;
-		this.projectTpl = projectTpl;
-		this.completionPercent = completionPercent;
-		this.entity = entity;
-	}
-
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:projectEntity")
 	public NodeRef getEntity() {
 		return entity;
 	}
@@ -121,39 +169,114 @@ public class ProjectData extends AbstractProjectData {
 		this.entity = entity;
 	}
 
-	@Override
-	public Map<QName, Serializable> getProperties() {
-		Map<QName, Serializable> properties = super.getProperties();
-		properties.put(ProjectModel.PROP_PROJECT_HIERARCHY1, hierarchy1);
-		properties.put(ProjectModel.PROP_PROJECT_START_DATE, startDate);
-		properties.put(ProjectModel.PROP_PROJECT_DUE_DATE, dueDate);
-		properties.put(ProjectModel.PROP_PROJECT_COMPLETION_DATE, completionDate);
-		properties.put(ProjectModel.PROP_PROJECT_PRIORITY, priority);
-		properties.put(ProjectModel.PROP_PROJECT_STATE, projectState.toString());
-		properties.put(ProjectModel.PROP_COMPLETION_PERCENT, completionPercent);
-		return properties;
+	@AlfProp
+	@AlfQname(qname = "pjt:projectLegends")
+	public List<NodeRef> getLegends() {
+		return legends;
 	}
 
-	@Override
-	public Map<QName, NodeRef> getSingleAssociations() {
-		Map<QName, NodeRef> singleAssociations = super.getSingleAssociations();
-		singleAssociations.put(ProjectModel.ASSOC_PROJECT_TPL, projectTpl);
-		singleAssociations.put(ProjectModel.ASSOC_PROJECT_ENTITY, entity);
-		return singleAssociations;
-	}
-
-	@Override
-	public Map<QName, List<NodeRef>> getMultipleAssociations() {
-		Map<QName, List<NodeRef>> multipleAssociations = super.getMultipleAssociations();
-		return multipleAssociations;
+	public void setLegends(List<NodeRef> legends) {
+		this.legends = legends;
 	}
 	
-	@Override
-	public String toString() {
-		return "ProjectData [hierarchy1=" + hierarchy1 + ", startDate=" + startDate + ", dueDate=" + dueDate
-				+ ", completionDate=" + completionDate + ", priority=" + priority + ", projectState=" + projectState
-				+ ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entity=" + entity
-				+ "]";
+	@AlfProp
+	@AlfQname(qname = "pjt:projectOverdue")
+	public Integer getOverdue() {
+		return overdue;
+	}
+
+	public void setOverdue(Integer overdue) {
+		this.overdue = overdue;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectScore")
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
+	}
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:projectManager")
+	public NodeRef getProjectManager() {
+		return projectManager;
+	}
+
+	public void setProjectManager(NodeRef projectManager) {
+		this.projectManager = projectManager;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "cm:created")
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "cm:modified")
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "cm:creator")
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "cm:modifier")
+	public String getModifier() {
+		return modifier;
+	}
+
+	public void setModifier(String modifier) {
+		this.modifier = modifier;
+	}
+
+	@DataList
+	@AlfQname(qname="pjt:taskList")
+	public List<TaskListDataItem> getTaskList() {
+		return taskList;
+	}
+	
+	@DataList
+	@AlfQname(qname="pjt:deliverableList")
+	public List<DeliverableListDataItem> getDeliverableList() {
+		return deliverableList;
+	}
+
+	public void setDeliverableList(List<DeliverableListDataItem> deliverableList) {
+		this.deliverableList = deliverableList;
+	}
+
+	public void setTaskList(List<TaskListDataItem> taskList) {
+		this.taskList = taskList;
+	}
+
+	@DataList
+	@AlfQname(qname="pjt:scoreList")
+	public List<ScoreListDataItem> getScoreList() {
+		return scoreList;
+	}
+
+	public void setScoreList(List<ScoreListDataItem> scoreList) {
+		this.scoreList = scoreList;
 	}
 
 	@Override
@@ -165,6 +288,7 @@ public class ProjectData extends AbstractProjectData {
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
 		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = prime * result + ((legends == null) ? 0 : legends.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result + ((projectState == null) ? 0 : projectState.hashCode());
 		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
@@ -206,6 +330,11 @@ public class ProjectData extends AbstractProjectData {
 				return false;
 		} else if (!hierarchy1.equals(other.hierarchy1))
 			return false;
+		if (legends == null) {
+			if (other.legends != null)
+				return false;
+		} else if (!legends.equals(other.legends))
+			return false;
 		if (priority == null) {
 			if (other.priority != null)
 				return false;
@@ -225,5 +354,15 @@ public class ProjectData extends AbstractProjectData {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ProjectData [hierarchy1=" + hierarchy1 + ", startDate=" + startDate + ", dueDate=" + dueDate
+				+ ", completionDate=" + completionDate + ", priority=" + priority + ", projectState=" + projectState
+				+ ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entity=" + entity
+				+ ", legends=" + legends + "]";
+	}
+
+	
 	
 }

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<becpg:data path="/app:company_home/cm:Companies/cm:Clients" type="node" name="Auchan" nodeRef="workspace://SpacesStore/cf96b137-87ba-4d41-a0d7-cbace75cd247" code="C5">
-  <becpg:image name="produit.jpg"><![CDATA[/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
+<bcpg:data path="/app:company_home/cm:TestFolder" type="node" name="Abricot, nectar, pasteurisé" nodeRef="workspace://SpacesStore/4ae3952f-6851-41e9-9046-daab3b99fa85" code="MP2043">
+  <bcpg:image name="produit.jpg"><![CDATA[/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
 HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
 MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCADmAOYDASIA
 AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
@@ -88,5 +88,5 @@ iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKK
 KKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
 oAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiig
 AooooA//2Q==
-]]></becpg:image>
-</becpg:data>
+]]></bcpg:image>
+</bcpg:data>

@@ -1,0 +1,7 @@
+PATH;/Temp;;;
+TYPE;bcpg:entityV2;;;
+MAPPING;Default;;;
+COLUMNS;bcpg:erpCode;img1Path;img2Path;docFileRegexp
+VALUES;ERP1;beCPG/import/images/img1-1.jpg;beCPG/import/images/img2-1.jpg;reg:.*2052\s*-.*
+VALUES;ERP2;beCPG/import/images/img1-2.jpg;beCPG/import/images/img2-2.jpg;reg:.*2365\s*-.*
+VALUES;ERP3;beCPG/import/images/img1-3.jpg;beCPG/import/images/img2-3.jpg;reg:.*4561\s*-.*

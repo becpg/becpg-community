@@ -1,0 +1,8 @@
+STOP_ON_FIRST_ERROR;false;;;;;;;
+IMPORT_TYPE;EntityListItem;;;;;;;
+PATH;/Temp/Products;;;;;;;
+TYPE;bcpg:ingList;;;;;;;
+MAPPING;Products;;;;;;;
+COLUMNS;bcpg:erpCode;bcpg:ingListIng;bcpg:ingListQtyPerc;bcpg:ingListIsGMO;bcpg:ingListIsIonized;bcpg:ingListGeoOrigin;bcpg:ingListBioOrigin;bcpg:ingListSubIng
+VALUES;ERP code 1;fraise;55;false;false;France,Espagne;Fraise;
+VALUES;ERP code 1;sucre;45;false;false;France,Espagne;Betterave, Cannes à sucre;

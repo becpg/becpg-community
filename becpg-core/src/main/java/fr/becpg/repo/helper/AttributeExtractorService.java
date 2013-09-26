@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 /**
  * Helper used to manage a property
@@ -19,20 +20,30 @@ import fr.becpg.config.format.PropertyFormats;
 public interface AttributeExtractorService {
 
 	public interface DataListCallBack {
+		
+		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
 
-		List<Map<String,Object>> extractDataListField(NodeRef entityNodeRef, QName dataListQname, List<String> metadataFields);
 
 	}
+	
+	public enum AttributeExtractorMode {
+		SEARCH,JSON,CSV;
+	}
 
+	
+	
+	
 	public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 
 	public String getPersonDisplayName(String userId);
 
-	public Serializable getProperty(NodeRef nodeRef, QName propQname);
-	
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch);
+	public String convertDateValue(Serializable value);
 
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, boolean isSearch, DataListCallBack callback);
+	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
+	
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode );
+	
+	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,  List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
 
 	public String getDisplayPath(NodeRef nodeRef);
 
@@ -45,6 +56,12 @@ public interface AttributeExtractorService {
 	public PropertyFormats getPropertyFormats();
 
 	public String extractSiteId(NodeRef entityNodeRef);
+
+	@Deprecated 
+	//Use convertDateValue instead
+	public Serializable getProperty(NodeRef nodeRef, QName propName);
+
+
 
 	
 }

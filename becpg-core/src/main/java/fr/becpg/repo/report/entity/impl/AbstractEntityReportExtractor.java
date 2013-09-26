@@ -2,19 +2,25 @@ package fr.becpg.repo.report.entity.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
@@ -23,13 +29,14 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 
@@ -45,27 +52,34 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String TAG_DATALISTS = "dataLists";
 	protected static final String TAG_ATTRIBUTES = "attributes";
 	protected static final String TAG_ATTRIBUTE = "attribute";
+	protected static final String TAG_VERSIONS = "versions";
+	protected static final String TAG_VERSION = "version";
 	protected static final String ATTR_SET = "set";
 	protected static final String ATTR_NAME = "name";
 	protected static final String ATTR_VALUE = "value";
-	protected static final String LINE_SEPARATOR = "line.separator";
-	private static final String TAG_SUFFIX_LINES = "-lines";
-	private static final String TAG_SUFFIX_LINE = "-line";
-
+	protected static final String ATTR_ITEM_TYPE = "itemType";	
+	protected static final String ATTR_ASPECTS = "aspects";
+	protected static final String TAG_IMAGES = "images";
+	protected static final String TAG_IMAGE = "image";
+	protected static final String PRODUCT_IMG_ID = "Img%d";
+	protected static final String ATTR_IMAGE_ID = "id";
+	
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
 	
 	private static final String VALUE_PERSON = "%s %s";
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 	
-	private static final String QUERY_XPATH_FORM_SETS = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/set";
-	private static final String QUERY_XPATH_FORM_FIELDS_BY_SET = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/appearance/field[@set=\"%s\"]";
-	private static final String QUERY_XPATH_FORM_FIELDS = "/alfresco-config/config[@evaluator=\"node-type\" and @condition=\"%s\"]/forms/form/field-visibility/show";
-	private static final String QUERY_ATTR_GET_ID = "@id";
-	private static final String QUERY_ATTR_GET_LABEL = "@label";
-	private static final String SET_DEFAULT = "";
-	
 	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
+
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(
+			ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID,
+			ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL,
+			ContentModel.PROP_CONTENT));
+	
+	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(
+			ContentModel.PROP_NAME, ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR,
+			ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 
 	protected DictionaryService dictionaryService;
 	
@@ -77,46 +91,42 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	
 	protected EntityService entityService;
 
+	protected VersionService versionService;
 	
+	protected FileFolderService fileFolderService;
+	
+	protected AssociationService associationService;
 
-	/**
-	 * @param nodeService the nodeService to set
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	
-	/**
-	 * @param dictionaryService the dictionaryService to set
-	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-
-	/**
-	 * @param namespaceService the namespaceService to set
-	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-
-	/**
-	 * @param attributeExtractorService the propertyService to set
-	 */
 
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
-
-
-	/**
-	 * @param entityService the entityService to set
-	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
+	}
+
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@Override
@@ -126,73 +136,78 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 		Document document = DocumentHelper.createDocument();
 		Element entityElt = document.addElement(TAG_ENTITY);
-
-		Element attributesElt = entityElt.addElement(TAG_ATTRIBUTES);
-
-		// add attributes at <product/> tag
-		Map<ClassAttributeDefinition, String> attributes = loadNodeAttributes(entityNodeRef);
-
-		for (Map.Entry<ClassAttributeDefinition, String> attrKV : attributes.entrySet()) {
-
-			entityElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
-			
-			loadMultiLinesAttributes(attrKV, entityElt);
-		}
-
-		// add attributes at <product><attributes/></product> and group them by
-		// set
-		Map<String, List<String>> fieldsBySets = getFieldsBySets(entityNodeRef, REPORT_FORM_CONFIG_PATH);
-
-		// set
-		for (Map.Entry<String, List<String>> kv : fieldsBySets.entrySet()) {
-
-			// field
-			for (String fieldId : kv.getValue()) {
-
-				// look for value
-				Map.Entry<ClassAttributeDefinition, String> attrKV = null;
-				for (Map.Entry<ClassAttributeDefinition, String> a : attributes.entrySet()) {
-
-					if (a.getKey().getName().getPrefixString().equals(fieldId)) {
-						attrKV = a;
-						break;
-					}
-				}
-
-				if (attrKV != null) {
-
-					Element attributeElt = attributesElt.addElement(TAG_ATTRIBUTE);
-					attributeElt.addAttribute(ATTR_SET, kv.getKey());
-					attributeElt.addAttribute(ATTR_NAME, attrKV.getKey().getTitle());
-					attributeElt.addAttribute(ATTR_VALUE, attrKV.getValue());
-				}
-			}
-		}
+		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		
-		// render target assocs (plants...special cases)
-		loadTargetAssocs(entityNodeRef, entityElt);				
+		// add attributes at <product/> tag
+		loadNodeAttributes(entityNodeRef, entityElt, true);
+		
+		Element aspectsElt = entityElt.addElement(ATTR_ASPECTS);
+		aspectsElt.addCDATA(extractAspects(entityNodeRef));
+		
+		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
+		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).getPrefixString());
+		
+		// load images
+		Element imgsElt = entityElt.addElement(TAG_IMAGES);		
+		extractEntityImages(entityNodeRef, imgsElt, images);
 		
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
-		loadDataLists(entityNodeRef, dataListsElt);
-
+		loadDataLists(entityNodeRef, dataListsElt, images);
+		
+		// render versions
+		loadVersions(entityNodeRef, entityElt);
+		
 		ret.setXmlDataSource(entityElt);
-		ret.setDataObjects(extractImages(entityNodeRef, entityElt));
+		ret.setDataObjects(images);
 
 		return ret;
 	}
 	
-	protected Map<String, byte[]> extractImages(NodeRef entityNodeRef, Element entityElt) {
-		return null;
+	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
+		
+		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		if (imagesFolderNodeRef != null) {
+			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
+
+				String imgName = fileInfo.getName().toLowerCase();
+				NodeRef imgNodeRef = fileInfo.getNodeRef();
+				String imgId = String.format(PRODUCT_IMG_ID, cnt);
+				byte[] imageBytes = entityService.getImage(imgNodeRef);
+				if (imageBytes != null) {
+					Element imgElt = imgsElt.addElement(TAG_IMAGE);
+					imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
+					imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName);
+					imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+
+					images.put(imgId, imageBytes);
+				}
+				cnt++;
+			}
+		}
 	}
 	
-	protected void loadTargetAssocs(NodeRef entityNodeRef, Element entityElt) {
+	// render target assocs (plants...special cases)
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
+		return false;
 	}
 	
 	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
 	}
 	
-	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {		
+	}
+	
+	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {		
+		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes);		
+	}
+	
+	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {
+		List<QName> hiddentAttributes = new ArrayList<>();
+		hiddentAttributes.addAll(hiddenNodeAttributes);
+		hiddentAttributes.addAll(hiddenDataListItemAttributes);
+		loadAttributes(nodeRef, nodeElt, useCData, hiddentAttributes);			
 	}
 	
 	/**
@@ -202,7 +217,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	 * @param elt the elt
 	 * @return the element
 	 */
-	protected Map<ClassAttributeDefinition, String> loadNodeAttributes(NodeRef nodeRef) {
+	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
 		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();		
@@ -212,14 +227,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
-			if(!(property.getKey().equals(ContentModel.PROP_NODE_REF) || 
-			property.getKey().equals(ContentModel.PROP_NODE_DBID) ||
-			property.getKey().equals(ContentModel.PROP_NODE_UUID) ||
-			property.getKey().equals(ContentModel.PROP_STORE_IDENTIFIER) ||
-			property.getKey().equals(ContentModel.PROP_STORE_NAME) ||
-			property.getKey().equals(ContentModel.PROP_STORE_PROTOCOL) ||
-			property.getKey().equals(ContentModel.PROP_CONTENT) ||
-			property.getKey().equals(ContentModel.PROP_VERSION_LABEL))){
+			if(!hiddenAttributes.contains(property.getKey())){
 			
 				PropertyDefinition propertyDef =  dictionaryService.getProperty(property.getKey());
 				if(propertyDef == null){
@@ -269,79 +277,92 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		
 		for(Map.Entry<QName, String> tempValue : tempValues.entrySet()){
 			AssociationDefinition associationDef =  dictionaryService.getAssociation(tempValue.getKey());
+			if(associationDef == null){
+				logger.error("This association doesn't exist. Name: " + tempValue.getKey());
+				continue;
+			}
 			values.put(associationDef, tempValue.getValue());
 		}
 		
-		return values;
+		for (Map.Entry<ClassAttributeDefinition, String> attrKV : values.entrySet()) {
+
+			if(attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition)attrKV.getKey(), nodeElt)){				
+				
+				if(useCData || 
+						attrKV.getKey().getName().isMatch(BeCPGModel.PROP_INSTRUCTION)){
+					addCDATA(nodeElt, attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+				}				
+				else{
+					nodeElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+				}
+			}				
+		}
 	}	
-
-	protected void extractMultiLines(Element entityElt, Map.Entry<ClassAttributeDefinition, String> kv, QName property){
-		
-		Element linesElt = entityElt.addElement(property.getLocalName() + TAG_SUFFIX_LINES);
-		if(kv.getValue() != null){
-			String[] textLines = kv.getValue().split(System.getProperty(LINE_SEPARATOR));
-
-			for (String textLine : textLines) {
-				Element lineElt = linesElt.addElement(property.getLocalName() + TAG_SUFFIX_LINE);
-				lineElt.addCDATA(textLine);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Map<String, List<String>> getFieldsBySets(NodeRef nodeRef, String reportFormConfigPath){
-				
-		Map<String, List<String>> fieldsBySets = new LinkedHashMap<String, List<String>>();
-		Document doc = null;
-		try{
-			ClassPathResource classPathResource = new ClassPathResource(reportFormConfigPath);
-			
-			SAXReader reader = new SAXReader();
-			doc = reader.read(classPathResource.getInputStream());
-		}
-		catch(Exception e){
-			logger.error("Failed to load file " + reportFormConfigPath, e);
-			return fieldsBySets;
-		}				
-		
-		// fields to show
-		List<String> fields = new ArrayList<String>();
-		QName nodeType = nodeService.getType(nodeRef);		
-		String nodeTypeWithPrefix = nodeType.toPrefixString(namespaceService);
-		
-		List<Element> fieldElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_FIELDS, nodeTypeWithPrefix));		
-		for(Element fieldElt : fieldElts){
-			fields.add(fieldElt.valueOf(QUERY_ATTR_GET_ID));
-		}				
-		
-		// sets to show
-		List<Element> setElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_SETS, nodeTypeWithPrefix));		
-		for(Element setElt : setElts){
-						
-			String setId = setElt.valueOf(QUERY_ATTR_GET_ID);
-			String setLabel = setElt.valueOf(QUERY_ATTR_GET_LABEL);
-			
-			List<String> fieldsForSet = new ArrayList<String>(); 
-			List<Element> fieldsForSetElts = doc.selectNodes(String.format(QUERY_XPATH_FORM_FIELDS_BY_SET, nodeTypeWithPrefix, setId));			
-			for(Element fieldElt : fieldsForSetElts){
-				
-				String fieldId = fieldElt.valueOf(QUERY_ATTR_GET_ID);						
-				fieldsForSet.add(fieldId);
-				fields.remove(fieldId);
-			}
-
-			fieldsBySets.put(setLabel, fieldsForSet);
-		}
-		
-		// fields not associated to set
-		fieldsBySets.put(SET_DEFAULT, fields);	
-		
-		return fieldsBySets;
-	}
 
 	protected String generateKeyAttribute(String attributeName){
 		
 		return attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase();
 	}
 	
+	protected void loadVersions(NodeRef entityNodeRef, Element entityElt) {
+		
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);		
+		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
+		
+		if(versionHistory!=null && versionHistory.getAllVersions() != null){
+			
+			for(Version version : versionHistory.getAllVersions()){
+				Element versionElt = versionsElt.addElement(TAG_VERSION);
+				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());			
+				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
+				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));				
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
+						attributeExtractorService.getPropertyFormats().getDateFormat().format(version.getFrozenModifiedDate()));
+			}
+		}
+		
+	}	
+	
+	protected String extractNames(List<NodeRef> nodeRefs){
+		String value = VALUE_NULL;
+		for(NodeRef nodeRef : nodeRefs){
+			if (!value.isEmpty()) {
+				value += RepoConsts.LABEL_SEPARATOR;
+			}
+			value += (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		}		
+		return value;
+	}
+	
+	protected String extractAspects(NodeRef nodeRef){
+		String value = VALUE_NULL;
+		for(QName aspect : nodeService.getAspects(nodeRef)){
+			if (!value.isEmpty()) {
+				value += RepoConsts.LABEL_SEPARATOR;
+			}
+			value += aspect.toPrefixString();
+		}		
+		return value;
+	}	
+	
+	/**
+	 * Extract target(s) association
+	 */
+	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt){
+		
+		Element rootElt =  assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
+		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
+
+		for (NodeRef nodeRef : nodeRefs) {
+
+			QName qName = nodeService.getType(nodeRef);
+			Element nodeElt = rootElt.addElement(qName.getLocalName());					
+			loadNodeAttributes(nodeRef, nodeElt, true);
+		}
+	}
+	
+	protected void addCDATA(Element nodeElt, String eltName, String eltValue){
+		Element cDATAElt = nodeElt.addElement(eltName);
+		cDATAElt.addCDATA(eltValue);
+	}
 }

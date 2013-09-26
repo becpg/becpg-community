@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -85,13 +86,13 @@ public class RepoServiceImpl implements RepoService {
 	 * @see fr.becpg.repo.helper.RepoService#createFolderByPaths(org.alfresco.service.cmr.repository.NodeRef, java.util.List)
 	 */
 	@Override
-	public NodeRef createFolderByPaths(NodeRef parentNodeRef, List<String> paths) {			    
+	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths) {			    
 		
     	for(String folderName : paths){
     		
     		if(folderName.equals("") == false){    				    		    		
     			
-    			parentNodeRef = createFolderByPath(parentNodeRef, folderName, folderName);    		
+    			parentNodeRef = getOrCreateFolderByPath(parentNodeRef, folderName, folderName);    		
     		}
     	}
 		
@@ -102,7 +103,7 @@ public class RepoServiceImpl implements RepoService {
 	 * @see fr.becpg.repo.helper.RepoService#createFolderByPath(org.alfresco.service.cmr.repository.NodeRef, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public NodeRef createFolderByPath(NodeRef parentNodeRef, String path, String name) {
+	public NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name) {
 		
 		NodeRef folderNodeRef = getFolderByPath(parentNodeRef, path);
 		
@@ -110,7 +111,7 @@ public class RepoServiceImpl implements RepoService {
 			logger.debug("Create folder : " + name);
 			
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-	    	properties.put(ContentModel.PROP_NAME, name);	    		    	
+	    	properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanFolderName(name));	    		    	
 	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
 	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(path)), 
@@ -125,13 +126,15 @@ public class RepoServiceImpl implements RepoService {
 		
 		String xPath = path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? 
 						path : String.format(XPATH, NamespaceService.CONTENT_MODEL_PREFIX, ISO9075.encode(path));
-
-		logger.debug("get folder by path: " + xPath);
 		
 		List<NodeRef> nodes = beCPGSearchService.searchByPath(parentNodeRef,xPath);
 		
 		if(!nodes.isEmpty()){
 			return nodes.get(0);			
+		}
+		else if(!path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)){
+			//try by name...
+			return nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, path);
 		}
 		
 		return null;
@@ -148,11 +151,11 @@ public class RepoServiceImpl implements RepoService {
 
 		logger.debug("start moveNode");
 		
-		// check the product is not already classified !
+		// check the nodeRefToMove is not already moved !
 		NodeRef parentOfNodeRefToMove = nodeService.getPrimaryParent(nodeRefToMove).getParentRef();
 		if (destionationNodeRef.equals(parentOfNodeRefToMove)) {
 			// nothing to do...
-			logger.debug("product already classified, nothing to do...");
+			logger.debug("nodeRefToMove is not already moved, nothing to do...");
 			return;
 		}
 
@@ -166,7 +169,7 @@ public class RepoServiceImpl implements RepoService {
 		try {
 			fileFolderService.move(nodeRefToMove, destionationNodeRef, name);
 		} catch (Exception e) {
-			logger.error("classifyProduct : Failed to move product", e);
+			logger.error("Failed to move node", e);
 		}
 	}
 
@@ -174,7 +177,7 @@ public class RepoServiceImpl implements RepoService {
 	public String getAvailableName(NodeRef folderNodeRef, String name) {
 		
 		List<FileInfo> fileInfos = fileFolderService.list(folderNodeRef);
-		if (fileInfos.size() > 0) {
+		if (!fileInfos.isEmpty()) {
 			int count = 0;
 			NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
