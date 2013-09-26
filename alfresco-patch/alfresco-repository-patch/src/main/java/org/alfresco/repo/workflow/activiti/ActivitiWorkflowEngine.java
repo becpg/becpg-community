@@ -70,7 +70,6 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.Job;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.alfresco.model.ContentModel;
@@ -85,6 +84,8 @@ import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.WorkflowNodeConverter;
 import org.alfresco.repo.workflow.WorkflowObjectFactory;
 import org.alfresco.repo.workflow.activiti.properties.ActivitiPropertyConverter;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -92,10 +93,13 @@ import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.cmr.workflow.LazyActivitiWorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
 import org.alfresco.service.cmr.workflow.WorkflowDeployment;
 import org.alfresco.service.cmr.workflow.WorkflowException;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
+import org.alfresco.service.cmr.workflow.WorkflowInstanceQuery;
+import org.alfresco.service.cmr.workflow.WorkflowInstanceQuery.DatePosition;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskDefinition;
@@ -109,10 +113,7 @@ import org.alfresco.util.GUID;
 import org.alfresco.util.collections.Function;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.parsers.DOMParser;
-import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -124,9 +125,8 @@ import org.xml.sax.InputSource;
  * @author Frederik Heremans
  * @since 3.4.e
  */
-@Service
 public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
-{
+{	
     // Workflow Component Messages
     private static final String ERR_DEPLOY_WORKFLOW = "activiti.engine.deploy.workflow.error";
     private static final String ERR_IS_WORKFLOW_DEPLOYED = "activiti.engine.is.workflow.deployed.error";
@@ -180,8 +180,11 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     private static final String ERR_END_UNEXISTING_TASK = "activiti.engine.end.task.unexisting.error";
     private static final String ERR_GET_TASK_BY_ID = "activiti.engine.get.task.by.id.error";
     private static final String ERR_END_TASK_INVALID_TRANSITION = "activiti.engine.end.task.invalid.transition";
-
+    public static final QName QNAME_INITIATOR = QName.createQName(NamespaceService.DEFAULT_URI, WorkflowConstants.PROP_INITIATOR);
+    
     private final static String WORKFLOW_TOKEN_SEPERATOR = "\\$";
+    
+    
     
     private RepositoryService repoService;
     private RuntimeService runtimeService;
@@ -191,6 +194,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     private FormService formService;
     private ActivitiUtil activitiUtil;
     
+    private DictionaryService dictionaryService;
     private NodeService nodeService;
     private SearchService unprotectedSearchService;
     private PersonService personService;
@@ -207,7 +211,6 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     private String companyHomePath;
     private StoreRef companyHomeStore;
     
-    private static Log logger = LogFactory.getLog(ActivitiWorkflowEngine.class);
     
     public ActivitiWorkflowEngine()
     {
@@ -228,6 +231,21 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
          this.historyService = activitiUtil.getHistoryService();
          this.managementService = activitiUtil.getManagementService();
      }
+
+     
+    /* (non-Javadoc)
+     * @see org.alfresco.repo.workflow.WorkflowComponent#cancelWorkflows(java.util.List)
+     */
+    @Override
+    public List<WorkflowInstance> cancelWorkflows(List<String> workflowIds)
+    {
+        List<WorkflowInstance> result = new ArrayList<WorkflowInstance>(workflowIds.size());
+        for (String workflowId : workflowIds)
+        {
+            result.add(cancelWorkflow(workflowId));
+        }
+        return result;
+    }
 
     /**
     * {@inheritDoc}
@@ -318,7 +336,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
      {
          try 
          {
-             String resourceName = GUID.generate() + BpmnDeployer.BPMN_RESOURCE_SUFFIX;
+             String resourceName = GUID.generate() + BpmnDeployer.BPMN_RESOURCE_SUFFIXES[0];
              
              if(tenantService.isEnabled())
              {
@@ -357,7 +375,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     {
         try
         {
-            return getWorkflowInstances(null, true);
+            return getWorkflows(new WorkflowInstanceQuery(true));
         }
         catch(ActivitiException ae) 
         {
@@ -374,7 +392,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     {
         try
         {
-            return getWorkflowInstances(null, false);
+            return getWorkflows(new WorkflowInstanceQuery(false));
         }
         catch(ActivitiException ae) 
         {
@@ -391,7 +409,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     {
         try
         {
-            return getWorkflowInstances(null, null);
+            return getWorkflows(new WorkflowInstanceQuery());
         }
         catch(ActivitiException ae) 
         {
@@ -407,7 +425,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     {
         try
         {
-            return getWorkflowInstances(workflowDefinitionId, true);
+            return getWorkflows(new WorkflowInstanceQuery(workflowDefinitionId, true));
         }
         catch(ActivitiException ae) 
         {
@@ -460,7 +478,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     {
         try
         {
-            return getWorkflowInstances(workflowDefinitionId, false);
+            return getWorkflows(new WorkflowInstanceQuery(workflowDefinitionId, false));
         }
         catch(ActivitiException ae) 
         {
@@ -670,7 +688,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
         // Use a linked hashmap to get the task defs in the right order
         Map<String, PvmActivity> userTasks = new LinkedHashMap<String, PvmActivity>();
         Set<String> processedActivities = new HashSet<String>();
-
+        
         // Start finding activities recursively
         findUserTasks(startEvent, userTasks, processedActivities);
         
@@ -929,7 +947,7 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     {
         try
         {
-            return getWorkflowInstances(workflowDefinitionId, null);
+            return getWorkflows(new WorkflowInstanceQuery(workflowDefinitionId));
         }
         catch(ActivitiException ae) 
         {
@@ -1155,18 +1173,8 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
                         .generateDiagram(processDefinition,
                                     ActivitiConstants.PROCESS_INSTANCE_IMAGE_FORMAT,
                                     runtimeService.getActiveActivityIds(processInstanceId)); 
-            } else {
-            	if(processDefinition != null){
-            		logger.warn(" No Graphical Notation Defined for workflow");
-            	} else {
-            		logger.error("Process instance doesn't exists");
-            	}
             }
-        } else {
-        	logger.error("Process instance is over");
         }
-        
-        
         return null;
     }
 
@@ -1287,6 +1295,15 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
         this.propertyConverter = propertyConverter;
     }
     
+    /**
+     * Sets the Dictionary Service
+     * @param dictionaryService
+     */
+    public void setDictionaryService(DictionaryService dictionaryService)
+    {
+        this.dictionaryService = dictionaryService;
+    }
+
     /**
      * Sets the Node Service
      * 
@@ -1467,22 +1484,63 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     */
     public List<WorkflowTask> getAssignedTasks(String authority, WorkflowTaskState state)
     {
+    	//Philippe : same arg for method
+    	boolean lazyInitialization = true;
+    	
         try
         {
             if(state == WorkflowTaskState.IN_PROGRESS)
             {
-                List<Task> tasks = taskService.createTaskQuery()
-                    .taskAssignee(authority)
-                    .list();
-                return typeConverter.convert(tasks);
+            	TaskQuery taskQuery = taskService.createTaskQuery()
+                    	.taskAssignee(authority);
+                	
+//                	if(!activitiUtil.isMultiTenantWorkflowDeploymentEnabled())
+//                	{
+//                		taskQuery.processVariableValueEquals(ActivitiConstants.VAR_TENANT_DOMAIN, TenantUtil.getCurrentDomain());
+//                	}
+            	
+                    List<Task> tasks = taskQuery.list();                    
+                    	
+                    List<WorkflowTask> resultingTasks = new ArrayList<WorkflowTask>();
+                    for(Task task : tasks) {
+                    	                    	
+                    	if(lazyInitialization)
+                    	{
+                    		resultingTasks.add(new LazyActivitiWorkflowTask(task, typeConverter, tenantService, 
+                    				typeConverter.getWorkflowDefinitionName(task.getProcessDefinitionId())));
+                    	}
+                    	else
+                    	{
+                    		resultingTasks.add(typeConverter.convert(task));
+                    	}
+                    }                    
+                    return resultingTasks;
             }
             else
             {
-                List<HistoricTaskInstance> historicTasks = historyService.createHistoricTaskInstanceQuery()
-                    .taskAssignee(authority)
-                    .finished()
-                    .list();
-                return typeConverter.convert(historicTasks);
+            	HistoricTaskInstanceQuery taskQuery = historyService.createHistoricTaskInstanceQuery()
+    	                .taskAssignee(authority)
+    	                .finished();
+                	
+//                	if(activitiUtil.isMultiTenantWorkflowDeploymentEnabled())
+//                	{
+//                		taskQuery.processVariableValueEquals(ActivitiConstants.VAR_TENANT_DOMAIN, TenantUtil.getCurrentDomain());
+//                	}
+                    List<HistoricTaskInstance> historicTasks =taskQuery.list();
+                    
+                    List<WorkflowTask> resultingTasks = new ArrayList<WorkflowTask>();
+                    for(HistoricTaskInstance historicTask : historicTasks) {
+                    	
+                    	if(lazyInitialization)
+                    	{
+                    		resultingTasks.add(new LazyActivitiWorkflowTask(historicTask, typeConverter, tenantService));
+                    	}
+                    	else
+                    	{
+                    		resultingTasks.add(typeConverter.convert(historicTask));
+                    	}
+                    }
+                    return resultingTasks;
             }
         }
         catch (ActivitiException ae)
@@ -1497,6 +1555,9 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     */
     public List<WorkflowTask> getPooledTasks(List<String> authorities)
     {
+    	//Philippe : same arg for method
+    	boolean lazyInitialization = true;
+    	
         try 
         {
             if (authorities != null && authorities.size() > 0) 
@@ -1524,16 +1585,40 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
                     addTasksForCandidateGroups(authorities, resultingTasks);
                 }
                 
-                List<Task> tasks = new ArrayList<Task>();
-                                // Only tasks that have NO assignee, should be returned
+                List<WorkflowTask> tasks = new ArrayList<WorkflowTask>();
+                WorkflowTask currentTask = null;
+                // Only tasks that have NO assignee, should be returned
                 for(Task task : resultingTasks.values()) 
                 {
                     if(task.getAssignee() == null) 
                     {
-                        tasks.add(task);
+                    	// ALF-12264: filter out tasks from other domain, can occur when tenants
+                    	// have a group with the same name
+                    	if(lazyInitialization)
+                    	{
+                    		String workflowDefinitionName = typeConverter.getWorkflowDefinitionName(task.getProcessDefinitionId());
+                    		try
+                    		{
+                    			workflowDefinitionName = tenantService.getBaseName(workflowDefinitionName);
+                    			currentTask = new LazyActivitiWorkflowTask(task, typeConverter, tenantService, workflowDefinitionName);
+                    		}
+                    		catch(RuntimeException re)
+                    		{
+                    			// Domain mismatch, don't use this task
+                    			currentTask = null;
+                    		}
+                    	}
+                    	else
+                    	{
+                    		currentTask = typeConverter.convert(task);
+                    	}
+                    	if(currentTask != null)
+                    	{
+                    		tasks.add(currentTask);
+                    	}
                     }
                 }
-                return typeConverter.convert(tasks);
+                return tasks;
             }
             
             return Collections.emptyList();
@@ -1599,6 +1684,16 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
             String msg = messageService.getMessage(ERR_GET_TASK_BY_ID);
             throw new WorkflowException(msg, ae);
         }
+    }
+
+    
+    /* (non-Javadoc)
+     * @see org.alfresco.repo.workflow.TaskComponent#queryTasks(org.alfresco.service.cmr.workflow.WorkflowTaskQuery, boolean)
+     */
+    @Override
+    public List<WorkflowTask> queryTasks(WorkflowTaskQuery query, boolean sameSession)
+    {
+        return queryTasks(query);
     }
 
     /**
@@ -2104,6 +2199,24 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
     }
     
     
+    
+	/* (non-Javadoc)
+     * @see org.alfresco.repo.workflow.TaskComponent#getStartTasks(java.util.List, boolean)
+     */
+    @Override
+    public List<WorkflowTask> getStartTasks(List<String> workflowInstanceIds, boolean sameSession)
+    {
+        List<WorkflowTask> result = new ArrayList<WorkflowTask>(workflowInstanceIds.size());
+        for (String workflowInstanceId : workflowInstanceIds)
+        {
+            WorkflowTask startTask = getStartTask(workflowInstanceId);
+            if (startTask != null)
+            {
+                result.add(startTask);
+            }
+        }
+        return result;
+    }
 
     /**
     * {@inheritDoc}
@@ -2165,33 +2278,154 @@ public class ActivitiWorkflowEngine extends BPMEngine implements WorkflowEngine
         }
     }
     
-    private List<WorkflowInstance> getWorkflowInstances(String workflowDefinitionId, Boolean isActive)
+    @Override
+    public List<WorkflowInstance> getWorkflows(WorkflowInstanceQuery workflowInstanceQuery)
     {
-        String processDefId = workflowDefinitionId==null ? null : createLocalId(workflowDefinitionId);
         LinkedList<WorkflowInstance> results = new LinkedList<WorkflowInstance>();
-        if(Boolean.FALSE.equals(isActive)==false)
+        if (Boolean.FALSE.equals(workflowInstanceQuery.getActive()) == false)
         {
-            ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery();
-            if(processDefId!=null)
-            {
-                query = query.processDefinitionId(processDefId);
-            }
-            List<ProcessInstance> activeInstances = query.list();
-            List<WorkflowInstance> activeResults = typeConverter.convert(activeInstances);
-            results.addAll(activeResults);
+            //Add active. 
+            results.addAll(getWorkflowsInternal(workflowInstanceQuery, true));
         }
-        if(Boolean.TRUE.equals(isActive)==false)
+        if (Boolean.TRUE.equals(workflowInstanceQuery.getActive()) == false)
         {
-            HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery()
-                .finished();
-            if(processDefId!=null)
+            //Add complete
+            results.addAll(getWorkflowsInternal(workflowInstanceQuery, false));
+        }
+        
+        return results;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<WorkflowInstance> getWorkflowsInternal(WorkflowInstanceQuery workflowInstanceQuery, boolean isActive)
+    {
+        String processDefId = workflowInstanceQuery.getWorkflowDefinitionId() == null ? null : createLocalId(workflowInstanceQuery.getWorkflowDefinitionId());
+        LinkedList<WorkflowInstance> results = new LinkedList<WorkflowInstance>();
+
+        HistoricProcessInstanceQuery query;
+        if (isActive)
+        {
+            // Don't use ProcessInstanceQuery here because in any case they will be converted to WorkflowInstance thro HistoricProcessInstance.
+            query = historyService.createHistoricProcessInstanceQuery().unfinished();
+        }
+        else
+        {
+            query = historyService.createHistoricProcessInstanceQuery().finished();
+        }
+        
+        if(processDefId!=null)
+        {
+            query = query.processDefinitionId(processDefId);
+        }
+
+        if(workflowInstanceQuery.getExcludedDefinitions() != null)
+        {
+	        List<String> exDefIds = new ArrayList<String>();
+	        for (String excludedDef : workflowInstanceQuery.getExcludedDefinitions())
+	        {
+	            String exDef = createLocalId(excludedDef);
+	            exDef = exDef.replaceAll("\\*", "%");
+	            exDefIds.add(exDef);
+	        }
+	
+	        if(exDefIds.size() > 0)
+	        {
+	        	query.processDefinitionKeyNotIn(exDefIds);
+	        }
+        }
+
+        // Check start range
+        if (workflowInstanceQuery.getStartBefore() != null)
+        {
+            query.startedBefore(workflowInstanceQuery.getStartBefore());
+
+        }
+        if (workflowInstanceQuery.getStartAfter() != null)
+        {
+            query.startedAfter(workflowInstanceQuery.getStartAfter());
+        }
+
+        // check end range
+        if (workflowInstanceQuery.getEndBefore() != null)
+        {
+            query.finishedBefore(workflowInstanceQuery.getEndBefore());
+        }
+        if (workflowInstanceQuery.getEndAfter() != null)
+        {
+            query.finishedAfter(workflowInstanceQuery.getEndAfter());
+        }
+
+        if (workflowInstanceQuery.getCustomProps() != null)
+        {
+        	Map<QName, Object> customProps = workflowInstanceQuery.getCustomProps();
+        	
+        	// CLOUD-667: Extract initiator-property and use 'startedBy' instead
+        	Object initiatorObject = customProps.get(QNAME_INITIATOR);
+        	if(initiatorObject != null && initiatorObject instanceof NodeRef)
+        	{
+        		// Extract username from person-node
+        		NodeRef initiator = (NodeRef) initiatorObject;
+        		if(this.nodeService.exists(initiator))
+                {
+                    String initiatorUserName = (String) nodeService.getProperty(initiator, ContentModel.PROP_USERNAME);
+                    query.startedBy(initiatorUserName);
+                    
+                    // Clone properties map and remove initiator
+                    customProps = new HashMap<QName, Object>();
+                    customProps.putAll(workflowInstanceQuery.getCustomProps());
+                    customProps.remove(QNAME_INITIATOR);
+                }
+        	}
+        	
+            for (Map.Entry<QName, Object> prop : customProps.entrySet())
             {
-                query = query.processDefinitionId(processDefId);
+                String propertyName = factory.mapQNameToName(prop.getKey());
+                if (prop.getValue() == null)
+                {
+                    query.variableValueEquals(propertyName, null);
+                }
+                else
+                {
+                    PropertyDefinition propertyDefinition = dictionaryService.getProperty(prop.getKey());
+                    if (propertyDefinition == null)
+                    {
+                        Object converted = propertyConverter.convertPropertyToValue(prop.getValue());
+                        query.variableValueEquals(propertyName, converted);
+                    }
+                    else
+                    {
+                        String propertyType = propertyDefinition.getDataType().getJavaClassName();
+                        if (propertyType.equals("java.util.Date"))
+                        {
+                            Map<DatePosition, Date> dateProps = (Map<DatePosition, Date>) prop.getValue();
+                            for (Map.Entry<DatePosition, Date> dateProp : dateProps.entrySet())
+                            {
+                                if (dateProp.getValue() != null)
+                                {
+                                    if (dateProp.getKey() == DatePosition.BEFORE)
+                                    {
+                                        query.variableValueLessThanOrEqual(propertyName, dateProp.getValue());
+                                    }
+                                    if (dateProp.getKey() == DatePosition.AFTER)
+                                    {
+                                        query.variableValueGreaterThanOrEqual(propertyName, dateProp.getValue());
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Object convertedValue = DefaultTypeConverter.INSTANCE.convert(propertyDefinition.getDataType(), prop.getValue());
+                            query.variableValueEquals(propertyName, convertedValue);
+                        }
+                    }
+                }
             }
+        }
+
             List<HistoricProcessInstance> completedInstances = query.list();
             List<WorkflowInstance> completedResults = typeConverter.convert(completedInstances);
             results.addAll(completedResults);
-        }
         return results;
     }
 

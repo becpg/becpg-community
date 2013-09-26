@@ -5,108 +5,54 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.BaseObject;
+import fr.becpg.repo.repository.annotation.AlfIdentAttr;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
-/**
- * The Class CostListDataItem.
- *
- * @author querephi
- */
-public class CostListDataItem extends BaseObject implements SimpleListDataItem, SimpleCharactDataItem,IManualDataItem{
+@AlfType
+@AlfQname(qname = "bcpg:costList")
+public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem{
 	
-	/** The node ref. */
-	private NodeRef nodeRef;
-	
-	/** The value. */
+
 	private Double value = 0d;
 	
-	/** The unit. */
 	private String unit;	
 	
 	private Double maxi = null;
 	
-	/** The cost. */
 	private NodeRef cost;
 	
-	private Boolean isManual;
 		
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
-	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-	
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:costListValue")
 	public Double getValue() {
 		return value;
 	}
 	
-	/**
-	 * Sets the value.
-	 *
-	 * @param value the new value
-	 */
+	
 	public void setValue(Double value) {
 		this.value = value;
 	}
 	
-	/**
-	 * Gets the unit.
-	 *
-	 * @return the unit
-	 */
+	@AlfProp
+	@AlfQname(qname="bcpg:costListUnit")
 	public String getUnit() {
 		return unit;
 	}
 	
-	/**
-	 * Sets the unit.
-	 *
-	 * @param unit the new unit
-	 */
+	
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 	
-	public Double getMini() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setMini(Double value) {
-		// TODO Auto-generated method stub
-		
-	}
 	
-	public Double getMaxi() {
-		return maxi;
-	}
-
-	public void setMaxi(Double maxi) {
-		this.maxi = maxi;
-	}
-
-	/**
-	 * Gets the cost.
-	 *
-	 * @return the cost
-	 */
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:costListCost")
+	@AlfIdentAttr
 	public NodeRef getCost() {
 		return cost;
 	}
@@ -122,32 +68,41 @@ public class CostListDataItem extends BaseObject implements SimpleListDataItem, 
 		
 	}
 	
-	/**
-	 * Sets the cost.
-	 *
-	 * @param cost the new cost
-	 */
+	
 	public void setCost(NodeRef cost) {
 		this.cost = cost;
 	}
 	
-	@Override
-	public Boolean getIsManual() {
 
-		return isManual;
+	@AlfProp
+	@AlfQname(qname="bcpg:costListMaxi")
+	public Double getMaxi() {
+		return maxi;
 	}
 
-	@Override
-	public void setIsManual(Boolean isManual) {
+	public void setMaxi(Double maxi) {
+		this.maxi = maxi;
+	}
+	
+	//////////////////////////////////////
+	
+	
+	public Double getMini() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setMini(Double value) {
+		// TODO Auto-generated method stub
 		
-		this.isManual = isManual;		
 	}
+
 	
 	/**
 	 * Instantiates a new cost list data item.
 	 */
 	public CostListDataItem() {
-		
+		super();
 	}
 	
 	/**
@@ -159,60 +114,61 @@ public class CostListDataItem extends BaseObject implements SimpleListDataItem, 
 	 * @param cost the cost
 	 */
 	public CostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual){
-		
-		setNodeRef(nodeRef);		
-		setValue(value);
-		setUnit(unit);
-		setMaxi(maxi);
-		setCost(cost);
-		setIsManual(isManual);
+		super();
+		this.nodeRef = nodeRef;		
+		this.value = value;
+		this.unit =  unit;
+		this.maxi = maxi;
+		this.cost = cost;
+		this.isManual = isManual;
 	}
+	
+	
 	
 	/**
 	 * Copy constructor
 	 * @param c
 	 */
 	public CostListDataItem(CostListDataItem c){
+		super();
+		this.nodeRef = c.nodeRef;		
+		this.value = c.value;
+		this.unit =  c.unit;
+		this.maxi = c.maxi;
+		this.cost = c.cost;
+		this.isManual = c.isManual;
 		
-		setNodeRef(c.getNodeRef());
-		setValue(c.getValue());
-		setUnit(c.getUnit());
-		setMaxi(c.getMaxi());
-		setCost(c.getCost());
-		setIsManual(c.getIsManual());
 	}
 	
+	@Deprecated
 	public CostListDataItem(SimpleListDataItem c){
-		
-		setValue(c.getValue());
-		setMaxi(c.getMaxi());
-		setIsManual(c.getIsManual());
-		setCost(c.getCharactNodeRef());
+		super();
+		this.nodeRef = c.getNodeRef();		
+		this.value = c.getValue();
+		this.maxi = c.getMaxi();
+		this.cost = c.getCharactNodeRef();
+		this.isManual = c.getIsManual();
 	}
 
-	@Override
-	public String toString() {
-		return "CostListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + cost + ", isManual=" + isManual + "]";
-	}
+
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((cost == null) ? 0 : cost.hashCode());
-		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
 
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -222,20 +178,10 @@ public class CostListDataItem extends BaseObject implements SimpleListDataItem, 
 				return false;
 		} else if (!cost.equals(other.cost))
 			return false;
-		if (isManual == null) {
-			if (other.isManual != null)
-				return false;
-		} else if (!isManual.equals(other.isManual))
-			return false;
 		if (maxi == null) {
 			if (other.maxi != null)
 				return false;
 		} else if (!maxi.equals(other.maxi))
-			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
 			return false;
 		if (unit == null) {
 			if (other.unit != null)
@@ -248,6 +194,15 @@ public class CostListDataItem extends BaseObject implements SimpleListDataItem, 
 		} else if (!value.equals(other.value))
 			return false;
 		return true;
-	}	
+	}
+
+
+	@Override
+	public String toString() {
+		return "CostListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + cost + "]";
+	}
+
+	
+	
 }
 

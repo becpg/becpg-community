@@ -1,58 +1,54 @@
 package fr.becpg.repo.workflow;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AuthorityType;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
 import org.alfresco.service.cmr.workflow.WorkflowNode;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
-import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
-import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.repo.admin.NPDGroup;
-import fr.becpg.repo.admin.SystemGroup;
 import fr.becpg.repo.product.data.RawMaterialData;
 
 public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
-		
-	
 	private static final String USER_ONE = "matthieuWF";
 	private static final String USER_TWO = "philippeWF";
 	private static String PATH_PRODUCTFOLDER = "TestProductFolder";
 
-	protected static String[] groups = { SystemGroup.ProductReviewer.toString() };
+	private static final String WF_URI = "http://www.bcpg.fr/model/workflow/1.0";
+
+	private static final QName PROP_reviewQualityApproval = QName.createQName(WF_URI, "reviewQualityApproval");
+	private static final QName PROP_reviewQualityComment = QName.createQName(WF_URI, "reviewQualityComment");
+	private static final QName PROP_reviewProductionApproval = QName.createQName(WF_URI, "reviewProductionApproval");
+	private static final QName PROP_pvTransmitterComment = QName.createQName(WF_URI, "pvTransmitterComment");
+	private static final QName PROP_reviewRDApproval = QName.createQName(WF_URI, "reviewRDApproval");
+	private static final QName PROP_reviewRDComment = QName.createQName(WF_URI, "reviewRDComment");
+	private static final QName PROP_reviewCallerApproval = QName.createQName(WF_URI, "reviewCallerApproval");
+	private static final QName PROP_pvCallerActor = QName.createQName(WF_URI, "pvCallerActor");
+	private static final QName PROP_pvQualityApprovalActor = QName.createQName(WF_URI, "pvQualityApprovalActor");
+	private static final QName PROP_pvProductionApprovalActor = QName.createQName(WF_URI, "pvProductionApprovalActor");
+	private static final QName PROP_pvRDApprovalActor = QName.createQName(WF_URI, "pvRDApprovalActor");
+	protected static final QName PROP_notifyUsers  = QName.createQName(WF_URI, "notifyUsers");
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductValidationWorkflowTest.class);
-
-	
-	
-	private NodeRef folderNodeRef;
-	
-	private NodeRef rawMaterial1NodeRef;
-	
-	private String workflowId = "";
-
 
 	private void createUsers() {
 
@@ -60,41 +56,25 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		 * Matthieu : user Philippe : validators
 		 */
 
-		for (String group : groups) {
-
-			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
-				logger.debug("create group: " + group);
-				authorityService.createAuthority(AuthorityType.GROUP, group);
-			}
-		}
-		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
-				PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(), true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + NPDGroup.ValidateFaisability.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
-					PermissionService.GROUP_PREFIX + NPDGroup.ValidateFaisability.toString());
-		
-		
 		// USER_ONE
 		NodeRef userOne = this.personService.getPerson(USER_ONE);
 		if (userOne != null) {
 			this.personService.deletePerson(userOne);
 		}
-		
+
 		if (!authenticationDAO.userExists(USER_ONE)) {
 			createUser(USER_ONE);
-		}		
+		}
 
 		// USER_TWO
 		NodeRef userTwo = this.personService.getPerson(USER_TWO);
 		if (userTwo != null) {
 			this.personService.deletePerson(userTwo);
 		}
-		
+
 		if (!authenticationDAO.userExists(USER_TWO)) {
 			createUser(USER_TWO);
 
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.ProductReviewer.toString(),
-					USER_TWO);
 		}
 
 		for (String s : authorityService.getAuthoritiesForUser(USER_ONE)) {
@@ -118,163 +98,142 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		}
 	}
 
-
 	@Test
 	public void testWorkFlow() {
 
 		authenticationComponent.setSystemUserAsCurrentUser();
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rawMaterial1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				createUsers();
 
-				folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-						ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);
+				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);
 				if (folderNodeRef != null) {
 					nodeService.deleteNode(folderNodeRef);
 				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER,
-						ContentModel.TYPE_FOLDER).getNodeRef();
+				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				rawMaterial1NodeRef = productDAO.create(folderNodeRef, rawMaterial1, null);
-
-				WorkflowDefinition wfDef = workflowService.getDefinitionByName("jbpm$bcpgwf:productValidationWF");
-				logger.debug("wfDefId found : " + wfDef.getId());
-				workflowId = wfDef.getId();
-
-				return null;
-			}
-		}, false, true);
-
-		authenticationComponent.setCurrentUser(USER_ONE);
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				// validate 1
-				validateProduct(workflowId, rawMaterial1NodeRef);
-
-				// validate 2
-				validateProduct(workflowId, rawMaterial1NodeRef);
-
-				return null;
+				return alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
 
 			}
 		}, false, true);
-	}
 
-	protected WorkflowTask getNextTaskForWorkflow(String workflowInstanceId) {
-		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
-		taskQuery.setProcessId(workflowInstanceId);
-		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
-
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
-		assertEquals(1, workflowTasks.size());
-		return workflowTasks.get(0);
-	}
-
-	private void validateProduct(String workflowId, NodeRef productNodeRef){
+		authenticationComponent.setCurrentUser("admin");
+//		
+//		for(WorkflowDefinition wfDef : workflowService.getAllDefinitions()){
+//			logger.error("Definition : "+wfDef.getId()+" - "+wfDef.getName());
+//		}
 		
-		// Fill a map of default properties to start the workflow with
+		WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$productValidationWF");
+		logger.debug("wfDefId found : " + wfDef.getId());
+
+		// validate 1
+		validateProduct(wfDef.getId(), rawMaterial1NodeRef);
+
+		// validate 2
+		validateProduct(wfDef.getId(), rawMaterial1NodeRef);
+
+	}
+
+	private void validateProduct(final String workflowId, final NodeRef productNodeRef) {
+
+		String workflowInstanceId =transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
+			public String execute() throws Throwable {
+
+				// Fill a map of default properties to start the workflow with
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Date dueDate = Calendar.getInstance().getTime();
+				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
+				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
+				properties.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, "test");
+				properties.put(PROP_pvTransmitterComment, "test");
+
+				Serializable workflowPackage = workflowService.createPackage(null);
+				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
+				
+				ChildAssociationRef childAssoc = nodeService.getPrimaryParent(productNodeRef);
+			     nodeService.addChild((NodeRef)workflowPackage, productNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, childAssoc.getQName());	
+
+				List<NodeRef> assignees = new ArrayList<NodeRef>();
+				assignees.add(personService.getPerson(USER_ONE));
+				properties.put(PROP_pvRDApprovalActor, (Serializable) assignees);
+				assignees = new ArrayList<NodeRef>();
+				assignees.add(personService.getPerson(USER_TWO));
+				properties.put(PROP_pvCallerActor, (Serializable) assignees);
+
+				WorkflowPath path = workflowService.startWorkflow(workflowId, properties);
+				assertNotNull("The workflow path is null!", path);
+
+				WorkflowInstance instance = path.getInstance();
+				assertNotNull("The workflow instance is null!", instance);
+
+
+				WorkflowNode node = path.getNode();
+				assertNotNull("The workflow node is null!", node);
+				
+				 return instance.getId();
+
+			}
+		}, false, true);
+		
+
+
+		WorkflowTask task =  getNextTaskForWorkflow(workflowInstanceId);
+		
+		logger.info(task.getPath().getNode().getName());
+		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
+
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		Date dueDate = Calendar.getInstance().getTime();
-		properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
-		properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
+		properties.put(PROP_reviewRDApproval, "Rejected");
+		properties.put(PROP_reviewRDComment, "OK comment");
 
-		WorkflowPath path = workflowService.startWorkflow(workflowId, properties);
-		assertNotNull("The workflow path is null!", path);
-
-		WorkflowInstance instance = path.getInstance();
-		assertNotNull("The workflow instance is null!", instance);
-
-		String workflowInstanceId = instance.getId();
-
-		WorkflowNode node = path.getNode();
-		assertNotNull("The workflow node is null!", node);
-
-		assertEquals("start", node.getName());
-		
-		/*
-		 *  Update start task
-		 */
-
-		WorkflowTask task = getNextTaskForWorkflow(workflowInstanceId);
-
-		logger.info("Set start information " + task.getName());
-		properties = new HashMap<QName, Serializable>();		
-		NodeRef  workflowPackage = workflowService.createPackage(null);
-		properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
-		properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-		
-		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		
-		// add product		
-		ChildAssociationRef childAssoc = nodeService.getPrimaryParent(productNodeRef);
-		nodeService.addChild(workflowPackage, rawMaterial1NodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, childAssoc.getQName());		
-
-		workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
-
-		task = workflowService.endTask(task.getId(), "");
-		assertEquals("review", task.getPath().getNode().getName());
-
-		/*
-		 *  do validation : approve
-		 */
-		task = submitTask(workflowInstanceId, "bcpgwf:doProductValidationTask", "approve", "OK comment");
+		task = submitTask(workflowInstanceId, "bcpgwf:doProductValidationRDTask", null, properties);
+		assertNotNull(task);
 		assertEquals("OK comment", task.getProperties().get(WorkflowModel.PROP_COMMENT));
-		assertEquals("approved", task.getPath().getNode().getName());				
+		logger.info(task.getPath().getNode().getName());
+		assertEquals("rejectProductTask", task.getPath().getNode().getName());
+
+		properties = new HashMap<QName, Serializable>();
+		properties.put(PROP_pvTransmitterComment, "OK comment");
+
+		task = submitTask(workflowInstanceId, "bcpgwf:rejectProductTask", null, properties);
+		assertNotNull(task);
+		assertEquals("OK comment", task.getProperties().get(WorkflowModel.PROP_COMMENT));
+		logger.info(task.getPath().getNode().getName());
+		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
+
+		properties = new HashMap<QName, Serializable>();
+		properties.put(PROP_reviewRDApproval, "Approved");
+		properties.put(PROP_reviewRDComment, "OK comment");
+
+		task = submitTask(workflowInstanceId, "bcpgwf:doProductValidationRDTask", null, properties);
+		assertNotNull(task);
+		assertEquals("OK comment", task.getProperties().get(WorkflowModel.PROP_COMMENT));
+		assertEquals("Approved", task.getProperties().get(PROP_reviewRDApproval));
+		logger.info(task.getPath().getNode().getName());
+		assertEquals("doProductValidationCallerTask", task.getPath().getNode().getName());
+
+		properties = new HashMap<QName, Serializable>();
+		properties.put(PROP_reviewCallerApproval, "Approved");
+
+		task = submitTask(workflowInstanceId, "bcpgwf:doProductValidationCallerTask", null, properties);
+		assertNotNull(task);
+		logger.info(task.getPath().getNode().getName());
+		assertEquals("approveProductTask", task.getPath().getNode().getName());
 
 		/*
 		 * submit approved task
 		 */
-		task = submitTask(workflowInstanceId, "bcpgwf:approveProductTask", "", "Thanks");
-		assertEquals("end", task.getPath().getNode().getName());		
+		task = submitTask(workflowInstanceId, "bcpgwf:approveProductTask", null, new HashMap<QName, Serializable>());
+		//logger.info(task.getPath().getNode().getName());
+		
 		
 		printInProgressTasks(workflowInstanceId);
-		
-		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
-	}
-	
-	private WorkflowTask submitTask(String workflowInstanceId, String taskName, String transitionName, String comment) {
-		
-		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
-		taskQuery.setProcessId(workflowInstanceId);
-		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
-		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-		properties.put(WorkflowModel.PROP_COMMENT, comment);
-
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
-		
-		for (WorkflowTask task : workflowTasks) {
-			if (taskName.equals(task.getName())) {
-				
-				logger.debug("submit task"+task.getName());				
-				workflowService.updateTask(task.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());				
-				task = workflowService.endTask(task.getId(), transitionName);	
-				
-				return task;
-			}
-		}
-		
-		return null;
-	}	
-	
-	private void printInProgressTasks(String workflowInstanceId) {
-		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
-		taskQuery.setProcessId(workflowInstanceId);
-		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
-		
-		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery);
-		
-		for(WorkflowTask task : workflowTasks){
-			
-			logger.debug("iter task "+ task.getName() + " - " + task.getState() );			
-		}		
+//
+//		assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
 	}
 
 }

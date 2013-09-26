@@ -27,9 +27,9 @@ function getMaxItems()
    {
       maxItems = myConfig["max-items"].toString();
    }
-   return parseInt(maxItems && maxItems.length > 0 ? maxItems : 50, 10);
+   return parseInt(maxItems && maxItems.length > 0 ? maxItems : 25, 10);
 }
 
-model.preferences = AlfrescoUtil.getPreferences("org.alfresco.share.productcatalog.dashlet");
+model.preferences = AlfrescoUtil.getPreferences("org.alfresco.share.product.catalog.dashlet");
 model.filters = getFilters();
 model.maxItems = getMaxItems();

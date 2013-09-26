@@ -4,7 +4,6 @@
 package fr.becpg.repo.admin;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,24 +24,19 @@ import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
@@ -54,9 +48,10 @@ import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.designer.DesignerInitService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
-import fr.becpg.repo.product.hierarchy.HierarchyHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
@@ -75,36 +70,15 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements InitVisitor {
 
-	/** The Constant GROUP_SYSTEM_MGR. */
-	public static final String GROUP_SYSTEM_MGR = "SystemMgr";
-
-	/** The Constant GROUP_RD_USER. */
-	public static final String GROUP_RD_USER = "RDUser";
-
-	/** The Constant GROUP_RD_MGR. */
-	public static final String GROUP_RD_MGR = "RDMgr";
-
-	/** The Constant GROUP_QUALITY_USER. */
-	public static final String GROUP_QUALITY_USER = "QualityUser";
-
-	/** The Constant GROUP_QUALITY_MGR. */
-	public static final String GROUP_QUALITY_MGR = "QualityMgr";
-
-	/** The Constant GROUP_PURCHASING_USER. */
-	public static final String GROUP_PURCHASING_USER = "PurchasingUser";
-
-	/** The Constant GROUP_PURCHASING_MGR. */
-	public static final String GROUP_PURCHASING_MGR = "PurchasingMgr";
-
-	/** The Constant GROUP_PRODUCT_REVIEWER. */
-	public static final String GROUP_PRODUCT_REVIEWER = "ProductReviewer";
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
-	private static final String PRODUCT_REPORT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
-	private static final String PRODUCT_REPORT_EN_PATH = "beCPG/birt/document/product/default/ProductReport-en.rptdesign";
+	public static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	public static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";	
+	public static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
+	public static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
-	private static final String ECO_REPORT_PATH = "beCPG/birt/system/ecm/ECOReport.rptdesign";
+	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
@@ -119,10 +93,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	private ReportTplService reportTplService;
 
-	private ContentService contentService;
-
-	private MimetypeService mimetypeService;
-
+	
+	private ContentHelper contentHelper;
+	
 	private DictionaryService dictionaryService;
 
 	private EntityTplService entityTplService;
@@ -157,12 +130,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		this.reportTplService = reportTplService;
 	}
 
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
-	public void setMimetypeService(MimetypeService mimetypeService) {
-		this.mimetypeService = mimetypeService;
+	public void setContentHelper(ContentHelper contentHelper) {
+		this.contentHelper = contentHelper;
 	}
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
@@ -218,6 +187,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		//Lists of characteristics for Project
 		visitSystemProjectListValuesEntity(systemNodeRef, RepoConsts.PATH_PROJECT_LISTS);
 		
+		//Lists of characteristics for Quality
+		visitSystemQualityListValuesEntity(systemNodeRef, RepoConsts.PATH_QUALITY_LISTS);
+		
 		// Exchange
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, RepoConsts.PATH_IMPORT);
@@ -225,6 +197,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_TO_DO);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_SUCCEEDED);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_FAILED);
+		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_LOG);
 		visitFolder(importNodeRef, RepoConsts.PATH_IMPORT_USER);
 
 		// Products
@@ -244,6 +217,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_POINTS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_METHODS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_STEPS);
+		
+		visitFolder(qualityNodeRef, RepoConsts.PATH_PRODUCT_SPECIFICATIONS);
+		
 		// NC
 		visitFolder(qualityNodeRef, RepoConsts.PATH_NC);
 		// QualityControls
@@ -259,11 +235,11 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
 
 		// EntityTemplates
-		visitFolderAndEntityTpls(systemNodeRef);
+		visitEntityTpls(systemNodeRef);
 
 		// MailTemplates
-		addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath:beCPG/mails/*.ftl");
-		addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath:beCPG/mails/workflow/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath:beCPG/mails/*.ftl");	
+		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath:beCPG/mails/workflow/*.ftl");
 
 		// Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, RepoConsts.PATH_COMPANIES);
@@ -290,8 +266,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/qualityModel.xml");
 		
+		
+		//OLAP
+		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
+		
+		
 	}
-
 
 
 
@@ -302,57 +282,21 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
 		if (folderName == RepoConsts.PATH_ICON) {
-			addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
 		}
 		if (folderName == RepoConsts.PATH_MAPPING) {
-			addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
 		}
 		if (folderName == RepoConsts.PATH_IMPORT_SAMPLES) {
-			addFilesResources(folderNodeRef, "classpath:beCPG/import/samples/*.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/samples/*.csv");
+		}
+		if (folderName == RepoConsts.PATH_OLAP_QUERIES) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
 		}
 
 	}
 
-	private void addFilesResources(NodeRef folderNodeRef, String pattern) {
-		try {
-
-			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
-			for (Resource res : resolver.getResources(pattern)) {
-
-				String fileName = res.getFilename();
-				logger.debug("add file " + fileName);
-
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, fileName);
-
-				NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS,
-						(String) properties.get(ContentModel.PROP_NAME));
-				if (nodeRef == null) {
-					nodeRef = nodeService.createNode(
-							folderNodeRef,
-							ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									QName.createValidLocalName((String) properties.get(ContentModel.PROP_NAME))), ContentModel.TYPE_CONTENT,
-							properties).getChildRef();
-
-					ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-
-					InputStream in = res.getInputStream();
-					writer.setMimetype(mimetypeService.guessMimetype(fileName));
-					if (fileName.endsWith(".csv")) {
-						writer.setEncoding(RepoConsts.ISO_CHARSET);
-					}
-					writer.putContent(in);
-					in.close();
-
-				}
-			}
-		} catch (Exception e) {
-			logger.error(e, e);
-		}
-
-	}
+	
 	
 	
 	
@@ -366,7 +310,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		boolean applyToChildren = false;
 
 		if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
-			specialiseType = BeCPGModel.TYPE_ENTITY;
+			specialiseType = BeCPGModel.TYPE_ENTITY_V2;
 		} else if (folderName == RepoConsts.PATH_REPORTS) {
 
 			// Action : apply type
@@ -480,13 +424,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			ruleService.saveRule(nodeRef, rule);
 		}
 
-		else if (folderName == RepoConsts.PATH_SUPPLIERS) {
-			// specialiseType = BeCPGModel.TYPE_SUPPLIER;
-			// applyToChildren = true;
-		} else if (folderName == RepoConsts.PATH_CLIENTS) {
-			// specialiseType = BeCPGModel.TYPE_CLIENT;
-			// applyToChildren = true;
-		}
 		// quality
 		else if (folderName == RepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA) {
 			specialiseType = BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
@@ -503,9 +440,9 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		} else if (folderName == RepoConsts.PATH_NC) {
 			specialiseType = QualityModel.TYPE_NC;
 		} else if (folderName == RepoConsts.PATH_PROJECT_TEMPLATES) {
-			specialiseType = ProjectModel.TYPE_PROJECT_TPL;
-		} else {
-			return;
+			createRuleAspect(nodeRef, true, ProjectModel.TYPE_PROJECT, BeCPGModel.ASPECT_ENTITY_TPL);
+		} else if (folderName == RepoConsts.PATH_PRODUCT_SPECIFICATIONS) {
+			specialiseType = BeCPGModel.TYPE_PRODUCT_SPECIFICATION;
 		}
 
 		// specialise type
@@ -523,93 +460,90 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		if (folderName == RepoConsts.PATH_SYSTEM) {
 
-			// boolean hasSystemMgrPerm = false;
-			// Set<AccessPermission> permissions =
-			// permissionService.getAllSetPermissions(nodeRef);
-			// for(AccessPermission permission : permissions){
-			// if(permission.getAuthority().equals(PermissionService.GROUP_PREFIX
-			// + GROUP_SYSTEM_MGR) &&
-			// permission.getPermission().equals(PermissionService.WRITE))
-
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(),
 					PermissionService.WRITE, true);
 		} else if (folderName == RepoConsts.PATH_PRODUCTS) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_RD_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString(),
 					PermissionService.WRITE, true);
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString(),
 					PermissionService.WRITE, true);
 		} else if (folderName == RepoConsts.PATH_EXCHANGE) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_SYSTEM_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(),
 					PermissionService.WRITE, true);
 		}
 
 		else if (folderName == RepoConsts.PATH_QUALITY) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + GROUP_QUALITY_MGR,
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString(),
+					PermissionService.WRITE, true);
+		}
+		
+		else if (folderName == RepoConsts.PATH_NC) {
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimAnalysis.toString(),
+					PermissionService.WRITE, true);
+			
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClassification.toString(),
+					PermissionService.WRITE, true);						
+
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(),
+					PermissionService.WRITE, true);
+
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(),
+					PermissionService.WRITE, true);
+			
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClosing.toString(),
 					PermissionService.WRITE, true);
 		}
 	}
 
 	/**
-	 * Create the folder and entity templates
+	 * Create the entity templates
 	 * 
 	 * @param productTplsNodeRef
 	 */
-	private void visitFolderAndEntityTpls(NodeRef systemNodeRef) {
+	private void visitEntityTpls(NodeRef systemNodeRef) {
 
-		NodeRef folderTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_FOLDER_TEMPLATES);
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
 		// create product tpls
-		visitProductTpls(folderTplsNodeRef, entityTplsNodeRef);
+		visitProductTpls(entityTplsNodeRef);
 
 		Set<String> subFolders = new HashSet<String>();		
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		subFolders.add(RepoConsts.PATH_IMAGES);
 
 		// visit supplier
-		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, subFolders);
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, dataLists);
+		dataLists.add(BeCPGModel.TYPE_PLANT);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, dataLists, subFolders);
 
 		// visit client
-		entityTplService.createFolderTpl(folderTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, subFolders);
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, dataLists, subFolders);
 
 		// visit acls
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
-		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists, null);
 		
 		// visit ECO
-		entityTplService.createFolderTpl(folderTplsNodeRef, ECMModel.TYPE_ECO, true, null);
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ECMModel.TYPE_REPLACEMENTLIST);
 		dataLists.add(ECMModel.TYPE_WUSEDLIST);
 		dataLists.add(ECMModel.TYPE_CALCULATEDCHARACTLIST);
 		dataLists.add(ECMModel.TYPE_CHANGEUNITLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, true, dataLists);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, true, dataLists, null);
 
 		// visit quality
-		visitQuality(folderTplsNodeRef, entityTplsNodeRef);
+		visitQuality(entityTplsNodeRef);
 		
 		// visit project and project Tpl
-		subFolders = new HashSet<String>();		
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
-		entityTplService.createFolderTpl(folderTplsNodeRef, ProjectModel.TYPE_PROJECT, true, subFolders);
-		dataLists = new LinkedHashSet<QName>();
+		dataLists = new LinkedHashSet<QName>();		
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists);
-		
-		subFolders = new HashSet<String>();		
-		entityTplService.createFolderTpl(folderTplsNodeRef, ProjectModel.TYPE_PROJECT_TPL, true, subFolders);
-		dataLists = new LinkedHashSet<QName>();
-		dataLists.add(ProjectModel.TYPE_TASK_LIST);
-		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT_TPL, true, dataLists);
+		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
 	}
 
 	
@@ -638,9 +572,14 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(RepoConsts.PATH_PLANTS,BeCPGModel.TYPE_PLANT);
 		entityLists.put(RepoConsts.PATH_CERTIFICATIONS,BeCPGModel.TYPE_CERTIFICATION);
 		entityLists.put(RepoConsts.PATH_APPROVALNUMBERS,BeCPGModel.TYPE_APPROVAL_NUMBER);
+		entityLists.put(RepoConsts.PATH_LABELCLAIMS,BeCPGModel.TYPE_LABEL_CLAIM);
 		entityLists.put(RepoConsts.PATH_PROCESSSTEPS,MPMModel.TYPE_PROCESSSTEP);
-		entityLists.put(RepoConsts.PATH_VARIANT_CHARACTS,VariantModel.TYPE_CHARACT);
-
+		entityLists.put(RepoConsts.PATH_VARIANT_CHARACTS,VariantModel.TYPE_CHARACT);		
+		entityLists.put(RepoConsts.PATH_STORAGE_CONDITIONS,BeCPGModel.TYPE_STORAGE_CONDITIONS);
+		entityLists.put(RepoConsts.PATH_PRECAUTION_OF_USE,BeCPGModel.TYPE_PRECAUTION_OF_USE);
+		entityLists.put(RepoConsts.PATH_LABELING_TEMPLATES,PackModel.TYPE_LABELING_TEMPLATE);
+		entityLists.put(RepoConsts.PATH_LABEL,PackModel.TYPE_LABEL);
+		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 	
@@ -658,9 +597,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_PACKAGINGKIT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		
+		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 		
 	}
+	
+
 	
 	/**
 	 * Create dyn List values
@@ -672,11 +614,13 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		Map<String,QName> entityLists = new HashMap<String,QName>();
 		
-		entityLists.put(RepoConsts.PATH_ING_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_ING_TYPES,BeCPGModel.TYPE_ING_TYPE_ITEM);
 		entityLists.put(RepoConsts.PATH_ALLERGEN_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_NUT_GROUPS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_NUT_TYPES,BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(RepoConsts.PATH_PACKAGING_LEVELS,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_NUT_FACTS_METHODS,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_LABELING_POSITIONS,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_LABEL_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -691,22 +635,40 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		
 		Map<String,QName> entityLists = new HashMap<String,QName>();
 		
-		entityLists.put(RepoConsts.PATH_PROJECT_STATUS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_TASK_LEGENDS,ProjectModel.TYPE_TASK_LEGEND);
-		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY1, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(RepoConsts.PATH_REQUEST_STATES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_REQUEST_ORIGINS,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_SCORE_CRITERIA,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_SPONSORS,BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
+	
+	
+	
+	private NodeRef visitSystemQualityListValuesEntity(NodeRef parentNodeRef, String path) {
+		
+		Map<String,QName> entityLists = new HashMap<String,QName>();
+		entityLists.put(RepoConsts.PATH_CLAIM_ORIGIN_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(RepoConsts.PATH_CLAIM_SOURCES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_CLAIM_TRACKING_VALUES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_CLAIM_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_CLAIM_RESPONSES_STATES,BeCPGModel.TYPE_LIST_VALUE);
+		
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+		
+	}
+	
 	
 	/**
 	 * Create product tpls
 	 * 
 	 * @param entityTplsNodeRef
 	 */
-	private void visitProductTpls(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef) {
+	private void visitProductTpls(NodeRef entityTplsNodeRef) {
 
-		NodeRef productFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
 		NodeRef productTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_PRODUCT_TEMPLATES);
 
 		Set<QName> productTypes = new HashSet<QName>();
@@ -736,12 +698,15 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)) {
 
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_PRICELIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PackModel.TYPE_LABELING_LIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_RESOURCEPRODUCT)) {
 
@@ -771,6 +736,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
 
 			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGKIT)) {
 
@@ -784,69 +750,53 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 			}
 
-			entityTplService.createFolderTpl(productFolderTplsNodeRef, productType, true, subFolders);
-			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists);
+			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists, subFolders);
 		}
-
-		// create product tpls that don't have a product folder
-		entityTplService.createFolderTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, false,
-				subFolders);
-		entityTplService
-				.createEntityTpl(productFolderTplsNodeRef, BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, true, null);
 	}
 
-	private void visitQuality(NodeRef folderTplsNodeRef, NodeRef entityTplsNodeRef) {
+	private void visitQuality(NodeRef entityTplsNodeRef) {
 
-		NodeRef qualityFolderTplsNodeRef = visitFolder(folderTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
 		NodeRef qualityTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_QUALITY_TEMPLATES);
 
 		// visit productMicrobioCriteria
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, false,
-				null);
 		entityTplService
-				.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists);
+				.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists, null);
 
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, false, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists, null);
 
 		// visit controlPlan
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, subFolders);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists, subFolders);
 
 		// visit qualityControl
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, true, dataLists, null);
 
 		// visit controlPoint
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, true, dataLists,null);
 
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, false, null);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists, null);
 		
 		// visit NC
 		subFolders = new HashSet<String>();		
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_WORK_LOG);
-		entityTplService.createFolderTpl(qualityFolderTplsNodeRef, QualityModel.TYPE_NC, true, subFolders);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, true, dataLists);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, true, dataLists, subFolders);
 	}
 
 	/**
@@ -861,24 +811,46 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
-		QName[] productTypes = { BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT,
-				BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, BeCPGModel.TYPE_FINISHEDPRODUCT,
-				BeCPGModel.TYPE_PACKAGINGMATERIAL, BeCPGModel.TYPE_PACKAGINGKIT, BeCPGModel.TYPE_RESOURCEPRODUCT};
+		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME,Locale.getDefault());
+		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME,Locale.getDefault());
+		
+		try {
 
-		for (QName productType : productTypes) {
-
-			try {
-
+			QName [] productTypes = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, BeCPGModel.TYPE_PACKAGINGMATERIAL};
+			String [] defaultReport = {PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_CLIENT_PATH};
+			String [] defaultReportName = {productReportClientName, productReportClientName, productReportProductionName, productReportClientName};
+			String [] otherReport = {PRODUCT_REPORT_PRODUCTION_PATH, null, null, null};
+			String [] otherReportName = {productReportProductionName, null, null, null};
+			
+			int i = 0;
+			
+			for(QName productType : productTypes){
+				
 				ClassDefinition classDef = dictionaryService.getClass(productType);
-				String reportPath = Locale.getDefault().equals(Locale.FRENCH) ? PRODUCT_REPORT_PATH : PRODUCT_REPORT_EN_PATH;
-				NodeRef compareProductFolderNodeRef = repoService.createFolderByPath(productReportTplsNodeRef,
-						classDef.getTitle(), classDef.getTitle());
-				reportTplService.createTplRptDesign(compareProductFolderNodeRef, classDef.getTitle(),
-						reportPath, ReportType.Document, ReportFormat.PDF, productType, true, true, false);
-			} catch (Exception e) {
-				logger.error("Failed to create product report tpl. SystemProductType: " + productType, e);
-			}
-
+				
+				if(repoService.getFolderByPath(productReportTplsNodeRef, classDef.getTitle()) == null){
+					
+					NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
+							classDef.getTitle(), classDef.getTitle());
+					
+					if(defaultReport[i] != null && defaultReportName[i] != null){
+						reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i],
+								defaultReport[i], 
+								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
+					}
+					
+					if(otherReport[i] != null && otherReportName[i] != null){
+						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i],
+								otherReport[i], 
+								ReportType.Document, ReportFormat.PDF, productType, true, false, false);
+					}
+				}
+								
+				i++;			
+			}			
+			
+		} catch (Exception e) {
+			logger.error("Failed to create product report.", e);
 		}
 		
 		// quality report templates
@@ -888,7 +860,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		try {
 
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_NC);
-			NodeRef qualityFolderNodeRef = repoService.createFolderByPath(qualityReportTplsNodeRef,
+			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef,
 					classDef.getTitle(), classDef.getTitle());
 			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(),
 					NC_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_NC, true, true, false);
@@ -911,7 +883,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			NodeRef ecoFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_ECO);
 			reportTplService.createTplRptDesign(ecoFolderNodeRef,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_ECO),
-					ECO_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
+					ECO_REPORT_PATH, ReportType.Document, ReportFormat.PDF, ECMModel.TYPE_ECO, true, true, false);
 		} catch (IOException e) {
 			logger.error("Failed to create eco report tpl.", e);
 		}
@@ -964,11 +936,12 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.RDMgr.toString(), SystemGroup.Quality.toString(), SystemGroup.QualityUser.toString(),
 				SystemGroup.QualityMgr.toString(), SystemGroup.Purchasing.toString(),
 				SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
+				SystemGroup.Production.toString(),
+				SystemGroup.ProductionUser.toString(), SystemGroup.ProductionMgr.toString(),
 				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(),
-				SystemGroup.ProductReviewer.toString(), NPDGroup.NPD.toString(),
-				NPDGroup.NeedDefinition.toString(), NPDGroup.ValidateNeedDefinition.toString(),
-				NPDGroup.DoPrototype.toString(), NPDGroup.StartProduction.toString(),
-				NPDGroup.ValidateFaisability.toString(), NPDGroup.FaisabilityAssignersGroup.toString() };
+				NCGroup.ClaimAnalysis.toString(),NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(), 
+				NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString()
+					};
 
 		Set<String> zones = new HashSet<String>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
@@ -978,7 +951,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		for (String group : groups) {
 
 			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase());
+			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase(), Locale.getDefault());
 
 			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
 				logger.debug("create group: " + groupName);
@@ -991,7 +964,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 						zonesToAdd.add(zone);
 					}
 
-				if (zonesToAdd.size() > 0) {
+				if (!zonesToAdd.isEmpty()) {
 					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
 					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
 				}
@@ -1027,6 +1000,15 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 					PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString());
 
 		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
+				+ SystemGroup.Production.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ProductionMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Production.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.ProductionMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ProductionUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Production.toString(),
+					PermissionService.GROUP_PREFIX + SystemGroup.ProductionUser.toString());
+		
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
 				+ SystemGroup.Trade.toString(), true);
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeMgr.toString()))
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(),
@@ -1034,31 +1016,27 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString()))
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(),
 					PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString());
-		// NPD
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
-				+ NPDGroup.NPD.toString(), true);
+	
 
-		for (String group : new String[] {NPDGroup.NeedDefinition.toString(),
-				NPDGroup.ValidateNeedDefinition.toString(), NPDGroup.DoPrototype.toString(),
-				NPDGroup.StartProduction.toString(), NPDGroup.ValidateFaisability.toString(),
-				NPDGroup.FaisabilityAssignersGroup.toString() }) {
-			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
-				authorityService.addAuthority(PermissionService.GROUP_PREFIX + NPDGroup.NPD.toString(),
-						PermissionService.GROUP_PREFIX + group);
+	}
 
+	@Override
+	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
+		switch (folderName) {
+		case RepoConsts.PATH_ENTITY_TEMPLATES:
+		case RepoConsts.PATH_PROJECT_TEMPLATES:
+		case RepoConsts.PATH_REPORTS:
+		case RepoConsts.PATH_SECURITY:
+		case RepoConsts.PATH_ICON:	
+			if(!nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)){
+				nodeService.addAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
+			}
+			break;
+		default:
+			break;
 		}
-
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
-				+ NPDGroup.FaisabilityAssignersGroup.toString(), true);
-
-		for (String group : new String[] { SystemGroup.RDMgr.toString(), SystemGroup.QualityMgr.toString() }) {
-			if (!authorities.contains(PermissionService.GROUP_PREFIX + group))
-				authorityService.addAuthority(
-						PermissionService.GROUP_PREFIX + NPDGroup.FaisabilityAssignersGroup.toString(),
-						PermissionService.GROUP_PREFIX + group);
-
-		}
-
+		
+		
 	}
 
 }

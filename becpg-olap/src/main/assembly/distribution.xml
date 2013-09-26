@@ -7,14 +7,13 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>${basedir}/_diff</directory>
+      <directory>${basedir}/src/main/config</directory>
       <outputDirectory>/dist</outputDirectory>
     </fileSet>
-     <fileSet>
-      <directory>${basedir}/src/main/resources</directory>
-      <outputDirectory>/dist/saiku/WEB-INF/classes</outputDirectory>
-       <filtered>true</filtered>
-     </fileSet>
+    <fileSet>
+      <directory>${basedir}/src/main/sql</directory>
+      <outputDirectory>/sql</outputDirectory>
+    </fileSet>
      <fileSet>
       <directory>${basedir}/src/main/bin</directory>
       <outputDirectory>/</outputDirectory>
@@ -27,5 +26,21 @@
       <source>README.txt</source>
       <outputDirectory>/</outputDirectory>
     </file>
+    <file>
+	   <source>target/${project.artifactId}-${project.version}-jar-with-dependencies.jar</source>
+	   <outputDirectory>/lib</outputDirectory>
+	  </file>
   </files>
+   <dependencySets>
+     <dependencySet>
+       <outputDirectory>/dist/saiku/WEB-INF/lib</outputDirectory>
+       <includes>
+       	<include>fr.becpg:becpg-olap</include>
+       	<include>org.apache.httpcomponents:httpclient</include>
+       	<include>org.apache.httpcomponents:httpmime</include>
+       	<include>commons-codec:commons-codec</include>
+       	<include>org.apache.httpcomponents:httpcore</include>
+       </includes>
+     </dependencySet>
+  </dependencySets>
 </assembly>

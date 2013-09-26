@@ -9,6 +9,42 @@
 					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-resources</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.footer</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-footer</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-documentlibrary</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.document-details</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-document-details</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.data-lists</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-data-lists</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.create-content</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-create-content</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.dashlets</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-dashlets</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.custom-modules</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>

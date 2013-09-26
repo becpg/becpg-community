@@ -26,9 +26,8 @@ VALUES;;1000014;Fournisseur3;;;;;;;;;;;;;;;;;;;;
 PATH;/Temp/Products;;;;;;;;;;;;;;;;;;;;;;
 TYPE;bcpg:rawMaterial;;;;;;;;;;;;;;;;;;;;;;
 DISABLED_POLICIES;rep:reportEntityAspect;;;;;;;;;;;;;;;;;;;;;;
-MAPPING;Products;;;;;;;;;;;;;;;;;;;;;;
-COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState;bcpg:productQty;bcpg:productUnit;bcpg:productDensity;bcpg:eanCode;cm:created;cm:creator;cm:modified;cm:modifier;bcpg:suppliers;coutMP;coutEmb;nutProteines;nutLipides;nutGlucides;img1Path;img1Title
-VALUES;;Saumon surgelé 80x20x4;;saumon sugelé;Sea food;Fish;ToValidate;;;;;07/06/2011;admin;;admin;1000012,1000013;1;3,1;2,5;3,6;5,6;file:${basedir}/src/test/resources/beCPG/import/images/sushi saumon/produit.jpg;saumon
+MAPPING;TestProducts;;;;;;;;;;;;;;;;;;;;;;
+COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;hierarchy1;hierarchy2;bcpg:productState;bcpg:productQty;bcpg:productUnit;bcpg:productDensity;bcpg:eanCode;cm:created;cm:creator;cm:modified;cm:modifier;bcpg:suppliers;coutMP;coutEmb;nutProteines;nutLipides;nutGlucides;img1Path;img1Title
 VALUES;;Saumon surgelé 80x20x4;;saumon sugelé;Sea food;Fish;ToValidate;;;;;07/06/2011;admin;;admin;1000012,1000013;1;3,1;2,5;3,6;5,6;file:${basedir}/src/test/resources/beCPG/import/images/sushi saumon/produit.jpg;saumon
 VALUES;1019;Saumon 80x20x3;;saumon;Sea food;Fish;ToValidate;;;;;07/06/2011;utilisateur.r&d;;utilisateur.r&d;1000012,1000014;0;0;30;12,7;0;file:${basedir}/src/test/resources/beCPG/import/images/sushi saumon/produit.jpg;sushi saumon
 VALUES;1016;dorade 80x20x3;;dorade;Sea food;Fish;ToValidate;;;;;08/06/2011;utilisateur.r&d;;utilisateur.r&d;1000012;0;0;19;0,35;0,8;file:${basedir}/src/test/resources/beCPG/import/images/sushi dorade/produit.jpg;suhis dorade
@@ -36,14 +35,14 @@ VALUES;1016;dorade 80x20x3;;dorade;Sea food;Fish;ToValidate;;;;;08/06/2011;utili
 VALUES;1020;Thon 80x20x8 ;;thon;Sea food;Fish;ToValidate;;;;;08/06/2011;utilisateur.r&d;;admin;1000013,1000014;0;0;24,3;1;0,9;file:${basedir}/src/test/resources/beCPG/import/images/sushi thon/produit.jpg;
 ;;;;;;;;;;;;;;;;;;;;;;;
 PATH;/Temp/Products;;;;;;;;;;;;;;;;;;;;;;
-TYPE;bcpg:entity;;;;;;;;;;;;;;;;;;;;;;
+TYPE;bcpg:rawMaterial;;;;;;;;;;;;;;;;;;;;;;
 MAPPING;TestProducts;;;;;;;;;;;;;;;;;;;;;;
-COLUMNS;cm:name;bcpg:entityTplClassName;bcpg:entityTplEnabled;coutMP;coutMPPrev;coutEmb;nutProteines;nutLipides;nutGlucides;;;;;;;;;;;;;;
-VALUES;productTpl;bcpg:rawMaterial;true;1;2;3,1;2,5;3,6;5,6;;;;;;;;;;;;;;
+COLUMNS;cm:name;hierarchy1;hierarchy2;bcpg:entityTplClassName;bcpg:entityTplEnabled;coutMP;coutMPPrev;coutEmb;nutProteines;nutLipides;nutGlucides;;;;;;;;;;;;
+VALUES;productTpl;Sea food;Fish;bcpg:rawMaterial;true;1;2;3,1;2,5;3,6;5,6;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 #;we simulate the creation in a site;;;;;;;;;;;;;;;;;;;;;;
 PATH;/st:sites/folder;;;;;;;;;;;;;;;;;;;;;;
 TYPE;bcpg:rawMaterial;;;;;;;;;;;;;;;;;;;;;;
-MAPPING;Products;;;;;;;;;;;;;;;;;;;;;;
-COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState;bcpg:productQty;bcpg:productUnit;bcpg:productDensity;bcpg:eanCode;cm:created;cm:creator;cm:modified;cm:modifier;bcpg:suppliers;coutMP;coutEmb;nutProteines;nutLipides;nutGlucides;img1Path;img1Title
-VALUES;;Saumon surgelé 80x20x4;;saumon sugelé;Sea food;Fish;ToValidate;;;;;07/06/2011;admin;;admin;1000012,1000013;1;3,1;2,5;3,6;5,6;file:${basedir}/src/test/resources/beCPG/import/images/sushi saumon/produit.jpg;saumon
+MAPPING;TestProducts;;;;;;;;;;;;;;;;;;;;;;
+COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;hierarchy1;hierarchy2;bcpg:productState;bcpg:productQty;bcpg:productUnit;bcpg:productDensity;bcpg:eanCode;cm:created;cm:creator;cm:modified;cm:modifier;bcpg:suppliers;coutMP;coutEmb;nutProteines;nutLipides;nutGlucides;img1Path;img1Title
+VALUES;;Saumon surgelé in site;;saumon sugelé;Sea food;Fish;ToValidate;;;;;07/06/2011;admin;;admin;1000012,1000013;1;3,1;2,5;3,6;5,6;file:${basedir}/src/test/resources/beCPG/import/images/sushi saumon/produit.jpg;saumon

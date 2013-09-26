@@ -104,7 +104,7 @@ function getVisibleFields(mode, formConfig)
 {
    var visibleFields = null;
    
-   if (formConfig != null)
+   if (formConfig !== null)
    {
       // get visible fields for the current mode
       switch (mode)
@@ -126,7 +126,12 @@ function getVisibleFields(mode, formConfig)
    
    if (logger.isLoggingEnabled())
    {
-      logger.log("Fields configured to be visible for " + mode + " mode = " + visibleFields);
+      var listOfVisibleFields = visibleFields;
+      if (visibleFields !== null)
+      {
+         listOfVisibleFields = "[" + visibleFields.join(",") + "]";
+      }
+      logger.log("Fields configured to be visible for " + mode + " mode = " + listOfVisibleFields);
    }
          
    return visibleFields;

@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.entity.policy;
 
-import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,12 +10,10 @@ import javax.annotation.Resource;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.AutoNumService;
-import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -26,9 +23,6 @@ import fr.becpg.test.RepoBaseTestCase;
  * @author querephi
  */
 public class ProductPoliciesTest extends RepoBaseTestCase {
-
-	@Resource
-	private ProductDictionaryService productDictionaryService;
 
 	@Resource
 	private AutoNumService autoNumService;
@@ -43,8 +37,6 @@ public class ProductPoliciesTest extends RepoBaseTestCase {
 	@Test
 	public void testProductCode() {
 
-		final Collection<QName> dataLists = productDictionaryService.getDataLists();
-
 		final NodeRef rawMaterial1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
@@ -52,7 +44,7 @@ public class ProductPoliciesTest extends RepoBaseTestCase {
 
 						RawMaterialData rawMaterial1 = new RawMaterialData();
 						rawMaterial1.setName("Raw material 1");
-						return productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
+						return alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 					}
 				}, false, true);
@@ -67,7 +59,7 @@ public class ProductPoliciesTest extends RepoBaseTestCase {
 
 						RawMaterialData rawMaterial2 = new RawMaterialData();
 						rawMaterial2.setName("Raw material 2");
-						return productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
+						return alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 
 					}
 				}, false, true);

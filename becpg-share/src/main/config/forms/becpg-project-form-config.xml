@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alfresco-config>	
+	<config condition="pjt:project" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:code" />
+					<show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />					
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectOrigin" />
+					<show id="pjt:projectSponsor" />
+					<show id="pjt:projectManager" />					
+					<show id="bcpg:entityTplRef" />
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectState" />					
+										
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectCompletionDate" for-mode="view" />					
+					<show id="pjt:completionPercent" for-mode="view"/>
+					<show id="pjt:projectOverdue" for-mode="view"/>
+					<show id="pjt:projectScore" for-mode="view"/>
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
+					
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />	
+					<field id="cm:description" set="mainInfo" />						
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="pjt:projectHierarchy1" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectOrigin" set="mainInfo" />
+					<field id="pjt:projectSponsor" set="mainInfo" />		
+					<field id="pjt:projectManager" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>	
+					<field id="pjt:projectEntity" set="mainInfo" />	
+					<field id="pjt:projectPriority" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="pjt:projectState" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>				
+					<field id="pjt:projectScore" set="mainInfo" />		
+					
+					<field id="pjt:projectStartDate" set="planning" />
+					<field id="pjt:projectDueDate" set="planning" />	
+					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectCompletionDate" set="planning" />
+					<field id="pjt:completionPercent" set="planning" />
+					<field id="pjt:projectOverdue" set="planning" />					
+																	
+						
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>					
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+					
+				</appearance>
+			</form>
+			<!-- Document Library pop-up Edit Metadata form -->
+         <form id="doclib-simple-metadata">
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+               <!-- tags and categories -->
+               <show id="cm:taggable" for-mode="edit" force="true" />
+               <show id="cm:categories" />
+            </field-visibility>
+            <edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+            <appearance>
+               <field id="cm:name">
+                 <control>
+                    <control-param name="maxLength">255</control-param>
+                 </control>
+               </field>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="cm:description">
+                  <control>
+                     <control-param name="activateLinks">true</control-param>
+                  </control>
+               </field>
+               <field id="cm:taggable">
+                  <control>
+                     <control-param name="compactMode">true</control-param>
+                     <control-param name="params">aspect=cm:taggable</control-param>
+                     <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore</control-param>
+                     <control-param name="createNewItemIcon">tag</control-param>
+                  </control>
+               </field>
+               <field id="cm:categories">
+                  <control>
+                     <control-param name="compactMode">true</control-param>
+                  </control>
+               </field>
+            </appearance>
+          </form>
+		</forms>
+	</config>
+	<config condition="pjt:project" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+				   <show id="cm:name" />
+				   <show id="bcpg:code" />				   
+				   <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectOrigin" />
+					<show id="pjt:projectSponsor" />
+					<show id="pjt:projectManager" />		
+					<show id="bcpg:entityTplRef" />			
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectState" />										
+										
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectDueDate" />					
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" force="true" />
+					<show id="cm:categories" force="true" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />		
+					<field id="cm:description" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />				
+					<field id="pjt:projectHierarchy1" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectOrigin" set="mainInfo" />
+					<field id="pjt:projectSponsor" set="mainInfo" />		
+					<field id="pjt:projectManager" set="mainInfo" />		
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>				
+					<field id="pjt:projectEntity" set="mainInfo" />	
+					<field id="pjt:projectPriority" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="pjt:projectState" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>										
+					
+					<field id="pjt:projectStartDate" set="planning" />
+					<field id="pjt:projectDueDate" set="planning" />
+						
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>					
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="pjt:projectOverdue" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:completionPercent" />					
+					<show id="pjt:projectScore" />					
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="pjt:projectEntity" />
+					<show id="dataList_pjt:taskList" />
+					<show id="dataList_pjt:deliverableList" />
+					<show id="pjt:projectManager" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" />
+					<field id="dataList_pjt:taskList" label-id="becpg.forms.field.projects.datagrid.taskList.label" />
+					<field id="pjt:projectStartDate" label-id="becpg.forms.field.projects.datagrid.projectStartDate.label"   />
+				</appearance>
+
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectPriority"  />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectPriority" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectState" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			
+			
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="pjt:projectHierarchy1" />
+					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectState" />
+					<show id="pjt:projectEntity" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:projectHierarchy1" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectPriority">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectState" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+		</forms>
+	</config>
+	<config condition="pjt:taskLegend" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:color" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:color">
+						<control
+							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskLegend" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:color" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:color">
+						<control
+							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:tlTaskName" />
+					<show force="true" id="pjt:tlPrevTasks" />
+					<show force="true" id="pjt:tlResources" />
+					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlWorkflowName" />
+					
+					<show id="pjt:tlStart" read-only="true" />
+					<show id="pjt:tlEnd"   read-only="true" />
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlDuration" />									
+					<show id="pjt:tlState" />
+					<show id="pjt:tlManualDate" />					
+					
+					<show id="pjt:completionPercent" read-only="true" />
+				</field-visibility>
+				<appearance>
+				
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
+						
+					<field id="pjt:tlTaskName" set="mainInfo"/>
+					<field id="pjt:tlPrevTasks" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>		
+					<field id="pjt:tlResources" set="mainInfo"/>
+					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
+					<field id="pjt:tlWorkflowName" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlStart" set="planning"/>
+					<field id="pjt:tlEnd" set="planning"/>
+					<field id="pjt:tlIsMilestone" set="planning"/>
+					<field id="pjt:tlDuration" set="planning"/>
+					<field id="pjt:tlState" set="planning">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlManualDate" set="planning">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,Start|data.manualdate.start,End|data.manualdate.end</control-param>
+						</control>
+					</field>
+					
+					<field id="pjt:completionPercent" set="planning"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:taskList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:tlTaskName" />
+					<show force="true" id="pjt:tlPrevTasks" />
+					<show force="true" id="pjt:tlResources" />
+					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlWorkflowName" />
+					
+					<show id="pjt:tlStart" read-only="true" />
+					<show id="pjt:tlEnd"   read-only="true" />
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlDuration" />									
+					<show id="pjt:tlState" />
+					<show id="pjt:tlManualDate" />					
+					
+					<show id="pjt:completionPercent" read-only="true" />
+				</field-visibility>
+				<appearance>
+					
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" />
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
+						
+					<field id="pjt:tlTaskName" set="mainInfo"/>
+					<field id="pjt:tlPrevTasks" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+						</control>
+					</field>		
+					<field id="pjt:tlResources" set="mainInfo"/>
+					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
+					<field id="pjt:tlWorkflowName" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlStart" set="planning"/>
+					<field id="pjt:tlEnd" set="planning"/>
+					<field id="pjt:tlIsMilestone" set="planning"/>
+					<field id="pjt:tlDuration" set="planning"/>
+					<field id="pjt:tlState" set="planning">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:tlManualDate" set="planning">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,Start|data.manualdate.start,End|data.manualdate.end</control-param>
+						</control>
+					</field>
+					
+					<field id="pjt:completionPercent" set="planning"/>
+					
+				</appearance>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="pjt:tlTaskName" />					
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlDuration" />
+					<show force="true" id="pjt:tlPrevTasks" />
+					<show force="true" id="pjt:tlResources" />
+					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlState" />
+					<show id="pjt:completionPercent" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd" />
+					<show id="fm:commentCount" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
+				</appearance>
+			</form>
+			<form id="sub-datagrid">
+				<field-visibility>
+					<show id="pjt:tlTaskName" />
+					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlDuration" />
+					<show force="true" id="pjt:tlPrevTasks" />
+					<show force="true" id="pjt:tlResources" />
+					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlState" />
+					<show id="pjt:completionPercent" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd" />
+					<show id="pjt:tlWorkflowInstance" />
+					<show id="fm:commentCount" force="true"/>
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:deliverableList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:dlDescription" />
+					<show id="pjt:dlTask" />
+					<show id="pjt:dlContent" />
+					<show id="pjt:dlState" />
+					<show id="pjt:completionPercent" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:dlTask">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:dlState">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.deliverablestate.planned,InProgress|data.deliverablestate.inprogress,Completed|data.deliverablestate.completed,Closed|data.deliverablestate.closed
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:dlContent" mandatory="false" read-only="false">
+		            <control template="/org/alfresco/components/form/controls/association.ftl">
+		              <control-param name="startLocation">{ancestor}</control-param>
+		              <control-param name="startLocationParams">aspect=bcpg:entityListsAspect</control-param>
+		            </control>
+		          </field>
+					
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:deliverableList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:dlDescription" />
+					<show id="pjt:dlTask" />
+					<show id="pjt:dlContent" />
+					<show id="pjt:dlState" />
+					<show id="pjt:completionPercent" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:dlTask">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:dlState">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.deliverablestate.planned,InProgress|data.deliverablestate.inprogress,Completed|data.deliverablestate.completed,Closed|data.deliverablestate.closed
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:dlContent" mandatory="false" read-only="false">
+		            <control template="/org/alfresco/components/form/controls/association.ftl">
+		              <control-param name="startLocation">{ancestor}</control-param>
+		              <control-param name="startLocationParams">aspect=bcpg:entityListsAspect</control-param>
+		            </control>
+		          </field>
+				</appearance>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="pjt:dlDescription" />
+					<show id="pjt:dlTask" />
+					<show id="pjt:dlContent" />
+					<show id="pjt:dlState" />
+					<show id="pjt:completionPercent" />
+					<show id="fm:commentCount" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
+				</appearance>
+			</form>
+			<form id="sub-datagrid">
+				<field-visibility>
+					<show id="pjt:dlDescription" />
+					<show id="pjt:dlTask" />
+					<show id="pjt:dlContent" />
+					<show id="pjt:dlState" />
+					<show id="fm:commentCount" force="true"/>
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config condition="pjt:scoreList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:slCriterion" />
+					<show id="pjt:slWeight" />
+					<show id="pjt:slScore" />
+					<show id="pjt:slScreening" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:slScreening">
+                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
+                  <control-param name="editorHeight">8</control-param>
+               </control>
+               </field>					
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:scoreList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:slCriterion" />
+					<show id="pjt:slWeight" />
+					<show id="pjt:slScore" />
+					<show id="pjt:slScreening" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:slScreening">
+                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
+                  <control-param name="editorHeight">8</control-param>
+               </control>
+               </field>	
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+         <form id="datagrid">
+            <field-visibility>
+            	<show id="pjt:slCriterion" />
+					<show id="pjt:slWeight" />
+					<show id="pjt:slScore" />
+					<show id="pjt:slScreening" />
+            </field-visibility>
+            <appearance>
+            	<field id="pjt:slScreening" read-only="true" ></field>
+            </appearance>
+         </form>
+		</forms>
+	</config>
+	
+	<config evaluator="aspect" condition="pjt:projectAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pjt:project" />
+				</field-visibility>
+				<appearance>
+					<set id="project" appearance="bordered-panel" label-id="becpg.forms.set.project.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pjt:project" set="project" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+   <!-- pjt:requestList type create form config-->
+   <config evaluator="model-type" condition="pjt:requestList">
+      <forms>
+         <!-- Create item form -->
+         <form>
+            <field-visibility>
+               <show id="cm:title" />
+               <show id="cm:description" />
+               <show id="pjt:rlAssignedTo" />
+               <show id="pjt:rlOrigin" />
+               <show id="pjt:rlState" />               
+               <show id="pjt:rlPriority" />               
+               <show id="pjt:rlDueDate" />
+               <show id="pjt:rlComments" />
+               <show id="cm:attachments" />
+             </field-visibility>
+            <create-form template="../data-lists/forms/dataitem.ftl" />
+            <appearance>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="pjt:rlComments">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>
+               <field id="cm:attachments">
+                  <control>
+                    <control-param name="startLocation">{doclib}</control-param>
+                  </control>
+               </field>
+            </appearance>
+         </form>
+         <!-- Data Grid view -->
+         <form id="datagrid">
+            <field-visibility>
+            	<show id="cm:title" />
+            	<show id="cm:likesRatingSchemeCount"/>
+               <show id="cm:description" />
+               <show id="pjt:rlAssignedTo" />
+               <show id="pjt:rlOrigin" />
+               <show id="pjt:rlState" />               
+               <show id="pjt:rlPriority" />               
+               <show id="pjt:rlDueDate" />
+               <show id="cm:attachments" />
+               <show id="cm:creator" />
+               <show id="cm:created" />               
+            </field-visibility>
+         </form>
+      </forms>
+   </config>
+   
+   <!-- pjt:requestList type edit form config-->
+   <config evaluator="node-type" condition="pjt:requestList">
+      <forms>
+         <!-- Create item form -->
+         <form>
+            <field-visibility>
+               <show id="cm:title" />
+               <show id="cm:description" />
+               <show id="pjt:rlAssignedTo" />
+               <show id="pjt:rlOrigin" />
+               <show id="pjt:rlState" />               
+               <show id="pjt:rlPriority" />               
+               <show id="pjt:rlDueDate" />
+               <show id="pjt:rlComments" />
+               <show id="cm:attachments" />
+             </field-visibility>
+            <create-form template="../data-lists/forms/dataitem.ftl" />
+            <appearance>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="pjt:rlComments">
+                  <control template="/org/alfresco/components/form/controls/textarea.ftl" />
+               </field>
+               <field id="cm:attachments">
+                  <control>
+                    <control-param name="startLocation">{doclib}</control-param>
+                  </control>
+               </field>
+            </appearance>
+         </form>
+      </forms>
+   </config>
+
+</alfresco-config>

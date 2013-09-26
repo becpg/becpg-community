@@ -1,0 +1,81 @@
+MAPPING;Default;
+PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;parentLevel;bcpg:lkvValue
+VALUES;Boulangerie-viennoiserie;Pains
+VALUES;Boulangerie-viennoiserie;Biscottes et pains non levés
+VALUES;Boulangerie-viennoiserie;Viennoiseries et brioches
+VALUES;Pâtisseries et biscuits;Gâteaux et pâtisseries
+VALUES;Pâtisseries et biscuits;Biscuits secs sucrés
+VALUES;Pâtisseries et biscuits;Biscuits salés apéritifs
+VALUES;Céréales petit déjeuner et barres céréalières;Céréales petit déjeuner et barres céréalières
+VALUES;Plats composés;Plats composés
+VALUES;Plats composés;Plats à base de viande ou volaille
+VALUES;Plats composés;Plats à base de poisson ou produits aquatiques
+VALUES;Plats composés;Plats à base de légumes ou légumineuses
+VALUES;Plats composés;Plats à base de céréales ou pâtes
+VALUES;Plats composés;Plats à base de fromage
+VALUES;Plats composés;Pizzas, crêpes et tartes salées
+VALUES;Sandwichs;Sandwichs
+VALUES;Produits japonais;Maki
+VALUES;Produits japonais;Brochette
+VALUES;Produits japonais;Sushi
+VALUES;Produits japonais;Sashimi
+VALUES;Menus - kits;Sushis
+VALUES;Quiches;Quiches individuelles
+VALUES;Quiches;Quiches familiale
+;;
+;;
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;parentLevel;bcpg:lkvValue
+VALUES;Mélange - garniture;Mélange - garniture
+VALUES;Pâtisserie;Pâtisserie
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;parentLevel;bcpg:lkvValue
+VALUES;Mélange - garniture;Mélange - garniture
+VALUES;Pâtisserie;Pâtisserie
+;;
+PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
+TYPE;bcpg:linkedValue;
+COLUMNS;parentLevel;bcpg:lkvValue
+VALUES;Epicerie;Alcools, eau
+VALUES;Additifs;Adipate
+VALUES;Additifs;Alginate
+VALUES;Additifs;Antibiotique
+VALUES;Additifs;Antioxidant
+VALUES;Additifs;Autre additif
+VALUES;Additifs;bcpg:productHierarchy2
+VALUES;Additifs;Carbonate
+VALUES;Additifs;Chlorure
+VALUES;Additifs;Cire et hydrocarbure
+VALUES;Additifs;Citrate
+VALUES;Additifs;Colorant alimentaire
+VALUES;Additifs;Conservateur
+VALUES;Additifs;Dérivé cellulosique
+VALUES;Additifs;Dérivé d'acide gras alimentaire
+VALUES;Additifs;Diphosphate
+VALUES;Additifs;Edulcorant
+VALUES;Additifs;Exhausteur
+VALUES;Additifs;Ferrocyanure
+VALUES;Additifs;Gaz
+VALUES;Additifs;Glace
+VALUES;Additifs;Gluconate
+VALUES;Additifs;Gomme
+VALUES;Additifs;Gomme à mâcher
+VALUES;Additifs;Guanylate
+VALUES;Additifs;Hydroxyde
+VALUES;Additifs;Inosinate
+VALUES;Additifs;Lactate
+VALUES;Additifs;Lécithine
+VALUES;Additifs;Malate
+VALUES;Additifs;Orthophosphate
+VALUES;Additifs;Phosphate
+VALUES;Additifs;Silicate
+VALUES;Additifs;Stearate
+VALUES;Additifs;Sulfate
+VALUES;Additifs;Tartrate
+VALUES;Additifs;Thiosulfate

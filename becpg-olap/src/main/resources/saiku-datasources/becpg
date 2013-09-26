@@ -1,4 +1,0 @@
-type=OLAP
-name=beCPG
-driver=mondrian.olap4j.MondrianOlap4jDriver
-location=jdbc:mondrian:Datasource=java:comp/env/jdbc/dataSource;Catalog=res:becpg/becpg.xml

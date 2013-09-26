@@ -1,0 +1,65 @@
+
+
+div.entityFolderInstructions {
+	 
+	 background-color: #F4FAFF;
+    border: 1px dashed #73B4DA;
+    color: #515D6B;
+    padding: 10px;
+	 margin: 0 -10px;
+	 clear: both;
+}
+
+
+.entityFolderInstructions .entityFolderToolbar-message  span {
+    display: block;
+    font-size: 123%;
+    margin-top: 10px;
+}
+
+
+.entityFolderInstructions .entityFolderToolbar-message img {
+	float: left;
+   padding: 0 10px;
+   vertical-align: middle;
+}
+
+.entityFolderInstructions .entityFolderToolbar-message  span ul {
+    padding-left: 100px;
+}
+
+.entityFolderInstructions .entityFolderToolbar-message  span ul li {
+    list-style: square;
+}
+
+
+
+.entityFolderInstructions .entityFolderToolbar-buttons {
+    min-height: 1.7em;
+    padding: 4px 0.5em 9px;
+	
+}
+
+.entityFolderInstructions .entityFolderToolbar-buttons div {
+	 float: left;
+	
+}
+
+.entityFolderToolbar-buttons .entity-view-details span.first-child {
+    background-image: url(./actions/entity-view-details-16.png);
+ 
+ }
+    
+.entityFolderToolbar-buttons .entity-view-datalist span.first-child {
+    background-image: url(./actions/entity-view-datalists-16.png);
+ 
+ }
+    
+.entityFolderToolbar-buttons .entity-view-datalist span.first-child ,
+.entityFolderToolbar-buttons .entity-view-details span.first-child
+ {
+    background-color: transparent;
+    background-position: 6px 4px;
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}

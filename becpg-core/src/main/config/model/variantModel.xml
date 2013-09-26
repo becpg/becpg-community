@@ -2,7 +2,7 @@
 <!-- Definition of new Model -->
 <model name="var:varmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
 	<!-- Optional meta-data about the model -->
-	<description>Variant management</description>
+	<description>(Deprecated )Variant management</description>
 	<author>QUERE</author>
 	<version>1.0</version>
 	<!-- Imports are required to allow references to definitions in other models -->
@@ -51,7 +51,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>

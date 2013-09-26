@@ -7,29 +7,35 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
+import org.alfresco.repo.copy.CopyServicePolicies;
+import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.project.ProjectException;
+import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
 /**
@@ -40,15 +46,16 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 @Service
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy,
-		NodeServicePolicies.BeforeDeleteNodePolicy{
+		CopyServicePolicies.OnCopyNodePolicy{
 
-	/** The logger. */
+	private static String KEY_INIT_DL_CONTENT = "ProjectPolicy.InitDLContent";
+	
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
 
 	private EntityListDAO entityListDAO;
 	private ProjectService projectService;
 	private AssociationService associationService;
-	private CopyService copyService;
+	private ProjectActivityService projectActivityService;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -61,9 +68,9 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
-
-	public void setCopyService(CopyService copyService) {
-		this.copyService = copyService;
+	
+	public void setProjectActivityService(ProjectActivityService projectActivityService) {
+		this.projectActivityService = projectActivityService;
 	}
 
 	/**
@@ -72,118 +79,191 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	public void doInit() {
 		logger.debug("Init ProjectPolicy...");
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, ProjectModel.ASSOC_PROJECT_TPL, new JavaBehaviour(this,
+				ProjectModel.TYPE_PROJECT, BeCPGModel.ASSOC_ENTITY_TPL_REF, new JavaBehaviour(this,
 						"onCreateAssociation"));
 
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, ProjectModel.ASSOC_PROJECT_ENTITY, new JavaBehaviour(this,
-						"onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));
+				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "onUpdateProperties"));		
 		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME,
-				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, 
+				ProjectModel.TYPE_PROJECT, new JavaBehaviour(this, "getCopyCallback"));
+		
+		// disable otherwise, impossible to copy project that has a template
+		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);		
 	}
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-
-		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_TPL)) {
-			// copy datalist from Tpl to project
-			logger.debug("copy datalists");
+		
+		NodeRef projectNodeRef = assocRef.getSourceRef();
+		
+		if (assocRef.getTypeQName().equals(BeCPGModel.ASSOC_ENTITY_TPL_REF)) {
+			
+			NodeRef projectTplNodeRef = assocRef.getTargetRef();
+			
+			// copy folders
+			// already done by entity policy
+			
+			// copy datalist from Tpl to project			
 			Collection<QName> dataLists = new ArrayList<QName>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
-			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-			entityListDAO.copyDataLists(assocRef.getTargetRef(), assocRef.getSourceRef(), dataLists, true);
-
-			// refresh reference to prevTasks
-			// TODO : do it in a generic way
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(assocRef.getSourceRef());
-			if (listContainerNodeRef != null) {
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
-				if (listNodeRef != null) {
-					List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
-					Map<NodeRef, NodeRef> originalMaps = new HashMap<NodeRef, NodeRef>(listItems.size());
-					for (NodeRef listItem : listItems) {
-						originalMaps.put(copyService.getOriginal(listItem), listItem);
-					}
-
-					listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-					listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-					updateOriginalNodes(originalMaps, listItems, ProjectModel.ASSOC_DL_TASK);
-
+			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);			
+			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, false);
+			
+			// we wait files are copied by entity policy
+			queueNode(KEY_INIT_DL_CONTENT, assocRef.getSourceRef());
+			
+			// initialize
+			queueNode(projectNodeRef);
+							
+		} 
+	}	
+	
+	// TODO : do it in a generic way
+	public void initializeNodeRefsAfterCopy(NodeRef projectNodeRef){
+					
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
+		if (listContainerNodeRef != null) {			
+			
+			//Deliverables
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+			if (listNodeRef != null) {
+				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
+				for (NodeRef listItem : listItems) {
+					updateDelieverableDocument(projectNodeRef, listItem);
 				}
 			}
-
-			// initialize
-			queueNode(assocRef.getSourceRef());
-
-			// //We want to be able to plan project in advance and start it
-			// later so we start it when state is InProgress
-			// if(TaskState.InProgress.toString().equals(nodeService.getProperty(assocRef.getSourceRef(),
-			// ProjectModel.PROP_PROJECT_STATE))){
-			// // start workflow when product is associated to project
-			// queueNode(KEY_PROJECTS_TO_START, assocRef.getSourceRef());
-			// }
-		} else if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {
-			// add project aspect on entity
-			nodeService.addAspect(assocRef.getTargetRef(), ProjectModel.ASPECT_PROJECT_ASPECT, null);
-			associationService.update(assocRef.getTargetRef(), ProjectModel.ASSOC_PROJECT, assocRef.getSourceRef());
 		}
 	}
-
-	private void updateOriginalNodes(Map<NodeRef, NodeRef> originalMaps, List<NodeRef> listItems, QName propertyQName) {
-
-		for (NodeRef listItem : listItems) {
-			List<NodeRef> originalTasks = associationService.getTargetAssocs(listItem, propertyQName);
-			List<NodeRef> tasks = new ArrayList<NodeRef>(originalTasks.size());
-
-			for (NodeRef originalTask : originalTasks) {
-				if (originalMaps.containsKey(originalTask)) {
-					tasks.add(originalMaps.get(originalTask));
-				}
+	
+	private void updateDelieverableDocument(NodeRef projectNodeRef, NodeRef listItem){
+		
+		Stack<String> stack = new Stack<String>();
+		NodeRef documentNodeRef = associationService.getTargetAssoc(listItem, ProjectModel.ASSOC_DL_CONTENT);
+		
+		if(documentNodeRef != null){
+			NodeRef folderNodeRef = nodeService.getPrimaryParent(documentNodeRef).getParentRef();
+			
+			while(folderNodeRef!=null && !nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_ENTITYLISTS)){
+				String name = (String)nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME);
+				logger.debug("folderNodeRef: " + folderNodeRef + " name: " + name);
+				stack.push(name);
+				folderNodeRef = nodeService.getPrimaryParent(folderNodeRef).getParentRef();
 			}
-			associationService.update(listItem, propertyQName, tasks);
+			
+			logger.debug("stack: " + stack);
+			
+			folderNodeRef = projectNodeRef;
+			Iterator<String>iterator = stack.iterator();
+			while(iterator.hasNext() && folderNodeRef !=null){
+				folderNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, iterator.next());				
+			}
+			 
+			if(folderNodeRef != null){
+				NodeRef newDocumentNodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, 
+						(String)nodeService.getProperty(documentNodeRef, ContentModel.PROP_NAME));
+				logger.debug("Update dlContent with doc " + newDocumentNodeRef);
+				associationService.update(listItem, ProjectModel.ASSOC_DL_CONTENT, newDocumentNodeRef);
+			}
+			
 		}
 	}
 
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
+		boolean formulateProject = false;
 		String beforeState = (String) before.get(ProjectModel.PROP_PROJECT_STATE);
-		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);
+		String afterState = (String) after.get(ProjectModel.PROP_PROJECT_STATE);		
 
+		// change state
 		if (afterState != null && !afterState.equals(beforeState)) {
-			if (afterState.equals(TaskState.InProgress.toString())) {
+			
+			projectActivityService.postProjectStateChangeActivity(nodeRef, beforeState, afterState);
+			
+			if (afterState.equals(ProjectState.InProgress.toString())) {
 				logger.debug("onUpdateProperties:start project");
 				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE,
 						ProjectHelper.removeTime(new Date()));
-				queueNode(nodeRef);
-			} else if (afterState.equals(TaskState.Cancelled.toString())) {
+				formulateProject = true;
+			} else if (afterState.equals(ProjectState.Cancelled.toString())) {
 				logger.debug("onUpdateProperties:cancel project");
 				projectService.cancel(nodeRef);
 			}
+		}
+		
+		// change startdate, duedate
+		if(isPropChanged(before, after, ProjectModel.PROP_PROJECT_START_DATE) ||
+				isPropChanged(before, after, ProjectModel.PROP_PROJECT_DUE_DATE)){
+			formulateProject = true;
+		}
+				
+		if(formulateProject){
+			queueNode(nodeRef);
 		}
 	}
 
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-		for (NodeRef nodeRef : pendingNodes) {
-			try {
-				logger.debug("Project policy formulate");
-				projectService.formulate(nodeRef);
-			} catch (ProjectException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(KEY_INIT_DL_CONTENT.equals(key)){
+			for (NodeRef nodeRef : pendingNodes) {
+				initializeNodeRefsAfterCopy(nodeRef);	
 			}
 		}
+		else{
+			for (NodeRef nodeRef : pendingNodes) {
+				try {
+					if(nodeService.exists(nodeRef) && isNotLocked(nodeRef)){
+						logger.debug("Project policy formulate");
+						projectService.formulate(nodeRef);
+					}				
+				} catch (FormulateException e) {
+					logger.error(e,e);
+				}
+			}
+		}
+		
 	}
-
+	
 	@Override
-	public void beforeDeleteNode(NodeRef nodeRef) {
-		projectService.cancel(nodeRef);
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		super.getCopyCallback(classRef, copyDetails);
+		return new ProjectCopyBehaviourCallback();
+	}
+		
+	private class ProjectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
+		
+        private ProjectCopyBehaviourCallback(){        
+        }
+        
+		@Override
+		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {				
+			return true;
+		}
+
+		@Override
+		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
+				Map<QName, Serializable> properties) {		
+			
+			if(ProjectModel.TYPE_PROJECT.equals(classQName)){
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_STATE)){
+					properties.put(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned);
+				}
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_START_DATE)){					
+					properties.remove(ProjectModel.PROP_PROJECT_START_DATE);					
+				}
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_DUE_DATE)){					
+					properties.remove(ProjectModel.PROP_PROJECT_DUE_DATE);					
+				}
+				if(properties.containsKey(ProjectModel.PROP_PROJECT_COMPLETION_DATE)){					
+					properties.remove(ProjectModel.PROP_PROJECT_COMPLETION_DATE);					
+				}
+			}
+			
+			return properties;
+		}
 	}
 
 }

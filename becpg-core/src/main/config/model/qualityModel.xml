@@ -1,63 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Definition of new Model -->
-<model name="qa:qamodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
-	<!-- Optional meta-data about the model -->
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="qa:qamodel">
 	<description>Quality Model</description>
 	<author>Laborie Matthieu</author>
 	<version>1.0</version>
-	<!-- Imports are required to allow references to definitions in other models -->
 	<imports>
-		<!-- Import Alfresco Dictionary Definitions -->
-		<import uri="http://www.alfresco.org/model/dictionary/1.0"
-			prefix="d" />
-		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
-		<import uri="http://www.alfresco.org/model/datalist/1.0"
-			prefix="dl" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0" prefix="dl" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
-	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/quality/1.0" prefix="qa" />
 	</namespaces>
-	
+	<data-types />
 	<constraints>
 		<constraint name="qa:ncStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
-					<value>Nouveau</value>
-					<value>En cours</value>
-					<value>À analyser</value>
-					<value>À corrigé</value>					
-					<value>À déclasser</value>
-					<value>Déclassé</value>
-					<value>À détruire</value>
-					<value>Détruit</value>		
-					<value>Résolu</value>
-					<value>Fermé</value>
-					<value>Ouvert</value>			
+					<value />
+					<value>new</value>
+					<value>analysis</value>
+					<value>treatment</value>
+					<value>response</value>
+					<value>classification</value>
+					<value>closing</value>
+					<value>closed</value>
 				</list>
 			</parameter>
-		</constraint>		
-		<constraint name="qa:ncType" type="LIST">
+		</constraint>
+		<constraint name="qa:ncTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
-					<value>Allergène</value>
-					<value>Microbiologie</value>
-					<value>Nutritionnelle</value>
-					<value>Physico-chimie</value>					
-					<value>Sensorielle</value>
-					<value>Poids</value>
-					<value>Corps étranger environnement</value>
-					<value>Corps étranger ligne</value>
-					<value>DLC</value>
-					<value>DLUO</value>
+					<value>Claim</value>
+					<value>NonConformity</value>
 				</list>
 			</parameter>
-		</constraint>		
+		</constraint>
 		<constraint name="qa:ncPriority" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -70,7 +49,7 @@
 		<constraint name="qa:ncQuantityNcUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
+					<value />
 					<value>kg</value>
 					<value>L</value>
 					<value>P</value>
@@ -78,7 +57,7 @@
 					<value>m2</value>
 				</list>
 			</parameter>
-		</constraint>		
+		</constraint>
 		<constraint name="qa:freqUnits" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -93,74 +72,134 @@
 					<value>/lot</value>
 				</list>
 			</parameter>
-		</constraint>		
+		</constraint>
 		<constraint name="qa:controlTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
+					<value />
 					<value>Allergène</value>
 					<value>Microbiologie</value>
 					<value>Nutritionnelle</value>
-					<value>Physico-chimie</value>					
-					<value>Sensorielle</value>					
+					<value>Physico-chimie</value>
+					<value>Sensorielle</value>
 				</list>
 			</parameter>
 		</constraint>
 		<constraint name="qa:states" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
+					<value />
 					<value>Conforme</value>
 					<value>Non conforme</value>
 				</list>
 			</parameter>
-		</constraint>					
+		</constraint>
+		<constraint name="qa:claimSources" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/QualityLists/bcpg:entityLists/ClaimSources</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		<constraint name="qa:claimTrackingValues" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/QualityLists/bcpg:entityLists/ClaimTrackingValues</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		<constraint name="qa:claimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/QualityLists/bcpg:entityLists/ClaimTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		<constraint name="qa:claimResponseStates" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/QualityLists/bcpg:entityLists/ClaimResponseStates</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
 	</constraints>
-
 	<types>
-	
-		<!-- Non conformité -->
-
 		<type name="qa:nc">
-			<parent>bcpg:entity</parent>
+			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="qa:ncType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<constraints>						
-						<constraint ref="qa:ncType" />
+					<index enabled="true" />
+					<constraints>
+						<constraint ref="qa:ncTypes" />
 					</constraints>
-				</property>			
+				</property>
 				<property name="qa:ncPriority">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
+					<index enabled="true" />
 					<constraints>
 						<constraint ref="qa:ncPriority" />
 					</constraints>
-				</property>		
+				</property>
 				<property name="qa:ncState">
 					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 					<constraints>
 						<constraint ref="qa:ncStates" />
 					</constraints>
-				</property>			
+				</property>
 				<property name="qa:ncQuantityNc">
-					<type>d:double</type>					
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:ncQuantityNcUnit">
 					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 					<constraints>
 						<constraint ref="qa:ncQuantityNcUnit" />
 					</constraints>
-				</property>						
+				</property>
 				<property name="qa:ncCost">
 					<type>d:double</type>
-				</property>				
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+				</property>
 				<property name="qa:ncComment">
 					<type>d:text</type>
-				</property>							
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+				</property>
 			</properties>
-			<associations>				
+			<associations>
 				<association name="qa:ncCreationStep">
 					<source>
 						<mandatory>false</mandatory>
@@ -168,7 +207,7 @@
 					</source>
 					<target>
 						<class>qa:controlStep</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -179,45 +218,45 @@
 					</source>
 					<target>
 						<class>qa:controlStep</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
 			</associations>
+			<overrides />
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>rep:reportEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		<!-- Control Plan -->				
 		<type name="qa:controlPlan">
-			<parent>cm:content</parent>
-			<properties>
-							
-			</properties>						
+			<parent>bcpg:entityV2</parent>
+			<properties />
+			<associations />
+			<overrides />
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>				
+				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		<!-- Quality control -->		
 		<type name="qa:qualityControl">
-			<parent>bcpg:entity</parent>
-			<properties>				
+			<parent>bcpg:entityV2</parent>
+			<properties>
 				<property name="qa:qcSamplesCounter">
 					<type>d:int</type>
-					<mandatory>false</mandatory>					
-				</property>		
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+				</property>
 				<property name="qa:qcState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true" />
 					<constraints>
 						<constraint ref="qa:states" />
-					</constraints>										
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -228,118 +267,130 @@
 					</source>
 					<target>
 						<class>qa:controlPlan</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>true</many>
 					</target>
 				</association>
-			</associations>			
+			</associations>
+			<overrides />
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>qa:batchAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
-				<aspect>qa:batchAspect</aspect>					
 			</mandatory-aspects>
 		</type>
-		
-		<!-- control point -->
 		<type name="qa:controlPoint">
-			<parent>cm:content</parent>
-			<properties>	
+			<parent>bcpg:entityV2</parent>
+			<properties>
 				<property name="qa:cpIsExtLabo">
 					<type>d:boolean</type>
-					<mandatory>false</mandatory>	
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:cpReleaseInfo">
 					<type>d:text</type>
-					<mandatory>false</mandatory>								
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:cpSendResults">
 					<type>d:boolean</type>
-					<mandatory>false</mandatory>								
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:cpStoreResults">
 					<type>d:boolean</type>
-					<mandatory>false</mandatory>								
-				</property>										
-			</properties>			
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+				</property>
+			</properties>
+			<associations />
+			<overrides />
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		<!-- Control step -->
 		<type name="qa:controlStep">
-			<parent>cm:content</parent>					
+			<parent>cm:content</parent>
+			<properties />
+			<associations />
+			<overrides />
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		<!-- Control method -->
 		<type name="qa:controlMethod">
-			<parent>cm:content</parent>					
+			<parent>cm:content</parent>
+			<properties />
+			<associations />
+			<overrides />
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		<!-- Work item analysis -->
 		<type name="qa:workItemAnalysis">
-			<parent>cm:content</parent>				
+			<parent>bcpg:entityV2</parent>
+			<properties />
+			<associations />
+			<overrides />
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
-		</type>	
-		
-		<!-- qa:qualityListItem -->
+		</type>
 		<type name="qa:qualityListItem">
 			<parent>bcpg:entityListItem</parent>
+			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
-		
-		<!-- Work log -->
 		<type name="qa:workLog">
 			<parent>qa:qualityListItem</parent>
-			<properties>				
+			<properties>
 				<property name="qa:wlState">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:ncStates" />
-					</constraints>					
+					</constraints>
 				</property>
 				<property name="qa:wlComment">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>					
-				</property>															
-			</properties>			
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations />
+			<overrides />
+			<mandatory-aspects />
 		</type>
-		
-		<!-- Sampling definition list -->
 		<type name="qa:samplingDefList">
 			<parent>qa:qualityListItem</parent>
-			<properties>			
+			<properties>
 				<property name="qa:sdlQty">
 					<type>d:int</type>
-					<mandatory>true</mandatory>	
-					<index enabled="false"/>				
+					<mandatory>true</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="qa:sdlFreq">
 					<type>d:int</type>
-					<mandatory>true</mandatory>	
-					<index enabled="false"/>				
+					<mandatory>true</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="qa:sdlFreqUnit">
 					<type>d:text</type>
-					<mandatory>true</mandatory>	
-					<index enabled="false"/>
+					<mandatory>true</mandatory>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:freqUnits" />
-					</constraints>				
-				</property>					
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="qa:sdlControlPoint">
@@ -349,7 +400,7 @@
 					</source>
 					<target>
 						<class>qa:controlPoint</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -360,10 +411,10 @@
 					</source>
 					<target>
 						<class>qa:controlStep</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
-				</association>				
+				</association>
 				<association name="qa:sdlSamplingGroup">
 					<source>
 						<mandatory>false</mandatory>
@@ -371,7 +422,7 @@
 					</source>
 					<target>
 						<class>cm:authorityContainer</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -382,7 +433,7 @@
 					</source>
 					<target>
 						<class>cm:authorityContainer</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -393,34 +444,35 @@
 					</source>
 					<target>
 						<class>cm:authorityContainer</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
-				</association>				
+				</association>
 			</associations>
-		</type>	
-		
-		<!-- Sampling list -->
+			<overrides />
+			<mandatory-aspects />
+		</type>
 		<type name="qa:samplingList">
 			<parent>qa:qualityListItem</parent>
-			<properties>				
+			<properties>
 				<property name="qa:slDateTime">
 					<type>d:datetime</type>
-					<mandatory>true</mandatory>			
-					<index enabled="false"/>		
+					<mandatory>true</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="qa:slSampleId">
 					<type>d:text</type>
-					<mandatory>true</mandatory>				
-					<index enabled="false"/>	
+					<mandatory>true</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="qa:slSampleState">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:states" />
-					</constraints>				
-				</property>													
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="qa:slControlPoint">
@@ -430,7 +482,7 @@
 					</source>
 					<target>
 						<class>qa:controlPoint</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -441,82 +493,102 @@
 					</source>
 					<target>
 						<class>qa:controlStep</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
-				</association>						
+				</association>
 			</associations>
+			<overrides />
+			<mandatory-aspects />
 		</type>
-		
-		<!-- Control Def List -->		
 		<type name="qa:controlDefList">
 			<parent>qa:qualityListItem</parent>
+			<properties />
+			<associations />
+			<overrides />
 			<mandatory-aspects>
 				<aspect>qa:controlListAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
-		<!-- Control List -->		
 		<type name="qa:controlList">
 			<parent>qa:qualityListItem</parent>
-			<properties>	
+			<properties>
 				<property name="qa:clSampleId">
 					<type>d:text</type>
-					<mandatory>true</mandatory>			
-					<index enabled="false"/>					
+					<mandatory>true</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="qa:clValue">
 					<type>d:double</type>
-					<mandatory>false</mandatory>			
-					<index enabled="false"/>					
-				</property>		
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="qa:clTarget">
 					<type>d:double</type>
-					<mandatory>false</mandatory>		
-					<index enabled="false"/>					
-				</property>	
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="qa:clUnit">
 					<type>d:text</type>
-					<mandatory>false</mandatory>			
-					<index enabled="false"/>					
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="qa:clState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:states" />
-					</constraints>										
-				</property>		
+					</constraints>
+				</property>
 			</properties>
-			<associations>				
-			</associations>
+			<associations />
+			<overrides />
 			<mandatory-aspects>
 				<aspect>qa:controlListAspect</aspect>
 			</mandatory-aspects>
-		</type>				
+		</type>
 	</types>
-	
 	<aspects>
-	
 		<aspect name="qa:batchAspect">
 			<properties>
 				<property name="qa:batchId">
 					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:orderId">
 					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:batchStart">
 					<type>d:datetime</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:batchDuration">
 					<type>d:int</type>
-					<mandatory>false</mandatory>					
+					<mandatory>false</mandatory>
+					<index enabled="true" />
 				</property>
 				<property name="qa:batchComment">
 					<type>d:text</type>
-				</property>				
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+				</property>
+				<!-- <property name="qa:productType"> <title>Type produit</title> <type>d:text</type> <mandatory>false</mandatory> <index enabled="true"/> <constraints> <constraint ref="qa:productTypes"/> </constraints> 
+					</property> -->
+				<property name="qa:productUseByDate">
+					<title>DLC produit</title>
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
 			</properties>
 			<associations>
 				<association name="qa:product">
@@ -526,41 +598,134 @@
 					</source>
 					<target>
 						<class>bcpg:product</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
 			</associations>
+			<overrides />
+			<mandatory-aspects>
+				<aspect>bcpg:manufacturingAspect</aspect>
+			</mandatory-aspects>
 		</aspect>
-
-		<!-- Control List Aspect -->		
+		<aspect name="qa:claimAspect">
+			<title>Aspect réclamation client</title>
+			<properties>
+				<property name="qa:claimDescription">
+					<title>Descriptif du problème</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="qa:claimSource">
+					<title>Source de la remontée</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+					<constraints>
+						<constraint ref="qa:claimSources" />
+					</constraints>
+				</property>
+				<property name="qa:claimCustomerInformation">
+					<title>Coordonnées client</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="qa:claimTradeContactCheck">
+					<title>Le produit a-t-il été vu par le commercial?</title>
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+				</property>
+				<property name="qa:claimTracking">
+					<title>Suivi demandé</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="qa:claimTrackingValues" />
+					</constraints>
+				</property>
+				<property name="qa:claimType">
+					<title>Type réclamation</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="qa:claimTypes" />
+					</constraints>
+				</property>
+				<property name="qa:claimOriginHierarchy1">
+					<title>Processus responsable de la réclamation - Famille</title>
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="qa:claimOriginHierarchy2">
+					<title>Processus responsable de la réclamation - Sous famille</title>
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+				<!-- <property name="qa:claimDistributionNetwork"> <title>Réseau de distribution</title> <type>d:text</type> <mandatory>false</mandatory> <index enabled="true"> <atomic>false</atomic> <stored>false</stored> 
+					<tokenised>TRUE</tokenised> </index> <constraints> <constraint ref="qa:claimDistributionNetworks"/> </constraints> </property> -->
+			</properties>
+			<associations>
+				<association name="qa:claimTradeContact">
+					<title>Contact commercial</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<overrides />
+			<mandatory-aspects>
+				<aspect>bcpg:clientsAspect</aspect>
+			</mandatory-aspects>
+		</aspect>
 		<aspect name="qa:controlListAspect">
 			<properties>
 				<property name="qa:clType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>	
+					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:controlTypes" />
-					</constraints>				
-				</property>												
+					</constraints>
+				</property>
 				<property name="qa:clMini">
 					<type>d:double</type>
-					<mandatory>false</mandatory>		
-					<index enabled="false"/>						
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="qa:clMaxi">
 					<type>d:double</type>
-					<mandatory>false</mandatory>						
-					<index enabled="false"/>		
-				</property>				
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="qa:clRequired">
 					<type>d:boolean</type>
-					<mandatory>false</mandatory>			
-					<index enabled="false"/>						
-				</property>				
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
-			<associations>								
+			<associations>
 				<association name="qa:clMethod">
 					<source>
 						<mandatory>false</mandatory>
@@ -568,7 +733,7 @@
 					</source>
 					<target>
 						<class>qa:controlMethod</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -579,11 +744,139 @@
 					</source>
 					<target>
 						<class>bcpg:charact</class>
-						<mandatory>false</mandatory>
+						<mandatory enforced="false">false</mandatory>
 						<many>true</many>
 					</target>
 				</association>
-			</associations>			
+			</associations>
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+		<aspect name="qa:claimTreatementAspect">
+			<title>Aspect traitement réclamation</title>
+			<properties>
+				<property name="qa:claimTreatementDate">
+					<title>Date traitement</title>
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="qa:claimTreatementDetails">
+					<title>Détails du traitement effectué (analyse des causes, traçabilité)</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="qa:claimTreatementPrevActions">
+					<title>Actions préventives éventuellement lancé</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+			<associations>
+				<association name="qa:claimTreatmentActor">
+					<title>Pilote étape Traitement</title>
+					<description>Une étape Traitement (recherches des causes, traçabilité…) est elle à effectuer ?</description>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+		<aspect name="qa:claimResponseAspect">
+			<title>Aspect réponse réclamation</title>
+			<properties>
+				<property name="qa:claimResponseDate">
+					<title>Date réponse</title>
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="qa:claimResponseState">
+					<title>Etat réponse</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="qa:claimResponseStates" />
+					</constraints>
+				</property>
+				<property name="qa:claimResponseDetails">
+					<title>Réponse apportée</title>
+					<description>( à détailler de façon formalisée en quelques phrases, sans abréviation - si besoin, préciser juste "cf pièce jointe")</description>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+			<associations>
+				<association name="qa:claimResponseActor">
+					<title>Pilote étape Réponse</title>
+					<description>Une étape Réponse sera-t-elle à effectuer ?</description>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+		<aspect name="qa:claimClosingAspect">
+			<title>Aspect clôture réclamation</title>
+			<properties>
+				<property name="qa:claimClosingDate">
+					<title>Date de clôture</title>
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+			<associations />
+			<overrides />
+			<mandatory-aspects />
 		</aspect>
 	</aspects>
 </model>

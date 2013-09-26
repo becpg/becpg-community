@@ -18,10 +18,19 @@ public interface WUsedListService {
     public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel);
     
     /**
+     * Calculate the WUsed entities of the items (compute AND Operator)
+     * @param entityNodeRef item associated to datalists
+     * @param associationName
+     * @param maxDepthLevel
+     */
+    public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, QName associationQName, int maxDepthLevel);
+    
+    /**
      * Evaluate the WUsed associations
      * @param targetNodeRef
      * @return
      */
+    @Deprecated
     public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef);
     
     /**
@@ -29,7 +38,9 @@ public interface WUsedListService {
      * @param associationName
      * @return
      */
+    @Deprecated
     public QName evaluateListFromAssociation(QName associationName);
+
+	
     
-    public NodeRef getRoot(NodeRef listItemNodeRef);
 }

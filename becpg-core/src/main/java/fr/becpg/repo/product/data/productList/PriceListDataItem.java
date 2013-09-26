@@ -9,16 +9,16 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 
-/**
- * The Class PriceListDataItem.
- *
- * @author querephi
- */
+@AlfType
+@AlfQname(qname = "bcpg:priceList")
 public class PriceListDataItem extends AbstractEffectiveDataItem{
-		
-	private NodeRef nodeRef;
 		
 	private Double value = 0d;
 	
@@ -29,20 +29,13 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 	private String purchaseUnit;
 	
 	private Integer prefRank = null;
-	
-	
+
 	private NodeRef cost;
 	
 	private List<NodeRef> suppliers = new ArrayList<NodeRef>();
 	
-	public NodeRef getNodeRef() {
-		return nodeRef;
-	}
-
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-
+	@AlfProp
+	@AlfQname(qname="bcpg:priceListValue")
 	public Double getValue() {
 		return value;
 	}
@@ -51,6 +44,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 		this.value = value;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:priceListUnit")
 	public String getUnit() {
 		return unit;
 	}
@@ -59,6 +54,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 		this.unit = unit;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:priceListPurchaseQty")
 	public Double getPurchaseValue() {
 		return purchaseValue;
 	}
@@ -67,6 +64,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 		this.purchaseValue = purchaseValue;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:priceListPurchaseUnit")
 	public String getPurchaseUnit() {
 		return purchaseUnit;
 	}
@@ -75,6 +74,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 		this.purchaseUnit = purchaseUnit;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:priceListPrefRank")
 	public Integer getPrefRank() {
 		return prefRank;
 	}
@@ -84,7 +85,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 	}
 
 
-
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:priceListCost")
 	public NodeRef getCost() {
 		return cost;
 	}
@@ -93,6 +95,8 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 		this.cost = cost;
 	}
 
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:suppliers")
 	public List<NodeRef> getSuppliers() {
 		return suppliers;
 	}

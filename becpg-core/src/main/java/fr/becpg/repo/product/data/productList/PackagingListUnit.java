@@ -23,6 +23,10 @@ public enum PackagingListUnit {
 	m,
 	
 	/** m2 **/
-	m2;
+	m2,
+	
+	kg,
+	
+	g;
 	
 }

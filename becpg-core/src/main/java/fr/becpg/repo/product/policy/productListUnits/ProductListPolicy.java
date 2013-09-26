@@ -17,18 +17,19 @@ import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.formulation.AbstractCalculatingVisitor;
-import fr.becpg.repo.product.formulation.CostsCalculatingVisitor;
-import fr.becpg.repo.product.formulation.NutsCalculatingVisitor;
+import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
+import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
+import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
 @Service
 public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
@@ -43,6 +44,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	private EntityListDAO entityListDAO;
 
 	private FileFolderService fileFolderService;
+	
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -60,11 +67,23 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_NUTLIST, BeCPGModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(
 				this, "onCreateAssociation"));
+		
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_PHYSICOCHEMLIST, 
+				BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM, new JavaBehaviour(this, "onCreateAssociation"));
+		
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
+				BeCPGModel.TYPE_LABELCLAIMLIST, BeCPGModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
 
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
+				PackModel.TYPE_LABELING_LIST, PackModel.ASSOC_LL_LABEL, new JavaBehaviour(this, "onCreateAssociation"));
+		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_PRODUCT, new JavaBehaviour(this, "onUpdateProperties"));
 
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_NUTLIST);
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_LABELCLAIMLIST);
+		super.disableOnCopyBehaviour(PackModel.TYPE_LABELING_LIST);
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PRODUCT);
 
 		// transaction listeners
@@ -149,8 +168,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									FileInfo node = nodes.get(z_idx);
 									NodeRef productListItemNodeRef = node.getNodeRef();
 
-									List<AssociationRef> costAssocRefs = nodeService.getTargetAssocs(productListItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
-									NodeRef costNodeRef = (costAssocRefs.get(0)).getTargetRef();
+									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, BeCPGModel.ASSOC_COSTLIST_COST);
 									Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTFIXED);
 
 									if (costFixed == null || !costFixed) {
@@ -158,9 +176,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 										String costCurrency = (String) nodeService.getProperty(costNodeRef, BeCPGModel.PROP_COSTCURRENCY);
 										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
 										
-										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(CostsCalculatingVisitor.calculateSuffixUnit(productUnit)))) {
+										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 											nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT,
-													CostsCalculatingVisitor.calculateUnit(productUnit, costCurrency));
+													CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency));
 										}
 									}
 								}
@@ -177,13 +195,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									NodeRef productListItemNodeRef = node.getNodeRef();
 									String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT);
 
-									List<AssociationRef> nutAssocRefs = nodeService.getTargetAssocs(productListItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
-									NodeRef nutNodeRef = (nutAssocRefs.get(0)).getTargetRef();
+									NodeRef nutNodeRef =  associationService.getTargetAssoc(productListItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
 									String nutUnit = (String) nodeService.getProperty(nutNodeRef, BeCPGModel.PROP_NUTUNIT);
 
-									if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingVisitor.calculateSuffixUnit(productUnit)))) {
+									if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 
-										nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT, NutsCalculatingVisitor.calculateUnit(productUnit, nutUnit));
+										nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT, NutsCalculatingFormulationHandler.calculateUnit(productUnit, nutUnit));
 									}
 								}
 							}
@@ -215,21 +232,21 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String costCurrency = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_COSTCURRENCY);
 							String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT);
 
-							if (costFixed != null && costFixed == true) {
+							if (costFixed != null && costFixed.booleanValue()) {
 
 								if (!(costListUnit != null && costListUnit.equals(costCurrency))) {
 									nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT, costCurrency);
 								}
 							} else {
 
-								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractCalculatingVisitor.UNIT_SEPARATOR))) {
+								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
 									if (listNodeRef != null) {
 
 										nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_COSTLIST_UNIT,
-												CostsCalculatingVisitor.calculateUnit(getProductUnit(listNodeRef), costCurrency));
+												CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), costCurrency));
 									}
 								}
 							}
@@ -238,20 +255,33 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT);
 
 							// nutListUnit
-							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractCalculatingVisitor.UNIT_SEPARATOR))) {
+							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
 								if (listNodeRef != null) {
 
 									nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_UNIT,
-											NutsCalculatingVisitor.calculateUnit(getProductUnit(listNodeRef), nutUnit));
+											NutsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), nutUnit));
 								}
 							}
 
 							// nutListGroup
 							String nutGroup = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_NUTGROUP);
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_GROUP, nutGroup);
+						} else if (type.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)){
+
+							String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_PHYSICO_CHEM_UNIT);
+							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
+						} else if(type.equals(BeCPGModel.TYPE_LABELCLAIMLIST)){
+							
+							// labelClaimType
+							String labelClaimType = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_LABEL_CLAIM_TYPE);
+							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_LCL_TYPE, labelClaimType);
+						} else if(type.equals(PackModel.TYPE_LABELING_LIST)){								
+							// labelingList
+							String labelType = (String)nodeService.getProperty(targetNodeRef, PackModel.PROP_LABEL_TYPE);
+							nodeService.setProperty(productListItemNodeRef, PackModel.PROP_LL_TYPE, labelType);
 						}
 					}
 				}

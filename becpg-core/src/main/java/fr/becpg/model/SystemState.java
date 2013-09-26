@@ -14,4 +14,10 @@ public enum SystemState {
 		Valid,
 		Refused,
 		Archived;
+		
+		
+		public static SystemState getSystemState(String systemState) {
+			
+			return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
+		}
 }

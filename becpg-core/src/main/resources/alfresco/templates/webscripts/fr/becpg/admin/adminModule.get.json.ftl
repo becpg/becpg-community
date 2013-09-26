@@ -1,13 +1,36 @@
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
    "status": "${status}"
-	<#if items?? >
-	,"items":
+   ,  "systemInfo" : {
+   	"totalMemory": ${totalMemory?c},
+		"freeMemory": ${freeMemory?c},
+		"maxMemory": ${maxMemory?c},
+		"connectedUsers": ${connectedUsers?c},
+		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c}
+   }
+	<#if systemEntities?? >
+	,"systemEntities":
 	   [
-	      <#list items as item>
+	      <#list systemEntities as item>
 	      {
 	         "nodeRef" : "${item.nodeRef}",
-	         "name" : "${item.name}" 
+	         "name" : "${item.name}",
+	         "title" : "${item.properties.title!""}",
+				"description": "${item.properties.description!""}"
+	      }<#if item_has_next>,</#if>
+	     </#list>
+	   ]
+	  </#if>
+	  <#if systemFolders?? >
+	,"systemFolders":
+	   [
+	      <#list systemFolders as item>
+	      {
+	         "nodeRef" : "${item.nodeRef}",
+	         "name" : "${item.name}",
+	         "title" : "${item.properties.title!""}",
+				"description": "${item.properties.description!""}",
+	         "path": "${item.displayPath}"
 	      }<#if item_has_next>,</#if>
 	     </#list>
 	   ]

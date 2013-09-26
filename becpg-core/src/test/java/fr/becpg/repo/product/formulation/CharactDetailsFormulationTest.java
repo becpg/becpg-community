@@ -4,14 +4,12 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,6 +25,8 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
@@ -57,12 +57,11 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 		logger.info("testFormulateCharactDetails");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
@@ -70,21 +69,24 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
-						localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+				CompoListDataItem item = new CompoListDataItem(null,(CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+						localSF1NodeRef);
+				
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null, item, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, item, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
-						localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+				item = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+						localSF2NodeRef);
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null, item, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
+				compoList.add(new CompoListDataItem(null, item, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
 						rawMaterial4NodeRef));
-				finishedProduct.setCompoList(compoList);
+				finishedProduct.getCompoListView().setCompoList(compoList);
 
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+				NodeRef finishedProductNodeRef =  alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate details --*/");
@@ -94,7 +96,24 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				Assert.assertNotNull(ret);
 
 				System.out.println(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				return finishedProductNodeRef;
+				
 
+			}
+		}, false, true);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				productService.formulate(finishedProductNodeRef);
+				
+				FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+				
+				Assert.assertNotNull(finishedProduct.getNutList());
+				for (NutListDataItem nutItem : finishedProduct.getNutList()){
+					Assert.assertTrue(nodeService.hasAspect(nutItem.getNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));
+				}
 				return null;
 
 			}
@@ -112,11 +131,9 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 		   
 		logger.info("testCalculateCostDetails");
 		
-	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
 					
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				
 				/*
 				 * Prepare packaging 
 				 */
@@ -130,7 +147,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				packagingMaterial1.setCostList(costList);					
-				packagingMaterial1NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial1, dataLists);
+				packagingMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial1).getNodeRef();
 				
 				/*-- Packaging material 2 --*/					
 				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
@@ -141,7 +158,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
 				packagingMaterial2.setCostList(costList);					
-				packagingMaterial2NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial2, dataLists);
+				packagingMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial2).getNodeRef();
 				
 				/*-- Packaging material 1 --*/					
 				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
@@ -152,7 +169,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				packagingMaterial3.setCostList(costList);					
-				packagingMaterial3NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial3, dataLists);
+				packagingMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial3).getNodeRef();
 				
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
@@ -160,25 +177,33 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
-				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, true, packagingMaterial1NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, true, packagingMaterial2NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, true, packagingMaterial3NodeRef));
-				finishedProduct.setPackagingList(packagingList);		
+				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+				finishedProduct.getPackagingListView().setPackagingList(packagingList);		
 				
 				
 				/*
 				 * Composition
 				 */				
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);				
+				CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
 				
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null, item, 1d, 0d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, item, 2d, 0d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
+				 item = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef);
+				compoList.add(item);
+				compoList.add(new CompoListDataItem(null,item, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, item, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				finishedProduct.getCompoListView().setCompoList(compoList);
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				
+			}},false,true);
+	   
+	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 				//formulate Details
 				List<NodeRef> costNodeRefs = new ArrayList<NodeRef>();			
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, BeCPGModel.TYPE_COSTLIST,
@@ -308,10 +333,11 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				}
 				
 				assertEquals("Verify checks done", 12, checks);
-								
+							
 				return null;
 
-			}},false,true);
+			}
+		}, false, true);
 		   
 	   }
 

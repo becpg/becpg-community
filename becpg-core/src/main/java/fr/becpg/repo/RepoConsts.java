@@ -17,19 +17,20 @@ public class RepoConsts {
 	public static final String PATH_QUERY_SUGGEST_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" +@cm\\:name:(%s) ";
 	public static final String PATH_QUERY_SUGGEST_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:listValue\" ";
 	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME  = " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvValue:\"%s\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +ISNULL:bcpg\\:parentLevel  ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\"  +@bcpg\\:lkvValue:\"%s\" ";
-	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ROOT = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +ISNULL:bcpg\\:parentLevel  +@bcpg\\:lkvValue:\"%s\" ";
+//	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\" ";
+//	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ALL_ROOT  = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +ISNULL:bcpg\\:parentLevel  ";
+//	public static final String PATH_QUERY_SUGGEST_LKV_VALUE = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:parentLevel:\"%s\"  +@bcpg\\:lkvValue:\"%s\" ";
+//	public static final String PATH_QUERY_SUGGEST_LKV_VALUE_ROOT = " +PATH:\"/app:company_home/%s/*\" +TYPE:\"bcpg:linkedValue\" +ISNULL:bcpg\\:parentLevel  +@bcpg\\:lkvValue:\"%s\" ";
 	//public static final String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"bcpg:product\" +@cm\\:name:(%s) -@bcpg\\:productState:%s -@bcpg\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	//public static final String QUERY_SUGGEST_PRODUCT_BY_CODE = " +TYPE:\"bcpg:product\" +@bcpg\\:code:%s -@bcpg\\:productState:%s -@bcpg\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	//public static final String QUERY_SUGGEST_PRODUCT_ALL = " +TYPE:\"bcpg:product\" -@bcpg\\:productState:%s -@cm\\:productState:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_TARGET_BY_NAME = " +TYPE:\"%s\"  +@cm\\:name:(%s) AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_SUGGEST_TARGET_ALL = " +TYPE:\"%s\" AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
-	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  +@bcpg\\:code:%s AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
+	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  AND (@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s)  AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
 	public static final String QUERY_FILTER_PRODUCT_STATE = " -@bcpg\\:productState:%s -@bcpg\\:productState:%s";
 	public static final String PATH_QUERY_LIST_CONSTRAINTS = "+PATH:\"/app:company_home/%s/*\" +TYPE:\"%s\"";
 	public static final String PATH_QUERY_IMPORT_FAILED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed\"";
+	public static final String PATH_QUERY_IMPORT_LOG_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportLog\"";
 	public static final String PATH_QUERY_IMPORT_SUCCEEDED_FOLDER = " +PATH:\"/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded\"";	
 	public static final String PATH_QUERY_REPORT_COMPARE_ENTITIES = "+PATH:\"/app:company_home/cm:System/cm:Reports/cm:CompareProducts/*\" +@cm\\:name:\"CompareProducts*rptdesign\"";	
 	public static final String QUERY_CHARACT_BY_TYPE_AND_NAME = " +TYPE:\"%s\" +@cm\\:name:\"%s\"";	
@@ -50,7 +51,7 @@ public class RepoConsts {
 	public static final String PATH_ALLERGEN_TYPES = "AllergenTypes";
 	public static final String PATH_NUT_GROUPS = "NutGroups";
 	public static final String PATH_NUT_TYPES = "NutTypes";
-	public static final String PATH_PACKAGING_LEVELS = "PackagingLevels";
+	public static final String PATH_NUT_FACTS_METHODS = "NutFactsMethods";
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_NUTS = "Nuts";
 	public static final String PATH_INGS = "Ings";
@@ -67,9 +68,15 @@ public class RepoConsts {
 	public static final String PATH_CERTIFICATIONS = "Certifications";
 	public static final String PATH_APPROVALNUMBERS = "ApprovalNumbers";
 	public static final String PATH_PROCESSSTEPS = "ProcessSteps";
+	public static final String PATH_LABELCLAIMS = "LabelClaims";	
+	public static final String PATH_STORAGE_CONDITIONS = "StorageConditions";
+	public static final String PATH_PRECAUTION_OF_USE = "PrecautionOfUse";
+	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
+	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
+	public static final String PATH_LABEL = "Labels";
+	public static final String PATH_LABEL_TYPES = "LabelTypes";
 	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
-	public static final String PATH_FOLDER_TEMPLATES = "FolderTemplates";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
 	public static final String PATH_QUALITY_TEMPLATES = "QualityTemplates";
 	public static final String PATH_PRODUCTS = "Products";
@@ -78,7 +85,8 @@ public class RepoConsts {
 	public static final String PATH_IMPORT_TO_TREAT	= "ImportToTreat";
 	public static final String PATH_IMPORT_TO_DO	= "ImportToDo";
 	public static final String PATH_IMPORT_SUCCEEDED = "ImportSucceeded";
-	public static final String PATH_IMPORT_FAILED = "ImportFailed";		
+	public static final String PATH_IMPORT_FAILED = "ImportFailed";
+	public static final String PATH_IMPORT_LOG = "ImportLog";
 	public static final String PATH_IMPORT_USER = "ImportUser";
 	public static final String PATH_IMPORT_SAMPLES = "ImportSamples";
 	public static final String PATH_MAPPING = "Mapping";
@@ -87,20 +95,38 @@ public class RepoConsts {
 	public static final String PATH_REGULATIONS = "Regulations";	
 	public static final String PATH_PRODUCT_MICROBIO_CRITERIA = "ProductMicrobioCriteria";
 	public static final String PATH_QUALITY_SPECIFICATIONS = "QualitySpecifications";	
+	public static final String PATH_PRODUCT_SPECIFICATIONS = "ProductSpecifications";
 	public static final String PATH_CONTROL_PLANS = "ControlPlans";
 	public static final String PATH_CONTROL_POINTS = "ControlPoints";	
 	public static final String PATH_CONTROL_STEPS = "ControlSteps";
 	public static final String PATH_CONTROL_METHODS = "ControlMethods";
 	public static final String PATH_QUALITY_CONTROLS = "QualityControls";	
 	public static final String PATH_NC = "NonConformities";
+	
+	//Quality Lists
+	public static final String PATH_QUALITY_LISTS = "QualityLists";
+	public static final String PATH_CLAIM_ORIGIN_HIERARCHY = "claimOrigin_Hierarchy";
+	public static final String PATH_CLAIM_SOURCES = "ClaimSources";
+	public static final String PATH_CLAIM_TRACKING_VALUES = "ClaimTrackingValues";
+	public static final String PATH_CLAIM_TYPES = "ClaimTypes";
+	public static final String PATH_CLAIM_RESPONSES_STATES = "ClaimResponseStates";
+	
+	
+	
 	//Project
 	public static final String PATH_PROJECTS = "Projects";
 	public static final String PATH_PROJECT_LISTS = "ProjectLists";
-	public static final String PATH_PROJECT_STATUS = "ProjectStatus";
 	public static final String PATH_TASKS = "Tasks";
 	public static final String PATH_TASK_LEGENDS = "TaskLegends";
 	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
-	public static final String PATH_PROJECT_HIERARCHY1 = "ProjectHierarchy1";
+	public static final String PATH_PROJECT_HIERARCHY = "project_Hierarchy";
+	public static final String PATH_REQUEST_STATES = "RequestStates";
+	public static final String PATH_REQUEST_ORIGINS = "RequestOrigins";
+	public static final String PATH_SCORE_CRITERIA = "ScoreCriteria";
+	public static final String PATH_SPONSORS = "Sponsors";
+	
+
+	
 	
 	//Security
 	public static final String PATH_SECURITY = "Security";
@@ -131,6 +157,9 @@ public class RepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 	
+	// olap
+	public static final String PATH_OLAP_QUERIES = "OlapQueries";
+	
 	// ECO
 	public static final String PATH_ECO = "ECO";
 	public static final String PATH_ECO_TEMPORARY = "Temporary";	
@@ -138,6 +167,7 @@ public class RepoConsts {
 	/*-- DataLists --*/
 	public static final String CONTAINER_DATALISTS = "DataLists";	
 	
+	public static final StoreRef ARCHIVE_STORE =  new StoreRef(StoreRef.PROTOCOL_ARCHIVE, "SpacesStore");
 	public static final StoreRef SPACES_STORE =  new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore");
 	public static final StoreRef VERSION_STORE =  new StoreRef(Version2Model.STORE_PROTOCOL, Version2Model.STORE_ID);
 	
@@ -161,8 +191,10 @@ public class RepoConsts {
 	public static final String LABEL_SEPARATOR = ", ";
 	
 	/*-- Report --*/
+	public static final String REPORT_EXTENSION_BIRT = "rptdesign";
 	public static final String REPORT_EXTENSION_PDF = ".PDF";
 	public static final String REPORT_EXTENSION_XLS = ".XLS";
+	public static final String EXTENSION_LOG = ".log";
 	
 	// FORMAT
 	public static final String FORMAT_DATE = "EEE d MMM yyyy";	
@@ -196,6 +228,9 @@ public class RepoConsts {
 	public static final String ISO_CHARSET = "ISO-8859-15";
 	
 	public static final Integer DATA_LISTS_PAGESIZE = 25;
+	
+
+	
 
 
 	

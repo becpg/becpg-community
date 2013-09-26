@@ -2,56 +2,46 @@ package fr.becpg.repo.quality.policy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.policy.PolicyComponent;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.BeCPGDao;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.NonConformityService;
 import fr.becpg.repo.quality.data.NonConformityData;
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
-public class NonConformityPolicies implements NodeServicePolicies.OnUpdatePropertiesPolicy,
-		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
+public class NonConformityPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
-	private static Log logger = LogFactory.getLog(NonConformityPolicies.class);
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	private PolicyComponent policyComponent;
-	private BeCPGDao<NonConformityData> nonConformityDAO;
+	List<NodeRef> currentDeletedNodes = new ArrayList<>(); 
+	
 	private NonConformityService nonConformityService;
 
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
-
-	public void setNonConformityDAO(BeCPGDao<NonConformityData> nonConformityDAO) {
-		this.nonConformityDAO = nonConformityDAO;
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public void setNonConformityService(NonConformityService nonConformityService) {
 		this.nonConformityService = nonConformityService;
 	}
 
-	public void init() {
+	@Override
+	public void doInit() {
 
-		logger.debug("Init NonConformityPolicies...");
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, QualityModel.TYPE_NC, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_NC, new JavaBehaviour(this, "beforeDeleteNode"));
 
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, QualityModel.TYPE_NC,
-				new JavaBehaviour(this, "onUpdateProperties"));
-
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
-				QualityModel.TYPE_NC, new JavaBehaviour(this, "onCreateAssociation"));
-
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME,
-				QualityModel.TYPE_NC, new JavaBehaviour(this, "onDeleteAssociation"));
 	}
 
 	@Override
@@ -59,53 +49,55 @@ public class NonConformityPolicies implements NodeServicePolicies.OnUpdateProper
 
 		String beforeState = (String) before.get(QualityModel.PROP_NC_STATE);
 		String afterState = (String) after.get(QualityModel.PROP_NC_STATE);
-		
+
 		String beforeComment = (String) before.get(QualityModel.PROP_NC_COMMENT);
 		String afterComment = (String) after.get(QualityModel.PROP_NC_COMMENT);
-		
+
 		boolean addWorkLog = false;
-		
+
 		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
 			addWorkLog = true;
-		}
-		else if (afterComment != null && !afterComment.isEmpty() && !afterComment.equals(beforeComment)) {
+		} else if (afterComment != null && !afterComment.isEmpty() && !afterComment.equals(beforeComment)) {
 			addWorkLog = true;
 		}
-		
-		if(addWorkLog){
 
-			NonConformityData ncData = nonConformityDAO.find(nodeRef);
+		if (addWorkLog) {
+
+			NonConformityData ncData = (NonConformityData) alfrescoRepository.findOne(nodeRef);
 
 			if (ncData.getWorkLog() == null) {
 				ncData.setWorkLog(new ArrayList<WorkLogDataItem>(1));
 			}
 
 			// add a work log
-			ncData.getWorkLog().add(
-					new WorkLogDataItem(null, afterState, (String) after.get(QualityModel.PROP_NC_COMMENT), null, null));
+			ncData.getWorkLog().add(new WorkLogDataItem(null, afterState, (String) after.get(QualityModel.PROP_NC_COMMENT), null, null));
 			// reset comment
 			ncData.setComment(null);
 
-			nonConformityDAO.update(nodeRef, ncData);
+			alfrescoRepository.save(ncData);
 		}
 
 	}
 
+	public void beforeDeleteNode(NodeRef ncNodeRef) {
+		for(String instance : nonConformityService.getAssociatedWorkflow(ncNodeRef)){
+			queueNode(new NodeRef(new StoreRef("tmp", "wfInstance"), instance));
+		}
+	}
+
+	
+	
+	
+	
 	@Override
-	public void onCreateAssociation(AssociationRef assocRef) {
-
-		logger.debug("NC onCreateAssociation");
-		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
-			nonConformityService.classifyNC(assocRef.getSourceRef(), assocRef.getTargetRef());
+	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
+		List<String> instanceIds = new ArrayList<>();
+		for(NodeRef tmp : pendingNodes){
+			instanceIds.add(tmp.getId());
 		}
+		
+		nonConformityService.deleteWorkflows(instanceIds);
+		
 	}
-
-	@Override
-	public void onDeleteAssociation(AssociationRef assocRef) {
-
-		logger.debug("NC onDeleteAssociation");
-		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
-			nonConformityService.classifyNC(assocRef.getSourceRef(), null);
-		}
-	}
+	
 }

@@ -1,10 +1,8 @@
 package fr.becpg.repo.listvalue;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +11,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Token;
-import org.apache.lucene.analysis.TokenStream;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -52,7 +47,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 			DataListFilter dataListFilter = new DataListFilter();
 			dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
-			dataListFilter.setEntityNodeRef(entityNodeRef);
+			dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
 
 			// need to load assoc so we use the MultiLevelDataListService
 			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
@@ -99,7 +94,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 					if (!query.isEmpty()) {
 
 						if (productName != null) {
-							if (isQueryMath(query, productName)) {
+							if (isQueryMatch(query, productName)) {
 								addNode = true;
 							}
 						}

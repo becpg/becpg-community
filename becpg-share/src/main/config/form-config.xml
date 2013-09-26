@@ -1,6 +1,26 @@
 <alfresco-config>
 
-<!-- TODO remove this files #Matthieu -->
+
+	<!-- TODO try to move  this under @script tag -->
+	<config>
+		<forms>
+			<dependencies>
+				<css src="/modules/custom-autocomplete/autocomplete-ext.css" />
+				<!-- Spel editor -->
+				<css src="/modules/spel-editor/spel-editor.css" />
+				<css src="/modules/spel-editor/shThemeDefault.css" />
+				<js src="/yui/editor/editor.js"/>
+				<js src="/modules/spel-editor/spel-editor.js" />
+				<js src="/modules/spel-editor/shCore.js" />
+				<js src="/modules/spel-editor/shBrushJScript.js" />
+				<!-- Decision tree -->
+				<css src="/components/form/controls/decision-tree.css" />
+				<js src="/components/form/controls/decision-tree.js" />
+			</dependencies>
+		</forms>
+	</config>
+
+
 
    <plug-ins>
       <element-readers>
@@ -20,8 +40,8 @@
             <type name="text" template="/org/alfresco/components/form/controls/textfield.ftl" />
             <type name="mltext" template="/org/alfresco/components/form/controls/textarea.ftl" />
             <type name="int" template="/org/alfresco/components/form/controls/number.ftl" />
-            <type name="float" template="/fr/becpg/components/form/controls/number.ftl" />
-            <type name="double" template="/fr/becpg/components/form/controls/number.ftl" />
+            <type name="float" template="/org/alfresco/components/form/controls/number.ftl" />
+            <type name="double" template="/org/alfresco/components/form/controls/number.ftl" />
             <type name="long" template="/org/alfresco/components/form/controls/number.ftl" />
             <type name="boolean" template="/org/alfresco/components/form/controls/checkbox.ftl" />
             <type name="date" template="/org/alfresco/components/form/controls/date.ftl" />
@@ -38,34 +58,78 @@
             <type name="association:cm:authorityContainer" template="/org/alfresco/components/form/controls/authority.ftl" />
             <type name="association:packageItems" template="/org/alfresco/components/form/controls/workflow/packageitems.ftl" />
 			<!--beCPG -->            
-			<type name="association:bcpg:product" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" >
-					<control-param name="ds">becpg/autocomplete/product</control-param>
-			</type>
-			<type name="association:bcpg:entity" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:charact" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
-			<type name="association:bcpg:subsidiary" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:plant" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:trademark" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />								
-			<type name="association:bcpg:client" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:supplier" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:plant" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:trademark" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:subsidiary" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />			
-			<type name="association:bcpg:certification" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:approvalNumber" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />							
-			<type name="association:bcpg:productSpecification" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bcpg:productMicrobioCriteria" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />				
-			<type name="association:qa:controlPoint" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:qa:controlStep" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:qa:controlMethod" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:qa:controlPlan" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:rep:reportTpl" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:pjt:projectTpl" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:pjt:project" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:pjt:taskList" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:pjt:taskLegend" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />
-			<type name="association:bp:productCatalog" template="/fr/becpg/components/form/controls/autocomplete-association.ftl" />		
-							
+				<type name="association:bcpg:product" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="ds">becpg/autocomplete/product?excludeClassNames=bcpg:entityTplAspect</control-param>
+					<control-param name="showTooltip">true</control-param>
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+				</type>
+				<type name="association:bcpg:entityV2" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showTooltip">true</control-param>
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+				</type>
+				<type name="association:bcpg:charact" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>				
+				<type name="association:bcpg:subsidiary" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:plant" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:trademark" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>								
+				<type name="association:bcpg:client" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showTooltip">true</control-param>
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associ<control-param name="showLink">false</control-param>ations/bcpg:client?excludeClassNames=bcpg:entityTplAspect</control-param>
+				</type>
+				<type name="association:bcpg:supplier" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showTooltip">true</control-param>
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:supplier?excludeClassNames=bcpg:entityTplAspect</control-param>
+				</type>
+				<type name="association:bcpg:certification" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:approvalNumber" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>							
+				<type name="association:bcpg:productSpecifications" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productSpecifications?excludeClassNames=bcpg:entityTplAspect</control-param>
+				</type>
+				<type name="association:bcpg:productMicrobioCriteria" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productMicrobioCriteria?excludeClassNames=bcpg:entityTplAspect</control-param>
+				</type>		
+				<type name="association:qa:controlPoint" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlPoint?excludeClassNames=bcpg:entityTplAspect</control-param>
+				</type>
+				<type name="association:qa:controlStep" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:qa:controlMethod" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:qa:controlPlan" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlPlan?excludeClassNames=bcpg:entityTplAspect</control-param>
+				</type>
+				<type name="association:rep:reportTpl" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:pjt:project" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?excludeClassNames=bcpg:entityTplAspect</control-param>
+				</type>
+				<type name="association:pjt:taskList" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:pjt:taskLegend" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:bcpg:productCatalog" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />		
+				<type name="association:bcpg:labelClaim" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:bcpg:storageConditions" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:precautionOfUse" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:pack:labelingTemplate" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:pack:label" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
          
             <type name="transitions" template="/org/alfresco/components/form/controls/workflow/transitions.ftl" />
             <type name="taskOwner" template="/org/alfresco/components/form/controls/workflow/taskowner.ftl" />
@@ -79,7 +143,7 @@
             <type name="locale" template="/org/alfresco/components/form/controls/readonly.ftl" />
          </default-controls>
          <constraint-handlers>
-            <constraint type="MANDATORY" validation-handler="Alfresco.forms.validation.mandatory" event="keyup" />
+            <constraint type="MANDATORY" validation-handler="Alfresco.forms.validation.mandatory" event="keyup,propertychange" />
             <constraint type="NUMBER" validation-handler="Alfresco.forms.validation.number" event="keyup" />
             <constraint type="MINMAX" validation-handler="Alfresco.forms.validation.numberRange" event="keyup" />
             <constraint type="LIST" validation-handler="Alfresco.forms.validation.inList" event="blur" />

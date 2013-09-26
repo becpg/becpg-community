@@ -1,26 +1,33 @@
 package fr.becpg.repo.quality.report;
 
+import java.util.Map;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.dom4j.Element;
 
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.quality.data.NonConformityData;
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
 import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 public class DefaultNonConformityReportExtractor extends AbstractEntityReportExtractor {
 
 	protected static final String TAG_WORKLOG = "workLog";
 	protected static final String TAG_WORK = "work";
 
-	private BeCPGDao<NonConformityData> nonConformityDAO;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	public void setNonConformityDAO(BeCPGDao<NonConformityData> nonConformityDAO) {
-		this.nonConformityDAO = nonConformityDAO;
+	
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
+
+
+
 
 	/**
 	 * load the datalists of the product data.
@@ -32,10 +39,10 @@ public class DefaultNonConformityReportExtractor extends AbstractEntityReportExt
 	 * @return the element
 	 */
 	@Override
-	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt) {
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
-		NonConformityData ncData = nonConformityDAO.find(entityNodeRef);
+		NonConformityData ncData = (NonConformityData) alfrescoRepository.findOne(entityNodeRef);
 
 		// workLog
 		if (ncData.getWorkLog() != null) {

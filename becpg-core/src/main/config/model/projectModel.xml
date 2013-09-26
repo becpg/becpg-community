@@ -14,6 +14,8 @@
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
+		<import uri="http://www.alfresco.org/model/datalist/1.0" prefix="dl" />
+		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
 	</imports>
 
 	<!-- Introduction of new namespaces defined by this model -->
@@ -31,21 +33,6 @@
 					<value>activiti$projectAdhoc</value>
 					<value>activiti$projectNewProduct</value>
 				</list>
-			</parameter>
-		</constraint>
-
-		<constraint name="pjt:projectHierarchy1"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
-				<list>
-					<value>/System/ProjectLists/bcpg:entityLists/ProjectHierarchy1</value>
-				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>Hierarchy1
-			<parameter name="constraintProp">
-				<value>cm:name</value>
 			</parameter>
 		</constraint>
 
@@ -68,6 +55,16 @@
 					<value>OnHold</value>
 					<value>Cancelled</value>
 					<value>Completed</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:manualDate" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Start</value>
+					<value>End</value>					
 				</list>
 			</parameter>
 		</constraint>
@@ -102,29 +99,94 @@
 				<value>100</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="pjt:requestStates"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/RequestStates</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:requestOrigins"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/RequestOrigins</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:scoreCriteria"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/ScoreCriteria</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:sponsors"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/Sponsors</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+		</constraint>		
 
 	</constraints>
 
 	<types>
 
-		<type name="pjt:projectTpl">
-			<parent>bcpg:entity</parent>
-			<mandatory-aspects>
-				<aspect>bcpg:codeAspect</aspect>
-				<aspect>bcpg:entityListsAspect</aspect>
-			</mandatory-aspects>
-		</type>
-
 		<type name="pjt:project">
 			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="pjt:projectHierarchy1">
-					<type>d:text</type>
+					<type>d:noderef</type>
 					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="pjt:projectHierarchy1" />
-					</constraints>
 				</property>
+				<property name="pjt:projectHierarchy2">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="pjt:projectOrigin">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:requestOrigins" />
+               </constraints>
+            </property>
+            <property name="pjt:projectSponsor">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:sponsors" />
+               </constraints>
+            </property>
 				<property name="pjt:projectStartDate">
 					<type>d:date</type>
 				</property>
@@ -149,35 +211,49 @@
 						<constraint ref="pjt:projectStates" />
 					</constraints>
 				</property>
+				<property name="pjt:projectLegends">
+					<type>d:noderef</type>		
+					<multiple>true</multiple>			
+				</property>
+				<property name="pjt:projectOverdue">
+					<type>d:int</type>
+				</property>
+				<property name="pjt:projectScore">
+					<type>d:int</type>
+					<constraints>
+                  <constraint ref="pjt:percentage" />
+               </constraints>
+				</property>				
 			</properties>
-			<associations>
-				<association name="pjt:projectProjectTpl">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>pjt:projectTpl</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
+			<associations>			
 				<association name="pjt:projectEntity">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entity</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 				</association>
+				<association name="pjt:projectManager">
+               <source>
+                  <mandatory>false</mandatory>
+                  <many>true</many>
+               </source>
+               <target>
+                  <class>cm:person</class>
+                  <mandatory>false</mandatory>
+                  <many>false</many>
+               </target>
+            </association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
+				<aspect>bcpg:entityTplRefAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -204,6 +280,7 @@
 				</property>
 				<property name="pjt:tlWorkflowName">
 					<type>d:text</type>
+					<default>activiti$projectAdhoc</default>
 					<constraints>
 						<constraint ref="pjt:allowedWorkflows" />
 					</constraints>
@@ -223,6 +300,12 @@
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="pjt:taskStates" />
+					</constraints>
+				</property>
+				<property name="pjt:tlManualDate">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="pjt:manualDate" />
 					</constraints>
 				</property>
 			</properties>
@@ -309,7 +392,91 @@
 				<aspect>pjt:completionAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		 <type name="pjt:scoreList">
+         <parent>bcpg:entityListItem</parent>
+         <properties>            
+            <property name="pjt:slCriterion">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:scoreCriteria" />
+               </constraints>
+            </property>
+            <property name="pjt:slWeight">
+               <type>d:int</type>
+               <constraints>
+                  <constraint ref="pjt:percentage" />
+               </constraints>
+            </property>
+            <property name="pjt:slScore">
+               <type>d:int</type>
+               <constraints>
+                  <constraint ref="pjt:percentage" />
+               </constraints>
+            </property>
+            <property name="pjt:slScreening">
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+         </properties>     
+         <mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+				<aspect>pjt:completionAspect</aspect>
+			</mandatory-aspects>   
+      </type>
 
+		<!-- Data List - Request List -->
+      <type name="pjt:requestList">
+         <parent>dl:dataListItem</parent>
+         <properties>            
+            <property name="pjt:rlState">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:requestStates" />
+               </constraints>
+            </property>
+             <property name="pjt:rlOrigin">
+               <type>d:text</type>
+               <constraints>
+                  <constraint ref="pjt:requestOrigins" />
+               </constraints>
+            </property>
+            <property name="pjt:rlPriority">
+               <type>d:text</type>
+               <default>Normal</default>
+               <constraints>
+                  <constraint ref="dl:priority_value" />
+               </constraints>
+            </property>
+            <property name="pjt:rlDueDate">
+               <type>d:date</type>
+               <mandatory>false</mandatory>
+            </property>
+            <property name="pjt:rlComments">
+               <type>d:text</type>
+               <mandatory>false</mandatory>
+            </property>
+         </properties>
+         <associations>
+            <association name="pjt:rlAssignedTo">
+               <source>
+                  <mandatory>false</mandatory>
+                  <many>true</many>
+               </source>
+               <target>
+                  <class>cm:person</class>
+                  <mandatory>false</mandatory>
+                  <many>true</many>
+               </target>
+            </association>
+         </associations>
+         <mandatory-aspects>
+            <aspect>cm:titled</aspect>
+            <aspect>cm:attachable</aspect>
+            <aspect>cm:likesRatingSchemeRollups</aspect>
+         </mandatory-aspects>
+      </type>
+     
 	</types>
 
 	<aspects>
@@ -351,11 +518,12 @@
 					</source>
 					<target>
 						<class>pjt:project</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
 			</associations>
 		</aspect>
+				
 	</aspects>
 </model>

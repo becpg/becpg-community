@@ -49,6 +49,41 @@
 				</sub-component>
 			</sub-components>
 		</component>
+		
+		 <!-- Document Header -->
+      <component>
+         <region-id>node-header</region-id>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if in site: Site header -->
+                  <evaluation id="site">
+                     <evaluators>
+                        <evaluator type="site.component.evaluator"/>
+                     </evaluators>
+                     <url>/components/entity-details/entity-header</url>
+                     <properties>
+                        <nodeRef>{nodeRef}</nodeRef>
+                        <rootPage>documentlibrary</rootPage>
+                        <rootLabelId>path.documents</rootLabelId>
+                        <pathMode>true</pathMode>
+                     </properties>
+                  </evaluation>
+                  <!-- otherwise: Repo header -->
+                  <evaluation id="repo">
+                     <url>/components/entity-details/entity-header</url>
+                     <properties>
+                        <nodeRef>{nodeRef}</nodeRef>
+                        <rootPage>repository</rootPage>
+                        <rootLabelId>path.repository</rootLabelId>
+                        <pathMode>true</pathMode>
+                     </properties>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+      </component>
+		
 
 		<!-- Toolbar -->
 		<component>
@@ -72,10 +107,6 @@
 								</evaluator>
 							</evaluators>
 							<url>/components/entity-charact-views/formulation-view</url>
-							<properties>
-								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-							</properties>
 						</evaluation>
 						<evaluation id="process">
 							<evaluators>
@@ -86,10 +117,6 @@
 								</evaluator>
 							</evaluators>
 							<url>/components/entity-charact-views/formulation-view</url>
-							<properties>
-								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-							</properties>
 						</evaluation>
 						<evaluation id="packaging">
 							<evaluators>
@@ -100,10 +127,16 @@
 								</evaluator>
 							</evaluators>
 							<url>/components/entity-charact-views/formulation-view</url>
-							<properties>
-								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-							</properties>
+						</evaluation>
+						<evaluation id="labeling">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.params.equal">
+									<params>
+										<list>ingLabelingList</list>
+									</params>
+								</evaluator>
+							</evaluators>
+							<url>/components/entity-charact-views/labeling-view</url>
 						</evaluation>
 						<evaluation id="datagrid">
 							<url>/components/entity-charact-views/entity-datagrid-view</url>

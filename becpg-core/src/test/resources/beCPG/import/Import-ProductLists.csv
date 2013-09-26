@@ -25,12 +25,14 @@ VALUES;14;Fournisseur3;;;;;
 ;;;;;;;
 PATH;/Temp/Products;;;;;;
 TYPE;bcpg:finishedProduct;;;;;;
-COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState
+MAPPING;Default;;;;;;
+COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;hierarchy1;hierarchy2;bcpg:productState
 VALUES;1000012012;Saumon surgelé 80x20x4;;saumon sugelé;Frozen;Pizza;ToValidate
 ;;;;;;;
 PATH;/Temp/Products;;;;;;
+MAPPING;Default;;;;;;
 TYPE;bcpg:rawMaterial;;;;;;
-COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState
+COLUMNS;bcpg:code;cm:name;cm:description;bcpg:legalName;hierarchy1;hierarchy2;bcpg:productState
 VALUES;1000012013;MP1;;;Sea food;Fish;ToValidate
 VALUES;1000012014;MP2;;;Sea food;Fish;ToValidate
 VALUES;1000012015;MP3;;;Sea food;Fish;ToValidate
@@ -38,7 +40,7 @@ VALUES;1000012015;MP3;;;Sea food;Fish;ToValidate
 ;;;;;;;
 PATH;/Temp/Products;;;;;;
 TYPE;bcpg:compoList;;;;;;
-MAPPING;Products;;;;;;
+MAPPING;TestProducts;;;;;;
 IMPORT_TYPE;EntityListItem;;;;;;
 COLUMNS;code;level;compoListProduct;compoListQty;compoListUnit;;
 VALUES;1000012012;1;1000012013;1;g;Saumon surgelé 80x20x4;

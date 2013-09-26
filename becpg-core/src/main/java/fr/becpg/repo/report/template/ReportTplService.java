@@ -86,4 +86,11 @@ public interface ReportTplService {
 	 * @return
 	 */
 	public ReportFormat getReportFormat(NodeRef tplNodeRef);
+
+	/**
+	 * Get the template associated to the report
+	 * @param nodeRef
+	 * @return
+	 */
+	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef);
 }

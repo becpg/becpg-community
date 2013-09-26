@@ -90,22 +90,6 @@
 			<column id="Alcool (éthanol)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Alcool (éthanol)" type="Characteristic" />
 			<column id="Acides organiques" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Acides organiques" type="Characteristic" />
 			
-			<!-- feed -->
-			<column id="CP" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Protéines brutes" type="Characteristic" />
-			<column id="UID" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Protéines non dégradées" type="Characteristic" />
-			<column id="EE" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Extrait d'éther" type="Characteristic" />
-			<column id="CF" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fibres brutes" type="Characteristic" />
-			<column id="ADF" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fibres au détergent acide" type="Characteristic" />
-			<column id="NDF" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fibres au détergent neutre" type="Characteristic" />
-			<column id="Ash" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Cendre" type="Characteristic" />
-			<column id="Soufre" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Soufre" type="Characteristic" />
-			<column id="TDN" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Total des nutriments digestibles" type="Characteristic" />
-			<column id="DE" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energie digestible" type="Characteristic" />
-			<column id="NE m" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energie nette pour l'entretien" type="Characteristic" />
-			<column id="NE g" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Energie nette pour la croissance" type="Characteristic" />
-			<column id="DM" dataListQName="bcpg:physicoChemList" charactQName="bcpg:pclPhysicoChem" attribute="bcpg:pclValue" charactNodeRef="" charactName="Matière sèche" type="Characteristic" />
-			
-			
 			<!-- files -->
 			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"
 				type="File" />

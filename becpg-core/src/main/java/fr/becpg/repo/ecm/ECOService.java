@@ -13,7 +13,5 @@ public interface ECOService {
 	
 	public void apply(NodeRef ecoNodeRef);
 	
-	public void createSimulationComposants(NodeRef ecoNodeRef);
-	
 	public void doSimulation(NodeRef ecoNodeRef);
 }

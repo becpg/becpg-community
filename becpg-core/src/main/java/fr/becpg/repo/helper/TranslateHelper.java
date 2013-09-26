@@ -2,18 +2,14 @@ package fr.becpg.repo.helper;
 
 import java.util.Locale;
 
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.SystemState;
-
 public class TranslateHelper {
 
 	private static final String PATH_MSG_PFX= "path.";
-	private static final String PRODUCT_STATE_MSG_PFX = "state.product.";
-	private static final String CONSTRAINT_MSG_PFX = "constraint.%s.%s";
+	private static final String LIST_CONSTRAINT_MSG_PFX = "listconstraint.%s.%s";
 	
 	private static final String MESSAGE_TRUE = "data.boolean.true";
 	private static final String MESSAGE_FALSE = "data.boolean.false";
@@ -37,15 +33,15 @@ public class TranslateHelper {
 		return translation;
 	}
 	
-	public static String getTranslatedProductState(SystemState state) {
-		
-		String translation = I18NUtil.getMessage(PRODUCT_STATE_MSG_PFX + state.toString().toLowerCase(), Locale.getDefault());
-		if(translation == null){
-			logger.error("Failed to translate path. path: " + state);
-		}
-		
-		return translation;
-	}
+//	public static String getTranslatedSystemState(SystemState state) {
+//		
+//		String translation = I18NUtil.getMessage(SYSTEM_STATE_MSG_PFX + state, Locale.getDefault());
+//		if(translation == null){
+//			logger.error("Failed to translate path. path: " + state);
+//		}
+//		
+//		return translation;
+//	}
 	
 	public static String getTranslatedBoolean(Boolean b, boolean useDefaultLocale) {
 		
@@ -61,26 +57,27 @@ public class TranslateHelper {
 		return translation;
 	}
 	
-	public static String getConstraint(QName propertyName, String value, boolean useDefaultLocale) {
-				
-		String translation = null;
-		String messageKey = String.format(CONSTRAINT_MSG_PFX, propertyName.getLocalName().toLowerCase(), value.toLowerCase());
+	public static String getConstraint(String constraintName, String value,  boolean useDefaultLocale) {
 		
-		if(useDefaultLocale){
-			translation = I18NUtil.getMessage(messageKey, Locale.getDefault());
-		}
-		else{
-			translation = I18NUtil.getMessage(messageKey);
-		}
-				
-		if(translation == null){
-			if(logger.isDebugEnabled()){
-				logger.debug("Failed to translate constraint. propertyName: " + propertyName + " - value: " + value);
-			}			
-			translation = value;
-		}
-		
-		return translation;
+			String translation = null;
+			String messageKey = String.format(LIST_CONSTRAINT_MSG_PFX, constraintName,  value);
+			
+			if(useDefaultLocale){
+				translation = I18NUtil.getMessage(messageKey, Locale.getDefault());
+			}
+			else{
+				translation = I18NUtil.getMessage(messageKey);
+			}
+					
+			if(translation == null){
+				if(logger.isDebugEnabled()){
+					logger.debug("Failed to translate constraint. constraintName: " + constraintName + " - value: " + value);
+				}			
+				translation = value;
+			}
+			
+			return translation;
+	
 	}
 	
 }

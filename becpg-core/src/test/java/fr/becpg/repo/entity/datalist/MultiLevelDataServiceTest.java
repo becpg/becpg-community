@@ -3,15 +3,14 @@
  */
 package fr.becpg.repo.entity.datalist;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -19,9 +18,8 @@ import org.junit.Test;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
-import fr.becpg.repo.product.ProductDAO;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
@@ -38,22 +36,25 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MultiLevelDataServiceTest.class);
 
-
-	/** The product dao. */
-	@Resource
-	private ProductDAO productDAO;
 	
 	@Resource
 	private MultiLevelDataListService multiLevelDataListService;
 
-
+	private NodeRef rawMaterial1NodeRef = null;
+	private NodeRef rawMaterial2NodeRef = null;
+	private NodeRef lSF1NodeRef = null;
+	private NodeRef lSF2NodeRef = null;
+	private NodeRef lSF3NodeRef = null;
+	private NodeRef lSF4NodeRef = null;
+	private NodeRef finishedProductNodeRef = null;
+	
 	/**
 	 * Test get Multilevel of the compoList
 	 */
 	@Test
 	public void testGetMultiLevelCompoList() {
 
-		logger.debug("testGetWUsedProduct");
+		logger.debug("testGetMultiLevelCompoList");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -62,45 +63,59 @@ public class MultiLevelDataServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
-				NodeRef rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, null);
+				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
-				NodeRef rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, null);
-				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
+				LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
+				lSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
 
-				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
+				lSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF2).getNodeRef();
 				
-				LocalSemiFinishedProduct lSF3 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF3 = new LocalSemiFinishedProductData();
 				lSF3.setName("Local semi finished 3");
-				NodeRef lSF3NodeRef = productDAO.create(testFolderNodeRef, lSF3, null);
+				lSF3NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF3).getNodeRef();
 				
-				LocalSemiFinishedProduct lSF4 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF4 = new LocalSemiFinishedProductData();
 				lSF4.setName("Local semi finished 4");
-				NodeRef lSF4NodeRef = productDAO.create(testFolderNodeRef, lSF4, null);
+				lSF4NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF4).getNodeRef();
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, lSF4NodeRef));
-				finishedProduct.setCompoList(compoList);
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+				
+				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
+				CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
+				CompoListDataItem child1 =new CompoListDataItem(null,parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
+				CompoListDataItem child12 =new CompoListDataItem(null,child1, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+				CompoListDataItem parent2 =new CompoListDataItem(null,(CompoListDataItem) null, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
+				CompoListDataItem child2 =new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
+				CompoListDataItem child21 =new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
+				
+				compoList.add(parent1);
+				compoList.add(child1);
+				compoList.add(child12);
+				compoList.add(parent2);
+				compoList.add(child2);
+				compoList.add(child21);
+				finishedProduct.getCompoListView().setCompoList(compoList);
+				
+				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
 				DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
-				dataListFilter.setEntityNodeRef(finishedProductNodeRef);
+				dataListFilter.setEntityNodeRefs(Arrays.asList(finishedProductNodeRef));
 				
 				MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 				int checks = 0;

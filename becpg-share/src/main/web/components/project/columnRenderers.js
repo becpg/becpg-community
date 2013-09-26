@@ -19,20 +19,13 @@
 
 		   }
 
-		});
-
-		YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		   propertyName : "pjt:projectHierarchy1",
-		   renderer : function(oRecord, data, label, scope) {
-			   return '<span class="' + scope.getAdvancementClass(oRecord, null, 32) + '">&nbsp;</span>';
-		   }
-		});
+		});				
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "cm:name",
 		   renderer : function(oRecord, data, label, scope) {
 
-			   return scope.getProjectTitle(oRecord);
+			   return scope.getProjectTitle(oRecord.getData());
 
 		   }
 		});
@@ -40,14 +33,8 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:taskList",
 		   renderer : function(oRecord, data, label, scope, idx, length) {
-
 			   var oData = oRecord.getData();
-
-			   if (data["itemData"]["prop_pjt_tlState"].value == "InProgress") {
-				  return scope.getTaskTitle(data, oData.nodeRef, true);
-			   }
-
-			   return null;
+			   return scope.getTaskTitle(data, oData.nodeRef, true);
 		   }
 		});
 
@@ -93,15 +80,7 @@
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:projectPriority",
 		   renderer : function(oRecord, data, label, scope) {
-			   var priority = oRecord.getData("itemData")["prop_pjt_projectPriority"].value, priorityMap = {
-			      "1" : "high",
-			      "2" : "medium",
-			      "3" : "low"
-			   }, priorityKey = priorityMap[priority + ""], desc = '<img src="' + Alfresco.constants.URL_RESCONTEXT
-			         + 'components/images/priority-' + priorityKey + '-16.png" title="'
-			         + scope.msg("label.priority", scope.msg("priority." + priorityKey)) + '"/>';
-			   return desc;
-
+			   return scope.getPriorityImg(oRecord.getData(), false);
 		   }
 
 		});
@@ -110,7 +89,7 @@
 		   propertyName : "pjt:projectStartDate",
 		   renderer : function(oRecord, data, label, scope) {
 
-			   var dates = scope.extractDates(oRecord), end = dates.due;
+			   var dates = scope.extractDates(oRecord.getData()), end = dates.due;
 
 			   var desc = '<span class="start">'
 			         + (dates.start ? Alfresco.util.formatDate(dates.start, "shortDate") : scope.msg("label.none"))
@@ -128,6 +107,20 @@
 		   }
 
 		});
-
+		
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : "pjt:projectOverdue",
+			   renderer : function(oRecord, data, label, scope) {
+				   var overdue = data.displayValue != null ? $html(data.displayValue)+ '&nbsp;' + scope.msg("overdue.day") : '';
+				   return '<span class="center ' + scope.getOverdueClass(oRecord.getData(), 32) + '" title="'+overdue+'">' + overdue + '</span>';
+			   }
+			});
+		
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+			   propertyName : ["pjt:projectScore","pjt:completionPercent"],
+			   renderer : function(oRecord, data, label, scope) {
+				   return (data.value !=null) ? $html(data.displayValue)+ '&nbsp; %' : '';
+			   }
+			});
 	}
 })();

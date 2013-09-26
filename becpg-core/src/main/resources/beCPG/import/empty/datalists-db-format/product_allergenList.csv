@@ -1,0 +1,21 @@
+STOP_ON_FIRST_ERROR;false;;;
+IMPORT_TYPE;EntityListItem;;;
+PATH;/Temp/Products;;;
+TYPE;bcpg:allergenList;;;
+MAPPING;Products;;;
+;;;;
+COLUMNS;bcpg:erpCode;bcpg:allergenListAllergen;bcpg:allergenListVoluntary;bcpg:allergenListInVoluntary
+VALUES;ERP code 1;Céréales contenant du gluten et produits à base de ces céréales;;
+VALUES;ERP code 1;Crustacés et produits à base de crustacés;True;
+VALUES;ERP code 1;Oeuf et produit à base d'oeuf;;
+VALUES;ERP code 1;Arachides et produits à base d'arachide;;
+VALUES;ERP code 1;Soja et produits à base de soja;;
+VALUES;ERP code 1;Lait et produit à base de (dont lactose);;True
+VALUES;ERP code 1;Fruits à Coque* (noix noisettes);;
+VALUES;ERP code 1;Poisson et produit à base de poisson;;
+VALUES;ERP code 1;Céleri et produits à base de céleri;;
+VALUES;ERP code 1;Moutarde et produits à base de moutarde;;
+VALUES;ERP code 1;Graines de sésame et produits à base de graines de sésame;;
+VALUES;ERP code 1;Anhydride sulfureux et sulfites;;
+VALUES;ERP code 1;Lupin  et produits à base de lupin;;
+VALUES;ERP code 1;Mollusque  et produits à base de mollusque;;

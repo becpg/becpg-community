@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.4.0</version>
+		<version>1.5.2</version>
 		<relativePath>../</relativePath>
 	</parent>
 	
@@ -16,10 +16,11 @@
 
 	<dependencies>
 
+		<!-- beCPG -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-controls-core</artifactId>
-			<version>1.4.0</version>
+			<version>${becpg.contribs.version}</version>
 			<type>jar</type>
 			<classifier>api</classifier>
 			<scope>provided</scope>
@@ -28,7 +29,7 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-core</artifactId>
-			<version>1.4.0</version>
+			<version>${becpg.contribs.version}</version>
 			<type>jar</type>
 			<classifier>api</classifier>
 			<scope>provided</scope>
@@ -37,13 +38,13 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
-			<version>1.4.0</version>
+			<version>1.5.2</version>
 			<classifier>client</classifier>
 			<type>jar</type>
 			<exclusions>
 				<exclusion>
-					<groupId>fr.becpg</groupId>
-					<artifactId>birt-sdk</artifactId>
+					<groupId>org.eclipse.birt.runtime</groupId>
+					<artifactId>org.eclipse.birt.runtime</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>log4j</groupId>
@@ -55,61 +56,45 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-
-		<!-- patch -->
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>alfresco-repository</artifactId>
-			<version>${alfresco.version}</version>
-			<type>jar</type>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.alfresco.sdk</groupId>
-					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-
-
+		
+		
 		<!-- alfresco -->
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>alfresco-sdk</artifactId>
-			<version>${alfresco.version}</version>
-			<type>pom</type>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.alfresco.sdk</groupId>
-					<artifactId>alfresco-repository-${alfresco.version}</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		 <dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-repository</artifactId>
+            <version>${alfresco.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-
-		<!-- mysql -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.9</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
+			<dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-remote-api</artifactId>
+            <version>${alfresco.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        
+        <!-- Test -->
+        <dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-remote-api</artifactId>
+            <version>${alfresco.version}</version>
+            <scope>test</scope>
+            <classifier>config</classifier>
+        </dependency>
+        
+         <dependency>
+		    <groupId>org.apache.chemistry</groupId>
+		    <artifactId>chemistry-tck-atompub</artifactId>
+		    <version>0.1-incubating-unreleased</version>
+		    <scope>test</scope>
+		 </dependency>
+		
 
 		<dependency>
 			<groupId>org.springframework.extensions.surf</groupId>
 			<artifactId>spring-webscripts</artifactId>
-			<version>1.0.0</version>
+			<version>1.2.0-M3</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 			<exclusions>
@@ -119,80 +104,39 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>jmock</groupId>
-			<artifactId>jmock</artifactId>
-			<version>1.2.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-mock</artifactId>
-			<version>2.0.8</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- <dependency> <groupId>org.subethamail</groupId> <artifactId>subethasmtp</artifactId> 
-			<version>3.1.3</version> <scope>test</scope> </dependency> -->
-
-
-
-		<dependency>
-			<groupId>org.alfresco.sdk</groupId>
-			<artifactId>config</artifactId>
-			<version>${alfresco.version}</version>
-			<classifier>community</classifier>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>3.0.5.RELEASE</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-
-
-		<!-- runtime <dependency> <groupId>net.sf.proguard</groupId> <artifactId>proguard</artifactId> 
-			<version>4.4</version> <scope>runtime</scope> <optional>true</optional> </dependency> -->
-
-
-		<!-- Don't add here amp dependencies as it will break amp packaging -->
+		
+		<!-- Addons -->
+		
+<!-- 		<dependency>  -->
+<!-- 		  <groupId>de.fme</groupId> -->
+<!-- 		  <artifactId>jsconsole</artifactId> -->
+<!-- 		  <classifier>repo</classifier> -->
+<!-- 		  <version>0.5.1</version> -->
+<!-- 		  <scope>runtime</scope> -->
+<!-- 		</dependency>  -->
 
 
 	</dependencies>
-	<properties>
-		<webapp.name>becpg-core-webapp</webapp.name>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12</version>
+				<version>2.16</version>
 				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					<argLine>${app.testing.jvm.args}</argLine>
 					<excludes>
-						<exclude>**/*WebScriptTest.java</exclude>
-						<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
+						<!-- <exclude>**/*WebScriptTest.java</exclude> -->
+					   <exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 						<exclude>fr/becpg/repo/importer/UserImportServiceTest.java</exclude>
+						<!-- <exclude>fr/becpg/repo/product/ProductVersionServiceTest.java</exclude>  -->
 					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.4</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -205,87 +149,11 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- proguard <plugin> <groupId>com.pyx4me</groupId> <artifactId>proguard-maven-plugin</artifactId> 
-				<version>2.0.4</version> <executions> <execution> <phase>prepare-package</phase> 
-				<goals> <goal>proguard</goal> </goals> </execution> </executions> <configuration> 
-				<proguardVersion>4.4</proguardVersion> <obfuscate>true</obfuscate> <injar>classes</injar> 
-				<options> <option>-dontoptimize</option> <option>-renamesourcefileattribute 
-				SourceFile</option> <option>-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod</option> 
-				<option>-keep public class * { public protected *;}</option> <option>-keepclassmembernames 
-				class * {java.lang.Class class$(java.lang.String); java.lang.Class class$(java.lang.String, 
-				boolean);}</option> <option>-keepclassmembers enum * {public static **[] 
-				values(); public static ** valueOf(java.lang.String);}</option> <option>-keepclassmembers 
-				class * implements java.io.Serializable { static final long serialVersionUID; 
-				private static final java.io.ObjectStreamField[] serialPersistentFields; 
-				private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); 
-				java.lang.Object writeReplace(); java.lang.Object readResolve();}</option> 
-				<option>-keep @org.springframework.beans.factory.annotation.Service class 
-				*</option> <option>-keep @org.springframework.stereotype.Controller class 
-				*</option> <option>-keepclassmembers class * { @org.springframework.beans.factory.annotation.Autowired 
-				*; }</option> </options> <libs> <lib>${java.home}/lib/rt.jar</lib> <lib>${java.home}/lib/jsse.jar</lib> 
-				</libs> <addMavenDescriptor>false</addMavenDescriptor> </configuration> </plugin> -->
-			<!-- native2ascii -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>native2ascii-maven-plugin</artifactId>
-				<version>1.0-alpha-1</version>
-				<inherited>true</inherited>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>native2ascii</goal>
-						</goals>
-						<configuration>
-							<encoding>8859_1</encoding>
-							<dest>target/classes/alfresco/module/${project.artifactId}</dest>
-							<src>src/main/config</src>
-							<includes>
-								**/*.properties
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			
+			
 		</plugins>
-		<!-- Copies and filters resources in build folder so maven-amp-plugin can 
-			pick them up -->
-		<resources>
-			<resource>
-				<filtering>true</filtering>
-				<directory>src/main/resources</directory>
-				<excludes>
-					<exclude>**README-*</exclude>
-					<exclude>**/*.csv</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<filtering>false</filtering>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.csv</include>
-				</includes>
-			</resource>
-			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' 
-				so to enforce full module naming single sourcing from POM properties -->
-			<resource>
-				<filtering>true</filtering>
-				<directory>src/main/config</directory>
-				<targetPath>alfresco/module/${project.artifactId}</targetPath>
-				<excludes>
-					<exclude>**README-*</exclude>
-					<exclude>**/*.properties</exclude>
-				</excludes>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<filtering>true</filtering>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
 	</build>
-	<profiles>
+	<!-- <profiles>
 		<profile>
 			<id>test-webscripts</id>
 			<build>
@@ -293,27 +161,20 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.12</version>
+						<version>2.16</version>
 						<configuration>
-							<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+							<argLine>${app.testing.jvm.args}</argLine>
 							<includes>
 								<include>**/*WebScriptTest.java</include>
 							</includes>
-								<excludes>
+							<excludes>
 									<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 									<exclude>fr/becpg/repo/importer/UserImportServiceTest.java</exclude>
-								</excludes>
-							<excludes>
 							</excludes>
-                		<parallel>classes</parallel>
-            			<useUnlimitedThreads>true</useUnlimitedThreads>
-	                  <threadCount>80</threadCount>
-	                  <perCoreThreadCount>true</perCoreThreadCount>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
-	
+	</profiles> -->
 </project>

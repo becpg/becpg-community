@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>wused-form</shortname>
+  <description>Where used association choice form</description>
+  <url>/components/wused/wused-form</url>
+</webscript>

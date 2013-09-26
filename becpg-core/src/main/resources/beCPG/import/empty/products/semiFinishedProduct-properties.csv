@@ -1,0 +1,9 @@
+PATH;/Temp/Products;;;;;;;;;;;;
+TYPE;bcpg:semiFinishedProduct;;;;;;;;;;;;
+MAPPING;Products;;;;;;;;;;;;
+COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState;bcpg:erpCode;bcpg:productUnit;bcpg:productQty;bcpg:productDensity;bcpg:productSpecifications;bcpg:productMicrobioCriteria
+VALUES;SF1;SF1;;;Pâtisserie;Génoises;ToValidate;;kg;40;1;;
+VALUES;SF2;SF2;;;Bases laitières;Glaces;ToValidate;;kg;2000;1;;
+VALUES;SF3;SF3;;;Bases laitières;Meringues;ToValidate;;kg;1800;1;;
+VALUES;SF4;SF4;;;Bases laitières;Sucrants;ToValidate;;kg;1;1;;
+VALUES;SF5;SF5;;;Mélange - garniture;Sirops;ToValidate;;kg;1800;1;;

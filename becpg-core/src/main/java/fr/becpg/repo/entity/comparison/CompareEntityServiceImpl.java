@@ -882,7 +882,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) ||
 				qName.equals(BeCPGModel.PROP_START_EFFECTIVITY) ||
 				qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) ||
-				qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)){
+				qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED) ||
+				qName.equals(BeCPGModel.PROP_VERSION_LABEL)){
 			
 			isCompareable = false;
 		}

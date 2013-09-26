@@ -22,13 +22,6 @@ public interface EntityService {
 	 */
 	 boolean hasDataListModified(NodeRef nodeRef);
 	
-	/**
-     * Initialize entity folder.
-     *
-     * @param entityNodeRef the entity node ref
-     */
-     void initializeEntityFolder(NodeRef entityNodeRef);
-    
     
 	/**
 	 * Gets the image defined in the image folder of the entity
@@ -64,14 +57,7 @@ public interface EntityService {
 	 * @return
 	 */
 	 byte[] getImage(NodeRef imgNodeRef);
-
-
-	/**
-	 * Delete all version of the entity
-	 * @param entityNodeRef
-	 */
-	 void deleteEntity(NodeRef entityNodeRef);
-
+	 
 	/**
 	 * Create or copy an entity
 	 * @param sourceNodeRef
@@ -95,13 +81,21 @@ public interface EntityService {
 	  */
 	 boolean hasAssociatedImages(QName type);
 
-	/**
-	 * 
-	 * @param entityNodeRef
-	 * @return entityFolderNodeRef
-	 */
-	 NodeRef getEntityFolder(NodeRef entityNodeRef);
-
-	
+	 void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef); 
     
+	 void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef);
+	 
+	 /**
+	 * delete files
+	 * @param nodeRef
+	 * @param deleteArchivedNode (delete from trash)
+	 */
+	 void deleteFiles(NodeRef entityNodeRef, boolean deleteArchivedNodes);
+	 
+	 /**
+	 * delete dataLists
+	 * @param nodeRef
+	 * @param deleteArchivedNode (delete from trash)
+	 */
+	 void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes);
 }

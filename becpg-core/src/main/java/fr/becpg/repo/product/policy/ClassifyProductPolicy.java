@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.CompanyHomeHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.ProductService;
@@ -53,6 +54,8 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_PRODUCT,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		
+		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_PRODUCT);
 	}
 
 	/**
@@ -73,34 +76,26 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 		NodeRef afterHierarchy2 = (NodeRef) after.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2);
 
 		boolean classify = false;
-		boolean checkPath = false;
 
 		//state
 		if (afterState != null && !afterState.isEmpty() && !afterState.equals(beforeState)) {
 			classify = true;
-			//create node with default state, we let it in the site
-			if(beforeState == null){
-				checkPath = true;
-			}
-			
 		} 
 		//hierarchy1 and hierarchy2
 		else if ((afterHierarchy1 != null  && !afterHierarchy1.equals(beforeHierarchy1)) || 
 					(afterHierarchy2 != null  && !afterHierarchy2.equals(beforeHierarchy2))) {
-			classify = true;
-			checkPath = true;					
+			classify = true;					
 		}
+			
+		//don't classify product that are in a site, 
+		// force to use wf && don't classify user dierctory
 		
-		//check path
-		if(checkPath && classify){
+		if(classify){
+			
 			String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-			if (SiteHelper.isSitePath(path)) {
-				classify = false;
+			if (!SiteHelper.isSitePath(path) && !CompanyHomeHelper.isInUserHome(path)) {
+				queueNode(nodeRef);
 			}
-		}
-
-		if (classify) {			
-			queueNode(nodeRef);
 		}
 	}
 	
@@ -108,7 +103,10 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
-			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
+			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) &&
+					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL) &&
+					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				
 				productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
 			}
 		}

@@ -1,1 +1,0 @@
-<b>${importInProgress}</b>

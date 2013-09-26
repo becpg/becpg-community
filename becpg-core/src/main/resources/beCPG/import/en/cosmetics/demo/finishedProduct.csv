@@ -1,7 +1,7 @@
 PATH;/Temp/Import;;;;;;;;;;;;;;;;;;;;;;;;
 TYPE;bcpg:finishedProduct;;;;;;;;;;;;;;;;;;;;;;;;
 MAPPING;NutDatabaseEnglish;;;;;;;;;;;;;;;;;;;;;;;;
-COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:erpCode;bcpg:eanCode;bcpg:productState;bcpg:trademark;bcpg:clients;bcpg:productUnit;bcpg:productQty;bcpg:productDensity;bcpg:productSpecification;bcpg:productMicrobioCriteria;bcpg:useByDate;bcpg:unitPrice;bcpg:unitTotalCost;bcpg:priceCurrency;bcpg:breakEven;bcpg:projectedQty;bcpg:profitability;;
+COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:erpCode;bcpg:eanCode;bcpg:productState;bcpg:trademark;bcpg:clients;bcpg:productUnit;bcpg:productQty;bcpg:productDensity;bcpg:productSpecifications;bcpg:productMicrobioCriteria;bcpg:useByDate;bcpg:unitPrice;bcpg:unitTotalCost;bcpg:priceCurrency;bcpg:breakEven;bcpg:projectedQty;bcpg:profitability;;
 VALUES;Arnispray Formula Arnica;Boiron;;;Welfare;Homeopathy;;;ToValidate;;Sephora;P;1;0.02;;;30;;;€;;;;;
 VALUES;Amazon balm anti wrinkle 50ml bottle;anti-wrinkle balm;;http://www.aroma-zone.com/aroma/Fiche_extrait_concombreBIO.asp#lait-visage-hydratant-concombre;Beauty and care;Anti-aging;;;ToValidate;;Sephora;P;1;0.5;;;30;;0;€;;;;;	
 VALUES;Bioptimum physical and intellectual vitality;Bioptimum physical and intellectual vitality;;;Welfare;Homeopathy;;;ToValidate;;Sephora;P;1;0.1;;;30;;;€;;;;;

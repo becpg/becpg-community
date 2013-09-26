@@ -3,12 +3,15 @@
  */
 package fr.becpg.repo.product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -16,10 +19,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.PackModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.report.DefaultProductReportExtractor;
@@ -38,7 +45,9 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 	@Resource
 	private DefaultProductReportExtractor defaultProductReportExtractor; 
 
-
+	@Resource
+	private AssociationService associationService;
+	
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -53,10 +62,9 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 		logger.debug("testReport()");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
-				
 				/*-- Packaging material 1 --*/					
 				PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
 				packagingMaterial1.setName("Packaging material 1");
@@ -66,7 +74,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				packagingMaterial1.setCostList(costList);					
-				packagingMaterial1NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial1, dataLists);
+				packagingMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial1).getNodeRef();
 				
 				/*-- Packaging material 2 --*/					
 				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
@@ -77,7 +85,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
 				packagingMaterial2.setCostList(costList);					
-				packagingMaterial2NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial2, dataLists);
+				packagingMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial2).getNodeRef();
 				
 				/*-- Packaging material 1 --*/					
 				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
@@ -88,7 +96,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				packagingMaterial3.setCostList(costList);					
-				packagingMaterial3NodeRef = productDAO.create(testFolderNodeRef, packagingMaterial3, dataLists);
+				packagingMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial3).getNodeRef();
 				
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -98,14 +106,27 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
-				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PACKAGING_PRIMAIRE, true, packagingMaterial1NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PACKAGING_PRIMAIRE, true, packagingMaterial2NodeRef));
-				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PACKAGING_TERTIAIRE, true, packagingMaterial3NodeRef));
-				finishedProduct.setPackagingList(packagingList);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);	
+				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
+				finishedProduct.getPackagingListView().setPackagingList(packagingList);
+				costList.clear();
+				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
+				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
+				finishedProduct.setCostList(costList);
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				
+				// add labelingTemplate aspect
+				ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(PackModel.PROP_LABELING_POSITION, "Côté de la boîte");
+				nodeService.addAspect(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASPECT_LABELING, properties);				
+				associationService.update(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASSOC_LABELING_TEMPLATE, labelingTemplateNodeRef);
+				
+				nodeService.setProperty(finishedProductNodeRef, ContentModel.PROP_DESCRIPTION, "Descr line 1 " + System.getProperty("line.separator") + " descr line 2");
 				
 				EntityReportData entityReportData = defaultProductReportExtractor.extract(finishedProductNodeRef);
-				logger.debug("XmlData : " + entityReportData.getXmlDataSource().asXML());
+				logger.info("XmlData : " + entityReportData.getXmlDataSource().asXML());
 
 				return null;
 			}

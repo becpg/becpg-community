@@ -17,13 +17,15 @@ import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.QualityControlData;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 public class QualityControlTest extends RepoBaseTestCase {
@@ -31,11 +33,8 @@ public class QualityControlTest extends RepoBaseTestCase {
 	private static final long HOUR = 3600 * 1000; // in milli-seconds.
 
 	@Resource
-	private BeCPGDao<ControlPointData> controlPointDAO;
-	@Resource
-	private BeCPGDao<ControlPlanData> controlPlanDAO;
-	@Resource
-	private BeCPGDao<QualityControlData> qualityControlDAO;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
 
 	private NodeRef controlStepNodeRef;
 	private NodeRef methodNodeRef;
@@ -66,7 +65,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 		List<ControlDefListDataItem> controlDefList = new ArrayList<ControlDefListDataItem>();
 		controlDefList.add(new ControlDefListDataItem(null, "Nutritionnelle", null, null, true, methodNodeRef, nuts));
 		controlPointData.setControlDefList(controlDefList);
-		controlPointNodeRef = controlPointDAO.create(testFolderNodeRef, controlPointData);
+		controlPointNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPointData).getNodeRef();
 
 		// // create group
 		// Set<String> zones = new HashSet<String>();
@@ -87,9 +86,9 @@ public class QualityControlTest extends RepoBaseTestCase {
 		ControlPlanData controlPlanData = new ControlPlanData();
 		controlPlanData.setName("Control plan");
 		List<SamplingDefListDataItem> samplingDefList = new ArrayList<SamplingDefListDataItem>();
-		samplingDefList.add(new SamplingDefListDataItem(null, 2, 1, "/4heures", controlPointNodeRef, controlStepNodeRef, null));
+		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4heures", controlPointNodeRef, controlStepNodeRef, null));
 		controlPlanData.setSamplingDefList(samplingDefList);
-		controlPlanNodeRef = controlPlanDAO.create(testFolderNodeRef, controlPlanData);
+		controlPlanNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPlanData).getNodeRef();
 	}
 
 	private void createQualityControl(NodeRef testFolderNodeRef, List<NodeRef> controlPlansNodeRef, NodeRef productNodeRef) {
@@ -103,7 +102,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 		qualityControlData.setProduct(productNodeRef);
 		qualityControlData.setControlPlans(controlPlansNodeRef);
 
-		qualityControlNodeRef = qualityControlDAO.create(testFolderNodeRef, qualityControlData);
+		qualityControlNodeRef = alfrescoRepository.create(testFolderNodeRef, qualityControlData).getNodeRef();
 
 		// TODO : add a policy...
 		// qualityControlService.createSamplingList(qualityControlNodeRef,
@@ -122,7 +121,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 				List<NodeRef> controlPlansNodeRef = new ArrayList<NodeRef>();
 				controlPlansNodeRef.add(controlPlanNodeRef);
 
-				NodeRef productNodeRef = createRawMaterial(testFolderNodeRef, "Raw material");
+				NodeRef productNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "Raw material");
 
 				createQualityControl(testFolderNodeRef, controlPlansNodeRef, productNodeRef);
 
@@ -132,7 +131,7 @@ public class QualityControlTest extends RepoBaseTestCase {
 		}, false, true);
 
 		// checks
-		QualityControlData qualityControlData = qualityControlDAO.find(qualityControlNodeRef);
+		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qualityControlNodeRef);
 		assertNotNull("Check QC exists", qualityControlData);
 		assertNotNull("Check Sample list", qualityControlData.getSamplingList());
 		assertEquals("6 samples", 6, qualityControlData.getSamplingList().size());

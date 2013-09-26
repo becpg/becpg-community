@@ -3,29 +3,21 @@
  */
 package fr.becpg.repo.product.data;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.collections.CollectionUtils;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.product.ProductVisitor;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
-import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -33,295 +25,182 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.formulation.FormulateException;
+import fr.becpg.repo.repository.annotation.AlfMlText;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
+import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfReadOnly;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.annotation.DataListView;
+import fr.becpg.repo.repository.filters.DataListFilter;
+import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
+import fr.becpg.repo.variant.model.VariantData;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class ProductData.
- *
- * @author querephi
- */
-public class ProductData extends AbstractEffectiveDataItem implements ProductElement {
-	
-	/** The node ref. */
-	private NodeRef nodeRef;
-	
-	/** The version label. */
-	private String versionLabel;
-	
-	/** The hierarchy1. */
+
+public class ProductData extends AbstractEffectiveDataItem {
+
 	private NodeRef hierarchy1;
-	
-	/** The hierarchy2. */
 	private NodeRef hierarchy2;
-	
-	/** The name. */
-	private String name;
-	
-	/** The legal name. */
 	private MLText legalName;
-	
-	/** The title. */
-	private String title;	
-	
-	/** The state. */
+	private String title;
 	private SystemState state = SystemState.ToValidate;
-	
-	/** The unit. */
-	private ProductUnit unit = ProductUnit.kg;	
-	
+	private ProductUnit unit = ProductUnit.kg;
+	private NodeRef entityTplRef;
+
 	/*
 	 * Transformable properties
 	 */
 	private Double qty;
 	private Double density;
 	private Double yield;
-	
+	private Double yieldVolume;
+	private Double netWeight;
+
 	/*
 	 * Profitability properties
 	 */
-	private Double unitTotalCost;	
-	private Double unitPrice;	
-	private Double profitability;	
+	private Double unitTotalCost;
+	private Double unitPrice;
+	private Double profitability;
 	private Long breakEven;
-	
-	/** The lists container. */
-	private NodeRef listsContainer;
-	
-	/** The allergen list. */
+
+	/*
+	 * DataList
+	 */
 	private List<AllergenListDataItem> allergenList;
-	
-	/** The compo list. */
-	private List<CompoListDataItem> compoList;
-
-	/** The dynamicCharactList*/
-	private List<DynamicCharactListItem> dynamicCharactList;
-	
-	/** The cost list. */
-	private List<CostListDataItem> costList;	
-	
+	private List<CostListDataItem> costList;
 	private List<PriceListDataItem> priceList;
-	
-	/** The ing list. */
 	private List<IngListDataItem> ingList;
-	
-	/** The nut list. */
 	private List<NutListDataItem> nutList;
-	
-	/** The organo list. */
-	private List<OrganoListDataItem> organoList;	
-	
-	/** The ing labeling list. */
-	private List<IngLabelingListDataItem> ingLabelingList;
-	
-	/** The microbio list. */
-	private List<MicrobioListDataItem> microbioList;
-	
-	/** The physico chem list. */
-	private List<PhysicoChemListDataItem> physicoChemList;
-	
-	private List<PackagingListDataItem> packagingList;
-	
-	private List<ForbiddenIngListDataItem> forbiddenIngList;
-	
-	private List<ReqCtrlListDataItem> reqCtrlList;
-	
-	private List<ProcessListDataItem> processList;
+	private List<OrganoListDataItem> organoList;
 
-	/**
-	 * Gets the node ref.
-	 *
-	 * @return the node ref
+	private List<MicrobioListDataItem> microbioList;
+	private List<PhysicoChemListDataItem> physicoChemList;
+	private List<ForbiddenIngListDataItem> forbiddenIngList;
+	private List<LabelClaimListDataItem> labelClaimList;
+	/*
+	 * View
 	 */
-	public NodeRef getNodeRef() {
-		return nodeRef;
+	private CompoListView compoListView = new CompoListView();
+	private ProcessListView processListView = new ProcessListView();
+	private PackagingListView packagingListView = new PackagingListView();
+
+	private LabelingListView labelingListView = new LabelingListView();
+	
+	/*
+	 * Variants
+	 */
+	
+	private List<VariantData> variants;
+
+	@AlfMultiAssoc(isChildAssoc=true, isEntity=true)
+	@AlfQname(qname="bcpg:variants")
+	@AlfReadOnly
+	public List<VariantData> getVariants() {
+		return variants;
+	}
+
+	public void setVariants(List<VariantData> variants) {
+		this.variants = variants;
 	}
 	
-	/**
-	 * Sets the node ref.
-	 *
-	 * @param nodeRef the new node ref
-	 */
-	public void setNodeRef(NodeRef nodeRef) {
-		this.nodeRef = nodeRef;
-	}
-	
-	/**
-	 * Gets the hierarchy1.
-	 *
-	 * @return the hierarchy1
-	 */
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:productHierarchy1")
 	public NodeRef getHierarchy1() {
 		return hierarchy1;
 	}
-	
-	/**
-	 * Sets the hierarchy1.
-	 *
-	 * @param hierarchy1 the new hierarchy1
-	 */
+
 	public void setHierarchy1(NodeRef hierarchy1) {
 		this.hierarchy1 = hierarchy1;
 	}
-	
-	/**
-	 * Gets the hierarchy2.
-	 *
-	 * @return the hierarchy2
-	 */
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:productHierarchy2")
 	public NodeRef getHierarchy2() {
 		return hierarchy2;
 	}
-	
-	/**
-	 * Sets the hierarchy2.
-	 *
-	 * @param hierarchy2 the new hierarchy2
-	 */
+
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
-	
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * Sets the name.
-	 *
-	 * @param name the new name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/**
-	 * Gets the version label.
-	 *
-	 * @return the version label
-	 */
-	public String getVersionLabel() {
-		return versionLabel;
-	}
-	
-	/**
-	 * Gets the legal name.
-	 *
-	 * @return the legal name
-	 */
+
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "bcpg:legalName")
 	public MLText getLegalName() {
 		return legalName;
 	}
-	
-	/**
-	 * Sets the legal name.
-	 *
-	 * @param legalName the new legal name
-	 */
+
 	public void setLegalName(MLText legalName) {
 		this.legalName = legalName;
 	}
-	
+
 	public void setLegalName(String legalName) {
 		this.legalName = new MLText(legalName);
 	}
-	
-	/**
-	 * Gets the title.
-	 *
-	 * @return the title
-	 */
+
+	@AlfProp
+	@AlfQname(qname = "cm:title")
 	public String getTitle() {
 		return title;
 	}
-	
-	/**
-	 * Sets the title.
-	 *
-	 * @param title the new title
-	 */
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
-	/**
-	 * Gets the state.
-	 *
-	 * @return the state
-	 */
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:productState")
 	public SystemState getState() {
 		return state;
 	}
-	
-	/**
-	 * Sets the state.
-	 *
-	 * @param state the new state
-	 */
+
 	public void setState(SystemState state) {
 		this.state = state;
 	}
-	
-	/**
-	 * Gets the unit.
-	 *
-	 * @return the unit
-	 */
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:productUnit")
 	public ProductUnit getUnit() {
 		return unit;
 	}
-	
-	/**
-	 * Sets the unit.
-	 *
-	 * @param unit the new unit
-	 */
+
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
-	}	
-	
-	/**
-	 * Gets the qty.
-	 *
-	 * @return the qty
-	 */
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:entityTplRef")
+	public NodeRef getEntityTplRef() {
+		return entityTplRef;
+	}
+
+	public void setEntityTplRef(NodeRef entityTplRef) {
+		this.entityTplRef = entityTplRef;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {
 		return qty;
 	}
-	
-	/**
-	 * Sets the qty.
-	 *
-	 * @param qty the new qty
-	 */
+
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
-	
-	/**
-	 * Gets the density.
-	 *
-	 * @return the density
-	 */
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:productDensity")
 	public Double getDensity() {
 		return density;
 	}
-	
-	/**
-	 * Sets the density.
-	 *
-	 * @param density the new density
-	 */
+
 	public void setDensity(Double density) {
 		this.density = density;
 	}
-	
+
 	public Double getYield() {
 		return yield;
 	}
@@ -329,7 +208,27 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 	public void setYield(Double yield) {
 		this.yield = yield;
 	}
+	
+	public Double getYieldVolume() {
+		return yieldVolume;
+	}
 
+	public void setYieldVolume(Double yieldVolume) {
+		this.yieldVolume = yieldVolume;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:netWeight")
+	public Double getNetWeight() {
+		return netWeight;
+	}
+
+	public void setNetWeight(Double netWeight) {
+		this.netWeight = netWeight;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:unitTotalCost")
 	public Double getUnitTotalCost() {
 		return unitTotalCost;
 	}
@@ -338,6 +237,8 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 		this.unitTotalCost = unitTotalCost;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:unitPrice")
 	public Double getUnitPrice() {
 		return unitPrice;
 	}
@@ -346,6 +247,8 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 		this.unitPrice = unitPrice;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:profitability")
 	public Double getProfitability() {
 		return profitability;
 	}
@@ -354,6 +257,8 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 		this.profitability = profitability;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:breakEven")
 	public Long getBreakEven() {
 		return breakEven;
 	}
@@ -361,132 +266,29 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 	public void setBreakEven(Long breakEven) {
 		this.breakEven = breakEven;
 	}
-	
-	/**
-	 * Gets the lists container.
-	 *
-	 * @return the lists container
-	 */
-	public NodeRef getListsContainer() {
-		return listsContainer;
-	}
-	
-	/**
-	 * Sets the lists container.
-	 *
-	 * @param ListsContainer the new lists container
-	 */
-	public void setListsContainer(NodeRef listsContainer) {
-		this.listsContainer = listsContainer;
-	}	
-	
-	/**
-	 * Gets the allergen list.
-	 *
-	 * @return the allergen list
-	 */
+
+	@DataList
+	@AlfQname(qname = "bcpg:allergenList")
 	public List<AllergenListDataItem> getAllergenList() {
 		return allergenList;
 	}
-	
-	/**
-	 * Sets the allergen list.
-	 *
-	 * @param allergenList the new allergen list
-	 */
+
 	public void setAllergenList(List<AllergenListDataItem> allergenList) {
 		this.allergenList = allergenList;
 	}
-	
-	/**
-	 * Gets the compo list.
-	 *
-	 * @return the compo list
-	 */
-	
 
-	public List<CompoListDataItem> getCompoList() {
-		return compoList;
-	}
-
-	public List<PackagingListDataItem> getPackagingList() {
-		return packagingList;
-	}
-
-	public List<ProcessListDataItem> getProcessList() {
-		return processList;
-	}
-	
-	
-	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData> filter) {
-		if(compoList!=null){
-			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoList);
-			CollectionUtils.filter(ret, filter.createPredicate(this));
-			return ret;
-		}
-		return compoList;
-	}
-	
-
-	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData> filter) {
-		if(packagingList!=null){
-			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingList);
-			CollectionUtils.filter(ret, filter.createPredicate(this));
-			return ret;
-		}
-		return packagingList;
-	}
-	
-
-	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData> filter) {
-		if(processList!=null){
-			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processList);
-			CollectionUtils.filter(ret, filter.createPredicate(this));
-			return ret;
-		}
-		return processList;
-	}
-	
-	
-	public boolean hasCompoListEl(DataListFilter<ProductData> filter) {
-		return compoList!=null && getCompoList(filter).size()>0;
-	}
-
-	public boolean hasPackagingListEl(DataListFilter<ProductData> filter) {
-		return packagingList!=null && getPackagingList(filter).size()>0;
-	}
-
-	public boolean hasProcessListEl(DataListFilter<ProductData> filter) {
-		return processList!=null && getProcessList(filter).size()>0;
-	}			
-	
-	/**
-	 * Sets the compo list.
-	 *
-	 * @param compoList the new compo list
-	 */
-	public void setCompoList(List<CompoListDataItem> compoList) {
-		this.compoList = compoList;
-	}
-	
-	/**
-	 * Gets the cost list.
-	 *
-	 * @return the cost list
-	 */
+	@DataList
+	@AlfQname(qname = "bcpg:costList")
 	public List<CostListDataItem> getCostList() {
 		return costList;
 	}
-	
-	/**
-	 * Sets the cost list.
-	 *
-	 * @param costList the new cost list
-	 */
+
 	public void setCostList(List<CostListDataItem> costList) {
 		this.costList = costList;
 	}
-	
+
+	@DataList
+	@AlfQname(qname = "bcpg:priceList")
 	public List<PriceListDataItem> getPriceList() {
 		return priceList;
 	}
@@ -495,119 +297,60 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 		this.priceList = priceList;
 	}
 
-	/**
-	 * Gets the ing list.
-	 *
-	 * @return the ing list
-	 */
+	@DataList
+	@AlfQname(qname = "bcpg:ingList")
 	public List<IngListDataItem> getIngList() {
 		return ingList;
 	}
-	
-	/**
-	 * Sets the ing list.
-	 *
-	 * @param ingList the new ing list
-	 */
+
 	public void setIngList(List<IngListDataItem> ingList) {
 		this.ingList = ingList;
 	}
-	
-	/**
-	 * Gets the nut list.
-	 *
-	 * @return the nut list
-	 */
+
+	@DataList
+	@AlfQname(qname = "bcpg:nutList")
 	public List<NutListDataItem> getNutList() {
 		return nutList;
 	}
-	
-	/**
-	 * Sets the nut list.
-	 *
-	 * @param nutList the new nut list
-	 */
+
 	public void setNutList(List<NutListDataItem> nutList) {
 		this.nutList = nutList;
 	}
-	
-	/**
-	 * Gets the organo list.
-	 *
-	 * @return the organo list
-	 */
+
+	@DataList
+	@AlfQname(qname = "bcpg:organoList")
 	public List<OrganoListDataItem> getOrganoList() {
 		return organoList;
 	}
-	
-	/**
-	 * Sets the organo list.
-	 *
-	 * @param organoList the new organo list
-	 */
+
 	public void setOrganoList(List<OrganoListDataItem> organoList) {
 		this.organoList = organoList;
 	}
-	
-	/**
-	 * Gets the ing labeling list.
-	 *
-	 * @return the ing labeling list
-	 */
-	public List<IngLabelingListDataItem> getIngLabelingList() {
-		return ingLabelingList;
-	}
-	
-	/**
-	 * Sets the ing labeling list.
-	 *
-	 * @param ingLabelingList the new ing labeling list
-	 */
-	public void setIngLabelingList(List<IngLabelingListDataItem> ingLabelingList) {
-		this.ingLabelingList = ingLabelingList;
-	}
-	
-	/**
-	 * Gets the microbio list.
-	 *
-	 * @return the microbio list
-	 */
+
+
+
+	@DataList
+	@AlfQname(qname = "bcpg:microbioList")
 	public List<MicrobioListDataItem> getMicrobioList() {
 		return microbioList;
 	}
-	
-	/**
-	 * Sets the microbio list.
-	 *
-	 * @param microbioList the new microbio list
-	 */
+
 	public void setMicrobioList(List<MicrobioListDataItem> microbioList) {
 		this.microbioList = microbioList;
 	}
-	
-	/**
-	 * Gets the physico chem list.
-	 *
-	 * @return the physico chem list
-	 */
+
+	@DataList
+	@AlfQname(qname = "bcpg:physicoChemList")
 	public List<PhysicoChemListDataItem> getPhysicoChemList() {
 		return physicoChemList;
 	}
-	
-	/**
-	 * Sets the physico chem list.
-	 *
-	 * @param physicoChemList the new physico chem list
-	 */
+
 	public void setPhysicoChemList(List<PhysicoChemListDataItem> physicoChemList) {
 		this.physicoChemList = physicoChemList;
 	}
-	
 
-	public void setPackagingList(List<PackagingListDataItem> packagingList) {
-		this.packagingList = packagingList;
-	}
-	
+	@DataList
+	@AlfQname(qname = "bcpg:forbiddenIngList")
 	public List<ForbiddenIngListDataItem> getForbiddenIngList() {
 		return forbiddenIngList;
 	}
@@ -615,250 +358,179 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 	public void setForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
 		this.forbiddenIngList = forbiddenIngList;
 	}
-
-	public List<ReqCtrlListDataItem> getReqCtrlList() {
-		return reqCtrlList;
+	@DataList
+	@AlfQname(qname="bcpg:labelClaimList")
+	public List<LabelClaimListDataItem> getLabelClaimList() {
+		return labelClaimList;
 	}
 
-	public void setReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
-		this.reqCtrlList = reqCtrlList;
+	public void setLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
+		this.labelClaimList = labelClaimList;
+	}
+	
+	
+	@DataListView
+	@AlfQname(qname = "bcpg:ingLabelingList")
+	public LabelingListView getLabelingListView() {
+		return labelingListView;
 	}
 
-
-	public void setProcessList(List<ProcessListDataItem> processList) {
-		this.processList = processList;
+	public void setLabelingListView(LabelingListView labelingListView) {
+		this.labelingListView = labelingListView;
 	}
 
-
-	public List<DynamicCharactListItem> getDynamicCharactList() {
-		return dynamicCharactList;
+	@DataListView
+	@AlfQname(qname = "bcpg:compoList")
+	public CompoListView getCompoListView() {
+		return compoListView;
 	}
 
-	public void setDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList) {
-		this.dynamicCharactList = dynamicCharactList;
+	
+	@SuppressWarnings("unchecked")
+	public  List<CompoListDataItem> getCompoList( DataListFilter<ProductData>... filters) {
+		if (compoListView != null && compoListView.getCompoList() != null) {
+			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
+			if (filters != null) {
+				for (DataListFilter<ProductData> filter : filters) {
+					CollectionUtils.filter(ret, filter.createPredicate(this));
+				}
+			}
+			return ret;
+		}
+		return null;
 	}
 
-	/**
-	 * Instantiates a new product data.
-	 */
-	public ProductData()
-	{
+	@SuppressWarnings("unchecked")
+	public  boolean hasCompoListEl(DataListFilter<ProductData>... filters) {
+		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
+
+	public void setCompoListView(CompoListView compoListView) {
+		this.compoListView = compoListView;
+	}
+
+	@DataListView
+	@AlfQname(qname = "mpm:processList")
+	public ProcessListView getProcessListView() {
+		return processListView;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData>... filters) {
+		if (processListView != null && processListView.getProcessList() != null) {
+			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
+			if (filters != null) {
+				for (DataListFilter<ProductData> filter : filters) {
+					CollectionUtils.filter(ret, filter.createPredicate(this));
+				}
+			}
+			return ret;
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean hasProcessListEl(DataListFilter<ProductData>... filters) {
+		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
+	}
+
+	public void setProcessListView(ProcessListView processListView) {
+		this.processListView = processListView;
+	}
+
+	@DataListView
+	@AlfQname(qname = "bcpg:packagingList")
+	public PackagingListView getPackagingListView() {
+		return packagingListView;
+	}
+
+	@SuppressWarnings("unchecked")
+	public  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
+		if (packagingListView != null && packagingListView.getPackagingList() != null) {
+			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
+			if (filters != null) {
+				for (DataListFilter<ProductData> filter : filters) {
+					CollectionUtils.filter(ret, filter.createPredicate(this));
+				}
+			}
+			return ret;
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean hasPackagingListEl(DataListFilter<ProductData>... filters) {
+		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
+	}
+
+	public void setPackagingListView(PackagingListView packagingListView) {
+		this.packagingListView = packagingListView;
+	}
+
+	
+
+	public List<AbstractProductDataView> getViews() {
+		return Arrays.asList(compoListView, packagingListView, processListView);
+	}
+	
+	public boolean isLiquid(){
+		return unit!=null && (unit == ProductUnit.L || unit == ProductUnit.mL);
+	}
+	
 	
 	/**
 	 * Instantiates a new product data.
-	 *
-	 * @param productData the product data
 	 */
-	public ProductData(ProductData productData){
-		
-		nodeRef = productData.getNodeRef();
-		setProperties(productData.getProperties());
-		
-		copyDataLists(productData);		
+	public ProductData() {
+		super();
 	}
-	
-	/**
-	 * Gets the system state.
-	 *
-	 * @param systemState the system state
-	 * @return the system state
-	 */
-	public static SystemState getSystemState(String systemState) {
-		
-		return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
-	}
-		
-	/**
-	 * Gets the properties.
-	 *
-	 * @return the properties
-	 */
-	public Map<QName, Serializable> getProperties(){
-		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, this.getName());
-		//properties.put(ContentModel.PROP_VERSION_LABEL, this.getVersionLabel()); alfresco system property, don't manage it for edition
-		properties.put(ContentModel.PROP_TITLE, this.getTitle());	
-		properties.put(BeCPGModel.PROP_PRODUCT_LEGALNAME, this.getLegalName());
-		properties.put(BeCPGModel.PROP_PRODUCT_HIERARCHY1, this.getHierarchy1());
-		properties.put(BeCPGModel.PROP_PRODUCT_HIERARCHY2, this.getHierarchy2());
-		properties.put(BeCPGModel.PROP_PRODUCT_STATE, this.getState().toString());		
-		properties.put(BeCPGModel.PROP_PRODUCT_UNIT, this.getUnit().toString());
-		properties.put(BeCPGModel.PROP_PRODUCT_QTY, this.getQty());
-		properties.put(BeCPGModel.PROP_PRODUCT_DENSITY, this.getDensity());		
-		properties.put(BeCPGModel.PROP_UNIT_TOTAL_COST, this.getUnitTotalCost());
-		properties.put(BeCPGModel.PROP_UNIT_PRICE, this.getUnitPrice());
-		properties.put(BeCPGModel.PROP_PROFITABILITY, this.getProfitability());
-		properties.put(BeCPGModel.PROP_BREAK_EVEN, this.getBreakEven());
-		properties.put(BeCPGModel.PROP_START_EFFECTIVITY, this.getStartEffectivity());
-		properties.put(BeCPGModel.PROP_END_EFFECTIVITY, this.getEndEffectivity());
-		
-		return properties;
-	}
-	
-	/**
-	 * Sets the properties.
-	 *
-	 * @param properties the properties
-	 */
-	public void setProperties(Map<QName, Serializable> properties){
-		
-		this.setHierarchy1((NodeRef)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY1));
-		this.setHierarchy2((NodeRef)properties.get(BeCPGModel.PROP_PRODUCT_HIERARCHY2));
-		this.setName((String)properties.get(ContentModel.PROP_NAME));
-		this.versionLabel = (String)properties.get(ContentModel.PROP_VERSION_LABEL);
-		// need to call mlNodeService if we want MLText
-		this.setLegalName((String)properties.get(BeCPGModel.PROP_PRODUCT_LEGALNAME));
-    	this.setTitle((String)properties.get(ContentModel.PROP_TITLE));
-    	SystemState systemState = getSystemState((String)properties.get(BeCPGModel.PROP_PRODUCT_STATE));
-    	this.setState(systemState);    	
-    	String strProductUnit = (String)properties.get(BeCPGModel.PROP_PRODUCT_UNIT);  
-    	this.setUnit(ProductUnit.getUnit(strProductUnit));    	    	
-    	this.setQty((Double)properties.get(BeCPGModel.PROP_PRODUCT_QTY));
-    	this.setDensity((Double)properties.get(BeCPGModel.PROP_PRODUCT_DENSITY));    	
-    	this.setUnitTotalCost((Double)properties.get(BeCPGModel.PROP_UNIT_TOTAL_COST));
-    	this.setUnitPrice((Double)properties.get(BeCPGModel.PROP_UNIT_PRICE));
-    	this.setProfitability((Double)properties.get(BeCPGModel.PROP_PROFITABILITY));
-    	this.setBreakEven((Long)properties.get(BeCPGModel.PROP_BREAK_EVEN));	
-    	this.setStartEffectivity((Date)properties.get(BeCPGModel.PROP_START_EFFECTIVITY));
-    	this.setEndEffectivity((Date)properties.get(BeCPGModel.PROP_END_EFFECTIVITY));
-	}	
-	
-	/**
-	 * Copy data lists.
-	 *
-	 * @param productData the product data
-	 */
-	public void copyDataLists(ProductData productData){
-		
-		if(productData.getAllergenList() != null){
-			allergenList = new ArrayList<AllergenListDataItem>(productData.getAllergenList());
-			for(AllergenListDataItem a : productData.getAllergenList()){
-				allergenList.add(new AllergenListDataItem(a));
-			}
-		}
-		
-		if(productData.getCompoList() != null){
-			compoList = new ArrayList<CompoListDataItem>(productData.getCompoList());
-			for(CompoListDataItem c : productData.getCompoList()){
-				compoList.add(new CompoListDataItem(c));
-			}
-		}
-		
-		if(productData.getDynamicCharactList() != null){
-			dynamicCharactList = new ArrayList<DynamicCharactListItem>(productData.getDynamicCharactList());
-			for(DynamicCharactListItem c : productData.getDynamicCharactList()){
-				dynamicCharactList.add(new DynamicCharactListItem(c));
-			}
-		}
-		
-		
-		if(productData.getCostList() != null){
-			costList = new ArrayList<CostListDataItem>(productData.getCostList());
-			for(CostListDataItem c : productData.getCostList()){
-				costList.add(new CostListDataItem(c));
-			}
-		}
-		
-		if(productData.getIngList() != null){
-			ingList = new ArrayList<IngListDataItem>(productData.getIngList());
-			for(IngListDataItem i : productData.getIngList()){
-				ingList.add(new IngListDataItem(i));
-			}
-		}
-		
-		if(productData.getNutList() != null){
-			nutList = new ArrayList<NutListDataItem>(productData.getNutList());
-			for(NutListDataItem n : productData.getNutList()){
-				nutList.add(new NutListDataItem(n));
-			}	
-		}
-			
-		if(productData.getOrganoList() != null){
-			organoList = new ArrayList<OrganoListDataItem>(productData.getOrganoList());
-			for(OrganoListDataItem o : productData.getOrganoList()){
-				organoList.add(new OrganoListDataItem(o));
-			}
-		}		
-		
-		if(productData.getIngLabelingList() != null){
-			setIngLabelingList(productData.getIngLabelingList());
-			ingLabelingList = new ArrayList<IngLabelingListDataItem>(productData.getIngLabelingList());
-			for(IngLabelingListDataItem i  : productData.getIngLabelingList()){
-				ingLabelingList.add(new IngLabelingListDataItem(i));
-			}
-		}
-		
-		if(productData.getMicrobioList() != null){
-			setMicrobioList(productData.getMicrobioList());
-			microbioList = new ArrayList<MicrobioListDataItem>(productData.getMicrobioList());
-			for(MicrobioListDataItem m : productData.getMicrobioList()){
-				microbioList.add(new MicrobioListDataItem(m));
-			}
-		}
-		
-		if(productData.getPhysicoChemList() != null){
-			setPhysicoChemList(productData.getPhysicoChemList());
-			physicoChemList = new ArrayList<PhysicoChemListDataItem>(productData.getPhysicoChemList());
-			for(PhysicoChemListDataItem p : productData.getPhysicoChemList()){
-				physicoChemList.add(new PhysicoChemListDataItem(p));
-			}
-		}
-		
-		if(productData.getProcessList() != null){
-			setProcessList(productData.getProcessList());
-			processList = new ArrayList<ProcessListDataItem>(productData.getProcessList());
-			for(ProcessListDataItem p : productData.getProcessList()){
-				processList.add(new ProcessListDataItem(p));
-			}
-		}
-	}	
-	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.food.ProductElement#accept(fr.becpg.repo.product.ProductVisitor)
-	 */
+
 	@Override
-	public void accept(ProductVisitor productVisitor) throws FormulateException {
-		this.accept(productVisitor);
-	}	
+	public String toString() {
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
+				+ ", entityTplRef=" + entityTplRef + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
+				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList="
+				+ allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList
+				+ ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", labelClaimList=" + labelClaimList
+				+ ", compoListView=" + compoListView + ", processListView=" + processListView + ", packagingListView=" + packagingListView + ", labelingListView="
+				+ labelingListView + ", variants=" + variants + "]";
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
-		result = prime * result + ((compoList == null) ? 0 : compoList.hashCode());
+		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
-		result = prime * result + ((dynamicCharactList == null) ? 0 : dynamicCharactList.hashCode());
+		result = prime * result + ((entityTplRef == null) ? 0 : entityTplRef.hashCode());
 		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
-		result = prime * result + ((ingLabelingList == null) ? 0 : ingLabelingList.hashCode());
 		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
+		result = prime * result + ((labelClaimList == null) ? 0 : labelClaimList.hashCode());
+		result = prime * result + ((labelingListView == null) ? 0 : labelingListView.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
-		result = prime * result + ((listsContainer == null) ? 0 : listsContainer.hashCode());
 		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
 		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
 		result = prime * result + ((organoList == null) ? 0 : organoList.hashCode());
-		result = prime * result + ((packagingList == null) ? 0 : packagingList.hashCode());
+		result = prime * result + ((packagingListView == null) ? 0 : packagingListView.hashCode());
 		result = prime * result + ((physicoChemList == null) ? 0 : physicoChemList.hashCode());
 		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
-		result = prime * result + ((processList == null) ? 0 : processList.hashCode());
+		result = prime * result + ((processListView == null) ? 0 : processListView.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
-		result = prime * result + ((reqCtrlList == null) ? 0 : reqCtrlList.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
 		result = prime * result + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
-		result = prime * result + ((versionLabel == null) ? 0 : versionLabel.hashCode());
+		result = prime * result + ((variants == null) ? 0 : variants.hashCode());
 		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
+		result = prime * result + ((yieldVolume == null) ? 0 : yieldVolume.hashCode());
 		return result;
 	}
 
@@ -866,7 +538,7 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -881,11 +553,11 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 				return false;
 		} else if (!breakEven.equals(other.breakEven))
 			return false;
-		if (compoList == null) {
-			if (other.compoList != null)
+		if (compoListView == null) {
+			if (other.compoListView != null)
 				return false;
-		} else if (!compoList.equals(other.compoList))
-			return false;		
+		} else if (!compoListView.equals(other.compoListView))
+			return false;
 		if (costList == null) {
 			if (other.costList != null)
 				return false;
@@ -896,10 +568,10 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 				return false;
 		} else if (!density.equals(other.density))
 			return false;
-		if (dynamicCharactList == null) {
-			if (other.dynamicCharactList != null)
+		if (entityTplRef == null) {
+			if (other.entityTplRef != null)
 				return false;
-		} else if (!dynamicCharactList.equals(other.dynamicCharactList))
+		} else if (!entityTplRef.equals(other.entityTplRef))
 			return false;
 		if (forbiddenIngList == null) {
 			if (other.forbiddenIngList != null)
@@ -916,40 +588,35 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 				return false;
 		} else if (!hierarchy2.equals(other.hierarchy2))
 			return false;
-		if (ingLabelingList == null) {
-			if (other.ingLabelingList != null)
-				return false;
-		} else if (!ingLabelingList.equals(other.ingLabelingList))
-			return false;
 		if (ingList == null) {
 			if (other.ingList != null)
 				return false;
 		} else if (!ingList.equals(other.ingList))
+			return false;
+		if (labelClaimList == null) {
+			if (other.labelClaimList != null)
+				return false;
+		} else if (!labelClaimList.equals(other.labelClaimList))
+			return false;
+		if (labelingListView == null) {
+			if (other.labelingListView != null)
+				return false;
+		} else if (!labelingListView.equals(other.labelingListView))
 			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
 		} else if (!legalName.equals(other.legalName))
 			return false;
-		if (listsContainer == null) {
-			if (other.listsContainer != null)
-				return false;
-		} else if (!listsContainer.equals(other.listsContainer))
-			return false;
 		if (microbioList == null) {
 			if (other.microbioList != null)
 				return false;
 		} else if (!microbioList.equals(other.microbioList))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (netWeight == null) {
+			if (other.netWeight != null)
 				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
+		} else if (!netWeight.equals(other.netWeight))
 			return false;
 		if (nutList == null) {
 			if (other.nutList != null)
@@ -961,10 +628,10 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 				return false;
 		} else if (!organoList.equals(other.organoList))
 			return false;
-		if (packagingList == null) {
-			if (other.packagingList != null)
+		if (packagingListView == null) {
+			if (other.packagingListView != null)
 				return false;
-		} else if (!packagingList.equals(other.packagingList))
+		} else if (!packagingListView.equals(other.packagingListView))
 			return false;
 		if (physicoChemList == null) {
 			if (other.physicoChemList != null)
@@ -976,10 +643,10 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 				return false;
 		} else if (!priceList.equals(other.priceList))
 			return false;
-		if (processList == null) {
-			if (other.processList != null)
+		if (processListView == null) {
+			if (other.processListView != null)
 				return false;
-		} else if (!processList.equals(other.processList))
+		} else if (!processListView.equals(other.processListView))
 			return false;
 		if (profitability == null) {
 			if (other.profitability != null)
@@ -990,11 +657,6 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 			if (other.qty != null)
 				return false;
 		} else if (!qty.equals(other.qty))
-			return false;
-		if (reqCtrlList == null) {
-			if (other.reqCtrlList != null)
-				return false;
-		} else if (!reqCtrlList.equals(other.reqCtrlList))
 			return false;
 		if (state != other.state)
 			return false;
@@ -1015,32 +677,23 @@ public class ProductData extends AbstractEffectiveDataItem implements ProductEle
 				return false;
 		} else if (!unitTotalCost.equals(other.unitTotalCost))
 			return false;
-		if (versionLabel == null) {
-			if (other.versionLabel != null)
+		if (variants == null) {
+			if (other.variants != null)
 				return false;
-		} else if (!versionLabel.equals(other.versionLabel))
+		} else if (!variants.equals(other.variants))
 			return false;
 		if (yield == null) {
 			if (other.yield != null)
 				return false;
 		} else if (!yield.equals(other.yield))
 			return false;
+		if (yieldVolume == null) {
+			if (other.yieldVolume != null)
+				return false;
+		} else if (!yieldVolume.equals(other.yieldVolume))
+			return false;
 		return true;
 	}
-
-	@Override
-	public String toString() {
-		return "ProductData [nodeRef=" + nodeRef + ", versionLabel=" + versionLabel + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", name=" + name
-				+ ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
-				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", listsContainer="
-				+ listsContainer + ", allergenList=" + allergenList + ", compoList=" + compoList + ", dynamicCharactList=" + dynamicCharactList + ", costList=" + costList
-				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList
-				+ ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", packagingList=" + packagingList + ", forbiddenIngList=" + forbiddenIngList
-				+ ", reqCtrlList=" + reqCtrlList + ", processList=" + processList + ", getStartEffectivity()=" + getStartEffectivity() + ", getEndEffectivity()="
-				+ getEndEffectivity() + "]";
-	}
-
-
 
 
 }

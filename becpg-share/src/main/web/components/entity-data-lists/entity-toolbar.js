@@ -1,105 +1,107 @@
-
 /**
- * Entity Data Lists: EntityDataListToolbar component.
- * 
- * Displays a list of EntityDataListToolbar
+ * Entity Data Lists: EntityDataListToolbar component. Displays a list of EntityDataListToolbar
  * 
  * @namespace beCPG
  * @class beCPG.component.EntityDataListToolbar
  */
 (function() {
-	/**
-	 * YUI Library aliases
-	 */
-	var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
+   /**
+    * YUI Library aliases
+    */
+   var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
 
-	/**
-	 * EntityDataListToolbar constructor.
-	 * 
-	 * @param htmlId
-	 *           {String} The HTML id of the parent element
-	 * @return {beCPG.component.EntityDataListToolbar} The new
-	 *         EntityDataListToolbar instance
-	 * @constructor
-	 */
-	beCPG.component.EntityDataListToolbar = function(htmlId) {
+   /**
+    * EntityDataListToolbar constructor.
+    * 
+    * @param htmlId
+    *            {String} The HTML id of the parent element
+    * @return {beCPG.component.EntityDataListToolbar} The new EntityDataListToolbar instance
+    * @constructor
+    */
+   beCPG.component.EntityDataListToolbar = function(htmlId) {
 
-		beCPG.component.EntityDataListToolbar.superclass.constructor.call(this, "beCPG.component.EntityDataListToolbar",
-		      htmlId, [ "button", "container" ]);
-		
-		// Initialise prototype properties
-		this.toolbarButtonActions = {};
+      beCPG.component.EntityDataListToolbar.superclass.constructor.call(this, "beCPG.component.EntityDataListToolbar",
+            htmlId, [ "button", "container" ]);
 
-		// Renderers
-		Bubbling.on("registerToolbarButtonAction", this.onRegisterToolbarButtonAction, this);
-		
-		Bubbling.on("activeDataListChanged", this.onActiveDataListChanged, this);
+      // Initialise prototype properties
+      this.toolbarButtonActions = {};
+      
+      this.widgets.actionButtons = {};
 
-		/* Deferred list population until DOM ready */
-		this.deferredToolbarPopulation = new Alfresco.util.Deferred([ "onReady", "onActiveDataListChanged" ], {
-		   fn : this.populateToolbar,
-		   scope : this
-		});
-		
-		return this;
-	};
+      // Renderers
+      Bubbling.on("registerToolbarButtonAction", this.onRegisterToolbarButtonAction, this);
 
-	/**
-	 * Extend from Alfresco.component.Base
-	 */
-	YAHOO.extend(beCPG.component.EntityDataListToolbar, Alfresco.component.Base);
+      Bubbling.on("activeDataListChanged", this.onActiveDataListChanged, this);
 
-	/**
-	 * Augment prototype with main class implementation, ensuring overwrite is
-	 * enabled
-	 */
-	YAHOO.lang.augmentObject(beCPG.component.EntityDataListToolbar.prototype, {
-	   /**
-		 * Object container for initialization options
-		 * 
-		 * @property options
-		 * @type object
-		 */
-	   options : {
-	      /**
-			 * Current siteId.
-			 * 
-			 * @property siteId
-			 * @type string
-			 * @default ""
-			 */
-	      siteId : "",
+      /* Deferred list population until DOM ready */
+      this.deferredToolbarPopulation = new Alfresco.util.Deferred([ "onReady", "onActiveDataListChanged" ], {
+         fn : this.populateToolbar,
+         scope : this
+      });
 
-	      /**
-			 * Current entityNodeRef.
-			 * 
-			 * @property entityNodeRef
-			 * @type string
-			 * @default ""
-			 */
-	      entityNodeRef : ""
-	   },
+      return this;
+   };
 
-	   /**
-		 * Register a toolbar button action via Bubbling event
-		 * 
-		 */
-	   onRegisterToolbarButtonAction : function EntityDataListToolbar_onRegisterToolbarButtonAction(layer, args) {
-		   var obj = args[1];
-		   if (obj && obj.actionName) {
-		   	 this.toolbarButtonActions[obj.actionName] = obj;
-		   } 
-	   },
-	   
-	   /**
-	    * Append toolbar buttons
-	    */
-	   onActiveDataListChanged : function EntityDataListToolbar_onRegisterToolbarButtonAction(layer, args) {
-	      var obj = args[1];
+   /**
+    * Extend from Alfresco.component.Base
+    */
+   YAHOO.extend(beCPG.component.EntityDataListToolbar, Alfresco.component.Base);
+
+   /**
+    * Augment prototype with main class implementation, ensuring overwrite is enabled
+    */
+   YAHOO.lang.augmentObject(beCPG.component.EntityDataListToolbar.prototype, {
+
+      /**
+       * Current entity
+       */
+      entity : null,
+      /**
+       * Object container for initialization options
+       * 
+       * @property options
+       * @type object
+       */
+      options : {
+         /**
+          * Current siteId.
+          * 
+          * @property siteId
+          * @type string
+          * @default ""
+          */
+         siteId : "",
+
+         /**
+          * Current entityNodeRef.
+          * 
+          * @property entityNodeRef
+          * @type string
+          * @default ""
+          */
+         entityNodeRef : ""
+      },
+
+      /**
+       * Register a toolbar button action via Bubbling event
+       */
+      onRegisterToolbarButtonAction : function EntityDataListToolbar_onRegisterToolbarButtonAction(layer, args) {
+         var obj = args[1];
+         if (obj && obj.actionName) {
+            this.toolbarButtonActions[obj.actionName] = obj;
+         }
+      },
+
+      /**
+       * Append toolbar buttons
+       */
+      onActiveDataListChanged : function EntityDataListToolbar_onRegisterToolbarButtonAction(layer, args) {
+         var obj = args[1];
          if ((obj !== null) && (obj.dataList !== null)) {
             this.datalistMeta = obj.dataList;
+            this.entity = obj.entity;
 
-            if (obj.list != null && (this.options.list == null || this.options.list.length < 1)) {
+            if (obj.list !== null && (!this.options.list || this.options.list === null || this.options.list.length < 1)) {
                this.options.list = obj.list;
             }
 
@@ -109,63 +111,77 @@
                this.populateToolbar();
             }
          }
-	   },
-	   
-	   populateToolbar : function EntityDataGrid_populateDataGrid() {
-	   	 
-	   	this.widgets.actionButtons = {};
-	   	
-	   	if (!YAHOO.lang.isObject(this.datalistMeta)) {
+      },
+
+      populateToolbar : function EntityDataGrid_populateDataGrid() {
+
+         //
+
+         if (!YAHOO.lang.isObject(this.datalistMeta)) {
             return;
          }
-        var container =   Dom.get(this.id +"-toolbar-buttons"),
-        		template  =   Dom.get(this.id + "-toolBar-template-button");
-         
-         for(actionName in this.toolbarButtonActions){
-         	var action = this.toolbarButtonActions[actionName];
-         	if(action.evaluate == null || action.evaluate(this.datalistMeta)){
-         		
-               var templateInstance = template.cloneNode(true);
-  
-                Dom.addClass(templateInstance, actionName);
-  
-               container.appendChild(templateInstance);
-               
-               var spanEl = Dom.getFirstChild(templateInstance);
-               Dom.setAttribute(spanEl,"id", this.id+"-"+actionName+"Button");
-   
-               this.widgets.actionButtons[actionName] = 
-               	Alfresco.util.createYUIButton(this, actionName+"Button", action.fn);
-                
-               this.widgets.actionButtons[actionName].set("label",this.msg("button."+actionName));
-               this.widgets.actionButtons[actionName].set("title",this.msg("button."+actionName+".description"));
-              
-              Dom.removeClass(templateInstance, "hidden");
-         	}
-         }
-	   },
-	   
-	   /**
-		 * Fired by YUI when parent element is available for scripting.
-		 * 
-		 * @method onReady
-		 */
-	   onReady : function EntityDataListToolbar_onReady() {
+         var containerRight = Dom.get(this.id + "-toolbar-buttons-right"), containerLeft = Dom
+               .get(this.id + "-toolbar-buttons-left"), template = Dom.get(this.id + "-toolBar-template-button");
 
-		   this.widgets.printButton = Alfresco.util.createYUIButton(this, "printButton", {
-			   disabled : true
-		   });
-		   this.widgets.rssFeedButton = Alfresco.util.createYUIButton(this, "rssFeedButton", {
-			   disabled : true
-		   });
-		   
+         for (var actionName in this.toolbarButtonActions) {
+            var action = this.toolbarButtonActions[actionName];
+            if (this.widgets.actionButtons[actionName] == null 
+                  && ( action.evaluate === null || action.evaluate(this.datalistMeta, this.entity))) {
+               
+               if(action.createWidget){
+                  if (action.right !== null && action.right === true) {
+                     this.widgets.actionButtons[actionName] = action.createWidget(containerRight, this); 
+                  } else {
+                     this.widgets.actionButtons[actionName] = action.createWidget(containerLeft, this); 
+                  }
+                 
+               } else {
+                  
+                  var templateInstance = template.cloneNode(true);
+                  
+                  Dom.setAttribute(templateInstance,"id", this.id + "-" + actionName + "ContainerDiv");
+
+                  Dom.addClass(templateInstance, actionName);
+
+                  if (action.right !== null && action.right === true) {
+                     containerRight.appendChild(templateInstance);
+                  } else {
+                     containerLeft.appendChild(templateInstance);
+                  }
+
+                  var spanEl = Dom.getFirstChild(templateInstance);
+                  
+               
+                  Dom.setAttribute(spanEl, "id", this.id + "-" + actionName + "Button");
+   
+                  this.widgets.actionButtons[actionName] = Alfresco.util.createYUIButton(this, actionName + "Button",
+                        action.fn);
+   
+                  this.widgets.actionButtons[actionName].set("label", this.msg("button." + actionName));
+                  this.widgets.actionButtons[actionName].set("title", this.msg("button." + actionName + ".description"));
+                  
+
+                  Dom.removeClass(templateInstance, "hidden");
+               }
+
+            }
+         }
+      },
+
+      /**
+       * Fired by YUI when parent element is available for scripting.
+       * 
+       * @method onReady
+       */
+      onReady : function EntityDataListToolbar_onReady() {
+
          this.deferredToolbarPopulation.fulfil("onReady");
 
-		   // Finally show the component body here to prevent UI artifacts on YUI
-			// button decoration
-		   Dom.setStyle(this.id + "-body", "visibility", "visible");
-	   },
+        
+         // Finally show the component body here to prevent UI artifacts on YUI
+         // button decoration
+         Dom.setStyle(this.id + "-body", "visibility", "visible");
+      }
 
-	 
-	}, true);
+   }, true);
 })();

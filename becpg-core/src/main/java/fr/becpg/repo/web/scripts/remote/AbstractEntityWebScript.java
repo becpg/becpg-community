@@ -2,27 +2,37 @@ package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -58,6 +68,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_CALLBACK_USER = "callbackUser";
 	
 	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
+
+	private static final String PARAM_MAX_RESULTS = "maxResults";
 	
 	/** Services **/
 
@@ -92,9 +104,23 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		String path = req.getParameter(PARAM_PATH);
 		String query = req.getParameter(PARAM_QUERY);
-		String runnedQuery = "+TYPE:\"bcpg:entity\" -TYPE:\"cm:systemfolder\""
-				+ " -@cm\\:lockType:READ_ONLY_LOCK"
-				+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\"";
+		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
+		
+		Integer maxResults = null;
+		if (maxResultsString != null) {
+			try {
+				maxResults = Integer.parseInt(maxResultsString);
+			} catch (NumberFormatException e) {
+				logger.error("Cannot parse page argument", e);
+			}
+		}
+		
+		if(maxResults==null){
+			maxResults = RepoConsts.MAX_RESULTS_256;
+		}
+		
+		String runnedQuery = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_V2))
+				+ LuceneHelper.DEFAULT_IGNORE_QUERY;
 		
 		
 		if (path != null && path.length() > 0) {
@@ -107,11 +133,40 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		}
 		
-		List<NodeRef> refs = beCPGSearchService.luceneSearch(runnedQuery,250);
-		if (refs.size() > 0) {
+		List<NodeRef> refs = null;
+		
+		if(RepoConsts.MAX_RESULTS_UNLIMITED == maxResults){
+			int page = 1;
+			
+			logger.info("Unlimited results ask -  start pagination");
+			List<NodeRef> tmp	=  beCPGSearchService.lucenePaginatedSearch(runnedQuery, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
+			
+			if (tmp!=null && !tmp.isEmpty()) {
+				logger.info(" - Page 1:"+tmp.size());
+				refs = tmp;
+			}
+			while(tmp!=null && tmp.size() == RepoConsts.MAX_RESULTS_256 ){
+				page ++;
+				tmp	=  beCPGSearchService.lucenePaginatedSearch(runnedQuery, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
+				if (tmp!=null && !tmp.isEmpty()) {
+					logger.info(" - Page "+page+":"+tmp.size());
+					refs.addAll(tmp);
+				}
+			}		
+			
+			
+		} else {
+			refs = beCPGSearchService.luceneSearch(runnedQuery,LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false) ,maxResults );
+		}
+		
+		if (refs!=null && !refs.isEmpty()) {
+			logger.info("Returning "+refs.size()+" entities");
+			
 			return refs;
 		}
-		throw new WebScriptException("No entities found for query " + query);
+		
+		logger.info("No entities found for query " + runnedQuery);
+		return new ArrayList<NodeRef>();
 		
 	}
 	
@@ -136,9 +191,10 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
+	
 		final String callBack = req.getParameter(PARAM_CALLBACK);
-		final String user = req.getParameter(PARAM_CALLBACK_USER);
-		final String password = req.getParameter(PARAM_CALLBACK_PASSWORD);
+		final String user = req.getParameter(PARAM_CALLBACK_USER)!=null ?  req.getParameter(PARAM_CALLBACK_USER) : "admin";
+		final String password = req.getParameter(PARAM_CALLBACK_PASSWORD)!=null ?  req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
 		
 		if (callBack != null && callBack.length() > 0) {
 			return new EntityProviderCallBack() {
@@ -148,37 +204,41 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 					try {
 						logger.debug("EntityProviderCallBack call : " + callBack + "?nodeRef=" + nodeRef.toString());
 
-						if (user != null && user.length() > 0
-								&& password != null && password.length() > 0){
-							logger.debug("Set authentication for callback");
-							Authenticator.setDefault (new Authenticator() {
-							    protected PasswordAuthentication getPasswordAuthentication() {
-							        return new PasswordAuthentication (user, password.toCharArray());
-							    }
-							});
-
-						}  else {
-							logger.debug("Set default authentication for callback");
-							Authenticator.setDefault (new Authenticator() {
-							    protected PasswordAuthentication getPasswordAuthentication() {
-							        return new PasswordAuthentication ("admin", "becpg".toCharArray());
-							    }
-							});
-						}
+						HttpClient httpClient = new DefaultHttpClient();
 						
-						URL  entityUrl =  new URL(callBack + "?nodeRef=" + nodeRef.toString());
-						URL  dataUrl  =  new URL(callBack + "/data?nodeRef=" + nodeRef.toString());
+						Header authHeader = null;
+						
+							logger.debug("Set authentication for callback ");
+							authHeader = BasicScheme.authenticate(
+									 new UsernamePasswordCredentials(user, password),
+									 "UTF-8", false);
+
+						HttpGet entityUrl = new HttpGet(callBack + "?nodeRef=" + nodeRef.toString());
+						
+						entityUrl.addHeader(authHeader);
+			
+						
 						InputStream entityStream = null;
 						InputStream dataStream = null;
 						
 						try {
-							entityStream = entityUrl.openStream();
+							
+							HttpResponse httpResponse = httpClient.execute(entityUrl);
+							HttpEntity responseEntity = httpResponse.getEntity();
+							
+							
+							entityStream = responseEntity.getContent();
 							 
 							NodeRef entityNodeRef =  remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
 							
 							if(remoteEntityService.containsData(entityNodeRef)){
 							
-								dataStream = dataUrl.openStream();
+								
+								HttpGet dataUrl = new HttpGet(callBack + "/data?nodeRef=" + nodeRef.toString());
+								dataUrl.addHeader(authHeader);
+								httpResponse = httpClient.execute(dataUrl);
+								responseEntity = httpResponse.getEntity();
+								dataStream = responseEntity.getContent();
 								remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
 							
 							}

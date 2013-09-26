@@ -1,6 +1,7 @@
 package fr.becpg.repo.ecm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,8 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ECMModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.ChangeOrderType;
@@ -28,7 +27,7 @@ import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -37,6 +36,8 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
@@ -55,7 +56,7 @@ public class ECOTest extends RepoBaseTestCase {
 	private ProductService productService;
 
 	@Resource
-	private BeCPGDao<ChangeOrderData> changeOrderDAO;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Resource
 	private ECOService ecoService;
@@ -95,7 +96,6 @@ public class ECOTest extends RepoBaseTestCase {
 	/** The nut2. */
 	private NodeRef nut2;
 
-
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -105,12 +105,11 @@ public class ECOTest extends RepoBaseTestCase {
 
 		nut1 = nuts.get(0);
 		nut2 = nuts.get(1);
-	
+
 		// create RM and lSF
 		initParts();
-		
-	}
 
+	}
 
 	/**
 	 * Inits the parts.
@@ -119,17 +118,17 @@ public class ECOTest extends RepoBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				
-				// remove products folder since products created in test folder are classified by policy
-                NodeRef productsFolder = nodeService
-        				.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
-                if(productsFolder != null){
-                	nodeService.deleteNode(productsFolder);
-                }
-				
-				/*-- Create raw materials --*/
-				logger.debug("/*-- Create raw materials --*/");
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
+
+				// remove products folder since products created in test folder
+				// are classified by policy
+				NodeRef productsFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+				if (productsFolder != null) {
+					nodeService.deleteNode(productsFolder);
+				}
+
+				/*-- create raw materials --*/
+				logger.debug("/*-- create raw materials --*/");
 				/*-- Raw material 1 --*/
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
@@ -146,7 +145,8 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial1.setNutList(nutList);
-				rawMaterial1NodeRef = productDAO.create(testFolderNodeRef, rawMaterial1, dataLists);
+
+				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
 
 				/*-- Raw material 2 --*/
 				RawMaterialData rawMaterial2 = new RawMaterialData();
@@ -164,7 +164,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial2.setNutList(nutList);
-				rawMaterial2NodeRef = productDAO.create(testFolderNodeRef, rawMaterial2, dataLists);
+				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 
 				/*-- Raw material 3 --*/
 				RawMaterialData rawMaterial3 = new RawMaterialData();
@@ -182,7 +182,7 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial3.setNutList(nutList);
-				rawMaterial3NodeRef = productDAO.create(testFolderNodeRef, rawMaterial3, dataLists);
+				rawMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial3).getNodeRef();
 
 				/*-- Raw material 4 --*/
 				RawMaterialData rawMaterial4 = new RawMaterialData();
@@ -190,7 +190,7 @@ public class ECOTest extends RepoBaseTestCase {
 				rawMaterial4.setLegalName("Legal Raw material 4");
 				rawMaterial4.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				rawMaterial4.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				rawMaterial4NodeRef = productDAO.create(testFolderNodeRef, rawMaterial4, dataLists);
+				rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
 
 				/*-- Raw material 5 --*/
 				RawMaterialData rawMaterial5 = new RawMaterialData();
@@ -208,23 +208,23 @@ public class ECOTest extends RepoBaseTestCase {
 				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterial5.setNutList(nutList);
-				rawMaterial5NodeRef = productDAO.create(testFolderNodeRef, rawMaterial5, dataLists);
+				rawMaterial5NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial5).getNodeRef();
 
 				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 				localSF1.setName("Local semi finished 1");
 				localSF1.setLegalName("Legal Local semi finished 1");
 				localSF1.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				localSF1.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
+				localSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF1).getNodeRef();
 
 				/*-- Local semi finished product 2 --*/
-				LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 				localSF2.setName("Local semi finished 2");
 				localSF2.setLegalName("Legal Local semi finished 2");
 				localSF2.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				localSF2.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
+				localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();
 
 				return null;
 
@@ -233,19 +233,18 @@ public class ECOTest extends RepoBaseTestCase {
 	}
 
 	/**
-	 * Create a finished product
+	 * create a finished product
 	 * 
 	 * @throws Exception
 	 *             the exception
 	 */
 	public NodeRef createFinishedProduct(final String finishedProductName) throws Exception {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create finished product --*/
-				logger.debug("/*-- Create finished product --*/");
-				Collection<QName> dataLists = productDictionaryService.getDataLists();
+				/*-- create finished product --*/
+				logger.debug("/*-- create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName(finishedProductName);
 				finishedProduct.setLegalName("Legal name");
@@ -254,14 +253,40 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				finishedProduct.setCompoList(compoList);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+
+				CompoListDataItem compo1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+
+				compoList.add(compo1);
+				compoList.add(new CompoListDataItem(null, compo1, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compo1, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+
+				CompoListDataItem compo2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+
+				compoList.add(compo2);
+				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+
+				finishedProduct.getCompoListView().setCompoList(compoList);
+
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				finishedProduct.setCostList(costList);
+
+				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				finishedProduct.setNutList(nutList);
+
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+
+			}
+		}, false, true);
+
+		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 
@@ -272,13 +297,14 @@ public class ECOTest extends RepoBaseTestCase {
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
 
-				ProductData formulatedProduct = productDAO.find(finishedProductNodeRef, dataLists);
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 				logger.debug("Finish product: " + formulatedProduct.toString());
 				// costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
+
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
@@ -320,18 +346,20 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	@Test
 	public void testECOService() throws Exception {
+	
+		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
+
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
-				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
-
+				
 				/*
-				 * Create a change order to replace RM4 by RM5
+				 * create a change order to replace RM4 by RM5
 				 */
 
-				logger.debug("Create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
 				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
 				calculatedCharacts.add(cost1);
@@ -341,52 +369,56 @@ public class ECOTest extends RepoBaseTestCase {
 				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
 
 				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
-				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
+
+				replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef);
 
 				// verify WUsed
 				int checks = 0;
-				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
+				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				assertEquals("Check 2 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+
+				
+				assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
 
-					assertNotNull(wul.getSourceItem());
-					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
-					assertNotNull(changeUnitData);
+					assertNotNull(wul.getSourceItems().get(0));
+					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItems().get(0));
+					logger.info("Source item " + wul.getSourceItems().get(0));
+					logger.info("ChangeUnit map : " + dbECOData.getChangeUnitMap().toString());
 
-					if (changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)) {
+					if (changeUnitData != null) {
+						 if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
 
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
+							checks++;
+							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+						} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
 
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
-
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+							checks++;
+							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+						}
 					}
 				}
-				assertEquals(3, checks);
+				
+				assertEquals(2, checks);
 
 				// simulation
 				ecoService.doSimulation(ecoNodeRef);
 
 				// verify Simulation
 				checks = 0;
-				dbECOData = changeOrderDAO.find(ecoNodeRef);
+				dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
-				assertEquals("Check SchangeUnitDataimulation list", 8, dbECOData.getSimulationList().size());
+				assertEquals("Check Simulation list", 8, dbECOData.getSimulationList().size());
 
 				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
 
@@ -444,149 +476,13 @@ public class ECOTest extends RepoBaseTestCase {
 				ecoService.apply(ecoNodeRef);
 
 				return null;
+				
+				
 
 			}
+
 		}, false, true);
-
-	}
-
-	/**
-	 * Test ecoService
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@Test
-	public void testECOPolicy() throws Exception {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
-				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
-
-				/*
-				 * Create a change order to replace RM4 by RM5
-				 */
-
-				logger.debug("Create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
-
-				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
-				calculatedCharacts.add(cost1);
-				calculatedCharacts.add(cost2);
-				calculatedCharacts.add(nut1);
-				calculatedCharacts.add(nut2);
-				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
-
-				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
-				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
-				changeOrderData.setReplacementList(replacementList);
-
-				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
-
-				// calculate WUsed
-				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToCalculateWUsed);
-
-				// verify WUsed
-				int checks = 0;
-				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
-				assertNotNull("check ECO exist in DB", dbECOData);
-				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				assertEquals("Check impacted WUsed", 3, dbECOData.getWUsedList().size());
-
-				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-					
-					assertNotNull(wul.getSourceItem());
-					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
-					assertNotNull(changeUnitData);
-
-					if (changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)) {
-
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
-
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
-
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					}
-				}
-				assertEquals(3, checks);
-
-				// simulation
-				nodeService.setProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE, ECOState.ToSimulate);
-
-				// verify Simulation
-				checks = 0;
-				dbECOData = changeOrderDAO.find(ecoNodeRef);
-				assertNotNull("check ECO exist in DB", dbECOData);
-				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
-				assertEquals("Check SchangeUnitDataimulation list", 8, dbECOData.getSimulationList().size());
-
-				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
-
-					if (sim.getSourceItem().equals(finishedProduct1NodeRef)) {
-
-						if (sim.getCharact().equals(cost1)) {
-
-							checks++;
-							assertEquals("check cost1 PF1", 4.0d, sim.getSourceValue());
-							assertEquals("check cost1 PF1", 11.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(cost2)) {
-
-							checks++;
-							assertEquals("check cost2 PF1", 6.0d, sim.getSourceValue());
-							assertEquals("check cost2 PF1", 15d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut1)) {
-
-							checks++;
-							assertEquals("check nut1 PF1", 3.0d, sim.getSourceValue());
-							assertEquals("check nut1 PF1", 4.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut2)) {
-
-							checks++;
-							assertEquals("check nut2 PF1", 6.0d, sim.getSourceValue());
-							assertEquals("check nut2 PF1", 10.5d, sim.getTargetValue());
-						}
-					} else if (sim.getSourceItem().equals(finishedProduct2NodeRef)) {
-
-						if (sim.getCharact().equals(cost1)) {
-
-							checks++;
-							assertEquals("check cost1 PF2", 4.0d, sim.getSourceValue());
-							assertEquals("check cost1 PF2", 11.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(cost2)) {
-
-							checks++;
-							assertEquals("check cost2 PF2", 6.0d, sim.getSourceValue());
-							assertEquals("check cost2 PF2", 15d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut1)) {
-
-							checks++;
-							assertEquals("check nut1 PF2", 3.0d, sim.getSourceValue());
-							assertEquals("check nut1 PF2", 4.5d, sim.getTargetValue());
-						} else if (sim.getCharact().equals(nut2)) {
-
-							checks++;
-							assertEquals("check nut2 PF2", 6.0d, sim.getSourceValue());
-							assertEquals("check nut2 PF2", 10.5d, sim.getTargetValue());
-						}
-					}
-				}
-				assertEquals(8, checks);
-
-				// apply
-				// nodeService.setProperty(ecoNodeRef, ECOModel.PROP_ECO_STATE,
-				// ECOState.ToApply);
-
-				return null;
-
-			}
-		}, false, true);
-
+		
 	}
 
 	/**
@@ -597,15 +493,14 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	@Test
 	public void testECOInMultiLeveCompo() throws Exception {
+		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef finishedProduct3NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
-				NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
-
 				/*
-				 * Create multi level compo
+				 * create multi level compo
 				 */
 
 				FinishedProductData finishedProduct3 = new FinishedProductData();
@@ -616,24 +511,37 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, 1, 2d, 2d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Declare, finishedProduct2NodeRef));
-				finishedProduct3.setCompoList(compoList);
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
+				finishedProduct3.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProduct3NodeRef = productDAO.create(testFolderNodeRef, finishedProduct3, dataLists);
+
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				finishedProduct3.setCostList(costList);
+
+				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				finishedProduct3.setNutList(nutList);
+
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct3).getNodeRef();
+
+			}
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				/*-- Formulate product --*/
-				try {
-					logger.debug("/*-- Formulate product PF3 --*/");
-					productService.formulate(finishedProduct3NodeRef);
-				} catch (Exception e) {
-					logger.error("!error when formulating.", e);
-				}
+				logger.debug("/*-- Formulate product PF3 --*/");
+				productService.formulate(finishedProduct3NodeRef);
 
 				/*-- Verify formulation --*/
 				logger.debug("/*-- Verify formulation --*/");
-				ProductData formulatedProduct3 = productDAO.find(finishedProduct3NodeRef, productDictionaryService.getDataLists());
+				ProductData formulatedProduct3 = (ProductData) alfrescoRepository.findOne(finishedProduct3NodeRef);
 
 				logger.debug("unit of product formulated: " + formulatedProduct3.getUnit());
 
@@ -667,10 +575,10 @@ public class ECOTest extends RepoBaseTestCase {
 				}
 
 				/*
-				 * Create a change order to replace RM4 by RM5
+				 * create a change order to replace RM4 by RM5
 				 */
 
-				logger.debug("Create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
+				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
 				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
 				calculatedCharacts.add(cost1);
@@ -680,55 +588,58 @@ public class ECOTest extends RepoBaseTestCase {
 				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
 
 				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
-				replacementList.add(new ReplacementListDataItem(null, RevisionType.Minor, rawMaterial4NodeRef, rawMaterial5NodeRef));
+				replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = changeOrderDAO.create(testFolderNodeRef, changeOrderData);
+				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef);
 
 				// verify WUsed
 				int checks = 0;
-				ChangeOrderData dbECOData = changeOrderDAO.find(ecoNodeRef);
+				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-				//assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
+			     assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-					
-					assertNotNull(wul.getSourceItem());
-					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItem());
-					assertNotNull(changeUnitData);
 
-					if (changeUnitData.getSourceItem().equals(rawMaterial4NodeRef)) {
+					assertNotNull(wul.getSourceItems().get(0));
+					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItems().get(0));
+					if (changeUnitData != null) {
 
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
+						if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
 
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
+							checks++;
+							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+						} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
 
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
-					} else if (changeUnitData.getSourceItem().equals(finishedProduct3NodeRef)) {
+							checks++;
+							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+						} else if (changeUnitData.getSourceItem().equals(finishedProduct3NodeRef)) {
 
-						checks++;
-						assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+							checks++;
+							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+						}
 					}
 				}
-				assertEquals(5, checks);
+				assertEquals(4, checks);
 
 				// simulation
 				ecoService.doSimulation(ecoNodeRef);
 
 				// verify Simulation
 				checks = 0;
-				dbECOData = changeOrderDAO.find(ecoNodeRef);
+				dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
+
+				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
+					System.out.println("Source - Target for " + nodeService.getProperty(sim.getSourceItem(), ContentModel.PROP_NAME) + " - " + sim.getSourceValue() + " - "
+							+ sim.getTargetValue());
+				}
+
 				assertEquals("Check changeUnitDataSimulation list", 12, dbECOData.getSimulationList().size());
 
 				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {

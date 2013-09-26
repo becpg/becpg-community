@@ -9,8 +9,10 @@ import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.encoding.CharactersetFinder;
 import org.alfresco.encoding.GuessEncodingCharsetFinder;
@@ -20,8 +22,10 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.importer.ImportContext;
 
 /**
@@ -34,6 +38,10 @@ public class ImportHelper{
 	/** The Constant MLTEXT_SEPARATOR. */
 	public static final String MLTEXT_SEPARATOR 		= "_";
 
+	public static String NULL_VALUE = "NULL";
+	
+	
+	
 	
 	/**
 	 * Load the property according to the property type.
@@ -53,9 +61,14 @@ public class ImportHelper{
 			
 			if(attribute instanceof PropertyDefinition){
 				
+				
 				PropertyDefinition propertyDef = (PropertyDefinition)attribute;
 				QName qName = propertyDef.getName();
 				QName dataType =propertyDef.getDataType().getName();				
+				
+				if(NULL_VALUE.equalsIgnoreCase(values.get(pos))){
+					return NULL_VALUE;
+				}
 				
 				// MLText
 				if(dataType.isMatch(DataTypeDefinition.MLTEXT)){
@@ -72,8 +85,8 @@ public class ImportHelper{
 							
 							String transLocalName = transColumn.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1] : null;			
 							// default locale
-							if(first){
-								mlText.addValue(Locale.getDefault(), values.get(z_idx));
+							if(first){								
+								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
 								first = false;
 							}
 							// other locales
@@ -94,7 +107,9 @@ public class ImportHelper{
 					value = mlText;
 				}
 				// Text
-				else if(dataType.isMatch(DataTypeDefinition.TEXT)){					
+				else if(dataType.isMatch(DataTypeDefinition.TEXT)){
+					
+					
 					
 					if (propertyDef.isMultiValued())
                 	{
@@ -108,8 +123,9 @@ public class ImportHelper{
                 	}
 					
 					// clean name
-					if(qName.getLocalName().equals(ContentModel.PROP_NAME.getLocalName()))
-						value = cleanName((String)value);
+					if(qName.getLocalName().equals(ContentModel.PROP_NAME.getLocalName())){
+						value = PropertiesHelper.cleanName((String)value);
+					}
 				}
 				// Date
 				else if(dataType.isMatch(DataTypeDefinition.DATE) || dataType.isMatch(DataTypeDefinition.DATETIME)){
@@ -162,28 +178,10 @@ public class ImportHelper{
 		return value;		
 	 }
 	
-	/**
-	 * remove invalid characters.
-	 *
-	 * @param name the name
-	 * @return the string
-	 */
-	public static String cleanName(String name) {
-		/*(.*[\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$) */
-		return name!=null? name.replaceAll("([\"*\\><?/:|])", "-").trim(): null;
-	}	
 	
-	/**
-	 * remove invalid characters (trim).
-	 *
-	 * @param value the value
-	 * @return the string
-	 */
-	public static String cleanValue(String value) {		
-		return value!=null? value.trim(): null;		
-	}
-	
-	
+
+
+
 	public static Charset guestCharset(InputStream is, String readerCharset){
 		Charset defaultCharset = Charset.forName(RepoConsts.ISO_CHARSET);
 		if(RepoConsts.ISO_CHARSET.equals(readerCharset)){
@@ -195,6 +193,17 @@ public class ImportHelper{
 			return defaultCharset;
 		}
 		return charset;
+	}
+
+	public static Map<QName, Serializable> cleanProperties(Map<QName, Serializable> properties) {
+		for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<QName, Serializable> entry = (Map.Entry<QName, Serializable>) iterator.next();
+			if(entry.getValue()!=null && ImportHelper.NULL_VALUE.equals(entry.getValue())){
+				 iterator.remove();
+			 }
+		}
+		
+		return properties;
 	}
 
 }

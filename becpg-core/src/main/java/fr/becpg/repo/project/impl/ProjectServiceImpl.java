@@ -1,28 +1,27 @@
 package fr.becpg.repo.project.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.workflow.WorkflowInstance;
-import org.alfresco.service.cmr.workflow.WorkflowService;
-import org.alfresco.service.namespace.QName;
+import org.alfresco.service.cmr.site.SiteService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.BeCPGListDao;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.project.ProjectException;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.data.AbstractProjectData;
+import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -37,23 +36,19 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
-	private BeCPGListDao<AbstractProjectData> projectDAO;
-	private WorkflowService workflowService;
+	private AlfrescoRepository<ProjectData> alfrescoRepository;	
 	private AssociationService associationService;
 	private NodeService nodeService;
 	private BeCPGSearchService beCPGSearchService;
 	private RepoService repoService;
-	private PlanningVisitor planningVisitor;
-	private TaskStateVisitor taskStateVisitor;
-
-	public void setProjectDAO(BeCPGListDao<AbstractProjectData> projectDAO) {
-		this.projectDAO = projectDAO;
+	private SiteService siteService;
+	private FormulationService<ProjectData> formulationService;
+	private ProjectWorkflowService projectWorkflowService;
+	
+	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
-
-	public void setWorkflowService(WorkflowService workflowService) {
-		this.workflowService = workflowService;
-	}
-
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -70,38 +65,40 @@ public class ProjectServiceImpl implements ProjectService {
 		this.repoService = repoService;
 	}
 
-	public void setTaskStateVisitor(TaskStateVisitor taskStateVisitor) {
-		this.taskStateVisitor = taskStateVisitor;
+	public void setFormulationService(FormulationService<ProjectData> formulationService) {
+		this.formulationService = formulationService;
+	}
+	
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
 	}
 
-	public void setPlanningVisitor(PlanningVisitor planningVisitor) {
-		this.planningVisitor = planningVisitor;
+	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
+		this.projectWorkflowService = projectWorkflowService;
 	}
 
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {
 
-		Integer dlCompletionPercent = (Integer) nodeService.getProperty(deliverableNodeRef,
-				ProjectModel.PROP_COMPLETION_PERCENT);
-		logger.debug("open Deliverable. completionPercent: " + dlCompletionPercent);
-
+		logger.debug("open Deliverable " + deliverableNodeRef);
 		NodeRef taskNodeRef = associationService.getTargetAssoc(deliverableNodeRef, ProjectModel.ASSOC_DL_TASK);
-
 		if (taskNodeRef != null) {
-
-			Integer taskDuration = (Integer) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_DURATION);
-
-			if (taskDuration != null && dlCompletionPercent != null) {
-				int newDuration = taskDuration * dlCompletionPercent;
-				nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_DURATION, taskDuration + newDuration);
-			}
-			logger.debug("set taskList InProgress: " + taskNodeRef);
 			nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_STATE, TaskState.InProgress.toString());
 		} else {
-			logger.debug("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
+			logger.warn("Task is not defined for the deliverable. nodeRef: " + deliverableNodeRef);
 		}
 	}
 
+	@Override
+	public void openTask(NodeRef taskNodeRef) {
+		
+		logger.debug("open Task " + taskNodeRef);
+		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);		
+		for(AssociationRef sourceAssoc : sourceAssocs){
+			nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
+		}
+	}
+	
 	@Override
 	public List<NodeRef> getTaskLegendList() {
 		return beCPGSearchService.luceneSearch(QUERY_TASK_LEGEND);
@@ -109,59 +106,64 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
+		if(siteId!=null && siteId.length()>0){
+			return siteService.getContainer(siteId,SiteService.DOCUMENT_LIBRARY);
+		}
 		return repoService.getFolderByPath(RepoConsts.PATH_PROJECTS);
 	}
 
 	@Override
 	public void cancel(NodeRef projectNodeRef) {
 
-		logger.debug("cancel project: " + projectNodeRef);
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(ProjectModel.TYPE_TASK_LIST);
-		AbstractProjectData abstractProjectData = projectDAO.find(projectNodeRef, dataLists);
-
-		for (TaskListDataItem taskListDataItem : abstractProjectData.getTaskList()) {
-			if (taskListDataItem.getWorkflowInstance() != null && !taskListDataItem.getWorkflowInstance().isEmpty()){
-				
-				WorkflowInstance workflowInstance = workflowService.getWorkflowById(taskListDataItem.getWorkflowInstance());
-				if(workflowInstance != null){
-					if(workflowInstance.isActive()){
-						logger.debug("Cancel workflow instance: " + taskListDataItem.getWorkflowInstance());
-						workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
-					}
-				}
-				else{
-					logger.warn("Workflow instance unknown. WorkflowId: " + taskListDataItem.getWorkflowInstance());
-				}
-				taskListDataItem.setWorkflowInstance(null);
-			}					
+		logger.debug("cancel project: " + projectNodeRef + " exists ? " + nodeService.exists(projectNodeRef));		
+		if(nodeService.exists(projectNodeRef)){
+			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+	         
+			for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {				
+				if (projectWorkflowService.isWorkflowActive(taskListDataItem)){
+					projectWorkflowService.cancelWorkflow(taskListDataItem);					
+				}					
+			}    
+			
+			alfrescoRepository.save(projectData);
 		}		
-		projectDAO.update(projectNodeRef, abstractProjectData, dataLists);
-		logger.debug("project cancelled.");
 	}
 
 	@Override
-	public void formulate(NodeRef projectNodeRef) throws ProjectException {
+	public void formulate(NodeRef projectNodeRef) throws  FormulateException {
 
-		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			logger.debug("formulate projectNodeRef: " + projectNodeRef);
-			Collection<QName> dataLists = new ArrayList<QName>();
-			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-			dataLists.add(ProjectModel.TYPE_TASK_LIST);
-			ProjectData projectData = (ProjectData) projectDAO.find(projectNodeRef, dataLists);
-
-			try {
-				planningVisitor.visit(projectData);
-				taskStateVisitor.visit(projectData);
-			} catch (ProjectException e) {
-				if (e instanceof ProjectException) {
-					throw (ProjectException) e;
-				}
-				throw new ProjectException("message.formulate.failure", e);
-			}
-
-			projectDAO.update(projectNodeRef, projectData, dataLists);
+		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {			
+			formulationService.formulate(projectNodeRef);			
 		}
-
 	}
+
+	@Override
+	public void deleteTask(NodeRef taskListNodeRef) {
+		
+		// update prevTasks assoc of next tasks		
+		List<NodeRef> deleteTaskPrevTaskNodeRefs = associationService.getTargetAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
+		List<AssociationRef> nextTaskAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
+		
+		for(AssociationRef nextTaskAssociationRef : nextTaskAssociationRefs){
+			
+			List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(), ProjectModel.ASSOC_TL_PREV_TASKS);
+			if(nextTaskAssociationRefs.contains(taskListNodeRef)){
+				nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
+			}			
+			
+			for(NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs){
+				nextTaskPrevTaskNodeRefs.add(deleteTaskPrevTaskNodeRef);
+			}
+			
+			associationService.update(nextTaskAssociationRef.getSourceRef(), nextTaskAssociationRef.getTypeQName(), nextTaskPrevTaskNodeRefs);
+		}
+		
+//		// delete dl (not the document associated to dl -> user must delete them)
+//		List<AssociationRef> dlAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_DL_TASK);
+//		for(AssociationRef dlAssociationRef : dlAssociationRefs){
+//			logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " + dlAssociationRef.getSourceRef());
+//			nodeService.deleteNode(dlAssociationRef.getSourceRef());
+//		}			
+	}
+	
 }

@@ -3,7 +3,7 @@
 
 <beans>
 
-	<bean id="lifecycle.workflowBootstrap" parent="workflowDeployer">
+	<bean id="beCPGWorkflowDeployer" parent="workflowDeployer">
 		<property name="workflowDefinitions">
 			<list>
 				<props>
@@ -13,14 +13,8 @@
 					<prop key="redeploy">false</prop>
 				</props>
 				<props>
-					<prop key="engineId">jbpm</prop>
-					<prop key="location">alfresco/module/${pom.artifactId}/workflow/product_validation_processdefinition.xml</prop>
-					<prop key="mimetype">text/xml</prop>
-					<prop key="redeploy">false</prop>
-				</props>
-				<props>
-					<prop key="engineId">jbpm</prop>
-					<prop key="location">alfresco/module/${pom.artifactId}/workflow/npd/processdefinition.xml</prop>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">false</prop>
 				</props>
@@ -38,6 +32,12 @@
 				</props>	
 				<props>
 					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">false</prop>
+				</props>
+				<props>
+					<prop key="engineId">activiti</prop>
 					<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-adhoc.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">false</prop>
@@ -46,14 +46,13 @@
 					<prop key="engineId">activiti</prop>
 					<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
-					<prop key="redeploy">true</prop>
+					<prop key="redeploy">false</prop>
 				</props>				
 			</list>
 		</property>
 		<property name="labels">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/workflow/workflow-messages</value>
-				<value>alfresco/module/${pom.artifactId}/workflow/npd/npd-messages</value>
 				<value>alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-messages</value>			
 				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflow-messages</value>	
 			</list>
@@ -61,7 +60,6 @@
 		<property name="models">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/workflow/workflowModel.xml</value>
-				<value>alfresco/module/${pom.artifactId}/workflow/npd/npdModel.xml</value>
 				<value>alfresco/module/${pom.artifactId}/workflow/quality/nonConformityModel.xml</value>
 				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflowModel.xml</value>
 			</list>

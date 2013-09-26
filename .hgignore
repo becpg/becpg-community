@@ -19,3 +19,6 @@ syntax: regexp
 
 syntax: regexp
 ^becpg_data$
+
+syntax: regexp
+^becpg-olap/archives$

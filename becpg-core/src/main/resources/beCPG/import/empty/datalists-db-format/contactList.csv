@@ -1,0 +1,9 @@
+STOP_ON_FIRST_ERROR;false;;;;;;;;
+IMPORT_TYPE;EntityListItem;;;;;;;;
+PATH;/Temp/Products;;;;;;;;
+TYPE;bcpg:contactList;;;;;;;;
+MAPPING;Default;;;;;;;;
+COLUMNS;bcpg:erpCode;bcpg:contactListFirstName;bcpg:contactListLastName;bcpg:contactListEmail;bcpg:contactListJobTitle;bcpg:contactListPhoneOffice;bcpg:contactListPhoneMobile;bcpg:contactListFax;bcpg:contactListNotes
+VALUES;ERP code 1;Prénom;Nom;mail;Poste;Tél bureau;Tél mobile;Fax;Notes
+VALUES;ERP code 1;;;;;;;;
+VALUES;ERP code 1;;;;;;;;

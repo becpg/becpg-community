@@ -1,0 +1,163 @@
+/* Simple/Details View */
+
+.project-list .simple-detailed span.first-child
+{
+   background-position: 50% 50%;
+   background-repeat: no-repeat;
+   min-height: 16px;
+   padding: 0 2px;
+}
+
+.project-list .simple-detailed .yui-button
+{
+   margin-left: 0;
+   margin-right: 0;
+}
+
+
+.project-list .simple-detailed .simple-view span.first-child
+{
+   background-image: url(../documentlibrary/images/simple-view-off-16.png);
+}
+
+.project-list .simple-detailed .simple-view.yui-button-checked span.first-child
+{
+   background-image: url(../documentlibrary/images/simple-view-on-16.png);
+}
+
+.project-list .simple-detailed .detailed-view span.first-child
+{
+   background-image: url(../documentlibrary/images/detailed-view-off-16.png);
+}
+
+.project-list .simple-detailed .detailed-view.yui-button-checked span.first-child
+{
+   background-image: url(../documentlibrary/images/detailed-view-on-16.png);
+}
+
+.project-list .view-characts
+{
+	background-image: url("../documentlibrary/actions/entity-view-datalists-16.png");
+	padding: 2px 0 2px 24px;
+}
+
+.project-list .view-documents
+{
+	background-image: url("../documentlibrary/actions/entity-view-documents-16.png");
+	padding: 2px 0 2px 24px;
+}
+
+
+/* Search Box */
+
+.project-list  .search-box > span.yui-button
+{
+   background: none;
+   border-width: 0px;
+}
+
+
+.project-list  div.search-box
+{
+   border: 1px solid #a0a0a0;
+   height: 20px;
+   float: left;
+   position: relative;
+   -moz-border-radius: 16px;
+   -webkit-border-radius: 16px;
+   background-color: white;
+   padding: 0 2px;
+   margin-top: 3px;
+}
+
+.project-list  div.search-box span.yui-button
+{
+   height: 20px;
+   margin-right: -2px;
+}
+
+.project-list  div.search-box span.yui-button span.first-child
+{
+   background-position: 3px 2px;
+   background-repeat: no-repeat;
+}
+
+.project-list  div.search-box span.yui-button span.first-child button
+{
+   min-height: 20px;
+   padding: 0 30px 0 0;
+   width: 36px;
+}
+
+.project-list  div.search-box input[type="text"]
+{
+   border-color: white;
+   display: inline-block;
+   padding: 0;
+   position: relative;
+   top: -1px;
+}
+
+.project-list  div.search-box input.faded
+{
+   opacity: 0.5;
+}
+
+/**
+Details
+*/
+
+
+.project-list .simple-doclist .detail {
+	 margin-left: 7px;
+}
+.project-list .task-resources li {
+	display: inline;
+	padding:5px;
+}
+
+.project-list div.paginator {
+	  float: left;
+    margin: 2px 0 0 0;
+}
+
+.project-list .task-resources img {
+	margin:5px;
+}
+
+.project-list div.project-manager {
+	float:right;
+}
+
+.project-list .simple-doclist .detail span.project-date {
+	  color:  #1155CC;
+    font-style: italic;
+}
+
+
+.project-list .simple-doclist .detail span.hierachy {	
+	font-weight: bold;
+	 padding:10px;
+}
+
+.project-list .simple-doclist .detail span.project {	
+	font-weight: bold;
+	 padding:10px;
+}
+
+.project-list .simple-doclist .detail a:hover{
+	text-decoration: none;
+}
+
+.project-list .simple-doclist h3 a:hover{
+	text-decoration: none;
+}
+
+.project-list .simple-doclist .detail span.item-social a:hover{
+	text-decoration: underline;
+}
+
+.project-list img.priority {
+	margin-right:5px;
+}
+}

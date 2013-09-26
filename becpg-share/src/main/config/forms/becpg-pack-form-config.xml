@@ -1,0 +1,144 @@
+<alfresco-config>
+
+	<config evaluator="model-type" condition="pack:labelingTemplate">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+
+				<appearance>
+					<field id="cm:description">
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="editorHeight">4</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:labelingTemplate">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="editorHeight">4</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="pack:label">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />					
+					<show id="cm:title" force="true" />
+					<show id="pack:labelType" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="pack:labelType" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="pack:labelType" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:label">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="pack:labelType" />
+					<show id="cm:description" force="true" />
+				</field-visibility>				
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="pack:labelingList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="pack:llPosition" />
+					<show id="pack:llLabel" />
+				</field-visibility>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="pack:llType" />
+					<show id="pack:llPosition" />
+					<show id="pack:llLabel" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true"/>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:labelingList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pack:llPosition" />
+					<show id="pack:llLabel" />
+				</field-visibility>				
+			</form>
+		</forms>
+	</config>
+
+</alfresco-config>

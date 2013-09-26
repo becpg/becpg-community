@@ -3,6 +3,7 @@
 
 <beans>
 
+	<!-- Todo merge that with  beCPGScriptHelper-->
 	<bean id="bSearchScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Search">
         <property name="extensionName">
             <value>bSearch</value>
@@ -11,7 +12,40 @@
             <ref bean="ServiceRegistry"/>
         </property>
         <property name="advSearchService">
-            <ref bean="advSearchService"/>
+            <ref bean="AdvSearchService"/>
         </property>
     </bean>
+    
+    <bean id="thumbnailScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Thumbnail">
+        <property name="extensionName">
+            <value>bThumbnail</value>
+        </property> 
+        	<property name="entityService" ref="entityService" />
+			<property name="beCPGSearchService" ref="beCPGSearchService" />
+			<property name="nodeService" ref="nodeService" />
+			<property name="beCPGCacheService" ref="beCPGCacheService" />
+			<property name="serviceRegistry" ref="ServiceRegistry"/>
+    </bean>
+    
+    
+    <bean id="beCPGScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGScriptHelper">
+    	 <property name="extensionName">
+            <value>bcpg</value>
+        </property> 
+    </bean>
+    
+    <!-- Override Alfresco -->
+    
+    <bean id="jsonConversionComponent" class="fr.becpg.repo.jscript.app.BeCPGJSONConversionComponent" parent="baseJsonConversionComponent">
+    	<property name="associationService" ref="associationService"/>
+    	<property name="dictionaryService" ref="dictionaryService"/>
+    </bean>
+    
+    <bean id="baseAssocDecorator" abstract="true" init-method="init">
+        <property name="nodeService" ref="NodeService"/>
+        <property name="namespaceService" ref="NamespaceService"/>
+        <property name="permissionService" ref="PermissionService"/>
+        <property name="jsonConversionComponent" ref="jsonConversionComponent"/>
+    </bean>
+    
 </beans>

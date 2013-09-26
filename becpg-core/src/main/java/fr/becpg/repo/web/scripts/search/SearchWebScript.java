@@ -23,15 +23,15 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.helper.extractors.BlogDataExtractor;
+import fr.becpg.repo.helper.extractors.CalendarDataExtractor;
+import fr.becpg.repo.helper.extractors.ContentDataExtractor;
+import fr.becpg.repo.helper.extractors.DataListDataExtractor;
+import fr.becpg.repo.helper.extractors.ForumDataExtractor;
+import fr.becpg.repo.helper.extractors.LinkDataExtractor;
+import fr.becpg.repo.helper.extractors.NodeDataExtractor;
+import fr.becpg.repo.helper.extractors.WikiDataExtractor;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
-import fr.becpg.repo.web.scripts.search.data.BlogDataExtractor;
-import fr.becpg.repo.web.scripts.search.data.CalendarDataExtractor;
-import fr.becpg.repo.web.scripts.search.data.ContentDataExtractor;
-import fr.becpg.repo.web.scripts.search.data.DataListDataExtractor;
-import fr.becpg.repo.web.scripts.search.data.ForumDataExtractor;
-import fr.becpg.repo.web.scripts.search.data.LinkDataExtractor;
-import fr.becpg.repo.web.scripts.search.data.NodeDataExtractor;
-import fr.becpg.repo.web.scripts.search.data.WikiDataExtractor;
 
 /**
  * Webscript that send the result of a search

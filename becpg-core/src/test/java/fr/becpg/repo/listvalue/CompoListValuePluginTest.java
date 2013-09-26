@@ -4,10 +4,7 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -15,94 +12,27 @@ import javax.annotation.Resource;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
-import fr.becpg.repo.product.data.productList.DeclarationType;
-import fr.becpg.test.RepoBaseTestCase;
+import fr.becpg.test.BeCPGTestHelper;
 
 /**
  * The Class ListValueServiceTest.
  * 
  * @author querephi
  */
-public class CompoListValuePluginTest extends RepoBaseTestCase {
+public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 	@Resource
 	private CompoListValuePlugin compoListValuePlugin;
 
-	private NodeRef rawMaterial1NodeRef;
-	private NodeRef rawMaterial2NodeRef;
-	private NodeRef rawMaterial3NodeRef;
-	private NodeRef localSF1NodeRef;
-	private NodeRef localSF2NodeRef;
-	private NodeRef finishedProductNodeRef;
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	private static Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
 
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				initProducts();
-
-				return null;
-
-			}
-		}, false, true);
-	}
-
-
-	public void initProducts() {
-
-		rawMaterial1NodeRef = createRawMaterial(testFolderNodeRef, "RM1");
-		rawMaterial2NodeRef = createRawMaterial(testFolderNodeRef, "RM2");
-		rawMaterial3NodeRef = createRawMaterial(testFolderNodeRef, "RM3");
-
-		Collection<QName> dataLists = productDictionaryService.getDataLists();
-
-		/*-- Local semi finished product 1 --*/
-		LocalSemiFinishedProduct localSF1 = new LocalSemiFinishedProduct();
-		localSF1.setName("Local semi finished 1");
-		localSF1.setLegalName("Legal Local semi finished 1");
-		localSF1NodeRef = productDAO.create(testFolderNodeRef, localSF1, dataLists);
-
-		/*-- Local semi finished product 1 --*/
-		LocalSemiFinishedProduct localSF2 = new LocalSemiFinishedProduct();
-		localSF2.setName("Local semi finished 2");
-		localSF2.setLegalName("Legal Local semi finished 2");
-		localSF2NodeRef = productDAO.create(testFolderNodeRef, localSF2, dataLists);
-
-		FinishedProductData finishedProduct = new FinishedProductData();
-		finishedProduct.setName("Produit fini 1");
-		finishedProduct.setLegalName("Legal Produit fini 1");
-		finishedProduct.setUnit(ProductUnit.kg);
-		finishedProduct.setQty(2d);
-		finishedProduct.setUnitPrice(12.4d);
-		List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-		compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail,
-				localSF1NodeRef));
-		compoList.add(new CompoListDataItem(null, 2, 1d, 0d, 0d, CompoListUnit.kg, 0d, null,
-				DeclarationType.Declare, rawMaterial1NodeRef));
-		compoList.add(new CompoListDataItem(null, 2, 2d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail,
-				rawMaterial2NodeRef));
-		compoList.add(new CompoListDataItem(null, 1, 1d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Detail,
-				localSF2NodeRef));
-		compoList.add(new CompoListDataItem(null, 2, 3d, 0d, 0d, CompoListUnit.kg, 0d, null,
-				DeclarationType.Declare, rawMaterial3NodeRef));
-		finishedProduct.setCompoList(compoList);
-
-		finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
-	}
 
 	/**
 	 * Test suggest supplier.
@@ -110,53 +40,70 @@ public class CompoListValuePluginTest extends RepoBaseTestCase {
 	@Test
 	public void testCompoListValuePlugin() {
 
-		Map<String, Serializable> props = new HashMap<String, Serializable>();
-		props.put(ListValueService.PROP_LOCALE, Locale.FRENCH);
-		props.put(ListValueService.PROP_NODEREF, finishedProductNodeRef.toString());
-		props.put(ListValueService.PROP_CLASS_NAME, "bcpg:compoList");
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
 
-		ListValuePage listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, new Integer(
-				ListValueService.SUGGEST_PAGE_SIZE), props);
+				Map<String, Serializable> props = new HashMap<String, Serializable>();
+				props.put(ListValueService.PROP_LOCALE, Locale.FRENCH);
+				props.put(ListValueService.PROP_NODEREF, finishedProductNodeRef.toString());
+				props.put(ListValueService.PROP_CLASS_NAME, "bcpg:compoList");
 
-//		for (ListValueEntry listValueEntry : listValuePage.getResults()) {
-//			logger.info("listValueEntry: " + listValueEntry.getName() + " - " + listValueEntry.getValue());
-//		}
-		
-		assertEquals(2, listValuePage.getResults().size());
-		
-		listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, new Integer(
-				ListValueService.SUGGEST_PAGE_SIZE), props);
+				authenticationComponent.setCurrentUser(BeCPGTestHelper.USER_ONE);
 
-		assertEquals(1, listValuePage.getResults().size());
-		
-		// Check cycle detection (exclude localSF1NodeRef)
-		Collection<QName> dataLists = productDictionaryService.getDataLists();
-		ProductData finishedProduct = productDAO.find(finishedProductNodeRef, dataLists);
-		
-		HashMap<String, String> extras = new HashMap<String, String>();
-		extras.put("itemId", finishedProduct.getCompoList().get(0).getNodeRef().toString());
-		props.put(ListValueService.EXTRA_PARAM, extras);
-		
-		listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, new Integer(
-				ListValueService.SUGGEST_PAGE_SIZE), props);
+				ListValuePage listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null,ListValueService.SUGGEST_PAGE_SIZE, props);
 
-		assertEquals(1, listValuePage.getResults().size());
+				for (ListValueEntry listValueEntry : listValuePage.getResults()) {
+					logger.info("listValueEntry: " + listValueEntry.getName() + " - " + listValueEntry.getValue());
+				}
+
+				assertEquals(1, listValuePage.getResults().size());
+
+				authenticationComponent.setSystemUserAsCurrentUser();
+
+				listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null,ListValueService.SUGGEST_PAGE_SIZE, props);
+
+				for (ListValueEntry listValueEntry : listValuePage.getResults()) {
+					logger.info("listValueEntry: " + listValueEntry.getName() + " - " + listValueEntry.getValue());
+				}
+
+				assertEquals(2, listValuePage.getResults().size());
+
+				listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, ListValueService.SUGGEST_PAGE_SIZE, props);
+
+				assertEquals(1, listValuePage.getResults().size());
+
+				// Check cycle detection (exclude localSF1NodeRef)
+				ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+
+				HashMap<String, String> extras = new HashMap<String, String>();
+				extras.put("itemId", finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef().toString());
+				props.put(ListValueService.EXTRA_PARAM, extras);
+
+				listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, ListValueService.SUGGEST_PAGE_SIZE, props);
+
+				assertEquals(1, listValuePage.getResults().size());
+
+				return null;
+
+			}
+		}, false, true);
 	}
-	
+
 	@Test
-	public void testIsQueryMatch(){
-		assertTrue(compoListValuePlugin.isQueryMath("*","Pâte de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","Pâte de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Pâte","Pâte de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","Pate de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","Pates de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Pâte*","pate de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Pat*","Patisserie de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Riz*","Pâte de riz" ));
-		assertTrue(compoListValuePlugin.isQueryMath("Riz*","Riz au lait" ));
-		assertFalse(compoListValuePlugin.isQueryMath("Pâto*","Patisserie" ));
-		assertFalse(compoListValuePlugin.isQueryMath("Pâte*","DesPates" ));
-		
+	public void testIsQueryMatch() {
+		assertTrue(compoListValuePlugin.isQueryMatch("*", "Pâte de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pâte de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Pâte", "Pâte de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pate de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pates de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "pate de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Pat*", "Patisserie de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Riz*", "Pâte de riz"));
+		assertTrue(compoListValuePlugin.isQueryMatch("Riz*", "Riz au lait"));
+		assertFalse(compoListValuePlugin.isQueryMatch("Pâto*", "Patisserie"));
+		assertFalse(compoListValuePlugin.isQueryMatch("Pâte*", "DesPates"));
+
 	}
 
 }

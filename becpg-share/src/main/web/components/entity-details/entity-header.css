@@ -1,0 +1,161 @@
+
+/* Path icons */
+
+.node-header .node-path .folder-pjt_project {
+	background-image:  url(../images/filetypes/generic-project-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_finishedProduct {
+	background-image: url(../images/filetypes/generic-finishedProduct-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_localSemiFinishedProduct {
+	background-image: url(../images/filetypes/generic-localSemiFinishedProduct-16.png), url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_packagingKit {
+	background-image: url(../images/filetypes/generic-packagingKit-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_packagingMaterial {
+	background-image: url(../images/filetypes/generic-packagingMaterial-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_rawMaterial {
+	background-image: url(../images/filetypes/generic-rawMaterial-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_semiFinishedProduct {
+	background-image: url(../images/filetypes/generic-semiFinishedProduct-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_resourceProduct {
+	background-image: url(../images/filetypes/generic-resourceProduct-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_client {
+	background-image: url(../images/filetypes/generic-client-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_supplier {
+	background-image: url(../images/filetypes/generic-supplier-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_systemEntity {
+	background-image: url(../images/filetypes/generic-systemEntity-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_productMicrobioCriteria {
+	background-image:  url(../images/filetypes/generic-productMicrobioCriteria-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_productSpecification {
+	background-image:  url(../images/filetypes/generic-productSpecification-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-bcpg_productMicrobioCriteria {
+	background-image:  url(../images/filetypes/generic-productMicrobioCriteria-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-ecm_changeOrder {
+	background-image:  url(../images/filetypes/generic-changeOrder-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-qa_nc {
+	background-image:  url(../images/filetypes/generic-nc-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-qa_qualityControl {
+	background-image:  url(../images/filetypes/generic-qualityControl-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-qa_controlPlan {
+	background-image:  url(../images/filetypes/generic-controlPlan-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-qa_controlPoint {
+	background-image:  url(../images/filetypes/generic-controlPoint-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+.node-header .node-path .folder-qa_workItemAnalysis {
+	background-image:  url(../images/filetypes/generic-workItemAnalysis-16.png) , url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+
+.node-header .node-path .folder-sec_aclGroup {
+	background-image:  url(../images/filetypes/generic-aclGroup-16.png), url(../documentlibrary/images/folder-closed-16.png) ;
+}
+
+
+
+.node-header .node-path .folder-pjt_project,
+.node-header .node-path .folder-bcpg_finishedProduct,
+.node-header .node-path .folder-bcpg_packagingKit,
+.node-header .node-path .folder-bcpg_packagingMaterial,
+.node-header .node-path .folder-bcpg_rawMaterial,
+.node-header .node-path .folder-bcpg_semiFinishedProduct,
+.node-header .node-path .folder-bcpg_resourceProduct,
+.node-header .node-path .folder-bcpg_client,
+.node-header .node-path .folder-bcpg_supplier,
+.node-header .node-path .folder-bcpg_systemEntity,
+.node-header .node-path .folder-bcpg_productMicrobioCriteria,
+.node-header .node-path .folder-bcpg_productSpecification,
+.node-header .node-path .folder-bcpg_productMicrobioCriteria,
+.node-header .node-path .folder-ecm_changeOrder,
+.node-header .node-path .folder-qa_nc,
+.node-header .node-path .folder-qa_qualityContrl,
+.node-header .node-path .folder-qa_controlPlan,
+.node-header .node-path .folder-qa_controlPoint,
+.node-header .node-path .folder-sec_aclGroup,
+.node-header .node-path .folder-qa_workItemAnalysis {
+	background-position:  7px bottom,left;
+	background-repeat: not-repeat ;
+	background-size: 12px 12px, 16px 16px;
+}
+
+
+/* Buttons */
+
+
+.node-header .node-action .entity-download-report span.first-child {
+   background-image: url(../documentlibrary/actions/document-download-16.png);
+   background-color: transparent;
+   background-position: 6px 4px;
+   background-repeat: no-repeat ;
+   padding-left: 6px;
+}
+
+.node-header .node-action .entity-view-documents span.first-child {
+    background-image: url(../documentlibrary/actions/entity-view-documents-16.png);
+ 
+ }
+    
+.node-header .node-action .entity-view-datalist span.first-child {
+    background-image: url(../documentlibrary/actions/entity-view-datalists-16.png);
+ 
+ }
+    
+.node-header .node-action .entity-view-datalist span.first-child ,
+.node-header .node-action .entity-view-documents span.first-child 
+ {
+    background-color: transparent;
+    background-position: 6px 4px;
+    background-repeat: no-repeat ;
+    padding-left: 16px;
+}
+
+.node-header .node-info
+{
+   float: left;
+   width: 58%;
+}
+
+
+.node-header .node-action
+{
+   width: 40%;
+}
+
+.node-header .node-action div {
+  display:inline-block;
+}

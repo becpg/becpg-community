@@ -1,0 +1,176 @@
+<alfresco-config>	
+
+	<!-- mpm:processStep type (existing nodes) -->
+	<config evaluator="node-type" condition="mpm:processStep">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:code" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="mpm:processStep">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:code" />
+
+				</field-visibility>
+
+				<appearance>
+					<field id="cm:name" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" />					
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" />
+					<show id="cm:description" />						
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>	
+	
+	<!-- mpm:processList type -->
+	<config evaluator="model-type" condition="mpm:processList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="mpm:plStep" />
+					<show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />										
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />	
+					<show id="bcpg:instruction" force="true"/>
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+					<field id="mpm:plStep">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plProduct">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plResource">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:instruction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true"/>
+					<show id="mpm:plStep" />
+					<show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />										
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />
+					<show id="mpm:plRateProduct" />		
+				   <show id="bcpg:dynamicCharactColumn1" force="true" />
+					<show id="bcpg:dynamicCharactColumn2" force="true" />
+					<show id="bcpg:dynamicCharactColumn3" force="true" />
+					<show id="bcpg:dynamicCharactColumn4" force="true" />
+					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="bcpg:instruction" force="true"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn1" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn2" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="bcpg:instruction" label="hidden" ></field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<!-- mpm:processList type (existing nodes) -->
+	<config evaluator="node-type" condition="mpm:processList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="mpm:plStep" />
+					<show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />										
+					<show id="mpm:plResource" />
+					<show id="mpm:plQtyResource" />
+					<show id="mpm:plRateResource" />
+					<show id="bcpg:instruction" force="true"/>
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+					<field id="mpm:plStep">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plProduct">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plResource">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:instruction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+</alfresco-config>

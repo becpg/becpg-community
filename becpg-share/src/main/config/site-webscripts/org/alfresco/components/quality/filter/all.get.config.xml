@@ -1,0 +1,6 @@
+<config>
+   <filters>
+      <filter id="ncs" data="Claim"    label="link.ncs.claim"/>
+      <filter id="ncs" data="NonConformity" label="link.ncs.nonconformity"/>
+   </filters>
+</config>

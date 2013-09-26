@@ -25,7 +25,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -36,6 +35,7 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -49,18 +49,18 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProduct;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
-import fr.becpg.report.client.ReportFormat;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -104,7 +104,6 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	private WUsedListService wUsedListService;
 
 
-	
 	/**
 	 * Test create product.
 	 */
@@ -114,7 +113,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				createRawMaterial(testFolderNodeRef, "MP test report");
+				BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 
 				return null;
 
@@ -132,21 +131,8 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	@Test
 	public void testReportProduct() throws Exception {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rawMaterialNodeRef =	transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-				/*-- Add report template --*/
-				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef reportsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplsFolder = repoService.createFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
-
-				QName productType = BeCPGModel.TYPE_RAWMATERIAL;
-				ClassDefinition classDef = dictionaryService.getClass(productType);
-				NodeRef productReportTplFolder = repoService.createFolderByPath(productReportTplsFolder, classDef.getTitle(), classDef.getTitle());
-				reportTplService.createTplRptDesign(productReportTplFolder, classDef.getTitle(), "beCPG/birt/document/product/default/ProductReport.rptdesign",
-						ReportType.Document, ReportFormat.PDF, productType, true, true, true);
 
 				/*-- Create images folder --*/
 				NodeRef imagesNodeRef = fileFolderService.create(testFolderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
@@ -155,25 +141,34 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- Create product --*/
 				logger.debug("Create product");
-				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
+				return BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				
+
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 
 				/*-- Generate report --*/
 				entityReportService.generateReport(rawMaterialNodeRef);
 
 				/*-- Check report --*/
 				logger.debug("/*-- Check report --*/");
-				ContentReader reader = contentService.getReader(rawMaterialNodeRef, ContentModel.PROP_CONTENT);
+				NodeRef documentsNodeRef = nodeService.getChildByName(rawMaterialNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+				assertNotNull(documentsNodeRef);								
+				NodeRef documentNodeRef = nodeService.getChildByName(documentsNodeRef, ContentModel.ASSOC_CONTAINS, "MP test report - Fiche Technique Client.pdf");
+				ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
 				assertNotNull("Reader should not be null", reader);
 				InputStream in = reader.getContentInputStream();
 				assertNotNull("Input stream should not be null", in);
 
 				OutputStream out = new FileOutputStream(new File("/tmp/becpg_product_report.pdf"));
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
+
+				IOUtils.copy( in, out);
+				
 				in.close();
 				out.close();
 
@@ -182,7 +177,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Product Tpl");
 				nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ENTITY, properties)
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ENTITY_V2, properties)
 						.getChildRef();
 
 				entityReportService.generateReport(rawMaterialNodeRef);
@@ -207,58 +202,31 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				/*-- create folders : Test, system, product templates--*/
-				
-				NodeRef systemFolder = repoService.createFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-
-				// clear folderTpls
-				NodeRef folderTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
-				if (folderTplsFolder != null) {
-					nodeService.deleteNode(folderTplsFolder);
-				}
-				folderTplsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_FOLDER_TEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_FOLDER_TEMPLATES));
-
-				// clear entityTpls
-				NodeRef entityTplsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_ENTITY_TEMPLATES));
-				if (entityTplsFolder != null) {
-					nodeService.deleteNode(entityTplsFolder);
-				}
-				entityTplsFolder = repoService.createFolderByPath(systemFolder, RepoConsts.PATH_ENTITY_TEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_ENTITY_TEMPLATES));
-
-				/*-- Create raw material Tpl --*/
-				logger.debug("/*-- Create raw material Tpl --*/");
-				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_RAWMATERIAL, true, null);
-
-				/*-- Create finished product Tpl with product folder and product image --*/
-				logger.debug("/*-- Create finished product Tpl --*/");
-
-				NodeRef folderTplFolder = entityTplService.createFolderTpl(folderTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true, null);
-
-				entityTplService.createEntityTpl(entityTplsFolder, BeCPGModel.TYPE_FINISHEDPRODUCT, true, null);
-
-				NodeRef imagesFolder = fileFolderService.create(folderTplFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
+				NodeRef entityTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_FINISHEDPRODUCT);
+				NodeRef imagesFolder = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+				assertNotNull(imagesFolder);
 				addProductImage(imagesFolder);
 
 				// add permissions on image folder Tpl
-				Set<String> zones = new HashSet<String>();
-				String collaboratorGroupName = "Collaborator_Test";
-				if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + collaboratorGroupName)) {
-					zones.add(AuthorityService.ZONE_APP_DEFAULT);
-					zones.add(AuthorityService.ZONE_APP_SHARE);
-					zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-					authorityService.createAuthority(AuthorityType.GROUP, collaboratorGroupName, collaboratorGroupName, zones);
+				if(nodeService.hasAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL)){
+					Set<String> zones = new HashSet<String>();
+					String collaboratorGroupName = "Collaborator_Test";
+					if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + collaboratorGroupName)) {
+						zones.add(AuthorityService.ZONE_APP_DEFAULT);
+						zones.add(AuthorityService.ZONE_APP_SHARE);
+						zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
+						authorityService.createAuthority(AuthorityType.GROUP, collaboratorGroupName, collaboratorGroupName, zones);
+					}
+					NodeRef groupNodeRef = authorityDAO.getAuthorityNodeRefOrNull(PermissionService.GROUP_PREFIX + collaboratorGroupName);
+					logger.debug("imagesFolder: " + imagesFolder);
+					logger.debug("groupNodeRef: " + groupNodeRef);
+					nodeService.addAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL, null);
+					logger.debug("aspects: " + nodeService.getAspects(imagesFolder));
+					logger.info("imagesFolder" + imagesFolder);
+					logger.info("groupNodeRef" + groupNodeRef);
+					nodeService.createAssociation(imagesFolder, groupNodeRef, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS);
 				}
-				NodeRef groupNodeRef = authorityDAO.getAuthorityNodeRefOrNull(PermissionService.GROUP_PREFIX + collaboratorGroupName);
-				logger.debug("imagesFolder: " + imagesFolder);
-				logger.debug("groupNodeRef: " + groupNodeRef);
-				nodeService.addAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL, null);
-				logger.debug("aspects: " + nodeService.getAspects(imagesFolder));
-				nodeService.createAssociation(imagesFolder, groupNodeRef, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS);
 
 				return null;
 
@@ -272,7 +240,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterial, null);
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
 				// productService.initializeProductFolder(rawMaterialNodeRef);
 
 				return rawMaterialNodeRef;
@@ -293,7 +261,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, null);
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 				// productService.initializeProductFolder(finishedProductNodeRef);
 
 				return finishedProductNodeRef;
@@ -303,14 +271,20 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 		// Check
 		logger.debug("//Check finished product");
-		NodeRef parentFinishedProductNodeRef = nodeService.getPrimaryParent(finishedProductNodeRef).getParentRef();
-		assertNotSame("Parent of finished product should not be the testFolderNodeRef", testFolderNodeRef, parentRawMaterialNodeRef);
-		assertEquals("Parent of finished product must have the type PRODUCT_FOLDER", BeCPGModel.TYPE_ENTITY_FOLDER, nodeService.getType(parentFinishedProductNodeRef));
-		NodeRef imagesFolder = nodeService.getChildByName(parentFinishedProductNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		NodeRef imagesFolder = nodeService.getChildByName(finishedProductNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		assertNotNull("Images folder must be not null", imagesFolder);
 		String imageName = I18NUtil.getMessage(RepoConsts.PATH_PRODUCT_IMAGE) + ".jpg";
 		NodeRef imageProductNodeRef = nodeService.getChildByName(imagesFolder, ContentModel.ASSOC_CONTAINS, imageName);
 		assertNotNull("Image product must be not null", imageProductNodeRef);
+		
+		/*-- init repo --*/
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
+				return null;
+			}
+		}, false, true);
 	}
 
 	/**
@@ -325,28 +299,33 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		/*-- add product image--*/
 		logger.debug("/*-- add product image--*/");
 		String imageName = I18NUtil.getMessage(RepoConsts.PATH_PRODUCT_IMAGE) + ".jpg";
-		logger.debug("image name: " + imageName);
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, imageName);
-		NodeRef imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
+		NodeRef imageNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+				imageName);
+		
+		if(imageNodeRef == null){
+			logger.debug("image name: " + imageName);
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, imageName);
+			imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
 
-		ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
-		String imageFullPath = System.getProperty("user.dir") + "/src/test/resources/beCPG/birt/productImage.jpg";
-		logger.debug("Load image file " + imageFullPath);
-		FileInputStream imageStream = new FileInputStream(imageFullPath);
-		logger.debug("image file loaded " + imageStream);
+			ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
+			String imageFullPath = System.getProperty("user.dir") + "/src/test/resources/beCPG/birt/productImage.jpg";
+			logger.debug("Load image file " + imageFullPath);
+			FileInputStream imageStream = new FileInputStream(imageFullPath);
+			logger.debug("image file loaded " + imageStream);
 
-		String mimetype = mimetypeService.guessMimetype(imageFullPath);
-		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-		Charset charset = charsetFinder.getCharset(imageStream, mimetype);
-		String encoding = charset.name();
+			String mimetype = mimetypeService.guessMimetype(imageFullPath);
+			ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+			Charset charset = charsetFinder.getCharset(imageStream, mimetype);
+			String encoding = charset.name();
 
-		logger.debug("mimetype : " + mimetype);
-		logger.debug("encoding : " + encoding);
-		writer.setMimetype(mimetype);
-		writer.setEncoding(encoding);
-		writer.putContent(imageStream);
+			logger.debug("mimetype : " + mimetype);
+			logger.debug("encoding : " + encoding);
+			writer.setMimetype(mimetype);
+			writer.setEncoding(encoding);
+			writer.putContent(imageStream);
+		}		
 	}
 
 	/**
@@ -378,7 +357,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial.setState(SystemState.Valid);
-				return productDAO.create(testFolderNodeRef, rawMaterial, null);
+				return alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
 				
 			}
 		}, false, true);
@@ -401,10 +380,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
+				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- classify twice --*/
@@ -421,10 +399,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
+				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- Create raw material 2 --*/
@@ -434,7 +411,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				rawMaterial2.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				rawMaterial2.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				rawMaterial2.setState(SystemState.Valid);
-				return productDAO.create(testFolderNodeRef, rawMaterial2, null);
+				return alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 				
 			}
 		}, false, true);
@@ -457,11 +434,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("4th Path should be 'Validés'", "Validés", arrDisplayPaths[3]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[4]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[5]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[6]);
-				assertEquals("8th Path should be 'Raw material (1)'", "Raw material (1)", nodeService.getProperty(rawMaterial2NodeRef, ContentModel.PROP_NAME));
+				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 
 				return null;
 
@@ -479,34 +454,59 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 		logger.debug("testGetWUsedProduct");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
 				rawMaterial.setName("Raw material");
-				NodeRef rawMaterialNodeRef = productDAO.create(testFolderNodeRef, rawMaterial, null);
-				LocalSemiFinishedProduct lSF1 = new LocalSemiFinishedProduct();
+				return alfrescoRepository.create(testFolderNodeRef, rawMaterial).getNodeRef();
+		
+			}
+		}, false, true);
+		
+		final NodeRef lSF1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
+				LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = productDAO.create(testFolderNodeRef, lSF1, null);
+				return alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		final NodeRef lSF2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
-				LocalSemiFinishedProduct lSF2 = new LocalSemiFinishedProduct();
+				LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 				lSF2.setName("Local semi finished 2");
-				NodeRef lSF2NodeRef = productDAO.create(testFolderNodeRef, lSF2, null);
+				return alfrescoRepository.create(testFolderNodeRef, lSF2).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, 1, 1d, 1d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, 2, 1d, 4d, 0d, CompoListUnit.P, 0d, null, DeclarationType.Declare, lSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, 3, 3d, 0d, 0d, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterialNodeRef));
-				finishedProduct.setCompoList(compoList);
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+				finishedProduct.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
 				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				NodeRef finishedProductNodeRef = productDAO.create(testFolderNodeRef, finishedProduct, dataLists);
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
 				logger.debug("local semi finished 1: " + lSF1NodeRef);
 				logger.debug("local semi finished 2: " + lSF2NodeRef);
@@ -549,13 +549,11 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
 			DeclarationType declType = DeclarationType.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE));
 			
-			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), WUSED_LEVEL, 
+			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), (CompoListDataItem)null, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
-										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_AFTER_PROCESS), 
 										compoListUnit, 
 										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
-										null, 
 										declType, 
 										kv.getValue().getEntityNodeRef());
 			
@@ -583,7 +581,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				logger.debug("/*-- Create pkg material --*/");
 				PackagingMaterialData packagingMaterial = new PackagingMaterialData();
 				packagingMaterial.setName("Packaging material");
-				NodeRef packagingMaterialNodeRef = productDAO.create(testFolderNodeRef, packagingMaterial, null);
+				NodeRef packagingMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial).getNodeRef();
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
@@ -593,16 +591,16 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished Product 1");
 				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
-				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, "Primaire", true, packagingMaterialNodeRef));
-				finishedProduct1.setPackagingList(packagingList1);
-				NodeRef finishedProductNodeRef1 = productDAO.create(testFolderNodeRef, finishedProduct1, dataLists);
+				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
+				finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
+				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
 				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
-				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, "Secondaire", true, packagingMaterialNodeRef));
-				finishedProduct2.setPackagingList(packagingList2);
-				NodeRef finishedProductNodeRef2 = productDAO.create(testFolderNodeRef, finishedProduct2, dataLists);
+				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
+				finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
+				NodeRef finishedProductNodeRef2 = alfrescoRepository.create(testFolderNodeRef, finishedProduct2).getNodeRef();
 
 				List<PackagingListDataItem> wUsedProducts = getWUsedPackagingList(packagingMaterialNodeRef);
 
@@ -611,13 +609,13 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				for (PackagingListDataItem packagingListDataItem : wUsedProducts) {
 
 					if (packagingListDataItem.getProduct().equals(finishedProductNodeRef1)) {
-						assertEquals("check qty", 1d, packagingListDataItem.getQty());
-						assertEquals("check qty", PackagingListUnit.P, packagingListDataItem.getPackagingListUnit());
-						assertEquals("check qty", "Primaire", packagingListDataItem.getPkgLevel());
+						assertEquals(1d, packagingListDataItem.getQty());
+						assertEquals(PackagingListUnit.P, packagingListDataItem.getPackagingListUnit());
+						assertEquals(PackagingLevel.Primary, packagingListDataItem.getPkgLevel());
 					} else if (packagingListDataItem.getProduct().equals(finishedProductNodeRef2)) {
-						assertEquals("check qty", 8d, packagingListDataItem.getQty());
-						assertEquals("check qty", PackagingListUnit.PP, packagingListDataItem.getPackagingListUnit());
-						assertEquals("check qty", "Secondaire", packagingListDataItem.getPkgLevel());
+						assertEquals(8d, packagingListDataItem.getQty());
+						assertEquals(PackagingListUnit.PP, packagingListDataItem.getPackagingListUnit());
+						assertEquals(PackagingLevel.Secondary, packagingListDataItem.getPkgLevel());
 					}
 				}
 
@@ -639,11 +637,12 @@ public class ProductServiceTest extends RepoBaseTestCase {
 			
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());			
 			PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));							
+			PackagingLevel packagingLevel = PackagingLevel.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL));
 			
 			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(), 									
 						(Double)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
 						packagingListUnit, 
-						(String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL), true, 
+						packagingLevel, true, 
 						kv.getValue().getEntityNodeRef());
 			
 			wUsedList.add(packagingListDataItem);

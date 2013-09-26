@@ -19,12 +19,10 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -32,10 +30,8 @@ import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.GUID;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -44,12 +40,11 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DataListModel;
+import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -83,19 +78,11 @@ public class EntityServiceImpl implements EntityService {
 
 	private FileFolderService fileFolderService;
 
-	private PermissionService permissionService;
-
-	private EntityTplService entityTplService;
-
-	private EntityVersionService entityVersionService;
-
 	private CopyService copyService;
 
 	private ContentService contentService;
 
 	private DictionaryService dictionaryService;
-
-	private BehaviourFilter policyBehaviourFilter;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -117,20 +104,8 @@ public class EntityServiceImpl implements EntityService {
 		this.fileFolderService = fileFolderService;
 	}
 
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	public void setEntityTplService(EntityTplService entityTplService) {
-		this.entityTplService = entityTplService;
-	}
-
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
-	}
-
-	public void setEntityVersionService(EntityVersionService entityVersionService) {
-		this.entityVersionService = entityVersionService;
 	}
 
 	public void setContentService(ContentService contentService) {
@@ -141,10 +116,6 @@ public class EntityServiceImpl implements EntityService {
 		this.dictionaryService = dictionaryService;
 	}
 	
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
 
@@ -182,7 +153,7 @@ public class EntityServiceImpl implements EntityService {
 				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(querySearch, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				logger.debug("resultSet.length() : " + resultSet.size());
 
-				if (resultSet.size() > 0) {
+				if (resultSet!=null && !resultSet.isEmpty()) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("list children has been modified");
 						logger.debug("Date :" + ISO8601DateFormat.format((Date) nodeService.getProperty(resultSet.get(0), ContentModel.PROP_MODIFIED)));
@@ -195,110 +166,6 @@ public class EntityServiceImpl implements EntityService {
 		}
 
 		return false;
-	}
-
-	/**
-	 * get the entity folder of the template and copy it for the entity.
-	 * 
-	 * @param entityNodeRef
-	 *            the entity node ref
-	 */
-	@Override
-	public void initializeEntityFolder(NodeRef entityNodeRef) {
-
-		logger.debug("initializeEntityFolder");
-		QName entityType = nodeService.getType(entityNodeRef);
-
-		// entity => exit
-		if (entityType.isMatch(BeCPGModel.TYPE_ENTITY)) {
-			return;
-		}		
-		
-		NodeRef entityFolderNodeRef = null;
-		NodeRef folderTplNodeRef = null;
-		
-		if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY)){
-			
-			NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-			QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-			// Actual entity parent is already a entity folder
-			if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-				return;
-			}
-						
-			folderTplNodeRef = entityTplService.getFolderTpl(entityType);
-			
-			if (folderTplNodeRef != null && nodeService.exists(folderTplNodeRef)) {
-
-				logger.debug("folderTplNodeRef found");
-			
-				entityFolderNodeRef = fileFolderService.create(parentEntityNodeRef, GUID.generate(), BeCPGModel.TYPE_ENTITY_FOLDER).getNodeRef();
-
-				// move entity in entityfolder and rename entityfolder
-				nodeService.moveNode(entityNodeRef, entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(entityNodeRef));
-				nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-				nodeService.setProperty(entityFolderNodeRef, BeCPGModel.PROP_ENTITY_FOLDER_CLASS_NAME, entityType);
-			}
-		}
-		else if(dictionaryService.isSubClass(entityType, BeCPGModel.TYPE_ENTITY_V2)){
-			entityFolderNodeRef = entityNodeRef;		
-			folderTplNodeRef = entityTplService.getFolderTpl(entityType);
-		}
-		else{
-			logger.debug("entityNodeRef doesn't inherit from entity nor entityV2");
-			return;
-		}
-		
-		// copy subfolders
-		if(entityFolderNodeRef != null && folderTplNodeRef != null){			
-			for (FileInfo folder : fileFolderService.listFolders(folderTplNodeRef)) {
-				
-				logger.debug("copy subFolder: " + folder.getName() + " entityFolderNodeRef: " + entityFolderNodeRef);				
-				//copyService.copy(folder.getNodeRef(), entityFolderNodeRef);
-				NodeRef subFolderNodeRef = copyService.copy(folder.getNodeRef(), entityFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, folder.getName());
-				
-				// initialize permissions according to template
-				NodeRef subFolderTplNodeRef = folder.getNodeRef();
-
-				if (subFolderNodeRef != null) {
-
-					if (nodeService.hasAspect(subFolderTplNodeRef, BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
-
-						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
-								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
-						String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
-								RepoConsts.PERMISSION_COLLABORATOR };
-
-						for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
-
-							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
-							String permissionName = permissionNames[cnt];
-							List<AssociationRef> groups = nodeService.getTargetAssocs(subFolderTplNodeRef, permissionGroupAssociation);
-
-							if (groups.size() > 0) {
-								for (AssociationRef assocRef : groups) {
-									NodeRef groupNodeRef = assocRef.getTargetRef();
-									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
-									logger.debug("add permission, folder: " + folder.getName() + " authority: " + authorityName + " perm: " + permissionName);
-									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
-
-									// remove association
-									nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
-								}
-							}
-						}
-
-						// TODO
-						// remove aspect when every association has been
-						// removed
-						// nodeService.removeAspect(subFolderNodeRef,
-						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
-					}
-				}
-			}
-		}
-		
 	}
 
 	/**
@@ -354,9 +221,8 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	private NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
-		NodeRef parentNodeRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
-
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef == null) {
 			throw new BeCPGException("Folder 'Images' doesn't exist.");
 		}
@@ -387,7 +253,7 @@ public class EntityServiceImpl implements EntityService {
 					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
 				}
 			} catch (IOException e) {
-				logger.error("Failed to get the content", e);
+				logger.error("Failed to get the content for "+nodeRef, e);
 			} finally {
 				IOUtils.closeQuietly(in);
 				IOUtils.closeQuietly(out);
@@ -395,12 +261,6 @@ public class EntityServiceImpl implements EntityService {
 		}
 
 		return imageBytes;
-	}
-
-	@Override
-	public void deleteEntity(NodeRef entityNodeRef) {
-		logger.debug("delete entity");
-		entityVersionService.deleteVersionHistory(entityNodeRef);
 	}
 
 	@Override
@@ -416,23 +276,12 @@ public class EntityServiceImpl implements EntityService {
 				@Override
 				public NodeRef doWork() throws Exception {
 
-					try {
+					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
 
-						policyBehaviourFilter.disableBehaviour(entityType);
+					//Done by copy initializeEntityFolder(ret);
 
-						NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-						nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-
-						initializeEntityFolder(ret);
-
-						return ret;
-
-					} finally {
-
-						policyBehaviourFilter.enableBehaviour(entityType);
-
-					}
-
+					return ret;
 				}
 			}, AuthenticationUtil.getSystemUserName());
 
@@ -514,7 +363,7 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public boolean hasAssociatedImages(QName type) {
 
-		return BeCPGModel.TYPE_CLIENT.isMatch(type) || BeCPGModel.TYPE_SUPPLIER.isMatch(type) || dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT);
+		return BeCPGModel.TYPE_CLIENT.isMatch(type) || BeCPGModel.TYPE_SUPPLIER.isMatch(type) || dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT) || ProjectModel.TYPE_PROJECT.isMatch(type);
 	}
 
 	/**
@@ -535,16 +384,145 @@ public class EntityServiceImpl implements EntityService {
 		return workingCopyName;
 	}
 
-	@Override
-	public NodeRef getEntityFolder(NodeRef entityNodeRef) {
-		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
 
-		// Actual entity parent is not a entity folder
-		if (parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER)) {
-			return parentEntityNodeRef;
+	@Override
+	public void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+		
+//		// copy files
+//		if(targetNodeRef != null && sourceNodeRef != null){			
+//			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
+//				
+//				if(nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, file.getName()) == null){
+//					
+//					logger.debug("copy file: " + file.getName() + " sourceNodeRef: " + sourceNodeRef + " targetNodeRef: " + targetNodeRef);
+//					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), targetNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+//					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+//					
+//					// initialize permissions according to template
+//					if (file.isFolder() && nodeService.hasAspect(file.getNodeRef(), BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
+//
+//						QName[] permissionGroupAssociations = { BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
+//								BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS, BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
+//						String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER, RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
+//								RepoConsts.PERMISSION_COLLABORATOR };
+//
+//						for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
+//
+//							QName permissionGroupAssociation = permissionGroupAssociations[cnt];
+//							String permissionName = permissionNames[cnt];
+//							List<AssociationRef> groups = nodeService.getTargetAssocs(file.getNodeRef(), permissionGroupAssociation);
+//
+//							if (groups!=null && !groups.isEmpty()) {
+//								for (AssociationRef assocRef : groups) {
+//									NodeRef groupNodeRef = assocRef.getTargetRef();
+//									String authorityName = (String) nodeService.getProperty(groupNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+//									logger.debug("add permission, folder: " + file.getName() + " authority: " + authorityName + " perm: " + permissionName);
+//									permissionService.setPermission(subFolderNodeRef, authorityName, permissionName, true);
+//
+//									// remove association
+//									nodeService.removeAssociation(subFolderNodeRef, groupNodeRef, permissionGroupAssociation);
+//								}
+//							}
+//						}
+//
+//						// TODO
+//						// remove aspect when every association has been
+//						// removed
+//						// nodeService.removeAspect(subFolderNodeRef,
+//						// BeCPGModel.ASPECT_PERMISSIONS_TPL);
+//						
+//						//TODO also copy datalist
+//					}
+//				}				
+//			}
+//		}
+		
+		copyOrMoveFiles(sourceNodeRef, targetNodeRef, true);
+		
+	}
+	
+	@Override
+	public void moveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+		copyOrMoveFiles(sourceNodeRef, targetNodeRef, false);		
+	}
+	
+	private void copyOrMoveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean isCopy){
+		
+		if(targetNodeRef != null && sourceNodeRef != null){	
+
+			for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
+				
+				if(file.getName().equals(TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS))){
+					
+					// create Documents folder if needed
+					String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
+					NodeRef documentsFolderNodeRef = nodeService.getChildByName(targetNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
+					if(documentsFolderNodeRef == null){
+						documentsFolderNodeRef = fileFolderService.create(targetNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+					}
+					
+					for (FileInfo file2 : fileFolderService.list(file.getNodeRef())){
+						
+						// copy/move files that are not report
+						if(!ReportModel.TYPE_REPORT.equals(file2.getType())){																							
+							copyOrMoveFile(file2, documentsFolderNodeRef, isCopy);
+						}						
+					}
+				}	
+				else{
+					copyOrMoveFile(file, targetNodeRef, isCopy);									
+				}
+			}
 		}
-		return null;
+	}
+	
+	private void copyOrMoveFile(FileInfo file, NodeRef parentNodeRef, boolean isCopy){		
+		
+		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, file.getName());
+		if (documentNodeRef == null) {			
+		
+			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
+			if(isCopy){
+				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+			}
+			else{
+				nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+			}	
+		}
+		else{
+			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: " + parentNodeRef);
+		}
+	}
+	
+	@Override
+	public void deleteFiles(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
+		
+		if(entityNodeRef != null){			
+			for (FileInfo file : fileFolderService.list(entityNodeRef)) {
+				
+				logger.debug("delete file: " + file.getName() + " entityFolderNodeRef: " + entityNodeRef);				
+				deleteNode(file.getNodeRef(), deleteArchivedNodes);
+			}
+		}		
+	}
+	
+	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode){		
+
+		// delete from trash
+		if(deleteArchivedNode){
+			nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, null);
+		}
+		nodeService.deleteNode(nodeRef);
+	}
+
+	@Override
+	public void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes) {
+		
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if(listContainerNodeRef != null){
+			deleteNode(listContainerNodeRef, deleteArchivedNodes);						
+		}		
 	}
 
 }

@@ -238,8 +238,7 @@ function main()
          status.setCode(json.status, "Not authenticated");
          return;
       }
-      else
-      {
+   
          var formModel = eval('(' + json + ')');
          
          // if we got a successful response attempt to render the form
@@ -252,7 +251,7 @@ function main()
             model.error = formModel.message;
          }
       }
-   }
+   
    
    var q = getArgument("q");
    var page = getArgument("page");

@@ -22,9 +22,9 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
-import fr.becpg.repo.BeCPGDao;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
@@ -44,7 +44,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 	private static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
-	private BeCPGDao<ACLGroupData> aclGroupDao;
+	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
 
 	private AuthorityService authorityService;
 
@@ -64,8 +64,9 @@ public class SecurityServiceImpl implements SecurityService {
 		this.dictionaryService = dictionaryService;
 	}
 
-	public void setAclGroupDao(BeCPGDao<ACLGroupData> aclGroupDao) {
-		this.aclGroupDao = aclGroupDao;
+	
+	public void setAlfrescoRepository(AlfrescoRepository<ACLGroupData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	public void setAuthorityService(AuthorityService authorityService) {
@@ -105,12 +106,11 @@ public class SecurityServiceImpl implements SecurityService {
 						if (permissionModel.isReadOnly() && isInGroup(permissionModel)) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
-						} else if (permissionModel.isReadOnly() && ret == SecurityService.WRITE_ACCESS) {
+						} else if (permissionModel.isReadOnly()) {
 							ret = SecurityService.NONE_ACCESS;
-
 						}
 
-						if (permissionModel.isWrite() && !isInGroup(permissionModel)) {
+						if (permissionModel.isWrite() && !isInGroup(permissionModel) && ret != SecurityService.NONE_ACCESS) {
 							ret = SecurityService.READ_ACCESS;
 							// Continue we can get better;
 						} else if (permissionModel.isWrite()) {
@@ -118,7 +118,8 @@ public class SecurityServiceImpl implements SecurityService {
 							// return we cannot get better
 						}
 					}
-				}
+
+				} 
 
 				return ret;
 			}
@@ -154,11 +155,12 @@ public class SecurityServiceImpl implements SecurityService {
 						List<NodeRef> aclGroups = findAllAclGroups();
 						if (aclGroups != null) {
 							for (NodeRef aclGroupNodeRef : aclGroups) {
-								ACLGroupData aclGrp = aclGroupDao.find(aclGroupNodeRef);
+								ACLGroupData aclGrp = alfrescoRepository.findOne(aclGroupNodeRef);
+								QName aclGrpType= QName.createQName(aclGrp.getNodeType(),namespacePrefixResolver);
 								List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
 								if (aclEntries != null) {
 									for (ACLEntryDataItem aclEntry : aclEntries) {
-										String key = computeAclKey(aclGrp.getNodeType(), aclEntry.getPropName());
+										String key = computeAclKey(aclGrpType, aclEntry.getPropName());
 										List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
 										perms.add(aclEntry.getPermissionModel());
 										if (acls.containsKey(key)) {
@@ -190,13 +192,11 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	private boolean isInGroup(PermissionModel permissionModel) {
 
+		
 		for (String currAuth : authorityService.getAuthorities()) {
-			for (String checkedAuth : permissionModel.getGroups()) {
-				if (currAuth != null && currAuth.equals(checkedAuth)) {
-					return true;
-				}
+			if(permissionModel.getGroups().contains(authorityService.getAuthorityNodeRef(currAuth))){
+				return true;
 			}
-
 		}
 
 		return false;
@@ -219,9 +219,9 @@ public class SecurityServiceImpl implements SecurityService {
 		if (aclGroups != null) {
 			for (NodeRef aclGroupNodeRef : aclGroups) {
 
-				ACLGroupData aclGroup = aclGroupDao.find(aclGroupNodeRef);
+				ACLGroupData aclGroup = alfrescoRepository.findOne(aclGroupNodeRef);
 
-				TypeDefinition typeDefinition = dictionaryService.getType(aclGroup.getNodeType());
+				TypeDefinition typeDefinition = dictionaryService.getType( QName.createQName(aclGroup.getNodeType(),namespacePrefixResolver));
 
 				if (typeDefinition != null && typeDefinition.getProperties() != null) {
 					for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition.getProperties().entrySet()) {
@@ -236,11 +236,10 @@ public class SecurityServiceImpl implements SecurityService {
 						aspects = new ArrayList<AspectDefinition>();
 					}
 
-					for (QName aspect : aclGroup.getNodeAspects()) {
-						AspectDefinition aspectDefinition = dictionaryService.getAspect(aspect);
-						aspects.add(aspectDefinition);
-
-					}
+//					for (QName aspect : aclGroup.getNodeAspects()) {
+//						AspectDefinition aspectDefinition = dictionaryService.getAspect(aspect);
+//						aspects.add(aspectDefinition);
+//					}
 
 					for (AspectDefinition aspect : aspects) {
 						if (aspect != null && aspect.getProperties() != null) {
