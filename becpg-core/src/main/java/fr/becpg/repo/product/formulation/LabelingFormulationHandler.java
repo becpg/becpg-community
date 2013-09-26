@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,6 +21,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -83,13 +85,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService);
 
+		//TODO add model only rules
+		List<LabelingRuleListDataItem> labelingRuleLists = getLabelingRules(formulatedProduct);;
+		
+		
 		// Apply before formula
-		for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
+		for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 			LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
 			if (LabelingRuleType.Format.equals(type)) {
 				labelingFormulaContext.formatText(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getFormula());
 			} else if (LabelingRuleType.Rename.equals(type)) {
 				labelingFormulaContext.rename(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(), labelingRuleListDataItem.getFormula());
+			} else if (LabelingRuleType.Locale.equals(type)) {
+				labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula());
 			} else if (LabelingRuleType.Detail.equals(type) || LabelingRuleType.Declare.equals(type) || LabelingRuleType.DoNotDeclare.equals(type)
 					|| LabelingRuleType.Omit.equals(type) || LabelingRuleType.Group.equals(type)) {
 				labelingFormulaContext.declare(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getFormula(), DeclarationType.valueOf(type.toString()));
@@ -110,7 +118,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		labelingFormulaContext.setCompositeIngs(compositeLabelings);
 
 		// Apply after formula
-		for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
+		for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 			LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
 			if (LabelingRuleType.Aggregate.equals(type)) {
 				// TODO
@@ -126,7 +134,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext dataContext = new StandardEvaluationContext(labelingFormulaContext);
 
-		for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
+		for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 			if (LabelingRuleType.Render.equals(labelingRuleListDataItem.getLabelingRuleType())) {
 				MLText label = new MLText();
 				for (Locale locale : labelingFormulaContext.getLocales()) {
@@ -157,6 +165,25 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		formulatedProduct.getLabelingListView().getIngLabelingList().retainAll(retainNodes);
 
 		return true;
+	}
+
+	private List<LabelingRuleListDataItem> getLabelingRules(ProductData formulatedProduct) {
+//      TODO 		
+//		List<LabelingRuleListDataItem> ret = new LinkedList<>();
+//		
+//		if(formulatedProduct.getEntityTplRef() !=null){
+//			List<RepositoryEntity> modelRules = alfrescoRepository.loadDataList(formulatedProduct.getEntityTplRef(), BeCPGModel.TYPE_LABELING_RULE_LIST,  BeCPGModel.TYPE_LABELING_RULE_LIST);
+//			for (RepositoryEntity modelRule : modelRules) {
+//				if(modelRule instanceof LabelingRuleListDataItem 
+//						&& ((LabelingRuleListDataItem) modelRule).getIsManual()){
+//					ret.add((LabelingRuleListDataItem)modelRule);
+//				}
+//			}	
+//		}
+//		ret.addAll(formulatedProduct.getLabelingListView().getLabelingRuleList());
+//		return ret;
+		
+		return formulatedProduct.getLabelingListView().getLabelingRuleList();
 	}
 
 	private IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label) {
@@ -203,9 +230,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
 			DeclarationType declarationType = getDeclarationType(component.getData(), null, labelingFormulaContext);
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("Declaration type :"+declarationType.toString()+" for :"+component.getData().getName());
+			}
 
 			if (component.isLeaf() || declarationType == DeclarationType.DoNotDeclare || declarationType == DeclarationType.Declare) {
-				defaultCompositeIng = calculateILLOfCompositeIng(defaultCompositeIng, component, labelingFormulaContext);
+				if(component.isLeaf()){
+					defaultCompositeIng = calculateILLOfCompositeIng(defaultCompositeIng, component, labelingFormulaContext);
+				} else {
+					defaultCompositeIng = calculateILLOfCompositeIng(component, labelingFormulaContext);
+				}
 
 			} else {
 				if (declarationType == DeclarationType.Detail) {

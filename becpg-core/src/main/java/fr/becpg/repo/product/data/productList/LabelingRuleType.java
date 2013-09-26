@@ -25,5 +25,7 @@ public enum LabelingRuleType {
 	
 	Group,
 	
-	DoNotDeclare;
+	DoNotDeclare, 
+	
+	Locale;
 }

@@ -3,8 +3,8 @@ package fr.becpg.repo.product.data.spel;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -32,9 +32,7 @@ import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -49,6 +47,8 @@ public class LabelingFormulaContext {
 
 	private List<CompositeLabeling> compositeLabelings;
 
+	private Set<Locale> availableLocales;
+
 	private NodeService mlNodeService;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -60,6 +60,23 @@ public class LabelingFormulaContext {
 	public LabelingFormulaContext(NodeService mlNodeService) {
 		super();
 		this.mlNodeService = mlNodeService;
+		availableLocales = new HashSet<>();
+		availableLocales.add(new Locale(Locale.getDefault().getLanguage()));
+	}
+
+	/*
+	 * LOCALE
+	 */
+
+	public void addLocale(String value) {
+		String[] locales = value.split(",");
+		for (String tmp : locales) {
+			availableLocales.add(new Locale(tmp));
+		}
+	}
+
+	public Set<Locale> getLocales() {
+		return availableLocales;
 	}
 
 	/*
@@ -86,9 +103,9 @@ public class LabelingFormulaContext {
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return new MessageFormat("<b>{0} ({1,number,percent}):</b>");
+				return new MessageFormat("<b>{0} ({1,number,0.#%}): </b>");
 			}
-			return new MessageFormat("{0} {1,number,percent} ({2})");
+			return new MessageFormat("{0} {1,number,0.#%} ({2})");
 		} else if (lblComponent instanceof IngTypeItem) {
 			return new MessageFormat("{0}: {1}");
 		}
@@ -149,10 +166,8 @@ public class LabelingFormulaContext {
 	/*
 	 * AGGREGATE
 	 */
-	
+
 	private Map<NodeRef, NodeRef> replacements = new HashMap<>();
-	
-	
 
 	public void aggregate(List<NodeRef> components, String label) {
 		// components peut être ING, SF ou MP
@@ -204,8 +219,11 @@ public class LabelingFormulaContext {
 
 		if (showGroup) {
 			for (CompositeLabeling compositeLabeling : compositeLabelings) {
+				if (ret.length() > 0) {
+					ret.append("<br/>");
+				}
 				ret.append(renderCompositeIng(compositeLabeling));
-				ret.append("<br/>");
+
 			}
 		} else {
 			CompositeLabeling merged = new CompositeLabeling();
@@ -271,7 +289,7 @@ public class LabelingFormulaContext {
 
 				Double qtyPerc = ing.getQty();
 				if (compositeLabeling.getQtyRMUsed() > 0) {
-					qtyPerc = qtyPerc / compositeLabeling.getQtyRMUsed() * 100;
+					qtyPerc = qtyPerc / compositeLabeling.getQtyRMUsed();
 				}
 
 				String ingName = getIngName(ing);
@@ -317,33 +335,74 @@ public class LabelingFormulaContext {
 
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
 
-		Map<IngTypeItem, List<AbstractLabelingComponent>> sortedIngListByType = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
+		Map<IngTypeItem, List<AbstractLabelingComponent>> tmp = new HashMap<IngTypeItem, List<AbstractLabelingComponent>>();
 
 		for (AbstractLabelingComponent lblComponent : compositeLabeling.getIngList().values()) {
-			IngTypeItem ingType = IngTypeItem.DEFAULT;
+			IngTypeItem ingType = null;
 			if (lblComponent instanceof IngItem) {
 				ingType = ((IngItem) lblComponent).getIngType();
-				// First aggregate
-				if (replacements.containsKey(ingType.getNodeRef())) {
-					ingType = (IngTypeItem) alfrescoRepository.findOne(replacements.get(ingType.getNodeRef()));
-				}
-				//If Omit
-				if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
-					DeclarationFilter declarationFilter = nodeDeclarationFilters.get(ingType.getNodeRef());
-					if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType()) && matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())) {
-						ingType = IngTypeItem.DEFAULT;
+				if (ingType != null) {
+					// First aggregate
+					if (replacements.containsKey(ingType.getNodeRef())) {
+						ingType = (IngTypeItem) alfrescoRepository.findOne(replacements.get(ingType.getNodeRef()));
+					}
+					// If Omit
+					if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
+						DeclarationFilter declarationFilter = nodeDeclarationFilters.get(ingType.getNodeRef());
+						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType()) && matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())) {
+							ingType = null;
+						}
 					}
 				}
 			}
 
-			List<AbstractLabelingComponent> subSortedList = sortedIngListByType.get(ingType);
+			if (ingType == null) {
+				ingType = IngTypeItem.DEFAULT;
+			}
+
+			List<AbstractLabelingComponent> subSortedList = tmp.get(ingType);
 
 			if (subSortedList == null) {
 				subSortedList = new LinkedList<AbstractLabelingComponent>();
-				Collections.sort(subSortedList);
-				sortedIngListByType.put(ingType, subSortedList);
+				tmp.put(ingType, subSortedList);
 			}
 			subSortedList.add(lblComponent);
+
+		}
+		
+		/*
+		 * Sort by qty, default is always first
+		 */
+		List<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>> entries = new ArrayList<>(tmp.entrySet());
+		Collections.sort(entries, new Comparator<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>>() {
+			public int compare(Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> a, Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> b) {
+
+				if(IngTypeItem.DEFAULT.equals(a.getKey())){
+					return 1;
+				}
+				
+				if(IngTypeItem.DEFAULT.equals(b.getKey())){
+					return 2;
+				}
+				
+				
+				return getQty(a.getValue()).compareTo(getQty(b.getValue()));
+			}
+
+			private Double getQty(List<AbstractLabelingComponent> lblComponents) {
+				Double ret = 0d;
+				 for(AbstractLabelingComponent lblComponent : lblComponents) {
+					 ret+=lblComponent.getQty();
+				}
+				
+				return ret;
+			}
+		});
+		Map<IngTypeItem, List<AbstractLabelingComponent>> sortedIngListByType = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
+		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> entry : entries) {
+
+			Collections.sort(entry.getValue());
+			sortedIngListByType.put(entry.getKey(), entry.getValue());
 		}
 
 		return sortedIngListByType;
@@ -360,11 +419,6 @@ public class LabelingFormulaContext {
 			return exp.getValue(dataContext, Boolean.class);
 		}
 		return true;
-	}
-
-	public Set<Locale> getLocales() {
-		// TODO
-		return new HashSet<>(Arrays.asList(Locale.FRENCH, Locale.ENGLISH));
 	}
 
 	@Override

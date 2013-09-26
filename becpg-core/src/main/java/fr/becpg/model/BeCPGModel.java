@@ -247,6 +247,8 @@ public interface BeCPGModel {
 	// ingLabelingList
 	/** The Constant TYPE_INGLABELINGLIST. */
 	QName TYPE_INGLABELINGLIST = QName.createQName(BECPG_URI, "ingLabelingList");
+	
+	QName TYPE_LABELING_RULE_LIST = QName.createQName(BECPG_URI, "labelingRuleList");
 
 	/** The Constant ASSOC_ILL_GRP. */
 	QName ASSOC_ILL_GRP = QName.createQName(BECPG_URI, "illGrp");
@@ -708,6 +710,5 @@ public interface BeCPGModel {
 	QName ASPECT_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
 	
 	QName PROP_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
-
 
 }

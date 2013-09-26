@@ -78,10 +78,24 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 		super();
 	}
 
-	public LabelingRuleListDataItem(String title, String formula, LabelingRuleType labelingRuleType) {
+	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType) {
 		super();
+		this.name = name;
 		this.formula = formula;
 		this.labelingRuleType = labelingRuleType;
+	}
+
+	
+	
+	
+	
+	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
+		super();
+		this.name = name;
+		this.formula = formula;
+		this.labelingRuleType = labelingRuleType;
+		this.components = components;
+		this.replacements = replacements;
 	}
 
 	@Override
