@@ -180,6 +180,7 @@
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
+					<value>Locale</value>
 				</list>
 			</parameter>
 		</constraint>

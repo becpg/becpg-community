@@ -152,6 +152,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     
     protected NodeRef ing5;    
     
+    protected NodeRef ingType1;
+    
     /** The bio origin1. */
     protected NodeRef bioOrigin1;
     
@@ -244,8 +246,16 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					allergen4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
 					//Ings
 					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "ing1");
+					properties.put(ContentModel.PROP_NAME, "Epaississant");
 					MLText mlName = new MLText();
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "Epaississant default");
+					mlName.addValue(Locale.ENGLISH, "Epaississant english");
+					mlName.addValue(Locale.FRENCH, "Epaississant french");	
+					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+					ingType1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "ing1");
+					mlName = new MLText();
 					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing1 default");
 					mlName.addValue(Locale.ENGLISH, "ing1 english");
 					mlName.addValue(Locale.FRENCH, "ing1 french");	
@@ -277,7 +287,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing5");
-					properties.put(BeCPGModel.PROP_ING_TYPE, "Epaississant");
+					properties.put(BeCPGModel.PROP_ING_TYPE_V2, ingType1);
 					mlName = new MLText();
 					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing5 default");
 					mlName.addValue(Locale.ENGLISH, "ing5 english");
