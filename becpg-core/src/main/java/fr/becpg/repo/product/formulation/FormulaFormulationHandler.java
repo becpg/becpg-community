@@ -49,7 +49,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
-	public static final int DYN_COLUMN_SIZE = 5;
+	public static final int DYN_COLUMN_SIZE = 10;
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
