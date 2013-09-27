@@ -45,7 +45,7 @@ public class LabelingFormulaContext {
 
 	private static Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
-	private List<CompositeLabeling> compositeLabelings;
+	private CompositeLabeling lblCompositeContext;
 
 	private Set<Locale> availableLocales;
 
@@ -53,8 +53,12 @@ public class LabelingFormulaContext {
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	public void setCompositeIngs(List<CompositeLabeling> compositeLabelings) {
-		this.compositeLabelings = compositeLabelings;
+	public CompositeLabeling getCompositeLabeling() {
+		return lblCompositeContext;
+	}
+
+	public void setCompositeLabeling(CompositeLabeling compositeLabeling) {
+		this.lblCompositeContext = compositeLabeling;
 	}
 
 	public LabelingFormulaContext(NodeService mlNodeService) {
@@ -124,13 +128,19 @@ public class LabelingFormulaContext {
 			MLText mlText = null;
 			if (replacement != null && !replacement.isEmpty()) {
 				// TODO several replacement
-				// TODO MP legalName
-				// TODO rename de type
 				mlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_LEGAL_NAME);
 			} else if (label != null) {
 				mlText = new MLText();
 				for (Locale locale : getLocales()) {
-					mlText.addValue(locale, I18NUtil.getMessage(label, locale));
+					String val = I18NUtil.getMessage(label, locale);
+					if(val == null){
+						if(logger.isDebugEnabled()){
+							logger.debug("I18 not found for key "+label+" locale "+locale.toString());
+						}
+						val = label;
+					}
+					
+					mlText.addValue(locale,val);
 				}
 			}
 			if (mlText != null) {
@@ -159,19 +169,41 @@ public class LabelingFormulaContext {
 	 * COMBINE
 	 */
 
-	public void combine(List<NodeRef> components, List<Double> values, String label) {
+	public void combine(List<NodeRef> components, List<NodeRef> replacement, String label) {
 		// components peut être ING, SF ou MP
+
+		
 	}
 
 	/*
 	 * AGGREGATE
 	 */
+	
+	
+	// Combiner --> nouveau groupe
+	// Aggréger -- aggrege (quel niveau ?) (remplacement au même niveau ) fusionne
 
 	private Map<NodeRef, NodeRef> replacements = new HashMap<>();
+	private Map<NodeRef, String> aggregateGroups = new HashMap<>();
 
-	public void aggregate(List<NodeRef> components, String label) {
+
+	public NodeRef getPossibleReplacement(NodeRef nodeRef) {
+		if(replacements.containsKey(nodeRef)){
+			return replacements.get(nodeRef);
+		}
+		return nodeRef;
+	}
+	
+	public void aggregate(List<NodeRef> components, List<NodeRef> replacement, String groupId) {
 		// components peut être ING, SF ou MP
-
+		for (NodeRef component : components) {
+			if (replacement != null && !replacement.isEmpty()) {
+				// TODO several replacement
+				replacements.put(component, replacement.get(0));
+			} else {
+				aggregateGroups.put(component, groupId);
+			}
+		}
 	}
 
 	/*
@@ -218,20 +250,17 @@ public class LabelingFormulaContext {
 		}
 
 		if (showGroup) {
-			for (CompositeLabeling compositeLabeling : compositeLabelings) {
-				if (ret.length() > 0) {
-					ret.append("<br/>");
-				}
-				ret.append(renderCompositeIng(compositeLabeling));
+			
+				ret.append(renderCompositeIng(lblCompositeContext));
 
-			}
 		} else {
-			CompositeLabeling merged = new CompositeLabeling();
-			for (CompositeLabeling compositeLabeling : compositeLabelings) {
-				merged.getIngList().putAll(compositeLabeling.getIngList());
-				merged.setQtyRMUsed(100d);
-			}
-			ret.append(renderCompositeIng(merged));
+			//TODO
+//			CompositeLabeling merged = new CompositeLabeling();
+//			for (CompositeLabeling compositeLabeling : compositeLabelings) {
+//				merged.getIngList().putAll(compositeLabeling.getIngList());
+//				merged.setQtyRMUsed(100d);
+//			}
+//			ret.append(renderCompositeIng(merged));
 		}
 
 		return ret.toString();
@@ -244,39 +273,43 @@ public class LabelingFormulaContext {
 			logger.debug(" Render Group list ");
 		}
 
-		for (CompositeLabeling compositeLabeling : compositeLabelings) {
-			if (compositeLabeling.getNodeRef() != null) {
-				if (ret.length() > 0) {
-					ret.append(RepoConsts.LABEL_SEPARATOR);
-				}
-				ret.append(getIngTextFormat(compositeLabeling).format(new Object[] { getIngName(compositeLabeling), compositeLabeling.getQty() }));
+		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+			
+			if(component instanceof CompositeLabeling && ((CompositeLabeling) component).isGroup()){
+					if (ret.length() > 0) {
+						ret.append(RepoConsts.LABEL_SEPARATOR);
+					}
+					ret.append(getIngTextFormat(component).format(new Object[] { getIngName(component), component.getQty() }));
 			}
 		}
 
 		return ret.toString().replaceAll(":", "");
 	}
-
-	public String renderGroup(NodeRef groupNodeRef) {
-		CompositeLabeling compositeLabeling = findGroup(groupNodeRef);
-		if (compositeLabeling != null) {
-			return renderCompositeIng(compositeLabeling);
-		}
-		return "";
-	}
-
-	private CompositeLabeling findGroup(NodeRef groupNodeRef) {
-		for (CompositeLabeling compositeLabeling : compositeLabelings) {
-			if (groupNodeRef.equals(compositeLabeling.getNodeRef())) {
-				return compositeLabeling;
-			}
-		}
-		return null;
-	}
+//
+//	public String renderGroup(NodeRef groupNodeRef) {
+//		CompositeLabeling compositeLabeling = findGroup(groupNodeRef);
+//		if (compositeLabeling != null) {
+//			return renderCompositeIng(compositeLabeling);
+//		}
+//		return "";
+//	}
+//
+//	private CompositeLabeling findGroup(NodeRef groupNodeRef) {
+//		for (CompositeLabeling compositeLabeling : compositeLabelings) {
+//			if (groupNodeRef.equals(compositeLabeling.getNodeRef())) {
+//				return compositeLabeling;
+//			}
+//		}
+//		return null;
+//	}
 
 	private String renderCompositeIng(CompositeLabeling compositeLabeling) {
 		StringBuffer ret = new StringBuffer();
 
 		if (compositeLabeling.isGroup() && compositeLabeling.getNodeRef() != null) {
+			if (ret.length() > 0) {
+				ret.append("<br/>");
+			}
 			ret.append(getIngTextFormat(compositeLabeling).format(new Object[] { getIngName(compositeLabeling), compositeLabeling.getQty() }));
 		}
 
@@ -423,8 +456,9 @@ public class LabelingFormulaContext {
 
 	@Override
 	public String toString() {
-		return "LabelingFormulaContext [compositeIngs=" + compositeLabelings + ", textFormaters=" + textFormaters + ", renameRules=" + renameRules + ", nodeDeclarationFilters="
+		return "LabelingFormulaContext [compositeLabeling=" + lblCompositeContext + ", textFormaters=" + textFormaters + ", renameRules=" + renameRules + ", nodeDeclarationFilters="
 				+ nodeDeclarationFilters + ", declarationFilters=" + declarationFilters + "]";
 	}
+
 
 }
