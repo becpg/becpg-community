@@ -541,15 +541,17 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	
 	protected void loadProductData(NodeRef nodeRef, Element dataListItemElt){
 		
-		QName [] props = { BeCPGModel.PROP_CODE, BeCPGModel.PROP_ERP_CODE, BeCPGModel.PROP_LEGAL_NAME, BeCPGModel.PROP_LEGAL_NAME};
-		QName [] assocs = { BeCPGModel.ASSOC_SUPPLIERS};
-		
-		for(QName prop : props){
-			dataListItemElt.addAttribute(prop.getLocalName(), (String)nodeService.getProperty(nodeRef, prop));
-		}
-				
-		for(QName assoc : assocs){
-			dataListItemElt.addAttribute(assoc.getLocalName(), extractNames(associationService.getTargetAssocs(nodeRef, assoc)));
-		}		
+		if(nodeRef != null){
+			QName [] props = { BeCPGModel.PROP_CODE, BeCPGModel.PROP_ERP_CODE, BeCPGModel.PROP_LEGAL_NAME, BeCPGModel.PROP_LEGAL_NAME};
+			QName [] assocs = { BeCPGModel.ASSOC_SUPPLIERS};
+			
+			for(QName prop : props){
+				dataListItemElt.addAttribute(prop.getLocalName(), (String)nodeService.getProperty(nodeRef, prop));
+			}
+					
+			for(QName assoc : assocs){
+				dataListItemElt.addAttribute(assoc.getLocalName(), extractNames(associationService.getTargetAssocs(nodeRef, assoc)));
+			}
+		}			
 	}
 }
