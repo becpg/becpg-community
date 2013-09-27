@@ -2369,18 +2369,6 @@ dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
                 <property name="width">0.42748091603053434in</property>
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="3326">
-                <property name="width">0.5419847328244275in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
-            <column id="3329">
-                <property name="width">0.5190839694656488in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
-            <column id="3332">
-                <property name="width">0.5038167938931297in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
             <header>
                 <row id="2911">
                     <property name="style">becpg-col-header</property>
@@ -2412,22 +2400,7 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3321">
                         <label id="3333">
-                            <text-property name="text">% SF</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3324">
-                        <label id="3335">
-                            <text-property name="text">Poids brut MeO (g)</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3327">
-                        <label id="3337">
-                            <text-property name="text">Poids net MeO (g)</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3330">
-                        <label id="3340">
-                            <text-property name="text">% PF</text-property>
+                            <text-property name="text">Qté Labo (g)</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2460,40 +2433,23 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3286">
                         <data id="3292">
+                            <property name="style">becpg-data</property>
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListYieldPerc</property>
                         </data>
                     </cell>
                     <cell id="3289">
                         <data id="3294">
+                            <property name="style">becpg-data</property>
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListLossPerc</property>
                         </data>
                     </cell>
                     <cell id="3322">
                         <data id="3334">
+                            <property name="style">becpg-data</property>
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">dynamicCharactColumn1</property>
-                        </data>
-                    </cell>
-                    <cell id="3325">
-                        <data id="3336">
-                            <structure name="numberFormat">
-                                <property name="category">General Number</property>
-                                <property name="pattern">General Number</property>
-                            </structure>
-                            <property name="resultSetColumn">dynamicCharactColumn2</property>
-                        </data>
-                    </cell>
-                    <cell id="3328">
-                        <data id="3338">
-                            <structure name="numberFormat">
-                                <property name="category">General Number</property>
-                                <property name="pattern">General Number</property>
-                            </structure>
-                            <property name="resultSetColumn">dynamicCharactColumn3</property>
-                        </data>
-                    </cell>
-                    <cell id="3331">
-                        <data id="3341">
-                            <property name="resultSetColumn">dynamicCharactColumn4</property>
                         </data>
                     </cell>
                 </row>
@@ -2617,16 +2573,6 @@ true
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">like</property>
-                                <expression name="expr" type="javascript">row["pclPhysicoChem"]</expression>
-                                <simple-property-list name="value1">
-                                    <value>"%sauce%"</value>
-                                </simple-property-list>
-                                <property name="updateAggregation">true</property>
-                            </structure>
-                        </list-property>
                         <column id="3280">
                             <property name="width">50%</property>
                         </column>
@@ -2642,9 +2588,9 @@ true
                                 </cell>
                             </row>
                             <row id="3270">
+                                <property name="style">becpg-col-header</property>
                                 <cell id="3271">
                                     <label id="3272">
-                                        <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
                                         <property name="textAlign">left</property>
                                         <text-property name="text">Critères</text-property>
@@ -2652,7 +2598,6 @@ true
                                 </cell>
                                 <cell id="3273">
                                     <label id="3274">
-                                        <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
                                         <property name="textAlign">left</property>
                                         <text-property name="text">Valeur</text-property>
@@ -2798,11 +2743,7 @@ true
                                                     <property name="resultSetColumn">organoListOrgano</property>
                                                 </data>
                                             </cell>
-                                            <cell id="1532">
-                                                <data id="3455">
-                                                    <property name="resultSetColumn">organoListValue</property>
-                                                </data>
-                                            </cell>
+                                            <cell id="1532"/>
                                         </row>
                                     </detail>
                                 </table>
