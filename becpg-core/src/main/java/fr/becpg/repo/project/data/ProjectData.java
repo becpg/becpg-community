@@ -9,6 +9,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -36,7 +37,7 @@ public class ProjectData extends BeCPGDataObject {
 	private ProjectState projectState;
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
-	private NodeRef entity;
+	private List<NodeRef> entities;
 	private List<NodeRef> legends = new ArrayList<NodeRef>();
 	private Integer overdue = 0;
 	private Integer score = 0;
@@ -55,7 +56,7 @@ public class ProjectData extends BeCPGDataObject {
 	}
 
 	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate, Integer priority,ProjectState projectState,
-			NodeRef projectTpl, Integer completionPercent, NodeRef entity) {
+			NodeRef projectTpl, Integer completionPercent, List<NodeRef> entities) {
 		super(nodeRef, name);
 		this.hierarchy1 = hierarchy1;
 		this.hierarchy2 = hierarchy2;
@@ -66,7 +67,7 @@ public class ProjectData extends BeCPGDataObject {
 		this.projectState = projectState;
 		this.projectTpl = projectTpl;
 		this.completionPercent = completionPercent;
-		this.entity = entity;
+		this.entities = entities;
 	}
 
 	@AlfProp
@@ -159,14 +160,14 @@ public class ProjectData extends BeCPGDataObject {
 		this.completionPercent = completionPercent;
 	}
 
-	@AlfSingleAssoc
+	@AlfMultiAssoc
 	@AlfQname(qname = "pjt:projectEntity")
-	public NodeRef getEntity() {
-		return entity;
+	public List<NodeRef> getEntities() {
+		return entities;
 	}
 
-	public void setEntity(NodeRef entity) {
-		this.entity = entity;
+	public void setEntities(List<NodeRef> entities) {
+		this.entities = entities;
 	}
 
 	@AlfProp
@@ -286,7 +287,7 @@ public class ProjectData extends BeCPGDataObject {
 		result = prime * result + ((completionDate == null) ? 0 : completionDate.hashCode());
 		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
-		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
+		result = prime * result + ((entities == null) ? 0 : entities.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((legends == null) ? 0 : legends.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
@@ -320,10 +321,10 @@ public class ProjectData extends BeCPGDataObject {
 				return false;
 		} else if (!dueDate.equals(other.dueDate))
 			return false;
-		if (entity == null) {
-			if (other.entity != null)
+		if (entities == null) {
+			if (other.entities != null)
 				return false;
-		} else if (!entity.equals(other.entity))
+		} else if (!entities.equals(other.entities))
 			return false;
 		if (hierarchy1 == null) {
 			if (other.hierarchy1 != null)
@@ -359,7 +360,7 @@ public class ProjectData extends BeCPGDataObject {
 	public String toString() {
 		return "ProjectData [hierarchy1=" + hierarchy1 + ", startDate=" + startDate + ", dueDate=" + dueDate
 				+ ", completionDate=" + completionDate + ", priority=" + priority + ", projectState=" + projectState
-				+ ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entity=" + entity
+				+ ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entities=" + entities
 				+ ", legends=" + legends + "]";
 	}
 

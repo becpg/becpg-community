@@ -1384,7 +1384,7 @@
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerProduct</property>
-                    <expression name="expression">row["costListValue"] /  ( row["productUnit"] == "g" || row["productUnit"] == "mL" ? row["productQty"] / 1000 : row["productQty"])</expression>
+                    <expression name="expression">row["costListValue"] *  ( row["productUnit"] == "g" || row["productUnit"] == "mL" ? row["productQty"] / 1000 : row["productQty"])</expression>
                     <property name="dataType">float</property>
                 </structure>
             </list-property>
@@ -1404,11 +1404,13 @@
                 <structure>
                     <property name="columnName">productQty</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productQty</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">productUnit</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">productUnit</text-property>
                 </structure>
             </list-property>
