@@ -91,9 +91,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		NodeRef wfPackage = workflowService.createPackage(null);
 		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
 				ContentModel.ASSOC_CHILDREN);
-		if (projectData.getEntity() != null) {
-			nodeService.addChild(wfPackage, projectData.getEntity(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					ContentModel.ASSOC_CHILDREN);
+		if (!projectData.getEntities().isEmpty()) {
+			for(NodeRef entity : projectData.getEntities()){
+				nodeService.addChild(wfPackage, entity, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+						ContentModel.ASSOC_CHILDREN);
+			}			
 		}
 		workflowProps.put(WorkflowModel.ASSOC_PACKAGE, wfPackage);
 
