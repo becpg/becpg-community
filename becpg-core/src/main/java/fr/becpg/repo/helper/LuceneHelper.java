@@ -192,6 +192,9 @@ public class LuceneHelper {
 		// remove 1st character '/'
 		return pathBuffer.substring(1);
 	}
+	
+
+	
 
 	public static Map<String, Boolean> getSort(QName field, boolean asc) {
 

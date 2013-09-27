@@ -48,10 +48,7 @@ public interface BeCPGModel {
 	/** The Constant TYPE_PRODUCT. */
 	QName TYPE_PRODUCT = QName.createQName(BECPG_URI, "product");
 	
-	
 
-	/** The Constant PROP_PRODUCT_LEGALNAME. */
-	QName PROP_PRODUCT_LEGALNAME = QName.createQName(BECPG_URI, "legalName");
 
 	/** The Constant PROP_PRODUCT_HIERARCHY1. */
 	QName PROP_PRODUCT_HIERARCHY1 = QName.createQName(BECPG_URI, "productHierarchy1");
@@ -250,6 +247,8 @@ public interface BeCPGModel {
 	// ingLabelingList
 	/** The Constant TYPE_INGLABELINGLIST. */
 	QName TYPE_INGLABELINGLIST = QName.createQName(BECPG_URI, "ingLabelingList");
+	
+	QName TYPE_LABELING_RULE_LIST = QName.createQName(BECPG_URI, "labelingRuleList");
 
 	/** The Constant ASSOC_ILL_GRP. */
 	QName ASSOC_ILL_GRP = QName.createQName(BECPG_URI, "illGrp");
@@ -358,7 +357,14 @@ public interface BeCPGModel {
 	QName PROP_ING_CEECODE = QName.createQName(BECPG_URI, "ingCEECode");
 
 	/** The Constant PROP_ING_TYPE. */
+	@Deprecated
 	QName PROP_ING_TYPE = QName.createQName(BECPG_URI, "ingType");
+	
+
+	QName PROP_ING_TYPE_V2 = QName.createQName(BECPG_URI, "ingTypeV2");
+	
+
+	QName TYPE_ING_TYPE_ITEM = QName.createQName(BECPG_URI, "ingTypeItem");
 
 	// microbio
 	/** The Constant TYPE_MICROBIO. */
@@ -704,4 +710,5 @@ public interface BeCPGModel {
 	QName ASPECT_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
 	
 	QName PROP_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
+
 }

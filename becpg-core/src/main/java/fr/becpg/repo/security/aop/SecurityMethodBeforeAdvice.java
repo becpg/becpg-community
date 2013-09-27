@@ -38,7 +38,9 @@ public class SecurityMethodBeforeAdvice implements MethodBeforeAdvice {
 				String classQName = target.getClass().getAnnotation(AlfQname.class).qname();
 				if (classQName != null) {
 					if (securityService.computeAccessMode(QName.createQName(classQName, namespaceService), methodQName) != SecurityService.WRITE_ACCESS) {
-						logger.info("Access denied to field " + methodQName + " for " + AuthenticationUtil.getFullyAuthenticatedUser());
+						if(logger.isInfoEnabled()){
+							logger.info("Access denied to field " + methodQName + " for " + AuthenticationUtil.getFullyAuthenticatedUser());
+						}
 						throw new BeCPGAccessDeniedException(methodQName);
 					}
 				}

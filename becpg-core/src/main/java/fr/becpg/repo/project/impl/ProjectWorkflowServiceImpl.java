@@ -88,6 +88,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		}
 		AuthenticationUtil.setFullyAuthenticatedUser(authenticatedUser);
 		
+		
 		NodeRef wfPackage = workflowService.createPackage(null);
 		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
 				ContentModel.ASSOC_CHILDREN);
