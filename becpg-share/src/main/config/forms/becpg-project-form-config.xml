@@ -16,7 +16,8 @@
 					<show id="bcpg:entityTplRef" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
-					<show id="pjt:projectState" />					
+					<show id="pjt:projectState" />	
+					<show id="bcpg:suppliers" />
 										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
@@ -85,6 +86,7 @@
 							</control-param>
 						</control>
 					</field>				
+					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="pjt:projectScore" set="mainInfo" />		
 					
 					<field id="pjt:projectStartDate" set="planning" />

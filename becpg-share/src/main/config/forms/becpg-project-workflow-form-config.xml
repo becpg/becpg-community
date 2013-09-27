@@ -225,10 +225,10 @@
 					<show force="false" id="pjtwf:packagingDescription" />
 					<show force="false" id="pjtwf:needDefinitionPackagingKit" />
 					<show force="false" id="pjtwf:recipeDescription" />
-					<show force="false" id="pjtwf:needDefinitionRecipeProduct" />
-					<show force="false" id="bpm:comment" />
+					<show force="false" id="pjtwf:needDefinitionRecipeProduct" />					
 					<show force="false" id="packageItems" />
-					<show force="false" id="transitions" />
+					<show force="false" id="bpm:comment" />
+					<show force="false" id="pjtwf:npdAction" />
 				</field-visibility>
 				<appearance>
 					<set appearance="title" id="main" label-id="workflow.set.general"
@@ -290,15 +290,17 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
-					<field id="bpm:comment" label-id="workflow.field.comment"
-						mandatory="false" read-only="false" set="progress">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
-					</field>
-
 					<field id="packageItems" mandatory="false" read-only="false"
 						set="items" />
-					<field id="transitions" mandatory="false" read-only="false"
-						set="items" />
+					
+					<set appearance="title" id="response" label-id="workflow.set.response" />
+					<field id="bpm:comment" label-id="workflow.field.comment"
+						mandatory="false" read-only="false" set="response">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>					
+					<field id="pjtwf:npdAction" label-id="workflow.field.outcome" set="response" >
+							<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+						</field>
 				</appearance>
 			</form>
 		</forms>

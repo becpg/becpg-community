@@ -229,5 +229,26 @@
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
 	
-	
+	<bean id="patch.bcpg.redeployWfProjectProcess2" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployWfProjectProcess2</value></property>
+        <property name="description"><value>patch.bcpg.redeployWfProjectProcess.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>100015</value></property>
+        <property name="workflowDefinitions">
+            <list>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-adhoc.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>				
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean>
+    
 </beans>

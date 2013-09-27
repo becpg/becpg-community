@@ -45,8 +45,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			
 			// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
 			if(ProjectState.Planned.equals(projectData.getProjectState()) && 
-					projectData.getStartDate() != null && 
-					!projectData.getStartDate().equals(projectData.getCreated()) &&
+					projectData.getStartDate() != null &&
 					projectData.getStartDate().before(new Date())){
 				projectData.setProjectState(ProjectState.InProgress);
 			}
@@ -69,7 +68,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					
 			// is project completed ?
 			if(ProjectHelper.areTasksDone(projectData)){
-				projectData.setCompletionDate(new Date());
+				projectData.setCompletionDate(ProjectHelper.getLastEndDate(projectData));
 				projectData.setCompletionPercent(COMPLETED);
 				projectData.setProjectState(ProjectState.Completed);
 			}
@@ -105,12 +104,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				// - previous task are done
 				if (TaskState.Planned.equals(nextTask.getState()) && ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
 					// manual date -> we wait the date 
-					// don't start task automatically if startDate is equal to projectStartDate and projectState == Planned
+					// don't start task automatically if startDate is equal to projectStartDate and projectState == Planned					
 					if((nextTask.getStart().before(ProjectHelper.removeTime(projectData.getStartDate())) || 
 							ProjectState.InProgress.equals(projectData.getProjectState())) &&
 							(nextTask.getManualDate() == null || nextTask.getStart().before(new Date()))){
 						logger.debug("Start task since we are after planned startDate.");
-						ProjectHelper.setTaskStartDate(nextTask, new Date());
+						//ProjectHelper.setTaskStartDate(nextTask, new Date());
 						nextTask.setState(TaskState.InProgress);							
 					}
 				} else if (TaskState.Completed.equals(nextTask.getState())) {

@@ -93,6 +93,7 @@
 					<show id="bcpg:trademark" force="true" />
 					<show id="bcpg:plants" force="true" />					
 					<show id="bcpg:clients" />
+					<show id="bcpg:suppliers" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />					
 										
@@ -262,6 +263,7 @@
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:trademark" set="mainInfo" />
 					<field id="bcpg:clients" set="mainInfo" />
+					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

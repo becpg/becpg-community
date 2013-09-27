@@ -6,6 +6,7 @@ package fr.becpg.repo.workflow.activiti.project;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateExecution;
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
@@ -14,6 +15,7 @@ import org.alfresco.repo.workflow.activiti.BaseJavaDelegate;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
@@ -104,6 +106,12 @@ public class CreateProduct extends BaseJavaDelegate {
 
 					String entityName = (String) task.getVariable(
 							"pjtwf_npdProductName");
+					
+					if(entityName == null || entityName.isEmpty()){
+						// use project name as default
+						entityName = (String)nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME);
+					}
+					
 					ActivitiScriptNode productNode = (ActivitiScriptNode) task.getVariable(
 							"pjtwf_needDefinitionProduct");
 					if (productNode != null) {
@@ -124,24 +132,17 @@ public class CreateProduct extends BaseJavaDelegate {
 						logger.debug("Packaging node exist");
 						packagingNodeRef = packagingNode.getNodeRef();
 					}
-
-					NodeRef productNodeRef = null;
+										
+					String productName = repoService.getAvailableName(projectNodeRef, entityName);
+					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, BeCPGModel.TYPE_FINISHEDPRODUCT,
+							productName);
 					
-//					try{
-//						//disable classify
-//						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_PRODUCT);
-						
-						
-						productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, nodeService.getType(sourceNodeRef),
-								repoService.getAvailableName(projectNodeRef, entityName));
-						
-						// change state: ToValidate
-						nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
-//					}
-//					finally{
-//						policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_PRODUCT);
-//					}					
-
+					// change state: ToValidate
+					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
+					
+					String localName = QName.createValidLocalName(productName);
+					QName qName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, localName);
+					nodeService.addChild(pkgNodeRef, productNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, qName);				
 	
 					// Copy datalist
 					if (recipeNodeRef != null && nodeService.exists(recipeNodeRef)) {
@@ -169,12 +170,7 @@ public class CreateProduct extends BaseJavaDelegate {
 					}
 
 					//Assoc product to project
-					nodeService.createAssociation(projectNodeRef, productNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
-					
-					NodeRef projectTask = ((ActivitiScriptNode) task.getVariable("pjt_workflowTask")).getNodeRef();
-					if(nodeService.exists(projectTask)){
-						nodeService.setProperty(projectTask, ProjectModel.PROP_TL_STATE, "Completed");
-					}
+					nodeService.createAssociation(projectNodeRef, productNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);					
 					
 				} catch (Exception e) {
 					logger.error("Failed to create product", e);
