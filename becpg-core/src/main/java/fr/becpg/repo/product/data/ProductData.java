@@ -16,7 +16,6 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
-import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
@@ -75,7 +74,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private List<IngListDataItem> ingList;
 	private List<NutListDataItem> nutList;
 	private List<OrganoListDataItem> organoList;
-	private List<IngLabelingListDataItem> ingLabelingList;
+
 	private List<MicrobioListDataItem> microbioList;
 	private List<PhysicoChemListDataItem> physicoChemList;
 	private List<ForbiddenIngListDataItem> forbiddenIngList;
@@ -86,6 +85,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private CompoListView compoListView = new CompoListView();
 	private ProcessListView processListView = new ProcessListView();
 	private PackagingListView packagingListView = new PackagingListView();
+
+	private LabelingListView labelingListView = new LabelingListView();
 	
 	/*
 	 * Variants
@@ -326,15 +327,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.organoList = organoList;
 	}
 
-	@DataList
-	@AlfQname(qname = "bcpg:ingLabelingList")
-	public List<IngLabelingListDataItem> getIngLabelingList() {
-		return ingLabelingList;
-	}
 
-	public void setIngLabelingList(List<IngLabelingListDataItem> ingLabelingList) {
-		this.ingLabelingList = ingLabelingList;
-	}
 
 	@DataList
 	@AlfQname(qname = "bcpg:microbioList")
@@ -374,6 +367,17 @@ public class ProductData extends AbstractEffectiveDataItem {
 	public void setLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
 		this.labelClaimList = labelClaimList;
 	}
+	
+	
+	@DataListView
+	@AlfQname(qname = "bcpg:ingLabelingList")
+	public LabelingListView getLabelingListView() {
+		return labelingListView;
+	}
+
+	public void setLabelingListView(LabelingListView labelingListView) {
+		this.labelingListView = labelingListView;
+	}
 
 	@DataListView
 	@AlfQname(qname = "bcpg:compoList")
@@ -382,7 +386,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 	}
 
 	
-	@AlfQname(qname = "bcpg:compoList")
 	@SuppressWarnings("unchecked")
 	public  List<CompoListDataItem> getCompoList( DataListFilter<ProductData>... filters) {
 		if (compoListView != null && compoListView.getCompoList() != null) {
@@ -412,7 +415,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return processListView;
 	}
 
-	@AlfQname(qname = "mpm:processList")
 	@SuppressWarnings("unchecked")
 	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData>... filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
@@ -442,7 +444,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return packagingListView;
 	}
 
-	@AlfQname(qname = "bcpg:packagingList")
 	@SuppressWarnings("unchecked")
 	public  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
@@ -487,11 +488,12 @@ public class ProductData extends AbstractEffectiveDataItem {
 	@Override
 	public String toString() {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
-				+ ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
-				+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList
-				+ ", nutList=" + nutList + ", organoList=" + organoList + ", ingLabelingList=" + ingLabelingList + ", microbioList=" + microbioList + ", physicoChemList="
-				+ physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", labelClaimList=" + labelClaimList + ", compoListView=" + compoListView + ", processListView="
-				+ processListView + ", packagingListView=" + packagingListView + ", variants=" + variants + "]";
+				+ ", entityTplRef=" + entityTplRef + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
+				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList="
+				+ allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList
+				+ ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", labelClaimList=" + labelClaimList
+				+ ", compoListView=" + compoListView + ", processListView=" + processListView + ", packagingListView=" + packagingListView + ", labelingListView="
+				+ labelingListView + ", variants=" + variants + "]";
 	}
 
 	@Override
@@ -503,14 +505,16 @@ public class ProductData extends AbstractEffectiveDataItem {
 		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
+		result = prime * result + ((entityTplRef == null) ? 0 : entityTplRef.hashCode());
 		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
-		result = prime * result + ((ingLabelingList == null) ? 0 : ingLabelingList.hashCode());
 		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
 		result = prime * result + ((labelClaimList == null) ? 0 : labelClaimList.hashCode());
+		result = prime * result + ((labelingListView == null) ? 0 : labelingListView.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
 		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
+		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
 		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
 		result = prime * result + ((organoList == null) ? 0 : organoList.hashCode());
 		result = prime * result + ((packagingListView == null) ? 0 : packagingListView.hashCode());
@@ -526,6 +530,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 		result = prime * result + ((unitTotalCost == null) ? 0 : unitTotalCost.hashCode());
 		result = prime * result + ((variants == null) ? 0 : variants.hashCode());
 		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
+		result = prime * result + ((yieldVolume == null) ? 0 : yieldVolume.hashCode());
 		return result;
 	}
 
@@ -563,6 +568,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!density.equals(other.density))
 			return false;
+		if (entityTplRef == null) {
+			if (other.entityTplRef != null)
+				return false;
+		} else if (!entityTplRef.equals(other.entityTplRef))
+			return false;
 		if (forbiddenIngList == null) {
 			if (other.forbiddenIngList != null)
 				return false;
@@ -578,11 +588,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!hierarchy2.equals(other.hierarchy2))
 			return false;
-		if (ingLabelingList == null) {
-			if (other.ingLabelingList != null)
-				return false;
-		} else if (!ingLabelingList.equals(other.ingLabelingList))
-			return false;
 		if (ingList == null) {
 			if (other.ingList != null)
 				return false;
@@ -593,6 +598,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!labelClaimList.equals(other.labelClaimList))
 			return false;
+		if (labelingListView == null) {
+			if (other.labelingListView != null)
+				return false;
+		} else if (!labelingListView.equals(other.labelingListView))
+			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
@@ -602,6 +612,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 			if (other.microbioList != null)
 				return false;
 		} else if (!microbioList.equals(other.microbioList))
+			return false;
+		if (netWeight == null) {
+			if (other.netWeight != null)
+				return false;
+		} else if (!netWeight.equals(other.netWeight))
 			return false;
 		if (nutList == null) {
 			if (other.nutList != null)
@@ -671,6 +686,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 			if (other.yield != null)
 				return false;
 		} else if (!yield.equals(other.yield))
+			return false;
+		if (yieldVolume == null) {
+			if (other.yieldVolume != null)
+				return false;
+		} else if (!yieldVolume.equals(other.yieldVolume))
 			return false;
 		return true;
 	}

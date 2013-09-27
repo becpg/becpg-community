@@ -8,8 +8,7 @@
 	<!-- Imports are required to allow references to definitions in other models -->
 	<imports>
 		<!-- Import Alfresco Dictionary Definitions -->
-		<import uri="http://www.alfresco.org/model/dictionary/1.0"
-			prefix="d" />
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.bcpg.fr/model/report/1.0" prefix="rep" />
@@ -62,33 +61,18 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="bcpg:netWeightUnits" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
 					<value>g</value>
-					<value>kg</value>				
+					<value>kg</value>
 				</list>
 			</parameter>
 		</constraint>
 
-		<constraint name="bcpg:ingType"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
-				<list>
-					<value>/System/Lists/bcpg:entityLists/IngTypes</value>
-				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>cm:name</value>
-			</parameter>
-		</constraint>
-		<constraint name="bcpg:nutGroup"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="bcpg:nutGroup" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/NutGroups</value>
@@ -101,8 +85,7 @@
 				<value>cm:name</value>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:nutType"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="bcpg:nutType" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/NutTypes</value>
@@ -152,8 +135,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:nutListMethods"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="bcpg:nutListMethods" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/NutFactsMethods</value>
@@ -182,6 +164,23 @@
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:lrTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Format</value>
+					<value>Rename</value>
+					<value>Combine</value>
+					<value>Aggregate</value>
+					<value>Render</value>
+					<value>Declare</value>
+					<value>Detail</value>
+					<value>Group</value>
+					<value>Omit</value>
+					<value>DoNotDeclare</value>
+					<value>Locale</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -284,13 +283,10 @@
 			</parameter>
 		</constraint>
 
-		<!-- <constraint name="bcpg:plant" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> 
-			<parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> 
-			<parameter name="constraintType"> <value>bcpg:plant</value> </parameter> 
-			<parameter name="constraintProp"> <value>cm:name</value> </parameter> </constraint> -->
-		<!-- <constraint name="bcpg:plant" type="LIST"> <parameter name="allowedValues"> 
-			<list> <value>Formulation</value> <value>Site A</value> <value>Site B</value> 
-			<value>Site C</value> <value></value> </list> </parameter> </constraint> -->
+		<!-- <constraint name="bcpg:plant" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> <parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> <parameter name="constraintType"> 
+			<value>bcpg:plant</value> </parameter> <parameter name="constraintProp"> <value>cm:name</value> </parameter> </constraint> -->
+		<!-- <constraint name="bcpg:plant" type="LIST"> <parameter name="allowedValues"> <list> <value>Formulation</value> <value>Site A</value> <value>Site B</value> <value>Site C</value> <value></value> </list> 
+			</parameter> </constraint> -->
 		<constraint name="bcpg:packagingListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -447,8 +443,7 @@
 				<aspect>bcpg:suppliersAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		<!-- ________________________________________________________________ CARACTERISTIQUES 
-			________________________________________________________________ -->
+		<!-- ________________________________________________________________ CARACTERISTIQUES ________________________________________________________________ -->
 
 
 		<type name="bcpg:charact">
@@ -511,6 +506,15 @@
 				</property>
 			</properties>
 		</type>
+		
+		<type name="bcpg:ingTypeItem">
+			<parent>bcpg:listValue</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:legalNameAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
 
 		<type name="bcpg:ing">
 			<parent>bcpg:charact</parent>
@@ -518,12 +522,14 @@
 				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
 				</property>
+			  <property name="bcpg:ingTypeV2">
+					<type>d:noderef</type>
+					<mandatory>true</mandatory>
+				</property>
+				<!-- deprecated -->
 				<property name="bcpg:ingType">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<constraints>
-						<constraint ref="bcpg:ingType" />
-					</constraints>
+					<mandatory>false</mandatory>
 				</property>
 			</properties>
 		</type>
@@ -738,7 +744,7 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
-				</property>			
+				</property>
 				<property name="bcpg:compoListDeclType">
 					<type>d:text</type>
 					<index enabled="false" />
@@ -751,7 +757,7 @@
 				</property>
 				<property name="bcpg:compoListVolume">
 					<type>d:double</type>
-				</property>				
+				</property>
 			</properties>
 			<associations>
 				<!-- assoc used to store the product -->
@@ -826,8 +832,7 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- ________________________________________________________________ LISTES 
-			DE CARACT. ________________________________________________________________ -->
+		<!-- ________________________________________________________________ LISTES DE CARACT. ________________________________________________________________ -->
 
 		<type name="bcpg:entityListItem">
 			<parent>cm:content</parent>
@@ -1065,12 +1070,60 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>bcpg:labelingRuleList</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
 			</associations>
+		</type>
+
+		<type name="bcpg:labelingRuleList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:lrFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lrErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lrType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:lrTypes" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:lrComponents">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:cmobject</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:lrReplacements">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:cmobject</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:ingList">
@@ -1088,6 +1141,12 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListIsIonized">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListIsProcessingAid">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
@@ -1578,8 +1637,7 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		<!-- ________________________________________________________________ AUTO 
-			COMP ________________________________________________________________ -->
+		<!-- ________________________________________________________________ AUTO COMP ________________________________________________________________ -->
 
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
@@ -1744,7 +1802,7 @@
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
-			<properties>							
+			<properties>
 			</properties>
 			<associations>
 				<!-- @Deprecated -->
@@ -1819,7 +1877,7 @@
 			</properties>
 		</aspect>
 
-		<aspect name="bcpg:consumerAspect">			
+		<aspect name="bcpg:consumerAspect">
 			<properties>
 				<property name="bcpg:useByDate">
 					<type>d:int</type>
@@ -2051,8 +2109,7 @@
 			</properties>
 		</aspect>
 
-		<!-- Aspect used to store the entity type of the template (entityFolderTpl, 
-			entityTpl, etc...) -->
+		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
 		<aspect name="bcpg:entityTplAspect">
 			<properties>
 				<property name="bcpg:entityTplClassName">
@@ -2380,12 +2437,10 @@
 		<!-- @Deprecated -->
 		<aspect name="bcpg:entityVersionable">
 			<title>Entity Versionable</title>
-			<!-- comment parent, otherwise when cm:versionable is removed when we 
-				remove bcpg:entityVersionable -->
-			<!-- <parent>cm:versionable</parent> <overrides> <property name="cm:autoVersion"> 
-				<default>false</default> </property> </overrides> -->
+			<!-- comment parent, otherwise when cm:versionable is removed when we remove bcpg:entityVersionable -->
+			<!-- <parent>cm:versionable</parent> <overrides> <property name="cm:autoVersion"> <default>false</default> </property> </overrides> -->
 		</aspect>
-		
+
 		<aspect name="bcpg:instructionAspect">
 			<properties>
 				<property name="bcpg:instruction">

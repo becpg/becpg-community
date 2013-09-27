@@ -23,12 +23,12 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.LuceneHelper;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -202,7 +202,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			@Override
 			public List<String> doWork() throws Exception {
 				List<String> allowedValues = new ArrayList<String>();
-				String encodedPath = encodePath(path);
+				String encodedPath = LuceneHelper.encodePath(path.substring(1));
 
 				String queryPath = String.format(RepoConsts.PATH_QUERY_LIST_CONSTRAINTS, encodedPath, constraintType);
 
@@ -276,36 +276,5 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		}, AuthenticationUtil.getSystemUserName());
 	}
 
-	/**
-	 * Encode path.
-	 * 
-	 * @param path
-	 *            the path
-	 * @return the string
-	 */
-	private String encodePath(String path) {
-
-		StringBuilder pathBuffer = new StringBuilder(64);
-		String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
-
-		for (String folder : arrPath) {
-
-			if (folder.isEmpty()) {
-				continue;
-			} else if (folder.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)) {
-				pathBuffer.append("/");
-				String[] tmp = folder.split(RepoConsts.MODEL_PREFIX_SEPARATOR);
-				pathBuffer.append(tmp[0]);
-				pathBuffer.append(RepoConsts.MODEL_PREFIX_SEPARATOR);
-				pathBuffer.append(ISO9075.encode(tmp[1]));
-			} else {
-				pathBuffer.append("/cm:");
-				pathBuffer.append(ISO9075.encode(folder));
-			}
-
-		}
-
-		// remove 1st character '/'
-		return pathBuffer.substring(1);
-	}
+	
 }

@@ -3,13 +3,10 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.text.Normalizer.Form;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ss.usermodel.FormulaError;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;

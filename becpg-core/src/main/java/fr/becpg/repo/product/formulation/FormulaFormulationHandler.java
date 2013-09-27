@@ -23,6 +23,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -101,7 +102,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					if (formula != null && formula.length() > 0) {
 						try {
 							labelClaimListDataItem.setIsFormulated(true);
-							Expression exp = parser.parseExpression(formatFormula(formula));
+							Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
 							Object ret = exp.getValue(context);
 							if (ret instanceof Boolean) {
 								labelClaimListDataItem.setIsClaimed((Boolean) ret);
@@ -112,7 +113,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						} catch (Exception e) {
 							labelClaimListDataItem.setErrorLog(e.getLocalizedMessage());
 							if (logger.isDebugEnabled()) {
-								logger.info("Error in formula :" + formatFormula(formula), e);
+								logger.info("Error in formula :" + SpelHelper.formatFormula(formula), e);
 							}
 						}
 					}
@@ -150,7 +151,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
 				try {
-					String formula = formatFormula(dynamicCharactListItem.getFormula());
+					String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
 					logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
 					Expression exp = parser.parseExpression(formula);
 
@@ -196,10 +197,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 		}
 
-	}
-
-	private String formatFormula(String formula) {
-		return formula.replace("&lt;", "<").replace("&gt;", ">");
 	}
 
 	// Formule.Si("Mon tableau de compoList", "Ma formule de calcul",

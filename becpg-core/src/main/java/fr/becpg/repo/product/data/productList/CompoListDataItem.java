@@ -4,7 +4,6 @@
 package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.lang.ObjectUtils;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -262,8 +261,6 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return new CompoListDataItem(this);
 	}
 
-
-	
 	
 	
 }

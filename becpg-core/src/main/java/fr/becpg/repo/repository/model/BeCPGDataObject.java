@@ -38,6 +38,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.name = name;
 	}
 
+	
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}

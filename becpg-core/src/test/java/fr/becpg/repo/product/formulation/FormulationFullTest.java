@@ -2,6 +2,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,6 +31,8 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.LabelingRuleType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
@@ -47,7 +50,6 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		initParts();
 	}
 
-	
 	/**
 	 * Test formulate product.
 	 * 
@@ -126,16 +128,17 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1", "entity.costList[0].value + dataListItem.qty");
 				dynCol.setColumnName("bcpg_dynamicCharactColumn1");
 				dynamicCharactListItems.add(dynCol);
-				
-				dynCol = new DynamicCharactListItem("Col Dyn 2", "dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
-				
-						
-				//"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(children(dataListItem),\"entity.costList[0].value + dataListItem.qty\" )"
-				//"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )"
-				
+
+				dynCol = new DynamicCharactListItem(
+						"Col Dyn 2",
+						"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
+
+				// "dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(children(dataListItem),\"entity.costList[0].value + dataListItem.qty\" )"
+				// "dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )"
+
 				dynCol.setColumnName("bcpg_dynamicCharactColumn2");
 				dynamicCharactListItems.add(dynCol);
-				
+
 				finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 
 				// Claim List
@@ -148,12 +151,22 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 						+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.ProductUnit).L or unit== T(fr.becpg.repo.product.data.ProductUnit).mL )))"
 						+ " and (nutList.?[nut.toString() == '" + nut1 + "'][0].value > 4 )");
 				nodeService.setProperty(labelClaims.get(1), BeCPGModel.PROP_LABEL_CLAIM_FORMULA, "nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
-				
-				
+
 				labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(0), "Nutritionnelle", false));
 				labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(1), "Nutritionnelle", false));
 
 				finishedProduct.setLabelClaimList(labelClaimListDataItems);
+
+				List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+				labelingRuleList.add(new LabelingRuleListDataItem("Test", "render()", LabelingRuleType.Render));
+
+				LabelingRuleListDataItem percRule = new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format);
+
+				percRule.setComponents(Arrays.asList(ing2, ing3, ing4));
+				labelingRuleList.add(percRule);
+
+				finishedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
@@ -367,27 +380,27 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 				// verify IngLabelingList
 				checks = 0;
-				assertNotNull("IngLabelingList is null", formulatedProduct.getIngLabelingList());
+				assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
 
-				for (IngLabelingListDataItem illDataItem : formulatedProduct.getIngLabelingList()) {
+				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
 
-					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
-					logger.debug("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
+					logger.info("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.FRENCH));
+					logger.info("grp: " + illDataItem.getGrp() + " - labeling: " + illDataItem.getValue().getValue(Locale.ENGLISH));
 
 					// Pâte 50 % (Legal Raw material 2 66,67 % (ing2 75,00 %,
 					// ing1 25,00 %), ing2 22,22 %, ing1 11,11 %), Garniture 50
 					// % (ing3 50,00 %)
-					if (illDataItem.getGrp() == null) {
 
-						checkILL("Pâte french 50,00 % (Legal Raw material 2 66,67 % (ing2 french 75,00 %, ing1 french 25,00 %), ing2 french 22,22 %, ing1 french 11,11 %)",
-								"Garniture french 50,00 % (ing3 french 100,00 %)", 
-								illDataItem.getValue().getValue(Locale.FRENCH));
+					checkILL("Garniture french 50% (ing3 french 100%)",
+							"Pâte french 50% (Legal Raw material 2 66,7% (ing2 french 75%, ing1 french), ing2 french 22,2%, ing1 french)",
+							illDataItem.getValue().getValue(Locale.FRENCH));
 
-						checkILL("Pâte english 50.00 % (Legal Raw material 2 66.67 % (ing2 english 75.00 %, ing1 english 25.00 %), ing2 english 22.22 %, ing1 english 11.11 %)",
-								"Garniture english 50.00 % (ing3 english 100.00 %)", 
-								illDataItem.getValue().getValue(Locale.ENGLISH));
-						checks++;
-					}
+					checkILL("Garniture english 50% (ing3 english 100%)",
+							"Pâte english 50% (Legal Raw material 2 66,7% (ing2 english 75%, ing1 english), ing2 english 22,2%, ing1 english)",
+							illDataItem.getValue().getValue(Locale.ENGLISH));
+
+					checks++;
+
 				}
 				assertEquals(1, checks);
 
@@ -413,9 +426,10 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				// Claim label list
 				checks = 0;
 				for (LabelClaimListDataItem labelClaimListDataItem : formulatedProduct.getLabelClaimList()) {
-					
-					logger.info(nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME)+" - Evaluate to : "+labelClaimListDataItem.getIsClaimed());
-					
+
+					logger.info(nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME) + " - Evaluate to : "
+							+ labelClaimListDataItem.getIsClaimed());
+
 					if (labelClaimListDataItem.getLabelClaim().equals(labelClaims.get(0)) && !labelClaimListDataItem.getIsClaimed()) {
 						checks++;
 					}
