@@ -62,8 +62,7 @@ public class ProjectStartByStartingTaskTest extends AbstractProjectTestCase {
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());
-				
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());				
 				assertEquals(ProjectState.InProgress, projectData.getProjectState());				
 
 				return null;

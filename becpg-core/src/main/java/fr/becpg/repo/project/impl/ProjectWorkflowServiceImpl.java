@@ -72,7 +72,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
 		}
 
-		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
+		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());	
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());
 		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
@@ -101,7 +101,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		workflowProps.put(WorkflowModel.ASSOC_PACKAGE, wfPackage);
 
 		String workflowDefId = getWorkflowDefId(taskListDataItem.getWorkflowName());
-		logger.debug("workflowDefId: " + workflowDefId);
+		if(logger.isDebugEnabled()){
+			logger.debug("workflowDefId: " + workflowDefId + " props " + workflowProps);
+		}		
 		if (workflowDefId != null) {
 
 			WorkflowPath wfPath = workflowService.startWorkflow(workflowDefId, workflowProps);

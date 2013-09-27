@@ -91,10 +91,11 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				// start project
-				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-				projectData.setProjectState(ProjectState.InProgress);
-				alfrescoRepository.save(projectData);
+				// start project				
+//				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+//				projectData.setProjectState(ProjectState.InProgress);
+//				alfrescoRepository.save(projectData);
+				nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress);
 
 				return null;
 			}
@@ -129,7 +130,6 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 
 				// check
 				assertEquals(today, projectData.getTaskList().get(0).getEnd());
-				logger.info("###projectData.getTaskList().get(1).getStart(): " + projectData.getTaskList().get(1).getStart());
 				assertEquals(nextStartDate, projectData.getTaskList().get(1).getStart());
 
 				// submit 2nd task
