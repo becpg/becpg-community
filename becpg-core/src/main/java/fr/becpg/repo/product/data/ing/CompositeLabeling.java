@@ -3,11 +3,14 @@
  */
 package fr.becpg.repo.product.data.ing;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.data.ProductData;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
@@ -88,5 +91,27 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		return ingListNotDeclared;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n");
+		print(sb, "",true);
+		return sb.toString();
+	}
+
+	private void print(StringBuilder sb, String prefix, boolean isTail) {
+		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (getLegalName(I18NUtil.getContentLocaleLang())==null ? "root" : getLegalName(I18NUtil.getContentLocaleLang()))+" - "+getQty()+" ("+getQtyRMUsed()+")"  +"]\n");
+        for (Iterator<AbstractLabelingComponent> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
+        	AbstractLabelingComponent labelingComponent =  iterator.next();
+        	if(labelingComponent  instanceof CompositeLabeling) {
+				((CompositeLabeling)labelingComponent).print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
+			} else {
+				sb.append(prefix + (isTail ? "    " : "│   ") +(!iterator.hasNext() ? "└──[" : "├──[")+ labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())+" - "+labelingComponent.getQty()  +"]\n");
+			      
+			}
+ 
+        }
+    }
+	
 
 }

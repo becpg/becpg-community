@@ -153,20 +153,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	 */
 	public IngListDataItem()
 	{
+		super();
 	}
 	
-	/**
-	 * Instantiates a new ing list data item.
-	 *
-	 * @param nodeRef the node ref
-	 * @param qtyPerc the qty perc
-	 * @param geoOrigin the geo origin
-	 * @param bioOrigin the bio origin
-	 * @param isGMO the is gmo
-	 * @param isIonized the is ionized
-	 * @param ing the ing
-	 */
-	public IngListDataItem(NodeRef nodeRef,	Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, NodeRef ing, Boolean isManual)
+
+	public IngListDataItem(NodeRef nodeRef,	Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setQtyPerc(qtyPerc);
@@ -176,6 +167,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsIonized(isIonized);
 		setIng(ing);
 		setIsManual(isManual);
+		setIsProcessingAid(processingAid);
 	}
 	
 	/**
@@ -192,6 +184,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsIonized(i.getIsIonized());
 		setIng(i.getIng());
 		setIsManual(i.getIsManual());
+		setIsProcessingAid(i.getIsProcessingAid());
 	}
 
 	@Override

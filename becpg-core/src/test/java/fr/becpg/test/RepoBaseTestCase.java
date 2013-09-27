@@ -77,10 +77,10 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "classpath:alfresco/application-context.xml")
-@ContextConfiguration(locations = {"classpath:alfresco/application-context.xml",
-			"classpath:alfresco/web-scripts-application-context.xml",
-			"classpath:alfresco/web-scripts-application-context-test.xml"})
+// @ContextConfiguration(locations =
+// "classpath:alfresco/application-context.xml")
+@ContextConfiguration(locations = { "classpath:alfresco/application-context.xml", "classpath:alfresco/web-scripts-application-context.xml",
+		"classpath:alfresco/web-scripts-application-context-test.xml" })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
@@ -184,7 +184,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	protected EntityTplService entityTplService;
-	
+
 	@Resource
 	protected PermissionService permissionService;
 
@@ -199,7 +199,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			logger.debug("setupBeforeClass : Start wiser");
 			wiser.start();
 		} catch (Exception e) {
-			logger.warn("cannot open wiser!",e);
+			logger.warn("cannot open wiser!", e);
 		}
 	}
 
@@ -209,14 +209,14 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			logger.debug("tearDownBeforeClass : Stop wiser");
 			wiser.stop();
 		} catch (Exception e) {
-			logger.warn("cannot stop wiser!",e);
+			logger.warn("cannot stop wiser!", e);
 		}
 
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		
+
 		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				// As system user
@@ -236,47 +236,44 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		logger.debug("setUp shouldInit :" + shouldInit);
 
-		systemFolderNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
 			}
 		}, false, true);
 
-	
 		doInitRepo(shouldInit);
-		
 
 	}
 
 	private void doInitRepo(final boolean shouldInit) {
 
-		if(shouldInit){
+		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
-	
-					
+
 					// Init repo for test
 					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
-	
+
 					Assert.assertEquals(5, entitySystemService.getSystemEntities().size());
-	
+
 					initConstraints();
 					initTasks();
-	
+
 					return false;
-	
+
 				}
 			}, false, true);
 		}
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				if(shouldInit){
+				if (shouldInit) {
 					dictionaryDAO.reset();
 				}
 				initCharacteristics();
-				if(shouldInit){
+				if (shouldInit) {
 					initEntityTemplates();
 					initSystemProducts();
 				}
@@ -306,13 +303,13 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 				for (NodeRef productNodeRef : productNodeRefs) {
 					if (nodeService.exists(productNodeRef)) {
-						
-						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService );
-					//	if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
-							logger.debug("   - Deleting :"+nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
-							logger.debug("   - PATH :"+path);
-							nodeService.deleteNode(productNodeRef);
-					//	}
+
+						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
+						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
+						logger.debug("   - Deleting :" + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
+						logger.debug("   - PATH :" + path);
+						nodeService.deleteNode(productNodeRef);
+						// }
 					}
 				}
 				logger.debug("   - Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME));
@@ -528,14 +525,13 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		for (FileInfo fileInfo : taskLegendsFileInfo) {
 			taskLegends.add(fileInfo.getNodeRef());
 		}
-		
-		
+
 		// claim labelling
 		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_LABELCLAIMS);
 		List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
 		if (labelClaimsFileInfo.size() == 0) {
 
-			String[] labelClaimNames = { "Faible valeur énergétique","Sans apport énergétique" };
+			String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique" };
 			for (String labelClaim : labelClaimNames) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, labelClaim);
@@ -549,12 +545,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				labelClaims.add(fileInfo.getNodeRef());
 			}
 		}
-		
+
 	}
 
 	private void initSystemProducts() {
 
-		/*-- Raw material Water --*/					
+		/*-- Raw material Water --*/
 		RawMaterialData rawMaterialWater = new RawMaterialData();
 		rawMaterialWater.setName("Eau réseau");
 		rawMaterialWater.setDensity(1d);
@@ -563,8 +559,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
 		rawMaterialWater.setLegalName(legalName);
 		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
-		ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
-		rawMaterialWater.setIngList(ingList);		
+		ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ingWater, false));
+		rawMaterialWater.setIngList(ingList);
 		alfrescoRepository.create(repositoryHelper.getCompanyHome(), rawMaterialWater).getNodeRef();
 	}
 

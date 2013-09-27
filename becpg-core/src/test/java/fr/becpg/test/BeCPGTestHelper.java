@@ -216,7 +216,7 @@ public class BeCPGTestHelper {
 		// Ings
 		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
 		for (int j = 0; j < RepoBaseTestCase.INSTANCE.ings.size(); j++) {
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, RepoBaseTestCase.INSTANCE.ings.get(j), false);
+			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false,false, RepoBaseTestCase.INSTANCE.ings.get(j), false);
 			ingList.add(ingListItemData);
 		}
 		rawMaterial.setIngList(ingList);
