@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
-  <process isExecutable="true" id="projectAdhoc" name="Project Adhoc Process">
-    <startEvent id="startevent1" name="Start" activiti:formKey="wf:submitAdhocTask"/>    	
+  <process id="projectAdhoc" name="Project Adhoc Process" isExecutable="true">
+    <startEvent id="startevent1" name="Start" activiti:formKey="wf:submitAdhocTask"></startEvent>
     <userTask id="adhocTask" name="Project Task" activiti:formKey="pjtwf:adhocTask">
       <extensionElements>
-      	 <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-	          <activiti:field name="script">
-	            <activiti:string>            
-	            	<![CDATA[
-	            	if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate
+        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+          <activiti:field name="script">
+            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate
 	               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
 	                      
 	            	if (bpm_assignees != null){
 		            		
-							for (var i = 0; i < bpm_assignees.size(); i++){
+							for (var i = 0; i &lt; bpm_assignees.size(); i++){
 		
 								var assignee = bpm_assignees.get(i);									
 						
@@ -21,52 +19,41 @@
 								if(assignee.properties==null){
 									assignee = utils.getNodeFromString(assignee); 
 								}					
-								if(bpm_assignees.size()>1){
+								if(bpm_assignees.size()&gt;1){
 									task.addCandidateUser(assignee.properties.userName);
 								}
 								else{
 									task.setAssignee(assignee.properties.userName);
 								}									
 							}					
-	              	}
-		            ]]>
-	            </activiti:string>
-	          </activiti:field>
-        </activiti:taskListener>        
-        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>var projectTask = pjt_workflowTask;
-            if(projectTask.exists()){
-            	projectTask.properties['pjt:tlState'] = 'Completed';
-					projectTask.save();
-            }</activiti:string>
+	              	}</activiti:string>
           </activiti:field>
         </activiti:taskListener>
-        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.project.SubmitTask"/>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.project.SubmitTask"></activiti:taskListener>
       </extensionElements>
     </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="adhocTask"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="adhocTask"></sequenceFlow>
-    <sequenceFlow id="flow2" name="" sourceRef="adhocTask" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="adhocTask" targetRef="endevent1"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_projectAdhoc">
     <bpmndi:BPMNPlane bpmnElement="projectAdhoc" id="BPMNPlane_projectAdhoc">
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
-        <omgdc:Bounds height="35" width="35" x="150" y="240"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="150.0" y="240.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="adhocTask" id="BPMNShape_adhocTask">
-        <omgdc:Bounds height="55" width="105" x="230" y="230"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="230.0" y="230.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35" width="35" x="380" y="240"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="390.0" y="240.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
-        <omgdi:waypoint x="185" y="257"></omgdi:waypoint>
-        <omgdi:waypoint x="230" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="185.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="230.0" y="257.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
-        <omgdi:waypoint x="335" y="257"></omgdi:waypoint>
-        <omgdi:waypoint x="380" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="335.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="257.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

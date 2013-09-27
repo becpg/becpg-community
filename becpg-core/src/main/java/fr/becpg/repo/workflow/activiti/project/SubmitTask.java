@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.CommentsService;
 import fr.becpg.repo.project.ProjectActivityService;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.util.ApplicationContextHelper;
 
 /**
@@ -36,6 +37,24 @@ public class SubmitTask extends ScriptTaskListener {
 	private ProjectActivityService projectActivityService;
 	
 	private CommentsService commentsService;
+	
+	private ProjectService projectService;
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+	public void setProjectActivityService(ProjectActivityService projectActivityService) {
+		this.projectActivityService = projectActivityService;
+	}
+
+	public void setCommentsService(CommentsService commentsService) {
+		this.commentsService = commentsService;
+	}
+
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
 
 	@Override
 	public void notify(final DelegateTask task) {
@@ -43,7 +62,9 @@ public class SubmitTask extends ScriptTaskListener {
 		nodeService = getServiceRegistry().getNodeService();
 		projectActivityService = (ProjectActivityService)ApplicationContextHelper.getApplicationContext().getBean("projectActivityService");
 		commentsService = (CommentsService)ApplicationContextHelper.getApplicationContext().getBean("commentsService");
+		projectService = (ProjectService)ApplicationContextHelper.getApplicationContext().getBean("projectService");
 		
+
 		final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
 		/**
@@ -71,9 +92,25 @@ public class SubmitTask extends ScriptTaskListener {
 
 				commentsService.createComment(projectNodeRef, "", comment, false);
 				projectActivityService.postProjectCommentCreatedActivity(projectNodeRef, comment);
+			}			
+		}
+		
+		/**
+		 *  update task
+		 */
+		String action = (String) task.getVariable("pjtwf_npdAction");
+		
+		// for compatibility with existing workflow (not the best) we need this for old instances, otherwise endDate is not filled 
+		if(action == null || action.equals("submitTask")){
+			ActivitiScriptNode taskNode = (ActivitiScriptNode) task.getVariable("pjt_workflowTask");
+			if (taskNode != null) {
+				logger.debug("taskNode exist " + taskNode.getNodeRef());
+				NodeRef taskNodeRef = taskNode.getNodeRef();
+				if(nodeService.exists(taskNodeRef)){	            	
+	            	projectService.submitTask(taskNodeRef);
+				}
 			}
 		}
+			
 	}
-
-
 }

@@ -34,16 +34,34 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		
 		if(projectData.getDueDate() == null){
 			// planning
-			if (projectData.getStartDate() == null) {
-				projectData.setStartDate(projectData.getCreated());
+			Date startDate = ProjectHelper.getFirstStartDate(projectData);
+			if(startDate == null){
+				if (projectData.getStartDate() == null) {
+					startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
+					projectData.setStartDate(startDate);
+				}
+				else{
+					startDate = projectData.getStartDate();
+				}				
 			}
-			projectData.setCompletionDate(projectData.getStartDate());
-			calculatePlanning(projectData, null, projectData.getStartDate());
+			else{
+				projectData.setStartDate(startDate);
+			}
+			
+			projectData.setCompletionDate(startDate);
+			calculatePlanning(projectData, null, startDate);
 		}
 		else{
 			//retro-planning
-			projectData.setStartDate(projectData.getDueDate());
-			projectData.setCompletionDate(projectData.getDueDate());
+			Date endDate = ProjectHelper.getLastEndDate(projectData);
+			if(endDate == null){
+				endDate = projectData.getDueDate();
+			}
+			else{
+				projectData.setDueDate(endDate);
+			}
+			
+			projectData.setStartDate(endDate);
 			calculateRetroPlanning(projectData, null, projectData.getStartDate());
 		}
 		
@@ -55,15 +73,31 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	
 	private void clearDates(ProjectData projectData){
 		
+		// Task dates manage project dates
+		if(projectData.getDueDate() != null){
+			Date endDate = ProjectHelper.getLastEndDate(projectData);
+			if(endDate != null){
+				projectData.setDueDate(endDate);
+			}			
+		}
+		else{
+			Date startDate = ProjectHelper.getFirstStartDate(projectData);
+			if(startDate != null){
+				projectData.setStartDate(startDate);
+			}				
+		}
+		
 		for(TaskListDataItem tl : projectData.getTaskList()){
-			if(TaskState.Planned.equals(tl.getState()) &&
-					!TaskManualDate.Start.equals(tl.getManualDate())){
-				tl.setStart(null);
-			}
-			if((TaskState.Planned.equals(tl.getState()) || (TaskState.InProgress.equals(tl.getState()))) &&
-					!TaskManualDate.End.equals(tl.getManualDate())){
-				tl.setEnd(null);
-			}
+			if(hasPlannedDuration(tl)){
+				if(TaskState.Planned.equals(tl.getState()) &&
+						!TaskManualDate.Start.equals(tl.getManualDate())){
+					tl.setStart(null);
+				}
+				if((TaskState.Planned.equals(tl.getState()) || (TaskState.InProgress.equals(tl.getState()))) &&
+						!TaskManualDate.End.equals(tl.getManualDate())){
+					tl.setEnd(null);
+				}
+			}			
 		}
 	}
 	
@@ -81,8 +115,10 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				ProjectHelper.setTaskStartDate(nextTask, startDate);
 			}
 
-			Date endDate = ProjectHelper.calculateEndDate(nextTask.getStart(), nextTask.getDuration());
-			ProjectHelper.setTaskEndDate(nextTask, endDate);
+			if(hasPlannedDuration(nextTask)){
+				Date endDate = ProjectHelper.calculateEndDate(nextTask.getStart(), nextTask.getDuration());
+				ProjectHelper.setTaskEndDate(nextTask, endDate);
+			}			
 			if (projectData.getCompletionDate().before(nextTask.getEnd())) {
 				projectData.setCompletionDate(nextTask.getEnd());
 			}
@@ -109,17 +145,20 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			if(TaskState.InProgress.equals(prevTask.getState())){
 				
 				// InProgress => calculate endDate from the startDate and we stop retro-planning
-				Date d = ProjectHelper.calculateEndDate(prevTask.getStart(), prevTask.getDuration());
-				ProjectHelper.setTaskEndDate(prevTask, d);
+				if(hasPlannedDuration(prevTask)){
+					Date d = ProjectHelper.calculateEndDate(prevTask.getStart(), prevTask.getDuration());
+					ProjectHelper.setTaskEndDate(prevTask, d);
+				}				
 			}
 			else{
 				// check new endDate is equals or before, otherwise we stop since a parallel branch is before
 				if(prevTask.getEnd() == null || prevTask.getEnd().equals(endDate) || prevTask.getEnd().after(endDate)){					
 					ProjectHelper.setTaskEndDate(prevTask, endDate);
 				}
-				
-				Date startDate = ProjectHelper.calculateStartDate(prevTask.getEnd(), prevTask.getDuration());
-				ProjectHelper.setTaskStartDate(prevTask, startDate);
+				if(hasPlannedDuration(prevTask)){
+					Date startDate = ProjectHelper.calculateStartDate(prevTask.getEnd(), prevTask.getDuration());
+					ProjectHelper.setTaskStartDate(prevTask, startDate);
+				}				
 				if (projectData.getStartDate().after(prevTask.getStart())) {
 					projectData.setStartDate(prevTask.getStart());
 				}
@@ -166,6 +205,14 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 	}
 
-	
+	private boolean hasPlannedDuration(TaskListDataItem task){
+		
+		if(task.getDuration() != null || task.getIsMilestone()){
+			return true;		
+		}
+		else{
+			return false;
+		}
+	}
 }
 

@@ -5,7 +5,6 @@ package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -206,18 +205,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			projectActivityService.postTaskStateChangeActivity(nodeRef, beforeState, afterState);
 			formulateProject = true;
 			
-			if (afterState.equals(TaskState.Completed.toString())) {
-				logger.debug("update task list: " + nodeRef + " - afterState: " + afterState);
-				// we want to keep the planned duration to calculate overdue				
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, ProjectHelper.removeTime(new Date()));
-				//milestone duration is maximum 1 day
-				Boolean isMileStone = (Boolean)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
-				if(isMileStone != null && isMileStone.booleanValue()){
-					nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, ProjectHelper.removeTime(new Date()));
-				}
-			} 
-			else if (beforeState.equals(DeliverableState.Completed.toString())
-					&& afterState.equals(DeliverableState.InProgress.toString())) {
+			if (beforeState.equals(DeliverableState.Completed.toString())
+				&& afterState.equals(DeliverableState.InProgress.toString())) {
 
 				// re-open task
 				logger.debug("re-open task: " + nodeRef);				
@@ -400,11 +389,13 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	private Map<QName, Serializable> resetProperties(QName classQName, Map<QName, Serializable> properties){
 		
 		if(ProjectModel.TYPE_TASK_LIST.equals(classQName)){
+			properties.remove(ProjectModel.PROP_TL_START);
+			properties.remove(ProjectModel.PROP_TL_END);
 			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
 			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
 			if(properties.containsKey(ProjectModel.PROP_TL_STATE)){
 				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
-			}
+			}			
 		}
 		else if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)){
 			if(properties.containsKey(ProjectModel.PROP_DL_STATE)){

@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -165,6 +166,23 @@ public class ProjectServiceImpl implements ProjectService {
 //			logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " + dlAssociationRef.getSourceRef());
 //			nodeService.deleteNode(dlAssociationRef.getSourceRef());
 //		}			
+	}
+
+	@Override
+	public void submitTask(NodeRef nodeRef) {
+		
+		Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+		Date endDate = ProjectHelper.removeTime(new Date());
+		
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Completed.toString());
+		// we want to keep the planned duration to calculate overdue				
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
+		//milestone duration is maximum 1 day or startDate is after endDate
+		Boolean isMileStone = (Boolean)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
+		if((isMileStone != null && isMileStone.booleanValue()) || 
+				(startDate == null || startDate.after(endDate))){
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
+		}		
 	}
 	
 }

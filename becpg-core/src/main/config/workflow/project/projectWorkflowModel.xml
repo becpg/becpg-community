@@ -15,7 +15,7 @@
 		<namespace uri="http://www.alfresco.org/model/project-workflow/1.0"
 			prefix="pjtwf" />
 	</namespaces>
-
+    
 	<types>
 
 		<!-- -->
@@ -58,13 +58,26 @@
 
 
 		<type name="pjtwf:newProductTask">
-			<parent>bpm:workflowTask</parent>
+			<parent>bpm:activitiOutcomeTask</parent>
 			<properties>
 				<property name="pjtwf:npdProductName">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 					<constraints>
 						<constraint ref="cm:filename" />
+					</constraints>
+				</property>
+				<property name="pjtwf:npdAction">
+					<type>d:text</type>
+					<default>createNewProduct</default>
+					<constraints>
+						<constraint name="pjtwf:npdActions" type="LIST">
+			            <parameter name="allowedValues">
+			                <list>
+			                    <value>createNewProduct</value>
+			                    <value>submitTask</value>                    
+			                </list>
+			            </parameter>
+			        </constraint>
 					</constraints>
 				</property>
 			</properties>
@@ -74,6 +87,10 @@
 				</property>
 				<property name="bpm:packageItemActionGroup">
 					<default>edit_package_item_actions</default>
+				</property>
+				<!-- Override bpm:outcomePropertyName with our custom property -->
+				<property name="bpm:outcomePropertyName">
+					<default>{http://www.alfresco.org/model/project-workflow/1.0}npdAction</default>
 				</property>
 			</overrides>
 			<mandatory-aspects>
