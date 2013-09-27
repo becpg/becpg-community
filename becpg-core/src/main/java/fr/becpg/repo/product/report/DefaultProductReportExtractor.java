@@ -187,7 +187,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				if (dataItem.getProduct() !=null && nodeService.exists(dataItem.getProduct())) {
 					
 					Element partElt = compoListElt.addElement(BeCPGModel.TYPE_COMPOLIST.getLocalName());
-					loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);					
+					loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);
+					loadProductData(dataItem.getProduct(), partElt);
 																			
 					partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
 					partElt.addAttribute(ATTR_ASPECTS, extractAspects(dataItem.getProduct()));
@@ -210,6 +211,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 				Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 				loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);
+				loadProductData(dataItem.getProduct(), partElt);
 				
 				if (dataItem.getProduct() !=null && nodeService.exists(dataItem.getProduct())) {					
 					partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
@@ -373,6 +375,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		Element partElt = packagingListElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
 		loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);
+		loadProductData(dataItem.getProduct(), partElt);
 																
 		partElt.addAttribute(ATTR_ITEM_TYPE, nodeType.toPrefixString(namespaceService));
 		partElt.addAttribute(ATTR_ASPECTS, extractAspects(dataItem.getProduct()));
@@ -534,5 +537,19 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			dynamicCharact.addAttribute(BeCPGModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(),
 					dc.getValue() == null ? VALUE_NULL : dc.getValue().toString());
 		}
+	}
+	
+	protected void loadProductData(NodeRef nodeRef, Element dataListItemElt){
+		
+		QName [] props = { BeCPGModel.PROP_CODE, BeCPGModel.PROP_ERP_CODE, BeCPGModel.PROP_LEGAL_NAME, BeCPGModel.PROP_LEGAL_NAME};
+		QName [] assocs = { BeCPGModel.ASSOC_SUPPLIERS};
+		
+		for(QName prop : props){
+			dataListItemElt.addAttribute(prop.getLocalName(), (String)nodeService.getProperty(nodeRef, prop));
+		}
+				
+		for(QName assoc : assocs){
+			dataListItemElt.addAttribute(assoc.getLocalName(), extractNames(associationService.getTargetAssocs(nodeRef, assoc)));
+		}		
 	}
 }
