@@ -207,6 +207,8 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_INGLIST_IS_IONIZED. */
 	QName PROP_INGLIST_IS_IONIZED = QName.createQName(BECPG_URI, "ingListIsIonized");
+	
+	QName PROP_ING_LIST_IS_PROCESSING_AID = QName.createQName(BECPG_URI, "ingListIsProcessingAid");
 
 	/** The Constant ASSOC_INGLIST_GEO_ORIGIN. */
 	QName ASSOC_INGLIST_GEO_ORIGIN = QName.createQName(BECPG_URI, "ingListGeoOrigin");
@@ -355,6 +357,7 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_ING_CEECODE. */
 	QName PROP_ING_CEECODE = QName.createQName(BECPG_URI, "ingCEECode");
+	
 
 	/** The Constant PROP_ING_TYPE. */
 	@Deprecated
