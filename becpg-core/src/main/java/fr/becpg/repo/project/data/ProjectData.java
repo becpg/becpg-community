@@ -15,6 +15,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
@@ -25,7 +26,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "pjt:project")
-public class ProjectData extends BeCPGDataObject {
+public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem {
 
 	
 	private NodeRef hierarchy1;

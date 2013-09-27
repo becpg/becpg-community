@@ -11,11 +11,13 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -103,7 +105,7 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Override
 	public List<NodeRef> getTaskLegendList() {
-		return beCPGSearchService.luceneSearch(QUERY_TASK_LEGEND);
+		return beCPGSearchService.luceneSearch(QUERY_TASK_LEGEND, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true));
 	}
 
 	@Override

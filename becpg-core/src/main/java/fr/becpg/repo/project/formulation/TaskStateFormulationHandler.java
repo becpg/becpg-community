@@ -53,17 +53,30 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			// even if project is not in Progress, we visit it because a task can start the project (manual task or task that has startdate < NOW)
 			visitTask(projectData, null);
 			
-			// first tasks to manage Project state
-			if(ProjectState.Planned.equals(projectData.getProjectState())){
-				List<TaskListDataItem> firstTasks = ProjectHelper.getNextTasks(projectData, null);
-				if (!firstTasks.isEmpty()) {
-					for (TaskListDataItem nextTask : firstTasks) {
-						if(TaskState.InProgress.equals(nextTask.getState()) || TaskState.Completed.equals(nextTask.getState())){
-							projectData.setProjectState(ProjectState.InProgress);
-							break;
-						}				
-					}			
-				}
+			// check tasks to manage Project state
+//			if(ProjectState.Planned.equals(projectData.getProjectState())){
+//				List<TaskListDataItem> firstTasks = ProjectHelper.getNextTasks(projectData, null);
+//				if (!firstTasks.isEmpty()) {
+//					for (TaskListDataItem nextTask : firstTasks) {
+//						if(TaskState.InProgress.equals(nextTask.getState()) || TaskState.Completed.equals(nextTask.getState())){
+//							projectData.setProjectState(ProjectState.InProgress);
+//							break;
+//						}				
+//					}			
+//				}
+//			}			
+			boolean allTaskPlanned = true;
+			for (TaskListDataItem task : projectData.getTaskList()) {
+				if(!TaskState.Planned.equals(task.getState())){
+					allTaskPlanned = false;
+					break;
+				}				
+			}
+			if(!allTaskPlanned && ProjectState.Planned.equals(projectData.getProjectState())){
+				projectData.setProjectState(ProjectState.InProgress);
+			} 
+			else if(allTaskPlanned && ProjectState.InProgress.equals(projectData.getProjectState())){
+				projectData.setProjectState(ProjectState.Planned);
 			}
 					
 			// is project completed ?
@@ -98,20 +111,31 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						projectWorkflowService.isWorkflowActive(nextTask)){
 					projectWorkflowService.cancelWorkflow(nextTask);
 				}
+				
+				if (TaskState.Planned.equals(nextTask.getState())) {					
 					
-				// start task
-				// - we are on first task and Project is in progress
-				// - previous task are done
-				if (TaskState.Planned.equals(nextTask.getState()) && ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
-					// manual date -> we wait the date 
-					// don't start task automatically if startDate is equal to projectStartDate and projectState == Planned					
-					if((nextTask.getStart().before(ProjectHelper.removeTime(projectData.getStartDate())) || 
-							ProjectState.InProgress.equals(projectData.getProjectState())) &&
-							(nextTask.getManualDate() == null || nextTask.getStart().before(new Date()))){
-						logger.debug("Start task since we are after planned startDate.");
-						//ProjectHelper.setTaskStartDate(nextTask, new Date());
-						nextTask.setState(TaskState.InProgress);							
+					// no previous task
+					if(nextTask.getPrevTasks().isEmpty()){						
+						if(nextTask.getStart().before(new Date())){							
+							logger.debug("Start first task.");
+							nextTask.setState(TaskState.InProgress);
+						}
 					}
+					else{
+						// previous task are done
+						if(ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())){								
+							if(nextTask.getManualDate() == null){									
+								logger.debug("Start task since previous are done");
+								nextTask.setState(TaskState.InProgress);
+							}
+							// manual date -> we wait the date
+							else if(nextTask.getStart().before(new Date())){
+								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
+								nextTask.setState(TaskState.InProgress);
+							}
+						}
+					}
+					
 				} else if (TaskState.Completed.equals(nextTask.getState())) {
 
 					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
