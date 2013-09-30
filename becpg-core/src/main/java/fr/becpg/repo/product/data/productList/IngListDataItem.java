@@ -27,6 +27,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
 	
+	private List<NodeRef> ingListSubIng = new ArrayList<NodeRef>();
+	
 	private Boolean isGMO = false;
 	
 	private Boolean isIonized = false;	
@@ -71,6 +73,19 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		this.bioOrigin = bioOrigin;
 	}
 	
+	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:ingListSubIng")
+	public List<NodeRef> getIngListSubIng() {
+		return ingListSubIng;
+	}
+
+
+	public void setIngListSubIng(List<NodeRef> ingListSubIng) {
+		this.ingListSubIng = ingListSubIng;
+	}
+
+
 	@AlfProp
 	@AlfEnforced
 	@AlfQname(qname="bcpg:ingListIsGMO")
@@ -194,6 +209,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		result = prime * result + ((bioOrigin == null) ? 0 : bioOrigin.hashCode());
 		result = prime * result + ((geoOrigin == null) ? 0 : geoOrigin.hashCode());
 		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
+		result = prime * result + ((ingListSubIng == null) ? 0 : ingListSubIng.hashCode());
 		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
 		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
@@ -226,6 +242,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				return false;
 		} else if (!ing.equals(other.ing))
 			return false;
+		if (ingListSubIng == null) {
+			if (other.ingListSubIng != null)
+				return false;
+		} else if (!ingListSubIng.equals(other.ingListSubIng))
+			return false;
 		if (isGMO == null) {
 			if (other.isGMO != null)
 				return false;
@@ -256,8 +277,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing
-				+ ", isManual=" + isManual + ", isProcessingAid=" + isProcessingAid + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", ingListSubIng=" + ingListSubIng + ", isGMO=" + isGMO
+				+ ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual + ", isProcessingAid=" + isProcessingAid + "]";
 	}
 
 

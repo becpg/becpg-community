@@ -175,7 +175,6 @@
 				<list>
 					<value>Format</value>
 					<value>Rename</value>
-					<value>Combine</value>
 					<value>Aggregate</value>
 					<value>Render</value>
 					<value>Declare</value>
@@ -1093,11 +1092,11 @@
 		<type name="bcpg:labelingRuleList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
-				<property name="bcpg:lrFormula">
-					<type>d:text</type>
+				<property name="bcpg:lrLabel">
+					<type>d:mltext</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:lrErrorLog">
+				<property name="bcpg:lrFormula">
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
