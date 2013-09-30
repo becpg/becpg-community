@@ -2827,7 +2827,6 @@ true
                                                 <property name="textAlign">center</property>
                                                 <image id="3444">
                                                     <property name="backgroundColor">white</property>
-                                                    <property name="height">1.0916030534351144in</property>
                                                     <property name="width">1.5648854961832062in</property>
                                                     <structure name="toc"/>
                                                     <property name="source">expr</property>
