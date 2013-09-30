@@ -24,7 +24,9 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -212,6 +214,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		CompositeLabeling ret = new CompositeLabeling();
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
+			
+		
+			
 
 			DeclarationType declarationType = getDeclarationType(component.getData(), null, labelingFormulaContext);
 
@@ -228,6 +233,20 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		CompoListDataItem compoListDataItem = composite.getData();
 
 		ProductData productData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+		
+		//MultiLevel 
+		if(productData instanceof SemiFinishedProductData ||
+				productData instanceof FinishedProductData){
+			@SuppressWarnings("unchecked")
+			Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.ALL,
+					VariantFilters.DEFAULT_VARIANT));
+			for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
+				sfChild.getData().setParent(compoListDataItem);
+				composite.addChild(sfChild);
+			}
+			
+		}
+		
 
 		// Calculate qtyRMUsed
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
@@ -269,12 +288,22 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					AggregateRule aggregateRule  = labelingFormulaContext.getAggregateRules().get(ingListDataItem.getIng());
 					
-					NodeRef ingNodeRef = aggregateRule!=null && aggregateRule.getReplacement()!=null? aggregateRule.getReplacement() : ingListDataItem.getIng();
+					boolean isReplacement =  aggregateRule!=null && aggregateRule.getReplacement()!=null;
+					
+					NodeRef ingNodeRef =isReplacement? aggregateRule.getReplacement() : ingListDataItem.getIng();
 
 					IngItem ingItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
 
 					if (ingItem == null) {
 						ingItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
+						
+						if(!isReplacement && ingListDataItem.getIngListSubIng().size()>0){
+							for(NodeRef subIng : ingListDataItem.getIngListSubIng()){
+								ingItem.getSubIngs().add((IngItem) alfrescoRepository.findOne(subIng));
+							}
+
+						}
+						
 						compositeLabeling.add(ingItem);
 						if (logger.isDebugEnabled()) {
 							logger.debug("- Add new ing to current Label" + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));

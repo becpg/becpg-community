@@ -112,6 +112,8 @@ public class LabelingFormulaContext {
 			return new MessageFormat("{0} {1,number,0.#%} ({2})");
 		} else if (lblComponent instanceof IngTypeItem) {
 			return new MessageFormat("{0}: {1}");
+		} else if (lblComponent instanceof IngItem && ((IngItem)lblComponent).getSubIngs().size()>0){
+			return new MessageFormat("{0} ({2})");
 		}
 
 		return new MessageFormat("{0}");
@@ -357,8 +359,8 @@ public class LabelingFormulaContext {
 			if (ret.length() > 0) {
 				ret.append(RepoConsts.LABEL_SEPARATOR);
 			}
-			
-			//TODO apply combine
+
+			// TODO apply combine
 
 			if (kv.getKey() != null && !IngTypeItem.DEFAULT.equals(kv.getKey())) {
 				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()), renderLabelingComponent(compositeLabeling, kv.getValue()) }));
@@ -395,7 +397,17 @@ public class LabelingFormulaContext {
 			}
 
 			if (component instanceof IngItem) {
-				subList.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc }));
+				IngItem ingItem = (IngItem) component;
+				StringBuffer subIngBuff = new StringBuffer();
+				for (IngItem subIngItem : ingItem.getSubIngs()) {
+					if (subIngBuff.length() > 0) {
+						subIngBuff.append(RepoConsts.LABEL_SEPARATOR);
+					}
+					subIngBuff.append(getIngName(subIngItem));
+				}
+
+				subList.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc,  subIngBuff.toString() }));
+
 			} else if (component instanceof CompositeLabeling) {
 				subList.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component) }));
 

@@ -2,6 +2,7 @@ package fr.becpg.repo.product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -565,6 +566,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					//ingList : ing5
 					ingList = new ArrayList<IngListDataItem>();			
 					ingList.add(new IngListDataItem(null, 100d, null, null, false, false,false, ing5, false));
+					ingList.get(0).getIngListSubIng().addAll(Arrays.asList(ing1,ing4));
 					rawMaterial7.setIngList(ingList);
 					rawMaterial7NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial7).getNodeRef();
 					
