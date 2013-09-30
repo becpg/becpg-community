@@ -53,16 +53,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	private static final String TAG_COMPARISON_ROW = "comparisonRow";	
 	
 	/** The Constant ATTR_ENTITY_1. */
-	private static final String ATTR_ENTITY_1 = "entity1";
-	
-	/** The Constant ATTR_ENTITY_2. */
-	private static final String ATTR_ENTITY_2 = "entity2";
-	
-	/** The Constant ATTR_ENTITY_3. */
-	private static final String ATTR_ENTITY_3 = "entity3";
-	
-	/** The Constant ATTR_ENTITY_4. */
-	private static final String ATTR_ENTITY_4 = "entity4";		
+	private static final String ATTR_ENTITY = "entity";
 	
 	/** The Constant ATTR_ENTITYLIST. */
 	private static final String ATTR_ENTITYLIST = "entityList";
@@ -76,16 +67,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	private static final String ATTR_PROPERTY_QNAME = "propertyQName";
 	
 	/** The Constant ATTR_VALUE_1. */
-	private static final String ATTR_VALUE_1 = "value1";
-	
-	/** The Constant ATTR_VALUE_2. */
-	private static final String ATTR_VALUE_2 = "value2";	
-	
-	/** The Constant ATTR_VALUE_3. */
-	private static final String ATTR_VALUE_3 = "value3";
-	
-	/** The Constant ATTR_VALUE_4. */
-	private static final String ATTR_VALUE_4 = "value4";	
+	private static final String ATTR_VALUE = "value";
 	
 	//structComparisonRows
 	/** The Constant TAG_STRUCT_COMPARISON_ROWS. */
@@ -260,28 +242,21 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 	 * @param compareResult the compare result
 	 * @return the element
 	 */
-	private Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entitiesNodeRef, List<CompareResultDataItem> compareResult){
+	private Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult){
 			
 			Document document = DocumentHelper.createDocument();
 			
 			Element cmpRowsElt = document.addElement(TAG_COMPARISON_ROWS);
 			
 			String name = (String)nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME);			
-			cmpRowsElt.addAttribute(ATTR_ENTITY_1, name);
+			cmpRowsElt.addAttribute(ATTR_ENTITY + "1", name);
 			
-			name = (String)nodeService.getProperty(entitiesNodeRef.get(0), ContentModel.PROP_NAME);
-			cmpRowsElt.addAttribute(ATTR_ENTITY_2, name);
+			int i = 2;
+			for(NodeRef entityNodeRef : entityNodeRefs){
+				name = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+				cmpRowsElt.addAttribute(ATTR_ENTITY + i, name);
+			}
 			
-			if(entitiesNodeRef.size() > 2){
-				name = (String)nodeService.getProperty(entitiesNodeRef.get(1), ContentModel.PROP_NAME);
-				cmpRowsElt.addAttribute(ATTR_ENTITY_3, name);
-			}
-				
-			if(entitiesNodeRef.size() > 3){
-				name = (String)nodeService.getProperty(entitiesNodeRef.get(2), ContentModel.PROP_NAME);
-				cmpRowsElt.addAttribute(ATTR_ENTITY_4, name);
-			}
-				
 			// compareResult
 			for(CompareResultDataItem c : compareResult){
 								
@@ -307,22 +282,15 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
 				cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, charactName);							
 				cmpRowElt.addAttribute(ATTR_PROPERTY, propertyTitle);
-				cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
+				cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));								
 				
-				if(logger.isTraceEnabled()){
-					String value1 = c.getValues().get(0);
-					String value2 = c.getValues().get(1);
-					logger.trace("compare prop: " + c.getProperty() + " - value1: " + value1 + " - value2: " + value2);
-				}					
-				
-				if(c.getValues().size() > 0 && c.getValues().get(0) != null)
-					cmpRowElt.addAttribute(ATTR_VALUE_1, c.getValues().get(0));
-				if(c.getValues().size() > 1 && c.getValues().get(1) != null)
-					cmpRowElt.addAttribute(ATTR_VALUE_2, c.getValues().get(1));
-				if(c.getValues().size() > 2 && c.getValues().get(2) != null)
-					cmpRowElt.addAttribute(ATTR_VALUE_3, c.getValues().get(2));
-				if(c.getValues().size() > 3 && c.getValues().get(3) != null)
-					cmpRowElt.addAttribute(ATTR_VALUE_4, c.getValues().get(3));
+				i = 1;
+				for(String value : c.getValues()){
+					if(logger.isTraceEnabled()){
+						logger.trace("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
+					}
+					cmpRowElt.addAttribute(ATTR_VALUE + i, value);
+				}				
 			}			
 											
 			return cmpRowsElt;
