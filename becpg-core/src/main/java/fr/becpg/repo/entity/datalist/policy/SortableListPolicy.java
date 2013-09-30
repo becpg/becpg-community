@@ -44,7 +44,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
 
-
 	private DataListSortService dataListSortService;
 	private BeCPGSearchService beCPGSearchService;
 	
@@ -171,6 +170,33 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
             boolean copyToNewNode,
             Map<NodeRef, NodeRef> copyMap){
 		
+		logger.debug("onCopyComplete destinationRef " + destinationRef);
+		
+		NodeRef sourceParentLevelNodeRef = (NodeRef)nodeService.getProperty(sourceNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+		NodeRef targetParentLevelNodeRef = (NodeRef)nodeService.getProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL);
+		
+		// parent equals -> need to update the parent of copied node
+		if(sourceParentLevelNodeRef != null && sourceParentLevelNodeRef.equals(targetParentLevelNodeRef)){
+			
+			// we assume sort is keeped during copy
+			Integer sourceParentSort = (Integer)nodeService.getProperty(sourceParentLevelNodeRef, BeCPGModel.PROP_SORT);
+			
+			NodeRef targetParentNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
+			String query = LuceneHelper.getCondParent(targetParentNodeRef, null);
+			query += LuceneHelper.getCondType(nodeService.getType(sourceParentLevelNodeRef));
+			query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : "", LuceneHelper.Operator.AND);
+			List<NodeRef> result = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+			
+			if(!result.isEmpty()){
+				NodeRef copiedParentNodeRef = result.get(0);
+				logger.debug("update the parent of copied node " + targetParentLevelNodeRef + " with value " + copiedParentNodeRef);
+				nodeService.setProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL, copiedParentNodeRef);
+			}
+			else{
+				logger.warn("DepthLevelAspectCopyBehaviourCallback : parent not found.");
+			}
+		}
+		
 		policyBehaviourFilter.enableBehaviour(destinationRef, BeCPGModel.ASPECT_DEPTH_LEVEL);
     }
 	
@@ -187,34 +213,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {				
 			policyBehaviourFilter.disableBehaviour(copyDetails.getTargetNodeRef(), BeCPGModel.ASPECT_DEPTH_LEVEL);
 			return true;
-		}
-
-		@Override
-		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
-				Map<QName, Serializable> properties) {		
-			
-			logger.debug("DepthLevelAspectCopyBehaviourCallback.getCopyProperties()");			
-			NodeRef sourceParentNodeRef = (NodeRef)copyDetails.getSourceNodeProperties().get(BeCPGModel.PROP_PARENT_LEVEL);
-			NodeRef targetParentNodeRef = (NodeRef)properties.get(BeCPGModel.PROP_PARENT_LEVEL);
-			
-			// parent equals -> need to update the parent of copied node
-			if(sourceParentNodeRef != null && sourceParentNodeRef.equals(targetParentNodeRef)){
-				
-				// we assume sort is keeped during copy
-				Integer sourceParentSort = (Integer)nodeService.getProperty(sourceParentNodeRef, BeCPGModel.PROP_SORT);
-				
-				String query = LuceneHelper.getCondParent(copyDetails.getTargetParentNodeRef(), null);
-				query += LuceneHelper.getCondType(nodeService.getType(copyDetails.getSourceNodeRef()));
-				query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : "", LuceneHelper.Operator.AND);
-				List<NodeRef> result = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-				
-				if(!result.isEmpty()){
-					NodeRef copiedParentNodeRef = result.get(0);
-					logger.debug("update the parent of copied node " + copyDetails.getTargetNodeRef() + " with value " + copiedParentNodeRef);
-					properties.put(BeCPGModel.PROP_PARENT_LEVEL, copiedParentNodeRef);
-				}
-			}				
-			return properties;
 		}
 	}
 }
