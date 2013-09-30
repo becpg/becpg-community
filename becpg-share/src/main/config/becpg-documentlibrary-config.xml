@@ -227,6 +227,11 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
+			<content id="project-npd" label="menu.create-content.project-npd"
+				type="pagelink" index="111" icon="generic-project">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create-npd&amp;isEntity=true
+				</param>
+			</content>
 			<content id="supplier" label="menu.create-content.supplier"
 				type="pagelink" index="120" icon="generic-supplier">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create&amp;isEntity=true

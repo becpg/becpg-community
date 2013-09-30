@@ -65,6 +65,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	/** The level prop in multi level case */
 	private String levelProp = null;
+	
+	private Boolean addEmptyValue = null;
 
 	/**
 	 * Set the paths where are stored allowed values by the constraint.
@@ -130,6 +132,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.levelProp = levelProp;
 	}
 
+	public void setAddEmptyValue(Boolean addEmptyValue) {
+		this.addEmptyValue = addEmptyValue;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -162,6 +168,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			public List<String> execute() throws Throwable {
 
 				List<String> allowedValues = new ArrayList<String>();
+				
+				if(addEmptyValue != null && addEmptyValue && !allowedValues.contains("")){
+					allowedValues.add("");
+				}
 
 				for (String path : paths) {
 

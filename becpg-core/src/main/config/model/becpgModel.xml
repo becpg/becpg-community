@@ -27,13 +27,6 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:emptyValue" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-				</list>
-			</parameter>
-		</constraint>
 		<constraint name="bcpg:systemState" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -153,6 +146,9 @@
 			</parameter>
 			<parameter name="constraintProp">
 				<value>cm:name</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:allergenType" type="LIST">
@@ -395,6 +391,15 @@
 
 		<type name="bcpg:product">
 			<parent>bcpg:entityV2</parent>
+			<properties>
+				<property name="bcpg:productState">
+					<type>d:text</type>
+					<default>ToValidate</default>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
+			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:legalNameAspect</aspect>
@@ -1304,7 +1309,6 @@
 					<mandatory>false</mandatory>
 					<constraints>
 						<constraint ref="bcpg:nutListMethods" />
-						<constraint ref="bcpg:emptyValue" />
 					</constraints>
 				</property>
 			</properties>
@@ -1778,14 +1782,7 @@
 				<property name="bcpg:productHierarchy2">
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
-				</property>
-				<property name="bcpg:productState">
-					<type>d:text</type>
-					<default>ToValidate</default>
-					<constraints>
-						<constraint ref="bcpg:systemState" />
-					</constraints>
-				</property>
+				</property>				
 				<property name="bcpg:productQty">
 					<type>d:double</type>
 					<mandatory>true</mandatory>
