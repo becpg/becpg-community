@@ -11,8 +11,6 @@ public enum LabelingRuleType {
 
 	Rename,
 	
-	Combine,
-	
 	Aggregate,
 	
 	Render,

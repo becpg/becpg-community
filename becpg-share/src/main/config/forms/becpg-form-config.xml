@@ -4543,6 +4543,7 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:lrLabel" />
 					<show id="bcpg:lrFormula" />
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
@@ -4573,12 +4574,8 @@
 					<show id="cm:name" />
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
-					<show id="bcpg:lrErrorLog" />
 					<show id="bcpg:lrType" />
 				</field-visibility>
-				<appearance>
-				   <field id="bcpg:lrErrorLog" label="hidden" />
-				</appearance>
 			</form>
 
 			<form id="filter">
@@ -4596,6 +4593,7 @@
 			<form>
 			<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:lrLabel" />
 					<show id="bcpg:lrFormula" />
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />

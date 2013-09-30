@@ -3,8 +3,10 @@ package fr.becpg.repo.product.data.productList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -16,11 +18,23 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 public class LabelingRuleListDataItem extends AbstractManualDataItem {
 	
 	private String formula;
-	private String errorLog;
+	private MLText label;
 	private LabelingRuleType labelingRuleType;
 	private List<NodeRef> components = new ArrayList<NodeRef>();
 	private List<NodeRef> replacements = new ArrayList<NodeRef>();
 	
+	
+	
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:lrLabel")
+	public MLText getLabel() {
+		return label;
+	}
+
+	public void setLabel(MLText label) {
+		this.label = label;
+	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:lrFormula")
@@ -62,16 +76,6 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 		this.labelingRuleType = labelingRuleType;
 	}
 
-	@AlfProp
-	@AlfQname(qname="bcpg:lrErrorLog")
-	public String getErrorLog() {
-		return errorLog;
-	}
-
-	public void setErrorLog(String errorLog) {
-		this.errorLog = errorLog;
-	}
-	
 	
 
 	public LabelingRuleListDataItem() {
@@ -98,13 +102,23 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 		this.replacements = replacements;
 	}
 
+	public LabelingRuleListDataItem(String name, MLText label ,String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
+		super();
+		this.name = name;
+		this.label = label;
+		this.formula = formula;
+		this.labelingRuleType = labelingRuleType;
+		this.components = components;
+		this.replacements = replacements;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((components == null) ? 0 : components.hashCode());
-		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
 		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((labelingRuleType == null) ? 0 : labelingRuleType.hashCode());
 		result = prime * result + ((replacements == null) ? 0 : replacements.hashCode());
 		return result;
@@ -124,15 +138,15 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 				return false;
 		} else if (!components.equals(other.components))
 			return false;
-		if (errorLog == null) {
-			if (other.errorLog != null)
-				return false;
-		} else if (!errorLog.equals(other.errorLog))
-			return false;
 		if (formula == null) {
 			if (other.formula != null)
 				return false;
 		} else if (!formula.equals(other.formula))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
 			return false;
 		if (labelingRuleType != other.labelingRuleType)
 			return false;
@@ -146,8 +160,8 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 
 	@Override
 	public String toString() {
-		return "LabelingRuleListDataItem [ formula=" + formula + ", components=" + components + ", replacements=" + replacements + ", labelingRuleType="
-				+ labelingRuleType + ", errorLog=" + errorLog + "]";
+		return "LabelingRuleListDataItem [formula=" + formula + ", label=" + label + ", labelingRuleType=" + labelingRuleType + ", components=" + components + ", replacements="
+				+ replacements + "]";
 	}
 
 	
