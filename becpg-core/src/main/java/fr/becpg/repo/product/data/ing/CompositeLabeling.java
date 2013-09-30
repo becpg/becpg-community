@@ -10,7 +10,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.data.ProductData;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
@@ -18,7 +17,6 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 
 	private Map<NodeRef, AbstractLabelingComponent> ingList = new LinkedHashMap<NodeRef, AbstractLabelingComponent>();
 
-	private Map<NodeRef, AbstractLabelingComponent> ingListNotDeclared = new LinkedHashMap<NodeRef, AbstractLabelingComponent>();
 
 	private Double qtyRMUsed = 0d;
 	
@@ -35,9 +33,6 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	public CompositeLabeling() {
 		super();
 	}
-	
-	
-
 
 	public boolean isGroup() {
 		return isGroup;
@@ -55,41 +50,24 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		this.qtyRMUsed = qtyRMUsed;
 	}
 
-	public void add(AbstractLabelingComponent ing, boolean isDeclared) {
-		if (isDeclared) {
-			ingList.put(ing.getNodeRef(), ing);
-		} else {
-			ingListNotDeclared.put(ing.getNodeRef(), ing);
-		}
+	public void add(AbstractLabelingComponent ing) {
+		ingList.put(ing.getNodeRef(), ing);
+		
 	}
 
-	public void remove(NodeRef ing, boolean isDeclared) {
-		if (isDeclared) {
-			ingList.remove(ing);
-		} else {
-			ingListNotDeclared.remove(ing);
-		}
+	public void remove(NodeRef ing) {
+		ingList.remove(ing);
 	}
 
-	public AbstractLabelingComponent get(NodeRef grpNodeRef, boolean isDeclared) {
+	public AbstractLabelingComponent get(NodeRef grpNodeRef) {
+		return ingList.get(grpNodeRef);
 
-		AbstractLabelingComponent ing = null;
-		if (isDeclared) {
-			ing = ingList.get(grpNodeRef);
-		} else {
-			ing = ingListNotDeclared.get(grpNodeRef);
-		}
-
-		return ing;
 	}
 
 	public Map<NodeRef, AbstractLabelingComponent> getIngList() {
 		return ingList;
 	}
 
-	public Map<NodeRef, AbstractLabelingComponent> getIngListNotDeclared() {
-		return ingListNotDeclared;
-	}
 
 	@Override
 	public String toString() {

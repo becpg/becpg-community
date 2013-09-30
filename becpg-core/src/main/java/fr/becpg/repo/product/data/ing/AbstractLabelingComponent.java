@@ -1,10 +1,8 @@
 package fr.becpg.repo.product.data.ing;
 
-import java.util.Iterator;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
