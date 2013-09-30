@@ -133,9 +133,6 @@
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
-					
-					<!-- Product Catalog -->
-					<show id="bp:productCatalogs" force="true" />
 
 					<!-- Effectivity -->
 					<show id="bcpg:startEffectivity"  /> 
@@ -196,7 +193,8 @@
 					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="dimension" appearance="bordered-panel"
-						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" 
+						parent="mainTab"/>
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
@@ -222,7 +220,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo" description-id="becpg.forms.field.tradeName" >
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
@@ -351,8 +349,6 @@
 							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
-					<!-- Product Catalog -->
-					<field id="bp:productCatalogs" set="categories" />
 					
 					<!-- audit -->
 					<field id="cm:creator" set="audit" />
@@ -425,7 +421,7 @@
                     <control-param name="maxLength">255</control-param>
                  </control>
                </field>
-               <field id="cm:title" description-id="becpg.forms.field.tradeName">
+               <field id="cm:title" label-id="becpg.forms.field.tradeName">
                   <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                </field>
                <field id="cm:description">
@@ -523,7 +519,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo" description-id="becpg.forms.field.tradeName" >
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
@@ -1237,7 +1233,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo" description-id="becpg.forms.field.tradeName" >
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
@@ -1397,7 +1393,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo" description-id="becpg.forms.field.tradeName" >
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
@@ -1525,7 +1521,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo" description-id="becpg.forms.field.tradeName" >
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
@@ -1726,7 +1722,7 @@
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
-					<field id="cm:title" set="mainInfo" description-id="becpg.forms.field.tradeName" >
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName" >
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
