@@ -42,14 +42,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		initParts();
 	}
 
-//	ing3 french 45,5%, ing2 french 19,7%, ing4 french 9,1%, ing1 french 7,6%	
-
-	// sous ingrédients
-	
-	
-	
-	
-
 	private NodeRef createTestProduct(final List<LabelingRuleListDataItem> labelingRuleList) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
