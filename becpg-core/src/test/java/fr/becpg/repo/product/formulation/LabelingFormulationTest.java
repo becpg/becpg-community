@@ -14,6 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import com.ibm.icu.util.Calendar;
+
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -59,7 +61,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				logger.debug("/*-- Create Finished product 1--*/");
 				logger.debug("/*************************************/");
 				FinishedProductData finishedProduct1 = new FinishedProductData();
-				finishedProduct1.setName("Finished product 1");
+				finishedProduct1.setName("Finished product "+Calendar.getInstance().getTimeInMillis());
 				finishedProduct1.setLegalName("Legal Finished product 1");
 				finishedProduct1.setQty(2d);
 				finishedProduct1.setUnit(ProductUnit.kg);
@@ -317,6 +319,86 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			    └──[ing4 french - 0.16666666666666666]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,"ing3 french 47,2%, Legal Raw material 12 33,3% (ing2 french 75%, ing3 french 25%), ing2 french 11,1%, ing4 french 8,3%", Locale.FRENCH);
+
+	    //Sub Ingredients ing5 (ing1,ing4)
+													
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
+				formulatedProduct.getCompoListView().getCompoList().get(2).setProduct(rawMaterial7NodeRef);
+				 alfrescoRepository.save(formulatedProduct);
+				 return null;
+			}
+		}, false, true);
+		
+		
+//		└──[root - 0.0 (2.0)]
+//			    ├──[Pâte french - 1.0 (3.0)]
+//			    │   ├──[ing1 french - 0.33333333333333337]
+//			    │   ├──[ing2 french - 0.6666666666666667]
+//			    │   └──[Legal Raw material 7 - 2.0 (2.0)]
+//			    │       └──[ing5 french - 2.0]
+//			    └──[Garniture french - 1.0 (6.0)]
+//			        ├──[ing3 french - 5.0]
+//			        └──[ing4 french - 1.0]
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 7 66,7% (Epaississant french: ing5 french (ing1 french, ing4 french)), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)", Locale.FRENCH);
+		
+		
+		//MultiLevel
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render(false)", LabelingRuleType.Render));
+		
+		final NodeRef finishProduct2 = createTestProduct(null);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
+				formulatedProduct.getCompoListView().getCompoList().get(2).setProduct(finishProduct2);
+				formulatedProduct.getCompoListView().getCompoList().add(new CompoListDataItem(null, null, 5d, null, CompoListUnit.kg, 0d, DeclarationType.Group, finishProduct2));
+				 alfrescoRepository.save(formulatedProduct);
+				 return null;
+			}
+		}, false, true);
+		
+		
+//		└──[root - 0.0 (7.0)]
+//			    ├──[Pâte french - 1.0 (3.0)]
+//			    │   ├──[ing1 french - 0.33333333333333337]
+//			    │   ├──[ing2 french - 0.6666666666666667]
+//			    │   └──[Legal Finished product 1 - 2.0 (2.0)]
+//			    │       ├──[Pâte french - 1.0 (3.0)]
+//			    │       │   ├──[ing1 french - 0.33333333333333337]
+//			    │       │   ├──[ing2 french - 0.6666666666666667]
+//			    │       │   └──[Legal Raw material 12 - 2.0 (2.0)]
+//			    │       │       ├──[ing1 french - 0.5]
+//			    │       │       └──[ing2 french - 1.5]
+//			    │       └──[Garniture french - 1.0 (6.0)]
+//			    │           ├──[ing3 french - 5.0]
+//			    │           └──[ing4 french - 1.0]
+//			    ├──[Garniture french - 1.0 (6.0)]
+//			    │   ├──[ing3 french - 5.0]
+//			    │   └──[ing4 french - 1.0]
+//			    └──[Legal Finished product 1 - 5.0 (2.0)]
+//			        ├──[Pâte french - 1.0 (3.0)]
+//			        │   ├──[ing1 french - 0.33333333333333337]
+//			        │   ├──[ing2 french - 0.6666666666666667]
+//			        │   └──[Legal Raw material 12 - 2.0 (2.0)]
+//			        │       ├──[ing1 french - 0.5]
+//			        │       └──[ing2 french - 1.5]
+//			        └──[Garniture french - 1.0 (6.0)]
+//			            ├──[ing3 french - 5.0]
+//			            └──[ing4 french - 1.0]
+
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Finished product 1 66,7% (Pâte french 50% (Legal Raw material 12 66,7% (ing2 french, ing1 french), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)", Locale.FRENCH);
+		
 
 
 		//Combine
