@@ -27,6 +27,13 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:emptyValue" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:systemState" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -1296,6 +1303,7 @@
 					<mandatory>false</mandatory>
 					<constraints>
 						<constraint ref="bcpg:nutListMethods" />
+						<constraint ref="bcpg:emptyValue" />
 					</constraints>
 				</property>
 			</properties>
