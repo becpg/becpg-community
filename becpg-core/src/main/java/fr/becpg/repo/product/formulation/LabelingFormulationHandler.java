@@ -349,8 +349,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			List<CompoListDataItem> subCompo = productData.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT);
 			for(CompoListDataItem subCompoListDataItem : subCompo){
 				Double subQty = FormulationHelper.getQtyInKg(subCompoListDataItem);	
-				if(subQty!=null && qty!=null){
-					subCompoListDataItem.setQty(subQty*qty);
+				Double subProductQty = productData.getNetWeight();
+				Double yield =  productData.getYield()!=null ? productData.getYield(): 100d;
+				if(subQty!=null && qty!=null && subProductQty!=null){
+					subCompoListDataItem.setQty((qty/subProductQty)*subQty*(yield/100));
 				} else {
 					subCompoListDataItem.setQty(null);
 				}
