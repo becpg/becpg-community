@@ -192,7 +192,11 @@ public class ImportEntityXmlVisitor {
 							try {
 								node = entityProviderCallBack.provideNode(new NodeRef(nodeRef));
 							} catch (BeCPGException e) {
-								throw new SAXException("Cannot call entityProviderCallBack ", e);
+								throw new SAXException("Cannot call entityProviderCallBack for nodeRef: "+nodeRef, e);
+							} finally {
+								if(node == null){
+									logger.error("Cannot add node to assoc, node not found : " + nodeRef);
+								}
 							}
 						}
 						if (node == null) {
@@ -207,27 +211,27 @@ public class ImportEntityXmlVisitor {
 
 						if (isNodeRefAssoc) {
 							// Case d:nodeRef
+							
 							if (logger.isDebugEnabled()) {
-								logger.debug("Set property : " + currProp.toPrefixString(namespaceService) + " value " + node + " for type " + type);
+								logger.debug("Set property to : " + currProp.toPrefixString(namespaceService) + " value " + node + " for type " + type);
 							}
+							
 							nodeService.setProperty(curNodeRef.peek(), currProp, node);
 							curNodeRef.push(node);
-							logger.debug("UnSet is nodeRefAssoc");
-							isNodeRefAssoc = false;
 						}
 					}
 				}
+				
 			} else if (type != null && (type.equals(RemoteEntityService.ASSOC_TYPE) || type.equals(RemoteEntityService.CHILD_ASSOC_TYPE))) {
 				currAssoc.push(QName.createQName(qName, namespaceService));
 				currAssocType.push(type);
 				removeAllExistingAssoc(curNodeRef.peek(), currAssoc.peek(), type);
 			} else if (type != null && type.length() > 0) {
 				if (type.equals(RemoteEntityService.NODEREF_TYPE)) {
-					logger.debug("Set is nodeRefAssoc");
 					isNodeRefAssoc = true;
 				}
 				currProp = QName.createQName(qName, namespaceService);
-			}
+			} 
 
 			currValue = new StringBuffer();
 
@@ -254,6 +258,8 @@ public class ImportEntityXmlVisitor {
 				} else {
 					nodeService.setProperty(curNodeRef.peek(), currProp, null);
 				}
+			} else {
+				isNodeRefAssoc = false;
 			}
 		}
 

@@ -90,15 +90,21 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		if (format.equals(RemoteEntityFormat.xml)) {
 			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
+			NodeRef ret = null;
 			try {
-				return xmlEntityVisitor.visit(entityNodeRef, in);
+				ret =  xmlEntityVisitor.visit(entityNodeRef, in);
 			} catch (IOException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (SAXException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (ParserConfigurationException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+			} finally {
+				if(ret == null){
+					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format);
+				}
 			}
+			return ret;
 		}
 		throw new BeCPGException("Unknow format " + format.toString());
 	}
