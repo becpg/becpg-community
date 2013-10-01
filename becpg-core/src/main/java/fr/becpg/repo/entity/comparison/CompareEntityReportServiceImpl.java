@@ -214,7 +214,11 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			Document document = DocumentHelper.createDocument();
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
-			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, BeCPGModel.ASSOC_COMPOLIST_PRODUCT));			
+			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, BeCPGModel.ASSOC_COMPOLIST_PRODUCT));		
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("comparison XML " + entitiesCmpElt);
+			}
 
 			try{
 				Map<String,Object> params = new HashMap<String, Object>();
@@ -255,6 +259,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			for(NodeRef entityNodeRef : entityNodeRefs){
 				name = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 				cmpRowsElt.addAttribute(ATTR_ENTITY + i, name);
+				i++;
 			}
 			
 			// compareResult
@@ -290,6 +295,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 						logger.trace("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
 					}
 					cmpRowElt.addAttribute(ATTR_VALUE + i, value);
+					i++;
 				}				
 			}			
 											
