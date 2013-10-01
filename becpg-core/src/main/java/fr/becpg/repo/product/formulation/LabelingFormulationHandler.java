@@ -337,21 +337,32 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			productNodeRef = aggregateRule.getReplacement();
 		}
 
+
+		// Calculate qtyRMUsed
+		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+
 		ProductData productData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
 		// MultiLevel
 		if (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData) {
 			@SuppressWarnings("unchecked")
-			Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
+			List<CompoListDataItem> subCompo = productData.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT);
+			for(CompoListDataItem subCompoListDataItem : subCompo){
+				Double subQty = FormulationHelper.getQtyInKg(subCompoListDataItem);	
+				if(subQty!=null && qty!=null){
+					subCompoListDataItem.setQty(subQty*qty);
+				} else {
+					subCompoListDataItem.setQty(null);
+				}
+			}
+			
+			Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(subCompo);
 			for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
 				sfChild.getData().setParent(compoListDataItem);
 				composite.addChild(sfChild);
 			}
 
 		}
-
-		// Calculate qtyRMUsed
-		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 
 		if (parent == null) {
 			parent = new CompositeLabeling(productData);
@@ -407,10 +418,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						compositeLabeling.add(ingItem);
 						if (logger.isDebugEnabled()) {
-							logger.debug("- Add new ing to current Label" + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
+							logger.debug("- Add new ing to current Label: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
 						}
 					} else if (logger.isDebugEnabled()) {
-						logger.debug("- Update ing value" + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
+						logger.debug("- Update ing value: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
 					}
 
 					Double qtyPerc = ingListDataItem.getQtyPerc();
