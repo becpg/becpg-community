@@ -143,6 +143,12 @@ public class ProductServiceImpl implements ProductService {
 		// product type		
 		SystemProductType systemProductType = SystemProductType.valueOf(nodeService.getType(productNodeRef));
 		String productTypeFolderName = productDictionaryService.getFolderName(systemProductType);
+		
+		if(productTypeFolderName == null){
+			logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
+			logger.debug(" - No productTypeFolderName found for: " + systemProductType);
+		} else {
+		
 		NodeRef productTypeNodeRef = repoService.getOrCreateFolderByPath(productsNodeRef, systemProductType.toString(), productTypeFolderName);
 		
 
@@ -162,6 +168,7 @@ public class ProductServiceImpl implements ProductService {
 		}
 		else{
 			logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
+		}
 		}
     }
 
