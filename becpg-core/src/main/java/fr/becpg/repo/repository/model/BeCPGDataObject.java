@@ -28,6 +28,8 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	protected boolean isTransient = false;
 	
 	
+
+
 	public BeCPGDataObject() {
 		super();
 	}
@@ -36,6 +38,17 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		super();
 		this.nodeRef = nodeRef;
 		this.name = name;
+	}
+	
+
+	public BeCPGDataObject(BeCPGDataObject beCPGDataObject) 
+	{
+	    this.nodeRef = beCPGDataObject.nodeRef;
+	    this.parentNodeRef = beCPGDataObject.parentNodeRef;
+	    this.name = beCPGDataObject.name;
+	    this.aspects = beCPGDataObject.aspects;
+	    this.extraProperties = beCPGDataObject.extraProperties;
+	    this.isTransient = beCPGDataObject.isTransient;
 	}
 
 	
