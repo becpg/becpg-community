@@ -20,6 +20,18 @@ public class IngItem extends AbstractLabelingComponent {
 	private List<IngItem> subIngs  = new ArrayList<>();
 	
 	
+	public IngItem() {
+		super();
+	}
+
+
+	public IngItem(IngItem ingItem) 
+	{
+		super(ingItem);
+	    this.ingType = ingItem.ingType;
+	    this.subIngs = ingItem.subIngs;
+	}
+
 	@AlfProp
 	@AlfQname(qname="bcpg:ingTypeV2")
 	public IngTypeItem getIngType() {

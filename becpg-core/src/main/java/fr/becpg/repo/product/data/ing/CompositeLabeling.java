@@ -22,17 +22,27 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	
 	private boolean isGroup = false;
 
-	public CompositeLabeling(ProductData productData) {
-		//TODO c null !!
-		this.name = productData.getName();
-		this.nodeRef = productData.getNodeRef();
-		this.legalName = productData.getLegalName();
-		
-	}
 
 	public CompositeLabeling() {
 		super();
 	}
+	
+	public CompositeLabeling(CompositeLabeling compositeLabeling) 
+	{
+		super(compositeLabeling);
+	    this.ingList = compositeLabeling.ingList;
+	    this.qtyRMUsed = compositeLabeling.qtyRMUsed;
+	    this.isGroup = compositeLabeling.isGroup;
+	}
+	
+
+	public CompositeLabeling(ProductData productData) {
+		this.name = productData.getName();
+		this.nodeRef = productData.getNodeRef();
+		this.legalName = productData.getLegalName();
+	}
+
+	
 
 	public boolean isGroup() {
 		return isGroup;
@@ -68,7 +78,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		return ingList;
 	}
 
-
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

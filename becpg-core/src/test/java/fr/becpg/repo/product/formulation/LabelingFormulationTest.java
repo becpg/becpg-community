@@ -28,6 +28,11 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleType;
 
+/**
+ * 
+ * @author matthieu
+ *
+ */
 public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	protected static Log logger = LogFactory.getLog(LabelingFormulationTest.class);
@@ -229,6 +234,83 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing3 french), ing3 french), Garniture french 50% (ing3 french, Epaississant french: ing5 french)", Locale.FRENCH);
 		
 		
+
+		//Combine
+					
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "20,30", LabelingRuleType.Aggregate, Arrays.asList(ing1,ing2),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
+		
+//		└──[root - 0.0 (2.0)]
+//			    ├──[Pâte french - 1.0 (3.0)]
+//			    │   ├──[ing1 french - 0.2666666666666667]
+//			    │   ├──[ing2 french - 0.4666666666666667]
+//			    │   ├──[Legal Raw material 12 - 2.0 (2.0)]
+//			    │   │   ├──[ing1 french - 0.4]
+//			    │   │   ├──[ing2 french - 1.05]
+//			    │   │   └──[Comb 1 - 0.55 (0.55)]
+//			    │   │       ├──[ing1 french - 0.1]
+//			    │   │       └──[ing2 french - 0.45]
+//			    │   └──[Comb 1 - 0.2666666666666667 (0.2666666666666667)]
+//			    │       ├──[ing1 french - 0.06666666666666668]
+//			    │       └──[ing2 french - 0.20000000000000004]
+//			    └──[Garniture french - 1.0 (6.0)]
+//			        ├──[ing3 french - 5.0]
+//			        └──[ing4 french - 1.0]
+
+		
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing2 french 52,5%, Comb 1 27,5% (ing2 french 81,8%, ing1 french 18,2%), ing1 french 20%), ing2 french 15,6%, ing1 french 8,9%, Comb 1 8,9% (ing2 french 75%, ing1 french 25%)), Garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)", Locale.FRENCH);
+	
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "100,30", LabelingRuleType.Aggregate, Arrays.asList(ing1,ing2),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
+
+
+//		└──[root - 0.0 (2.0)]
+//			    ├──[Pâte french - 1.0 (3.0)]
+//			    │   ├──[ing2 french - 0.4666666666666667]
+//			    │   ├──[Legal Raw material 12 - 2.0 (2.0)]
+//			    │   │   ├──[ing2 french - 1.05]
+//			    │   │   └──[Comb 1 - 0.95 (0.95)]
+//			    │   │       ├──[ing1 french - 0.5]
+//			    │   │       └──[ing2 french - 0.45]
+//			    │   └──[Comb 1 - 0.5333333333333334 (0.5333333333333334)]
+//			    │       ├──[ing1 french - 0.33333333333333337]
+//			    │       └──[ing2 french - 0.20000000000000004]
+//			    └──[Garniture french - 1.0 (6.0)]
+//			        ├──[ing3 french - 5.0]
+//			        └──[ing4 french - 1.0]
+
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing2 french 52,5%, Comb 1 47,5% (ing1 french 52,6%, ing2 french 47,4%)), Comb 1 17,8% (ing1 french 62,5%, ing2 french 37,5%), ing2 french 15,6%), Garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)", Locale.FRENCH);
+
+		
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 2", new MLText("Decors 1"), null, LabelingRuleType.Aggregate, Arrays.asList(localSF11NodeRef,localSF12NodeRef),null));
+			
+//		└──[root - 0.0 (2.0)]
+//			    └──[Decors 1 - 2.0 (2.0)]
+//			        ├──[Pâte french - 1.0 (3.0)]
+//			        │   ├──[ing1 french - 0.33333333333333337]
+//			        │   ├──[ing2 french - 0.6666666666666667]
+//			        │   └──[Legal Raw material 12 - 2.0 (2.0)]
+//			        │       ├──[ing1 french - 0.5]
+//			        │       └──[ing2 french - 1.5]
+//			        └──[Garniture french - 1.0 (6.0)]
+//			            ├──[ing3 french - 5.0]
+//			            └──[ing4 french - 1.0]
+
+		
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>Decors 1 (100%):</b> Pâte french 50% (Legal Raw material 12 66,7% (ing2 french, ing1 french), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)", Locale.FRENCH);
+	
+		
+		
 		// Group
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "renderGroupList()", LabelingRuleType.Render));
@@ -249,7 +331,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 
 		
-		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>Pâte french 100%</b>, <b>Garniture french 100%</b>", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>Pâte french 50%</b>, <b>Garniture french 50%</b>", Locale.FRENCH);
 		
 		
 		labelingRuleList = new ArrayList<>();
@@ -291,6 +373,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,"ing3 french 41,7%, Legal Raw material 12 33,3% (ing2 french 75%, ing1 french 25%), ing2 french 11,1%, ing4 french 8,3%, ing1 french 5,6%", Locale.FRENCH);
 	
+		
+		
 		
 
 		labelingRuleList = new ArrayList<>();
@@ -393,17 +477,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 
 
-		//Combine
-													
-		
-		labelingRuleList = new ArrayList<>();
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "20,30", LabelingRuleType.Aggregate, Arrays.asList(ing1,ing2),null));
-		
-		checkILL(finishedProductNodeRef1, labelingRuleList, "ing2 french 34,07 %, ing1 french 9,26 %, ing3 french, ing4 french", Locale.FRENCH);
-		
-		
-		
 		
 //	TODO	//Do not Declare ????
 
@@ -442,7 +515,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	
 
 
-	 //@Test
+	 @Test
 	public void testMultiLingualLabelingFormulation() throws Exception {
 
 		logger.info("testLabelingFormulation");

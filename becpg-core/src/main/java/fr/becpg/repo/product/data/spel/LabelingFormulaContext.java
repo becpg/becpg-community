@@ -289,12 +289,18 @@ public class LabelingFormulaContext {
 				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
 				for (AbstractLabelingComponent subComponent : compositeLabeling.getIngList().values()) {
 					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
-					Double qtyPerc = (subComponent.getQty() / compositeLabeling.getQtyRMUsed()) * compositeLabeling.getQty();
+					Double qtyPerc = computeQty(compositeLabeling, subComponent);
+					if (compositeLabeling.getQty() != null && qtyPerc != null) {
+						qtyPerc = qtyPerc * compositeLabeling.getQty();
+					}
+
 					if (toMerged == null) {
 						subComponent.setQty(qtyPerc);
 						merged.add(subComponent);
 					} else {
-						toMerged.setQty(toMerged.getQty() + qtyPerc);
+						if (qtyPerc != null) {
+							toMerged.setQty(toMerged.getQty() + qtyPerc);
+						}
 					}
 				}
 			} else {
@@ -310,6 +316,14 @@ public class LabelingFormulaContext {
 
 	}
 
+	private Double computeQty(CompositeLabeling parent, AbstractLabelingComponent component) {
+		Double qtyPerc = component.getQty();
+		if (parent.getQtyRMUsed() != null && parent.getQtyRMUsed() > 0 && qtyPerc != null) {
+			qtyPerc = qtyPerc / parent.getQtyRMUsed();
+		}
+		return qtyPerc;
+	}
+
 	public String renderGroupList() {
 		StringBuffer ret = new StringBuffer();
 
@@ -320,16 +334,14 @@ public class LabelingFormulaContext {
 		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
 
 			String ingName = getIngName(component);
-			
-			Double qtyPerc = component.getQty();
-			if (lblCompositeContext.getQtyRMUsed() > 0) {
-				qtyPerc = qtyPerc / lblCompositeContext.getQtyRMUsed();
-			}
+
+			Double qtyPerc = computeQty(lblCompositeContext, component);
+
 			if (isGroup(component)) {
 				if (ret.length() > 0) {
 					ret.append(RepoConsts.LABEL_SEPARATOR);
 				}
-				ret.append(new MessageFormat("<b>{0} {1,number,0.#%}</b>").format(new Object[] {ingName, qtyPerc }));
+				ret.append(new MessageFormat("<b>{0} {1,number,0.#%}</b>").format(new Object[] { ingName, qtyPerc }));
 			}
 		}
 
@@ -340,32 +352,13 @@ public class LabelingFormulaContext {
 		return component instanceof CompositeLabeling && ((CompositeLabeling) component).isGroup();
 	}
 
-	//
-	// public String renderGroup(NodeRef groupNodeRef) {
-	// CompositeLabeling compositeLabeling = findGroup(groupNodeRef);
-	// if (compositeLabeling != null) {
-	// return renderCompositeIng(compositeLabeling);
-	// }
-	// return "";
-	// }
-	//
-	// private CompositeLabeling findGroup(NodeRef groupNodeRef) {
-	// for (CompositeLabeling compositeLabeling : compositeLabelings) {
-	// if (groupNodeRef.equals(compositeLabeling.getNodeRef())) {
-	// return compositeLabeling;
-	// }
-	// }
-	// return null;
-	// }
 
-	private String renderCompositeIng(CompositeLabeling compositeLabeling) {
+  private String renderCompositeIng(CompositeLabeling compositeLabeling) {
 		StringBuffer ret = new StringBuffer();
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 			if (ret.length() > 0) {
 				ret.append(RepoConsts.LABEL_SEPARATOR);
 			}
-
-			// TODO apply combine
 
 			if (kv.getKey() != null && !IngTypeItem.DEFAULT.equals(kv.getKey())) {
 				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()), renderLabelingComponent(compositeLabeling, kv.getValue()) }));
@@ -383,10 +376,7 @@ public class LabelingFormulaContext {
 		boolean appendEOF = false;
 		for (AbstractLabelingComponent component : subComponents) {
 
-			Double qtyPerc = component.getQty();
-			if (parent.getQtyRMUsed() > 0) {
-				qtyPerc = qtyPerc / parent.getQtyRMUsed();
-			}
+			Double qtyPerc = computeQty(parent, component);
 
 			String ingName = getIngName(component);
 
@@ -401,8 +391,8 @@ public class LabelingFormulaContext {
 					ret.append(RepoConsts.LABEL_SEPARATOR);
 				}
 			}
-			
-			if(isGroup(component)){
+
+			if (isGroup(component)) {
 				appendEOF = true;
 			} else {
 				appendEOF = false;
@@ -497,7 +487,9 @@ public class LabelingFormulaContext {
 			private Double getQty(List<AbstractLabelingComponent> lblComponents) {
 				Double ret = 0d;
 				for (AbstractLabelingComponent lblComponent : lblComponents) {
-					ret += lblComponent.getQty();
+					if (lblComponent.getQty() != null) {
+						ret += lblComponent.getQty();
+					}
 				}
 
 				return ret;

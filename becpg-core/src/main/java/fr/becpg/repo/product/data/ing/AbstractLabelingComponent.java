@@ -14,6 +14,21 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	protected Double qty = 0d;
 
 	protected MLText legalName;
+	
+	
+	
+	public AbstractLabelingComponent() {
+		super();
+	}
+
+
+	public AbstractLabelingComponent(AbstractLabelingComponent abstractLabelingComponent) 
+	{
+		super(abstractLabelingComponent);
+	    this.qty = abstractLabelingComponent.qty;
+	    this.legalName = abstractLabelingComponent.legalName;
+	}
+
 
 	@AlfMlText
 	@AlfProp
@@ -51,6 +66,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
+	
+	
 
 	@Override
 	public int hashCode() {
