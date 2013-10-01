@@ -88,11 +88,17 @@ public class LabelingFormulaContext {
 	 */
 
 	private Map<NodeRef, String> textFormaters = new HashMap<>();
+	
+	private String defaultFormat = "{0}";
 
 	// Exemple <b>{1}</b> : {2}
 	public boolean formatText(List<NodeRef> components, String textFormat) {
-		for (NodeRef component : components) {
-			textFormaters.put(component, textFormat);
+		if(components!=null && !components.isEmpty()){
+			for (NodeRef component : components) {
+				textFormaters.put(component, textFormat);
+			}
+		} else {
+			defaultFormat = textFormat;
 		}
 		return true;
 	}
@@ -116,7 +122,7 @@ public class LabelingFormulaContext {
 			return new MessageFormat("{0} ({2})");
 		}
 
-		return new MessageFormat("{0}");
+		return new MessageFormat(defaultFormat);
 	}
 
 	/*
@@ -481,7 +487,7 @@ public class LabelingFormulaContext {
 					return 1;
 				}
 
-				return getQty(a.getValue()).compareTo(getQty(b.getValue()));
+				return getQty(b.getValue()).compareTo(getQty(a.getValue()));
 			}
 
 			private Double getQty(List<AbstractLabelingComponent> lblComponents) {
