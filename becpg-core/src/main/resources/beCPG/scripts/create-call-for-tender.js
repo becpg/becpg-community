@@ -23,8 +23,8 @@ const ASSOCS =[ {assoc:"bcpg:clients"},
 	
 	
 function createCallForTender() {
-	//var project = document.parent.parent;
-	var project = search.findNode("workspace://SpacesStore/7a71991f-32af-44fc-aea2-3f6693c65725");
+	var project = document.parent.parent.parent;
+	//var project = search.findNode("workspace://SpacesStore/7a71991f-32af-44fc-aea2-3f6693c65725");
 	var documentLibrary = project.parent.parent;
 	var suppliersAssocName = "bcpg:suppliers";
 
@@ -37,7 +37,7 @@ function createCallForTender() {
 			for ( var k = 0; k < suppliers.length; k++) {
 				
 				logger.log("supplier " + suppliers[k].name);
-				var supplierFolder = documentLibrary.childByNamePath(suppliers[k].name);
+				var supplierFolder = documentLibrary.childByNamePath(suppliers[k].name + "/Produits");
 
 				if (supplierFolder != null) {
 					var newProduct = productTemplate.copy(supplierFolder, true);
@@ -65,6 +65,8 @@ function createCallForTender() {
 					if(briefDoc != null){
 						briefDoc.copy(newProduct.childByNamePath("Brief"))
 					}
+					
+					project.createAssociation(newProduct, "pjt:projectEntity");
 				}
 			}
 		}

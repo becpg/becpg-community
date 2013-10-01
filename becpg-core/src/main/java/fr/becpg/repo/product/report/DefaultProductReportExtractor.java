@@ -121,7 +121,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					if(!dataListQName.isMatch(BeCPGModel.TYPE_COMPOLIST) &&
 							!dataListQName.isMatch(BeCPGModel.TYPE_PACKAGINGLIST) &&
 							!dataListQName.isMatch(MPMModel.TYPE_PROCESSLIST) &&
-							!dataListQName.isMatch(BeCPGModel.TYPE_MICROBIOLIST)){
+							!dataListQName.isMatch(BeCPGModel.TYPE_MICROBIOLIST) &&
+							!dataListQName.isMatch(BeCPGModel.TYPE_INGLABELINGLIST)){
 					
 						List<BeCPGDataObject> dataListItems = (List)datalists.get(dataListQName);
 						
@@ -361,7 +362,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		if (nodeService.getType(dataItem.getProduct()).equals(BeCPGModel.TYPE_PACKAGINGKIT)) {					
 			loadPackagingKit(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
-			Element imgsElt = (Element)packagingListElt.getDocument().selectSingleNode(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName() + "/" + TAG_IMAGES);
+			Element imgsElt = (Element)packagingListElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 			if(imgsElt != null){
 				extractEntityImages(dataItem.getProduct(), imgsElt, images);
 			}
