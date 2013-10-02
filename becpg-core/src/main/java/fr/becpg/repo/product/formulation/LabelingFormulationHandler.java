@@ -22,11 +22,13 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
@@ -46,6 +48,7 @@ import fr.becpg.repo.product.data.spel.LabelingFormulaContext;
 import fr.becpg.repo.product.data.spel.LabelingFormulaContext.AggregateRule;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -88,7 +91,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		logger.debug("Calculate Ingredient Labeling");
 
-		LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService);
+		LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, alfrescoRepository);
 
 		// TODO add model only rules
 		List<LabelingRuleListDataItem> labelingRuleLists = getLabelingRules(formulatedProduct);
@@ -104,7 +107,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			} else if (LabelingRuleType.Locale.equals(type)) {
 				labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula());
 			} else if (LabelingRuleType.Detail.equals(type) || LabelingRuleType.Declare.equals(type) || LabelingRuleType.DoNotDeclare.equals(type)
-					|| LabelingRuleType.Omit.equals(type) || LabelingRuleType.Group.equals(type)) {
+					|| LabelingRuleType.Omit.equals(type) || LabelingRuleType.Group.equals(type) || LabelingRuleType.DoNotDetails.equals(type)) {
 				labelingFormulaContext.declare(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getFormula(), DeclarationType.valueOf(type.toString()));
 			} else if (LabelingRuleType.Aggregate.equals(type)) {
 				labelingFormulaContext.aggregate(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(), labelingRuleListDataItem.getLabel(),
@@ -181,11 +184,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				AggregateRule aggregateRule = labelingFormulaContext.getAggregateRules().get(component.getNodeRef());
 				// Create a new
-				if (aggregateRule != null && aggregateRule.getLabel() != null) {
+				if (aggregateRule != null && aggregateRule.getLabel() != null && aggregateRule.getReplacement() == null) {
 					CompositeLabeling compositeLabeling = findByName(toAdd, aggregateRule.getLabel());
 					if (compositeLabeling == null) {
 
 						compositeLabeling = new CompositeLabeling();
+						// In memory nodeRef
+						compositeLabeling.setNodeRef(L2CacheSupport.generateNodeRef());
 						compositeLabeling.setLegalName(aggregateRule.getLabel());
 						compositeLabeling.setGroup(firstLevel);
 						if (logger.isDebugEnabled()) {
@@ -235,13 +240,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (is100Perc) {
 						iterator.remove();
-					} else if(qty!=null) {
+					} else if (qty != null) {
 						component.setQty(component.getQty() - qty);
 					}
 
 				}
-				
-				//Recur
+
+				// Recur
 				if (component instanceof CompositeLabeling) {
 					applyCombineRules((CompositeLabeling) component, labelingFormulaContext, false);
 				}
@@ -337,34 +342,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			productNodeRef = aggregateRule.getReplacement();
 		}
 
-
 		// Calculate qtyRMUsed
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 
 		ProductData productData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
-		// MultiLevel
-		if (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData) {
-			@SuppressWarnings("unchecked")
-			List<CompoListDataItem> subCompo = productData.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT);
-			for(CompoListDataItem subCompoListDataItem : subCompo){
-				Double subQty = FormulationHelper.getQtyInKg(subCompoListDataItem);	
-				Double subProductQty = productData.getNetWeight();
-				Double yield =  productData.getYield()!=null ? productData.getYield(): 100d;
-				if(subQty!=null && qty!=null && subProductQty!=null){
-					subCompoListDataItem.setQty((qty/subProductQty)*subQty*(yield/100));
-				} else {
-					subCompoListDataItem.setQty(null);
-				}
-			}
-			
-			Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(subCompo);
-			for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
-				sfChild.getData().setParent(compoListDataItem);
-				composite.addChild(sfChild);
-			}
-
-		}
+		boolean isMultiLevel = false;
 
 		if (parent == null) {
 			parent = new CompositeLabeling(productData);
@@ -376,7 +359,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		CompositeLabeling compositeLabeling = parent;
 
-		if (DeclarationType.Detail.equals(declarationType) || DeclarationType.Group.equals(declarationType)) {
+		if (DeclarationType.Detail.equals(declarationType) || DeclarationType.Group.equals(declarationType) || DeclarationType.DoNotDetails.equals(declarationType)) {
+
+			// MultiLevel only if detail or group
+			if (!DeclarationType.DoNotDetails.equals(declarationType) && (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData)) {
+				@SuppressWarnings("unchecked")
+				Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
+				for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
+					sfChild.getData().setParent(compoListDataItem);
+					composite.addChild(sfChild);
+				}
+				isMultiLevel = true;
+			}
+
 			compositeLabeling = new CompositeLabeling(productData);
 			compositeLabeling.setQty(qty);
 			compositeLabeling.setGroup(DeclarationType.Group.equals(declarationType));
@@ -393,81 +388,89 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			return parent;
 		}
 
-		if (productData.getIngList() != null && !productData.getIngList().isEmpty()) {
+		if (!DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDeclare.equals(declarationType)) {
 
-			for (IngListDataItem ingListDataItem : productData.getIngList()) {
+			if (!isMultiLevel && productData.getIngList() != null && !productData.getIngList().isEmpty()) {
 
-				DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListDataItem, labelingFormulaContext);
+				for (IngListDataItem ingListDataItem : productData.getIngList()) {
 
-				if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
+					DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListDataItem, labelingFormulaContext);
 
-					aggregateRule = labelingFormulaContext.getAggregateRules().get(ingListDataItem.getIng());
+					if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 
-					boolean isReplacement = aggregateRule != null && aggregateRule.getReplacement() != null;
+						aggregateRule = labelingFormulaContext.getAggregateRules().get(ingListDataItem.getIng());
 
-					NodeRef ingNodeRef = isReplacement ? aggregateRule.getReplacement() : ingListDataItem.getIng();
-					IngItem ingItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
+						boolean isReplacement = aggregateRule != null && aggregateRule.getReplacement() != null;
+						if (isReplacement && !BeCPGModel.TYPE_ING.equals(nodeService.getType(aggregateRule.getReplacement()))) {
+							isReplacement = false;
+						}
 
-					if (ingItem == null) {
-						ingItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
+						NodeRef ingNodeRef = isReplacement ? aggregateRule.getReplacement() : ingListDataItem.getIng();
+						IngItem ingItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
 
-						if (!isReplacement && ingListDataItem.getIngListSubIng().size() > 0) {
-							for (NodeRef subIng : ingListDataItem.getIngListSubIng()) {
-								ingItem.getSubIngs().add((IngItem) alfrescoRepository.findOne(subIng));
+						if (ingItem == null) {
+							ingItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
+
+							if (!isReplacement && ingListDataItem.getIngListSubIng().size() > 0) {
+								for (NodeRef subIng : ingListDataItem.getIngListSubIng()) {
+									ingItem.getSubIngs().add((IngItem) alfrescoRepository.findOne(subIng));
+								}
+
 							}
 
+							compositeLabeling.add(ingItem);
+							if (logger.isDebugEnabled()) {
+								logger.debug("- Add new ing to current Label: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
+							}
+						} else if (logger.isDebugEnabled()) {
+							logger.debug("- Update ing value: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
 						}
 
-						compositeLabeling.add(ingItem);
-						if (logger.isDebugEnabled()) {
-							logger.debug("- Add new ing to current Label: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
-						}
-					} else if (logger.isDebugEnabled()) {
-						logger.debug("- Update ing value: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
-					}
+						Double qtyPerc = ingListDataItem.getQtyPerc();
 
-					Double qtyPerc = ingListDataItem.getQtyPerc();
+						if (qtyPerc == null) {
+							ingItem.setQty(null);
+						} else {
+							// if one ingItem has null perc -> must be null
+							if (ingItem.getQty() != null) {
+								if (qty != null) {
 
-					if (qtyPerc == null) {
-						ingItem.setQty(null);
-					} else {
-						// if one ingItem has null perc -> must be null
-						if (ingItem.getQty() != null) {
-							if (qty != null) {
+									Double totalQtyIng = ingItem.getQty();
 
-								Double totalQtyIng = ingItem.getQty();
+									Double valueToAdd = qty * qtyPerc / 100;
+									totalQtyIng += valueToAdd;
+									ingItem.setQty(totalQtyIng);
 
-								Double valueToAdd = qty * qtyPerc / 100;
-								totalQtyIng += valueToAdd;
-								ingItem.setQty(totalQtyIng);
-
-								if (logger.isDebugEnabled()) {
-									logger.debug(" -- new qty to add :" + valueToAdd);
+									if (logger.isDebugEnabled()) {
+										logger.debug(" -- new qty to add :" + valueToAdd);
+									}
 								}
 							}
 						}
 					}
+
 				}
 
 			}
 
-		}
+			// Recur
+			if (!composite.isLeaf()) {
+				for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
-		// Recur
-		if (!composite.isLeaf()) {
-			for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
-				if (!DeclarationType.Omit.equals(declarationType)) {
-					calculateILLV2(compositeLabeling, component, labelingFormulaContext, getDeclarationType(component.getData(), null, labelingFormulaContext));
+					if (!DeclarationType.Omit.equals(declarationType)) {
+						calculateILLV2(compositeLabeling, component, labelingFormulaContext, getDeclarationType(component.getData(), null, labelingFormulaContext));
+					}
 				}
 			}
 		}
 
-		// Update parent qty
-		if (qty != null) {
-			Double qtyRMUsed = parent.getQtyRMUsed();
-			qtyRMUsed += qty;
-			parent.setQtyRMUsed(qtyRMUsed);
+		if (!(DeclarationType.Declare.equals(declarationType) && productData instanceof LocalSemiFinishedProductData)) {
+			// Update parent qty
+			if (qty != null) {
+				Double qtyRMUsed = parent.getQtyRMUsed();
+				qtyRMUsed += qty;
+				parent.setQtyRMUsed(qtyRMUsed);
+			}
 		}
 
 		return parent;

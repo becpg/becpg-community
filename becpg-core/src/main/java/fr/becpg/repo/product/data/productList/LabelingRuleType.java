@@ -21,6 +21,8 @@ public enum LabelingRuleType {
 	
 	Detail,
 	
+	DoNotDetails,
+	
 	Group,
 	
 	DoNotDeclare, 

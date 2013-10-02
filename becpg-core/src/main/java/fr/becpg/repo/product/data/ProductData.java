@@ -201,6 +201,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.density = density;
 	}
 
+
 	public Double getYield() {
 		return yield;
 	}

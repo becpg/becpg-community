@@ -167,6 +167,7 @@
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
+					<value>DoNotDetails</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -182,6 +183,7 @@
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
+					<value>DoNotDetails</value>
 					<value>Locale</value>
 				</list>
 			</parameter>
@@ -1087,6 +1089,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:labelingRuleList">
