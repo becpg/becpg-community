@@ -33,6 +33,7 @@ import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.LabelingRuleType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -175,12 +176,21 @@ public class LabelingFormulaContext {
 	// Combiner --> nouveau groupe
 	// Aggréger -- aggrege (quel niveau ?) (remplacement au même niveau )
 	// fusionne
+	// Regrouper SF1, SF2 -> SF3
+	// Groupe SF3 % : SF1 ° SF2
+	//
+	// Combiner SF1, SF2 -> SF3
+	// SF3 (SF1, SF2)
+	//
+	// Aggréger SF1, SF2 -> SF3
+	// SF3
 
 	public class AggregateRule {
 
 		MLText label;
 		NodeRef replacement;
 		Double qty = 100d;
+		DeclarationType declarationType;
 
 		public NodeRef getReplacement() {
 			return replacement;
@@ -206,6 +216,14 @@ public class LabelingFormulaContext {
 			this.qty = qty;
 		}
 
+		public DeclarationType getDeclarationType() {
+			return declarationType;
+		}
+
+		public void setDeclarationType(DeclarationType declarationType) {
+			this.declarationType = declarationType;
+		}
+
 	}
 
 	private Map<NodeRef, AggregateRule> aggregateRules = new HashMap<>();
@@ -214,7 +232,7 @@ public class LabelingFormulaContext {
 		return aggregateRules;
 	}
 
-	public void aggregate(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula) {
+	private void aggregate(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, DeclarationType declarationType) {
 		String[] qtys = formula != null && !formula.isEmpty() ? formula.split(",") : null;
 
 		// components peut être ING, SF ou MP
@@ -237,6 +255,8 @@ public class LabelingFormulaContext {
 					logger.error(e, e);
 				}
 			}
+
+			aggregateRule.setDeclarationType(declarationType);
 
 			i++;
 			aggregateRules.put(component, aggregateRule);
@@ -263,13 +283,19 @@ public class LabelingFormulaContext {
 	 * ingListDataItem.isProcessingAid == true) Type : Declare, Detail, Group,
 	 * Omit, DoNotDeclare Scope: PF , MP
 	 */
-	public boolean declare(List<NodeRef> components, String selector, DeclarationType declarationType) {
+	public boolean declare(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, DeclarationType declarationType) {
 		if (components != null) {
-			for (NodeRef component : components) {
-				nodeDeclarationFilters.put(component, new DeclarationFilter(selector, declarationType));
+
+			if ((components.size() > 1 || (replacement != null && !replacement.isEmpty()))
+					&& (DeclarationType.Detail.equals(declarationType) || DeclarationType.Group.equals(declarationType) || DeclarationType.DoNotDetails.equals(declarationType))) {
+				aggregate(components, replacement, label, formula, declarationType);
+			} else {
+				for (NodeRef component : components) {
+					nodeDeclarationFilters.put(component, new DeclarationFilter(formula, declarationType));
+				}
 			}
 		} else {
-			declarationFilters.add(new DeclarationFilter(selector, declarationType));
+			declarationFilters.add(new DeclarationFilter(formula, declarationType));
 		}
 
 		return true;

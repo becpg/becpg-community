@@ -88,6 +88,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			logger.debug("no compo => no formulation");
 			return true;
 		}
+		
+		// TODO copyTemplateDynamicCharactLists(productData);
 
 		logger.debug("Calculate Ingredient Labeling");
 
@@ -108,11 +110,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula());
 			} else if (LabelingRuleType.Detail.equals(type) || LabelingRuleType.Declare.equals(type) || LabelingRuleType.DoNotDeclare.equals(type)
 					|| LabelingRuleType.Omit.equals(type) || LabelingRuleType.Group.equals(type) || LabelingRuleType.DoNotDetails.equals(type)) {
-				labelingFormulaContext.declare(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getFormula(), DeclarationType.valueOf(type.toString()));
-			} else if (LabelingRuleType.Aggregate.equals(type)) {
-				labelingFormulaContext.aggregate(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(), labelingRuleListDataItem.getLabel(),
-						labelingRuleListDataItem.getFormula());
-			}
+				labelingFormulaContext.declare(labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(), labelingRuleListDataItem.getLabel(), 
+						labelingRuleListDataItem.getFormula(), DeclarationType.valueOf(type.toString()));
+			} 
 		}
 
 		// Compute composite
