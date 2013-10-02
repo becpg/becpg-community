@@ -61,9 +61,10 @@ public class LabelingFormulaContext {
 		this.lblCompositeContext = compositeLabeling;
 	}
 
-	public LabelingFormulaContext(NodeService mlNodeService) {
+	public LabelingFormulaContext(NodeService mlNodeService, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		super();
 		this.mlNodeService = mlNodeService;
+		this.alfrescoRepository = alfrescoRepository;
 		availableLocales = new HashSet<>();
 		availableLocales.add(new Locale(Locale.getDefault().getLanguage()));
 	}
@@ -88,12 +89,12 @@ public class LabelingFormulaContext {
 	 */
 
 	private Map<NodeRef, String> textFormaters = new HashMap<>();
-	
+
 	private String defaultFormat = "{0}";
 
 	// Exemple <b>{1}</b> : {2}
 	public boolean formatText(List<NodeRef> components, String textFormat) {
-		if(components!=null && !components.isEmpty()){
+		if (components != null && !components.isEmpty()) {
 			for (NodeRef component : components) {
 				textFormaters.put(component, textFormat);
 			}
@@ -225,7 +226,7 @@ public class LabelingFormulaContext {
 				aggregateRule.setReplacement(replacement.get(0));
 			}
 
-			if (label != null) {
+			if (label != null && !label.isEmpty()) {
 				aggregateRule.setLabel(label);
 			}
 
@@ -351,15 +352,14 @@ public class LabelingFormulaContext {
 			}
 		}
 
-		return ret.toString();
+		return cleanLabel(ret);
 	}
 
 	private boolean isGroup(AbstractLabelingComponent component) {
 		return component instanceof CompositeLabeling && ((CompositeLabeling) component).isGroup();
 	}
 
-
-  private String renderCompositeIng(CompositeLabeling compositeLabeling) {
+	private String renderCompositeIng(CompositeLabeling compositeLabeling) {
 		StringBuffer ret = new StringBuffer();
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 			if (ret.length() > 0) {
@@ -372,7 +372,11 @@ public class LabelingFormulaContext {
 				ret.append(renderLabelingComponent(compositeLabeling, kv.getValue()));
 			}
 		}
-		return ret.toString();
+		return cleanLabel(ret);
+	}
+
+	private String cleanLabel(StringBuffer buffer) {
+		return buffer.toString().replaceAll("null|\\(null\\)|\\(\\)", "").trim();
 	}
 
 	private StringBuffer renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents) {
@@ -437,8 +441,21 @@ public class LabelingFormulaContext {
 			IngTypeItem ingType = null;
 			if (lblComponent instanceof IngItem) {
 				ingType = ((IngItem) lblComponent).getIngType();
+
+				if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
+					AggregateRule aggregateRule = aggregateRules.get(lblComponent.getNodeRef());
+					if (aggregateRule.getReplacement() != null) {
+						RepositoryEntity repositoryEntity = alfrescoRepository.findOne(aggregateRule.getReplacement());
+						if (repositoryEntity instanceof IngTypeItem) {
+							ingType = (IngTypeItem) repositoryEntity;
+						}
+					}
+
+				}
+
 				if (ingType != null) {
-					// First aggregate
+
+					// Type replacement
 					if (aggregateRules.containsKey(ingType.getNodeRef())) {
 						AggregateRule aggregateRule = aggregateRules.get(ingType.getNodeRef());
 						if (aggregateRule.getReplacement() != null) {
@@ -447,13 +464,19 @@ public class LabelingFormulaContext {
 							ingType = new IngTypeItem();
 							ingType.setLegalName(aggregateRule.getLabel());
 						}
+						// Ing IngType replacement
 					}
+
 					// If Omit
 					if (nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
 						DeclarationFilter declarationFilter = nodeDeclarationFilters.get(ingType.getNodeRef());
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType()) && matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())) {
+							break;
+						} else if (DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType())
+								&& matchFormule(declarationFilter.getFormula(), new DeclarationFilterContext())) {
 							ingType = null;
 						}
+
 					}
 				}
 			}

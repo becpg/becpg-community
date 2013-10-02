@@ -217,5 +217,13 @@ public class LazyLoadingDataList<E> implements List<E>  {
 		return getList().subList(fromIndex, toIndex);
 	}
 
+
+	@Override
+	public String toString() {
+		return "LazyLoadingDataList [backedList=" + backedList + ", loaded=" + loaded + ", deletedNodes=" + deletedNodes + "]";
+	}
+
+	
+	
 	
 }

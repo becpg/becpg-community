@@ -3765,12 +3765,6 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:compoListDeclType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.bcpg_compolistdecltype.declare,Detail|data.bcpg_compolistdecltype.detail,Group|data.bcpg_compolistdecltype.group,Omit|data.bcpg_compolistdecltype.omit,DoNotDeclare|data.bcpg_compolistdecltype.donotdeclare
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:parentLevel">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -3807,12 +3801,6 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:compoListDeclType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.bcpg_compolistdecltype.declare,Detail|data.bcpg_compolistdecltype.detail,Group|data.bcpg_compolistdecltype.group,Omit|data.bcpg_compolistdecltype.omit,DoNotDeclare|data.bcpg_compolistdecltype.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -3925,12 +3913,6 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:compoListDeclType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Declare|data.bcpg_compolistdecltype.declare,Detail|data.bcpg_compolistdecltype.detail,Group|data.bcpg_compolistdecltype.group,Omit|data.bcpg_compolistdecltype.omit,DoNotDeclare|data.bcpg_compolistdecltype.donotdeclare
 							</control-param>
 						</control>
 					</field>
@@ -4477,16 +4459,10 @@
 
 				<appearance>
 					<field id="bcpg:illValue">
-						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
-                     <control-param name="editorAppearance">explorer</control-param>
-                     <control-param name="forceEditor">true</control-param>
-                  </control>
+						 <control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:illManualValue">
-						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
-                     <control-param name="editorAppearance">explorer</control-param>
-                     <control-param name="forceEditor">true</control-param>
-                  </control>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -4520,16 +4496,10 @@
 
 					<appearance>
 					<field id="bcpg:illValue">
-						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
-                     <control-param name="editorAppearance">explorer</control-param>
-                     <control-param name="forceEditor">true</control-param>
-                  </control>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:illManualValue">
-						 <control template="/org/alfresco/components/form/controls/richtext.ftl">
-                     <control-param name="editorAppearance">explorer</control-param>
-                     <control-param name="forceEditor">true</control-param>
-                  </control>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -5460,6 +5430,47 @@
 		</forms>
 	</config>
 
+<!-- beCPG ingTypeItem -->
+<config evaluator="node-type" condition="bcpg:ingTypeItem">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="bcpg:ingTypeItem">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 	<!-- bcpg:productReportTemplate type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:productReportTemplate">
