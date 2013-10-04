@@ -309,7 +309,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
 			}
 
-
+//			TODO : #546
 			Date lastModified = extractor.computeLastModified(dataListFilter);
 
 			if (shouldReturnNotModified(req, lastModified)) {
@@ -321,8 +321,13 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			}
 
 			Cache cache = new Cache(getDescription().getRequiredCache());
-
+			cache.setIsPublic(false);
+			cache.setMustRevalidate(true);
+			cache.setNeverCache(false);
+			cache.setMaxAge(0L);
 			cache.setLastModified(lastModified);
+			res.setCache(cache);
+
 
 			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
 
@@ -358,7 +363,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 					ret.put("totalRecords", extractedItems.getFullListSize());
 					if (pagination.getQueryExecutionId() != null) {
 						ret.put(PARAM_QUERY_EXECUTION_ID, pagination.getQueryExecutionId());
-						cache.setETag(pagination.getQueryExecutionId());
 					}
 
 				}
@@ -394,8 +398,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				ret.write(res.getWriter());
 			}
 
-			res.setCache(cache);
-
+			
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
