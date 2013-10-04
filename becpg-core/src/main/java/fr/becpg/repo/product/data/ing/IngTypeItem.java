@@ -7,8 +7,6 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:ingTypeItem")
 public class IngTypeItem extends AbstractLabelingComponent{
 
-	public static final IngTypeItem DEFAULT = new IngTypeItem();
+	public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
 
-	//Nothing for now
-	
 }

@@ -282,9 +282,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected void copyProductTemplateList(ProductData formulatedProduct, List<T> simpleListDataList){
 		
-		if(formulatedProduct.getEntityTplRef() !=null){
-		
-			List<T> templateSimpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getEntityTplRef(), getDataListVisited(), getDataListVisited());
+		if(formulatedProduct.getEntityTpl() !=null){
+			
+			//TODO do not use loadDataList
+			List<T> templateSimpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getEntityTpl().getNodeRef(), getDataListVisited(), getDataListVisited());
 			
 			for(T tsl : templateSimpleListDataList){
 				if(tsl.getCharactNodeRef() != null){

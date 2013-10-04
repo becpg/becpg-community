@@ -46,7 +46,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private String title;
 	private SystemState state = SystemState.ToValidate;
 	private ProductUnit unit = ProductUnit.kg;
-	private NodeRef entityTplRef;
+	private ProductData entityTpl;
 
 	/*
 	 * Transformable properties
@@ -171,14 +171,14 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.unit = unit;
 	}
 
-	@AlfSingleAssoc
+	@AlfSingleAssoc(isEntity = true)
 	@AlfQname(qname="bcpg:entityTplRef")
-	public NodeRef getEntityTplRef() {
-		return entityTplRef;
+	public ProductData getEntityTpl() {
+		return entityTpl;
 	}
 
-	public void setEntityTplRef(NodeRef entityTplRef) {
-		this.entityTplRef = entityTplRef;
+	public void setEntityTpl(ProductData entityTpl) {
+		this.entityTpl = entityTpl;
 	}
 
 	@AlfProp
@@ -186,6 +186,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 	public Double getQty() {
 		return qty;
 	}
+
+	
 
 	public void setQty(Double qty) {
 		this.qty = qty;
@@ -489,7 +491,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	@Override
 	public String toString() {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
-				+ ", entityTplRef=" + entityTplRef + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
+				+ ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
 				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", variants=" + variants
 				+ "]";
 	}
@@ -500,7 +502,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 		int result = super.hashCode();
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
-		result = prime * result + ((entityTplRef == null) ? 0 : entityTplRef.hashCode());
 		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
@@ -536,11 +537,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 			if (other.density != null)
 				return false;
 		} else if (!density.equals(other.density))
-			return false;
-		if (entityTplRef == null) {
-			if (other.entityTplRef != null)
-				return false;
-		} else if (!entityTplRef.equals(other.entityTplRef))
 			return false;
 		if (forbiddenIngList == null) {
 			if (other.forbiddenIngList != null)

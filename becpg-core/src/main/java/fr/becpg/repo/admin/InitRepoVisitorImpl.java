@@ -734,6 +734,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
+				dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
@@ -751,6 +752,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			}
 
 			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists, subFolders);
+			
 		}
 	}
 

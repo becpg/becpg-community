@@ -166,6 +166,8 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				percRule.setComponents(Arrays.asList(ing2, ing3, ing4));
 				labelingRuleList.add(percRule);
 
+				labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
+				
 				finishedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
@@ -390,6 +392,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 					// Pâte 50 % (Legal Raw material 2 66,67 % (ing2 75,00 %,
 					// ing1 25,00 %), ing2 22,22 %, ing1 11,11 %), Garniture 50
 					// % (ing3 50,00 %)
+					
 
 					checkILL("Garniture french 50% (ing3 french 100%)",
 							"Pâte french 50% (Legal Raw material 2 66,7% (ing2 french 75%, ing1 french), ing2 french 22,2%, ing1 french)",
