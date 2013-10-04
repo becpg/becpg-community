@@ -11,6 +11,7 @@ public enum LabelingRuleType {
 
 	Rename,
 	
+	Type,
 	
 	Locale,
 	

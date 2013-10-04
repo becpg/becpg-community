@@ -6,6 +6,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -22,6 +23,7 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 	private LabelingRuleType labelingRuleType;
 	private List<NodeRef> components = new ArrayList<NodeRef>();
 	private List<NodeRef> replacements = new ArrayList<NodeRef>();
+	private Boolean isActive = true;
 	
 	
 	
@@ -34,6 +36,18 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 
 	public void setLabel(MLText label) {
 		this.label = label;
+	}
+	
+	
+	@AlfProp
+	@AlfEnforced
+	@AlfQname(qname="bcpg:lrIsActive")
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	@AlfProp

@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface AlfSingleAssoc {
   boolean isChildAssoc() default false;
+  boolean isEntity() default false;
 }

@@ -1,5 +1,5 @@
-PATH;/System/Lists/bcpg:entityLists/IngTypes
-TYPE;bcpg:listValue
+PATH;/System/Lists/bcpg:entityLists/ingTypeItem
+TYPE;bcpg:ingTypeItem
 COLUMNS;cm:name
 VALUES;Adipate
 VALUES;Alginate

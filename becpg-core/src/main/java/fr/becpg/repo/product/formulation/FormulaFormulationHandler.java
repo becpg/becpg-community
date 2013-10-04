@@ -91,7 +91,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		// ClaimLabel list
-
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				labelClaimListDataItem.setIsFormulated(false);
@@ -213,8 +212,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
-		if (formulatedProduct.getEntityTplRef() != null) {
-			ProductData templateProductData = alfrescoRepository.findOne(formulatedProduct.getEntityTplRef());
+		if (formulatedProduct.getEntityTpl() != null) {
+			ProductData templateProductData = formulatedProduct.getEntityTpl();
 
 			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(), formulatedProduct.getCompoListView().getDynamicCharactList());
 			copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(), formulatedProduct.getPackagingListView().getDynamicCharactList());

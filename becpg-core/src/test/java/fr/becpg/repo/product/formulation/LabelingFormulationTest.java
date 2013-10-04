@@ -160,8 +160,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        └──[ing5 french - 1.0]
 
 
-
-		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing2 french, ing1 french), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing5 french)", Locale.FRENCH);
 		
 		//Test Omit IngType
@@ -273,6 +271,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			    └──[Garniture french - 1.0 (6.0)]
 //			        ├──[ing3 french - 5.0]
 //			        └──[ing5 french - 1.0]
+		
+
 
 		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing3 french), ing3 french), Garniture french 50% (ing3 french, Epaississant french: ing5 french)", Locale.FRENCH);
@@ -398,7 +398,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        └──[ing4 french - 1.0]
 
 
-		
+														
 		checkILL(finishedProductNodeRef1, labelingRuleList,"<b>Pâte french (50%):</b> Legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%<br/><b>Garniture french (50%):</b> ing3 french 83,3%, ing4 french 16,7%", Locale.FRENCH);
 		
 		labelingRuleList = new ArrayList<>();

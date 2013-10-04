@@ -4518,6 +4518,8 @@
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
+					<show id="bcpg:lrIsActive" />
+					<show id="bcpg:isManualListItem" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lrFormula">
@@ -4551,6 +4553,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:lrType" />
+					<show id="bcpg:lrIsActive" />
 				</field-visibility>
 			</form>
 
@@ -4568,6 +4571,8 @@
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
+					<show id="bcpg:lrIsActive" />
+					<show id="bcpg:isManualListItem" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lrFormula">
