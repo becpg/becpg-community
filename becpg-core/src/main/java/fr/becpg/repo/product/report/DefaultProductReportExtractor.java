@@ -235,18 +235,26 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				List<String> locales = new ArrayList<String>();
 				for (Locale locale : dataItem.getValue().getLocales()) {
 
-					logger.debug("ill, locale: " + locale);
-					MLText grpMLText = dataItem.getGrp() != null ? (MLText) mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LEGAL_NAME) : null;
+					logger.debug("ill, locale: " + locale);					
 
 					if (!locales.contains(locale.getLanguage())) {
 
 						locales.add(locale.getLanguage());
-
+						
+						String grpName = "";
+						MLText grpMLText = dataItem.getGrp() != null ? (MLText) mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LABELING_RULE_LABEL) : null;
+						if(grpMLText != null && grpMLText.getValue(locale) != null && !grpMLText.getValue(locale).isEmpty()){
+							grpName = grpMLText.getValue(locale);
+						}
+						else{
+							grpName = (String)nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
+						}						
+						
 						Element ingLabelingElt = ingListElt.addElement(BeCPGModel.TYPE_INGLABELINGLIST.getLocalName());
-						ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-						ingLabelingElt.addAttribute(BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpMLText != null ? grpMLText.getValue(locale) : VALUE_NULL);
-						ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL);
-						ingLabelingElt.addAttribute(BeCPGModel.PROP_ILL_MANUAL_VALUE.getLocalName(), dataItem.getManualValue() != null  ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
+						addCDATA(ingLabelingElt, ATTR_LANGUAGE, locale.getDisplayLanguage());
+						addCDATA(ingLabelingElt, BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpName);
+						addCDATA(ingLabelingElt, BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL);
+						addCDATA(ingLabelingElt, BeCPGModel.PROP_ILL_MANUAL_VALUE.getLocalName(), dataItem.getManualValue() != null  ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());

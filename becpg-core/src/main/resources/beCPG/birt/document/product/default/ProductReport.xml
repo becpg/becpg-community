@@ -17,7 +17,8 @@
 	<productMicrobioCriteria>Microbio - Quiches</productMicrobioCriteria>
 	<versionLabel>1.2</versionLabel>
 	<productSpecifications>Intermarché - Plat cuisiné, Intermarché -
-		Fromages blancs</productSpecifications>
+		Fromages blancs
+	</productSpecifications>
 	<plants>
 		<plant>
 			<creator>admin</creator>
@@ -71,7 +72,8 @@
 	<productComments>Commentaire 1
 		Commentaire 2
 	</productComments>
-	<packagingDescription>Boite, avec tel couvercle et film micro-ondable.</packagingDescription>
+	<packagingDescription>Boite, avec tel couvercle et film micro-ondable.
+	</packagingDescription>
 	<storageConditions>
 		<creator>admin</creator>
 		<modified>jeu. 25 juil. 2013 16:24:03</modified>
@@ -81,21 +83,25 @@
 		<name>Pâtisserie surgelée</name>
 		<description>* 3 jours dans le compartiment à glace du réfrigérateur à
 			-6°C
-			*** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée sur
+			*** Plusieurs mois au congélateur à -18°C, jusqu’à la date
+			indiquée sur
 			le côté de la boite.
 
-			Après décongélation, à conserver au réfrigérateur et à consommer dans la
+			Après décongélation, à conserver au
+			réfrigérateur et à consommer dans la
 			journée.
 		</description>
 	</storageConditions>
 	<packagingDescription>Quiche mis dans une boite en carton sur palette
-		euro.</packagingDescription>
+		euro.
+	</packagingDescription>
 	<breakEven>0</breakEven>
 	<locale>fr</locale>
 	<clients>Intermarché</clients>
 	<reports>Quiche lorraineMDD 200g - Fiche Technique Client.pdf, Quiche
 		lorraineMDD 200g - Fiche Technique Production.pdf, Quiche lorraineMDD
-		200g - Fiche Technique RD.pdf</reports>
+		200g - Fiche Technique RD.pdf
+	</reports>
 	<priceCurrency>€</priceCurrency>
 	<eanCode></eanCode>
 	<categories>Cons. frais, Gamme MDD</categories>
@@ -108,7 +114,8 @@
 		eanAspect, consumerAspect, localized, entityVariantAspect,
 		legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect,
 		incomplete, taggable, productMicrobioCriteriaAspect,
-		generalclassifiable, profitabilityAspect, versionable</aspects>
+		generalclassifiable, profitabilityAspect, versionable
+	</aspects>
 	<itemType>finishedProduct</itemType>
 	<images>
 		<image id="Img0" name="produit.jpg" title="Aperçu du produit" />
@@ -396,11 +403,6 @@
 				ingListGeoOrigin="France" ingListIsIonized="Faux" locale="fr"
 				ingListBioOrigin="Pomme de terre" sort="19" />
 		</ingLists>
-		<ingLabelingLists>
-			<ingLabelingList illManualValue="" isManualListItem="Faux"
-				illValue="Ingrédient : Blé farine 28,24 %, Eau 17,71 %, Crème 16,57 %, Lait 16,19 %, Oeuf frais 12,50 %, Porc poitrine 5,28 %, Poivre noir 1,20 %, Muscade 1,00 %, Sel, Ferments lactiques, Ferrocyanure de sodium, Lactose, Fumée naturelle, Présure, Pomme de terre fécule, Conservateur : E262(i) - acétate de sodium, E252 - nitrate de potassium, E250 - nitrite de sodium, Colorant alimentaire : E127 - érythrosine"
-				locale="fr" sort="100" />
-		</ingLabelingLists>
 		<compoLists>
 			<compoList compoListDeclType="Declare" compoListUnit="kg"
 				dynamicCharactColumn4="50" dynamicCharactColumn3="2,50"
@@ -408,7 +410,8 @@
 				compoListProduct="Fond de quiche" locale="fr" compoListQty="0,1"
 				compoListQtyAfterProcess="" compoListQtySubFormula="0,1"
 				compoListOverrunPerc="" sort="100" startEffectivity="sam. 8 sept. 2012 10:48:57"
-				dynamicCharactColumn5="5" dynamicCharactColumn6="3" dynamicCharactColumn7="0,375" itemType="bcpg:semiFinishedProduct"
+				dynamicCharactColumn5="5" dynamicCharactColumn6="3"
+				dynamicCharactColumn7="0,375" itemType="bcpg:semiFinishedProduct"
 				aspects="referenceable, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect">
 				<instruction>Laisser reposer la pâte 10 min.</instruction>
 			</compoList>
@@ -543,8 +546,9 @@
 					<locale>fr</locale>
 					<name>Marquage standard</name>
 					<description>
-						<p>[MM/AAAA]
-							(DLUO mois 
+						<p>
+							[MM/AAAA]
+							(DLUO mois
 							<br />
 							<font color="#FF0000">
 								<strong>ATTEN
@@ -625,12 +629,30 @@
 			</dynamicCharactLists>
 		</processLists>
 		<ingLabelingLists>
-			<ingLabelingList language="anglais" illGrp=""
-				illValue="Ingrédient : Wheat flour 28.24 %, Water 17.71 %, Cream 16.57 %, Milk 16.19 %, Fresh egg 12.50 %, Pork chest 5.28 %, Black pepper 1.20 %, Nutmeg 1.00 %, Salt, Lactic, Sodium ferrocyanide, Lactose, Natural smoke, Rennet, Potato starch, Conservateur : E262 (i) - sodium acetate, E252 - potassium nitrate, E250 - sodium nitrite, Colorant alimentaire : E127 - erythrosine" />
-			<ingLabelingList language="français" illGrp=""
-				illValue="Ingrédient : Blé farine 28,24 %, Eau 17,71 %, Crème 16,57 %, Lait 16,19 %, Oeuf frais 12,50 %, Porc poitrine 5,28 %, Poivre noir 1,20 %, Muscade 1,00 %, Sel, Ferments lactiques, Ferrocyanure de sodium, Lactose, Fumée naturelle, Présure, Pomme de terre fécule, Conservateur : E262(i) - acétate de sodium, E252 - nitrate de potassium, E250 - nitrite de sodium, Colorant alimentaire : E127 - érythrosine" />
-			<ingLabelingList language="russe" illGrp=""
-				illValue="Ingrédient : Мука пшеничная 28,24 %, null 17,71 %, Крем 16,57 %, null 16,19 %, null 12,50 %, Свинина грудь 5,28 %, null 1,20 %, null 1,00 %, null, null, Натрий ферроцианида, Лактоза, null, null, Картофельный крахмал, Conservateur : null, null, null, Colorant alimentaire : null" />
+			<ingLabelingList>
+				<language><![CDATA[anglais]]></language>
+				<illGrp><![CDATA[Label 1]]></illGrp>
+				<illValue><![CDATA[<b>pastry (50%):</b> Wheat flour 56,5%, Water 21,7%, Cream 20,6%, Salt 1%, Lactic 0,2%, Sodium ferrocyanide<br/><b>mixture (50%):</b> Milk 32,4%, Cream 25%, Fresh egg 25%, smoked bacon 12% (Pork chest 88%, Water 10%, Natural smoke 0,1%, Salt , Lactose , Conservateur: E262 (i) - sodium acetate , E252 - potassium nitrate , E250 - sodium nitrite , Colorant: E127 - erythrosine), Black pepper 2,4%, Nutmeg 2%, Salt 1,1%, Lactic , Rennet , Potato starch , Sodium ferrocyanide]]></illValue>
+				<illManualValue></illManualValue>
+			</ingLabelingList>
+			<ingLabelingList>
+				<language><![CDATA[français]]></language>
+				<illGrp><![CDATA[Étiquetage 1]]></illGrp>
+				<illValue><![CDATA[<b>pâte (50%):</b> Farine de blé tendre 56,5%, Eau 21,7%, Crème 20,6%, Sel 1%, Ferments lactiques 0,2%, Ferrocyanure de sodium<br/><b>garniture (50%):</b> Lait 32,4%, Crème 25%, Oeuf frais 25%, lardon fumé 12% (Porc poitrine 88%, Eau 10%, Fumée naturelle 0,1%, Sel , Lactose , Conservateur: E262(i) - acétate de sodium , E252 - nitrate de potassium , E250 - nitrite de sodium , Colorant: E127 - érythrosine), Poivre noir 2,4%, Muscade 2%, Sel 1,1%, Ferments lactiques , Présure , Pomme de terre fécule , Ferrocyanure de sodium]]></illValue>
+				<illManualValue></illManualValue>
+			</ingLabelingList>
+			<ingLabelingList>
+				<language><![CDATA[anglais]]></language>
+				<illGrp><![CDATA[Étiquetage 2]]></illGrp>
+				<illValue><![CDATA[<b>pastry 50%</b>, <b>mixture 50%</b><br/><br/>Milk 16,2%, Cream 12,5%, Fresh egg 12,5%, smoked bacon 6% (Pork chest 88%, Water 10%, Natural smoke 0,1%, Salt , Lactose , Conservateur: E262 (i) - sodium acetate , E252 - potassium nitrate , E250 - sodium nitrite , Colorant: E127 - erythrosine), Black pepper 1,2%, Nutmeg 1%, Salt 0,6%, Wheat flour 0%, Water 0%, Lactic 0%, Sodium ferrocyanide , Rennet , Potato starch]]></illValue>
+				<illManualValue></illManualValue>
+			</ingLabelingList>
+			<ingLabelingList>
+				<language><![CDATA[français]]></language>
+				<illGrp><![CDATA[Étiquetage 2]]></illGrp>
+				<illValue><![CDATA[<b>pâte 50%</b>, <b>garniture 50%</b><br/><br/>Farine de blé tendre 28,2%, Crème 22,8%, Lait 16,2%, Oeuf frais 12,5%, Eau 10,9%, lardon fumé 6% (Porc poitrine 88%, Eau 10%, Fumée naturelle 0,1%, Sel , Lactose , Conservateur: E262(i) - acétate de sodium , E252 - nitrate de potassium , E250 - nitrite de sodium , Colorant: E127 - érythrosine), Poivre noir 1,2%, Sel 1%, Muscade 1%, Ferments lactiques 0,1%, Ferrocyanure de sodium , Présure , Pomme de terre fécule]]></illValue>
+				<illManualValue></illManualValue>
+			</ingLabelingList>
 		</ingLabelingLists>
 		<microbioLists>
 			<microbioList mblMicrobio="Flore aérobie mésophile revivifiable"
