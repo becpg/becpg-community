@@ -7647,6 +7647,12 @@ dataSetRow["mblMaxi"]
                     <expression name="expression" type="javascript">dataSetRow["packagingDescription"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">netWeight</property>
+                    <text-property name="displayName">netWeight</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["netWeight"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
             </list-property>
             <column id="3054"/>
             <row id="3055">
@@ -8052,22 +8058,8 @@ else{
                                 </data>
                             </cell>
                             <cell id="2365">
-                                <data id="2684">
-                                    <structure name="numberFormat">
-                                        <property name="category">Fixed</property>
-                                        <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
-                                    </structure>
-                                    <property name="dataSet">Product</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">productQty</property>
-                                            <text-property name="displayName">productQty</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["productQty"] * dataSetRow["productDensity"]</expression>
-                                            <property name="dataType">string</property>
-                                            <property name="allowExport">true</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">productQty</property>
+                                <data id="3239">
+                                    <property name="resultSetColumn">netWeight</property>
                                 </data>
                             </cell>
                             <cell id="2366">

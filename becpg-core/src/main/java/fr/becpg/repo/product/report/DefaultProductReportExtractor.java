@@ -377,6 +377,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		Element partElt = packagingListElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
 		loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);
 		loadProductData(dataItem.getProduct(), partElt);
+		
+		//we want to have true instead of Vrai
+		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_ISMASTER.getLocalName(), dataItem.getIsMaster() == null ? VALUE_NULL : dataItem.getIsMaster().toString());
 																
 		partElt.addAttribute(ATTR_ITEM_TYPE, nodeType.toPrefixString(namespaceService));
 		partElt.addAttribute(ATTR_ASPECTS, extractAspects(dataItem.getProduct()));
