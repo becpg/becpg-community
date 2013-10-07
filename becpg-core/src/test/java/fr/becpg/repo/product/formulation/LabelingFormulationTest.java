@@ -144,7 +144,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		//Test Do not Declare IngType
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.Aggregate, Arrays.asList(ing4),Arrays.asList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing4),Arrays.asList(ing5)));
 		labelingRuleList.add(new LabelingRuleListDataItem("Do not declare", null, LabelingRuleType.DoNotDeclare, Arrays.asList(ingType1), null));
 
 		//		
@@ -160,14 +160,12 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        └──[ing5 french - 1.0]
 
 
-
-		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing2 french, ing1 french), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing5 french)", Locale.FRENCH);
 		
 		//Test Omit IngType
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.Aggregate, Arrays.asList(ing4),Arrays.asList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing4),Arrays.asList(ing5)));
 		labelingRuleList.add(new LabelingRuleListDataItem("Omit", null, LabelingRuleType.Omit, Arrays.asList(ingType1), null));
 
 				//		
@@ -235,7 +233,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("Rename 1", null, LabelingRuleType.Rename, Arrays.asList(ing1), Arrays.asList(ing5)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.Aggregate, Arrays.asList(ing4),Arrays.asList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing4),Arrays.asList(ing5)));
 		labelingRuleList.add(new LabelingRuleListDataItem("Rename 2", "Test rename2", LabelingRuleType.Rename, Arrays.asList(rawMaterial12NodeRef),null));
 		labelingRuleList.add(new LabelingRuleListDataItem("Rename 3", "path.allergens", LabelingRuleType.Rename, Arrays.asList(ingType1), null));
 		
@@ -259,8 +257,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		//Aggregate
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.Aggregate, Arrays.asList(ing1,ing2),Arrays.asList(ing3)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.Aggregate, Arrays.asList(ing4),Arrays.asList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1,ing2),Arrays.asList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing4),Arrays.asList(ing5)));
 		
 		//Todo test aggregate type or MP
 		
@@ -273,6 +271,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			    └──[Garniture french - 1.0 (6.0)]
 //			        ├──[ing3 french - 5.0]
 //			        └──[ing5 french - 1.0]
+		
+
 
 		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing3 french), ing3 french), Garniture french 50% (ing3 french, Epaississant french: ing5 french)", Locale.FRENCH);
@@ -283,7 +283,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "20,30", LabelingRuleType.Aggregate, Arrays.asList(ing1,ing2),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "20,30", LabelingRuleType.Detail, Arrays.asList(ing1,ing2),null));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
 		
 //		└──[root - 0.0 (2.0)]
@@ -309,7 +309,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "100,30", LabelingRuleType.Aggregate, Arrays.asList(ing1,ing2),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "100,30", LabelingRuleType.Detail, Arrays.asList(ing1,ing2),null));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
 
 
@@ -335,7 +335,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Combine 2", new MLText("Decors 1"), null, LabelingRuleType.Aggregate, Arrays.asList(localSF11NodeRef,localSF12NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Combine 2", new MLText("Decors 1"), null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef,localSF12NodeRef),null));
 			
 //		└──[root - 0.0 (2.0)]
 //			    └──[Decors 1 - 2.0 (2.0)]
@@ -358,7 +358,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// Group
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "renderGroupList()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Group ", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef, localSF12NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Arrays.asList(localSF12NodeRef),null));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
 
 		
@@ -380,7 +381,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu 1", "render()", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Group ", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef, localSF12NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Arrays.asList(localSF12NodeRef),null));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
 
 		
@@ -396,12 +398,13 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        └──[ing4 french - 1.0]
 
 
-		
+														
 		checkILL(finishedProductNodeRef1, labelingRuleList,"<b>Pâte french (50%):</b> Legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%<br/><b>Garniture french (50%):</b> ing3 french 83,3%, ing4 french 16,7%", Locale.FRENCH);
 		
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu 2", "render(false)", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Group ", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef, localSF12NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Arrays.asList(localSF12NodeRef),null));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
 
 
@@ -423,8 +426,9 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu 2", "render(false)", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.Aggregate, Arrays.asList(ing1),Arrays.asList(ing3)));
-		labelingRuleList.add(new LabelingRuleListDataItem("Group ", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef, localSF12NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1),Arrays.asList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 1", null, LabelingRuleType.Group, Arrays.asList(localSF11NodeRef),null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Group 2", null, LabelingRuleType.Group, Arrays.asList(localSF12NodeRef),null));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, Arrays.asList(ing1 ,ing2, ing3, ing4), null));
 
 

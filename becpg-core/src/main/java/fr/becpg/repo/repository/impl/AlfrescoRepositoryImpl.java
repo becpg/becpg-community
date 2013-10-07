@@ -513,7 +513,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				assocRef = associationService.getChildAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			}
 
-			if (assocRef != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
+			if (assocRef != null && (pd.getPropertyType().isAnnotationPresent(AlfType.class) || readMethod.getAnnotation(AlfSingleAssoc.class).isEntity())) {
 				PropertyUtils.setProperty(entity,pd.getName(), findOne(assocRef, caches));
 			} else {
 				PropertyUtils.setProperty(entity,pd.getName(), assocRef);

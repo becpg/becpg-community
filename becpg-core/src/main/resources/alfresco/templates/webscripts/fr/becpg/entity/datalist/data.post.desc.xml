@@ -8,9 +8,4 @@
    <authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>
 	<lifecycle>internal</lifecycle>
-	<cache>
-	  <never>false</never>
-	  <public>false</public>
-	  <mustrevalidate>true</mustrevalidate>
-	</cache>
 </webscript>
