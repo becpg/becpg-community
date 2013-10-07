@@ -24,16 +24,21 @@ const ASSOCS =[ {assoc:"bcpg:clients"},
 	
 function createCallForTender() {
 	var project = document.parent.parent.parent;
-	//var project = search.findNode("workspace://SpacesStore/7a71991f-32af-44fc-aea2-3f6693c65725");
+	//var project = search.findNode("workspace://SpacesStore/6c48fb62-5ebd-47ba-ac8e-48e0af3b1d56");
 	var documentLibrary = project.parent.parent;
 	var suppliersAssocName = "bcpg:suppliers";
 
 	if (project != null && documentLibrary != null) {
 		
 		var suppliers = project.assocs[suppliersAssocName];
-		var productTemplate = search.findNode("workspace://SpacesStore/f1af1136-4019-432b-991e-cc485cea97df");	
+		var productTemplate = search.findNode("workspace://SpacesStore/9e528d08-fe3a-4ecf-af8c-7b2077acd980");
+		var projectEntities = project.assocs["pjt:projectEntity"];
 
-		if (suppliers != null && productTemplate != null) {
+		if (suppliers != null && productTemplate != null && projectEntities == null) {
+			
+//			var productTemplate = productTemplate[0]; 
+//			project.removeAssociation(productTemplate, "pjt:projectEntity");
+			
 			for ( var k = 0; k < suppliers.length; k++) {
 				
 				logger.log("supplier " + suppliers[k].name);
@@ -49,6 +54,7 @@ function createCallForTender() {
 					}					
 					newProduct.save();
 					newProduct.createAssociation(suppliers[k], suppliersAssocName);
+					newProduct.createAssociation(productTemplate, "bcpg:entityTplRef");
 					
 					// update with project ones
 					for(row in ASSOCS){
