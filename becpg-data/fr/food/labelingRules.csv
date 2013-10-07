@@ -1,0 +1,9 @@
+PATH;/System/EntityTemplates/ProductTemplates/finishedProduct/bcpg:entityLists/bcpg:ingLabelingList;;;;
+TYPE;bcpg:labelingRuleList;;;;
+COLUMNS;cm:name;bcpg:lrFormula;bcpg:lrType;bcpg:lrIsActive;bcpg:isManualListItem
+VALUES;Afficher les %;{0} {1,number,0.#%};Format;false;true
+VALUES;Masquer les auxiliaires technologiques;ingListDataItem.isProcessingAid == true;Omit;false;true
+VALUES;Étiquetage format 1;render();Format;true;false
+VALUES;Étiquetage format 2;"renderGroupList()+""<br/><br/>""+render(false)";Format;true;false
+VALUES;Langues;fr,en,de,es,it,ja,nl,ru,zh,pt,no,sv,el;Locale;false;false
+VALUES;Masquer les types;;Omit;false;false

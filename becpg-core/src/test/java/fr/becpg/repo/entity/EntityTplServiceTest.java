@@ -55,7 +55,7 @@ public class EntityTplServiceTest extends RepoBaseTestCase {
 				
 				RawMaterialData rm1Data = new RawMaterialData();
 				rm1Data.setName("Raw material 1");
-				rm1Data.setEntityTplRef(rmTplNodeRef);
+				rm1Data.setEntityTpl(alfrescoRepository.findOne(rmTplNodeRef));
 				NodeRef rm1NodeRef = alfrescoRepository.create(testFolderNodeRef, rm1Data).getNodeRef();
 				
 				assertFalse(alfrescoRepository.hasDataList(rm1NodeRef, BeCPGModel.TYPE_COSTLIST));

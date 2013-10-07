@@ -9,8 +9,7 @@
 	<transaction allow="readonly" >required</transaction>
 	<lifecycle>internal</lifecycle>
 	<cache>
-	  <never>false</never>
-	  <public>false</public>
-	  <mustrevalidate>true</mustrevalidate>
-	</cache>
+    <never>false</never>
+    <mustrevalidate>true</mustrevalidate>
+  </cache>
 </webscript>

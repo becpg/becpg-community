@@ -3,6 +3,7 @@ package fr.becpg.repo.product.data.spel;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.LabelingRuleType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -136,7 +138,6 @@ public class LabelingFormulaContext {
 		for (NodeRef component : components) {
 			MLText mlText = null;
 			if (replacement != null && !replacement.isEmpty()) {
-				// TODO several replacement
 				mlText = (MLText) mlNodeService.getProperty(replacement.get(0), BeCPGModel.PROP_LEGAL_NAME);
 			} else if (label != null) {
 				mlText = label;
@@ -171,16 +172,14 @@ public class LabelingFormulaContext {
 	/*
 	 * AGGREGATE
 	 */
-	// {20,30}
-	// Combiner --> nouveau groupe
-	// Aggréger -- aggrege (quel niveau ?) (remplacement au même niveau )
-	// fusionne
 
 	public class AggregateRule {
 
 		MLText label;
 		NodeRef replacement;
 		Double qty = 100d;
+		LabelingRuleType labelingRuleType;
+		List<NodeRef> components;
 
 		public NodeRef getReplacement() {
 			return replacement;
@@ -191,7 +190,13 @@ public class LabelingFormulaContext {
 		}
 
 		public MLText getLabel() {
-			return label;
+			MLText mlText = null;
+			if (replacement != null) {
+				mlText = (MLText) mlNodeService.getProperty(replacement, BeCPGModel.PROP_LEGAL_NAME);
+			} else if (label != null) {
+				mlText = label;
+			}
+			return mlText;
 		}
 
 		public void setLabel(MLText label) {
@@ -206,6 +211,33 @@ public class LabelingFormulaContext {
 			this.qty = qty;
 		}
 
+		public LabelingRuleType getLabelingRuleType() {
+			return labelingRuleType;
+		}
+
+		public void setLabelingRuleType(LabelingRuleType labelingRuleType) {
+			this.labelingRuleType = labelingRuleType;
+		}
+
+		public void setComponents(List<NodeRef> components) {
+			this.components = components;
+		}
+
+		public NodeRef getKey() {
+			return replacement != null ? replacement : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + label.getDefaultValue().hashCode());
+		}
+
+		public boolean matchAll(Collection<AbstractLabelingComponent> values) {
+			int matchCount = components.size();
+			for (AbstractLabelingComponent abstractLabelingComponent : values) {
+				if (components.contains(abstractLabelingComponent.getNodeRef())) {
+					matchCount--;
+				}
+			}
+
+			return matchCount == 0;
+		}
+
 	}
 
 	private Map<NodeRef, AggregateRule> aggregateRules = new HashMap<>();
@@ -214,7 +246,43 @@ public class LabelingFormulaContext {
 		return aggregateRules;
 	}
 
-	public void aggregate(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula) {
+	/*
+	 * DECLARE
+	 */
+
+	private Map<NodeRef, DeclarationFilter> nodeDeclarationFilters = new HashMap<>();
+	private List<DeclarationFilter> declarationFilters = new ArrayList<>();
+
+	public Map<NodeRef, DeclarationFilter> getNodeDeclarationFilters() {
+		return nodeDeclarationFilters;
+	}
+
+	public List<DeclarationFilter> getDeclarationFilters() {
+		return declarationFilters;
+	}
+
+	public boolean addRule(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labeLabelingRuleType) {
+
+		if (LabelingRuleType.Type.equals(labeLabelingRuleType)
+				|| ((components != null && components.size() > 1) || (replacement != null && !replacement.isEmpty()))
+				&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType) || LabelingRuleType.DoNotDetails
+						.equals(labeLabelingRuleType))) {
+			aggregate(components, replacement, label, formula, labeLabelingRuleType);
+		} else {
+			if (components != null && !components.isEmpty()) {
+				for (NodeRef component : components) {
+					nodeDeclarationFilters.put(component, new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
+				}
+			} else {
+				declarationFilters.add(new DeclarationFilter(formula, DeclarationType.valueOf(labeLabelingRuleType.toString())));
+			}
+
+		}
+
+		return true;
+	}
+
+	private void aggregate(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labelingRuleType) {
 		String[] qtys = formula != null && !formula.isEmpty() ? formula.split(",") : null;
 
 		// components peut être ING, SF ou MP
@@ -237,42 +305,12 @@ public class LabelingFormulaContext {
 					logger.error(e, e);
 				}
 			}
+			aggregateRule.setComponents(components);
+			aggregateRule.setLabelingRuleType(labelingRuleType);
 
 			i++;
 			aggregateRules.put(component, aggregateRule);
 		}
-	}
-
-	/*
-	 * DECLARE
-	 */
-
-	private Map<NodeRef, DeclarationFilter> nodeDeclarationFilters = new HashMap<>();
-	private List<DeclarationFilter> declarationFilters = new ArrayList<>();
-
-	public Map<NodeRef, DeclarationFilter> getNodeDeclarationFilters() {
-		return nodeDeclarationFilters;
-	}
-
-	public List<DeclarationFilter> getDeclarationFilters() {
-		return declarationFilters;
-	}
-
-	/*
-	 * Selector : (ing.type == « gélifiant », ingListItem.value < 5 ,
-	 * ingListDataItem.isProcessingAid == true) Type : Declare, Detail, Group,
-	 * Omit, DoNotDeclare Scope: PF , MP
-	 */
-	public boolean declare(List<NodeRef> components, String selector, DeclarationType declarationType) {
-		if (components != null) {
-			for (NodeRef component : components) {
-				nodeDeclarationFilters.put(component, new DeclarationFilter(selector, declarationType));
-			}
-		} else {
-			declarationFilters.add(new DeclarationFilter(selector, declarationType));
-		}
-
-		return true;
 	}
 
 	public String render() {
@@ -366,7 +404,7 @@ public class LabelingFormulaContext {
 				ret.append(RepoConsts.LABEL_SEPARATOR);
 			}
 
-			if (kv.getKey() != null && !IngTypeItem.DEFAULT.equals(kv.getKey())) {
+			if (kv.getKey() != null && getIngName(kv.getKey()) != null) {
 				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()), renderLabelingComponent(compositeLabeling, kv.getValue()) }));
 			} else {
 				ret.append(renderLabelingComponent(compositeLabeling, kv.getValue()));
@@ -435,7 +473,7 @@ public class LabelingFormulaContext {
 
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
 
-		Map<IngTypeItem, List<AbstractLabelingComponent>> tmp = new HashMap<IngTypeItem, List<AbstractLabelingComponent>>();
+		Map<IngTypeItem, List<AbstractLabelingComponent>> tmp = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
 
 		for (AbstractLabelingComponent lblComponent : compositeLabeling.getIngList().values()) {
 			IngTypeItem ingType = null;
@@ -444,10 +482,15 @@ public class LabelingFormulaContext {
 
 				if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 					AggregateRule aggregateRule = aggregateRules.get(lblComponent.getNodeRef());
-					if (aggregateRule.getReplacement() != null) {
-						RepositoryEntity repositoryEntity = alfrescoRepository.findOne(aggregateRule.getReplacement());
-						if (repositoryEntity instanceof IngTypeItem) {
-							ingType = (IngTypeItem) repositoryEntity;
+					if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
+						if (aggregateRule.getReplacement() != null) {
+							RepositoryEntity repositoryEntity = alfrescoRepository.findOne(aggregateRule.getReplacement());
+							if (repositoryEntity instanceof IngTypeItem) {
+								ingType = (IngTypeItem) repositoryEntity;
+							}
+						} else {
+							ingType = new IngTypeItem();
+							ingType.setLegalName(aggregateRule.getLabel());
 						}
 					}
 
@@ -458,11 +501,13 @@ public class LabelingFormulaContext {
 					// Type replacement
 					if (aggregateRules.containsKey(ingType.getNodeRef())) {
 						AggregateRule aggregateRule = aggregateRules.get(ingType.getNodeRef());
-						if (aggregateRule.getReplacement() != null) {
-							ingType = (IngTypeItem) alfrescoRepository.findOne(aggregateRule.getReplacement());
-						} else {
-							ingType = new IngTypeItem();
-							ingType.setLegalName(aggregateRule.getLabel());
+						if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
+							if (aggregateRule.getReplacement() != null) {
+								ingType = (IngTypeItem) alfrescoRepository.findOne(aggregateRule.getReplacement());
+							} else {
+								ingType = new IngTypeItem();
+								ingType.setLegalName(aggregateRule.getLabel());
+							}
 						}
 						// Ing IngType replacement
 					}
@@ -481,8 +526,14 @@ public class LabelingFormulaContext {
 				}
 			}
 
+			if (lblComponent instanceof CompositeLabeling && ((CompositeLabeling) lblComponent).isGroup()) {
+				ingType = IngTypeItem.DEFAULT_GROUP;
+
+			}
+
 			if (ingType == null) {
-				ingType = IngTypeItem.DEFAULT;
+				ingType = new IngTypeItem();
+				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + lblComponent.getNodeRef().hashCode()));
 			}
 
 			List<AbstractLabelingComponent> subSortedList = tmp.get(ingType);
@@ -502,11 +553,11 @@ public class LabelingFormulaContext {
 		Collections.sort(entries, new Comparator<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>>() {
 			public int compare(Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> a, Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> b) {
 
-				if (IngTypeItem.DEFAULT.equals(a.getKey())) {
+				if (IngTypeItem.DEFAULT_GROUP.equals(a.getKey())) {
 					return -1;
 				}
 
-				if (IngTypeItem.DEFAULT.equals(b.getKey())) {
+				if (IngTypeItem.DEFAULT_GROUP.equals(b.getKey())) {
 					return 1;
 				}
 
@@ -537,6 +588,10 @@ public class LabelingFormulaContext {
 
 	public boolean matchFormule(String formula, DeclarationFilterContext declarationFilterContext) {
 		if (formula != null && !formula.isEmpty()) {
+		    if(logger.isDebugEnabled()){
+		    	logger.debug("Test Match formula :"+formula);
+		    }
+			
 			ExpressionParser parser = new SpelExpressionParser();
 			StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
 

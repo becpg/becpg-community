@@ -176,7 +176,7 @@
 				<list>
 					<value>Format</value>
 					<value>Rename</value>
-					<value>Aggregate</value>
+					<value>Type</value>
 					<value>Render</value>
 					<value>Declare</value>
 					<value>Detail</value>
@@ -1111,6 +1111,11 @@
 						<constraint ref="bcpg:lrTypes" />
 					</constraints>
 				</property>
+				<property name="bcpg:lrIsActive">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>true</default>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:lrComponents">
@@ -1154,19 +1159,16 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:ingListIsProcessingAid">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
