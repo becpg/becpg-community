@@ -270,7 +270,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PHYSICOCHEMLIST.getLocalName())){
 			pivotProperty = BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM;
-		}				
+		}
+		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PRICELIST.getLocalName())){
+			pivotProperty = BeCPGModel.ASSOC_PRICELIST_COST;
+		}
+		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_LABELCLAIMLIST.getLocalName())){
+			pivotProperty = BeCPGModel.ASSOC_LCL_LABELCLAIM;
+		}
 		else{
 			//TODO : specific entityLists ? Not implemented
 			return;
