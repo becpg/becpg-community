@@ -101,6 +101,7 @@
 	<categories>Cons. frais, Gamme MDD</categories>
 	<legalName>Quiche lorraine</legalName>
 	<productDensity>1</productDensity>
+	<netWeight>0,2</netWeight>
 	<aspects>referenceable, titled, transformationAspect, discussable,
 		entityTplRefAspect, auditable, manufacturingAspect, entityListsAspect,
 		reportEntityAspect, clientsAspect, productAspect, commentsRollup,
@@ -527,7 +528,7 @@
 			netWeightPkgLevel3="144.0" grossWeightPkgLevel3="177.8432"
 			nbProductsPkgLevel2="20" nbProductsPkgLevel3="720">
 			<packagingList erpCode="1256" labelingTemplate="Marquage standard"
-				packagingListIsMaster="Vrai" packagingListUnit="P" labelingPosition="Largeur de la boîte"
+				packagingListIsMaster="true" packagingListUnit="P" labelingPosition="Largeur de la boîte"
 				packagingListQty="1" locale="fr" startEffectivity="sam. 8 sept. 2012 10:49:00"
 				sort="100" packagingListProduct="Boite tarte" packagingListPkgLevel="Primary"
 				dynamicCharactColumn2="0,11" dynamicCharactColumn1="0,55"
@@ -553,7 +554,7 @@
 					</description>
 				</labelingTemplate>
 			</packagingList>
-			<packagingList packagingListIsMaster="Faux"
+			<packagingList packagingListIsMaster="false"
 				packagingListUnit="m" packagingListQty="0,3" locale="fr"
 				startEffectivity="sam. 8 sept. 2012 10:48:59" sort="101"
 				packagingListProduct="Film 150µ" packagingListPkgLevel="Primary"
@@ -561,7 +562,7 @@
 				itemType="bcpg:packagingMaterial"
 				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect, certificateDateAspect"
 				tare="0.2" tareUnit="g/m2" />
-			<packagingList packagingListIsMaster="Faux"
+			<packagingList packagingListIsMaster="false"
 				packagingListUnit="PP" packagingListQty="20" locale="fr"
 				startEffectivity="mar. 27 déc. 2011 09:28:56" sort="102"
 				packagingListProduct="Carton SdV - Palette euro"
@@ -572,13 +573,13 @@
 				palletHeight="1800">
 				<dataLists>
 					<packagingList>
-						<packagingList packagingListIsMaster="Faux"
+						<packagingList packagingListIsMaster="false"
 							packagingListUnit="P" variantIds="" packagingListQty="1" locale="fr_FR"
 							startEffectivity="sam. 8 sept. 2012 10:48:58"
 							packagingListProduct="Carton 50x30x30" packagingListPkgLevel="Secondary"
 							endEffectivity="" itemType="bcpg:packagingMaterial"
 							aspects="eanAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect" />
-						<packagingList packagingListIsMaster="Faux"
+						<packagingList packagingListIsMaster="false"
 							packagingListUnit="P" variantIds="" packagingListQty="1" locale="fr_FR"
 							startEffectivity="sam. 8 sept. 2012 10:49:02"
 							packagingListProduct="Palette euro" packagingListPkgLevel="Tertiary"
