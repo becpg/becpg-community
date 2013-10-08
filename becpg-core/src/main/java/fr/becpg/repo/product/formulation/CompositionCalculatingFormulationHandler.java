@@ -82,11 +82,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		// calculate on every item
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
 		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
-		visitYieldChildren(formulatedProduct, netWeight, compositeAll);
 		
+		// Yield
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
-		
-		// Yield		
+		visitYieldChildren(formulatedProduct, netWeight, compositeDefaultVariant);
+				
 		Double qtyUsed = calculateQtyUsedBeforeProcess(compositeDefaultVariant);
 		if(qtyUsed != null && qtyUsed != 0d){
 			formulatedProduct.setYield(100 * netWeight / qtyUsed);

@@ -2133,6 +2133,7 @@
                 <structure>
                     <property name="columnName">depthLevel</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">depthLevel</text-property>
                 </structure>
                 <structure>
@@ -2185,6 +2186,11 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">instruction</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">instruction</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -2232,6 +2238,11 @@
                     <structure>
                         <property name="position">9</property>
                         <property name="name">isDefaultVariant</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">instruction</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -2301,8 +2312,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">instruction</property>
+                    <property name="nativeName">instruction</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;INT;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;INT;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant},{instruction;STRING;/instruction}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6213,6 +6231,102 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="processList" id="3301">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">plStep</property>
+                    <text-property name="heading">plStep</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">instruction</property>
+                    <text-property name="heading">instruction</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">plStep</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">instruction</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">plStep</property>
+                    <property name="nativeName">plStep</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">instruction</property>
+                    <property name="nativeName">instruction</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{plStep;STRING;/@plStep},{instruction;STRING;/instruction}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>plStep</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>plStep</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>instruction</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>instruction</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -7968,7 +8082,127 @@ en m</text-property>
                 </cell>
             </row>
         </grid>
+        <label id="3302"/>
+        <label id="3303">
+            <property name="style">becpg-chapter-header</property>
+            <text-property name="text">INSTRUCTIONS</text-property>
+        </label>
         <label id="2852"/>
+        <table id="3249">
+            <property name="style">becpg-table</property>
+            <property name="width">100%</property>
+            <property name="dataSet">CompoList</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">compoListProduct</property>
+                    <text-property name="displayName">compoListProduct</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListProduct"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">instruction</property>
+                    <text-property name="displayName">instruction</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["instruction"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">depthLevel</property>
+                    <text-property name="displayName">depthLevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">if(row["instruction"] == null || row["instruction"] == ""){
+false
+}
+else{
+true
+}</expression>
+                    <property name="updateAggregation">true</property>
+                </structure>
+            </list-property>
+            <column id="3259">
+                <property name="width">1.3358778625954197in</property>
+            </column>
+            <column id="3260">
+                <property name="width">5.4961832061068705in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <detail>
+                <row id="3253">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="3254">
+                        <text id="3449">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["compoListProduct"]</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="3255">
+                        <data id="3342">
+                            <property name="resultSetColumn">instruction</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <label id="3304"/>
+        <table id="3344">
+            <property name="style">becpg-table</property>
+            <property name="width">100%</property>
+            <property name="dataSet">processList</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">instruction</property>
+                    <text-property name="displayName">instruction</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["instruction"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">plStep</property>
+                    <text-property name="displayName">plStep</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["plStep"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">if(row["instruction"] == null || row["instruction"] == ""){
+false
+}
+else{
+true
+}</expression>
+                    <property name="updateAggregation">true</property>
+                </structure>
+            </list-property>
+            <column id="3354">
+                <property name="width">1.3435114503816794in</property>
+            </column>
+            <column id="3355">
+                <property name="width">5.488549618320611in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <detail>
+                <row id="3348">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="3349">
+                        <data id="3401">
+                            <property name="resultSetColumn">plStep</property>
+                        </data>
+                    </cell>
+                    <cell id="3350">
+                        <data id="3359">
+                            <property name="resultSetColumn">instruction</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <label id="3450"/>
         <label id="2853">
             <property name="style">becpg-chapter-header</property>
             <text-property name="text">PHOTOS DU PRODUIT</text-property>

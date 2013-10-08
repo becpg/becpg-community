@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 3.7.1.v20110905 Build &lt;3.7.1.v20110905-1820></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
     <simple-property-list name="includeResource">
         <value>src/main/resources/beCPG/birt/CompareEntities-messages_fr</value>
         <value>src/main/resources/beCPG/birt/CompareEntities-messages</value>
@@ -420,40 +420,56 @@
             </list-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="StructComparison" id="1640">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">tableCheck</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                </structure>
+            </list-property>
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">comparison</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">comparison</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">entityList</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">entityList</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">depthLevel</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">depthLevel</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">item1</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">item1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">item2</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">item2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">operator</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">operator</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">properties1</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">properties1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">properties2</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">properties2</text-property>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -496,6 +512,11 @@
                         <property name="name">properties2</property>
                         <property name="dataType">string</property>
                     </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">tableCheck</property>
+                        <property name="dataType">integer</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">DataXml</property>
@@ -505,48 +526,56 @@
                     <property name="name">comparison</property>
                     <property name="nativeName">comparison</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
                     <property name="name">entityList</property>
                     <property name="nativeName">entityList</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
                     <property name="name">depthLevel</property>
                     <property name="nativeName">depthLevel</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">item1</property>
                     <property name="nativeName">item1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">item2</property>
                     <property name="nativeName">item2</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">operator</property>
                     <property name="nativeName">operator</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">properties1</property>
                     <property name="nativeName">properties1</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
                     <property name="name">properties2</property>
                     <property name="nativeName">properties2</property>
                     <property name="dataType">string</property>
+                    <property name="nativeDataType">0</property>
                 </structure>
             </list-property>
             <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/structComparisonRows/structComparisonRow]#:#{comparison;STRING;/@comparison},{entityList;STRING;/@entityList},{depthLevel;STRING;/@depthLevel},{item1;STRING;/@item1},{item2;STRING;/@item2},{operator;STRING;/@operator},{properties1;STRING;/@properties1},{properties2;STRING;/@properties2}]]></xml-property>
@@ -790,7 +819,6 @@
         </simple-master-page>
     </page-setup>
     <body>
-        <label id="1676"/>
         <grid id="1803">
             <list-property name="visibility">
                 <structure>
@@ -799,15 +827,6 @@
                 </structure>
             </list-property>
             <column id="1804"/>
-            <row id="1805">
-                <cell id="1806">
-                    <label id="1586">
-                        <property name="fontStyle">italic</property>
-                        <property name="color">red</property>
-                        <text-property name="text">Comparaison structurelle.</text-property>
-                    </label>
-                </cell>
-            </row>
             <row id="1809">
                 <cell id="1810">
                     <label id="1677"/>
@@ -819,6 +838,17 @@
                         <property name="style">beCPG-Table-border</property>
                         <property name="width">10.455357142857142in</property>
                         <property name="dataSet">StructComparison</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
+	true
+}
+else{
+	false
+}</expression>
+                            </structure>
+                        </list-property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">comparison</property>
@@ -867,6 +897,12 @@
                                 <text-property name="displayName">properties2</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["properties2"]</expression>
                                 <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">tableCheck</property>
+                                <text-property name="displayName">tableCheck</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
+                                <property name="dataType">integer</property>
                             </structure>
                         </list-property>
                         <column id="1697">
@@ -1085,10 +1121,11 @@
             </row>
         </grid>
         <grid id="1812">
-            <property name="pageBreakBefore">always</property>
+            <property name="pageBreakBefore">auto</property>
             <column id="1813"/>
             <row id="1814">
                 <cell id="1815">
+                    <label id="1820"/>
                     <label id="1587">
                         <property name="fontStyle">italic</property>
                         <property name="color">#FF0000</property>
