@@ -97,9 +97,7 @@ public class RepoConsts {
 	public static final String PATH_QUALITY_SPECIFICATIONS = "QualitySpecifications";	
 	public static final String PATH_PRODUCT_SPECIFICATIONS = "ProductSpecifications";
 	public static final String PATH_CONTROL_PLANS = "ControlPlans";
-	public static final String PATH_CONTROL_POINTS = "ControlPoints";	
-	public static final String PATH_CONTROL_STEPS = "ControlSteps";
-	public static final String PATH_CONTROL_METHODS = "ControlMethods";
+	public static final String PATH_CONTROL_POINTS = "ControlPoints";		
 	public static final String PATH_QUALITY_CONTROLS = "QualityControls";	
 	public static final String PATH_NC = "NonConformities";
 	
@@ -110,7 +108,10 @@ public class RepoConsts {
 	public static final String PATH_CLAIM_TRACKING_VALUES = "ClaimTrackingValues";
 	public static final String PATH_CLAIM_TYPES = "ClaimTypes";
 	public static final String PATH_CLAIM_RESPONSES_STATES = "ClaimResponseStates";
-	
+	public static final String PATH_CONTROL_STEPS = "ControlSteps";
+	public static final String PATH_CONTROL_METHODS = "ControlMethods";
+	public static final String PATH_CONTROL_CHARACTS = "ControlCharacts";
+	public static final String PATH_CONTROL_UNITS = "ControlUnits";
 	
 	
 	//Project

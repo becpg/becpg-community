@@ -82,6 +82,10 @@
 					<value>Nutritionnelle</value>
 					<value>Physico-chimie</value>
 					<value>Sensorielle</value>
+					<value>Dimension</value>
+					<value>Poids</value>
+					<value>Composition</value>
+					<value>Conditionnement</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -144,6 +148,22 @@
 			</parameter>
 			<parameter name="constraintProp">
 				<value>cm:name</value>
+			</parameter>
+		</constraint>
+		<constraint name="qa:controlUnits" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/QualityLists/bcpg:entityLists/ControlUnits</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>cm:name</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>
 	</constraints>
@@ -313,7 +333,7 @@
 			</mandatory-aspects>
 		</type>
 		<type name="qa:controlStep">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties />
 			<associations />
 			<overrides />
@@ -322,8 +342,24 @@
 			</mandatory-aspects>
 		</type>
 		<type name="qa:controlMethod">
-			<parent>cm:content</parent>
+			<parent>bcpg:charact</parent>
 			<properties />
+			<associations />
+			<overrides />
+			<mandatory-aspects>
+				<aspect>bcpg:codeAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		<type name="qa:controlCharact">
+			<parent>bcpg:charact</parent>
+			<properties >
+				<property name="qa:controlCharactType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="qa:controlTypes" />
+					</constraints>
+				</property>
+			</properties>
 			<associations />
 			<overrides />
 			<mandatory-aspects>
@@ -522,17 +558,7 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
-				</property>
-				<property name="qa:clTarget">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="qa:clUnit">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
+				</property>				
 				<property name="qa:clState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -704,9 +730,21 @@
 				<property name="qa:clType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 					<constraints>
 						<constraint ref="qa:controlTypes" />
+					</constraints>
+				</property>
+				<property name="qa:clTarget">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="qa:clUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="qa:controlUnits"/>
 					</constraints>
 				</property>
 				<property name="qa:clMini">
@@ -716,6 +754,11 @@
 				</property>
 				<property name="qa:clMaxi">
 					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="qa:clTextCriteria">
+					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
