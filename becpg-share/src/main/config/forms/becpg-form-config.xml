@@ -5621,7 +5621,13 @@
 					<field id="cm:description">
                   <control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">4</control-param>
-						</control>
+						</control>						
+               </field>
+               <field id="bcpg:storageConditionsMode">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="bcpg:storageConditionsTemperature">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                </field>
 				</appearance>
 			</form>
@@ -5646,6 +5652,12 @@
 							<control-param name="rows">4</control-param>
 						</control>
 					</field>
+					<field id="bcpg:storageConditionsMode">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="bcpg:storageConditionsTemperature">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
 				</appearance>
 			</form>
 
