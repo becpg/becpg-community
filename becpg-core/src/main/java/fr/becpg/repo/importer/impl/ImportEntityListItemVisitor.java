@@ -105,9 +105,16 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		}
 
 		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, importContext.getType());
+		if(listNodeRef!=null && importContext.isDeleteDataList(entityNodeRef)){
+			nodeService.deleteNode(listNodeRef);
+			listNodeRef = entityListDAO.createList(listContainerNodeRef, importContext.getType());
+		} 
+		
 		if (listNodeRef == null) {
 			listNodeRef = entityListDAO.createList(listContainerNodeRef, importContext.getType());
 		}
+		
+		
 
 		/*
 		 * Look for entityListItem
