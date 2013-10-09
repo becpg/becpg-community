@@ -5614,6 +5614,8 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:storageConditionsMode" />
+					<show id="bcpg:storageConditionsTemperature" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -5634,6 +5636,8 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:storageConditionsMode" />
+					<show id="bcpg:storageConditionsTemperature" />
 				</field-visibility>
 
 				<appearance>
@@ -5656,6 +5660,8 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:storageConditionsMode" />
+					<show id="bcpg:storageConditionsTemperature" />
 				</field-visibility>
 			</form>
 		</forms>
