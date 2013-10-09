@@ -1756,6 +1756,14 @@
 
 		<type name="bcpg:storageConditions">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:storageConditionsMode">
+					<type>d:mltext</type>
+				</property>
+				<property name="bcpg:storageConditionsTemperature">
+					<type>d:mltext</type>
+				</property>
+			</properties>
 		</type>
 
 		<type name="bcpg:precautionOfUse">
