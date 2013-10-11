@@ -6441,7 +6441,6 @@ row["illValue"]
                                     <image id="2470">
                                         <property name="backgroundColor">white</property>
                                         <property name="height">1.8396946564885497in</property>
-                                        <property name="width">2.572519083969466in</property>
                                         <structure name="toc"/>
                                         <property name="source">expr</property>
                                         <expression name="valueExpr">row["img"]</expression>
