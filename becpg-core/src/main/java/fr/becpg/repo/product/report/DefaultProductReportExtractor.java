@@ -201,7 +201,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// packList
-		loadPackaging(productData, dataListsElt, defaultVariantNodeRef, images);
+		loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
 
 		
 		// processList
@@ -242,13 +242,16 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 						locales.add(locale.getLanguage());
 						
 						String grpName = "";
-						MLText grpMLText = dataItem.getGrp() != null ? (MLText) mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LABELING_RULE_LABEL) : null;
-						if(grpMLText != null && grpMLText.getValue(locale) != null && !grpMLText.getValue(locale).isEmpty()){
-							grpName = grpMLText.getValue(locale);
+						if(dataItem.getGrp() != null){
+							MLText grpMLText = (MLText)mlNodeService.getProperty(dataItem.getGrp(), BeCPGModel.PROP_LABELING_RULE_LABEL);
+							if(grpMLText != null && grpMLText.getValue(locale) != null && !grpMLText.getValue(locale).isEmpty()){
+								grpName = grpMLText.getValue(locale);
+							}
+							else{
+								grpName = (String)nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
+							}
 						}
-						else{
-							grpName = (String)nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
-						}						
+												
 						
 						Element ingLabelingElt = ingListElt.addElement(BeCPGModel.TYPE_INGLABELINGLIST.getLocalName());
 						addCDATA(ingLabelingElt, ATTR_LANGUAGE, locale.getDisplayLanguage());
@@ -265,14 +268,17 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		// NutList
-		List<Element> nutListElts = (List<Element>)dataListsElt.selectNodes(BeCPGModel.TYPE_NUTLIST.getLocalName() + "s/" + BeCPGModel.TYPE_NUTLIST.getLocalName());				
-		for(Element nutListElt : nutListElts){
-			Element nutElt = (Element)nutListElt.selectSingleNode(BeCPGModel.ASSOC_NUTLIST_NUT.getLocalName());
-			if(nutElt != null){
-				Element valueElt = (Element)nutListElt.selectSingleNode(BeCPGModel.PROP_NUTLIST_VALUE.getLocalName());				
-				nutListElt.addAttribute(generateKeyAttribute(nutElt.getText()), valueElt != null ? valueElt.getText() : "");
-			}			
-		}
+		Element nutListsElt = (Element)dataListsElt.selectSingleNode(BeCPGModel.TYPE_NUTLIST.getLocalName()+"s");
+		if(nutListsElt != null){
+			List<Element> nutListElts = (List<Element>)nutListsElt.selectNodes(BeCPGModel.TYPE_NUTLIST.getLocalName());
+			for(Element nutListElt : nutListElts){
+				String nut = nutListElt.valueOf("@"+BeCPGModel.ASSOC_NUTLIST_NUT.getLocalName());
+				if(nut != null){
+					String value = nutListElt.valueOf("@"+BeCPGModel.PROP_NUTLIST_VALUE.getLocalName());				
+					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
+				}			
+			}
+		}		
 		
 		// MicrobioList
 		Map<NodeRef, MicrobioListDataItem> microbioMap = new HashMap<NodeRef, MicrobioListDataItem>();
@@ -323,7 +329,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		return false;			
 	}
 	
-	private void loadPackaging(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images){			
+	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images){			
 		
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 			
@@ -331,7 +337,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			Element packagingListElt = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName()+"s");
 
 			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-				loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);				
+				loadPackagingItem(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);				
 			}
 			
 			loadDynamicCharactList(productData.getPackagingListView().getDynamicCharactList(), packagingListElt);
@@ -349,6 +355,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_2, toString(tareSecondary));
 				packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_2, toString(netWeightSecondary));
 				packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_2, toString(tareSecondary + netWeightSecondary));
+				packagingListElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_2, toString(packagingData.getProductPerBoxes()));
 				
 				if(packagingData.getBoxesPerPallet() != null){
 					
@@ -356,8 +363,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					Double netWeightTertiary = netWeightSecondary * packagingData.getBoxesPerPallet();
 					packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
 					packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_3, toString(netWeightTertiary));
-					packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_3, toString(tareTertiary + netWeightTertiary));
-					packagingListElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_2, toString(packagingData.getProductPerBoxes()));
+					packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_3, toString(tareTertiary + netWeightTertiary));					
 					packagingListElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_3, toString(packagingData.getProductPerBoxes() * packagingData.getBoxesPerPallet()));
 				}
 			}
@@ -365,7 +371,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}		
 	}
 
-	private void loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, 
+	private void loadPackagingItem(PackagingListDataItem dataItem, Element packagingListElt, 
 			PackagingData packagingData, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(BeCPGModel.TYPE_PACKAGINGKIT)) {					
@@ -433,13 +439,15 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET)) {
+			logger.debug("load pallet aspect ");
 			partElt.addAttribute(PackModel.PROP_PALLET_BOXES_PER_LAYER.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_LAYER)));
 			partElt.addAttribute(PackModel.PROP_PALLET_LAYERS.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_LAYERS)));
 			partElt.addAttribute(PackModel.PROP_PALLET_BOXES_PER_PALLET.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET)));			
 			partElt.addAttribute(PackModel.PROP_PALLET_HEIGHT.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_HEIGHT)));
-			
+						
 			// product per box and boxes per pallet
 			if(defaultVariantNodeRef == null || dataItem.getVariants() == null || dataItem.getVariants().contains(defaultVariantNodeRef)){
+				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
 				packagingData.setProductPerBoxes(dataItem.getQty().intValue());
 				packagingData.setBoxesPerPallet((Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
 			}			
