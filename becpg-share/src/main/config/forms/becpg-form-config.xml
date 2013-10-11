@@ -114,6 +114,7 @@
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
 					<show id="bcpg:productDensity" />					
+					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />					
 
@@ -311,6 +312,7 @@
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />					
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />					
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
@@ -486,6 +488,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />					
 					<show id="bcpg:productDensity" />					
+					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:productMicrobioCriteria" />					
@@ -607,6 +610,7 @@
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />					
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />					
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
@@ -1379,6 +1383,10 @@
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:certificateDate" force="true" />			
 					<show id="rep:reportTpls" />
+					
+					<!-- tare -->
+					<show id="pack:tare"      force="true"  />
+		         <show id="pack:tareUnit"  force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1390,7 +1398,9 @@
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-
+					<set id="tare" appearance="bordered-panel"
+						label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName" >
@@ -1437,6 +1447,10 @@
 						</control>
 					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
+					
+					<!-- tare -->
+					<field id="pack:tare" set="tare"/>
+               <field id="pack:tareUnit" set="tare"/>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -2889,18 +2903,14 @@
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
+					<show id="bcpg:nutGDA" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
-					</field>
-					<field id="bcpg:legalName" />
-					<field id="bcpg:nutGroup" />
-					<field id="bcpg:nutType" />
-					<field id="bcpg:nutUnit" />
+					</field>					
 				</appearance>
 			</form>
 		</forms>
@@ -2918,20 +2928,16 @@
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
+					<show id="bcpg:nutGDA" />
 
 				</field-visibility>
 
 				<appearance>
-					<field id="cm:name" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
-					</field>
-					<field id="bcpg:legalName" />
-					<field id="bcpg:nutGroup" />
-					<field id="bcpg:nutType" />
-					<field id="bcpg:nutUnit" />
+					</field>					
 				</appearance>
 			</form>
 
@@ -2952,6 +2958,7 @@
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
+					<show id="bcpg:nutGDA" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -4789,7 +4796,7 @@
 					<field id="bcpg:nutListNut">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
+					</field>					
 				</appearance>
 			</form>
 
@@ -4802,8 +4809,10 @@
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListGDAPerc" force="true" />					
 					<show id="bcpg:nutListGroup" />
-					<show id="bcpg:nutListMethod" />					
+					<show id="bcpg:nutListMethod" />			
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -4825,7 +4834,7 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
-					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListMethod" />	
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -4833,7 +4842,7 @@
 					<field id="bcpg:nutListNut">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
+					</field>					
 				</appearance>
 			</form>
 		</forms>

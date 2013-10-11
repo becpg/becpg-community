@@ -400,6 +400,8 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_NUTUNIT. */
 	QName PROP_NUTUNIT = QName.createQName(BECPG_URI, "nutUnit");
+	
+	QName PROP_NUTGDA = QName.createQName(BECPG_URI, "nutGDA");
 
 	// organo
 	/** The Constant TYPE_ORGANO. */

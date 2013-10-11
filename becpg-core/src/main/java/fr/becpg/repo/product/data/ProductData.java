@@ -56,6 +56,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private Double yield;
 	private Double yieldVolume;
 	private Double netWeight;
+	private Double servingSize;
 
 	/*
 	 * Profitability properties
@@ -228,6 +229,16 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setNetWeight(Double netWeight) {
 		this.netWeight = netWeight;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:servingSize")
+	public Double getServingSize() {
+		return servingSize;
+	}
+
+	public void setServingSize(Double servingSize) {
+		this.servingSize = servingSize;
 	}
 
 	@AlfProp
@@ -490,24 +501,47 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
-				+ ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
-				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", variants=" + variants
-				+ "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName
+				+ ", title=" + title + ", state=" + state + ", unit=" + unit + ", entityTpl=" + entityTpl + ", qty="
+				+ qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight="
+				+ netWeight + ", servingSize=" + servingSize + ", unitTotalCost=" + unitTotalCost + ", unitPrice="
+				+ unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList="
+				+ allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList
+				+ ", nutList=" + nutList + ", organoList=" + organoList + ", microbioList=" + microbioList
+				+ ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList
+				+ ", labelClaimList=" + labelClaimList + ", compoListView=" + compoListView + ", processListView="
+				+ processListView + ", packagingListView=" + packagingListView + ", labelingListView="
+				+ labelingListView + ", variants=" + variants + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
+		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
+		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
+		result = prime * result + ((entityTpl == null) ? 0 : entityTpl.hashCode());
 		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
+		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
+		result = prime * result + ((labelClaimList == null) ? 0 : labelClaimList.hashCode());
+		result = prime * result + ((labelingListView == null) ? 0 : labelingListView.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
+		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
 		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
+		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
+		result = prime * result + ((organoList == null) ? 0 : organoList.hashCode());
+		result = prime * result + ((packagingListView == null) ? 0 : packagingListView.hashCode());
+		result = prime * result + ((physicoChemList == null) ? 0 : physicoChemList.hashCode());
+		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
+		result = prime * result + ((processListView == null) ? 0 : processListView.hashCode());
+		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
@@ -528,15 +562,35 @@ public class ProductData extends AbstractEffectiveDataItem {
 		if (getClass() != obj.getClass())
 			return false;
 		ProductData other = (ProductData) obj;
+		if (allergenList == null) {
+			if (other.allergenList != null)
+				return false;
+		} else if (!allergenList.equals(other.allergenList))
+			return false;
 		if (breakEven == null) {
 			if (other.breakEven != null)
 				return false;
 		} else if (!breakEven.equals(other.breakEven))
 			return false;
+		if (compoListView == null) {
+			if (other.compoListView != null)
+				return false;
+		} else if (!compoListView.equals(other.compoListView))
+			return false;
+		if (costList == null) {
+			if (other.costList != null)
+				return false;
+		} else if (!costList.equals(other.costList))
+			return false;
 		if (density == null) {
 			if (other.density != null)
 				return false;
 		} else if (!density.equals(other.density))
+			return false;
+		if (entityTpl == null) {
+			if (other.entityTpl != null)
+				return false;
+		} else if (!entityTpl.equals(other.entityTpl))
 			return false;
 		if (forbiddenIngList == null) {
 			if (other.forbiddenIngList != null)
@@ -553,20 +607,80 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!hierarchy2.equals(other.hierarchy2))
 			return false;
+		if (ingList == null) {
+			if (other.ingList != null)
+				return false;
+		} else if (!ingList.equals(other.ingList))
+			return false;
+		if (labelClaimList == null) {
+			if (other.labelClaimList != null)
+				return false;
+		} else if (!labelClaimList.equals(other.labelClaimList))
+			return false;
+		if (labelingListView == null) {
+			if (other.labelingListView != null)
+				return false;
+		} else if (!labelingListView.equals(other.labelingListView))
+			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
 		} else if (!legalName.equals(other.legalName))
+			return false;
+		if (microbioList == null) {
+			if (other.microbioList != null)
+				return false;
+		} else if (!microbioList.equals(other.microbioList))
 			return false;
 		if (netWeight == null) {
 			if (other.netWeight != null)
 				return false;
 		} else if (!netWeight.equals(other.netWeight))
 			return false;
+		if (nutList == null) {
+			if (other.nutList != null)
+				return false;
+		} else if (!nutList.equals(other.nutList))
+			return false;
+		if (organoList == null) {
+			if (other.organoList != null)
+				return false;
+		} else if (!organoList.equals(other.organoList))
+			return false;
+		if (packagingListView == null) {
+			if (other.packagingListView != null)
+				return false;
+		} else if (!packagingListView.equals(other.packagingListView))
+			return false;
+		if (physicoChemList == null) {
+			if (other.physicoChemList != null)
+				return false;
+		} else if (!physicoChemList.equals(other.physicoChemList))
+			return false;
+		if (priceList == null) {
+			if (other.priceList != null)
+				return false;
+		} else if (!priceList.equals(other.priceList))
+			return false;
+		if (processListView == null) {
+			if (other.processListView != null)
+				return false;
+		} else if (!processListView.equals(other.processListView))
+			return false;
+		if (profitability == null) {
+			if (other.profitability != null)
+				return false;
+		} else if (!profitability.equals(other.profitability))
+			return false;
 		if (qty == null) {
 			if (other.qty != null)
 				return false;
 		} else if (!qty.equals(other.qty))
+			return false;
+		if (servingSize == null) {
+			if (other.servingSize != null)
+				return false;
+		} else if (!servingSize.equals(other.servingSize))
 			return false;
 		if (state != other.state)
 			return false;

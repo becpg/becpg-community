@@ -26,6 +26,10 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	private Double mini;
 	
 	private Double maxi;
+	
+	private Double valuePerServing;
+	
+	private Double gdaPerc;
 
 	private String group;
 	
@@ -76,6 +80,29 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	public void setMaxi(Double maxi) {
 		this.maxi = maxi;
 	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListValuePerServing")
+	public Double getValuePerServing() {
+		return valuePerServing;
+	}
+
+
+	public void setValuePerServing(Double valuePerServing) {
+		this.valuePerServing = valuePerServing;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListGDAPerc")
+	public Double getGdaPerc() {
+		return gdaPerc;
+	}
+
+
+	public void setGdaPerc(Double gdaPerc) {
+		this.gdaPerc = gdaPerc;
+	}
+
 
 	@AlfProp
 	@AlfQname(qname="bcpg:nutListGroup")
@@ -186,12 +213,15 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((gdaPerc == null) ? 0 : gdaPerc.hashCode());
 		result = prime * result + ((group == null) ? 0 : group.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
 		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
 		result = prime * result + ((nut == null) ? 0 : nut.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + ((valuePerServing == null) ? 0 : valuePerServing.hashCode());
 		return result;
 	}
 
@@ -204,6 +234,11 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		if (getClass() != obj.getClass())
 			return false;
 		NutListDataItem other = (NutListDataItem) obj;
+		if (gdaPerc == null) {
+			if (other.gdaPerc != null)
+				return false;
+		} else if (!gdaPerc.equals(other.gdaPerc))
+			return false;
 		if (group == null) {
 			if (other.group != null)
 				return false;
@@ -213,6 +248,11 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 			if (other.maxi != null)
 				return false;
 		} else if (!maxi.equals(other.maxi))
+			return false;
+		if (method == null) {
+			if (other.method != null)
+				return false;
+		} else if (!method.equals(other.method))
 			return false;
 		if (mini == null) {
 			if (other.mini != null)
@@ -234,12 +274,18 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 				return false;
 		} else if (!value.equals(other.value))
 			return false;
+		if (valuePerServing == null) {
+			if (other.valuePerServing != null)
+				return false;
+		} else if (!valuePerServing.equals(other.valuePerServing))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "NutListDataItem [nodeRef=" + nodeRef + ", value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", group=" + group + ", nut=" + nut
-				+ ", isManual=" + isManual + "]";
+		return "NutListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi
+				+ ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", group=" + group + ", method="
+				+ method + ", nut=" + nut + "]";
 	}	
 }

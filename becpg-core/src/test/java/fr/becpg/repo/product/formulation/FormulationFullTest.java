@@ -73,6 +73,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(22.4d);
 				finishedProduct.setDensity(1d);
+				finishedProduct.setServingSize(50d);//50g
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -244,6 +245,8 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 						assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d, nutListDataItem.getValue());
 						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
+						assertEquals(6d * 50d / 100, nutListDataItem.getValuePerServing());
+						assertEquals(100 * nutListDataItem.getValuePerServing() / 2000d, nutListDataItem.getGdaPerc());
 						checks++;
 					}
 					assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());

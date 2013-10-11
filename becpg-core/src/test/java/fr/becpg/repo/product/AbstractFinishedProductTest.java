@@ -227,6 +227,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					properties.put(ContentModel.PROP_NAME, "nut2");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kcal");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
+					properties.put(BeCPGModel.PROP_NUTGDA, 2000d);
 					nut2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();			
 					//Allergens
 					properties.clear();

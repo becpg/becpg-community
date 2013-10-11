@@ -261,6 +261,7 @@
 					<value>min</value>
 					<value>°B</value>
 					<value>mosm/L</value>
+					<value>meq/kg</value>					
 				</list>
 			</parameter>
 		</constraint>
@@ -579,6 +580,11 @@
 					<constraints>
 						<constraint ref="bcpg:nutUnit" />
 					</constraints>
+				</property>
+				<property name="bcpg:nutGDA">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</type>
@@ -1301,7 +1307,7 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
-				</property>
+				</property>				
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
@@ -1923,8 +1929,11 @@
 						<constraint ref="bcpg:netWeightUnits" />
 					</constraints>
 				</property>
+				<property name="bcpg:servingSize">
+					<type>d:double</type>
+				</property>
 				<property name="bcpg:numberOfServings">
-					<type>d:int</type>
+					<type>d:text</type>
 				</property>
 				<property name="bcpg:preparationTips">
 					<type>d:text</type>
@@ -2464,6 +2473,21 @@
 			<properties>
 				<property name="bcpg:instruction">
 					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:nutListServingAspect">
+			<properties>
+				<property name="bcpg:nutListValuePerServing">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListGDAPerc">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>

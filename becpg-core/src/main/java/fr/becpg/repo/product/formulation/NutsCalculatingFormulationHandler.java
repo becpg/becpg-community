@@ -60,6 +60,19 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				n.setGroup((String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTGROUP));				
 				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTUNIT)));
 				
+				if(formulatedProduct.getServingSize() != null && n.getValue() != null){
+					double valuePerserving = n.getValue() * formulatedProduct.getServingSize() / 100;
+					n.setValuePerServing(valuePerserving);
+					Double gda = (Double)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTGDA);
+					if(gda != null && gda != 0d){
+						n.setGdaPerc(100 * n.getValuePerServing()/gda);
+					}
+				}
+				else{
+					n.setValuePerServing(null);
+					n.setGdaPerc(null);
+				}
+				
 				if(isCharactFormulated(n)){
 					n.setMethod(NUT_FORMULATED);
 				}
