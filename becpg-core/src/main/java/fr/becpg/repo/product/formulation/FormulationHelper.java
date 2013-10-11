@@ -234,11 +234,11 @@ public class FormulationHelper {
 			return netWeight;
 		}
 		else{			
-			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);									
+			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
 			if(productUnit != null){
 				Double qty = getProductQty(nodeRef, nodeService);
 				if(qty != null){
-					if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
+					//if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
 						if(productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)){
 							qty = qty / 1000;
 						}
@@ -247,14 +247,14 @@ public class FormulationHelper {
 							qty = qty * density;
 						}
 						return qty;
-					}						
+					//}						
 				}
 				else if(FormulationHelper.isProductUnitP(productUnit)){
 					return QTY_FOR_PIECE;
 				}								
 			}
 		}	
-				
+		
 		return DEFAULT_NET_WEIGHT;
 	}
 		
