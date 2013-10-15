@@ -330,7 +330,7 @@ if (beCPG.module.EntityDataGridRenderers) {
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName :  ["bcpg:illValue","bcpg:illManualValue"] ,
       renderer : function(oRecord, data, label, scope) {
-         if(data.value!=null){
+         if(data.value!=null && data.value.length>0){
             return '<div class="note rounded"> '+data.displayValue+'</div>';
          }
          return "";

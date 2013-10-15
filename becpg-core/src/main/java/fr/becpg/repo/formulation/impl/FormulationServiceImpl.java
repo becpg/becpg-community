@@ -126,7 +126,7 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 			else if(e instanceof ConcurrencyFailureException){
 				throw (ConcurrencyFailureException)e;
 			} 
-			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure"),e);
+			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure",repositoryEntity.getNodeRef()),e);
 			
 		}
 		
