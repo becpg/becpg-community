@@ -85,25 +85,16 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     
     protected NodeRef rawMaterial7NodeRef;
     
-    /** The local s f11 node ref. */
     protected NodeRef localSF11NodeRef;
-    
-    /** The raw material11 node ref. */
+
     protected NodeRef rawMaterial11NodeRef;
-    
-    /** The raw material12 node ref. */
+
     protected NodeRef rawMaterial12NodeRef;
-    
-    /** The local s f12 node ref. */
     protected NodeRef localSF12NodeRef;
-    
-    /** The raw material13 node ref. */
     protected NodeRef rawMaterial13NodeRef;
-    
-    /** The raw material14 node ref. */
     protected NodeRef rawMaterial14NodeRef;
-    
     protected NodeRef rawMaterial15NodeRef;
+    protected NodeRef rawMaterial16NodeRef;
     
     protected NodeRef packagingMaterial1NodeRef;
     protected NodeRef packagingMaterial2NodeRef;
@@ -712,7 +703,30 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					rawMaterial15.setQty(50d);
 					rawMaterial15.setUnit(ProductUnit.mL);
 					rawMaterial15.setNetWeight(2d);
-					rawMaterial15NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial15).getNodeRef();					
+					rawMaterial15NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial15).getNodeRef();	
+					
+					
+					/*-- Raw material 16 --*/
+					RawMaterialData rawMaterial16 = new RawMaterialData();
+					rawMaterial16.setName("Raw material 16");
+					legalName = new MLText("Legal Raw material 16");
+					legalName.addValue(Locale.FRENCH, "Legal Raw material 16");
+					legalName.addValue(Locale.ENGLISH, "Legal Raw material 16");
+					rawMaterial16.setLegalName(legalName);
+					rawMaterial16.setDensity(1d);
+					//ingList : 4 ing3 ; bio1|bio2 ; geo2
+					ingList = new ArrayList<IngListDataItem>();
+					bioOrigins = new ArrayList<NodeRef>();
+					bioOrigins.add(bioOrigin1);
+					bioOrigins.add(bioOrigin2);
+					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins.add(geoOrigin2);
+					ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true, true,false, ing1, false));
+					ingList.add(new IngListDataItem(null, 55d, geoOrigins, bioOrigins, true, true,false, ing3, false));	
+					ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true, true,false, ing2, false));
+					rawMaterial16.setIngList(ingList);		
+					rawMaterial16NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial16).getNodeRef();
+					
 //				}
 //				else{
 //					

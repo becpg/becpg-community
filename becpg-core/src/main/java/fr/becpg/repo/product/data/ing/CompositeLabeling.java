@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.DeclarationType;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
 public class CompositeLabeling extends AbstractLabelingComponent {
@@ -23,6 +24,9 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	private boolean isGroup = false;
 
 
+	private DeclarationType declarationType;
+	
+
 	public CompositeLabeling() {
 		super();
 	}
@@ -33,6 +37,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	    this.ingList = compositeLabeling.ingList;
 	    this.qtyRMUsed = compositeLabeling.qtyRMUsed;
 	    this.isGroup = compositeLabeling.isGroup;
+	    this.declarationType = compositeLabeling.declarationType;
 	}
 	
 
@@ -43,11 +48,20 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	
+	public DeclarationType getDeclarationType() {
+		return declarationType;
+	}
+
+	public void setDeclarationType(DeclarationType declarationType) {
+		this.declarationType = declarationType;
+	}
 
 	public boolean isGroup() {
 		return isGroup;
 	}
 
+	//TODO test Declaration Type instead
+	@Deprecated
 	public void setGroup(boolean isGroup) {
 		this.isGroup = isGroup;
 	}
