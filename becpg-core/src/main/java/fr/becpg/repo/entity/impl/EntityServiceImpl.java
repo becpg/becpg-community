@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
+import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -249,7 +250,7 @@ public class EntityServiceImpl implements EntityService {
 				Image image = ImageIO.read(in);
 				out = new ByteArrayOutputStream();
 				if (image != null) {
-					ImageIO.write((RenderedImage) image, "jpg", out);
+					ImageIO.write((RenderedImage) image, MimetypeMap.MIMETYPE_IMAGE_PNG.equals(reader.getMimetype()) ? "png": "jpg", out);
 					imageBytes = ((ByteArrayOutputStream) out).toByteArray();
 				}
 			} catch (IOException e) {

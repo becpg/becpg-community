@@ -167,6 +167,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label));
 				}
 			}
+		} else {
+			//Keep Manual ingList
+			for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+				if (tmp.getManualValue()!=null && !tmp.getManualValue().isEmpty()) {
+					tmp.setValue(null);
+					retainNodes.add(tmp);
+				}
+			}
+
 		}
 		formulatedProduct.getLabelingListView().getIngLabelingList().retainAll(retainNodes);
 
@@ -177,7 +186,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		List<LabelingRuleListDataItem> ret = new ArrayList<>(formulatedProduct.getLabelingListView().getLabelingRuleList());
 		if (formulatedProduct.getEntityTpl() != null) {
 			for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList()) {
-				if (!Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsManual())) {
+				if (!modelLabelingRuleListDataItem.isSynchronisable()) {
 					ret.add(modelLabelingRuleListDataItem);
 				}
 			}
@@ -189,7 +198,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void copyTemplateLabelingRuleList(ProductData formulatedProduct) {
 		if (formulatedProduct.getEntityTpl() != null) {
 			for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList()) {
-				if (Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsManual())) {
+				if (modelLabelingRuleListDataItem.isSynchronisable()) {
 					boolean contains = false;
 					for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
 						if (labelingRuleListDataItem.getName().equals(modelLabelingRuleListDataItem.getName())) {
@@ -283,7 +292,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									} else {
 										current = component;
 									}
-
 									current.setQty(0d);
 									if (logger.isTraceEnabled()) {
 										logger.trace(" - Add new ing to aggregate  :" + current.getName());
@@ -406,6 +414,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			compositeLabeling = new CompositeLabeling(productData);
 			compositeLabeling.setQty(qty);
 			compositeLabeling.setGroup(DeclarationType.Group.equals(declarationType));
+			compositeLabeling.setDeclarationType(declarationType);
 			if (composite.isLeaf()) {
 				compositeLabeling.setQtyRMUsed(qty);
 			}
@@ -423,8 +432,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (!isMultiLevel && productData.getIngList() != null && !productData.getIngList().isEmpty()) {
 
+				int sort = 0;
 				for (IngListDataItem ingListDataItem : productData.getIngList()) {
-
+					
+					sort ++;
 					DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListDataItem, labelingFormulaContext);
 
 					if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
@@ -434,14 +445,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if (ingItem == null) {
 							ingItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
-
+						
 							if (ingListDataItem.getIngListSubIng().size() > 0) {
 								for (NodeRef subIng : ingListDataItem.getIngListSubIng()) {
 									ingItem.getSubIngs().add((IngItem) alfrescoRepository.findOne(subIng));
 								}
 
 							}
-
+							
 							compositeLabeling.add(ingItem);
 							if (logger.isTraceEnabled()) {
 								logger.trace("- Add new ing to current Label: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
@@ -480,7 +491,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			// Recur
 			if (!composite.isLeaf()) {
 				for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
+   
 					if (!DeclarationType.Omit.equals(declarationType)) {
 						calculateILLV2(compositeLabeling, component, labelingFormulaContext, getDeclarationType(component.getData(), null, labelingFormulaContext));
 					}

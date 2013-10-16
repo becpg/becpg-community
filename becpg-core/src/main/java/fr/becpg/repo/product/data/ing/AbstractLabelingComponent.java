@@ -16,7 +16,6 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	protected MLText legalName;
 	
 	
-	
 	public AbstractLabelingComponent() {
 		super();
 	}

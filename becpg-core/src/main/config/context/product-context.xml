@@ -44,6 +44,11 @@
 		<property name="productService" ref="productService"/>
 	</bean>
 	
+	<bean id="labelingRuleListPolicy" class="fr.becpg.repo.product.policy.LabelingRuleListPolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="entityListDAO" ref="entityListDAO"/>
+	</bean>
+	
 	
 	<!-- Product Listeners -->
 	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">
