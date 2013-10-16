@@ -127,6 +127,16 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Legal Raw material 16 100% (ing1 french, ing3 french 55%, ing2 french)", Locale.FRENCH);
+		
+		//TODO J'ai 2 MP qui ont l'ing Eau. Pour une des 2, la qté est null dans la LI. Dans l'étiquetage, j'ai null.
+		
+//	    Auxiliaires technologiques
+//
+//        J'ai un aux tech dans ma MP sel. J'utilise la MP sel dans le SF pâte. Si je dis de masquer lex aux tech, je vois l'aux tech du sel car l'info est perdu au niveau du SF
+//        J'ai un aux tech dans ma MP sel. J'utilise ce même aux tech dans le SF pâte qui utilise aussi le sel. Si je dis de masquer lex aux tech, il faut prendre dans le calcul slmt la qté MeO dans le SF.
+
+
+		
 	}
 	
 	

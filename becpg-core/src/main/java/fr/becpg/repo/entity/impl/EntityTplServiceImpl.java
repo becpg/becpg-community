@@ -32,6 +32,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 @Service
@@ -222,6 +223,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				
 				for (QName dataListQName : datalistsTpl.keySet()) {
 					
+					@SuppressWarnings("unchecked")
 					List<BeCPGDataObject> dataListItems = (List)datalists.get(dataListQName);
 					boolean update = false;
 					
@@ -245,8 +247,19 @@ public class EntityTplServiceImpl implements EntityTplService {
 							if(!isFound){
 								dataListItemTpl.setNodeRef(null);
 								dataListItemTpl.setParentNodeRef(null);
-								dataListItems.add((BeCPGDataObject)dataListItemTpl);
-								update = true;
+								
+								if(dataListItemTpl instanceof Synchronisable){
+									if(((Synchronisable)dataListItemTpl).isSynchronisable()){
+										dataListItems.add((BeCPGDataObject)dataListItemTpl);
+										update = true;
+									}
+								} else {
+									//Synchronize always
+									dataListItems.add((BeCPGDataObject)dataListItemTpl);
+									update = true;
+								}
+					
+							
 							}
 						}						
 					}		
@@ -264,7 +277,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 		List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 		
 		for(NodeRef entityNodeRef : entityNodeRefs){
-			formulationService.formulate(entityNodeRef);
+			try {
+				formulationService.formulate(entityNodeRef);
+			} catch(FormulateException e){
+				logger.error(e,e);
+			}
 		}
 	}
 	
@@ -274,7 +291,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 		
 		for(AssociationRef assocRef : assocRefs){
-			if(!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+			if(!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !tplNodeRef.equals(assocRef.getSourceRef())){
 				entityNodeRefs.add(assocRef.getSourceRef());
 			}
 		}
