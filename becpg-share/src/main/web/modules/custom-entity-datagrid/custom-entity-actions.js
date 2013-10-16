@@ -133,9 +133,6 @@
                            onActionShowWused_redirect(val,val);
                         });
          } else {
-            
-          
-            
             if(this.datalistMeta.name.indexOf("WUsed") == 0){
                var val = null, val2 =  "assoc_bcpg_compoListProduct";
                if(this.datalistMeta.name.indexOf("|")>0){
@@ -153,9 +150,6 @@
             } else {
                onActionShowWused_redirect();
             }
-            
-           
-            
          }
 
       },
