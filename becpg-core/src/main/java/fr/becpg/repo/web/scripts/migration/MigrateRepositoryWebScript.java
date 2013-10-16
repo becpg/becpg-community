@@ -426,7 +426,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				List<AssociationRef> inVolAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES);
 				List<AssociationRef> volAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES);
 				
-				if(ingAssocRefs.isEmpty() && inVolAssocRefs.isEmpty() && volAssocRefs.isEmpty()){
+				if(ingAssocRefs.isEmpty() && inVolAssocRefs.isEmpty() && volAssocRefs.isEmpty() && nodeService.exists(ingNodeRef)){
 					logger.info("Delete ing : " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));
 					nodeService.deleteNode(ingNodeRef);
 				}							
