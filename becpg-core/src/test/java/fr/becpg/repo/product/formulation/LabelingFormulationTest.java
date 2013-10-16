@@ -81,7 +81,65 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
+   @Test
+	public void testNullIng() throws Exception {
+		
+       final NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				FinishedProductData finishedProduct1 = new FinishedProductData();
+				finishedProduct1.setName("Finished product "+Calendar.getInstance().getTimeInMillis());
+				finishedProduct1.setLegalName("Legal Finished product 1");
+				finishedProduct1.setQty(2d);
+				finishedProduct1.setUnit(ProductUnit.kg);
+				finishedProduct1.setDensity(1d);
+				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
+				compoList1.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial16NodeRef));
 
+				finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+
+
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+			}
+		}, false, true);
+		
+		
+//		└──[root - 0.0 (1.0)]
+//			    ├──[ing1 french - null]
+//			    ├──[ing3 french - 0.55]
+//			    └──[ing2 french - null]
+       
+		//Declare
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare, Arrays.asList(rawMaterial16NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 55%, ing1 french, ing2 french", Locale.FRENCH);
+		
+		labelingRuleList = new ArrayList<>();
+		
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Detail", null, LabelingRuleType.Detail, Arrays.asList(rawMaterial16NodeRef), null));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Legal Raw material 16 100% (ing1 french, ing3 french 55%, ing2 french)", Locale.FRENCH);
+		
+		//TODO J'ai 2 MP qui ont l'ing Eau. Pour une des 2, la qté est null dans la LI. Dans l'étiquetage, j'ai null.
+		
+//	    Auxiliaires technologiques
+//
+//        J'ai un aux tech dans ma MP sel. J'utilise la MP sel dans le SF pâte. Si je dis de masquer lex aux tech, je vois l'aux tech du sel car l'info est perdu au niveau du SF
+//        J'ai un aux tech dans ma MP sel. J'utilise ce même aux tech dans le SF pâte qui utilise aussi le sel. Si je dis de masquer lex aux tech, il faut prendre dans le calcul slmt la qté MeO dans le SF.
+
+
+		
+	}
+	
+	
 	/**
 	 * Test ingredients calculating.
 	 * 
@@ -569,7 +627,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	
 
 
-	 @Test
+	@Test
 	public void testMultiLingualLabelingFormulation() throws Exception {
 
 		logger.info("testLabelingFormulation");

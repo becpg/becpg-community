@@ -20,6 +20,7 @@ public class IngItem extends AbstractLabelingComponent {
 	private List<IngItem> subIngs  = new ArrayList<>();
 	
 	
+	
 	public IngItem() {
 		super();
 	}
@@ -50,5 +51,6 @@ public class IngItem extends AbstractLabelingComponent {
 		this.subIngs = subIngs;
 	}
 
+	
 
 }

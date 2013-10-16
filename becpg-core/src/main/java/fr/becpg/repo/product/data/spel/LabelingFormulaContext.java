@@ -109,7 +109,6 @@ public class LabelingFormulaContext {
 	/* formaters */
 
 	private Format getIngTextFormat(AbstractLabelingComponent lblComponent) {
-
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
 			return new MessageFormat(textFormaters.get(lblComponent.getNodeRef()));
 		}
@@ -124,7 +123,6 @@ public class LabelingFormulaContext {
 		} else if (lblComponent instanceof IngItem && ((IngItem) lblComponent).getSubIngs().size() > 0) {
 			return new MessageFormat("{0} ({2})");
 		}
-
 		return new MessageFormat(defaultFormat);
 	}
 
@@ -151,7 +149,6 @@ public class LabelingFormulaContext {
 						}
 						val = formula;
 					}
-
 					mlText.addValue(locale, val);
 				}
 			}
@@ -414,7 +411,7 @@ public class LabelingFormulaContext {
 	}
 
 	private String cleanLabel(StringBuffer buffer) {
-		return buffer.toString().replaceAll("null|\\(null\\)|\\(\\)", "").trim();
+		return buffer.toString().replaceAll(" null| \\(null\\)| \\(\\)", "").trim();
 	}
 
 	private StringBuffer renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents) {
@@ -475,6 +472,7 @@ public class LabelingFormulaContext {
 
 		Map<IngTypeItem, List<AbstractLabelingComponent>> tmp = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
 
+		boolean keepOrder = false;
 		for (AbstractLabelingComponent lblComponent : compositeLabeling.getIngList().values()) {
 			IngTypeItem ingType = null;
 			if (lblComponent instanceof IngItem) {
@@ -526,12 +524,16 @@ public class LabelingFormulaContext {
 				}
 			}
 
+			if (lblComponent.getQty() == null) {
+				keepOrder = true;
+			}
+
 			if (lblComponent instanceof CompositeLabeling && ((CompositeLabeling) lblComponent).isGroup()) {
 				ingType = IngTypeItem.DEFAULT_GROUP;
-
 			}
 
 			if (ingType == null) {
+
 				ingType = new IngTypeItem();
 				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + lblComponent.getNodeRef().hashCode()));
 			}
@@ -546,39 +548,47 @@ public class LabelingFormulaContext {
 
 		}
 
+		 keepOrder = DeclarationType.Detail.equals(compositeLabeling.getDeclarationType()) && keepOrder;
+
 		/*
 		 * Sort by qty, default is always first
 		 */
+
 		List<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>> entries = new ArrayList<>(tmp.entrySet());
-		Collections.sort(entries, new Comparator<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>>() {
-			public int compare(Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> a, Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> b) {
+		if (!keepOrder) {
+			Collections.sort(entries, new Comparator<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>>() {
+				public int compare(Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> a, Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> b) {
 
-				if (IngTypeItem.DEFAULT_GROUP.equals(a.getKey())) {
-					return -1;
-				}
-
-				if (IngTypeItem.DEFAULT_GROUP.equals(b.getKey())) {
-					return 1;
-				}
-
-				return getQty(b.getValue()).compareTo(getQty(a.getValue()));
-			}
-
-			private Double getQty(List<AbstractLabelingComponent> lblComponents) {
-				Double ret = 0d;
-				for (AbstractLabelingComponent lblComponent : lblComponents) {
-					if (lblComponent.getQty() != null) {
-						ret += lblComponent.getQty();
+					if (IngTypeItem.DEFAULT_GROUP.equals(a.getKey())) {
+						return -1;
 					}
+
+					if (IngTypeItem.DEFAULT_GROUP.equals(b.getKey())) {
+						return 1;
+					}
+
+					return getQty(b.getValue()).compareTo(getQty(a.getValue()));
 				}
 
-				return ret;
-			}
-		});
+				private Double getQty(List<AbstractLabelingComponent> lblComponents) {
+					Double ret = 0d;
+					for (AbstractLabelingComponent lblComponent : lblComponents) {
+						if (lblComponent.getQty() != null) {
+							ret += lblComponent.getQty();
+						}
+					}
+
+					return ret;
+				}
+			});
+		}
 		Map<IngTypeItem, List<AbstractLabelingComponent>> sortedIngListByType = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> entry : entries) {
 
-			Collections.sort(entry.getValue());
+			if (!keepOrder) {
+				// Sort by value
+				Collections.sort(entry.getValue());
+			}
 			sortedIngListByType.put(entry.getKey(), entry.getValue());
 		}
 
@@ -588,10 +598,10 @@ public class LabelingFormulaContext {
 
 	public boolean matchFormule(String formula, DeclarationFilterContext declarationFilterContext) {
 		if (formula != null && !formula.isEmpty()) {
-		    if(logger.isDebugEnabled()){
-		    	logger.debug("Test Match formula :"+formula);
-		    }
-			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Test Match formula :" + formula);
+			}
+
 			ExpressionParser parser = new SpelExpressionParser();
 			StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
 

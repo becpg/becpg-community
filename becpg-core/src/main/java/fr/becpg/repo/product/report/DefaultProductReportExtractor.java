@@ -230,10 +230,18 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		if (productData.getLabelingListView().getIngLabelingList() != null) {
 			Element ingListElt = dataListsElt.addElement(BeCPGModel.TYPE_INGLABELINGLIST.getLocalName()+"s");
 
+			
 			for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
-
+			
+				MLText labelingText = dataItem.getManualValue();
+				if(labelingText == null || labelingText.isEmpty()){
+					labelingText = dataItem.getValue();
+				}
+				
+				
+				if(labelingText!=null){
 				List<String> locales = new ArrayList<String>();
-				for (Locale locale : dataItem.getValue().getLocales()) {
+				for (Locale locale : labelingText.getLocales()) {
 
 					logger.debug("ill, locale: " + locale);					
 
@@ -264,6 +272,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 						}
 					}
 				}
+			}
 			}
 		}
 
