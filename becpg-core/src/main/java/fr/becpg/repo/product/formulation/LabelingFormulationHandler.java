@@ -167,6 +167,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label));
 				}
 			}
+		} else {
+			//Keep Manual ingList
+			for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+				if (tmp.getManualValue()!=null && !tmp.getManualValue().isEmpty()) {
+					tmp.setValue(null);
+					retainNodes.add(tmp);
+				}
+			}
+
 		}
 		formulatedProduct.getLabelingListView().getIngLabelingList().retainAll(retainNodes);
 
