@@ -177,7 +177,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		List<LabelingRuleListDataItem> ret = new ArrayList<>(formulatedProduct.getLabelingListView().getLabelingRuleList());
 		if (formulatedProduct.getEntityTpl() != null) {
 			for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList()) {
-				if (!Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsManual()) && Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsActive())) {
+				if (!modelLabelingRuleListDataItem.isSynchronisable()) {
 					ret.add(modelLabelingRuleListDataItem);
 				}
 			}
@@ -189,7 +189,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void copyTemplateLabelingRuleList(ProductData formulatedProduct) {
 		if (formulatedProduct.getEntityTpl() != null) {
 			for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList()) {
-				if (Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsManual())) {
+				if (modelLabelingRuleListDataItem.isSynchronisable()) {
 					boolean contains = false;
 					for (LabelingRuleListDataItem labelingRuleListDataItem : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
 						if (labelingRuleListDataItem.getName().equals(modelLabelingRuleListDataItem.getName())) {

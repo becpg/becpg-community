@@ -13,10 +13,11 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelingRuleList")
-public class LabelingRuleListDataItem extends AbstractManualDataItem {
+public class LabelingRuleListDataItem extends AbstractManualDataItem implements Synchronisable {
 	
 	private String formula;
 	private MLText label;
@@ -178,7 +179,11 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 				+ replacements + "]";
 	}
 
-	
+	@Override
+	public boolean isSynchronisable() {
+		return Boolean.TRUE.equals(getIsManual());
+	}
+
 	
 
 }
