@@ -61,26 +61,29 @@
       },
 
       onActionShowWused : function EntityDataGrid_onActionShowWused(p_items) {
-         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], nodeRefs = [];
-
-         for ( var i = 0, ii = items.length; i < ii; i++) {
-            nodeRefs.push(items[i].nodeRef);
-         }
-
+         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
          function onActionShowWused_redirect(itemAssocName, assocName ){
+            var nodeRefs = [];
+            
+            for ( var i = 0, ii = items.length; i < ii; i++) {
+               if(!assocName){
+                  nodeRefs.push(items[i].nodeRef);
+               } else {
+                  if(items[i].itemData[itemAssocName].value){
+                     nodeRefs.push(items[i].itemData[itemAssocName].value);
+                  }else {
+                     for ( var j in items[i].itemData[itemAssocName]) {
+                        nodeRefs.push(items[i].itemData[itemAssocName][j].value);
+                     }
+                  }
+               }
+            }
+            
             if(!assocName){
                window.location = Alfresco.constants.URL_PAGECONTEXT + "wused?type=" + items[0].itemType + "&nodeRefs=" + nodeRefs
                .join();
             } else {
-               nodeRefs = [];
-               if(items[0].itemData[itemAssocName].value){
-                  nodeRefs.push(items[0].itemData[itemAssocName].value);
-               }else {
-                  for ( var j in items[0].itemData[itemAssocName]) {
-                     nodeRefs.push(items[0].itemData[itemAssocName][j].value);
-                  }
-               }
                window.location = Alfresco.constants.URL_PAGECONTEXT + "wused?assocName=" + assocName + "&nodeRefs=" + nodeRefs
                      .join();
             }
@@ -131,15 +134,22 @@
                         });
          } else {
             
-            var val = null;
+          
             
             if(this.datalistMeta.name.indexOf("WUsed") == 0){
+               var val = null, val2 =  "assoc_bcpg_compoListProduct";
                if(this.datalistMeta.name.indexOf("|")>0){
                   val ="assoc_"+this.datalistMeta.name.split("|")[1].replace(":","_");
+               } else if(this.datalistMeta.itemType==="bcpg:packagingList"){
+                  val = "assoc_bcpg_packagingListProduct";
+                  val2 = val;
+               } else if(this.datalistMeta.itemType==="mpm:processList"){
+                  val = "assoc_mpm_plResource";
+                  val2 = val;
                } else {
                   val = "assoc_bcpg_compoListProduct";
                }
-               onActionShowWused_redirect(val,"assoc_bcpg_compoListProduct");
+               onActionShowWused_redirect(val, val2);
             } else {
                onActionShowWused_redirect();
             }
