@@ -308,25 +308,30 @@ public class FormulationHelper {
 		totalValue += qtyUsed * value / netWeight;		
 		return totalValue;
 	}
-	
-	public static Double getTareInKg(NodeRef packagingNodeRef, NodeService nodeService){
+
+	public static Double getTareInKg(NodeRef productNodeRef, NodeService nodeService){
 		
-		Double tare = (Double)nodeService.getProperty(packagingNodeRef, PackModel.PROP_TARE);
-		String strTareUnit = (String)nodeService.getProperty(packagingNodeRef, PackModel.PROP_TARE_UNIT);
+		Double tare = (Double)nodeService.getProperty(productNodeRef, PackModel.PROP_TARE);
+		String strTareUnit = (String)nodeService.getProperty(productNodeRef, PackModel.PROP_TARE_UNIT);
 		if(tare == null || strTareUnit == null){
 			return null;
 		}
-		else{
-			
-			TareUnit tareUnit = TareUnit.parse(strTareUnit);
-			
-			if(tareUnit == TareUnit.g || tareUnit == TareUnit.gPerm2){
-				tare = tare / 1000;
-			}
-			
-			return tare;
+		else{			
+			TareUnit tareUnit = TareUnit.parse(strTareUnit);			
+			return FormulationHelper.getTareInKg(tare, tareUnit);
 		}				
 	}
 	
-	
+	public static Double getTareInKg(Double tare, TareUnit tareUnit){
+				
+		if(tare == null || tareUnit == null){
+			return null;
+		}
+		else{			
+			if(tareUnit == TareUnit.g || tareUnit == TareUnit.gPerm2){
+				tare = tare / 1000;
+			}
+			return tare;
+		}				
+	}	
 }

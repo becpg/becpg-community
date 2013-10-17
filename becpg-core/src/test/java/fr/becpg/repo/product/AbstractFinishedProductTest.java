@@ -25,6 +25,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.TareUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -491,7 +492,10 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					rawMaterial5.setLegalName(legalName);
 					rawMaterial5.setQty(0.1d);
 					rawMaterial5.setUnit(ProductUnit.kg);
+					rawMaterial5.setNetWeight(0.1d);
 					rawMaterial5.setDensity(0.1d);
+					rawMaterial5.setTare(9d);
+					rawMaterial5.setTareUnit(TareUnit.g);
 					//costList
 					costList = new ArrayList<CostListDataItem>();
 					costList.add(new CostListDataItem(null, 5d, "€/m", null, cost1, false));

@@ -131,43 +131,42 @@ public class ProductServiceImpl implements ProductService {
      * @param containerNodeRef : companyHome, or documentLibrary of site
      * @param productNodeRef : product
      */
-    @Override
-    public void classifyProductByHierarchy(NodeRef containerNodeRef, NodeRef productNodeRef){
-    	
-    	NodeRef destinationNodeRef = null;
-    	ProductData productData = alfrescoRepository.findOne(productNodeRef);    	
-		
-		// product type		
-		SystemProductType systemProductType = SystemProductType.valueOf(nodeService.getType(productNodeRef));
+	@Override
+	public void classifyProductByHierarchy(NodeRef containerNodeRef, NodeRef productNodeRef) {
+
+		NodeRef destinationNodeRef = null;		
+
+		// product type
+		QName type = nodeService.getType(productNodeRef);
+		SystemProductType systemProductType = SystemProductType.valueOf(type);
 		String productTypeFolderName = productDictionaryService.getFolderName(systemProductType);
-		
-		if(productTypeFolderName == null){
-			logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
-			logger.debug(" - No productTypeFolderName found for: " + systemProductType);
+
+		if (productTypeFolderName == null) {
+			logger.error("Failed to classify product. productNodeRef: " + productNodeRef + " - No productTypeFolderName found for: " + type);
 		} else {
-		
-		NodeRef productTypeNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, systemProductType.toString(), productTypeFolderName);
-		
-
-		if(productData.getHierarchy2()!=null){
-			destinationNodeRef = getOrCreateHierachyFolder( productData.getHierarchy2(),productTypeNodeRef);
-		} else{
-			logger.debug("Cannot classify product since it doesn't have a productHierarchy2.");
-		}
-
-		if(destinationNodeRef != null){
-
-			// classify product
-			repoService.moveNode(productNodeRef, destinationNodeRef);
 			
-			// productNodeRef : remove all owner related rights 
-            ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);    			
+			ProductData productData = alfrescoRepository.findOne(productNodeRef);
+			NodeRef productTypeNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef,
+					systemProductType.toString(), productTypeFolderName);
+
+			if (productData.getHierarchy2() != null) {
+				destinationNodeRef = getOrCreateHierachyFolder(productData.getHierarchy2(), productTypeNodeRef);
+			} else {
+				logger.debug("Cannot classify product since it doesn't have a productHierarchy2.");
+			}
+
+			if (destinationNodeRef != null) {
+
+				// classify product
+				repoService.moveNode(productNodeRef, destinationNodeRef);
+
+				// productNodeRef : remove all owner related rights
+				ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);
+			} else {
+				logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
+			}
 		}
-		else{
-			logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
-		}
-		}
-    }
+	}
 
 	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
 		NodeRef destinationNodeRef = null;

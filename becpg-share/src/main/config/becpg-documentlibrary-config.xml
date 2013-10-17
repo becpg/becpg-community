@@ -50,6 +50,7 @@
 
 		<types>
 			<type name="cm:content">
+				<subtype name="bcpg:product" />
 				<subtype name="bcpg:productMicrobioCriteria" />
 				<subtype name="bcpg:productSpecification" />
 

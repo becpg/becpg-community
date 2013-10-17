@@ -66,6 +66,7 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="beCPGSearchService" ref="BeCPGSearchService" />
 					<property name="beCPGCacheService" ref="beCPGCacheService" />	
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
 				</bean>
