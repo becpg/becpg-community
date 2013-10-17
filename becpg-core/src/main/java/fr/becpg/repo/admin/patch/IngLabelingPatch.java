@@ -6,7 +6,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -38,50 +37,51 @@ public class IngLabelingPatch extends AbstractBeCPGPatch {
 	protected String applyInternal() throws Exception {
 		NodeRef entityTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_FINISHEDPRODUCT);
 
-		ProductData entityTpl = alfrescoRepository.findOne(entityTplNodeRef);
-		NodeRef renderRuleNodeRef = null;
-		for (LabelingRuleListDataItem labelingRuleListDataItem : entityTpl.getLabelingListView().getLabelingRuleList()) {
-			if (LabelingRuleType.Render.equals(labelingRuleListDataItem.getLabelingRuleType()) && labelingRuleListDataItem.getName().contains("1")) {
-				renderRuleNodeRef = labelingRuleListDataItem.getNodeRef();
-				break;
+		if (entityTplNodeRef != null) {
+			ProductData entityTpl = alfrescoRepository.findOne(entityTplNodeRef);
+			NodeRef renderRuleNodeRef = null;
+			for (LabelingRuleListDataItem labelingRuleListDataItem : entityTpl.getLabelingListView().getLabelingRuleList()) {
+				if (LabelingRuleType.Render.equals(labelingRuleListDataItem.getLabelingRuleType()) && labelingRuleListDataItem.getName().contains("1")) {
+					renderRuleNodeRef = labelingRuleListDataItem.getNodeRef();
+					break;
+				}
 			}
-		}
 
-		if (renderRuleNodeRef == null) {
-			logger.info("No default labeling Rule found creating one");
-			LabelingRuleListDataItem labelingRuleListDataItem = new LabelingRuleListDataItem("Étiquetage 1", "render()", LabelingRuleType.Render);
-			labelingRuleListDataItem.setIsManual(false);
-			labelingRuleListDataItem.setIsActive(true);
-			entityTpl.getLabelingListView().getLabelingRuleList().add(labelingRuleListDataItem);
-			alfrescoRepository.save(entityTpl);
-			renderRuleNodeRef = labelingRuleListDataItem.getNodeRef();
-		}
+			if (renderRuleNodeRef == null) {
+				logger.info("No default labeling Rule found creating one");
+				LabelingRuleListDataItem labelingRuleListDataItem = new LabelingRuleListDataItem("Étiquetage 1", "render()", LabelingRuleType.Render);
+				labelingRuleListDataItem.setIsManual(false);
+				labelingRuleListDataItem.setIsActive(true);
+				entityTpl.getLabelingListView().getLabelingRuleList().add(labelingRuleListDataItem);
+				alfrescoRepository.save(entityTpl);
+				renderRuleNodeRef = labelingRuleListDataItem.getNodeRef();
+			}
 
-		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(entityTplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			List<AssociationRef> assocRefs = nodeService.getSourceAssocs(entityTplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 
-		if (renderRuleNodeRef == null) {
-			throw new RuntimeException("No rule created");
-		}
-		for (AssociationRef assocRef : assocRefs) {
-			if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !entityTplNodeRef.equals(assocRef.getSourceRef()) ) {
+			if (renderRuleNodeRef == null) {
+				throw new RuntimeException("No rule created");
+			}
+			for (AssociationRef assocRef : assocRefs) {
+				if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !entityTplNodeRef.equals(assocRef.getSourceRef())) {
 
-				
-				try {
-					ProductData entity = alfrescoRepository.findOne(assocRef.getSourceRef());
+					try {
+						ProductData entity = alfrescoRepository.findOne(assocRef.getSourceRef());
 
-					logger.info("Patch ingLabeling for :" + entity.getName());
+						logger.info("Patch ingLabeling for :" + entity.getName());
 
-					entity.getLabelingListView().getLabelingRuleList().clear();
+						entity.getLabelingListView().getLabelingRuleList().clear();
 
-					for (IngLabelingListDataItem ingLabelingListDataItem : entity.getLabelingListView().getIngLabelingList()) {
-						ingLabelingListDataItem.setGrp(renderRuleNodeRef);
-						break;
+						for (IngLabelingListDataItem ingLabelingListDataItem : entity.getLabelingListView().getIngLabelingList()) {
+							ingLabelingListDataItem.setGrp(renderRuleNodeRef);
+							break;
+						}
+
+						alfrescoRepository.save(entity);
+
+					} catch (Exception e) {
+						logger.error(e, e);
 					}
-
-					alfrescoRepository.save(entity);
-
-				} catch (Exception e) {
-					logger.error(e, e);
 				}
 			}
 		}

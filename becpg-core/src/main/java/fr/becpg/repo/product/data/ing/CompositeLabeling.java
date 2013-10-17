@@ -21,8 +21,6 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 
 	private Double qtyRMUsed = 0d;
 	
-	private boolean isGroup = false;
-
 
 	private DeclarationType declarationType;
 	
@@ -36,7 +34,6 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		super(compositeLabeling);
 	    this.ingList = compositeLabeling.ingList;
 	    this.qtyRMUsed = compositeLabeling.qtyRMUsed;
-	    this.isGroup = compositeLabeling.isGroup;
 	    this.declarationType = compositeLabeling.declarationType;
 	}
 	
@@ -57,14 +54,9 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	public boolean isGroup() {
-		return isGroup;
+		return DeclarationType.Group.equals(declarationType);
 	}
 
-	//TODO test Declaration Type instead
-	@Deprecated
-	public void setGroup(boolean isGroup) {
-		this.isGroup = isGroup;
-	}
 
 	public Double getQtyRMUsed() {
 		return qtyRMUsed;
@@ -102,7 +94,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
-		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (getLegalName(I18NUtil.getContentLocaleLang())==null ? "root" : getLegalName(I18NUtil.getContentLocaleLang()))+" - "+getQty()+" ("+getQtyRMUsed()+")"  +"]\n");
+		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (getLegalName(I18NUtil.getContentLocaleLang())==null ? "root" : getLegalName(I18NUtil.getContentLocaleLang()))+" - "+getQty()+" ("+getQtyRMUsed()+") "+(declarationType!=null ? declarationType.toString():"")+"]\n");
         for (Iterator<AbstractLabelingComponent> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
         	AbstractLabelingComponent labelingComponent =  iterator.next();
         	if(labelingComponent  instanceof CompositeLabeling) {
