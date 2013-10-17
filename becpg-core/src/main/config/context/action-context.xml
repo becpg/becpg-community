@@ -13,4 +13,11 @@
      	<property name="nodeService" ref="nodeService" />
     </bean>  
     
+	<bean id="compress-image" class="fr.becpg.repo.action.executer.ImageCompressorActionExecuter" parent="action-executer">
+      <property name="contentService" ref="contentService" />
+      <property name="imageMagickContentTransformer">
+          <ref bean="transformer.ImageMagick" />
+      </property>   
+    </bean> 
+    
 </beans>

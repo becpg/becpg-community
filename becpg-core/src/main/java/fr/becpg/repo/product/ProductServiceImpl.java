@@ -132,13 +132,10 @@ public class ProductServiceImpl implements ProductService {
      * @param productNodeRef : product
      */
     @Override
-    public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef){
+    public void classifyProductByHierarchy(NodeRef containerNodeRef, NodeRef productNodeRef){
     	
     	NodeRef destinationNodeRef = null;
-    	ProductData productData = alfrescoRepository.findOne(productNodeRef);
-    	
-    	// products
-		NodeRef productsNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+    	ProductData productData = alfrescoRepository.findOne(productNodeRef);    	
 		
 		// product type		
 		SystemProductType systemProductType = SystemProductType.valueOf(nodeService.getType(productNodeRef));
@@ -149,7 +146,7 @@ public class ProductServiceImpl implements ProductService {
 			logger.debug(" - No productTypeFolderName found for: " + systemProductType);
 		} else {
 		
-		NodeRef productTypeNodeRef = repoService.getOrCreateFolderByPath(productsNodeRef, systemProductType.toString(), productTypeFolderName);
+		NodeRef productTypeNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, systemProductType.toString(), productTypeFolderName);
 		
 
 		if(productData.getHierarchy2()!=null){

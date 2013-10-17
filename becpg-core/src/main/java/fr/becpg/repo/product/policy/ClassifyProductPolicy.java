@@ -16,8 +16,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.CompanyHomeHelper;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.ProductService;
 
@@ -29,6 +32,7 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 	private ProductService productService;
 	private NamespaceService namespaceService;
 	private Repository repositoryHelper;
+	private RepoService repoService;
 
 
 	public void setProductService(ProductService productService) {
@@ -41,6 +45,10 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 
 	public void setRepositoryHelper(Repository repositoryHelper) {
 		this.repositoryHelper = repositoryHelper;
+	}
+
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
 	}
 
 	public void doInit() {
@@ -107,7 +115,9 @@ public class ClassifyProductPolicy extends AbstractBeCPGPolicy implements NodeSe
 					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL) &&
 					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 				
-				productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
+				// products
+    			NodeRef productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+				productService.classifyProductByHierarchy(productsFolder, nodeRef);
 			}
 		}
 	}

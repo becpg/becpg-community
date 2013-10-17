@@ -23,6 +23,9 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductService;
 
 /**
@@ -38,6 +41,7 @@ public class ValidateProduct extends BaseJavaDelegate {
 	private NodeService nodeService;
 	private Repository repositoryHelper;
 	private DictionaryService dictionaryService;
+	private RepoService repoService;
 	
 	
 	public void setProductService(ProductService productService) {
@@ -52,12 +56,13 @@ public class ValidateProduct extends BaseJavaDelegate {
 		this.repositoryHelper = repositoryHelper;
 	}
 
-
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
 
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
@@ -81,8 +86,11 @@ public class ValidateProduct extends BaseJavaDelegate {
 						QName nodeType = nodeService.getType(nodeRef);
 						
 						if(dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_PRODUCT)){
-	            			nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);            			
-	            			productService.classifyProduct(repositoryHelper.getCompanyHome(), nodeRef);
+	            			nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);  
+
+	            			// products
+	            			NodeRef productsNodeRef = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));	            			
+	            			productService.classifyProductByHierarchy(productsNodeRef, nodeRef);
 						}            			
             		}
         		}
