@@ -286,6 +286,7 @@
 		<property name="formulationService" ref="formulationService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
+		<property name="transactionService" ref="transactionService" />
 		
 	</bean>
 	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
