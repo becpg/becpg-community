@@ -45,7 +45,6 @@ public class RemoveDataListPatch1 extends AbstractPatch {
 	protected String applyInternal() throws Exception {
 		
 		logger.info("RemoveDataListPatch1");
-		
 		List<QName> entityTypes = new ArrayList<>();
 		entityTypes.add(BeCPGModel.TYPE_RAWMATERIAL);
 		deleteDataLists(datalistsToRemoveOnRawMaterials, entityTypes);

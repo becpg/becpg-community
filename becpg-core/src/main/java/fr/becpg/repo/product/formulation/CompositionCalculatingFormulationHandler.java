@@ -23,9 +23,11 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -44,6 +46,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	
 	private BeCPGCacheService beCPGCacheService;
 	
+	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -54,6 +58,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,13 +100,17 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			formulatedProduct.setYield(100 * netWeight / qtyUsed);
 		}	
 		
+		// Volume
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct.getNodeRef(), nodeService);
 		if(netVolume != null){
 			Double calculatedVolume = calculateVolumeFromChildren(compositeDefaultVariant);
 			if(calculatedVolume != 0d){
 				formulatedProduct.setYieldVolume(100 * netVolume / calculatedVolume);
 			}			
-		}
+		}		
+		
+		// Tare
+		calculateTare(formulatedProduct);
 		
 		return true;
 	}
@@ -288,6 +300,44 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			volume += value;
 		}		
 		return volume;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void calculateTare(ProductData formulatedProduct){
+		Double totalTare = 0d;
+		for(CompoListDataItem compoList : formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)){			
+			Double qty = compoList.getQty();
+			CompoListUnit unit = compoList.getCompoListUnit();
+			if(compoList.getProduct() != null && qty != null && unit != null){		
+				
+				ProductData productData = alfrescoRepository.findOne(compoList.getProduct());				
+				Double productQty = productData.getQty();
+				ProductUnit productUnit = productData.getUnit();
+				Double tare = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
+				
+				if(tare != null && productUnit != null && productQty != null){
+					
+					if(FormulationHelper.isProductUnitP(productUnit)){
+						qty = compoList.getQtySubFormula();
+					}
+					else if(FormulationHelper.isProductUnitLiter(productUnit)){						
+						int compoFactor = unit.equals(CompoListUnit.L) ? 1000 : 1;
+						int productFactor = productUnit.equals(ProductUnit.L) ? 1000 : 1;						
+						qty = compoList.getQtySubFormula() * compoFactor / productFactor;					
+					}
+					else if(FormulationHelper.isProductUnitKg(productUnit)){
+						if(productUnit.equals(ProductUnit.g)){
+							qty = qty * 1000;
+						}
+					}
+					
+					logger.debug("tare: " + tare + " qty " + qty + " productQty " + productQty);					
+					totalTare += (tare * qty / productQty);
+				}				
+			}
+		}
+		formulatedProduct.setTare(totalTare * 1000);
+		formulatedProduct.setTareUnit(TareUnit.g);
 	}
 	
 }

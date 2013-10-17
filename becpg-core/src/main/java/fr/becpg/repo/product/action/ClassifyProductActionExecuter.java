@@ -5,9 +5,11 @@ package fr.becpg.repo.product.action;
 
 import java.util.List;
 
+import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,13 +21,14 @@ import fr.becpg.repo.product.ProductService;
  *
  * @author querephi
  */
-public class ClassifyProductByHierarchyActionExecuter extends ActionExecuterAbstractBase{
+public class ClassifyProductActionExecuter extends ActionExecuterAbstractBase{
 
 	/** The Constant NAME. */
 	public static final String NAME = "classify-product";
+	public static final String PARAM_CLASSIFY_FOLDER = "classify-folder";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ClassifyProductByHierarchyActionExecuter.class);	
+	private static Log logger = LogFactory.getLog(ClassifyProductActionExecuter.class);	
 	
 	/** The product service. */
 	private ProductService productService;
@@ -39,23 +42,16 @@ public class ClassifyProductByHierarchyActionExecuter extends ActionExecuterAbst
 		this.productService = productService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.alfresco.repo.action.executer.ActionExecuterAbstractBase#executeImpl(org.alfresco.service.cmr.action.Action, org.alfresco.service.cmr.repository.NodeRef)
-	 */
 	@Override
 	protected void executeImpl(Action action, NodeRef nodeRef) {
-		
-		logger.debug("Start ClassifyProductByHierarchyActionExecuter");		
-		productService.classifyProductByHierarchy(action.getNodeRef(), nodeRef);		
+		logger.debug("Start ClassifyProductActionExecuter");
+		NodeRef approveFolder = (NodeRef)action.getParameterValue(PARAM_CLASSIFY_FOLDER);
+		productService.classifyProductByHierarchy(approveFolder, nodeRef);		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.alfresco.repo.action.ParameterizedItemAbstractBase#addParameterDefinitions(java.util.List)
-	 */
 	@Override
-	protected void addParameterDefinitions(List<ParameterDefinition> arg0) {
-		// TODO Auto-generated method stub
-		
+	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
+		paramList.add(new ParameterDefinitionImpl(PARAM_CLASSIFY_FOLDER, DataTypeDefinition.NODE_REF, true, getParamDisplayLabel(PARAM_CLASSIFY_FOLDER)));		
 	}
 
 }

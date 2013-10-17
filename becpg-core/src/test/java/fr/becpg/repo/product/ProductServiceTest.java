@@ -341,10 +341,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		logger.debug("testClassifyProductByHierarchy");
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				// products
-    			productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+			public NodeRef execute() throws Throwable {				
 				
 				/*-- Clean --*/
 				NodeRef productsNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
@@ -368,6 +365,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		
 		final NodeRef rawMaterial2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
+    			
+				// products
+    			productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
     			
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");

@@ -57,6 +57,9 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private Double yieldVolume;
 	private Double netWeight;
 	private Double servingSize;
+	
+	private Double tare;
+	private TareUnit tareUnit;
 
 	/*
 	 * Profitability properties
@@ -239,6 +242,26 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setServingSize(Double servingSize) {
 		this.servingSize = servingSize;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pack:tare")
+	public Double getTare() {
+		return tare;
+	}
+
+	public void setTare(Double tare) {
+		this.tare = tare;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "pack:tareUnit")
+	public TareUnit getTareUnit() {
+		return tareUnit;
+	}
+
+	public void setTareUnit(TareUnit tareUnit) {
+		this.tareUnit = tareUnit;
 	}
 
 	@AlfProp
@@ -504,14 +527,14 @@ public class ProductData extends AbstractEffectiveDataItem {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName
 				+ ", title=" + title + ", state=" + state + ", unit=" + unit + ", entityTpl=" + entityTpl + ", qty="
 				+ qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight="
-				+ netWeight + ", servingSize=" + servingSize + ", unitTotalCost=" + unitTotalCost + ", unitPrice="
-				+ unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList="
-				+ allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList
-				+ ", nutList=" + nutList + ", organoList=" + organoList + ", microbioList=" + microbioList
-				+ ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList
-				+ ", labelClaimList=" + labelClaimList + ", compoListView=" + compoListView + ", processListView="
-				+ processListView + ", packagingListView=" + packagingListView + ", labelingListView="
-				+ labelingListView + ", variants=" + variants + "]";
+				+ netWeight + ", servingSize=" + servingSize + ", tare=" + tare + ", tareUnit=" + tareUnit
+				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability
+				+ ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList
+				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList="
+				+ organoList + ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList
+				+ ", forbiddenIngList=" + forbiddenIngList + ", labelClaimList=" + labelClaimList + ", compoListView="
+				+ compoListView + ", processListView=" + processListView + ", packagingListView=" + packagingListView
+				+ ", labelingListView=" + labelingListView + ", variants=" + variants + "]";
 	}
 
 	@Override
@@ -543,6 +566,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((tare == null) ? 0 : tare.hashCode());
+		result = prime * result + ((tareUnit == null) ? 0 : tareUnit.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
@@ -683,6 +708,13 @@ public class ProductData extends AbstractEffectiveDataItem {
 		} else if (!servingSize.equals(other.servingSize))
 			return false;
 		if (state != other.state)
+			return false;
+		if (tare == null) {
+			if (other.tare != null)
+				return false;
+		} else if (!tare.equals(other.tare))
+			return false;
+		if (tareUnit != other.tareUnit)
 			return false;
 		if (title == null) {
 			if (other.title != null)
