@@ -57,7 +57,7 @@ public interface ProductService {
      * @param containerNodeRef the container node ref
      * @param productNodeRef the product node ref
      */
-    public void classifyProduct(NodeRef containerNodeRef, NodeRef productNodeRef);
+    public void classifyProductByHierarchy(NodeRef containerNodeRef, NodeRef productNodeRef);
 
     
     

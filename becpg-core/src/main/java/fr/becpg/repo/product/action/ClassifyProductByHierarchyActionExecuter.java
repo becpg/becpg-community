@@ -19,13 +19,13 @@ import fr.becpg.repo.product.ProductService;
  *
  * @author querephi
  */
-public class ClassifyProductActionExecuter extends ActionExecuterAbstractBase{
+public class ClassifyProductByHierarchyActionExecuter extends ActionExecuterAbstractBase{
 
 	/** The Constant NAME. */
 	public static final String NAME = "classify-product";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ClassifyProductActionExecuter.class);	
+	private static Log logger = LogFactory.getLog(ClassifyProductByHierarchyActionExecuter.class);	
 	
 	/** The product service. */
 	private ProductService productService;
@@ -46,7 +46,7 @@ public class ClassifyProductActionExecuter extends ActionExecuterAbstractBase{
 	protected void executeImpl(Action action, NodeRef nodeRef) {
 		
 		logger.debug("Start ClassifyProductActionExecuter");		
-		productService.classifyProduct(action.getNodeRef(), nodeRef);		
+		productService.classifyProductByHierarchy(action.getNodeRef(), nodeRef);		
 	}
 
 	/* (non-Javadoc)

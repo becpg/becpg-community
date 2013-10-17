@@ -64,9 +64,10 @@
 		<property name="productService" ref="productService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="repoService" ref="repoService" />		
 	</bean>
 	
-	<bean id="classify-product" class="fr.becpg.repo.product.action.ClassifyProductActionExecuter" parent="action-executer">
+	<bean id="classify-product" class="fr.becpg.repo.product.action.ClassifyProductByHierarchyActionExecuter" parent="action-executer">
       <property name="productService" ref="productService" />      
     </bean>
 
