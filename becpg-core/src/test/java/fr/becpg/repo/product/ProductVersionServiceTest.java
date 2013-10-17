@@ -30,8 +30,10 @@ import org.junit.Test;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
@@ -428,7 +430,9 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 
 				// Valid it
 				nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);
-				productService.classifyProduct(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
+				// products
+    			NodeRef productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+				productService.classifyProductByHierarchy(productsFolder, rawMaterialNodeRef);
 
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				String expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish/";
