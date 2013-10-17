@@ -172,11 +172,21 @@ public class LabelingFormulaContext {
 
 	public class AggregateRule {
 
+		String name;
 		MLText label;
 		NodeRef replacement;
 		Double qty = 100d;
 		LabelingRuleType labelingRuleType;
 		List<NodeRef> components;
+
+		public AggregateRule(String name) {
+			super();
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
 
 		public NodeRef getReplacement() {
 			return replacement;
@@ -221,7 +231,7 @@ public class LabelingFormulaContext {
 		}
 
 		public NodeRef getKey() {
-			return replacement != null ? replacement : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + label.getDefaultValue().hashCode());
+			return replacement != null ? replacement : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + name.hashCode());
 		}
 
 		public boolean matchAll(Collection<AbstractLabelingComponent> values) {
@@ -258,13 +268,13 @@ public class LabelingFormulaContext {
 		return declarationFilters;
 	}
 
-	public boolean addRule(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labeLabelingRuleType) {
+	public boolean addRule(String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labeLabelingRuleType) {
 
 		if (LabelingRuleType.Type.equals(labeLabelingRuleType)
 				|| ((components != null && components.size() > 1) || (replacement != null && !replacement.isEmpty()))
 				&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType) || LabelingRuleType.DoNotDetails
 						.equals(labeLabelingRuleType))) {
-			aggregate(components, replacement, label, formula, labeLabelingRuleType);
+			aggregate(name, components, replacement, label, formula, labeLabelingRuleType);
 		} else {
 			if (components != null && !components.isEmpty()) {
 				for (NodeRef component : components) {
@@ -279,13 +289,14 @@ public class LabelingFormulaContext {
 		return true;
 	}
 
-	private void aggregate(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labelingRuleType) {
+
+	private void aggregate(String name,List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labelingRuleType) {
 		String[] qtys = formula != null && !formula.isEmpty() ? formula.split(",") : null;
 
 		// components peut être ING, SF ou MP
 		int i = 0;
 		for (NodeRef component : components) {
-			AggregateRule aggregateRule = new AggregateRule();
+			AggregateRule aggregateRule = new AggregateRule(name);
 
 			if (replacement != null && !replacement.isEmpty()) {
 				aggregateRule.setReplacement(replacement.get(0));
@@ -396,11 +407,22 @@ public class LabelingFormulaContext {
 
 	private String renderCompositeIng(CompositeLabeling compositeLabeling) {
 		StringBuffer ret = new StringBuffer();
+		boolean appendEOF = false;
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
 			if (ret.length() > 0) {
-				ret.append(RepoConsts.LABEL_SEPARATOR);
+				if (appendEOF) {
+					ret.append("<br/>");
+				} else {
+					ret.append(RepoConsts.LABEL_SEPARATOR);
+				}
 			}
 
+			if (IngTypeItem.DEFAULT_GROUP.equals(kv.getKey())) {
+				appendEOF = true;
+			} else {
+				appendEOF = false;
+			}
+			
 			if (kv.getKey() != null && getIngName(kv.getKey()) != null) {
 				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()), renderLabelingComponent(compositeLabeling, kv.getValue()) }));
 			} else {
@@ -465,7 +487,6 @@ public class LabelingFormulaContext {
 		}
 
 		return ret;
-
 	}
 
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
