@@ -273,5 +273,17 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+	<bean id="patch.bcpg.removeDataListPatch1" class="fr.becpg.repo.admin.patch.RemoveDataListPatch1" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.removeDataListPatch1</value></property>
+        <property name="description"><value>patch.bcpg.removeDataListPatch1.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10018</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="fileFolderService" ref="fileFolderService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
     
 </beans>
