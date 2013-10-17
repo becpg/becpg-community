@@ -45,7 +45,7 @@ public class ClassifyProductByHierarchyActionExecuter extends ActionExecuterAbst
 	@Override
 	protected void executeImpl(Action action, NodeRef nodeRef) {
 		
-		logger.debug("Start ClassifyProductActionExecuter");		
+		logger.debug("Start ClassifyProductByHierarchyActionExecuter");		
 		productService.classifyProductByHierarchy(action.getNodeRef(), nodeRef);		
 	}
 

@@ -103,6 +103,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	@Resource
 	private WUsedListService wUsedListService;
 
+	private NodeRef productsFolder = null; 
 
 	/**
 	 * Test create product.
@@ -335,13 +336,16 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	 *             the exception
 	 */
 	@Test
-	public void testClassifyProduct() throws Exception {
+	public void testClassifyProductByHierarchy() throws Exception {
 
-		logger.debug("testClassifyProduct");
+		logger.debug("testClassifyProductByHierarchy");
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
+				// products
+    			productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
+				
 				/*-- Clean --*/
 				NodeRef productsNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
@@ -364,11 +368,10 @@ public class ProductServiceTest extends RepoBaseTestCase {
 		
 		final NodeRef rawMaterial2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
-
+    			
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
-				productService.classifyProduct(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
+				productService.classifyProductByHierarchy(productsFolder, rawMaterialNodeRef);
 
 				/*-- Check --*/
 				List<Path> paths = nodeService.getPaths(rawMaterialNodeRef, true);
@@ -387,7 +390,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- classify twice --*/
 				logger.debug("/*-- classify twice --*/");
-				productService.classifyProduct(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
+				productService.classifyProductByHierarchy(productsFolder, rawMaterialNodeRef);
 
 				/*-- Check --*/
 				paths = nodeService.getPaths(rawMaterialNodeRef, true);
@@ -422,7 +425,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
-				productService.classifyProduct(repositoryHelper.getCompanyHome(), rawMaterial2NodeRef);
+				productService.classifyProductByHierarchy(productsFolder, rawMaterial2NodeRef);
 
 				/*-- Check --*/
 				List<Path> paths = nodeService.getPaths(rawMaterial2NodeRef, true);

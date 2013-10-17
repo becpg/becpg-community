@@ -42,6 +42,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="productService" ref="productService"/>
+		<property name="repoService" ref="repoService" />		
 	</bean>
 	
 	<bean id="labelingRuleListPolicy" class="fr.becpg.repo.product.policy.LabelingRuleListPolicy"
