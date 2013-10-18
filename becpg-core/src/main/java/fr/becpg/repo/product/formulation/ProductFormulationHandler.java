@@ -3,8 +3,11 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
 	private static final String MESSAGE_MISSING_TARE = "message.formulate.missing.tare";
+	
+	protected static Log logger = LogFactory.getLog(ProductFormulationHandler.class);
 	
 	private NodeService nodeService;
 	
@@ -151,6 +156,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	
 	private void checkNetWeight(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef){
 		Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService);
+		logger.info("### " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + " netWeight " + netWeight);
 		if(netWeight == null || netWeight.equals(0d)){								
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
 		}

@@ -4,15 +4,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -21,13 +18,13 @@ import fr.becpg.repo.product.data.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.PackagingLevel;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListUnit;
 
 public class FormulationTareTest extends AbstractFinishedProductTest {
 
 	protected static Log logger = LogFactory.getLog(FormulationTareTest.class);
-
-	@Resource
-	private AssociationService associationService;
 
 	@Override
 	public void setUp() throws Exception {
@@ -62,6 +59,12 @@ public class FormulationTareTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
+				List<PackagingListDataItem> packList = new ArrayList<>();
+				packList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+				packList.add(new PackagingListDataItem(null, 2d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+				packList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));
+				finishedProduct.getPackagingListView().setPackagingList(packList);
+				
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 
 			}
@@ -74,7 +77,7 @@ public class FormulationTareTest extends AbstractFinishedProductTest {
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 				DecimalFormat df = new DecimalFormat("0.####");
-				assertEquals(df.format(99d), df.format(formulatedProduct.getTare()));
+				assertEquals(df.format(90d + 9d + 15d + 2*5d + 3d), df.format(formulatedProduct.getTare()));
 				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
 				return null;
 

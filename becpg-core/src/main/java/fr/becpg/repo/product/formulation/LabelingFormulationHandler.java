@@ -354,7 +354,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			AbstractLabelingComponent component = (AbstractLabelingComponent) iterator.next().getValue();
 			if (component instanceof CompositeLabeling) {
 
-				double currQty = component.getQty();
+				Double currQty = component.getQty();
 				ret.addAll(reorderCompositeLabeling((CompositeLabeling) component, false));
 				if (component.getQty() != currQty && component.getQty() == 0) {
 					iterator.remove();

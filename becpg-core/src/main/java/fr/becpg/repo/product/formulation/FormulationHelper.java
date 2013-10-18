@@ -238,7 +238,7 @@ public class FormulationHelper {
 			if(productUnit != null){
 				Double qty = getProductQty(nodeRef, nodeService);
 				if(qty != null){
-					//if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
+					if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
 						if(productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)){
 							qty = qty / 1000;
 						}
@@ -247,7 +247,10 @@ public class FormulationHelper {
 							qty = qty * density;
 						}
 						return qty;
-					//}						
+					}
+					else if(BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(nodeRef))){
+						return qty;
+					}
 				}
 				else if(FormulationHelper.isProductUnitP(productUnit)){
 					return QTY_FOR_PIECE;
@@ -255,7 +258,7 @@ public class FormulationHelper {
 			}
 		}	
 		
-		return DEFAULT_NET_WEIGHT;
+		return null;
 	}
 		
 	public static Double getNetVolume(NodeRef nodeRef, NodeService nodeService) {
@@ -317,7 +320,7 @@ public class FormulationHelper {
 			return null;
 		}
 		else{			
-			TareUnit tareUnit = TareUnit.parse(strTareUnit);			
+			TareUnit tareUnit = TareUnit.valueOf(strTareUnit);			
 			return FormulationHelper.getTareInKg(tare, tareUnit);
 		}				
 	}
@@ -328,7 +331,7 @@ public class FormulationHelper {
 			return null;
 		}
 		else{			
-			if(tareUnit == TareUnit.g || tareUnit == TareUnit.gPerm2){
+			if(tareUnit == TareUnit.g){
 				tare = tare / 1000;
 			}
 			return tare;
