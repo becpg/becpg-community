@@ -23,6 +23,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.TareUnit;
@@ -731,6 +732,43 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					rawMaterial16.setIngList(ingList);		
 					rawMaterial16NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial16).getNodeRef();
 					
+					/*-- Packaging material 1 --*/					
+					PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
+					packagingMaterial1.setName("Packaging material 1");
+					packagingMaterial1.setLegalName("Legal Packaging material 1");
+					packagingMaterial1.setTare(0.015d);
+					packagingMaterial1.setTareUnit(TareUnit.kg);
+					//costList
+					costList = new ArrayList<CostListDataItem>();
+					costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
+					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
+					packagingMaterial1.setCostList(costList);					
+					packagingMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial1).getNodeRef();
+					
+					/*-- Packaging material 2 --*/					
+					PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
+					packagingMaterial2.setName("Packaging material 2");
+					packagingMaterial2.setLegalName("Legal Packaging material 2");
+					packagingMaterial2.setTare(5d);
+					packagingMaterial2.setTareUnit(TareUnit.g);
+					//costList
+					costList.clear();
+					costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
+					costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
+					packagingMaterial2.setCostList(costList);					
+					packagingMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial2).getNodeRef();
+					
+					/*-- Packaging material 1 --*/					
+					PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
+					packagingMaterial3.setName("Packaging material 3");
+					packagingMaterial3.setLegalName("Legal Packaging material 3");
+					//costList
+					costList.clear();
+					costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
+					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
+					packagingMaterial3.setCostList(costList);					
+					packagingMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial3).getNodeRef();
+					
 //				}
 //				else{
 //					
@@ -774,7 +812,6 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 //				    ing3 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing3");
 //				    ing4 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing4");
 //				    ing5 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing5");
-//				    ingWater = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "eau");
 //				    
 //				    bioOrigin1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "bioOrigin1");
 //				    bioOrigin2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "bioOrigin2");

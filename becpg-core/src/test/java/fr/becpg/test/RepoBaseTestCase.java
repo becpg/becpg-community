@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -24,7 +23,6 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -44,7 +42,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
@@ -62,10 +59,8 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -112,7 +107,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
 	protected List<NodeRef> labelClaims = new ArrayList<NodeRef>();
 
-	protected NodeRef ingWater;
 	protected NodeRef labelingTemplateNodeRef = null;
 
 	protected NodeRef testFolderNodeRef;
@@ -275,7 +269,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				initCharacteristics();
 				if (shouldInit) {
 					initEntityTemplates();
-					initSystemProducts();
 				}
 				initHierarchyLists();
 				// initSystemProducts();
@@ -469,19 +462,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}
 		}
 
-		ingWater = nodeService.getChildByName(ingFolder, ContentModel.ASSOC_CONTAINS, "eau");
-
-		if (ingWater == null) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, "eau");
-			MLText mlName = new MLText();
-			mlName.addValue(I18NUtil.getContentLocaleLang(), "eau default");
-			mlName.addValue(Locale.ENGLISH, "eau english");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			ingWater = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
-		}
-
 		// nuts
 		NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_NUTS);
 		List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
@@ -546,22 +526,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}
 		}
 
-	}
-
-	private void initSystemProducts() {
-
-		/*-- Raw material Water --*/
-		RawMaterialData rawMaterialWater = new RawMaterialData();
-		rawMaterialWater.setName("Eau réseau");
-		rawMaterialWater.setDensity(1d);
-		MLText legalName = new MLText("Legal Raw material Eau");
-		legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
-		legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
-		rawMaterialWater.setLegalName(legalName);
-		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
-		ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ingWater, false));
-		rawMaterialWater.setIngList(ingList);
-		alfrescoRepository.create(repositoryHelper.getCompanyHome(), rawMaterialWater).getNodeRef();
 	}
 
 	private void initEntityTemplates() {

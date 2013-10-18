@@ -352,7 +352,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			loadDynamicCharactList(productData.getPackagingListView().getDynamicCharactList(), packagingListElt);
 			
 			// display tare, net weight and gross weight
-			Double tarePrimary = packagingData.getTarePrimary();
+			Double tarePrimary = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
+			if(tarePrimary == null){
+				tarePrimary = 0d;
+			}
 			Double netWeightPrimary = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService);
 			packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_1, toString(tarePrimary));
 			packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_1, toString(netWeightPrimary));
@@ -419,16 +422,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				if(FormulationHelper.isPackagingListUnitKg(dataItem.getPackagingListUnit())){
 					tare = FormulationHelper.getQty(dataItem);
 				}else{
-					tare = FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
+					tare = FormulationHelper.getQty(dataItem) * FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
 				}
 				
-				if(tare != null){
-					tare = FormulationHelper.getQty(dataItem) * tare;
-					
-					if(dataItem.getPkgLevel().equals(PackagingLevel.Primary)){
-						packagingData.setTarePrimary(packagingData.getTarePrimary() + tare);
-					}
-					else if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){					
+				if(tare != null){					
+					if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){					
 						packagingData.setTareSecondary(packagingData.getTareSecondary() + tare);
 					}
 					else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
@@ -493,18 +491,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	}
 	
 	private class PackagingData{
-		private Double tarePrimary = 0d;
 		private Double tareSecondary = 0d;
 		private Double tareTertiary = 0d;
 		private Integer productPerBoxes;
 		private Integer boxesPerPallet;
-		
-		public Double getTarePrimary() {
-			return tarePrimary;
-		}
-		public void setTarePrimary(Double tarePrimary) {
-			this.tarePrimary = tarePrimary;
-		}
+
 		public Double getTareSecondary() {
 			return tareSecondary;
 		}
