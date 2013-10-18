@@ -130,7 +130,6 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProduct2NodeRef);				
 				DecimalFormat df = new DecimalFormat("0.00");
 				
-				assertEquals(2, formulatedProduct.getIngList().size());
 				assertEquals(df.format(0.065d), df.format(formulatedProduct.getCompoListView().getCompoList().get(0).getQty()));
 				assertEquals(df.format(100d), df.format(formulatedProduct.getCompoListView().getCompoList().get(0).getYieldPerc()));
 				

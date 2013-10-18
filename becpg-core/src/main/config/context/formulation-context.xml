@@ -92,7 +92,7 @@
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler">
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

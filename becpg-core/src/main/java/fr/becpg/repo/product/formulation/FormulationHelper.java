@@ -312,6 +312,57 @@ public class FormulationHelper {
 		return totalValue;
 	}
 
+	public static Double getTareInKg(CompoListDataItem compoList, NodeService nodeService){
+	
+		Double qty = compoList.getQty();
+		CompoListUnit unit = compoList.getCompoListUnit();
+		if(compoList.getProduct() != null && qty != null && unit != null){
+			Double productQty = FormulationHelper.getProductQty(compoList.getProduct(), nodeService);
+			ProductUnit productUnit = FormulationHelper.getProductUnit(compoList.getProduct(), nodeService);
+			Double tare = FormulationHelper.getTareInKg(compoList.getProduct(), nodeService);
+			
+			if(tare != null && productUnit != null && productQty != null){
+				
+				if(FormulationHelper.isProductUnitP(productUnit)){
+					productQty = 1d;
+					qty = compoList.getQtySubFormula();
+				}
+				else if(FormulationHelper.isProductUnitLiter(productUnit)){						
+					int compoFactor = unit.equals(CompoListUnit.L) ? 1000 : 1;
+					int productFactor = productUnit.equals(ProductUnit.L) ? 1000 : 1;						
+					qty = compoList.getQtySubFormula() * compoFactor / productFactor;					
+				}
+				else if(FormulationHelper.isProductUnitKg(productUnit)){
+					if(productUnit.equals(ProductUnit.g)){
+						qty = qty * 1000;
+					}
+				}			
+				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);					
+				return tare * qty / productQty;
+			}
+		}		
+		return 0d;
+	}
+	
+	public static Double getTareInKg(PackagingListDataItem packList, NodeService nodeService){
+		
+		Double tare = 0d;
+		Double qty = FormulationHelper.getQty(packList);
+		
+		if(qty != null){
+			if(FormulationHelper.isPackagingListUnitKg(packList.getPackagingListUnit())){
+				tare = qty;
+			}else{
+				Double t = FormulationHelper.getTareInKg(packList.getProduct(), nodeService);
+				if(t != null){							
+					tare = qty * t;
+				}
+			}
+		}
+		logger.debug("pack tare " + tare);
+		return tare;
+	}
+	
 	public static Double getTareInKg(NodeRef productNodeRef, NodeService nodeService){
 		
 		Double tare = (Double)nodeService.getProperty(productNodeRef, PackModel.PROP_TARE);

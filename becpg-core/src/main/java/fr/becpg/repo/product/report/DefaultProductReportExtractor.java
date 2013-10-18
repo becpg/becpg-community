@@ -418,20 +418,13 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					(defaultVariantNodeRef == null || dataItem.getVariants() == null || dataItem.getVariants().contains(defaultVariantNodeRef)) &&
 					!BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeType)){
 				
-				Double tare = null;				
-				if(FormulationHelper.isPackagingListUnitKg(dataItem.getPackagingListUnit())){
-					tare = FormulationHelper.getQty(dataItem);
-				}else{
-					tare = FormulationHelper.getQty(dataItem) * FormulationHelper.getTareInKg(dataItem.getProduct(), nodeService);
-				}
+				Double tare = FormulationHelper.getTareInKg(dataItem, nodeService);	
 				
-				if(tare != null){					
-					if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){					
-						packagingData.setTareSecondary(packagingData.getTareSecondary() + tare);
-					}
-					else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
-						packagingData.setTareTertiary(packagingData.getTareTertiary() + tare);
-					}
+				if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){					
+					packagingData.setTareSecondary(packagingData.getTareSecondary() + tare);
+				}
+				else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
+					packagingData.setTareTertiary(packagingData.getTareTertiary() + tare);
 				}				
 			}
 			

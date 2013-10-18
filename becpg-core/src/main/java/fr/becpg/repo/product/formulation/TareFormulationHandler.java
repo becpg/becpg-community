@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation;
 
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,10 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 	
 	private static Log logger = LogFactory.getLog(TareFormulationHandler.class);
 	
-	private AlfrescoRepository<ProductData> alfrescoRepository;
-
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
+	private NodeService nodeService;
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,36 +56,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 	private Double calculateTareOfComposition(ProductData formulatedProduct){
 		Double totalTare = 0d;
 		for(CompoListDataItem compoList : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){			
-			Double qty = compoList.getQty();
-			CompoListUnit unit = compoList.getCompoListUnit();
-			if(compoList.getProduct() != null && qty != null && unit != null){		
-				
-				ProductData productData = alfrescoRepository.findOne(compoList.getProduct());				
-				Double productQty = productData.getQty();
-				ProductUnit productUnit = productData.getUnit();
-				Double tare = FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
-				
-				if(tare != null && productUnit != null && productQty != null){
-					
-					if(FormulationHelper.isProductUnitP(productUnit)){
-						productQty = 1d;
-						qty = compoList.getQtySubFormula();
-					}
-					else if(FormulationHelper.isProductUnitLiter(productUnit)){						
-						int compoFactor = unit.equals(CompoListUnit.L) ? 1000 : 1;
-						int productFactor = productUnit.equals(ProductUnit.L) ? 1000 : 1;						
-						qty = compoList.getQtySubFormula() * compoFactor / productFactor;					
-					}
-					else if(FormulationHelper.isProductUnitKg(productUnit)){
-						if(productUnit.equals(ProductUnit.g)){
-							qty = qty * 1000;
-						}
-					}
-					
-					logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);					
-					totalTare += (tare * qty / productQty);
-				}				
-			}
+			totalTare += FormulationHelper.getTareInKg(compoList, nodeService);
 		}			
 		return totalTare;
 	}
@@ -95,16 +67,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		for(PackagingListDataItem packList : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			
 			// take in account only primary
-			if(packList.getPkgLevel() != null && packList.getPkgLevel().equals(PackagingLevel.Primary)){
-							
-				Double tare = 0d;
-				if(FormulationHelper.isPackagingListUnitKg(packList.getPackagingListUnit())){
-					tare = FormulationHelper.getQty(packList);
-				}else{
-					ProductData productData = alfrescoRepository.findOne(packList.getProduct());
-					tare = FormulationHelper.getQty(packList) * FormulationHelper.getTareInKg(productData.getTare(), productData.getTareUnit());
-				}					
-				logger.debug("pack tare " + tare);
+			if(packList.getPkgLevel() != null && packList.getPkgLevel().equals(PackagingLevel.Primary)){						
+				Double tare = FormulationHelper.getTareInKg(packList, nodeService);			
 				totalTare += tare;
 			}			
 		}			
