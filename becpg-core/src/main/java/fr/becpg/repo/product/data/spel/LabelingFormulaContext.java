@@ -28,11 +28,13 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.LabelingRuleType;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -245,6 +247,17 @@ public class LabelingFormulaContext {
 			return matchCount == 0;
 		}
 
+		public boolean matchAll(List<Composite<CompoListDataItem>> values) {
+			int matchCount = components.size();
+			for (Composite<CompoListDataItem> component : values) {
+				if (components.contains(component.getData().getProduct())) {
+					matchCount--;
+				}
+			}
+
+			return matchCount == 0;
+		}
+
 	}
 
 	private Map<NodeRef, AggregateRule> aggregateRules = new HashMap<>();
@@ -318,6 +331,8 @@ public class LabelingFormulaContext {
 
 			i++;
 			aggregateRules.put(component, aggregateRule);
+			
+			
 		}
 	}
 
@@ -347,13 +362,20 @@ public class LabelingFormulaContext {
 						qtyPerc = qtyPerc * compositeLabeling.getQty();
 					}
 
-					if (toMerged == null) {
-						subComponent.setQty(qtyPerc);
-						merged.add(subComponent);
+					if (toMerged == null) {		
+						AbstractLabelingComponent clonedSubComponent = null;
+						if(subComponent instanceof CompositeLabeling){
+							clonedSubComponent = new CompositeLabeling((CompositeLabeling)subComponent);
+						} else {
+							clonedSubComponent = new IngItem((IngItem)subComponent);
+						}
+						clonedSubComponent.setQty(qtyPerc);
+						merged.add(clonedSubComponent);
 					} else {
-						if (qtyPerc != null) {
+						if (qtyPerc != null && toMerged.getQty()!=null) {
 							toMerged.setQty(toMerged.getQty() + qtyPerc);
 						}
+						 //TODO else add warning	
 					}
 				}
 			} else {
@@ -384,7 +406,10 @@ public class LabelingFormulaContext {
 			logger.debug(" Render Group list ");
 		}
 
-		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+		List<AbstractLabelingComponent> components = new LinkedList<>(lblCompositeContext.getIngList().values());
+		Collections.sort(components);
+				
+		for (AbstractLabelingComponent component : components) {
 
 			String ingName = getIngName(component);
 

@@ -1,6 +1,6 @@
 package fr.becpg.repo.product.data;
 
-public enum TareUnit {
+public enum TareUnit{
 	g,
 	kg,
 	gPerm2;

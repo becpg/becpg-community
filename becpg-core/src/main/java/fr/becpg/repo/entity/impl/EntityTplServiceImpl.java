@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -22,6 +23,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
 
@@ -65,6 +67,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
 	private TransactionService transactionService;
+
+	private BehaviourFilter policyBehaviourFilter;
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
 
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -225,57 +233,54 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			doInBatch(entityNodeRefs, 10, new BatchCallBack() {
 
-				public void run(List<NodeRef> subList) {
-					for (NodeRef entityNodeRef : subList) {
+				public void run(NodeRef entityNodeRef) {
+					RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+					Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+					NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
-						RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-						Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-						NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
+					for (QName dataListQName : datalistsTpl.keySet()) {
 
-						for (QName dataListQName : datalistsTpl.keySet()) {
+						@SuppressWarnings("unchecked")
+						List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+						boolean update = false;
 
-							@SuppressWarnings("unchecked")
-							List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
-							boolean update = false;
+						for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
 
-							for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
+							Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
-								Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
+							if (!identAttrTpl.isEmpty()) {
+								boolean isFound = false;
 
-								if (!identAttrTpl.isEmpty()) {
-									boolean isFound = false;
+								// look on instance
+								for (RepositoryEntity dataListItem : dataListItems) {
 
-									// look on instance
-									for (RepositoryEntity dataListItem : dataListItems) {
-
-										Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
-										if (identAttrTpl.equals(identAttr)) {
-											isFound = true;
-											break;
-										}
+									Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
+									if (identAttrTpl.equals(identAttr)) {
+										isFound = true;
+										break;
 									}
+								}
 
-									if (!isFound) {
-										dataListItemTpl.setNodeRef(null);
-										dataListItemTpl.setParentNodeRef(null);
+								if (!isFound) {
+									dataListItemTpl.setNodeRef(null);
+									dataListItemTpl.setParentNodeRef(null);
 
-										if (dataListItemTpl instanceof Synchronisable) {
-											if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
-												dataListItems.add((BeCPGDataObject) dataListItemTpl);
-												update = true;
-											}
-										} else {
-											// Synchronize always
+									if (dataListItemTpl instanceof Synchronisable) {
+										if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
 											dataListItems.add((BeCPGDataObject) dataListItemTpl);
 											update = true;
 										}
-
+									} else {
+										// Synchronize always
+										dataListItems.add((BeCPGDataObject) dataListItemTpl);
+										update = true;
 									}
+
 								}
 							}
-							if (update) {
-								alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
-							}
+						}
+						if (update) {
+							alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
 						}
 					}
 				}
@@ -289,16 +294,15 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 
-		doInBatch(entityNodeRefs, 10, new BatchCallBack() {
+		doInBatch(entityNodeRefs, 5, new BatchCallBack() {
 
-			public void run(List<NodeRef> subList) {
-				for (NodeRef entityNodeRef : subList) {
-					try {
-						formulationService.formulate(entityNodeRef);
-					} catch (FormulateException e) {
-						logger.error(e, e);
-					}
+			public void run(NodeRef entityNodeRef) {
+				try {
+					formulationService.formulate(entityNodeRef);
+				} catch (FormulateException e) {
+					logger.error(e, e);
 				}
+
 			}
 
 		});
@@ -306,10 +310,17 @@ public class EntityTplServiceImpl implements EntityTplService {
 	}
 
 	private interface BatchCallBack {
-		public void run(List<NodeRef> entityNodeRefs);
+		public void run(NodeRef entityNodeRef);
 	}
 
 	private void doInBatch(List<NodeRef> entityNodeRefs, int batchSize, final BatchCallBack batchCallBack) {
+
+		StopWatch watch = null;
+		if (logger.isInfoEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
 		for (final List<NodeRef> subList : Lists.partition(entityNodeRefs, batchSize)) {
 			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 				@Override
@@ -317,8 +328,23 @@ public class EntityTplServiceImpl implements EntityTplService {
 					RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
 						@Override
 						public Object execute() {
-							batchCallBack.run(subList);
+							for (NodeRef entityNodeRef : subList) {
+								try {
+
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+
+									batchCallBack.run(entityNodeRef);
+
+								} finally {
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								}
+							}
 							return null;
+
 						}
 					};
 					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
@@ -326,6 +352,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 			};
 			AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
 
+		}
+
+		if (logger.isInfoEnabled()) {
+			watch.stop();
+			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
 		}
 
 	}
