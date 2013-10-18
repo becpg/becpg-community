@@ -478,7 +478,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		// Calculate qtyRMUsed
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
-		if( compoListDataItem.getYieldPerc()!=null){
+		if( compoListDataItem.getYieldPerc()!=null && ! (productData instanceof SemiFinishedProductData) ){
 			qty *= compoListDataItem.getYieldPerc()/100;
 		}
 		
