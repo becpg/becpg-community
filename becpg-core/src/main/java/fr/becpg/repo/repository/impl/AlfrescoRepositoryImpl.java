@@ -289,13 +289,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
 
-			if (dataListNodeRef == null && (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())) {
+			if (dataListNodeRef == null && (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())
+					&& ! dataList.isEmpty() ) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListContainerType);
 				}
-				if (logger.isInfoEnabled() && dataList.isEmpty()) {
-					logger.info("Creating empty datalist :" + dataListContainerType);
-				}
+//				if (logger.isInfoEnabled() && dataList.isEmpty()) {
+//					logger.info("Creating empty datalist :" + dataListContainerType);
+//				}
 
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
 			}
