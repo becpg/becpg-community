@@ -171,6 +171,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								compoItem.getDeclType() != DeclarationType.Omit){
 					Double qty = FormulationHelper.getQtyInKg(compoItem);
 					if(qty != null){
+						if(compoItem.getYieldPerc()!=null){
+							qty *= compoItem.getYieldPerc()/100;
+						}
 						totalQtyUsed += qty;
 					}					
 				}
@@ -281,6 +284,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Double qtyIng = ingListDataItem.getQtyPerc();
 			
 			if(qty != null && qtyIng != null){
+				if(compoListDataItem.getYieldPerc()!=null){
+					qty *= compoListDataItem.getYieldPerc()/100;
+				}
 				Double valueToAdd = qty * qtyIng;
 				totalQtyIng += valueToAdd;
 				totalQtyIngMap.put(ingNodeRef, totalQtyIng);
