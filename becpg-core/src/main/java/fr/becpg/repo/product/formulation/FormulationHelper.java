@@ -85,13 +85,17 @@ public class FormulationHelper {
 				return qty / 1000;
 			}
 			else if(compoListUnit.equals(CompoListUnit.P)){
-				Double productQty = 1d;
+				Double productQty = null;
 				ProductUnit productUnit = FormulationHelper.getProductUnit(compoListDataItem.getProduct(), nodeService);				
 				if(productUnit != null && productUnit.equals(ProductUnit.P)){
 					productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
 				}
 				
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService) * qty / productQty;
+				if(productQty == null){
+					productQty = 1d;
+				}
+				
+				return  FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT)* qty / productQty;
 			}
 			else if(compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)){
 				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
@@ -231,7 +235,7 @@ public class FormulationHelper {
 	 * @param productData
 	 * @return
 	 */
-	public static Double getNetWeight(NodeRef nodeRef, NodeService nodeService) {
+	public static Double getNetWeight(NodeRef nodeRef, NodeService nodeService, Double defaultValue) {
 		
 		Double netWeight = (Double)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_NET_WEIGHT);
 		if(netWeight != null){	
@@ -262,7 +266,7 @@ public class FormulationHelper {
 			}
 		}	
 		
-		return null;
+		return defaultValue;
 	}
 		
 	public static Double getNetVolume(NodeRef nodeRef, NodeService nodeService) {

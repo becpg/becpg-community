@@ -78,7 +78,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException{				
 		
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);
+		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
 		
 		/*
 		 * Composition
@@ -190,7 +190,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){
 		
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);
+		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double unitTotalVariableCost = 0d;
 		Double unitTotalFixedCost = 0d;
 		
