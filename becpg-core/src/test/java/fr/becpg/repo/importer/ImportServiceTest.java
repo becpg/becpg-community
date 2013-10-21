@@ -221,13 +221,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 					fileFolderService.delete(tempNodeRef);
 				}
 
-				// remove products
-				NodeRef productsNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
-				if (productsNodeRef != null) {
-					logger.debug("delete products folder");
-					fileFolderService.delete(productsNodeRef);
-				}
-
 				// remove companies
 				NodeRef companiesFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_COMPANIES);
 
@@ -290,22 +283,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertNotNull("Temp folder should exist", tempNodeRef);
 		NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
 		assertNotNull("import folder should exist", importFolderNodeRef);
-		assertEquals("import folder has one the productTpl", (int) 1, fileFolderService.list(importFolderNodeRef).size());
-
-		// load folder where products have been moved in
-		// ./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish
-		List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), PATH_CLASSIF_FOLDER_RM, null, namespaceService, false);
-
-		assertEquals("classif folder should exist", (int) 1, nodes.size());
-		NodeRef productsNodeRef = nodes.get(0);
-		assertEquals("4 products should exist", (int) 4, fileFolderService.list(productsNodeRef).size());
+		assertEquals((int) 5, fileFolderService.list(importFolderNodeRef).size());
 
 		/*
 		 * check products in repo
 		 */
 
 		String productName = "Saumon surgelé 80x20x4";
-		NodeRef product1NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, productName);
+		NodeRef product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
 		// productFolder => look for product
 
 		assertNotNull("product 1 should exist", product1NodeRef);
@@ -338,7 +323,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		 * Check Saumon
 		 */
 		productName = "Saumon 80x20x3";
-		NodeRef product2NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, productName);
+		NodeRef product2NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
 		// productFolder => look for product
 
 		assertNotNull("product 2 should exist", product2NodeRef);
@@ -403,7 +388,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		 * check trim is done by CSVReader
 		 */
 
-		NodeRef product4NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, "Thon 80x20x8");
+		NodeRef product4NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Thon 80x20x8");
 		assertNotNull("product 4 should exist", product4NodeRef);
 
 		/*
@@ -464,7 +449,7 @@ public class ImportServiceTest extends RepoBaseTestCase {
 		assertEquals("1 product should exist", (int) 1, fileFolderService.list(siteFolderNodeRef).size());
 
 		productName = "Saumon surgelé 80x20x4";
-		product1NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, productName);
+		product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
 
 		assertNotNull("product 1 should exist", product1NodeRef);
 
@@ -552,11 +537,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 					fileFolderService.delete(tempNodeRef);
 				}
 
-				NodeRef productsNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS);
-				if (productsNodeRef != null) {
-					fileFolderService.delete(productsNodeRef);
-				}
-
 				/*-- Create file to import --*/
 				logger.debug("create file to import");
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -593,25 +573,14 @@ public class ImportServiceTest extends RepoBaseTestCase {
 				assertNotNull("Temp folder should exist", tempNodeRef);
 				NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
 				assertNotNull("import folder should exist", importFolderNodeRef);
-				assertEquals("import folder should be empty", (int) 0, fileFolderService.listFiles(importFolderNodeRef).size());
-
-				// load folder where products have been moved in
-				// ./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish
-				List<NodeRef> nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), PATH_CLASSIF_FOLDER_RM, null, namespaceService, false);
-				assertEquals("classif folder should exist", (int) 1, nodes.size());
-				NodeRef productsNodeRef = nodes.get(0);
-				assertEquals("3 rm should exist", (int) 3, fileFolderService.listFolders(productsNodeRef).size());
-
-				nodes = searchService.selectNodes(repositoryHelper.getCompanyHome(), PATH_CLASSIF_FOLDER_FP, null, namespaceService, false);
-				assertEquals("classif folder should exist", (int) 1, nodes.size());
-				productsNodeRef = nodes.get(0);
-				assertEquals("1 finished product should exist", (int) 1, fileFolderService.listFolders(productsNodeRef).size());
+				logger.info("###fileFolderService.listFiles(importFolderNodeRef).size()" + fileFolderService.listFiles(importFolderNodeRef).size());
+				assertEquals((int) 4, fileFolderService.list(importFolderNodeRef).size());
 
 				/*
 				 * check products
 				 */
 
-				NodeRef product1NodeRef = nodeService.getChildByName(productsNodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
+				NodeRef product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "Saumon surgelé 80x20x4");
 
 				assertNotNull("product 1 should exist", product1NodeRef);
 				ProductData productData = alfrescoRepository.findOne(product1NodeRef);
