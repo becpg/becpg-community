@@ -6,7 +6,6 @@ package fr.becpg.repo.workflow.activiti.product;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateExecution;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
@@ -16,6 +15,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
@@ -23,87 +23,68 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.ProductService;
 
 /**
  * 
  * @author matthieu
- *
+ * 
  */
 public class ValidateProduct extends BaseJavaDelegate {
 
 	private static Log logger = LogFactory.getLog(ValidateProduct.class);
 
-	private ProductService productService;
 	private NodeService nodeService;
-	private Repository repositoryHelper;
 	private DictionaryService dictionaryService;
-	private RepoService repoService;
+	private OwnableService ownableService;
 	
-	
-	public void setProductService(ProductService productService) {
-		this.productService = productService;
-	}
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-
-	public void setRepositoryHelper(Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
 	}
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
+	public void setOwnableService(OwnableService ownableService) {
+		this.ownableService = ownableService;
 	}
 
 	@Override
 	public void execute(final DelegateExecution task) throws Exception {
 
-		 final NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
+		logger.debug("start ApproveActionHandler");
 
-		
-	  logger.debug("start ApproveActionHandler");
-		
-		RunAsWork<Object> actionRunAs = new RunAsWork<Object>()
-        {
-            @Override
-			public Object doWork() throws Exception
-            {
-            	try{
-        			//change state and classify products
-            		List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);										
+		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+			@Override
+			public Object doWork() throws Exception {
+				try {
+					NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
+					
+					// change state and classify products
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef,
+							WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
 					for (ChildAssociationRef childAssoc : childAssocs) {
-            			
+
 						NodeRef nodeRef = childAssoc.getChildRef();
 						QName nodeType = nodeService.getType(nodeRef);
-						
-						if(dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_PRODUCT)){
-	            			nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);  
 
-	            			// products
-	            			NodeRef productsNodeRef = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));	            			
-	            			productService.classifyProductByHierarchy(productsNodeRef, nodeRef);
-						}            			
-            		}
-        		}
-        		catch(Exception e){
-        			logger.error("Failed to approve product", e);
-        			throw e;
-        		}
-        		
-        		return null;
-            }
-        };
-        AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
-        
-        logger.debug("end ApproveActionHandler");
+						if (dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_PRODUCT)) {
+							nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);
+
+							// productNodeRef : remove all owner related rights
+							ownableService.setOwner(nodeRef, OwnableService.NO_OWNER);
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Failed to approve product", e);
+					throw e;
+				}
+
+				return null;
+			}
+		};
+		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
+
+		logger.debug("end ApproveActionHandler");
 	}
 }

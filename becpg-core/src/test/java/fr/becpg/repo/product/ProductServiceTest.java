@@ -44,6 +44,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
@@ -102,6 +103,9 @@ public class ProductServiceTest extends RepoBaseTestCase {
 	
 	@Resource
 	private WUsedListService wUsedListService;
+	
+	@Resource
+	private EntityService entityService;
 
 	private NodeRef productsFolder = null; 
 
@@ -371,7 +375,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
     			
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
-				productService.classifyProductByHierarchy(productsFolder, rawMaterialNodeRef);
+				entityService.classifyByHierarchy(productsFolder, rawMaterialNodeRef);
 
 				/*-- Check --*/
 				List<Path> paths = nodeService.getPaths(rawMaterialNodeRef, true);
@@ -383,14 +387,14 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("5th Path should be 'Matièrespremière'", "Matière première", arrDisplayPaths[3]);
 				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
 				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- classify twice --*/
 				logger.debug("/*-- classify twice --*/");
-				productService.classifyProductByHierarchy(productsFolder, rawMaterialNodeRef);
+				entityService.classifyByHierarchy(productsFolder, rawMaterialNodeRef);
 
 				/*-- Check --*/
 				paths = nodeService.getPaths(rawMaterialNodeRef, true);
@@ -402,7 +406,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[3]);
 				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
 				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
@@ -425,7 +429,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
-				productService.classifyProductByHierarchy(productsFolder, rawMaterial2NodeRef);
+				entityService.classifyByHierarchy(productsFolder, rawMaterial2NodeRef);
 
 				/*-- Check --*/
 				List<Path> paths = nodeService.getPaths(rawMaterial2NodeRef, true);
@@ -437,7 +441,7 @@ public class ProductServiceTest extends RepoBaseTestCase {
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
 				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("5th Path should be 'Matières premières'", "Matières premières", arrDisplayPaths[3]);
+				assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[3]);
 				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
 				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
 

@@ -98,4 +98,13 @@ public interface EntityService {
 	 * @param deleteArchivedNode (delete from trash)
 	 */
 	 void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes);
+	 
+
+	    /**
+	     * Classify by hierarchy.
+	     *
+	     * @param containerNodeRef the container node ref
+	     * @param entityNodeRef the entity node ref
+	     */
+	 void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef);
 }
