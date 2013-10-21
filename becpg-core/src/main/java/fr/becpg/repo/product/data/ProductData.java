@@ -524,17 +524,10 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName
-				+ ", title=" + title + ", state=" + state + ", unit=" + unit + ", entityTpl=" + entityTpl + ", qty="
-				+ qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight="
-				+ netWeight + ", servingSize=" + servingSize + ", tare=" + tare + ", tareUnit=" + tareUnit
-				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability
-				+ ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", costList=" + costList
-				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList="
-				+ organoList + ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList
-				+ ", forbiddenIngList=" + forbiddenIngList + ", labelClaimList=" + labelClaimList + ", compoListView="
-				+ compoListView + ", processListView=" + processListView + ", packagingListView=" + packagingListView
-				+ ", labelingListView=" + labelingListView + ", variants=" + variants + "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
+				+ ",  qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
+				+ ", servingSize=" + servingSize + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
+				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", variants=" + variants + ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
 
 	@Override
