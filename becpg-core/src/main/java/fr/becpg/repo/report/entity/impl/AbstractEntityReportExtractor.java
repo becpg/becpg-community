@@ -366,6 +366,6 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		cDATAElt.addCDATA(eltValue);
 		
 		//TODO : manage prefix correctly
-		cDATAElt.addAttribute("prefix", propertyQName.getPrefixString());
+		cDATAElt.addAttribute("prefix", propertyQName.getPrefixedQName(namespaceService).getLocalName());
 	}
 }
