@@ -262,10 +262,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 												
 						
 						Element ingLabelingElt = ingListElt.addElement(BeCPGModel.TYPE_INGLABELINGLIST.getLocalName());
-						addCDATA(ingLabelingElt, ATTR_LANGUAGE, locale.getDisplayLanguage());
-						addCDATA(ingLabelingElt, BeCPGModel.ASSOC_ILL_GRP.getLocalName(), grpName);
-						addCDATA(ingLabelingElt, BeCPGModel.PROP_ILL_VALUE.getLocalName(), dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL);
-						addCDATA(ingLabelingElt, BeCPGModel.PROP_ILL_MANUAL_VALUE.getLocalName(), dataItem.getManualValue() != null  ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
+						ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
+						addCDATA(ingLabelingElt, BeCPGModel.ASSOC_ILL_GRP, grpName);
+						addCDATA(ingLabelingElt, BeCPGModel.PROP_ILL_VALUE, dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL);
+						addCDATA(ingLabelingElt, BeCPGModel.PROP_ILL_MANUAL_VALUE, dataItem.getManualValue() != null  ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
