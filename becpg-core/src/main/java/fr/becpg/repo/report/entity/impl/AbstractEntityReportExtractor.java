@@ -290,7 +290,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				
 				if(useCData || 
 						attrKV.getKey().getName().isMatch(BeCPGModel.PROP_INSTRUCTION)){
-					addCDATA(nodeElt, attrKV.getKey().getName().getLocalName(), attrKV.getValue());
+					addCDATA(nodeElt, attrKV.getKey().getName(), attrKV.getValue());
 				}				
 				else{
 					nodeElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
@@ -361,8 +361,11 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		}
 	}
 	
-	protected void addCDATA(Element nodeElt, String eltName, String eltValue){
-		Element cDATAElt = nodeElt.addElement(eltName);
+	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue){
+		Element cDATAElt = nodeElt.addElement(propertyQName.getLocalName());		
 		cDATAElt.addCDATA(eltValue);
+		
+		//TODO : manage prefix correctly
+		cDATAElt.addAttribute("prefix", propertyQName.getPrefixString());
 	}
 }
