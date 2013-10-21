@@ -46,7 +46,7 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(2d);
+				finishedProduct.setQty(4d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -63,15 +63,11 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {	
 	   
-				/*-- Formulate product --*/
-				logger.debug("/*-- Formulate product --*/");
-				productService.formulate(finishedProductNodeRef);
+//				productService.formulate(finishedProductNodeRef);
+				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);					
+				formulatedProduct = productService.formulate(formulatedProduct);
 				
-				/*-- Verify formulation --*/
-				logger.debug("/*-- Verify formulation --*/");
-				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);				
-				DecimalFormat df = new DecimalFormat("0.00");
-				
+				DecimalFormat df = new DecimalFormat("0.00");				
 				assertEquals(1d, formulatedProduct.getCompoListView().getCompoList().get(0).getQty());
 				assertEquals(1.5d, formulatedProduct.getCompoListView().getCompoList().get(1).getQty());
 				
@@ -81,6 +77,7 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 //				ing 1 : 27,083333333
 //				ing 2 : 72,916666667
 				
+				assertEquals(100d, formulatedProduct.getYield());
 				assertEquals(2, formulatedProduct.getIngList().size());
 				assertEquals(ing2, formulatedProduct.getIngList().get(0).getIng());
 				assertEquals(ing1, formulatedProduct.getIngList().get(1).getIng());
