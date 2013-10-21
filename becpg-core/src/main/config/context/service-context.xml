@@ -298,6 +298,7 @@
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="repoService" ref="repoService" />
 	</bean>
 	<bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
 		<property name="nodeService" ref="nodeService" />

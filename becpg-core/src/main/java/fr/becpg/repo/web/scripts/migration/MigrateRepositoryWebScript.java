@@ -42,7 +42,6 @@ import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.migration.impl.BeCPGSystemFolderMigrator;
 import fr.becpg.repo.migration.impl.EntityFolderMigrator;
@@ -74,7 +73,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	private static final String ACTION_RENAME_USER = "renameUser";
 	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";
-	private static final String ACTION_MIGRATE_CLASSIFY_PRODUCT = "classifyProduct";
 	private static final String ACTION_DELETE_UNUSED_INGS = "deleteUnusedIngs";
 	
 	private static final String ACTION_REMOVE_ASPECT = "removeAspect";
@@ -257,21 +255,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			}
 		} else if (ACTION_MIGRATE_ENTITY_FOLDER.equals(action)) {
 			doMigrateEntityFolderInMt();
-		} else if (ACTION_MIGRATE_CLASSIFY_PRODUCT.equals(action)) {
-			try {
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-
-				// search for entities to migrate
-				List<NodeRef> productsNodeRef = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:product\" -ASPECT:\"bcpg:compositeVersionable\" ", RepoConsts.MAX_RESULTS_UNLIMITED);
-				// products
-    			NodeRef productsFolder = repoService.getOrCreateFolderByPath(repository.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
-    			
-				for (NodeRef productNodeRef : productsNodeRef) {
-					productService.classifyProductByHierarchy(productsFolder, productNodeRef);
-				}
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			}
 		} else if(ACTION_ADD_MANDATORY_ASPECT.equals(action)){
 			String type = req.getParameter(PARAM_TYPE);
 			String aspect = req.getParameter(PARAM_ASPECT);

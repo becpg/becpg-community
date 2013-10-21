@@ -20,4 +20,18 @@
       </property>   
     </bean> 
     
+    <bean id="classify-by-hierarchy" class="fr.becpg.repo.action.executer.ClassifyByHierarchyActionExecuter" parent="action-executer">
+      <property name="entityService" ref="entityService" />      
+    </bean>
+    
+    <!-- I18N -->
+   
+   <bean id="actionResourceBundles" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+        <property name="resourceBundles">
+            <list>
+                <value>alfresco/module/${artifactId}/messages/action-config</value>
+            </list>
+        </property>
+   </bean>
+    
 </beans>

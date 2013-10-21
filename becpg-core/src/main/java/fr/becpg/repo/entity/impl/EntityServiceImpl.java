@@ -21,6 +21,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -46,7 +47,9 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -85,6 +88,8 @@ public class EntityServiceImpl implements EntityService {
 
 	private DictionaryService dictionaryService;
 	
+	private RepoService repoService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -117,6 +122,10 @@ public class EntityServiceImpl implements EntityService {
 		this.dictionaryService = dictionaryService;
 	}
 	
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
+
 	@Override
 	public boolean hasDataListModified(NodeRef nodeRef) {
 
@@ -524,6 +533,73 @@ public class EntityServiceImpl implements EntityService {
 		if(listContainerNodeRef != null){
 			deleteNode(listContainerNodeRef, deleteArchivedNodes);						
 		}		
+	}
+	
+	/**
+     * Classify according to the hierarchy.
+     *
+     * @param containerNodeRef : documentLibrary of site
+     * @param entityNodeRef : entity
+     */
+	@Override
+	public void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef) {
+
+		NodeRef destinationNodeRef = null;	
+		QName type = nodeService.getType(entityNodeRef);
+		ClassDefinition classDef = dictionaryService.getClass(type);
+		
+		//TODO : generic
+		NodeRef hierarchyNodeRef = null;		
+		if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
+			hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+			if(hierarchyNodeRef == null){
+				hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+			}
+		}
+		else if(type.isMatch(ProjectModel.TYPE_PROJECT)){	
+			hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2);
+			if(hierarchyNodeRef == null){
+				hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY1);
+			}
+		}
+		else if(type.isMatch(BeCPGModel.TYPE_CLIENT)){			
+		}
+		else if(type.isMatch(BeCPGModel.TYPE_SUPPLIER)){			
+		}
+					
+		if(hierarchyNodeRef != null){				
+			NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle());
+			destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, classFolder);				
+			if (destinationNodeRef != null) {
+				// classify
+				repoService.moveNode(entityNodeRef, destinationNodeRef);
+			} else {
+				logger.debug("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+			}
+		}
+		else {
+			logger.debug("Cannot classify entity since it doesn't have a hierarchy.");
+		}			
+	}
+
+	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
+		NodeRef destinationNodeRef = null;
+		
+		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
+		if(parent != null ){
+			parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);		
+		}
+		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
+		if(name!=null){
+			destinationNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef,name, name);
+		}
+		else{
+			if(logger.isDebugEnabled()){
+				logger.debug("Cannot create folder for productHierarchy since hierarchyName is null. productHierarchy: " + hierarchyNodeRef);
+			}
+		}		
+		
+		return destinationNodeRef;
 	}
 
 }

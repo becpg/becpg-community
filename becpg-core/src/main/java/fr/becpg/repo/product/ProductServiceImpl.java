@@ -7,21 +7,14 @@ import java.util.List;
 
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.OwnableService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
-import fr.becpg.model.SystemProductType;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -37,16 +30,8 @@ public class ProductServiceImpl implements ProductService {
 
 	private static Log logger = LogFactory.getLog(ProductServiceImpl.class);
 	
-	private NodeService nodeService;	
-	
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
-	private ProductDictionaryService productDictionaryService;
-	
-	private RepoService repoService;
-
-	private OwnableService ownableService;
-
 	private FormulationService<ProductData> formulationService;
 	
 	public BehaviourFilter policyBehaviourFilter;
@@ -57,29 +42,13 @@ public class ProductServiceImpl implements ProductService {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}	
-	
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setProductDictionaryService(ProductDictionaryService productDictionaryService) {
-		this.productDictionaryService = productDictionaryService;
 	}
 
 	public void setCharactDetailsVisitorFactory(CharactDetailsVisitorFactory charactDetailsVisitorFactory) {
 		this.charactDetailsVisitorFactory = charactDetailsVisitorFactory;
 	}
-
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
-
-	public void setOwnableService(OwnableService ownableService) {
-		this.ownableService = ownableService;
-	}	
 
     public void setFormulationService(FormulationService<ProductData> formulationService) {
 		this.formulationService = formulationService;
@@ -124,71 +93,5 @@ public class ProductServiceImpl implements ProductService {
 		return visitor.visit(productData, elements);		
 	}
   
-    
-    /**
-     * Move the product in a folder according to the hierarchy.
-     *
-     * @param containerNodeRef : companyHome, or documentLibrary of site
-     * @param productNodeRef : product
-     */
-	@Override
-	public void classifyProductByHierarchy(NodeRef containerNodeRef, NodeRef productNodeRef) {
-
-		NodeRef destinationNodeRef = null;		
-
-		// product type
-		QName type = nodeService.getType(productNodeRef);
-		SystemProductType systemProductType = SystemProductType.valueOf(type);
-		String productTypeFolderName = productDictionaryService.getFolderName(systemProductType);
-
-		if (productTypeFolderName == null) {
-			logger.error("Failed to classify product. productNodeRef: " + productNodeRef + " - No productTypeFolderName found for: " + type);
-		} else {
-			
-			ProductData productData = alfrescoRepository.findOne(productNodeRef);
-			NodeRef productTypeNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef,
-					systemProductType.toString(), productTypeFolderName);
-
-			if (productData.getHierarchy2() != null) {
-				destinationNodeRef = getOrCreateHierachyFolder(productData.getHierarchy2(), productTypeNodeRef);
-			} else {
-				logger.debug("Cannot classify product since it doesn't have a productHierarchy2.");
-			}
-
-			if (destinationNodeRef != null) {
-
-				// classify product
-				repoService.moveNode(productNodeRef, destinationNodeRef);
-
-				// productNodeRef : remove all owner related rights
-				ownableService.setOwner(productNodeRef, OwnableService.NO_OWNER);
-			} else {
-				logger.debug("Failed to classify product. productNodeRef: " + productNodeRef);
-			}
-		}
-	}
-
-	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
-		NodeRef destinationNodeRef = null;
-		
-		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
-		if(parent != null ){
-			parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);		
-		}
-		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
-		if(name!=null){
-			destinationNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef,name, name);
-		}
-		else{
-			if(logger.isDebugEnabled()){
-				logger.debug("Cannot create folder for productHierarchy since hierarchyName is null. productHierarchy: " + hierarchyNodeRef);
-			}
-		}		
-		
-		return destinationNodeRef;
-	}
-
-	
-
 
 }

@@ -15,7 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
@@ -159,7 +158,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 	
 
 	@Override
-	public String getHierarchyPath(NodeRef hierarchyNodeRef, SystemProductType systemProductType) {
+	public String getHierarchyPath(NodeRef hierarchyNodeRef) {
 		
 		StringBuilder  path = new StringBuilder();
 		

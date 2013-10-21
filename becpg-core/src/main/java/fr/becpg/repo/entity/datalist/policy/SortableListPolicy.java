@@ -4,6 +4,7 @@
 package fr.becpg.repo.entity.datalist.policy;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -118,10 +119,9 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		logger.debug("SortableListPolicy.onAddAspect: " + aspect);		
 		
 		// try to avoid to do two times the work, otherwise it duplicates nodeRef in lucene index !!!
-		if (nodeService.exists(nodeRef) && (aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && 
-				!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL) && 
-				nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null) 
-				|| (aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL) && nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null)) {
+		if (nodeService.exists(nodeRef) && nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null && 
+				(aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) || 
+				(aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL))) {
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("Add sortable aspect policy ");
@@ -133,11 +133,13 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 	
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		
+		Set<NodeRef> deletedNodes = new HashSet<>();		
 		for (NodeRef nodeRef : pendingNodes) {
 			if(!nodeService.exists(nodeRef)){
-				pendingNodes.remove(nodeRef);
+				deletedNodes.add(nodeRef);				
 			}
 		}
+		pendingNodes.removeAll(deletedNodes);
 		
 		dataListSortService.computeDepthAndSort(pendingNodes);
 	}

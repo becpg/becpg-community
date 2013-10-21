@@ -46,20 +46,7 @@ public interface ProductService {
      * @throws FormulateException
      */
     public ProductData formulate(ProductData productData) throws FormulateException;
-    
-
-    
-    
- 
-    /**
-     * Classify product.
-     *
-     * @param containerNodeRef the container node ref
-     * @param productNodeRef the product node ref
-     */
-    public void classifyProductByHierarchy(NodeRef containerNodeRef, NodeRef productNodeRef);
-
-    
+     
     
     /**
      * 

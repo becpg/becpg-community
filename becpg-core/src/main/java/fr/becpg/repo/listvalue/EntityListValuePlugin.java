@@ -432,8 +432,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * Get the report templates of the product type that user can choose from
 	 * UI.
 	 * 
-	 * @param systemProductType
-	 *            the system product type
 	 * @param query
 	 *            the query
 	 * @return the map

@@ -864,7 +864,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(),
 					NC_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_NC, true, true, false);
 		} catch (Exception e) {
-			logger.error("Failed to create nc report tpl. SystemProductType: " + QualityModel.TYPE_NC, e);
+			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_NC, e);
 		}
 
 		// compare report
