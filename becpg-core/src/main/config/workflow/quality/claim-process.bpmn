@@ -152,6 +152,8 @@
                  
                }
                
+               execution.setVariable('bcpg_plants', task.getVariable('bcpg_plants'));
+               
                execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
         			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
                execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>

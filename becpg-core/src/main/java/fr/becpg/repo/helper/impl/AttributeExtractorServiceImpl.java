@@ -33,6 +33,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.config.format.CSVPropertyFormats;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -71,6 +72,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private SecurityService securityService;
 
 	private PropertyFormats propertyFormats = new PropertyFormats(false);
+	
+	private PropertyFormats csvPropertyFormats = new CSVPropertyFormats(false);
 
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
@@ -450,7 +453,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		if (attribute instanceof PropertyDefinition) {
 
 			value = properties.get(attribute.getName());
-			displayName = getStringValue((PropertyDefinition) attribute, value, propertyFormats);
+			displayName = getStringValue((PropertyDefinition) attribute, value,AttributeExtractorMode.CSV.equals(mode)? csvPropertyFormats :  propertyFormats);
 
 			if (AttributeExtractorMode.CSV.equals(mode)) {
 				return displayName;

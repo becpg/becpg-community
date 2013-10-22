@@ -48,7 +48,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
 
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
-		Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService);
+		Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 			for (CompoListDataItem compoListDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
@@ -95,7 +95,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				Double value = (simpleCharact.getValue() != null ? simpleCharact.getValue() : 0d);
 				value = value * qty;
-				if (netWeight != 0.0d) {
+				if (netWeight != 0d) {
 					value = value / netWeight;
 				}
 				

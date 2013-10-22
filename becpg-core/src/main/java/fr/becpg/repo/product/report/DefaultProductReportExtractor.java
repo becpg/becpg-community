@@ -441,7 +441,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			if(tarePrimary == null){
 				tarePrimary = 0d;
 			}
-			Double netWeightPrimary = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService);
+			Double netWeightPrimary = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
 			packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_1, toString(tarePrimary));
 			packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_1, toString(netWeightPrimary));
 			packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_1, toString(tarePrimary + netWeightPrimary));
