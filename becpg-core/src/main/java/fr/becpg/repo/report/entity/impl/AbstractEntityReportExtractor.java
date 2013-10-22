@@ -3,6 +3,7 @@ package fr.becpg.repo.report.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,8 @@ import fr.becpg.repo.report.entity.EntityReportExtractor;
 
 public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
 
-
 	private static Log logger = LogFactory.getLog(AbstractEntityReportExtractor.class);
-	
+
 	/** The Constant TAG_ENTITY. */
 	protected static final String TAG_ENTITY = "entity";
 
@@ -57,44 +57,41 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final String ATTR_SET = "set";
 	protected static final String ATTR_NAME = "name";
 	protected static final String ATTR_VALUE = "value";
-	protected static final String ATTR_ITEM_TYPE = "itemType";	
+	protected static final String ATTR_ITEM_TYPE = "itemType";
 	protected static final String ATTR_ASPECTS = "aspects";
 	protected static final String TAG_IMAGES = "images";
 	protected static final String TAG_IMAGE = "image";
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
-	
+
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
-	
+
 	private static final String VALUE_PERSON = "%s %s";
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
-	
+
 	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
 
-	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(
-			ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID,
-			ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL,
-			ContentModel.PROP_CONTENT));
-	
-	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(
-			ContentModel.PROP_NAME, ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR,
-			ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_DBID,
+			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
+
+	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NAME, ContentModel.PROP_CREATED,
+			ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 
 	protected DictionaryService dictionaryService;
-	
+
 	protected NamespaceService namespaceService;
-	
+
 	protected AttributeExtractorService attributeExtractorService;
 
 	protected NodeService nodeService;
-	
+
 	protected EntityService entityService;
 
 	protected VersionService versionService;
-	
+
 	protected FileFolderService fileFolderService;
-	
+
 	protected AssociationService associationService;
 
 	public void setNodeService(NodeService nodeService) {
@@ -137,35 +134,35 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		Document document = DocumentHelper.createDocument();
 		Element entityElt = document.addElement(TAG_ENTITY);
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
-		
+
 		// add attributes at <product/> tag
 		loadNodeAttributes(entityNodeRef, entityElt, true);
-		
+
 		Element aspectsElt = entityElt.addElement(ATTR_ASPECTS);
 		aspectsElt.addCDATA(extractAspects(entityNodeRef));
-		
+
 		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
 		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).getPrefixString());
-		
+
 		// load images
-		Element imgsElt = entityElt.addElement(TAG_IMAGES);		
+		Element imgsElt = entityElt.addElement(TAG_IMAGES);
 		extractEntityImages(entityNodeRef, imgsElt, images);
-		
+
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
 		loadDataLists(entityNodeRef, dataListsElt, images);
-		
+
 		// render versions
 		loadVersions(entityNodeRef, entityElt);
-		
+
 		ret.setXmlDataSource(entityElt);
 		ret.setDataObjects(images);
 
 		return ret;
 	}
-	
+
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
-		
+
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
@@ -187,65 +184,66 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			}
 		}
 	}
-	
+
 	// render target assocs (plants...special cases)
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
 		return false;
 	}
-	
+
 	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
 	}
-	
-	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {		
+
+	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 	}
-	
-	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {		
-		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes);		
+
+	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {
+		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes);
 	}
-	
+
 	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {
 		List<QName> hiddentAttributes = new ArrayList<>();
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
-		loadAttributes(nodeRef, nodeElt, useCData, hiddentAttributes);			
+		loadAttributes(nodeRef, nodeElt, useCData, hiddentAttributes);
 	}
-	
+
 	/**
 	 * Load node attributes.
-	 *
-	 * @param nodeRef the node ref
-	 * @param elt the elt
+	 * 
+	 * @param nodeRef
+	 *            the node ref
+	 * @param elt
+	 *            the elt
 	 * @return the element
 	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
-		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();		
-		
+		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();
+
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
-			if(!hiddenAttributes.contains(property.getKey())){
-			
-				PropertyDefinition propertyDef =  dictionaryService.getProperty(property.getKey());
-				if(propertyDef == null){
+			if (!hiddenAttributes.contains(property.getKey())) {
+
+				PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
+				if (propertyDef == null) {
 					logger.error("This property doesn't exist. Name: " + property.getKey());
 					continue;
 				}
-				
-				String value = VALUE_NULL;				
+
+				String value = VALUE_NULL;
 				if (property.getValue() != null) {
-					
+
 					value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-				}			
-				
+				}
+
 				values.put(propertyDef, value);
-			}			
-		}		
-		
-		
+			}
+		}
+
 		// associations
 		Map<QName, String> tempValues = new HashMap<QName, String>();
 		List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
@@ -255,15 +253,14 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			QName qName = assocRef.getTypeQName();
 			NodeRef targetNodeRef = assocRef.getTargetRef();
 			QName targetQName = nodeService.getType(targetNodeRef);
-			String name = "";			
-			
-			if(targetQName.equals(ContentModel.TYPE_PERSON)){
-				name = String.format(VALUE_PERSON, (String)nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
-								(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
-			}
-			else{
+			String name = "";
+
+			if (targetQName.equals(ContentModel.TYPE_PERSON)) {
+				name = String.format(VALUE_PERSON, (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
+						(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
+			} else {
 				name = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
-			}									
+			}
 
 			if (tempValues.containsKey(qName)) {
 				String names = tempValues.get(qName);
@@ -273,99 +270,101 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			} else {
 				tempValues.put(qName, name);
 			}
-		}		
-		
-		for(Map.Entry<QName, String> tempValue : tempValues.entrySet()){
-			AssociationDefinition associationDef =  dictionaryService.getAssociation(tempValue.getKey());
-			if(associationDef == null){
+		}
+
+		for (Map.Entry<QName, String> tempValue : tempValues.entrySet()) {
+			AssociationDefinition associationDef = dictionaryService.getAssociation(tempValue.getKey());
+			if (associationDef == null) {
 				logger.error("This association doesn't exist. Name: " + tempValue.getKey());
 				continue;
 			}
 			values.put(associationDef, tempValue.getValue());
 		}
-		
+
 		for (Map.Entry<ClassAttributeDefinition, String> attrKV : values.entrySet()) {
 
-			if(attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition)attrKV.getKey(), nodeElt)){				
-				
-				if(useCData || 
-						attrKV.getKey().getName().isMatch(BeCPGModel.PROP_INSTRUCTION)){
+			if (attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition) attrKV.getKey(), nodeElt)) {
+
+				if (useCData || attrKV.getKey().getName().isMatch(BeCPGModel.PROP_INSTRUCTION)) {
 					addCDATA(nodeElt, attrKV.getKey().getName(), attrKV.getValue());
-				}				
-				else{
+				} else {
 					nodeElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
 				}
-			}				
+			}
 		}
-	}	
+	}
 
-	protected String generateKeyAttribute(String attributeName){
-		
+	protected String generateKeyAttribute(String attributeName) {
+
 		return attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase();
 	}
-	
+
 	protected void loadVersions(NodeRef entityNodeRef, Element entityElt) {
-		
-		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);		
+
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
-		
-		if(versionHistory!=null && versionHistory.getAllVersions() != null){
-			
-			for(Version version : versionHistory.getAllVersions()){
+
+		if (versionHistory != null && versionHistory.getAllVersions() != null) {
+
+			for (Version version : versionHistory.getAllVersions()) {
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
-				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());			
+				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
-				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));				
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
+				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(),
 						attributeExtractorService.getPropertyFormats().getDateFormat().format(version.getFrozenModifiedDate()));
 			}
 		}
-		
-	}	
-	
-	protected String extractNames(List<NodeRef> nodeRefs){
+
+	}
+
+	protected String extractNames(List<NodeRef> nodeRefs) {
 		String value = VALUE_NULL;
-		for(NodeRef nodeRef : nodeRefs){
+		for (NodeRef nodeRef : nodeRefs) {
 			if (!value.isEmpty()) {
 				value += RepoConsts.LABEL_SEPARATOR;
 			}
 			value += (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-		}		
+		}
 		return value;
 	}
-	
-	protected String extractAspects(NodeRef nodeRef){
+
+	protected String extractAspects(NodeRef nodeRef) {
 		String value = VALUE_NULL;
-		for(QName aspect : nodeService.getAspects(nodeRef)){
+		for (QName aspect : nodeService.getAspects(nodeRef)) {
 			if (!value.isEmpty()) {
 				value += RepoConsts.LABEL_SEPARATOR;
 			}
 			value += aspect.toPrefixString();
-		}		
+		}
 		return value;
-	}	
-	
+	}
+
 	/**
 	 * Extract target(s) association
 	 */
-	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt){
-		
-		Element rootElt =  assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
+	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
+
+		Element rootElt = assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
 		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 
 		for (NodeRef nodeRef : nodeRefs) {
 
 			QName qName = nodeService.getType(nodeRef);
-			Element nodeElt = rootElt.addElement(qName.getLocalName());					
+			Element nodeElt = rootElt.addElement(qName.getLocalName());
 			loadNodeAttributes(nodeRef, nodeElt, true);
 		}
 	}
-	
-	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue){
-		Element cDATAElt = nodeElt.addElement(propertyQName.getLocalName());		
+
+	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue) {
+		Element cDATAElt = nodeElt.addElement(propertyQName.getLocalName());
 		cDATAElt.addCDATA(eltValue);
-		
-		//TODO : manage prefix correctly
-		cDATAElt.addAttribute("prefix", propertyQName.getPrefixedQName(namespaceService).getLocalName());
+
+		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());
+		if (prefixes.size() != 0) {
+
+			// TODO : manage prefix correctly
+			cDATAElt.addAttribute("prefix", prefixes.iterator().next());
+		}
 	}
 }
