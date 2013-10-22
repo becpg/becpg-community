@@ -35,3 +35,16 @@
 	padding-left: 20px;
 }
 
+
+ul.users {
+    height: 25em;
+    line-height: 2em;
+    padding-top: 20px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.users li span {
+	vertical-align: top;
+	padding-left: 20px;
+}

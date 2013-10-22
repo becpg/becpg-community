@@ -41,6 +41,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private static final String ACTION_RELOAD_ACL = "reload-acl";
 	private static final String ACTION_RELOAD_MODEL = "reload-model";
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
+	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
 
 	private InitVisitor initRepoVisitor;
 
@@ -118,6 +119,9 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			logger.debug("Get system entities");
 			ret.put("systemEntities", entitySystemService.getSystemEntities());
 			ret.put("systemFolders", entitySystemService.getSystemFolders());
+		} else if (action.equals(ACTION_GET_CONNECTED_USERS)) {
+			logger.debug("Get connected users");
+			ret.put("users", authenticationService.getUsersWithTickets(true));
 		} else {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 		}
@@ -137,7 +141,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		ret.put("freeMemory", runtime.freeMemory()/ 1000000d);
 		ret.put("maxMemory", runtime.maxMemory()/ 1000000d);
 		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed()/ 1000000d);
-		ret.put("connectedUsers", authenticationService.getUsersWithTickets(true).size());
+		ret.put("connectedUsers", authenticationService.getUsersWithTickets(true).size()-1);
 		
 		
 		
