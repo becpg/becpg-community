@@ -20,11 +20,11 @@ public class PropertyFormats {
 	
 	private boolean useDefaultLocale = true;
 	
-	private DateFormat dateFormat;
+	protected DateFormat dateFormat;
 	
-	private DateFormat datetimeFormat;
+	protected DateFormat datetimeFormat;
 	
-	private DecimalFormat decimalFormat;
+	protected DecimalFormat decimalFormat;
 
 	
 	public boolean isUseDefaultLocale() {

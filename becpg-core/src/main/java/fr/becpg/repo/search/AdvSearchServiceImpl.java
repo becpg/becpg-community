@@ -21,7 +21,6 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
@@ -54,8 +53,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private BeCPGSearchService beCPGSearchService;
 
 	private PermissionService permissionService;
-	
-	private HierarchyService hierarchyService;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -75,10 +72,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setHierarchyService(HierarchyService hierarchyService) {
-		this.hierarchyService = hierarchyService;
 	}
 
 	@Override
@@ -119,25 +112,27 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		// we processed the search terms, so suffix the PATH query
 	
-		String pathQuery = "PATH:\"/app:company_home//*\"";
 		if (!isRepo) {
-			pathQuery =  LuceneHelper.getSiteSearchPath(siteId, containerId);
+			ftsQuery = LuceneHelper.getSiteSearchPath(siteId, containerId) + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
 		}	
 		
-		ftsQuery = pathQuery + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
 		
 		if (datatype != null) {
-			ftsQuery = "TYPE:\"" + datatype + "\"" + " AND " + ftsQuery;
+			ftsQuery = "TYPE:\"" + datatype + "\"" + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
+		} else {
+			ftsQuery += "AND -TYPE:\"cm:thumbnail\" " +
+					"AND -TYPE:\"cm:failedThumbnail\" " +
+					"AND -TYPE:\"cm:rating\" " +
+					"AND -TYPE:\"bcpg:entityListItem\" " +
+					"AND -TYPE:\"systemfolder\" " +
+					"AND -TYPE:\"rep:report\"";
 		}
 		
-		ftsQuery += " AND -TYPE:\"cm:thumbnail\" AND -TYPE:\"cm:failedThumbnail\" AND -TYPE:\"cm:rating\" AND -TYPE:\"bcpg:entityListItem\" AND -TYPE:\"systemfolder\" AND -TYPE:\"rep:report\"";
-//		ftsQuery += " TYPE:\"" + BeCPGModel.TYPE_PRODUCT + "\"^4";
-			
-
+		
 		// extract data type for this search - advanced search query is type
 		// specific
 		ftsQuery += " AND -ASPECT:\"ecm:simulationEntityAspect\""
-				    +" AND -ASPECT: \"bcpg:hiddenFolder\""
+				    +" AND -ASPECT:\"bcpg:hiddenFolder\""
 				    +" AND -ASPECT:\"bcpg:compositeVersion\""
 				    +" AND -ASPECT:\"bcpg:entityTplAspect\"";
 

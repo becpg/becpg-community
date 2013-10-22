@@ -3,6 +3,7 @@ package fr.becpg.repo.report.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -368,20 +369,15 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		}
 	}
 	
-	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue){
-		Element cDATAElt = nodeElt.addElement(propertyQName.getLocalName());		
+	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue) {
+		Element cDATAElt = nodeElt.addElement(propertyQName.getLocalName());
 		cDATAElt.addCDATA(eltValue);
-		
-		//TODO : manage prefix correctly
-		cDATAElt.addAttribute("prefix", propertyQName.getPrefixString());
-	}
-	
-	private String toString(Integer value) {
-		return value == null ? VALUE_NULL : Integer.toString(value);
-	}
 
-	private String toString(Double value) {
+		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());
+		if (prefixes.size() != 0) {
 
-		return value == null ? VALUE_NULL : Double.toString(value);
+			// TODO : manage prefix correctly
+			cDATAElt.addAttribute("prefix", prefixes.iterator().next());
+		}
 	}
 }

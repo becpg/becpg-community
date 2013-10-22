@@ -155,7 +155,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}	
 	
 	private void checkNetWeight(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef){
-		Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService);
+		Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService,null);
 		if(netWeight == null || netWeight.equals(0d)){								
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
 		}
