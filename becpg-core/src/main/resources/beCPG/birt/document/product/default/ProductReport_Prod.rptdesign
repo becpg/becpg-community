@@ -79,10 +79,8 @@
                 </structure>
                 <structure>
                     <property name="columnName">modified</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">modified</text-property>
-                    <property name="analysisColumn">modified</property>
                 </structure>
                 <structure>
                     <property name="columnName">productQty</property>
@@ -127,10 +125,8 @@
                 </structure>
                 <structure>
                     <property name="columnName">created</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">created</text-property>
-                    <property name="analysisColumn">created</property>
                 </structure>
                 <structure>
                     <property name="columnName">description</property>
@@ -154,10 +150,8 @@
                 </structure>
                 <structure>
                     <property name="columnName">startEffectivity</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">startEffectivity</text-property>
-                    <property name="analysisColumn">startEffectivity</property>
                 </structure>
                 <structure>
                     <property name="columnName">productComments</property>
@@ -175,6 +169,7 @@
                 <structure>
                     <property name="columnName">pvTransmitterActor</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvTransmitterActor</text-property>
                 </structure>
                 <structure>
@@ -192,7 +187,6 @@
                 <structure>
                     <property name="columnName">pvValidationDate</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvValidationDate</text-property>
                 </structure>
                 <structure>
@@ -261,7 +255,7 @@
                     <structure>
                         <property name="position">8</property>
                         <property name="name">modified</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">9</property>
@@ -296,7 +290,7 @@
                     <structure>
                         <property name="position">15</property>
                         <property name="name">created</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">16</property>
@@ -316,7 +310,7 @@
                     <structure>
                         <property name="position">19</property>
                         <property name="name">startEffectivity</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">20</property>
@@ -346,7 +340,7 @@
                     <structure>
                         <property name="position">25</property>
                         <property name="name">pvValidationDate</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">26</property>
@@ -425,8 +419,8 @@
                     <property name="position">8</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
@@ -474,8 +468,8 @@
                     <property name="position">15</property>
                     <property name="name">created</property>
                     <property name="nativeName">created</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">16</property>
@@ -502,8 +496,8 @@
                     <property name="position">19</property>
                     <property name="name">startEffectivity</property>
                     <property name="nativeName">startEffectivity</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">20</property>
@@ -544,8 +538,8 @@
                     <property name="position">25</property>
                     <property name="name">pvValidationDate</property>
                     <property name="nativeName">pvValidationDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">26</property>
@@ -576,7 +570,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;STRING;/created},{description;STRING;/description},{eanCode;INT;/eanCode},{useByDate;STRING;/useByDate},{startEffectivity;STRING;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;STRING;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;TIMESTAMP;/created},{description;STRING;/description},{eanCode;INT;/eanCode},{useByDate;STRING;/useByDate},{startEffectivity;TIMESTAMP;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6590,8 +6584,8 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                                 <structure>
                                                     <property name="name">modified</property>
                                                     <text-property name="displayName">modified</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["modified"],17)</expression>
-                                                    <property name="dataType">string</property>
+                                                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
@@ -6620,7 +6614,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                                 <structure>
                                                     <property name="name">pvValidationDate</property>
                                                     <text-property name="displayName">pvValidationDate</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["pvValidationDate"],17)</expression>
+                                                    <expression name="expression" type="javascript">dataSetRow["pvValidationDate"]</expression>
                                                     <property name="dataType">string</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>

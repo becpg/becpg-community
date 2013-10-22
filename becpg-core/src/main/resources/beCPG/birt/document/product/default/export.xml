@@ -1,0 +1,207 @@
+<entity>
+	<modified prefix="cm:modified"><![CDATA[lun. 21 oct. 2013 21:26:34]]></modified>
+	<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+	<productState prefix="bcpg:productState"><![CDATA[A valider]]></productState>
+	<netWeight prefix="bcpg:netWeight"><![CDATA[2]]></netWeight>
+	<name prefix="cm:name"><![CDATA[Produit fini 1]]></name>
+	<productQty prefix="bcpg:productQty"><![CDATA[2]]></productQty>
+	<locale prefix="sys:locale"><![CDATA[fr_FR]]></locale>
+	<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+	<legalName prefix="bcpg:legalName"><![CDATA[Legal Produit fini 1]]></legalName>
+	<description prefix="cm:description"><![CDATA[Descr line 1 
+ descr line 2]]></description>
+	<netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit>
+	<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+	<created prefix="cm:created"><![CDATA[lun. 21 oct. 2013 21:26:34]]></created>
+	<aspects><![CDATA[bcpg:eanAspect, bcpg:consumerAspect, referenceable, cm:titled, localized, bcpg:transformationAspect, bcpg:legalNameAspect, bcpg:effectivityAspect, bcpg:entityTplRefAspect, auditable, bcpg:codeAspect, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:productMicrobioCriteriaAspect, bcpg:clientsAspect, bcpg:productAspect]]></aspects>
+	<itemType><![CDATA[bcpg:finishedProduct]]></itemType>
+	<images />
+	<dataLists>
+		<costLists>
+			<costList costListUnit="€/P" costListCost="pkgCost1"
+				isManualListItem="Faux" costListValue="1" locale="fr_FR" />
+			<costList costListUnit="€/P" costListCost="pkgCost2"
+				isManualListItem="Faux" costListValue="2" locale="fr_FR" />
+		</costLists>
+		<compoLists>
+			<compoList compoListQty="1" compoListQtySubFormula="1"
+				compoListDeclType="Déclarer" compoListProduct="Raw material 1"
+				compoListUnit="kg" compoListLossPerc="3" locale="fr_FR" depthLevel="1"
+				code="MP132" legalName="Legal Raw material 1" suppliers=""
+				itemType="bcpg:rawMaterial"
+				aspects="bcpg:eanAspect, referenceable, localized, bcpg:legalNameAspect, bcpg:suppliersAspect, bcpg:effectivityAspect, bcpg:entityTplRefAspect, auditable, bcpg:codeAspect, incomplete, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:productMicrobioCriteriaAspect, bcpg:productAspect" />
+			<compoList compoListQty="0,5" compoListQtySubFormula="0,5"
+				compoListDeclType="Déclarer" compoListProduct="Raw material 2"
+				compoListUnit="kg" compoListLossPerc="3" locale="fr_FR" depthLevel="1"
+				code="MP133" legalName="Legal Raw material 2" suppliers=""
+				itemType="bcpg:rawMaterial"
+				aspects="bcpg:eanAspect, referenceable, localized, bcpg:legalNameAspect, bcpg:suppliersAspect, bcpg:effectivityAspect, bcpg:entityTplRefAspect, auditable, bcpg:codeAspect, incomplete, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:productMicrobioCriteriaAspect, bcpg:productAspect" />
+			<compoList compoListQty="0,5" compoListQtySubFormula="0,5"
+				compoListDeclType="Déclarer" compoListProduct="Raw material 3"
+				compoListUnit="kg" compoListLossPerc="3" locale="fr_FR" depthLevel="1"
+				code="MP134" legalName="Legal Raw material 3" suppliers=""
+				itemType="bcpg:rawMaterial"
+				aspects="bcpg:eanAspect, referenceable, localized, bcpg:legalNameAspect, bcpg:suppliersAspect, bcpg:effectivityAspect, bcpg:entityTplRefAspect, auditable, bcpg:codeAspect, incomplete, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:productMicrobioCriteriaAspect, bcpg:productAspect" />
+			<dynamicCharactLists />
+		</compoLists>
+		<rawMaterials>
+			<rawMaterial>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<modified prefix="cm:modified"><![CDATA[lun. 21 oct. 2013 21:26:29]]></modified>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première]]></entityTplRef>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<productState prefix="bcpg:productState"><![CDATA[A valider]]></productState>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[13049]]></node-dbid>
+				<name prefix="cm:name"><![CDATA[Raw material 1]]></name>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[e21fa153-c572-45e4-908c-72011c1c94c8]]></node-uuid>
+				<locale prefix="sys:locale"><![CDATA[fr_FR]]></locale>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<legalName prefix="bcpg:legalName"><![CDATA[Legal Raw material 1]]></legalName>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[lun. 21 oct. 2013 21:26:28]]></startEffectivity>
+				<code prefix="bcpg:code"><![CDATA[MP132]]></code>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<created prefix="cm:created"><![CDATA[lun. 21 oct. 2013 21:26:27]]></created>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1]]></productDensity>
+				<compoListQty prefix="compoListQty"><![CDATA[50.0]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists />
+					<labelClaimLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListIsIonized="Faux" ingListIsProcessingAid="Faux"
+							sort="113" ingListIng="ing1" ingListGeoOrigin="geoOrigin1"
+							ingListBioOrigin="bioOrigin1" ingListIsGMO="Faux"
+							isManualListItem="Faux" locale="fr_FR" ingListQtyPerc="33,3333" />
+						<ingList ingListIsIonized="Faux" ingListIsProcessingAid="Faux"
+							sort="114" ingListIng="ing2" ingListGeoOrigin="geoOrigin1, geoOrigin2"
+							ingListBioOrigin="bioOrigin1" ingListIsGMO="Faux"
+							isManualListItem="Faux" locale="fr_FR" ingListQtyPerc="66,6667" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<modified prefix="cm:modified"><![CDATA[lun. 21 oct. 2013 21:26:30]]></modified>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première]]></entityTplRef>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<productState prefix="bcpg:productState"><![CDATA[A valider]]></productState>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[13070]]></node-dbid>
+				<name prefix="cm:name"><![CDATA[Raw material 2]]></name>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[420cdb6b-560c-4e7a-a789-8bb53b015e6c]]></node-uuid>
+				<locale prefix="sys:locale"><![CDATA[fr_FR]]></locale>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<legalName prefix="bcpg:legalName"><![CDATA[Legal Raw material 2]]></legalName>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[lun. 21 oct. 2013 21:26:28]]></startEffectivity>
+				<code prefix="bcpg:code"><![CDATA[MP133]]></code>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<created prefix="cm:created"><![CDATA[lun. 21 oct. 2013 21:26:27]]></created>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1]]></productDensity>
+				<compoListQty prefix="compoListQty"><![CDATA[25.0]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists />
+					<labelClaimLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListIsIonized="Vrai" ingListIsProcessingAid="Faux"
+							sort="127" ingListIng="ing1" ingListGeoOrigin="geoOrigin1"
+							ingListBioOrigin="bioOrigin1" ingListIsGMO="Vrai"
+							isManualListItem="Faux" locale="fr_FR" ingListQtyPerc="25" />
+						<ingList ingListIsIonized="Faux" ingListIsProcessingAid="Faux"
+							sort="128" ingListIng="ing2" ingListGeoOrigin="geoOrigin2"
+							ingListBioOrigin="bioOrigin2" ingListIsGMO="Faux"
+							isManualListItem="Faux" locale="fr_FR" ingListQtyPerc="75" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<modified prefix="cm:modified"><![CDATA[lun. 21 oct. 2013 21:26:30]]></modified>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première]]></entityTplRef>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<productState prefix="bcpg:productState"><![CDATA[A valider]]></productState>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[13091]]></node-dbid>
+				<name prefix="cm:name"><![CDATA[Raw material 3]]></name>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[0296f9ad-ef5d-4b6a-bbab-672b242afb0f]]></node-uuid>
+				<locale prefix="sys:locale"><![CDATA[fr_FR]]></locale>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<legalName prefix="bcpg:legalName"><![CDATA[Legal Raw material 3]]></legalName>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[lun. 21 oct. 2013 21:26:28]]></startEffectivity>
+				<code prefix="bcpg:code"><![CDATA[MP134]]></code>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<created prefix="cm:created"><![CDATA[lun. 21 oct. 2013 21:26:27]]></created>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1]]></productDensity>
+				<compoListQty prefix="compoListQty"><![CDATA[25.0]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists />
+					<labelClaimLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListIsIonized="Vrai" ingListIsProcessingAid="Faux"
+							sort="141" ingListIng="ing3" ingListGeoOrigin="geoOrigin2"
+							ingListBioOrigin="bioOrigin1, bioOrigin2" ingListIsGMO="Vrai"
+							isManualListItem="Faux" locale="fr_FR" ingListQtyPerc="100" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+		</rawMaterials>
+		<packagingLists tarePkgLevel1="0.0" netWeightPkgLevel1="2.0"
+			grossWeightPkgLevel1="2.0">
+			<packagingList labelingPosition="Côté de la boîte"
+				packagingListLossPerc="0" packagingListProduct="Packaging material 1"
+				packagingListUnit="P" labelingTemplate="Marquage 1"
+				packagingListIsMaster="true" packagingListPkgLevel="Primary"
+				packagingListQty="1" locale="fr_FR" code="E32"
+				legalName="Legal Packaging material 1" suppliers=""
+				itemType="bcpg:packagingMaterial"
+				aspects="bcpg:eanAspect, referenceable, pack:tareAspect, localized, bcpg:suppliersAspect, bcpg:legalNameAspect, bcpg:entityTplRefAspect, bcpg:effectivityAspect, auditable, bcpg:codeAspect, incomplete, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:productAspect"
+				tare="0.015" tareUnit="kg">
+				<labelingTemplate>
+					<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+					<modified prefix="cm:modified"><![CDATA[lun. 21 oct. 2013 20:08:29]]></modified>
+					<description prefix="cm:description"><![CDATA[N° de lot : AAJJJ (AA : derniers chiffres de l’année ; JJJ : quantième du jour de fabrication)]]></description>
+					<name prefix="cm:name"><![CDATA[Marquage 1]]></name>
+					<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+					<created prefix="cm:created"><![CDATA[lun. 21 oct. 2013 20:08:29]]></created>
+					<locale prefix="sys:locale"><![CDATA[fr_FR]]></locale>
+				</labelingTemplate>
+			</packagingList>
+			<packagingList packagingListLossPerc="0"
+				packagingListProduct="Packaging material 2" packagingListUnit="m"
+				packagingListIsMaster="true" packagingListPkgLevel="Primary"
+				packagingListQty="3" locale="fr_FR" code="E33"
+				legalName="Legal Packaging material 2" suppliers=""
+				itemType="bcpg:packagingMaterial"
+				aspects="bcpg:eanAspect, referenceable, pack:tareAspect, localized, bcpg:suppliersAspect, bcpg:legalNameAspect, bcpg:entityTplRefAspect, bcpg:effectivityAspect, auditable, bcpg:codeAspect, incomplete, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:productAspect"
+				tare="5.0" tareUnit="g" />
+			<packagingList packagingListLossPerc="0"
+				packagingListProduct="Packaging material 3" packagingListUnit="PP"
+				packagingListIsMaster="true" packagingListPkgLevel="Tertiary"
+				packagingListQty="8" locale="fr_FR" code="E34"
+				legalName="Legal Packaging material 3" suppliers=""
+				itemType="bcpg:packagingMaterial"
+				aspects="bcpg:eanAspect, auditable, bcpg:codeAspect, incomplete, referenceable, bcpg:entityListsAspect, rep:reportEntityAspect, localized, bcpg:legalNameAspect, bcpg:suppliersAspect, bcpg:productAspect, bcpg:effectivityAspect, bcpg:entityTplRefAspect" />
+			<dynamicCharactLists />
+		</packagingLists>
+		<ingLabelingLists />
+	</dataLists>
+	<variants />
+	<versions />
+</entity>

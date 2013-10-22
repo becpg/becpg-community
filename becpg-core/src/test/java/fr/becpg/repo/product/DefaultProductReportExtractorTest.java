@@ -24,7 +24,10 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
@@ -70,7 +73,8 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(2d);
+				finishedProduct.setQty(2d);		
+				finishedProduct.setNetWeight(2d);
 				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
@@ -80,6 +84,11 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				finishedProduct.setCostList(costList);
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
+				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
 				
 				// add labelingTemplate aspect

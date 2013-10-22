@@ -3,6 +3,7 @@ package fr.becpg.repo.report.entity.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
@@ -227,7 +229,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			// do not display system properties
-			if(!hiddenAttributes.contains(property.getKey())){
+			if(hiddenAttributes == null || !hiddenAttributes.contains(property.getKey())){
 			
 				PropertyDefinition propertyDef =  dictionaryService.getProperty(property.getKey());
 				if(propertyDef == null){
@@ -235,10 +237,15 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 					continue;
 				}
 				
-				String value = VALUE_NULL;				
+				String value = VALUE_NULL;	
 				if (property.getValue() != null) {
-					
-					value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
+
+					// value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
+					if (property.getValue() instanceof Date) {
+						value = ISO8601DateFormat.format((Date) property.getValue());
+					} else {
+						value = property.getValue().toString();
+					}
 				}			
 				
 				values.put(propertyDef, value);
@@ -367,5 +374,14 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		
 		//TODO : manage prefix correctly
 		cDATAElt.addAttribute("prefix", propertyQName.getPrefixString());
+	}
+	
+	private String toString(Integer value) {
+		return value == null ? VALUE_NULL : Integer.toString(value);
+	}
+
+	private String toString(Double value) {
+
+		return value == null ? VALUE_NULL : Double.toString(value);
 	}
 }
