@@ -264,7 +264,7 @@
                     <structure>
                         <property name="position">8</property>
                         <property name="name">modified</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">9</property>
@@ -319,7 +319,7 @@
                     <structure>
                         <property name="position">19</property>
                         <property name="name">pvValidationDate</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">20</property>
@@ -443,8 +443,8 @@
                     <property name="position">8</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
@@ -520,8 +520,8 @@
                     <property name="position">19</property>
                     <property name="name">pvValidationDate</property>
                     <property name="nativeName">pvValidationDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">20</property>
@@ -615,7 +615,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;STRING;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1976,8 +1976,8 @@ Prix de revient</text-property>
                                                 <structure>
                                                     <property name="name">modified</property>
                                                     <text-property name="displayName">modified</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["modified"],17)</expression>
-                                                    <property name="dataType">string</property>
+                                                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
@@ -2006,8 +2006,8 @@ Prix de revient</text-property>
                                                 <structure>
                                                     <property name="name">pvValidationDate</property>
                                                     <text-property name="displayName">pvValidationDate</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["pvValidationDate"],17)</expression>
-                                                    <property name="dataType">string</property>
+                                                    <expression name="expression" type="javascript">dataSetRow["pvValidationDate"]</expression>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>

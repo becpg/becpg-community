@@ -141,7 +141,6 @@
                 <structure>
                     <property name="columnName">pvValidationDate</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvValidationDate</text-property>
                 </structure>
                 <structure>
@@ -213,6 +212,7 @@
                 <structure>
                     <property name="columnName">netWeight</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">netWeight</text-property>
                 </structure>
             </list-property>
@@ -257,7 +257,7 @@
                     <structure>
                         <property name="position">8</property>
                         <property name="name">modified</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">9</property>
@@ -312,7 +312,7 @@
                     <structure>
                         <property name="position">19</property>
                         <property name="name">pvValidationDate</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">20</property>
@@ -431,8 +431,8 @@
                     <property name="position">8</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
@@ -508,8 +508,8 @@
                     <property name="position">19</property>
                     <property name="name">pvValidationDate</property>
                     <property name="nativeName">pvValidationDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">20</property>
@@ -596,7 +596,7 @@
                     <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;STRING;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5693,6 +5693,306 @@ row["illValue"]
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="rawMaterials" id="3250">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">legalName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">compoListQty</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">compoListQty</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">lclIsClaimed_Elevage</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">lclIsClaimed_Elevage</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">suppliers</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">suppliers</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">erpCode</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">erpCode</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">modified</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">modified</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">legalName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">compoListQty</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">lclIsClaimed_Elevage</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">suppliers</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">erpCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">modified</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">compoListQty</property>
+                    <property name="nativeName">compoListQty</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">lclIsClaimed_Elevage</property>
+                    <property name="nativeName">lclIsClaimed_Elevage</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">suppliers</property>
+                    <property name="nativeName">suppliers</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">erpCode</property>
+                    <property name="nativeName">erpCode</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">modified</property>
+                    <property name="nativeName">modified</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/rawMaterials/rawMaterial]#:#{legalName;STRING;/legalName},{compoListQty;STRING;/compoListQty},{lclIsClaimed_Elevage;STRING;/dataLists/labelClaimLists/labelClaimList[@lclLabelClaim="Elevage"]/@lclIsClaimed},{suppliers;STRING;/suppliers},{erpCode;STRING;/erpCode},{modified;STRING;/modified}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>legalName</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>legalName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>compoListQty</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>compoListQty</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="rawMaterialsIngList" id="3304">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ingListIng</property>
+                    <text-property name="heading">ingListIng</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ingListGeoOrigin</property>
+                    <text-property name="heading">ingListGeoOrigin</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">ingListBioOrigin</property>
+                    <text-property name="heading">ingListBioOrigin</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ingListIng</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">ingListGeoOrigin</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">ingListBioOrigin</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ingListIng</property>
+                    <property name="nativeName">ingListIng</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">ingListGeoOrigin</property>
+                    <property name="nativeName">ingListGeoOrigin</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">ingListBioOrigin</property>
+                    <property name="nativeName">ingListBioOrigin</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/rawMaterials/rawMaterial/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListBioOrigin;STRING;/@ingListBioOrigin}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ingListIng</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ingListIng</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ingListGeoOrigin</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ingListGeoOrigin</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>ingListBioOrigin</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>ingListBioOrigin</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -5922,8 +6222,8 @@ row["illValue"]
                                                 <structure>
                                                     <property name="name">modified</property>
                                                     <text-property name="displayName">modified</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["modified"],17)</expression>
-                                                    <property name="dataType">string</property>
+                                                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
@@ -7271,9 +7571,190 @@ dataSetRow["illValue"]
                                         <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["illValueToShow"]</VALUE-OF>]]></text-property>
                                     </text>
                                     <label id="3246"/>
+                                    <label id="3251">
+                                        <property name="style">becpg-chapter-header</property>
+                                        <property name="marginTop">0pt</property>
+                                        <property name="marginBottom">0pt</property>
+                                        <property name="textAlign">center</property>
+                                        <property name="display">block</property>
+                                        <text-property name="text">ORIGINE DES MATIERES PREMIERES</text-property>
+                                    </label>
                                 </cell>
                             </row>
                         </detail>
+                    </table>
+                    <table id="3252">
+                        <property name="dataSet">rawMaterials</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">legalName</property>
+                                <text-property name="displayName">legalName</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">compoListQty</property>
+                                <text-property name="displayName">compoListQty</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["compoListQty"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">lclIsClaimed_Elevage</property>
+                                <text-property name="displayName">lclIsClaimed_Elevage</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["lclIsClaimed_Elevage"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">suppliers</property>
+                                <text-property name="displayName">suppliers</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["suppliers"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">erpCode</property>
+                                <text-property name="displayName">erpCode</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">modified</property>
+                                <text-property name="displayName">modified</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <column id="3283"/>
+                        <column id="3284"/>
+                        <column id="3285"/>
+                        <column id="3286"/>
+                        <column id="3287"/>
+                        <column id="3288"/>
+                        <column id="3289"/>
+                        <column id="3290"/>
+                        <header>
+                            <row id="3253">
+                                <cell id="3254">
+                                    <label id="3292">
+                                        <text-property name="text">legalName</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3255">
+                                    <label id="3294">
+                                        <text-property name="text">compoListQty</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3256">
+                                    <label id="3298">
+                                        <text-property name="text">suppliers</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3257">
+                                    <label id="3296">
+                                        <text-property name="text">lclIsClaimed_Elevage</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3258"/>
+                                <cell id="3259">
+                                    <label id="3300">
+                                        <text-property name="text">erpCode</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3260">
+                                    <label id="3302">
+                                        <text-property name="text">modified</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="3261"/>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="3263">
+                                <cell id="3264">
+                                    <data id="3293">
+                                        <property name="resultSetColumn">legalName</property>
+                                    </data>
+                                </cell>
+                                <cell id="3265">
+                                    <data id="3295">
+                                        <property name="resultSetColumn">compoListQty</property>
+                                    </data>
+                                </cell>
+                                <cell id="3266">
+                                    <data id="3299">
+                                        <property name="resultSetColumn">suppliers</property>
+                                    </data>
+                                </cell>
+                                <cell id="3267">
+                                    <data id="3297">
+                                        <property name="resultSetColumn">lclIsClaimed_Elevage</property>
+                                    </data>
+                                </cell>
+                                <cell id="3268"/>
+                                <cell id="3269">
+                                    <data id="3301">
+                                        <property name="resultSetColumn">erpCode</property>
+                                    </data>
+                                </cell>
+                                <cell id="3270">
+                                    <data id="3303">
+                                        <property name="resultSetColumn">modified</property>
+                                    </data>
+                                </cell>
+                                <cell id="3271">
+                                    <table id="3305">
+                                        <property name="dataSet">rawMaterialsIngList</property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">ingListIng</property>
+                                                <text-property name="displayName">ingListIng</text-property>
+                                                <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                                                <property name="dataType">string</property>
+                                            </structure>
+                                        </list-property>
+                                        <column id="3318"/>
+                                        <column id="3319"/>
+                                        <column id="3320"/>
+                                        <header>
+                                            <row id="3306">
+                                                <cell id="3307">
+                                                    <data id="3321">
+                                                        <property name="resultSetColumn">ingListIng</property>
+                                                    </data>
+                                                </cell>
+                                                <cell id="3308"/>
+                                                <cell id="3309"/>
+                                            </row>
+                                        </header>
+                                        <detail>
+                                            <row id="3310">
+                                                <cell id="3311"/>
+                                                <cell id="3312"/>
+                                                <cell id="3313"/>
+                                            </row>
+                                        </detail>
+                                        <footer>
+                                            <row id="3314">
+                                                <cell id="3315"/>
+                                                <cell id="3316"/>
+                                                <cell id="3317"/>
+                                            </row>
+                                        </footer>
+                                    </table>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="3273">
+                                <cell id="3274"/>
+                                <cell id="3275"/>
+                                <cell id="3276"/>
+                                <cell id="3277"/>
+                                <cell id="3278"/>
+                                <cell id="3279"/>
+                                <cell id="3280"/>
+                                <cell id="3281"/>
+                            </row>
+                        </footer>
                     </table>
                     <label id="2567"/>
                 </cell>
