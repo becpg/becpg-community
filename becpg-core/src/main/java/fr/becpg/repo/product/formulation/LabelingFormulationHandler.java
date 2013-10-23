@@ -296,7 +296,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (component instanceof CompositeLabeling && DeclarationType.Declare.equals(((CompositeLabeling) component).getDeclarationType())) {
 								for (AbstractLabelingComponent childComponent : ((CompositeLabeling) component).getIngList().values()) {
-									double subQty = childComponent.getQty() * qty / ((CompositeLabeling) component).getQtyRMUsed();
+									Double subQty = null;
+									if(qty!=null && childComponent.getQty()!=null){
+										//TODO add warning
+										subQty  = childComponent.getQty() * qty / ((CompositeLabeling) component).getQtyRMUsed();
+									}
 									appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty);
 								}
 
