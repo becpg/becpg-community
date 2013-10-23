@@ -49,7 +49,7 @@
 					<show id="qa:claimOriginHierarchy1" />
 					<show id="qa:claimOriginHierarchy2" />
 
-					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatementDate" />
 					<show id="qa:claimTreatmentActor" />
 					<show id="qa:claimTreatementDetails" />
 					<show id="qa:claimTreatementPrevActions"/>
@@ -143,7 +143,7 @@
 						</control>
 					</field>
 
-					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatementDate" set="claim-info"/>
 					<field id="qa:claimTreatmentActor" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
 					<field id="qa:claimTreatementPrevActions" set="claim-info"/>
@@ -211,7 +211,7 @@
    			   <show id="qa:claimOriginHierarchy1" />
 					<show id="qa:claimOriginHierarchy2" />
 
-					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatementDate" />
 					<show id="qa:claimTreatmentActor" />
 					<show id="qa:claimTreatementDetails" />
 					<show id="qa:claimTreatementPrevActions"/>
@@ -303,7 +303,7 @@
 						</control>
 					</field>
 
-					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatementDate" set="claim-info"/>
 					<field id="qa:claimTreatmentActor" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
@@ -390,7 +390,7 @@
 					<show id="cm:creator"   />
 					<show id="cm:created"  />
 
-					<show id="qa:claimTreatmentDate" force="true"/>
+					<show id="qa:claimTreatementDate" force="true"/>
 					<show id="qa:claimTreatmentActor" force="true"/>
 
 					<show id="qa:claimResponseDate" force="true"/>
@@ -544,7 +544,7 @@
    			   <show id="qa:claimOriginHierarchy1" />
 					<show id="qa:claimOriginHierarchy2" />
 
-					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatementDate" />
 					<show id="qa:claimTreatmentActor" />
 					<show id="qa:claimTreatementDetails" />
 					<show id="qa:claimTreatementPrevActions"/>
@@ -636,7 +636,7 @@
 						</control>
 					</field>
 
-					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatementDate" set="claim-info"/>
 					<field id="qa:claimTreatmentActor" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
