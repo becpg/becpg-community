@@ -38,7 +38,7 @@
 
 	<#--
 	Top 10 des produits (Nb NC pour 1 000 000 			UVC facturés) + graph (camembert)
-	NC par mois avec filtre par usine, année, 			marque, famille, produit, nom/groupe (tjs ramené à 1000 000 UVC 			fab) + graph (histogramme + ligne)
+	NC par mois avec filtre par usine, année, marque, famille, produit, nom/groupe (tjs ramené à 1000 000 UVC 			fab) + graph (histogramme + ligne)
 	Affichage des défauts avec % + graph 			(camembert)
 	Nombre de NC par équipe et par défaut 			avec filtres possible
 	Nombre NC par Centrale – client (2 niv)
@@ -67,14 +67,14 @@
 					MAX(IF(prop.prop_name = "qa:claimOriginHierarchy1",prop.string_value,NULL)) as claimOriginHierarchy1, 
 					MAX(IF(prop.prop_name = "qa:claimOriginHierarchy2",prop.string_value,NULL)) as claimOriginHierarchy2, 
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
-					MAX(IF(prop.prop_name = "qa:claimResponseDate",prop.long_value,NULL)) as claimResponseDate, 
-					MAX(IF(prop.prop_name = "qa:claimTreatmentDate",prop.long_value,NULL)) as claimTreatmentDate,
-					MAX(IF(prop.prop_name = "qa:claimClosingDate",prop.long_value,NULL)) as claimClosingDate,
+					MAX(IF(prop.prop_name = "qa:claimResponseDate",prop.date_value,NULL)) as claimResponseDate, 
+					MAX(IF(prop.prop_name = "qa:claimTreatementDate",prop.date_value,NULL)) as claimTreatmentDate,
+					MAX(IF(prop.prop_name = "qa:claimClosingDate",prop.date_value,NULL)) as claimClosingDate,
 					entity.instance_id as instance_id
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type IN ("qa:nc") and instance_id = ${instanceId} and is_last_version = true
+					entity.entity_type = "qa:nc" and instance_id = ${instanceId} and is_last_version = true
 				group by 
 					id
 				]]>
@@ -159,7 +159,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="Produits">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les produits liés" primaryKey="entity_id">
-				<View alias="products">
+				<View alias="qaProducts">
 						<SQL dialect="generic">
 							<![CDATA[
 							select
@@ -172,10 +172,11 @@
 								prop_entity.entity_id as entity_id
 							from
 								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
-																			  LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+																	    LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 								prop_entity.prop_name="qa:product"
-								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
+								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") 
+								and entity.instance_id = ${instanceId}
 							group by id
 							]]>
 						</SQL>
@@ -298,7 +299,7 @@
 							from
 								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
-								 entity.entity_type IN ("pjt:project") and entity.is_last_version = true and entity.instance_id = ${instanceId}
+								 entity.entity_type = "pjt:project" and entity.is_last_version = true and entity.instance_id = ${instanceId}
 							group by id
 							]]>
 						</SQL>
@@ -365,7 +366,7 @@
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type IN ("pjt:project") and entity.instance_id = ${instanceId}
+					entity.entity_type = "pjt:project" and entity.instance_id = ${instanceId}
 				group by 
 					id
 				]]>
@@ -425,7 +426,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="Entités">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les entités liées" primaryKey="entity_id">
-				<View alias="compoList">
+				<View alias="projectEntity">
 						<SQL dialect="generic">
 							<![CDATA[
 							select
@@ -438,11 +439,11 @@
 								prop_entity.entity_id as entity_id
 							from
 								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
-																			  LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+																		 LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 								prop_entity.prop_name="pjt:projectEntity"
 								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
-							group by id
+							 group by id
 							]]>
 						</SQL>
 				</View>		
