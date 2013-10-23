@@ -350,7 +350,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private void extractRawMaterials(ProductData productData, Element dataListsElt, Map<String, byte[]> images){
 		
 		Map<NodeRef, Double> rawMaterials = new HashMap<>();
-		rawMaterials = getRawMaterials(productData, rawMaterials, productData.getNetWeight());
+		rawMaterials = getRawMaterials(productData, rawMaterials, productData.getNetWeight() != null ? productData.getNetWeight() : 0d);
 		Double totalQty = 0d;
 		for(Double qty : rawMaterials.values()){
 			totalQty += qty;
