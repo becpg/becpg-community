@@ -72,6 +72,8 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setHierarchy1(HIERARCHY1_FROZEN_REF);
+				finishedProduct.setHierarchy2(HIERARCHY2_FISH_REF);
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);		
 				finishedProduct.setNetWeight(2d);
