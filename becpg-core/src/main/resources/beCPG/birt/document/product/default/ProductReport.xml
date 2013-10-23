@@ -1,5 +1,1161 @@
-<entity><priceCurrency prefix="bcpg:priceCurrency"><![CDATA[€]]></priceCurrency><productSpecifications prefix="bcpg:productSpecifications"><![CDATA[Spécification glace - client 1]]></productSpecifications><netWeight prefix="bcpg:netWeight"><![CDATA[0.458]]></netWeight><profitability prefix="bcpg:profitability"><![CDATA[24.353074663765206]]></profitability><preparationTips prefix="bcpg:preparationTips"><![CDATA[Surtir du congélateur 10 minutes avant.]]></preparationTips><trademark prefix="bcpg:trademark"><![CDATA[beCPG]]></trademark><productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><width prefix="pack:width"><![CDATA[]]></width><subsidiary prefix="bcpg:subsidiary"><![CDATA[beCPG agro]]></subsidiary><creator prefix="cm:creator"><![CDATA[admin]]></creator><precautionOfUse><created prefix="cm:created"><![CDATA[2013-07-25T15:57:17.715+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><description prefix="cm:description"><![CDATA[NE JAMAIS RECONGELER UN PRODUIT DÉCONGELÉ.]]></description><name prefix="cm:name"><![CDATA[Produit surgelé]]></name><modified prefix="cm:modified"><![CDATA[2013-08-07T13:47:36.391+02:00]]></modified><creator prefix="cm:creator"><![CDATA[admin]]></creator><locale prefix="sys:locale"><![CDATA[fr]]></locale></precautionOfUse><title prefix="cm:title"><![CDATA[]]></title><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-23T00:00:00.000+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/79c39251-aad6-4543-8e50-d53ded086c73]]></productHierarchy2><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><unitPrice prefix="bcpg:unitPrice"><![CDATA[2.0]]></unitPrice><locale prefix="sys:locale"><![CDATA[fr]]></locale><tareUnit prefix="pack:tareUnit"><![CDATA[g]]></tareUnit><taggable prefix="cm:taggable"><![CDATA[[workspace://SpacesStore/76b04bae-2d71-4c8e-ac58-da1b51a90220]]]></taggable><productUnit prefix="bcpg:productUnit"><![CDATA[L]]></productUnit><height prefix="pack:height"><![CDATA[]]></height><description prefix="cm:description"><![CDATA[L’Omelette Norvégienne est composée d’une crème glacée « neutre »  supérieure posée sur une génoise nature imbibée avec un sirop de rhum. Une meringue vanillée et flambée vient recouvrir le tout.]]></description><productDensity prefix="bcpg:productDensity"><![CDATA[0.458]]></productDensity><packagingDescription prefix="bcpg:packagingDescription"><![CDATA[L’Omelette norvégienne extrudée sur une semelle carton et décorée est posée sur un plat aluminium, protégée par une cale plastique et une coiffe plastique puis mise en étui imprimé en micro-cannelure.
-Les Omelettes sont colisées en caisse américaine par 4.]]></packagingDescription><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-22T18:07:12.791+02:00]]></reportEntityGenerated><created prefix="cm:created"><![CDATA[2013-04-19T18:47:22.932+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><useByDate prefix="bcpg:useByDate"><![CDATA[80]]></useByDate><erpCode prefix="bcpg:erpCode"><![CDATA[]]></erpCode><projectedQty prefix="bcpg:projectedQty"><![CDATA[1000]]></projectedQty><name prefix="cm:name"><![CDATA[Omelette Norvégienne 1000 ml]]></name><periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]></periodAfterOpening><modified prefix="cm:modified"><![CDATA[2013-10-18T18:50:12.586+02:00]]></modified><plants><plant><created prefix="cm:created"><![CDATA[2011-11-24T12:20:54.371+01:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><locationAddress1 prefix="bcpg:locationAddress1"><![CDATA[16, rue Gabriel Péri]]></locationAddress1><name prefix="cm:name"><![CDATA[beCPG Montrouge]]></name><title prefix="cm:title"><![CDATA[]]></title><locationAddress3 prefix="bcpg:locationAddress3"><![CDATA[92120 MONTROUGE]]></locationAddress3><modified prefix="cm:modified"><![CDATA[2013-05-17T15:25:07.713+02:00]]></modified><plantTel prefix="bcpg:plantTel"><![CDATA[01 57 21 23 47]]></plantTel><locale prefix="sys:locale"><![CDATA[fr_FR]]></locale><plantCertifications prefix="bcpg:plantCertifications"><![CDATA[IFS, BRC, ISO 22000]]></plantCertifications><plantApprovalNumbers prefix="bcpg:plantApprovalNumbers"><![CDATA[FR 10.375.003 CE]]></plantApprovalNumbers><locationCountry prefix="bcpg:locationCountry"><![CDATA[FRANCE]]></locationCountry><locationCity prefix="bcpg:locationCity"><![CDATA[]]></locationCity><description prefix="cm:description"><![CDATA[]]></description><locationZip prefix="bcpg:locationZip"><![CDATA[92120]]></locationZip><locationAddress2 prefix="bcpg:locationAddress2"><![CDATA[]]></locationAddress2><creator prefix="cm:creator"><![CDATA[admin]]></creator><editInline prefix="app:editInline"><![CDATA[true]]></editInline></plant></plants><numberOfServings prefix="bcpg:numberOfServings"><![CDATA[8]]></numberOfServings><productMicrobioCriteria prefix="bcpg:productMicrobioCriteria"><![CDATA[Microbio - Glaces]]></productMicrobioCriteria><length prefix="pack:length"><![CDATA[]]></length><reports prefix="rep:reports"><![CDATA[Omelette Norvégienne 1000 ml - Fiche Technique Client.pdf, Omelette Norvégienne 1000 ml - Fiche Technique Production.pdf, Omelette Norvégienne 1000 ml - Fiche Technique R&D.pdf, Omelette Norvégienne 1000 ml - Fiche Technique Origines MP.pdf]]></reports><tare prefix="pack:tare"><![CDATA[32.2003]]></tare><legalName prefix="bcpg:legalName"><![CDATA[Omelette Norvégienne]]></legalName><code prefix="bcpg:code"><![CDATA[PF1384]]></code><unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[1.5129385067246959]]></unitTotalCost><bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]></bestBeforeDate><categories prefix="cm:categories"><![CDATA[[workspace://SpacesStore/00d70956-4757-4bbf-be7f-d182616ebfbb, workspace://SpacesStore/a4d347ed-3b6e-4c1e-a376-b042b1674d08]]]></categories><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/47977f00-a036-4a15-be9f-c4403517d946]]></productHierarchy1><breakEven prefix="bcpg:breakEven"><![CDATA[0]]></breakEven><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Produit fini Glace]]></entityTplRef><storageConditions><created prefix="cm:created"><![CDATA[2013-07-25T15:56:21.575+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><description prefix="cm:description"><![CDATA[* 3 jours dans le compartiment à glace du réfrigérateur à -6°C
+<entity>
+	<priceCurrency prefix="bcpg:priceCurrency"><![CDATA[€]]></priceCurrency>
+	<productSpecifications prefix="bcpg:productSpecifications"><![CDATA[Spécification glace - client 1]]></productSpecifications>
+	<netWeight prefix="bcpg:netWeight"><![CDATA[0.458]]></netWeight>
+	<profitability prefix="bcpg:profitability"><![CDATA[24.353074663765206]]></profitability>
+	<preparationTips prefix="bcpg:preparationTips"><![CDATA[Surtir du congélateur 10 minutes avant.]]></preparationTips>
+	<trademark prefix="bcpg:trademark"><![CDATA[beCPG]]></trademark>
+	<productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty>
+	<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+	<width prefix="pack:width"><![CDATA[]]>
+	</width>
+	<subsidiary prefix="bcpg:subsidiary"><![CDATA[beCPG agro]]></subsidiary>
+	<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+	<precautionOfUse>
+		<created prefix="cm:created"><![CDATA[2013-07-25T15:57:17.715+02:00]]></created>
+		<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+		<description prefix="cm:description"><![CDATA[NE JAMAIS RECONGELER UN PRODUIT DÉCONGELÉ.]]></description>
+		<name prefix="cm:name"><![CDATA[Produit surgelé]]></name>
+		<modified prefix="cm:modified"><![CDATA[2013-08-07T13:47:36.391+02:00]]></modified>
+		<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+		<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+	</precautionOfUse>
+	<title prefix="cm:title"><![CDATA[]]>
+	</title>
+	<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-23T00:00:00.000+02:00]]></startEffectivity>
+	<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/79c39251-aad6-4543-8e50-d53ded086c73]]></productHierarchy2>
+	<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+	</eanCode>
+	<unitPrice prefix="bcpg:unitPrice"><![CDATA[2.0]]></unitPrice>
+	<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+	<tareUnit prefix="pack:tareUnit"><![CDATA[g]]></tareUnit>
+	<taggable prefix="cm:taggable"><![CDATA[[workspace://SpacesStore/76b04bae-2d71-4c8e-ac58-da1b51a90220]]]></taggable>
+	<productUnit prefix="bcpg:productUnit"><![CDATA[L]]></productUnit>
+	<height prefix="pack:height"><![CDATA[]]>
+	</height>
+	<description prefix="cm:description"><![CDATA[L’Omelette Norvégienne est composée d’une crème glacée « neutre »  supérieure posée sur une génoise nature imbibée avec un sirop de rhum. Une meringue vanillée et flambée vient recouvrir le tout.]]></description>
+	<productDensity prefix="bcpg:productDensity"><![CDATA[0.458]]></productDensity>
+	<packagingDescription prefix="bcpg:packagingDescription"><![CDATA[L’Omelette norvégienne extrudée sur une semelle carton et décorée est posée sur un plat aluminium, protégée par une cale plastique et une coiffe plastique puis mise en étui imprimé en micro-cannelure.
+Les Omelettes sont colisées en caisse américaine par 4.]]></packagingDescription>
+	<productComments prefix="bcpg:productComments"><![CDATA[]]>
+	</productComments>
+	<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-22T18:07:12.791+02:00]]></reportEntityGenerated>
+	<created prefix="cm:created"><![CDATA[2013-04-19T18:47:22.932+02:00]]></created>
+	<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+	<useByDate prefix="bcpg:useByDate"><![CDATA[80]]></useByDate>
+	<erpCode prefix="bcpg:erpCode"><![CDATA[]]>
+	</erpCode>
+	<projectedQty prefix="bcpg:projectedQty"><![CDATA[1000]]></projectedQty>
+	<name prefix="cm:name"><![CDATA[Omelette Norvégienne 1000 ml]]></name>
+	<periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]>
+	</periodAfterOpening>
+	<modified prefix="cm:modified"><![CDATA[2013-10-18T18:50:12.586+02:00]]></modified>
+	<plants>
+		<plant>
+			<created prefix="cm:created"><![CDATA[2011-11-24T12:20:54.371+01:00]]></created>
+			<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+			<locationAddress1 prefix="bcpg:locationAddress1"><![CDATA[16, rue Gabriel Péri]]></locationAddress1>
+			<name prefix="cm:name"><![CDATA[beCPG Montrouge]]></name>
+			<title prefix="cm:title"><![CDATA[]]>
+			</title>
+			<locationAddress3 prefix="bcpg:locationAddress3"><![CDATA[92120 MONTROUGE]]></locationAddress3>
+			<modified prefix="cm:modified"><![CDATA[2013-05-17T15:25:07.713+02:00]]></modified>
+			<plantTel prefix="bcpg:plantTel"><![CDATA[01 57 21 23 47]]></plantTel>
+			<locale prefix="sys:locale"><![CDATA[fr_FR]]></locale>
+			<plantCertifications prefix="bcpg:plantCertifications"><![CDATA[IFS, BRC, ISO 22000]]></plantCertifications>
+			<plantApprovalNumbers prefix="bcpg:plantApprovalNumbers"><![CDATA[FR 10.375.003 CE]]></plantApprovalNumbers>
+			<locationCountry prefix="bcpg:locationCountry"><![CDATA[FRANCE]]></locationCountry>
+			<locationCity prefix="bcpg:locationCity"><![CDATA[]]>
+			</locationCity>
+			<description prefix="cm:description"><![CDATA[]]>
+			</description>
+			<locationZip prefix="bcpg:locationZip"><![CDATA[92120]]></locationZip>
+			<locationAddress2 prefix="bcpg:locationAddress2"><![CDATA[]]>
+			</locationAddress2>
+			<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+			<editInline prefix="app:editInline"><![CDATA[true]]></editInline>
+		</plant>
+	</plants>
+	<numberOfServings prefix="bcpg:numberOfServings"><![CDATA[8]]></numberOfServings>
+	<productMicrobioCriteria prefix="bcpg:productMicrobioCriteria"><![CDATA[Microbio - Glaces]]></productMicrobioCriteria>
+	<length prefix="pack:length"><![CDATA[]]>
+	</length>
+	<reports prefix="rep:reports"><![CDATA[Omelette Norvégienne 1000 ml - Fiche Technique Client.pdf, Omelette Norvégienne 1000 ml - Fiche Technique Production.pdf, Omelette Norvégienne 1000 ml - Fiche Technique R&D.pdf, Omelette Norvégienne 1000 ml - Fiche Technique Origines MP.pdf]]></reports>
+	<tare prefix="pack:tare"><![CDATA[32.2003]]></tare>
+	<legalName prefix="bcpg:legalName"><![CDATA[Omelette Norvégienne]]></legalName>
+	<code prefix="bcpg:code"><![CDATA[PF1384]]></code>
+	<unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[1.5129385067246959]]></unitTotalCost>
+	<bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]>
+	</bestBeforeDate>
+	<categories prefix="cm:categories"><![CDATA[[workspace://SpacesStore/00d70956-4757-4bbf-be7f-d182616ebfbb, workspace://SpacesStore/a4d347ed-3b6e-4c1e-a376-b042b1674d08]]]></categories>
+	<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/47977f00-a036-4a15-be9f-c4403517d946]]></productHierarchy1>
+	<breakEven prefix="bcpg:breakEven"><![CDATA[0]]></breakEven>
+	<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Produit fini Glace]]></entityTplRef>
+	<storageConditions>
+		<created prefix="cm:created"><![CDATA[2013-07-25T15:56:21.575+02:00]]></created>
+		<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+		<description prefix="cm:description"><![CDATA[* 3 jours dans le compartiment à glace du réfrigérateur à -6°C
 *** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée sur le côté de la boite.
 
-Après décongélation, à conserver au réfrigérateur et à consommer dans la journée.]]></description><name prefix="cm:name"><![CDATA[Pâtisserie surgelée]]></name><modified prefix="cm:modified"><![CDATA[2013-07-25T16:24:03.055+02:00]]></modified><creator prefix="cm:creator"><![CDATA[admin]]></creator><locale prefix="sys:locale"><![CDATA[fr]]></locale></storageConditions><aspects><![CDATA[referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, copiedfrom, sizeAspect, clientsAspect, productAspect, eanAspect, consumerAspect, localized, entityVariantAspect, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, incomplete, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect]]></aspects><itemType><![CDATA[finishedProduct]]></itemType><images><image id="Img0" name="produit.jpg"/><image id="Img1" name="img_palet1.jpg" title="Couches"/><image id="Img2" name="img_palet2.jpg" title="Palette"/><image id="Img3" name="img_fab1.jpg" title="Fabrication du produit"/><image id="Img4" name="img_fab4.jpg" title="Défaut : Hauteur du décor insuffisante"/><image id="Img5" name="img_fab3.jpg" title="Défaut: Décor meringue abîmé, Décor grossier"/></images><dataLists><nutLists energiekj="1019.7383100436681" energiekcal="241.7126812227074" glucides="44.35714410480349" lipides="6.151338427947599" protéines="1.8347598253275108" agsaturés="4.045827641921397" fibresalimentaires="0.38683406113537117" sodium="22.304650655021838" sucres="44.82526637554585" ethanol="0.10668995633187772" sulfite="0.4480349344978166"><nutList nutListGroup="Groupe 1" nutListNut="Energie kJ" nutListValue="1019.7383100436681" isManualListItem="false" nutListMethod="Formulation" nutListUnit="kJ/100mL" sort="0" locale="fr"/><nutList nutListGroup="Groupe 1" nutListNut="Energie kcal" nutListValue="241.7126812227074" isManualListItem="false" nutListMethod="Formulation" nutListUnit="kcal/100mL" sort="1" locale="fr"/><nutList nutListGroup="Groupe 1" nutListNut="Glucides" nutListValue="44.35714410480349" isManualListItem="" nutListMethod="Formulation" nutListUnit="g/100mL" sort="2" locale="fr"/><nutList nutListGroup="Groupe 1" nutListNut="Lipides" nutListValue="6.151338427947599" isManualListItem="" nutListMethod="Formulation" nutListUnit="g/100mL" sort="3" locale="fr"/><nutList nutListGroup="Groupe 1" nutListNut="Protéines" nutListValue="1.8347598253275108" isManualListItem="" nutListMethod="Formulation" nutListUnit="g/100mL" sort="4" locale="fr"/><nutList nutListGroup="Groupe 2" nutListNut="AG saturés" nutListValue="4.045827641921397" isManualListItem="false" nutListMethod="Formulation" nutListUnit="g/100mL" sort="5" locale="fr"/><nutList nutListGroup="Groupe 2" nutListNut="Fibres alimentaires" nutListValue="0.38683406113537117" isManualListItem="false" nutListMethod="Formulation" nutListUnit="g/100mL" sort="6" locale="fr"/><nutList nutListGroup="Groupe 2" nutListNut="Sodium" nutListValue="22.304650655021838" isManualListItem="false" nutListMethod="Formulation" nutListUnit="mg/100mL" sort="7" locale="fr"/><nutList nutListGroup="Groupe 2" nutListNut="Sucres" nutListValue="44.82526637554585" isManualListItem="false" nutListMethod="Formulation" nutListUnit="g/100mL" sort="8" locale="fr"/><nutList nutListGroup="Autre" nutListNut="Ethanol" nutListValue="0.10668995633187772" isManualListItem="false" nutListMethod="Formulation" nutListUnit="g/100mL" sort="9" locale="fr"/><nutList nutListGroup="Autre" nutListNut="Sulfite" nutListValue="0.4480349344978166" isManualListItem="false" nutListMethod="Formulation" nutListUnit="mg/100mL" sort="10" locale="fr"/></nutLists><costLists><costList costListValue="2.1093320394630437" isManualListItem="false" costListUnit="€/L" costListCost="Coût Emb" sort="1" locale="fr"/><costList costListValue="1.065962367281401" isManualListItem="false" costListUnit="€/L" costListCost="Coût MP" sort="2" locale="fr"/><costList costListValue="0.26710334788937407" isManualListItem="false" costListUnit="€/L" costListCost="Coût Production" sort="3" locale="fr"/></costLists><organoLists><organoList organoListValue="Aspect de la glace" organoListOrgano="Aspect" sort="100" locale="fr"/><organoList organoListOrgano="Couleur" sort="101" locale="fr"/><organoList organoListOrgano="Goût" sort="102" locale="fr"/><organoList organoListOrgano="Odeur" sort="103" locale="fr"/><organoList organoListOrgano="Texture" sort="104" locale="fr"/></organoLists><labelClaimLists><labelClaimList lclType="Santé" lclLabelClaim="Sans BPA" lclIsClaimed="true" isManualListItem="" lclIsFormulated="false" sort="100" locale="fr"/><labelClaimList lclType="Santé" lclLabelClaim="Sans huile de palme" lclIsClaimed="true" isManualListItem="" lclIsFormulated="false" sort="101" locale="fr"/><labelClaimList lclType="Environnementale" lclLabelClaim="Produit exempt de matières grasses de palme" lclIsClaimed="true" isManualListItem="" lclIsFormulated="false" sort="102" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Faible teneur en sucres" lclIsClaimed="false" isManualListItem="" lclIsFormulated="true" sort="102" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Pauvre en sodium ou en sel" lclIsClaimed="false" isManualListItem="" lclIsFormulated="true" sort="103" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Faible valeur énergétique" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="104" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Sans apport énergétique" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="105" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Faible teneur en matières grasses" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="106" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Sans matières grasses" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="107" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Sans sucres" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="109" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Très pauvre en sodium ou en sel" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="111" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Sans sodium ou sans sel" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="112" locale="fr"/><labelClaimList lclType="Nutritionnelle" lclLabelClaim="Source de fibres" lclIsClaimed="false" isManualListItem="false" lclIsFormulated="true" sort="113" locale="fr"/></labelClaimLists><allergenLists allergenListVoluntary="Crustacés et produits à base de crustacés, Lait et produit à base de (dont lactose), Oeuf et produit à base d'oeuf" allergenListInVoluntary="Céréales contenant du gluten et produits à base de ces céréales, Fruits à Coque- (noix noisettes), Soja et produits à base de soja, Céleri et produits à base de céleri"><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Anhydride sulfureux et sulfites" sort="1" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Anhydride sulfureux et sulfites" sort="2" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Arachides et produits à base d'arachides" sort="3" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Arachides et produits à base d'arachides" sort="4" locale="fr"/><allergenList allergenListVoluntary="true" isManualListItem="" allergenListInVoluntary="false" allergenListVolSources="JAUNE OEUF SUCRE 10%" allergenListAllergen="Crustacés et produits à base de crustacés" sort="5" locale="fr"/><allergenList allergenListInVolSources="Ligne 1 - Site Montrouge" allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="true" allergenListAllergen="Céréales contenant du gluten et produits à base de ces céréales" sort="6" locale="fr"/><allergenList allergenListInVolSources="RAISINS AU RHUM 12 % VOL (Four018)" allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="true" allergenListAllergen="Fruits à Coque- (noix noisettes)" sort="7" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Graines de sésame et produits à base de graines de sésame" sort="8" locale="fr"/><allergenList allergenListInVolSources="RAISINS AU RHUM 12 % VOL (Four018)" allergenListVoluntary="true" isManualListItem="" allergenListInVoluntary="true" allergenListVolSources="Lait demi écrémé UHT, CREME FRAICHE PASTEURISEE (Four003), CREME FRAICHE PASTEURISEE (Four004), CREME FRAICHE PASTEURISEE (Four005)" allergenListAllergen="Lait et produit à base de (dont lactose)" sort="9" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Lupin  et produits à base de lupin" sort="10" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Mollusque  et produits à base de mollusque" sort="11" locale="fr"/><allergenList allergenListVoluntary="true" isManualListItem="" allergenListInVoluntary="false" allergenListVolSources="BLANC D'OEUF SUCRE 25% (Four001), BLANC D'OEUF SUCRE 25% (Four002), JAUNE OEUF SUCRE 10% (Four012), JAUNE OEUF SUCRE 10% (Four013), JAUNE OEUF SUCRE 10% (Four014), JAUNE OEUF SUCRE 10% (Four002)" allergenListAllergen="Oeuf et produit à base d'oeuf" sort="12" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Poisson et produit à base de poisson" sort="13" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Poisson et produit à base de poisson" sort="14" locale="fr"/><allergenList allergenListInVolSources="Ligne 1 - Site Montrouge" allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="true" allergenListAllergen="Soja et produits à base de soja" sort="15" locale="fr"/><allergenList allergenListInVolSources="RAISINS AU RHUM 12 % VOL (Four018)" allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="true" allergenListAllergen="Céleri et produits à base de céleri" sort="16" locale="fr"/><allergenList allergenListVoluntary="false" isManualListItem="" allergenListInVoluntary="false" allergenListAllergen="Moutarde et produits à base de moutarde" sort="17" locale="fr"/></allergenLists><physicoChemLists><physicoChemList pclValue="50.99793036899563" isManualListItem="" pclPhysicoChem="Extrait sec" sort="1" locale="fr" pclUnit="%"/><physicoChemList pclValue="6.18574192139738" isManualListItem="" pclPhysicoChem="Matière grasse" sort="2" locale="fr" pclUnit="%"/><physicoChemList pclValue="44.34410480349345" isManualListItem="" pclPhysicoChem="Pouvoir sucrant" sort="3" locale="fr" pclUnit="%"/><physicoChemList isManualListItem="" pclPhysicoChem="pH" sort="4" locale="fr_FR"/></physicoChemLists><ingLists><ingList ingListGeoOrigin="Belgique, Brésil, Cuba, Espagne, France, Inde, Malawi, Réunion, Swaziland, Tanzanie, république-unie de, Union européenne, Afrique, Pays tiers, Caraïbes, Pacifique, PMA, DOM" ingListIsGMO="false" ingListIng="Sucre" ingListBioOrigin="Betterave, Canne à sucre, Auxiliaires technologiques" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="47.015274994433305" ingListIsIonized="false" sort="1" locale="fr"/><ingList ingListGeoOrigin="France" ingListIsGMO="false" ingListIng="crème fraîche liquide" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="14.027388109552438" ingListIsIonized="false" sort="2" locale="fr"/><ingList ingListGeoOrigin="France" ingListIsGMO="false" ingListIng="Lait" ingListBioOrigin="Bovine (Boeuf, Vache, Veau)" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="14.027388109552438" ingListIsIonized="false" sort="3" locale="fr"/><ingList ingListIsGMO="false" ingListIng="Eau" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="9.530171454019147" ingListIsIonized="false" sort="4" locale="fr"/><ingList ingListGeoOrigin="Allemagne, Belgique, Espagne, France, Italie, PAYS-bas, Pologne, Portugal, Roumanie, Royaume-Uni" ingListIsGMO="false" ingListIng="oeuf blanc" ingListBioOrigin="Poulet, Poule, Oeuf" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="8.28323313293253" ingListIsIonized="false" sort="5" locale="fr"/><ingList ingListGeoOrigin="Turquie" ingListIsGMO="false" ingListIng="Raisins au rhum" ingListBioOrigin="Raisin" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="4.40881763527054" ingListIsIonized="false" sort="6" locale="fr"/><ingList ingListGeoOrigin="Allemagne, Espagne, Portugal, Union européenne" ingListIsGMO="false" ingListIng="oeuf jaune" ingListBioOrigin="Poulet, Poule, Oeuf" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="2.1955911823647294" ingListIsIonized="false" sort="7" locale="fr"/><ingList ingListGeoOrigin="Jamaïque, Martinique, Europe" ingListIsGMO="false" ingListIng="Rhum gélifié" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="0.2672010688042752" ingListIsIonized="false" sort="8" locale="fr"/><ingList ingListIsGMO="false" ingListIng="Oeuf entier" ingListIsProcessingAid="false" isManualListItem="" ingListQtyPerc="0.12024048096192382" ingListIsIonized="false" sort="9" locale="fr"/><ingList ingListIsGMO="false" ingListIng="Farine de blé" ingListIsProcessingAid="false" isManualListItem="" ingListQtyPerc="0.0668002672010688" ingListIsIonized="false" sort="10" locale="fr"/><ingList ingListGeoOrigin="Antilles Néerlandaises, Union européenne, Europe, Caraïbes, Pacifique, Antilles" ingListIsGMO="false" ingListIng="Gomme Xanthane" ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="0.044533511467379196" ingListIsIonized="false" sort="11" locale="fr"/><ingList ingListIsGMO="false" ingListIng="Levure boulangère" ingListIsProcessingAid="false" isManualListItem="" ingListQtyPerc="0.013360053440213758" ingListIsIonized="false" sort="12" locale="fr"/></ingLists><compoLists><compoList dynamicCharactColumn1="0,2328" compoListQtyAfterProcess="" compoListUnit="g" startEffectivity="2013-04-19T18:53:35.244+02:00" compoListDeclType="Group" depthLevel="1" locale="fr" sort="100" dynamicCharactColumn2="0.315" compoListQtySubFormula="124.0" compoListVolume="0.39365079365079364" compoListQty="0.124" compoListProduct="Prepa meringue" compoListOverrunPerc="0.0" code="SF1162" erpCode="PRE0702" legalName="Meringue" suppliers="" itemType="bcpg:semiFinishedProduct" aspects="consumerAspect, referenceable, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect"/><compoList dynamicCharactColumn1="0,0049" compoListQtyAfterProcess="" compoListUnit="g" startEffectivity="2013-04-21T18:24:50.574+02:00" compoListDeclType="Group" depthLevel="1" locale="fr" sort="400" dynamicCharactColumn2="0.242" compoListQtySubFormula="1.2" compoListVolume="0.0049586776859504135" compoListQty="0.0012" compoListProduct="BANDE GENOISE NATURE 550 X 70 EP 12" compoListOverrunPerc="0.0" code="SF1166" erpCode="GEN001" legalName="Génoise nature" suppliers="" itemType="bcpg:semiFinishedProduct" aspects="consumerAspect, referenceable, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect"/><compoList dynamicCharactColumn1="0,0266" compoListQtyAfterProcess="" compoListUnit="g" compoListDeclType="Group" startEffectivity="2013-04-21T17:55:54.113+02:00" depthLevel="1" locale="fr" sort="500" dynamicCharactColumn2="1.1" compoListQtySubFormula="30.0" compoListVolume="0.027272727272727268" compoListQty="0.03" compoListProduct="SIROP RHUM" compoListOverrunPerc="0.0" code="SF1164" erpCode="SIR0100" legalName="Sirop rhum" suppliers="" itemType="bcpg:semiFinishedProduct" aspects="consumerAspect, referenceable, titled, localized, transformationAspect, entityVariantAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect, versionable"><instruction prefix="bcpg:instruction"><![CDATA[]]></instruction></compoList><compoList dynamicCharactColumn1="0,6135" compoListQtyAfterProcess="" compoListUnit="mL" startEffectivity="2013-04-20T12:46:18.272+02:00" compoListDeclType="Declare" depthLevel="1" locale="fr" sort="501" dynamicCharactColumn2="1.1" compoListQtySubFormula="249.0" compoListVolume="0.45272727272727264" compoListQty="0.27390000000000003" compoListProduct="CREME GLACEE NEUTRE" compoListOverrunPerc="100.0" code="SF1163" erpCode="CGL1100" legalName="Glace" suppliers="" itemType="bcpg:semiFinishedProduct" aspects="consumerAspect, referenceable, titled, localized, transformationAspect, entityVariantAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect"/><compoList dynamicCharactColumn1="0,1048" compoListQtyAfterProcess="" compoListUnit="g" compoListDeclType="Detail" startEffectivity="2013-04-21T18:52:24.536+02:00" depthLevel="1" locale="fr" sort="502" dynamicCharactColumn2="1.21" compoListQtySubFormula="20.0" compoListVolume="0.01652892561983471" compoListQty="0.02" compoListProduct="RAISINS AU RHUM" compoListOverrunPerc="0.0" code="MP40187" erpCode="INC046" legalName="raisins au rhum" suppliers="CAR001, DIS003" itemType="bcpg:rawMaterial" aspects="eanAspect, consumerAspect, referenceable, titled, localized, transformationAspect, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect, certificateDateAspect"><instruction prefix="bcpg:instruction"><![CDATA[]]></instruction></compoList><dynamicCharactLists><dynamicCharactList dynamicCharactTitle="Rendement (%)" dynamicCharactValue="107.96793965110797"/><dynamicCharactList dynamicCharactTitle="Rdt vol (%)" dynamicCharactValue="111.71456876388557"/><dynamicCharactList dynamicCharactTitle="Nb Ech" dynamicCharactValue="20"/><dynamicCharactList dynamicCharactTitle="Coût MP (€/L)" dynamicCharactValue=""/><dynamicCharactList dynamicCharactTitle="Profit (%)" dynamicCharactValue="24.353074663765206"/><dynamicCharactList dynamicCharactTitle="Coût MP total (€/L)" dynamicCharactValue="0.926923797636001"/><dynamicCharactList dynamicCharactTitle="Perte 15%" dynamicCharactValue="1.065962367281401"/><dynamicCharactList dynamicCharactTitle="Extrait sec (%)" dynamicCharactValue="50.99793036899563"/><dynamicCharactList dynamicCharactTitle="Matière grasse" dynamicCharactValue="6.18574192139738"/><dynamicCharactList dynamicCharactTitle="Pouvoir sucrant (%)" dynamicCharactValue="44.34410480349345"/><dynamicCharactList dynamicCharactTitle="Qté totale" dynamicCharactValue="0.9262008733624454"/><dynamicCharactList dynamicCharactTitle="Densité" dynamicCharactValue=""/><dynamicCharactList dynamicCharactTitle="Nutriment" dynamicCharactValue="44.82526637554585"/></dynamicCharactLists></compoLists><rawMaterials><rawMaterial><created prefix="cm:created"><![CDATA[2013-04-21T13:30:18.140+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[SUC002]]></erpCode><node-uuid prefix="sys:node-uuid"><![CDATA[4caea489-1f97-46f6-9220-3cbe4cb6122c]]></node-uuid><name prefix="cm:name"><![CDATA[SUCRE EN POUDRE]]></name><node-dbid prefix="sys:node-dbid"><![CDATA[457106]]></node-dbid><modified prefix="cm:modified"><![CDATA[2013-09-11T10:39:17.050+02:00]]></modified><profitability prefix="bcpg:profitability"><![CDATA[]]></profitability><productQty prefix="bcpg:productQty"><![CDATA[]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[Sucre en poudre]]></legalName><code prefix="bcpg:code"><![CDATA[MP40182]]></code><endEffectivity prefix="bcpg:endEffectivity"><![CDATA[]]></endEffectivity><title prefix="cm:title"><![CDATA[]]></title><suppliers prefix="bcpg:suppliers"><![CDATA[AZE002, BEG003, FLE002, VER001]]></suppliers><unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[0.75]]></unitTotalCost><categories prefix="cm:categories"><![CDATA[]]></categories><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T13:30:18.296+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/c7a2200d-7807-4aba-b779-fd7d52591843]]></productHierarchy2><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1><unitPrice prefix="bcpg:unitPrice"><![CDATA[]]></unitPrice><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><locale prefix="sys:locale"><![CDATA[fr]]></locale><breakEven prefix="bcpg:breakEven"><![CDATA[]]></breakEven><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><description prefix="cm:description"><![CDATA[]]></description><taggable prefix="cm:taggable"><![CDATA[]]></taggable><productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-07-09T10:25:07.984+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[44.90148486579097]]></compoListQty><dataLists><nutLists/><costLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="Brésil, Cuba, Espagne, France, Inde, Malawi, Réunion, Swaziland, Tanzanie, république-unie de, Union européenne, Afrique, Caraïbes, Pacifique, PMA, DOM" ingListIsGMO="false" ingListIng="Sucre" ingListBioOrigin="Betterave, Canne à sucre, Auxiliaires technologiques" isManualListItem="" ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><created prefix="cm:created"><![CDATA[2011-03-16T09:46:45.815+01:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[125877]]></erpCode><useByDate prefix="bcpg:useByDate"><![CDATA[]]></useByDate><node-uuid prefix="sys:node-uuid"><![CDATA[3b0f13a1-2602-4a5d-96e9-8a951b52cb6b]]></node-uuid><name prefix="cm:name"><![CDATA[Lait demi écrémé UHT]]></name><periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]></periodAfterOpening><netWeight prefix="bcpg:netWeight"><![CDATA[]]></netWeight><node-dbid prefix="sys:node-dbid"><![CDATA[11584]]></node-dbid><modified prefix="cm:modified"><![CDATA[2013-10-21T14:53:56.834+02:00]]></modified><preparationTips prefix="bcpg:preparationTips"><![CDATA[]]></preparationTips><netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit><certificateDate prefix="bcpg:certificateDate"><![CDATA[]]></certificateDate><productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty><productState prefix="bcpg:productState"><![CDATA[Valid]]></productState><reports prefix="rep:reports"><![CDATA[Lait demi écrémé UHT - Fiche Technique MP.pdf]]></reports><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[lait demi écrémé]]></legalName><owner prefix="cm:owner"><![CDATA[]]></owner><code prefix="bcpg:code"><![CDATA[MP1004]]></code><title prefix="cm:title"><![CDATA[]]></title><suppliers prefix="bcpg:suppliers"><![CDATA[Fournisseur JP Martin]]></suppliers><categories prefix="cm:categories"><![CDATA[]]></categories><bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]></bestBeforeDate><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2012-09-08T10:49:26.619+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/2389746a-913e-4b58-b41f-983bd68f67a8]]></productHierarchy2><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/baa374ba-e27c-47bb-915f-fbeae9a1d536]]></productHierarchy1><locale prefix="sys:locale"><![CDATA[fr]]></locale><description prefix="cm:description"><![CDATA[]]></description><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><taggable prefix="cm:taggable"><![CDATA[]]></taggable><packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]></packagingDescription><productDensity prefix="bcpg:productDensity"><![CDATA[1.1]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-01T13:59:27.003+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[20.441890348372358]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList organoListValue="Lait demi écrémé" organoListOrgano="Aspect" sort="1" locale="fr_FR"/><organoList organoListValue="Blanc" organoListOrgano="Couleur" sort="2" locale="fr_FR"/><organoList organoListValue="Goût franc" organoListOrgano="Goût" sort="3" locale="fr_FR"/><organoList organoListValue="Odeur neutre" organoListOrgano="Odeur" sort="4" locale="fr_FR"/><organoList organoListValue="Liquide" organoListOrgano="Texture" sort="5" locale="fr_FR"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="France" ingListIsGMO="false" ingListIng="Lait" ingListBioOrigin="Bovine (Boeuf, Vache, Veau)" isManualListItem="false" ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr_FR"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><created prefix="cm:created"><![CDATA[2013-04-20T11:41:38.755+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[LAC017]]></erpCode><node-uuid prefix="sys:node-uuid"><![CDATA[59056f6e-143d-47c6-8b41-c304233d602d]]></node-uuid><name prefix="cm:name"><![CDATA[CREME FRAICHE PASTEURISEE]]></name><node-dbid prefix="sys:node-dbid"><![CDATA[453770]]></node-dbid><modified prefix="cm:modified"><![CDATA[2013-09-11T10:39:09.774+02:00]]></modified><profitability prefix="bcpg:profitability"><![CDATA[]]></profitability><productQty prefix="bcpg:productQty"><![CDATA[]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[Crème fraîche pasteurisée]]></legalName><code prefix="bcpg:code"><![CDATA[MP40176]]></code><endEffectivity prefix="bcpg:endEffectivity"><![CDATA[]]></endEffectivity><title prefix="cm:title"><![CDATA[]]></title><suppliers prefix="bcpg:suppliers"><![CDATA[ALL002, GLA001, NVD004]]></suppliers><unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[1.98]]></unitTotalCost><categories prefix="cm:categories"><![CDATA[]]></categories><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-20T11:41:39.094+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/2c2b1707-2639-4180-bf99-ed5f18e49188]]></productHierarchy2><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/baa374ba-e27c-47bb-915f-fbeae9a1d536]]></productHierarchy1><unitPrice prefix="bcpg:unitPrice"><![CDATA[]]></unitPrice><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><locale prefix="sys:locale"><![CDATA[fr]]></locale><breakEven prefix="bcpg:breakEven"><![CDATA[]]></breakEven><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><description prefix="cm:description"><![CDATA[]]></description><taggable prefix="cm:taggable"><![CDATA[]]></taggable><productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-07-09T10:25:08.861+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[20.441890348372358]]></compoListQty><dataLists><nutLists/><costLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="France" ingListIsGMO="false" ingListIng="crème fraîche liquide" isManualListItem="" ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><created prefix="cm:created"><![CDATA[2013-04-21T18:52:24.356+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[INC046]]></erpCode><useByDate prefix="bcpg:useByDate"><![CDATA[]]></useByDate><node-uuid prefix="sys:node-uuid"><![CDATA[6209d115-5532-4163-aac6-5032d529def1]]></node-uuid><name prefix="cm:name"><![CDATA[RAISINS AU RHUM]]></name><periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]></periodAfterOpening><netWeight prefix="bcpg:netWeight"><![CDATA[]]></netWeight><node-dbid prefix="sys:node-dbid"><![CDATA[457998]]></node-dbid><modified prefix="cm:modified"><![CDATA[2013-10-18T18:57:36.174+02:00]]></modified><preparationTips prefix="bcpg:preparationTips"><![CDATA[]]></preparationTips><netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit><certificateDate prefix="bcpg:certificateDate"><![CDATA[]]></certificateDate><productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><reports prefix="rep:reports"><![CDATA[RAISINS AU RHUM - Fiche Technique MP.pdf]]></reports><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[raisins au rhum]]></legalName><code prefix="bcpg:code"><![CDATA[MP40187]]></code><title prefix="cm:title"><![CDATA[]]></title><suppliers prefix="bcpg:suppliers"><![CDATA[CAR001, DIS003]]></suppliers><unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[2.4]]></unitTotalCost><categories prefix="cm:categories"><![CDATA[]]></categories><bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]></bestBeforeDate><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:52:24.536+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/abb5815a-0010-495f-8aa6-e88bbe48516f]]></productHierarchy2><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1><locale prefix="sys:locale"><![CDATA[fr]]></locale><description prefix="cm:description"><![CDATA[]]></description><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><taggable prefix="cm:taggable"><![CDATA[]]></taggable><packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]></packagingDescription><productDensity prefix="bcpg:productDensity"><![CDATA[1.21]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-18T18:57:38.179+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[7.13877784123358]]></compoListQty><dataLists><nutLists/><costLists/><labelClaimLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="Turquie" ingListIsGMO="false" ingListIng="Raisins au rhum" ingListBioOrigin="Raisin" isManualListItem="" ingListQtyPerc="99.0" ingListIsIonized="false" sort="1" locale="fr"/><ingList ingListGeoOrigin="Union européenne" ingListIsGMO="false" ingListIng="Gomme Xanthane" isManualListItem="" ingListQtyPerc="1.0" ingListIsIonized="false" sort="2" locale="fr"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><created prefix="cm:created"><![CDATA[2013-04-20T13:08:55.397+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[OVO005]]></erpCode><node-uuid prefix="sys:node-uuid"><![CDATA[9d113856-ec46-4a6b-9a65-339788388ed5]]></node-uuid><name prefix="cm:name"><![CDATA[JAUNE OEUF SUCRE 10%]]></name><node-dbid prefix="sys:node-dbid"><![CDATA[454854]]></node-dbid><modified prefix="cm:modified"><![CDATA[2013-09-11T10:39:14.089+02:00]]></modified><profitability prefix="bcpg:profitability"><![CDATA[]]></profitability><productQty prefix="bcpg:productQty"><![CDATA[]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[Jaune d'oeuf sucré]]></legalName><code prefix="bcpg:code"><![CDATA[MP40178]]></code><endEffectivity prefix="bcpg:endEffectivity"><![CDATA[]]></endEffectivity><title prefix="cm:title"><![CDATA[]]></title><suppliers prefix="bcpg:suppliers"><![CDATA[NVD004, SAM001, IGR003, ABC001, INT002]]></suppliers><unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[2.3]]></unitTotalCost><categories prefix="cm:categories"><![CDATA[]]></categories><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-20T13:08:55.545+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/9466a77a-e318-4656-b792-a590db6de624]]></productHierarchy2><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/113f1410-ed1d-4ef3-b4a6-8f22e05552fb]]></productHierarchy1><unitPrice prefix="bcpg:unitPrice"><![CDATA[]]></unitPrice><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><locale prefix="sys:locale"><![CDATA[fr]]></locale><breakEven prefix="bcpg:breakEven"><![CDATA[]]></breakEven><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><description prefix="cm:description"><![CDATA[]]></description><taggable prefix="cm:taggable"><![CDATA[]]></taggable><productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-07-09T10:25:09.281+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[3.555111364934324]]></compoListQty><dataLists><nutLists/><costLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="Allemagne, Espagne, Portugal, Union européenne" ingListIsGMO="false" ingListIng="oeuf jaune" ingListBioOrigin="Poulet, Poule, Oeuf" isManualListItem="" ingListQtyPerc="90.0" ingListIsIonized="false" sort="1" locale="fr"/><ingList ingListGeoOrigin="Belgique, Espagne, France, Union européenne, Pays tiers" ingListIsGMO="false" ingListIng="Sucre" ingListBioOrigin="Betterave, Canne à sucre" isManualListItem="" ingListQtyPerc="10.0" ingListIsIonized="false" sort="2" locale="fr"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><created prefix="cm:created"><![CDATA[2013-04-21T18:29:00.123+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[OVO008]]></erpCode><useByDate prefix="bcpg:useByDate"><![CDATA[]]></useByDate><node-uuid prefix="sys:node-uuid"><![CDATA[04fb34d7-39ec-4f7d-84b9-1c5d67cdb97e]]></node-uuid><name prefix="cm:name"><![CDATA[OEUFS ENTIERS LIQUIDES]]></name><periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]></periodAfterOpening><netWeight prefix="bcpg:netWeight"><![CDATA[1.0]]></netWeight><node-dbid prefix="sys:node-dbid"><![CDATA[457798]]></node-dbid><modified prefix="cm:modified"><![CDATA[2013-10-10T12:24:15.139+02:00]]></modified><preparationTips prefix="bcpg:preparationTips"><![CDATA[]]></preparationTips><netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit><certificateDate prefix="bcpg:certificateDate"><![CDATA[]]></certificateDate><productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><reports prefix="rep:reports"><![CDATA[OEUFS ENTIERS LIQUIDES - Fiche Technique MP.pdf]]></reports><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[Oeuf entiers liquides]]></legalName><code prefix="bcpg:code"><![CDATA[MP40184]]></code><title prefix="cm:title"><![CDATA[]]></title><suppliers prefix="bcpg:suppliers"><![CDATA[SAM001, ABC001, INT002, VIL004]]></suppliers><unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[2.8]]></unitTotalCost><categories prefix="cm:categories"><![CDATA[]]></categories><bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]></bestBeforeDate><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:29:00.597+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/eaed1f29-58c0-4bb3-86b6-4230176827d3]]></productHierarchy2><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/113f1410-ed1d-4ef3-b4a6-8f22e05552fb]]></productHierarchy1><locale prefix="sys:locale"><![CDATA[fr]]></locale><description prefix="cm:description"><![CDATA[]]></description><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><taggable prefix="cm:taggable"><![CDATA[]]></taggable><packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]></packagingDescription><productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-10T12:24:08.136+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[3.3923472301541984]]></compoListQty><dataLists><nutLists/><costLists/><labelClaimLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListIsGMO="false" ingListIng="Oeuf entier" ingListIsProcessingAid="false" isManualListItem="" ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><created prefix="cm:created"><![CDATA[2013-04-21T18:39:21.842+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[FAR001]]></erpCode><useByDate prefix="bcpg:useByDate"><![CDATA[]]></useByDate><node-uuid prefix="sys:node-uuid"><![CDATA[fda09170-a087-4555-a069-00f869852258]]></node-uuid><name prefix="cm:name"><![CDATA[FARINE DE BLE TYPE 55]]></name><periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]></periodAfterOpening><netWeight prefix="bcpg:netWeight"><![CDATA[1.0]]></netWeight><node-dbid prefix="sys:node-dbid"><![CDATA[457849]]></node-dbid><modified prefix="cm:modified"><![CDATA[2013-10-10T12:24:59.836+02:00]]></modified><preparationTips prefix="bcpg:preparationTips"><![CDATA[]]></preparationTips><netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit><certificateDate prefix="bcpg:certificateDate"><![CDATA[]]></certificateDate><productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><reports prefix="rep:reports"><![CDATA[FARINE DE BLE TYPE 55 - Fiche Technique MP.pdf]]></reports><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[Farine de blé]]></legalName><code prefix="bcpg:code"><![CDATA[MP40186]]></code><title prefix="cm:title"><![CDATA[]]></title><suppliers prefix="bcpg:suppliers"><![CDATA[CHA002, GMP001, GRF001]]></suppliers><unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[1.75]]></unitTotalCost><categories prefix="cm:categories"><![CDATA[]]></categories><bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]></bestBeforeDate><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:39:22.011+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/430a6c06-3e34-4dab-889d-e67925dc2eca]]></productHierarchy2><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1><locale prefix="sys:locale"><![CDATA[fr]]></locale><description prefix="cm:description"><![CDATA[]]></description><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><taggable prefix="cm:taggable"><![CDATA[]]></taggable><packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]></packagingDescription><productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-10T12:24:54.708+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[0.1070816676185037]]></compoListQty><dataLists><nutLists/><costLists/><labelClaimLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListIsGMO="false" ingListIng="Farine de blé" ingListIsProcessingAid="false" isManualListItem="" ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><created prefix="cm:created"><![CDATA[2013-04-21T18:37:05.219+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol><erpCode prefix="bcpg:erpCode"><![CDATA[PRE2100]]></erpCode><useByDate prefix="bcpg:useByDate"><![CDATA[]]></useByDate><node-uuid prefix="sys:node-uuid"><![CDATA[78c4830d-c6ee-40f3-a960-90efb694a4d0]]></node-uuid><name prefix="cm:name"><![CDATA[Levure chimique]]></name><netWeight prefix="bcpg:netWeight"><![CDATA[]]></netWeight><node-dbid prefix="sys:node-dbid"><![CDATA[457842]]></node-dbid><periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]></periodAfterOpening><modified prefix="cm:modified"><![CDATA[2013-09-11T10:53:19.502+02:00]]></modified><preparationTips prefix="bcpg:preparationTips"><![CDATA[]]></preparationTips><netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit><certificateDate prefix="bcpg:certificateDate"><![CDATA[]]></certificateDate><productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty><productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState><creator prefix="cm:creator"><![CDATA[admin]]></creator><legalName prefix="bcpg:legalName"><![CDATA[Préparation émulsifiant biscuit]]></legalName><code prefix="bcpg:code"><![CDATA[MP40185]]></code><title prefix="cm:title"><![CDATA[]]></title><categories prefix="cm:categories"><![CDATA[]]></categories><bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]></bestBeforeDate><startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:37:05.517+02:00]]></startEffectivity><productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/355df3f5-866d-46e6-ba07-5877f8465409]]></productHierarchy2><eanCode prefix="bcpg:eanCode"><![CDATA[]]></eanCode><productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1><locale prefix="sys:locale"><![CDATA[fr]]></locale><description prefix="cm:description"><![CDATA[]]></description><productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit><taggable prefix="cm:taggable"><![CDATA[]]></taggable><packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]></packagingDescription><productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity><store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier><productComments prefix="bcpg:productComments"><![CDATA[]]></productComments><entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première]]></entityTplRef><reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-09-11T10:53:20.124+02:00]]></reportEntityGenerated><compoListQty prefix="compoListQty"><![CDATA[0.021416333523700738]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" organoListOrgano="Aspect" sort="100" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" organoListOrgano="Couleur" sort="101" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" organoListOrgano="Goût" sort="102" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" organoListOrgano="Odeur" sort="103" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" organoListOrgano="Texture" sort="104" locale="fr"/><organoList organoListValue="Poudre" organoListOrgano="Etat" sort="105" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListIsGMO="false" ingListIng="Levure boulangère" ingListIsProcessingAid="false" isManualListItem="false" ingListQtyPerc="100.0" ingListIsIonized="false" sort="100" locale="fr"/></ingLists></dataLists><variants/></rawMaterial></rawMaterials><packagingLists tarePkgLevel1="0.0322003" netWeightPkgLevel1="0.458" grossWeightPkgLevel1="0.49020030000000003" tarePkgLevel2="3.7932018000000003" netWeightPkgLevel2="2.748" grossWeightPkgLevel2="6.5412018000000005" nbProductsPkgLevel2="6" tarePkgLevel3="300.1105296" netWeightPkgLevel3="197.85600000000002" grossWeightPkgLevel3="497.96652960000006" nbProductsPkgLevel3="432"><packagingList packagingListUnit="m" packagingListQty="3.0E-4" dynamicCharactColumn1="0,0098" dynamicCharactColumn2="0,0045" packagingListPkgLevel="Primary" packagingListIsMaster="false" startEffectivity="2013-04-21T19:46:18.503+02:00" packagingListProduct="BOBINE SEMELLE BLANCHE Laize 100 mm" sort="100" locale="fr" code="E1120" erpCode="SEM025" legalName="Bobine semelle blanche" suppliers="" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect" tare="1.0" tareUnit="g" length="155.0" width="100.0" height=""/><packagingList packagingListUnit="P" packagingListQty="1.0" dynamicCharactColumn1="0,8734" dynamicCharactColumn2="0,40" packagingListPkgLevel="Primary" packagingListIsMaster="false" startEffectivity="2013-04-21T19:46:57.738+02:00" packagingListProduct="PLAT ALU OMELETTE 1L" sort="101" locale="fr" code="E1121" erpCode="ALU003" legalName="Plat alu" suppliers="" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect" tare="9.3" tareUnit="g" length="215.0" width="135.0" height="11.0"/><packagingList packagingListUnit="P" packagingListQty="1.0" dynamicCharactColumn1="0,2183" dynamicCharactColumn2="0,10" packagingListPkgLevel="Primary" packagingListIsMaster="false" startEffectivity="2013-04-21T19:47:32.941+02:00" packagingListProduct="CALAGE 1 PIED BLEU" sort="102" locale="fr" code="E1122" erpCode="CAL020" legalName="" suppliers="" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect" tare="2.9" tareUnit="g" length="78.0" width="40.0" height="58.0"/><packagingList packagingListUnit="P" packagingListQty="1.0" dynamicCharactColumn1="0,2183" dynamicCharactColumn2="0,10" packagingListPkgLevel="Primary" packagingListIsMaster="false" startEffectivity="2013-04-21T19:48:03.127+02:00" packagingListProduct="COIFFE ON 1000 ml" sort="103" locale="fr" code="E1123" erpCode="COI082" legalName="Coiffe" suppliers="" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect"/><packagingList packagingListUnit="P" packagingListQty="1.0" dynamicCharactColumn1="0,5459" dynamicCharactColumn2="0,25" packagingListPkgLevel="Primary" packagingListIsMaster="true" labelingTemplate="Marquage standard" startEffectivity="2013-04-21T19:42:06.724+02:00" packagingListProduct="BOITE ON 1 L LEADER PRICE" labelingPosition="Largeur de la boîte" sort="104" locale="fr" code="E1119" erpCode="ELP041" legalName="Boite" suppliers="" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect" tare="20.0" tareUnit="g" length="200.0" width="120.0" height="120.0"><labelingTemplate><created prefix="cm:created"><![CDATA[2013-07-25T15:50:23.885+02:00]]></created><modifier prefix="cm:modifier"><![CDATA[admin]]></modifier><description prefix="cm:description"><![CDATA[<p>[MM/AAAA] (DLUO mois ann&eacute;e)<br />L [AAJJJ]&nbsp; [hh:mm] (n&deg; lot) (heure)<br /><font color="#FF0000"><strong>ATTENTION&nbsp;! INVERSER LE SENS DE LECTURE DU MARQUAGE DE L&rsquo;ETUI (concordance avec l&rsquo;impression de l&rsquo;&eacute;tui)</strong></font></p>]]></description><name prefix="cm:name"><![CDATA[Marquage standard]]></name><modified prefix="cm:modified"><![CDATA[2013-09-09T17:55:32.621+02:00]]></modified><creator prefix="cm:creator"><![CDATA[admin]]></creator><locale prefix="sys:locale"><![CDATA[fr]]></locale></labelingTemplate></packagingList><packagingList packagingListUnit="PP" packagingListQty="6.0" dynamicCharactColumn1="0,2436" variantIds="[]" dynamicCharactColumn2="0,1116" packagingListPkgLevel="Secondary" packagingListIsMaster="true" startEffectivity="2013-04-21T19:50:07.602+02:00" packagingListProduct="Kit Caisse N 264 - Pallette Euro" sort="105" locale="fr" code="KE1115" erpCode="ERP code PackKit2" legalName="Caisse N 264 - Pallette Euro" suppliers="" itemType="bcpg:packagingKit" aspects="referenceable, titled, localized, palletAspect, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, profitabilityAspect, generalclassifiable, productAspect" palletBoxesPerLayer="12" palletLayers="6" palletBoxesPerPallet="72" palletHeight="1680"><dataLists><packagingList><packagingList packagingListUnit="P" packagingListQty="72.0" packagingListPkgLevel="Secondary" packagingListIsMaster="true" startEffectivity="2013-04-21T19:48:47.496+02:00" packagingListProduct="CAISSE N 264" sort="100" locale="fr" code="E1124" erpCode="CAR264" legalName="Caisse" suppliers="" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, incomplete, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect" tare="50.0" tareUnit="g" length="600.0" width="500.0" height="350.0"/><packagingList packagingListUnit="P" packagingListQty="1.0" packagingListPkgLevel="Tertiary" packagingListIsMaster="true" startEffectivity="2012-09-08T10:49:02.056+02:00" packagingListProduct="Palette euro" sort="101" locale="fr" code="E1085" erpCode="" legalName="palette euro" suppliers="Fournisseur Lacroix" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect" tare="27.0" tareUnit="kg" length="1200.0" width="800.0" height="144.0"/></packagingList></dataLists></packagingList><dynamicCharactLists><dynamicCharactList dynamicCharactTitle="Coût Emb total (€/kg)" dynamicCharactValue="2.1093320394630437"/><dynamicCharactList dynamicCharactTitle="Coût Emb (€/kg)" dynamicCharactValue=""/><dynamicCharactList dynamicCharactTitle="Coût Emb (€/UVC)" dynamicCharactValue=""/></dynamicCharactLists></packagingLists><processLists><processList plStep="Ligne" plRateResource="1000.0" plRateProcess="1000.0" plQtyResource="1.0" plRateProduct="1000.0" startEffectivity="2011-12-22T15:58:09.644+01:00" plResource="Ligne 1 - Site Montrouge" sort="100" locale="fr"/><processList plStep="Emballage" plRateResource="1200.0" plRateProcess="1200.0" plQtyResource="1.0" plRateProduct="1200.0" startEffectivity="2011-12-22T16:18:11.969+01:00" plResource="Emballeuse carton" sort="101" locale="fr"/><processList plStep="Emballage" plRateResource="500.0" plRateProcess="1000.0" plQtyResource="2.0" plRateProduct="1000.0" startEffectivity="2011-12-22T15:49:56.964+01:00" plResource="Opérateur Emballage" sort="102" locale="fr"/><dynamicCharactLists><dynamicCharactList dynamicCharactTitle="Coût Prod (€/kg)" dynamicCharactValue="0.26710334788937407"/></dynamicCharactLists></processLists><ingLabelingLists><ingLabelingList language="français"><illGrp prefix="illGrp"><![CDATA[Etiquetage]]></illGrp><illValue prefix="illValue"><![CDATA[Sucre, Lait, crème fraiche, Eau, oeuf blanc, raisins au rhum 4,5% (Raisins au rhum 99%, Gomme Xanthane), oeuf jaune, rhum gélifié 0,3% (Rhum gélifié, Gomme Xanthane), Oeuf entier, Farine de blé, Levure boulangère]]></illValue><illManualValue prefix="illManualValue"><![CDATA[]]></illManualValue></ingLabelingList><ingLabelingList language="français"><illGrp prefix="illGrp"><![CDATA[Etiquetage2]]></illGrp><illValue prefix="illValue"><![CDATA[<b>Crème glacée avec raisins au rhum (65,4%):</b> Sucre, Lait, crème fraiche, raisins au rhum 6,8% (Raisins au rhum 99%, Gomme Xanthane), oeuf jaune<br/><b>Meringue (27,6%):</b> Sucre, oeuf blanc, Eau<br/><b>Sirop rhum (6,7%):</b> Eau, Sucre, rhum gélifié 4% (Rhum gélifié, Gomme Xanthane)<br/><b>Génoise nature (0,3%):</b> Oeuf entier, Sucre, Farine de blé, Levure boulangère]]></illValue><illManualValue prefix="illManualValue"><![CDATA[]]></illManualValue></ingLabelingList></ingLabelingLists><microbioLists><microbioList original="2cab1718-3ab8-4eed-98d0-4d8404d6fd3d" mblUnit="UFC/g" mblMaxi="500000.0" mblValue="300000.0" mblMicrobio="Flore aérobie mésophile revivifiable" mblTextCriteria="" sort="1" locale="fr_FR"/><microbioList original="8aefa39e-a7e8-4c81-9ae5-48845fc7a4cc" mblUnit="UFC/10g" mblMaxi="" mblValue="" mblMicrobio="Levure" mblTextCriteria="" sort="2" locale="fr_FR"/><microbioList original="9d5803c5-2b4b-459e-ba01-a3f3c32e4962" mblUnit="UFC/g" mblMaxi="4000.0" mblValue="1000.0" mblMicrobio="Coliforme totaux" mblTextCriteria="" sort="4" locale="fr_FR"/><microbioList original="cb89b88a-096f-413f-96b6-2e191d7301b0" mblUnit="UFC/10g" mblMaxi="" mblValue="" mblMicrobio="Moisissure" mblTextCriteria="" sort="3" locale="fr_FR"/><microbioList original="e1d7629c-462b-49c9-881a-1cce59ace162" mblUnit="/g" mblMaxi="1000.0" mblValue="100.0" mblMicrobio="ASR" mblTextCriteria="" sort="7" locale="fr_FR"/><microbioList original="a08b2948-a08c-4a0e-8d5d-c0e65dbff703" mblUnit="UFC/g" mblMaxi="500.0" mblValue="100.0" mblMicrobio="Staphylocoque" mblTextCriteria="" sort="6" locale="fr_FR"/><microbioList original="38f69575-7881-4f25-97a1-a8d619a5c71f" mblUnit="UFC/g" mblMaxi="1000.0" mblValue="100.0" mblMicrobio="Escherichia coli" mblTextCriteria="" sort="5" locale="fr_FR"/></microbioLists></dataLists><variants/><versions/></entity>
+Après décongélation, à conserver au réfrigérateur et à consommer dans la journée.]]></description>
+		<name prefix="cm:name"><![CDATA[Pâtisserie surgelée]]></name>
+		<modified prefix="cm:modified"><![CDATA[2013-07-25T16:24:03.055+02:00]]></modified>
+		<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+		<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+	</storageConditions>
+	<aspects><![CDATA[referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, copiedfrom, sizeAspect, clientsAspect, productAspect, eanAspect, consumerAspect, localized, entityVariantAspect, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, incomplete, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect]]></aspects>
+	<itemType><![CDATA[finishedProduct]]></itemType>
+	<images>
+		<image id="Img0" name="produit.jpg" />
+		<image id="Img1" name="img_palet1.jpg" title="Couches" />
+		<image id="Img2" name="img_palet2.jpg" title="Palette" />
+		<image id="Img3" name="img_fab1.jpg" title="Fabrication du produit" />
+		<image id="Img4" name="img_fab4.jpg" title="Défaut : Hauteur du décor insuffisante" />
+		<image id="Img5" name="img_fab3.jpg"
+			title="Défaut: Décor meringue abîmé, Décor grossier" />
+	</images>
+	<dataLists>
+		<nutLists energiekj="1019.7383100436681" energiekcal="241.7126812227074"
+			glucides="44.35714410480349" lipides="6.151338427947599" protéines="1.8347598253275108"
+			agsaturés="4.045827641921397" fibresalimentaires="0.38683406113537117"
+			sodium="22.304650655021838" sucres="44.82526637554585"  alcooléthanol="2.10668995633187772"
+			sulfite="0.4480349344978166">
+			<nutList nutListGroup="Groupe 1" nutListNut="Energie kJ"
+				nutListValue="1019.7383100436681" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="kJ/100mL" sort="0" locale="fr" />
+			<nutList nutListGroup="Groupe 1" nutListNut="Energie kcal"
+				nutListValue="241.7126812227074" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="kcal/100mL" sort="1"
+				locale="fr" />
+			<nutList nutListGroup="Groupe 1" nutListNut="Glucides"
+				nutListValue="44.35714410480349" isManualListItem="" nutListMethod="Formulation"
+				nutListUnit="g/100mL" sort="2" locale="fr" />
+			<nutList nutListGroup="Groupe 1" nutListNut="Lipides"
+				nutListValue="6.151338427947599" isManualListItem="" nutListMethod="Formulation"
+				nutListUnit="g/100mL" sort="3" locale="fr" />
+			<nutList nutListGroup="Groupe 1" nutListNut="Protéines"
+				nutListValue="1.8347598253275108" isManualListItem="" nutListMethod="Formulation"
+				nutListUnit="g/100mL" sort="4" locale="fr" />
+			<nutList nutListGroup="Groupe 2" nutListNut="AG saturés"
+				nutListValue="4.045827641921397" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="g/100mL" sort="5" locale="fr" />
+			<nutList nutListGroup="Groupe 2" nutListNut="Fibres alimentaires"
+				nutListValue="0.38683406113537117" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="g/100mL" sort="6" locale="fr" />
+			<nutList nutListGroup="Groupe 2" nutListNut="Sodium"
+				nutListValue="22.304650655021838" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="mg/100mL" sort="7" locale="fr" />
+			<nutList nutListGroup="Groupe 2" nutListNut="Sucres"
+				nutListValue="44.82526637554585" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="g/100mL" sort="8" locale="fr" />
+			<nutList nutListGroup="Autre" nutListNut="Ethanol"
+				nutListValue="0.10668995633187772" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="g/100mL" sort="9" locale="fr" />
+			<nutList nutListGroup="Autre" nutListNut="Sulfite"
+				nutListValue="0.4480349344978166" isManualListItem="false"
+				nutListMethod="Formulation" nutListUnit="mg/100mL" sort="10" locale="fr" />
+		</nutLists>
+		<costLists>
+			<costList costListValue="2.1093320394630437"
+				isManualListItem="false" costListUnit="€/L" costListCost="Coût Emb"
+				sort="1" locale="fr" />
+			<costList costListValue="1.065962367281401"
+				isManualListItem="false" costListUnit="€/L" costListCost="Coût MP"
+				sort="2" locale="fr" />
+			<costList costListValue="0.26710334788937407"
+				isManualListItem="false" costListUnit="€/L" costListCost="Coût Production"
+				sort="3" locale="fr" />
+		</costLists>
+		<organoLists>
+			<organoList organoListValue="Aspect de la glace"
+				organoListOrgano="Aspect" sort="100" locale="fr" />
+			<organoList organoListOrgano="Couleur" sort="101" locale="fr" />
+			<organoList organoListOrgano="Goût" sort="102" locale="fr" />
+			<organoList organoListOrgano="Odeur" sort="103" locale="fr" />
+			<organoList organoListOrgano="Texture" sort="104" locale="fr" />
+		</organoLists>
+		<labelClaimLists>
+			<labelClaimList lclType="Santé" lclLabelClaim="Sans BPA"
+				lclIsClaimed="true" isManualListItem="" lclIsFormulated="false"
+				sort="100" locale="fr" />
+			<labelClaimList lclType="Santé" lclLabelClaim="Sans huile de palme"
+				lclIsClaimed="true" isManualListItem="" lclIsFormulated="false"
+				sort="101" locale="fr" />
+			<labelClaimList lclType="Environnementale"
+				lclLabelClaim="Produit exempt de matières grasses de palme"
+				lclIsClaimed="true" isManualListItem="" lclIsFormulated="false"
+				sort="102" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Faible teneur en sucres" lclIsClaimed="false"
+				isManualListItem="" lclIsFormulated="true" sort="102" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Pauvre en sodium ou en sel" lclIsClaimed="false"
+				isManualListItem="" lclIsFormulated="true" sort="103" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Faible valeur énergétique" lclIsClaimed="false"
+				isManualListItem="false" lclIsFormulated="true" sort="104" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Sans apport énergétique" lclIsClaimed="false"
+				isManualListItem="false" lclIsFormulated="true" sort="105" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Faible teneur en matières grasses" lclIsClaimed="false"
+				isManualListItem="false" lclIsFormulated="true" sort="106" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Sans matières grasses" lclIsClaimed="false"
+				isManualListItem="false" lclIsFormulated="true" sort="107" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Sans sucres" lclIsClaimed="false" isManualListItem="false"
+				lclIsFormulated="true" sort="109" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Très pauvre en sodium ou en sel" lclIsClaimed="false"
+				isManualListItem="false" lclIsFormulated="true" sort="111" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Sans sodium ou sans sel" lclIsClaimed="false"
+				isManualListItem="false" lclIsFormulated="true" sort="112" locale="fr" />
+			<labelClaimList lclType="Nutritionnelle"
+				lclLabelClaim="Source de fibres" lclIsClaimed="false"
+				isManualListItem="false" lclIsFormulated="true" sort="113" locale="fr" />
+		</labelClaimLists>
+		<allergenLists
+			allergenListVoluntary="Crustacés et produits à base de crustacés, Lait et produit à base de (dont lactose), Oeuf et produit à base d'oeuf"
+			allergenListInVoluntary="Céréales contenant du gluten et produits à base de ces céréales, Fruits à Coque- (noix noisettes), Soja et produits à base de soja, Céleri et produits à base de céleri">
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Anhydride sulfureux et sulfites" sort="1"
+				locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Anhydride sulfureux et sulfites" sort="2"
+				locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Arachides et produits à base d'arachides"
+				sort="3" locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Arachides et produits à base d'arachides"
+				sort="4" locale="fr" />
+			<allergenList allergenListVoluntary="true"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListVolSources="JAUNE OEUF SUCRE 10%" allergenListAllergen="Crustacés et produits à base de crustacés"
+				sort="5" locale="fr" />
+			<allergenList allergenListInVolSources="Ligne 1 - Site Montrouge"
+				allergenListVoluntary="false" isManualListItem=""
+				allergenListInVoluntary="true"
+				allergenListAllergen="Céréales contenant du gluten et produits à base de ces céréales"
+				sort="6" locale="fr" />
+			<allergenList allergenListInVolSources="RAISINS AU RHUM 12 % VOL (Four018)"
+				allergenListVoluntary="false" isManualListItem=""
+				allergenListInVoluntary="true" allergenListAllergen="Fruits à Coque- (noix noisettes)"
+				sort="7" locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Graines de sésame et produits à base de graines de sésame"
+				sort="8" locale="fr" />
+			<allergenList allergenListInVolSources="RAISINS AU RHUM 12 % VOL (Four018)"
+				allergenListVoluntary="true" isManualListItem=""
+				allergenListInVoluntary="true"
+				allergenListVolSources="Lait demi écrémé UHT, CREME FRAICHE PASTEURISEE (Four003), CREME FRAICHE PASTEURISEE (Four004), CREME FRAICHE PASTEURISEE (Four005)"
+				allergenListAllergen="Lait et produit à base de (dont lactose)"
+				sort="9" locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Lupin  et produits à base de lupin" sort="10"
+				locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Mollusque  et produits à base de mollusque"
+				sort="11" locale="fr" />
+			<allergenList allergenListVoluntary="true"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListVolSources="BLANC D'OEUF SUCRE 25% (Four001), BLANC D'OEUF SUCRE 25% (Four002), JAUNE OEUF SUCRE 10% (Four012), JAUNE OEUF SUCRE 10% (Four013), JAUNE OEUF SUCRE 10% (Four014), JAUNE OEUF SUCRE 10% (Four002)"
+				allergenListAllergen="Oeuf et produit à base d'oeuf" sort="12"
+				locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Poisson et produit à base de poisson" sort="13"
+				locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Poisson et produit à base de poisson" sort="14"
+				locale="fr" />
+			<allergenList allergenListInVolSources="Ligne 1 - Site Montrouge"
+				allergenListVoluntary="false" isManualListItem=""
+				allergenListInVoluntary="true" allergenListAllergen="Soja et produits à base de soja"
+				sort="15" locale="fr" />
+			<allergenList allergenListInVolSources="RAISINS AU RHUM 12 % VOL (Four018)"
+				allergenListVoluntary="false" isManualListItem=""
+				allergenListInVoluntary="true" allergenListAllergen="Céleri et produits à base de céleri"
+				sort="16" locale="fr" />
+			<allergenList allergenListVoluntary="false"
+				isManualListItem="" allergenListInVoluntary="false"
+				allergenListAllergen="Moutarde et produits à base de moutarde" sort="17"
+				locale="fr" />
+		</allergenLists>
+		<physicoChemLists>
+			<physicoChemList pclValue="50.99793036899563"
+				isManualListItem="" pclPhysicoChem="Extrait sec" sort="1" locale="fr"
+				pclUnit="%" />
+			<physicoChemList pclValue="6.18574192139738"
+				isManualListItem="" pclPhysicoChem="Matière grasse" sort="2" locale="fr"
+				pclUnit="%" />
+			<physicoChemList pclValue="44.34410480349345"
+				isManualListItem="" pclPhysicoChem="Pouvoir sucrant" sort="3"
+				locale="fr" pclUnit="%" />
+			<physicoChemList isManualListItem="" pclPhysicoChem="pH"
+				sort="4" locale="fr_FR" />
+		</physicoChemLists>
+		<ingLists>
+			<ingList
+				ingListGeoOrigin="Belgique, Brésil, Cuba, Espagne, France, Inde, Malawi, Réunion, Swaziland, Tanzanie, république-unie de, Union européenne, Afrique, Pays tiers, Caraïbes, Pacifique, PMA, DOM"
+				ingListIsGMO="false" ingListIng="Sucre"
+				ingListBioOrigin="Betterave, Canne à sucre, Auxiliaires technologiques"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="47.015274994433305"
+				ingListIsIonized="false" sort="1" locale="fr" />
+			<ingList ingListGeoOrigin="France" ingListIsGMO="false"
+				ingListIng="crème fraîche liquide" ingListIsProcessingAid=""
+				isManualListItem="" ingListQtyPerc="14.027388109552438"
+				ingListIsIonized="false" sort="2" locale="fr" />
+			<ingList ingListGeoOrigin="France" ingListIsGMO="false"
+				ingListIng="Lait" ingListBioOrigin="Bovine (Boeuf, Vache, Veau)"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="14.027388109552438"
+				ingListIsIonized="false" sort="3" locale="fr" />
+			<ingList ingListIsGMO="false" ingListIng="Eau"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="9.530171454019147"
+				ingListIsIonized="false" sort="4" locale="fr" />
+			<ingList
+				ingListGeoOrigin="Allemagne, Belgique, Espagne, France, Italie, PAYS-bas, Pologne, Portugal, Roumanie, Royaume-Uni"
+				ingListIsGMO="false" ingListIng="oeuf blanc" ingListBioOrigin="Poulet, Poule, Oeuf"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="8.28323313293253"
+				ingListIsIonized="false" sort="5" locale="fr" />
+			<ingList ingListGeoOrigin="Turquie" ingListIsGMO="false"
+				ingListIng="Raisins au rhum" ingListBioOrigin="Raisin"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="4.40881763527054"
+				ingListIsIonized="false" sort="6" locale="fr" />
+			<ingList ingListGeoOrigin="Allemagne, Espagne, Portugal, Union européenne"
+				ingListIsGMO="false" ingListIng="oeuf jaune" ingListBioOrigin="Poulet, Poule, Oeuf"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="2.1955911823647294"
+				ingListIsIonized="false" sort="7" locale="fr" />
+			<ingList ingListGeoOrigin="Jamaïque, Martinique, Europe"
+				ingListIsGMO="false" ingListIng="Rhum gélifié"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="0.2672010688042752"
+				ingListIsIonized="false" sort="8" locale="fr" />
+			<ingList ingListIsGMO="false" ingListIng="Oeuf entier"
+				ingListIsProcessingAid="false" isManualListItem=""
+				ingListQtyPerc="0.12024048096192382" ingListIsIonized="false" sort="9"
+				locale="fr" />
+			<ingList ingListIsGMO="false" ingListIng="Farine de blé"
+				ingListIsProcessingAid="false" isManualListItem="" ingListQtyPerc="0.0668002672010688"
+				ingListIsIonized="false" sort="10" locale="fr" />
+			<ingList
+				ingListGeoOrigin="Antilles Néerlandaises, Union européenne, Europe, Caraïbes, Pacifique, Antilles"
+				ingListIsGMO="false" ingListIng="Gomme Xanthane"
+				ingListIsProcessingAid="" isManualListItem="" ingListQtyPerc="0.044533511467379196"
+				ingListIsIonized="false" sort="11" locale="fr" />
+			<ingList ingListIsGMO="false" ingListIng="Levure boulangère"
+				ingListIsProcessingAid="false" isManualListItem=""
+				ingListQtyPerc="0.013360053440213758" ingListIsIonized="false" sort="12"
+				locale="fr" />
+		</ingLists>
+		<compoLists>
+			<compoList dynamicCharactColumn1="0,2328"
+				compoListQtyAfterProcess="" compoListUnit="g"
+				startEffectivity="2013-04-19T18:53:35.244+02:00" compoListDeclType="Group"
+				depthLevel="1" locale="fr" sort="100" dynamicCharactColumn2="0.315"
+				compoListQtySubFormula="124.0" compoListVolume="0.39365079365079364"
+				compoListQty="0.124" compoListProduct="Prepa meringue"
+				compoListOverrunPerc="0.0" code="SF1162" erpCode="PRE0702"
+				legalName="Meringue" suppliers="" itemType="bcpg:semiFinishedProduct"
+				aspects="consumerAspect, referenceable, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect" />
+			<compoList dynamicCharactColumn1="0,0049"
+				compoListQtyAfterProcess="" compoListUnit="g"
+				startEffectivity="2013-04-21T18:24:50.574+02:00" compoListDeclType="Group"
+				depthLevel="1" locale="fr" sort="400" dynamicCharactColumn2="0.242"
+				compoListQtySubFormula="1.2" compoListVolume="0.0049586776859504135"
+				compoListQty="0.0012" compoListProduct="BANDE GENOISE NATURE 550 X 70 EP 12"
+				compoListOverrunPerc="0.0" code="SF1166" erpCode="GEN001" legalName="Génoise nature"
+				suppliers="" itemType="bcpg:semiFinishedProduct"
+				aspects="consumerAspect, referenceable, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect" />
+			<compoList dynamicCharactColumn1="0,0266"
+				compoListQtyAfterProcess="" compoListUnit="g" compoListDeclType="Group"
+				startEffectivity="2013-04-21T17:55:54.113+02:00" depthLevel="1"
+				locale="fr" sort="500" dynamicCharactColumn2="1.1"
+				compoListQtySubFormula="30.0" compoListVolume="0.027272727272727268"
+				compoListQty="0.03" compoListProduct="SIROP RHUM"
+				compoListOverrunPerc="0.0" code="SF1164" erpCode="SIR0100"
+				legalName="Sirop rhum" suppliers="" itemType="bcpg:semiFinishedProduct"
+				aspects="consumerAspect, referenceable, titled, localized, transformationAspect, entityVariantAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect, versionable">
+				<instruction prefix="bcpg:instruction"><![CDATA[]]>
+				</instruction>
+			</compoList>
+			<compoList dynamicCharactColumn1="0,6135"
+				compoListQtyAfterProcess="" compoListUnit="mL"
+				startEffectivity="2013-04-20T12:46:18.272+02:00" compoListDeclType="Declare"
+				depthLevel="1" locale="fr" sort="501" dynamicCharactColumn2="1.1"
+				compoListQtySubFormula="249.0" compoListVolume="0.45272727272727264"
+				compoListQty="0.27390000000000003" compoListProduct="CREME GLACEE NEUTRE"
+				compoListOverrunPerc="100.0" code="SF1163" erpCode="CGL1100"
+				legalName="Glace" suppliers="" itemType="bcpg:semiFinishedProduct"
+				aspects="consumerAspect, referenceable, titled, localized, transformationAspect, entityVariantAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect" />
+			<compoList dynamicCharactColumn1="0,1048"
+				compoListQtyAfterProcess="" compoListUnit="g" compoListDeclType="Detail"
+				startEffectivity="2013-04-21T18:52:24.536+02:00" depthLevel="1"
+				locale="fr" sort="502" dynamicCharactColumn2="1.21"
+				compoListQtySubFormula="20.0" compoListVolume="0.01652892561983471"
+				compoListQty="0.02" compoListProduct="RAISINS AU RHUM"
+				compoListOverrunPerc="0.0" code="MP40187" erpCode="INC046"
+				legalName="raisins au rhum" suppliers="CAR001, DIS003" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, consumerAspect, referenceable, titled, localized, transformationAspect, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, productAspect, certificateDateAspect">
+				<instruction prefix="bcpg:instruction"><![CDATA[]]>
+				</instruction>
+			</compoList>
+			<dynamicCharactLists>
+				<dynamicCharactList dynamicCharactTitle="Rendement (%)"
+					dynamicCharactValue="107.96793965110797" />
+				<dynamicCharactList dynamicCharactTitle="Rdt vol (%)"
+					dynamicCharactValue="111.71456876388557" />
+				<dynamicCharactList dynamicCharactTitle="Nb Ech"
+					dynamicCharactValue="20" />
+				<dynamicCharactList dynamicCharactTitle="Coût MP (€/L)"
+					dynamicCharactValue="" />
+				<dynamicCharactList dynamicCharactTitle="Profit (%)"
+					dynamicCharactValue="24.353074663765206" />
+				<dynamicCharactList dynamicCharactTitle="Coût MP total (€/L)"
+					dynamicCharactValue="0.926923797636001" />
+				<dynamicCharactList dynamicCharactTitle="Perte 15%"
+					dynamicCharactValue="1.065962367281401" />
+				<dynamicCharactList dynamicCharactTitle="Extrait sec (%)"
+					dynamicCharactValue="50.99793036899563" />
+				<dynamicCharactList dynamicCharactTitle="Matière grasse"
+					dynamicCharactValue="6.18574192139738" />
+				<dynamicCharactList dynamicCharactTitle="Pouvoir sucrant (%)"
+					dynamicCharactValue="44.34410480349345" />
+				<dynamicCharactList dynamicCharactTitle="Qté totale"
+					dynamicCharactValue="0.9262008733624454" />
+				<dynamicCharactList dynamicCharactTitle="Densité"
+					dynamicCharactValue="" />
+				<dynamicCharactList dynamicCharactTitle="Nutriment"
+					dynamicCharactValue="44.82526637554585" />
+			</dynamicCharactLists>
+		</compoLists>
+		<rawMaterials>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2013-04-21T13:30:18.140+02:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[SUC002]]></erpCode>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[4caea489-1f97-46f6-9220-3cbe4cb6122c]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[SUCRE EN POUDRE]]></name>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[457106]]></node-dbid>
+				<modified prefix="cm:modified"><![CDATA[2013-09-11T10:39:17.050+02:00]]></modified>
+				<profitability prefix="bcpg:profitability"><![CDATA[]]>
+				</profitability>
+				<productQty prefix="bcpg:productQty"><![CDATA[]]>
+				</productQty>
+				<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[Sucre en poudre]]></legalName>
+				<code prefix="bcpg:code"><![CDATA[MP40182]]></code>
+				<endEffectivity prefix="bcpg:endEffectivity"><![CDATA[]]>
+				</endEffectivity>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<suppliers prefix="bcpg:suppliers"><![CDATA[AZE002, BEG003, FLE002, VER001]]></suppliers>
+				<unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[0.75]]></unitTotalCost>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T13:30:18.296+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/c7a2200d-7807-4aba-b779-fd7d52591843]]></productHierarchy2>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1>
+				<unitPrice prefix="bcpg:unitPrice"><![CDATA[]]>
+				</unitPrice>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<breakEven prefix="bcpg:breakEven"><![CDATA[]]>
+				</breakEven>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-07-09T10:25:07.984+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[44.90148486579097]]></compoListQty>
+				<dataLists>
+					<nutLists />
+					<costLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList
+							ingListGeoOrigin="Brésil, Cuba, Espagne, France, Inde, Malawi, Réunion, Swaziland, Tanzanie, république-unie de, Union européenne, Afrique, Caraïbes, Pacifique, PMA, DOM"
+							ingListIsGMO="false" ingListIng="Sucre"
+							ingListBioOrigin="Betterave, Canne à sucre, Auxiliaires technologiques"
+							isManualListItem="" ingListQtyPerc="100.0" ingListIsIonized="false"
+							sort="1" locale="fr" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2011-03-16T09:46:45.815+01:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[125877]]></erpCode>
+				<useByDate prefix="bcpg:useByDate"><![CDATA[]]>
+				</useByDate>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[3b0f13a1-2602-4a5d-96e9-8a951b52cb6b]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[Lait demi écrémé UHT]]></name>
+				<periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]>
+				</periodAfterOpening>
+				<netWeight prefix="bcpg:netWeight"><![CDATA[]]>
+				</netWeight>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[11584]]></node-dbid>
+				<modified prefix="cm:modified"><![CDATA[2013-10-21T14:53:56.834+02:00]]></modified>
+				<preparationTips prefix="bcpg:preparationTips"><![CDATA[]]>
+				</preparationTips>
+				<netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit>
+				<certificateDate prefix="bcpg:certificateDate"><![CDATA[]]>
+				</certificateDate>
+				<productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty>
+				<productState prefix="bcpg:productState"><![CDATA[Valid]]></productState>
+				<reports prefix="rep:reports"><![CDATA[Lait demi écrémé UHT - Fiche Technique MP.pdf]]></reports>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[lait demi écrémé]]></legalName>
+				<owner prefix="cm:owner"><![CDATA[]]>
+				</owner>
+				<code prefix="bcpg:code"><![CDATA[MP1004]]></code>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<suppliers prefix="bcpg:suppliers"><![CDATA[Fournisseur JP Martin]]></suppliers>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]>
+				</bestBeforeDate>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2012-09-08T10:49:26.619+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/2389746a-913e-4b58-b41f-983bd68f67a8]]></productHierarchy2>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/baa374ba-e27c-47bb-915f-fbeae9a1d536]]></productHierarchy1>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]>
+				</packagingDescription>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.1]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-01T13:59:27.003+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[20.441890348372358]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList organoListValue="Lait demi écrémé"
+							organoListOrgano="Aspect" sort="1" locale="fr_FR" />
+						<organoList organoListValue="Blanc" organoListOrgano="Couleur"
+							sort="2" locale="fr_FR" />
+						<organoList organoListValue="Goût franc"
+							organoListOrgano="Goût" sort="3" locale="fr_FR" />
+						<organoList organoListValue="Odeur neutre"
+							organoListOrgano="Odeur" sort="4" locale="fr_FR" />
+						<organoList organoListValue="Liquide" organoListOrgano="Texture"
+							sort="5" locale="fr_FR" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListGeoOrigin="France" ingListIsGMO="false"
+							ingListIng="Lait" ingListBioOrigin="Bovine (Boeuf, Vache, Veau)"
+							isManualListItem="false" ingListQtyPerc="100.0" ingListIsIonized="false"
+							sort="1" locale="fr_FR" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2013-04-20T11:41:38.755+02:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[LAC017]]></erpCode>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[59056f6e-143d-47c6-8b41-c304233d602d]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[CREME FRAICHE PASTEURISEE]]></name>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[453770]]></node-dbid>
+				<modified prefix="cm:modified"><![CDATA[2013-09-11T10:39:09.774+02:00]]></modified>
+				<profitability prefix="bcpg:profitability"><![CDATA[]]>
+				</profitability>
+				<productQty prefix="bcpg:productQty"><![CDATA[]]>
+				</productQty>
+				<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[Crème fraîche pasteurisée]]></legalName>
+				<code prefix="bcpg:code"><![CDATA[MP40176]]></code>
+				<endEffectivity prefix="bcpg:endEffectivity"><![CDATA[]]>
+				</endEffectivity>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<suppliers prefix="bcpg:suppliers"><![CDATA[ALL002, GLA001, NVD004]]></suppliers>
+				<unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[1.98]]></unitTotalCost>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-20T11:41:39.094+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/2c2b1707-2639-4180-bf99-ed5f18e49188]]></productHierarchy2>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/baa374ba-e27c-47bb-915f-fbeae9a1d536]]></productHierarchy1>
+				<unitPrice prefix="bcpg:unitPrice"><![CDATA[]]>
+				</unitPrice>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<breakEven prefix="bcpg:breakEven"><![CDATA[]]>
+				</breakEven>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-07-09T10:25:08.861+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[20.441890348372358]]></compoListQty>
+				<dataLists>
+					<nutLists />
+					<costLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListGeoOrigin="France" ingListIsGMO="false"
+							ingListIng="crème fraîche liquide" isManualListItem=""
+							ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2013-04-21T18:52:24.356+02:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[INC046]]></erpCode>
+				<useByDate prefix="bcpg:useByDate"><![CDATA[]]>
+				</useByDate>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[6209d115-5532-4163-aac6-5032d529def1]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[RAISINS AU RHUM]]></name>
+				<periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]>
+				</periodAfterOpening>
+				<netWeight prefix="bcpg:netWeight"><![CDATA[]]>
+				</netWeight>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[457998]]></node-dbid>
+				<modified prefix="cm:modified"><![CDATA[2013-10-18T18:57:36.174+02:00]]></modified>
+				<preparationTips prefix="bcpg:preparationTips"><![CDATA[]]>
+				</preparationTips>
+				<netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit>
+				<certificateDate prefix="bcpg:certificateDate"><![CDATA[]]>
+				</certificateDate>
+				<productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty>
+				<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+				<reports prefix="rep:reports"><![CDATA[RAISINS AU RHUM - Fiche Technique MP.pdf]]></reports>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[raisins au rhum]]></legalName>
+				<code prefix="bcpg:code"><![CDATA[MP40187]]></code>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<suppliers prefix="bcpg:suppliers"><![CDATA[CAR001, DIS003]]></suppliers>
+				<unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[2.4]]></unitTotalCost>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]>
+				</bestBeforeDate>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:52:24.536+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/abb5815a-0010-495f-8aa6-e88bbe48516f]]></productHierarchy2>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]>
+				</packagingDescription>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.21]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-18T18:57:38.179+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[7.13877784123358]]></compoListQty>
+				<dataLists>
+					<nutLists />
+					<costLists />
+					<labelClaimLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListGeoOrigin="Turquie" ingListIsGMO="false"
+							ingListIng="Raisins au rhum" ingListBioOrigin="Raisin"
+							isManualListItem="" ingListQtyPerc="99.0" ingListIsIonized="false"
+							sort="1" locale="fr" />
+						<ingList ingListGeoOrigin="Union européenne" ingListIsGMO="false"
+							ingListIng="Gomme Xanthane" isManualListItem="" ingListQtyPerc="1.0"
+							ingListIsIonized="false" sort="2" locale="fr" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2013-04-20T13:08:55.397+02:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[OVO005]]></erpCode>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[9d113856-ec46-4a6b-9a65-339788388ed5]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[JAUNE OEUF SUCRE 10%]]></name>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[454854]]></node-dbid>
+				<modified prefix="cm:modified"><![CDATA[2013-09-11T10:39:14.089+02:00]]></modified>
+				<profitability prefix="bcpg:profitability"><![CDATA[]]>
+				</profitability>
+				<productQty prefix="bcpg:productQty"><![CDATA[]]>
+				</productQty>
+				<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[Jaune d'oeuf sucré]]></legalName>
+				<code prefix="bcpg:code"><![CDATA[MP40178]]></code>
+				<endEffectivity prefix="bcpg:endEffectivity"><![CDATA[]]>
+				</endEffectivity>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<suppliers prefix="bcpg:suppliers"><![CDATA[NVD004, SAM001, IGR003, ABC001, INT002]]></suppliers>
+				<unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[2.3]]></unitTotalCost>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-20T13:08:55.545+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/9466a77a-e318-4656-b792-a590db6de624]]></productHierarchy2>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/113f1410-ed1d-4ef3-b4a6-8f22e05552fb]]></productHierarchy1>
+				<unitPrice prefix="bcpg:unitPrice"><![CDATA[]]>
+				</unitPrice>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<breakEven prefix="bcpg:breakEven"><![CDATA[]]>
+				</breakEven>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-07-09T10:25:09.281+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[3.555111364934324]]></compoListQty>
+				<dataLists>
+					<nutLists />
+					<costLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListGeoOrigin="Allemagne, Espagne, Portugal, Union européenne"
+							ingListIsGMO="false" ingListIng="oeuf jaune" ingListBioOrigin="Poulet, Poule, Oeuf"
+							isManualListItem="" ingListQtyPerc="90.0" ingListIsIonized="false"
+							sort="1" locale="fr" />
+						<ingList ingListGeoOrigin="Belgique, Espagne, France, Union européenne, Pays tiers"
+							ingListIsGMO="false" ingListIng="Sucre" ingListBioOrigin="Betterave, Canne à sucre"
+							isManualListItem="" ingListQtyPerc="10.0" ingListIsIonized="false"
+							sort="2" locale="fr" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2013-04-21T18:29:00.123+02:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[OVO008]]></erpCode>
+				<useByDate prefix="bcpg:useByDate"><![CDATA[]]>
+				</useByDate>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[04fb34d7-39ec-4f7d-84b9-1c5d67cdb97e]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[OEUFS ENTIERS LIQUIDES]]></name>
+				<periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]>
+				</periodAfterOpening>
+				<netWeight prefix="bcpg:netWeight"><![CDATA[1.0]]></netWeight>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[457798]]></node-dbid>
+				<modified prefix="cm:modified"><![CDATA[2013-10-10T12:24:15.139+02:00]]></modified>
+				<preparationTips prefix="bcpg:preparationTips"><![CDATA[]]>
+				</preparationTips>
+				<netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit>
+				<certificateDate prefix="bcpg:certificateDate"><![CDATA[]]>
+				</certificateDate>
+				<productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty>
+				<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+				<reports prefix="rep:reports"><![CDATA[OEUFS ENTIERS LIQUIDES - Fiche Technique MP.pdf]]></reports>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[Oeuf entiers liquides]]></legalName>
+				<code prefix="bcpg:code"><![CDATA[MP40184]]></code>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<suppliers prefix="bcpg:suppliers"><![CDATA[SAM001, ABC001, INT002, VIL004]]></suppliers>
+				<unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[2.8]]></unitTotalCost>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]>
+				</bestBeforeDate>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:29:00.597+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/eaed1f29-58c0-4bb3-86b6-4230176827d3]]></productHierarchy2>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/113f1410-ed1d-4ef3-b4a6-8f22e05552fb]]></productHierarchy1>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]>
+				</packagingDescription>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-10T12:24:08.136+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[3.3923472301541984]]></compoListQty>
+				<dataLists>
+					<nutLists />
+					<costLists />
+					<labelClaimLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListIsGMO="false" ingListIng="Oeuf entier"
+							ingListIsProcessingAid="false" isManualListItem=""
+							ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2013-04-21T18:39:21.842+02:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[FAR001]]></erpCode>
+				<useByDate prefix="bcpg:useByDate"><![CDATA[]]>
+				</useByDate>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[fda09170-a087-4555-a069-00f869852258]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[FARINE DE BLE TYPE 55]]></name>
+				<periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]>
+				</periodAfterOpening>
+				<netWeight prefix="bcpg:netWeight"><![CDATA[1.0]]></netWeight>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[457849]]></node-dbid>
+				<modified prefix="cm:modified"><![CDATA[2013-10-10T12:24:59.836+02:00]]></modified>
+				<preparationTips prefix="bcpg:preparationTips"><![CDATA[]]>
+				</preparationTips>
+				<netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit>
+				<certificateDate prefix="bcpg:certificateDate"><![CDATA[]]>
+				</certificateDate>
+				<productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty>
+				<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+				<reports prefix="rep:reports"><![CDATA[FARINE DE BLE TYPE 55 - Fiche Technique MP.pdf]]></reports>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[Farine de blé]]></legalName>
+				<code prefix="bcpg:code"><![CDATA[MP40186]]></code>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<suppliers prefix="bcpg:suppliers"><![CDATA[CHA002, GMP001, GRF001]]></suppliers>
+				<unitTotalCost prefix="bcpg:unitTotalCost"><![CDATA[1.75]]></unitTotalCost>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]>
+				</bestBeforeDate>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:39:22.011+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/430a6c06-3e34-4dab-889d-e67925dc2eca]]></productHierarchy2>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]>
+				</packagingDescription>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première générique]]></entityTplRef>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-10-10T12:24:54.708+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[0.1070816676185037]]></compoListQty>
+				<dataLists>
+					<nutLists />
+					<costLists />
+					<labelClaimLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListIsGMO="false" ingListIng="Farine de blé"
+							ingListIsProcessingAid="false" isManualListItem=""
+							ingListQtyPerc="100.0" ingListIsIonized="false" sort="1" locale="fr" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<created prefix="cm:created"><![CDATA[2013-04-21T18:37:05.219+02:00]]></created>
+				<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+				<store-protocol prefix="sys:store-protocol"><![CDATA[workspace]]></store-protocol>
+				<erpCode prefix="bcpg:erpCode"><![CDATA[PRE2100]]></erpCode>
+				<useByDate prefix="bcpg:useByDate"><![CDATA[]]>
+				</useByDate>
+				<node-uuid prefix="sys:node-uuid"><![CDATA[78c4830d-c6ee-40f3-a960-90efb694a4d0]]></node-uuid>
+				<name prefix="cm:name"><![CDATA[Levure chimique]]></name>
+				<netWeight prefix="bcpg:netWeight"><![CDATA[]]>
+				</netWeight>
+				<node-dbid prefix="sys:node-dbid"><![CDATA[457842]]></node-dbid>
+				<periodAfterOpening prefix="bcpg:periodAfterOpening"><![CDATA[]]>
+				</periodAfterOpening>
+				<modified prefix="cm:modified"><![CDATA[2013-09-11T10:53:19.502+02:00]]></modified>
+				<preparationTips prefix="bcpg:preparationTips"><![CDATA[]]>
+				</preparationTips>
+				<netWeightUnit prefix="bcpg:netWeightUnit"><![CDATA[kg]]></netWeightUnit>
+				<certificateDate prefix="bcpg:certificateDate"><![CDATA[]]>
+				</certificateDate>
+				<productQty prefix="bcpg:productQty"><![CDATA[1.0]]></productQty>
+				<productState prefix="bcpg:productState"><![CDATA[ToValidate]]></productState>
+				<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+				<legalName prefix="bcpg:legalName"><![CDATA[Préparation émulsifiant biscuit]]></legalName>
+				<code prefix="bcpg:code"><![CDATA[MP40185]]></code>
+				<title prefix="cm:title"><![CDATA[]]>
+				</title>
+				<categories prefix="cm:categories"><![CDATA[]]>
+				</categories>
+				<bestBeforeDate prefix="bcpg:bestBeforeDate"><![CDATA[]]>
+				</bestBeforeDate>
+				<startEffectivity prefix="bcpg:startEffectivity"><![CDATA[2013-04-21T18:37:05.517+02:00]]></startEffectivity>
+				<productHierarchy2 prefix="bcpg:productHierarchy2"><![CDATA[workspace://SpacesStore/355df3f5-866d-46e6-ba07-5877f8465409]]></productHierarchy2>
+				<eanCode prefix="bcpg:eanCode"><![CDATA[]]>
+				</eanCode>
+				<productHierarchy1 prefix="bcpg:productHierarchy1"><![CDATA[workspace://SpacesStore/8a8b544d-4a51-4107-bd13-95cd67c511a4]]></productHierarchy1>
+				<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				<description prefix="cm:description"><![CDATA[]]>
+				</description>
+				<productUnit prefix="bcpg:productUnit"><![CDATA[kg]]></productUnit>
+				<taggable prefix="cm:taggable"><![CDATA[]]>
+				</taggable>
+				<packagingDescription prefix="bcpg:packagingDescription"><![CDATA[]]>
+				</packagingDescription>
+				<productDensity prefix="bcpg:productDensity"><![CDATA[1.0]]></productDensity>
+				<store-identifier prefix="sys:store-identifier"><![CDATA[SpacesStore]]></store-identifier>
+				<productComments prefix="bcpg:productComments"><![CDATA[]]>
+				</productComments>
+				<entityTplRef prefix="bcpg:entityTplRef"><![CDATA[Matière première]]></entityTplRef>
+				<reportEntityGenerated prefix="rep:reportEntityGenerated"><![CDATA[2013-09-11T10:53:20.124+02:00]]></reportEntityGenerated>
+				<compoListQty prefix="compoListQty"><![CDATA[0.021416333523700738]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							organoListOrgano="Aspect" sort="100" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							organoListOrgano="Couleur" sort="101" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							organoListOrgano="Goût" sort="102" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							organoListOrgano="Odeur" sort="103" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							organoListOrgano="Texture" sort="104" locale="fr" />
+						<organoList organoListValue="Poudre" organoListOrgano="Etat"
+							sort="105" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListIsGMO="false" ingListIng="Levure boulangère"
+							ingListIsProcessingAid="false" isManualListItem="false"
+							ingListQtyPerc="100.0" ingListIsIonized="false" sort="100"
+							locale="fr" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+		</rawMaterials>
+		<packagingLists tarePkgLevel1="0.0322003"
+			netWeightPkgLevel1="0.458" grossWeightPkgLevel1="0.49020030000000003"
+			tarePkgLevel2="3.7932018000000003" netWeightPkgLevel2="2.748"
+			grossWeightPkgLevel2="6.5412018000000005" nbProductsPkgLevel2="6"
+			tarePkgLevel3="300.1105296" netWeightPkgLevel3="197.85600000000002"
+			grossWeightPkgLevel3="497.96652960000006" nbProductsPkgLevel3="432">
+			<packagingList packagingListUnit="m" packagingListQty="3.0E-4"
+				dynamicCharactColumn1="0,0098" dynamicCharactColumn2="0,0045"
+				packagingListPkgLevel="Primary" packagingListIsMaster="false"
+				startEffectivity="2013-04-21T19:46:18.503+02:00"
+				packagingListProduct="BOBINE SEMELLE BLANCHE Laize 100 mm" sort="100"
+				locale="fr" code="E1120" erpCode="SEM025" legalName="Bobine semelle blanche"
+				suppliers="" itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect"
+				tare="1.0" tareUnit="g" length="155.0" width="100.0" height="" />
+			<packagingList packagingListUnit="P" packagingListQty="1.0"
+				dynamicCharactColumn1="0,8734" dynamicCharactColumn2="0,40"
+				packagingListPkgLevel="Primary" packagingListIsMaster="false"
+				startEffectivity="2013-04-21T19:46:57.738+02:00"
+				packagingListProduct="PLAT ALU OMELETTE 1L" sort="101" locale="fr"
+				code="E1121" erpCode="ALU003" legalName="Plat alu" suppliers=""
+				itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect"
+				tare="9.3" tareUnit="g" length="215.0" width="135.0" height="11.0" />
+			<packagingList packagingListUnit="P" packagingListQty="1.0"
+				dynamicCharactColumn1="0,2183" dynamicCharactColumn2="0,10"
+				packagingListPkgLevel="Primary" packagingListIsMaster="false"
+				startEffectivity="2013-04-21T19:47:32.941+02:00"
+				packagingListProduct="CALAGE 1 PIED BLEU" sort="102" locale="fr"
+				code="E1122" erpCode="CAL020" legalName="" suppliers=""
+				itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect"
+				tare="2.9" tareUnit="g" length="78.0" width="40.0" height="58.0" />
+			<packagingList packagingListUnit="P" packagingListQty="1.0"
+				dynamicCharactColumn1="0,2183" dynamicCharactColumn2="0,10"
+				packagingListPkgLevel="Primary" packagingListIsMaster="false"
+				startEffectivity="2013-04-21T19:48:03.127+02:00"
+				packagingListProduct="COIFFE ON 1000 ml" sort="103" locale="fr"
+				code="E1123" erpCode="COI082" legalName="Coiffe" suppliers=""
+				itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect" />
+			<packagingList packagingListUnit="P" packagingListQty="1.0"
+				dynamicCharactColumn1="0,5459" dynamicCharactColumn2="0,25"
+				packagingListPkgLevel="Primary" packagingListIsMaster="true"
+				labelingTemplate="Marquage standard" startEffectivity="2013-04-21T19:42:06.724+02:00"
+				packagingListProduct="BOITE ON 1 L LEADER PRICE" labelingPosition="Largeur de la boîte"
+				sort="104" locale="fr" code="E1119" erpCode="ELP041" legalName="Boite"
+				suppliers="" itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect"
+				tare="20.0" tareUnit="g" length="200.0" width="120.0" height="120.0">
+				<labelingTemplate>
+					<created prefix="cm:created"><![CDATA[2013-07-25T15:50:23.885+02:00]]></created>
+					<modifier prefix="cm:modifier"><![CDATA[admin]]></modifier>
+					<description prefix="cm:description"><![CDATA[<p>[MM/AAAA] (DLUO mois ann&eacute;e)<br />L [AAJJJ]&nbsp; [hh:mm] (n&deg; lot) (heure)<br /><font color="#FF0000"><strong>ATTENTION&nbsp;! INVERSER LE SENS DE LECTURE DU MARQUAGE DE L&rsquo;ETUI (concordance avec l&rsquo;impression de l&rsquo;&eacute;tui)</strong></font></p>]]></description>
+					<name prefix="cm:name"><![CDATA[Marquage standard]]></name>
+					<modified prefix="cm:modified"><![CDATA[2013-09-09T17:55:32.621+02:00]]></modified>
+					<creator prefix="cm:creator"><![CDATA[admin]]></creator>
+					<locale prefix="sys:locale"><![CDATA[fr]]></locale>
+				</labelingTemplate>
+			</packagingList>
+			<packagingList packagingListUnit="PP" packagingListQty="6.0"
+				dynamicCharactColumn1="0,2436" variantIds="[]"
+				dynamicCharactColumn2="0,1116" packagingListPkgLevel="Secondary"
+				packagingListIsMaster="true" startEffectivity="2013-04-21T19:50:07.602+02:00"
+				packagingListProduct="Kit Caisse N 264 - Pallette Euro" sort="105"
+				locale="fr" code="KE1115" erpCode="ERP code PackKit2" legalName="Caisse N 264 - Pallette Euro"
+				suppliers="" itemType="bcpg:packagingKit"
+				aspects="referenceable, titled, localized, palletAspect, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, profitabilityAspect, generalclassifiable, productAspect"
+				palletBoxesPerLayer="12" palletLayers="6" palletBoxesPerPallet="72"
+				palletHeight="1680">
+				<dataLists>
+					<packagingList>
+						<packagingList packagingListUnit="P"
+							packagingListQty="72.0" packagingListPkgLevel="Secondary"
+							packagingListIsMaster="true" startEffectivity="2013-04-21T19:48:47.496+02:00"
+							packagingListProduct="CAISSE N 264" sort="100" locale="fr" code="E1124"
+							erpCode="CAR264" legalName="Caisse" suppliers=""
+							itemType="bcpg:packagingMaterial"
+							aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, incomplete, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect"
+							tare="50.0" tareUnit="g" length="600.0" width="500.0" height="350.0" />
+						<packagingList packagingListUnit="P"
+							packagingListQty="1.0" packagingListPkgLevel="Tertiary"
+							packagingListIsMaster="true" startEffectivity="2012-09-08T10:49:02.056+02:00"
+							packagingListProduct="Palette euro" sort="101" locale="fr" code="E1085"
+							erpCode="" legalName="palette euro" suppliers="Fournisseur Lacroix"
+							itemType="bcpg:packagingMaterial"
+							aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, incomplete, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect"
+							tare="27.0" tareUnit="kg" length="1200.0" width="800.0" height="144.0" />
+					</packagingList>
+				</dataLists>
+			</packagingList>
+			<dynamicCharactLists>
+				<dynamicCharactList dynamicCharactTitle="Coût Emb total (€/kg)"
+					dynamicCharactValue="2.1093320394630437" />
+				<dynamicCharactList dynamicCharactTitle="Coût Emb (€/kg)"
+					dynamicCharactValue="" />
+				<dynamicCharactList dynamicCharactTitle="Coût Emb (€/UVC)"
+					dynamicCharactValue="" />
+			</dynamicCharactLists>
+		</packagingLists>
+		<processLists>
+			<processList plStep="Ligne" plRateResource="1000.0"
+				plRateProcess="1000.0" plQtyResource="1.0" plRateProduct="1000.0"
+				startEffectivity="2011-12-22T15:58:09.644+01:00" plResource="Ligne 1 - Site Montrouge"
+				sort="100" locale="fr" />
+			<processList plStep="Emballage" plRateResource="1200.0"
+				plRateProcess="1200.0" plQtyResource="1.0" plRateProduct="1200.0"
+				startEffectivity="2011-12-22T16:18:11.969+01:00" plResource="Emballeuse carton"
+				sort="101" locale="fr" />
+			<processList plStep="Emballage" plRateResource="500.0"
+				plRateProcess="1000.0" plQtyResource="2.0" plRateProduct="1000.0"
+				startEffectivity="2011-12-22T15:49:56.964+01:00" plResource="Opérateur Emballage"
+				sort="102" locale="fr" />
+			<dynamicCharactLists>
+				<dynamicCharactList dynamicCharactTitle="Coût Prod (€/kg)"
+					dynamicCharactValue="0.26710334788937407" />
+			</dynamicCharactLists>
+		</processLists>
+		<ingLabelingLists>
+			<ingLabelingList language="français">
+				<illGrp prefix="illGrp"><![CDATA[Etiquetage]]></illGrp>
+				<illValue prefix="illValue"><![CDATA[Sucre, Lait, crème fraiche, Eau, oeuf blanc, raisins au rhum 4,5% (Raisins au rhum 99%, Gomme Xanthane), oeuf jaune, rhum gélifié 0,3% (Rhum gélifié, Gomme Xanthane), Oeuf entier, Farine de blé, Levure boulangère]]></illValue>
+				<illManualValue prefix="illManualValue"><![CDATA[]]>
+				</illManualValue>
+			</ingLabelingList>
+			<ingLabelingList language="français">
+				<illGrp prefix="illGrp"><![CDATA[Etiquetage2]]></illGrp>
+				<illValue prefix="illValue"><![CDATA[<b>Crème glacée avec raisins au rhum (65,4%):</b> Sucre, Lait, crème fraiche, raisins au rhum 6,8% (Raisins au rhum 99%, Gomme Xanthane), oeuf jaune<br/><b>Meringue (27,6%):</b> Sucre, oeuf blanc, Eau<br/><b>Sirop rhum (6,7%):</b> Eau, Sucre, rhum gélifié 4% (Rhum gélifié, Gomme Xanthane)<br/><b>Génoise nature (0,3%):</b> Oeuf entier, Sucre, Farine de blé, Levure boulangère]]></illValue>
+				<illManualValue prefix="illManualValue"><![CDATA[]]>
+				</illManualValue>
+			</ingLabelingList>
+		</ingLabelingLists>
+		<microbioLists>
+			<microbioList original="2cab1718-3ab8-4eed-98d0-4d8404d6fd3d"
+				mblUnit="UFC/g" mblMaxi="500000.0" mblValue="300000.0"
+				mblMicrobio="Flore aérobie mésophile revivifiable" mblTextCriteria=""
+				sort="1" locale="fr_FR" />
+			<microbioList original="8aefa39e-a7e8-4c81-9ae5-48845fc7a4cc"
+				mblUnit="UFC/10g" mblMaxi="" mblValue="" mblMicrobio="Levure"
+				mblTextCriteria="" sort="2" locale="fr_FR" />
+			<microbioList original="9d5803c5-2b4b-459e-ba01-a3f3c32e4962"
+				mblUnit="UFC/g" mblMaxi="4000.0" mblValue="1000.0" mblMicrobio="Coliforme totaux"
+				mblTextCriteria="" sort="4" locale="fr_FR" />
+			<microbioList original="cb89b88a-096f-413f-96b6-2e191d7301b0"
+				mblUnit="UFC/10g" mblMaxi="" mblValue="" mblMicrobio="Moisissure"
+				mblTextCriteria="" sort="3" locale="fr_FR" />
+			<microbioList original="e1d7629c-462b-49c9-881a-1cce59ace162"
+				mblUnit="/g" mblMaxi="1000.0" mblValue="100.0" mblMicrobio="ASR"
+				mblTextCriteria="" sort="7" locale="fr_FR" />
+			<microbioList original="a08b2948-a08c-4a0e-8d5d-c0e65dbff703"
+				mblUnit="UFC/g" mblMaxi="500.0" mblValue="100.0" mblMicrobio="Staphylocoque"
+				mblTextCriteria="" sort="6" locale="fr_FR" />
+			<microbioList original="38f69575-7881-4f25-97a1-a8d619a5c71f"
+				mblUnit="UFC/g" mblMaxi="1000.0" mblValue="100.0" mblMicrobio="Escherichia coli"
+				mblTextCriteria="" sort="5" locale="fr_FR" />
+		</microbioLists>
+	</dataLists>
+	<variants />
+	<versions />
+</entity>
