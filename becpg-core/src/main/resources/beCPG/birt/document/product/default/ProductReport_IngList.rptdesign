@@ -1648,9 +1648,15 @@
                     <cell id="3648">
                         <grid id="3655">
                             <column id="3656"/>
-                            <column id="3705"/>
-                            <column id="3657"/>
-                            <column id="3658"/>
+                            <column id="3705">
+                                <property name="style">becpg-col-border</property>
+                            </column>
+                            <column id="3657">
+                                <property name="style">becpg-col-border</property>
+                            </column>
+                            <column id="3658">
+                                <property name="style">becpg-col-border</property>
+                            </column>
                             <row id="3659">
                                 <cell id="3660">
                                     <label id="3661">
@@ -1775,9 +1781,15 @@
                                 </structure>
                             </list-property>
                             <column id="3687"/>
-                            <column id="3702"/>
-                            <column id="3688"/>
-                            <column id="3689"/>
+                            <column id="3702">
+                                <property name="style">becpg-col-border</property>
+                            </column>
+                            <column id="3688">
+                                <property name="style">becpg-col-border</property>
+                            </column>
+                            <column id="3689">
+                                <property name="style">becpg-col-border</property>
+                            </column>
                             <detail>
                                 <row id="3680">
                                     <property name="borderTopStyle">solid</property>
