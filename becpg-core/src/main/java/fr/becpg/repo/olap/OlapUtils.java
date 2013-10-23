@@ -50,7 +50,7 @@ public class OlapUtils {
 			httpget.addHeader(ALF_USER_HEADER, olapContext.getCurrentUser());
 			HttpResponse response = olapContext.getSession().execute(httpget);
 			HttpEntity entity = response.getEntity();
-			ret = EntityUtils.toString(entity);
+			ret = EntityUtils.toString(entity, "UTF-8");
 			JSONObject json = new JSONObject(ret);
 
 			return json;
@@ -78,7 +78,7 @@ public class OlapUtils {
 			httpget.addHeader(ALF_USER_HEADER, olapContext.getCurrentUser());
 			HttpResponse response = olapContext.getSession().execute(httpget);
 			HttpEntity entity = response.getEntity();
-			ret = EntityUtils.toString(entity);
+			ret = EntityUtils.toString(entity, "UTF-8");
 			JSONArray json = new JSONArray(ret);
 
 			return json;
