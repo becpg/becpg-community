@@ -272,8 +272,8 @@
 	</bean>
     
     
-    <bean id="patch.bcpg.redeployClaimWf" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
-        <property name="id"><value>patch.bcpg.redeployClaimWf</value></property>
+    <bean id="patch.bcpg.redeployClaimWf2" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployClaimWf2</value></property>
         <property name="description"><value>patch.bcpg.redeployClaimWf.description</value></property>
         <property name="fixesFromSchema"><value>0</value></property>
         <property name="fixesToSchema"><value>${version.schema}</value></property>
