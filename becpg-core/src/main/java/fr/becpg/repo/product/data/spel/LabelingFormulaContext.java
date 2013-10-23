@@ -26,6 +26,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
@@ -56,6 +57,17 @@ public class LabelingFormulaContext {
 	private NodeService mlNodeService;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	
+	private List<ReqCtrlListDataItem> errors = new ArrayList<>(); 
+	
+	public List<ReqCtrlListDataItem> getErrors() {
+		return errors;
+	}
+
+	public void setErrors(List<ReqCtrlListDataItem> errors) {
+		this.errors = errors;
+	}
 
 	public CompositeLabeling getCompositeLabeling() {
 		return lblCompositeContext;

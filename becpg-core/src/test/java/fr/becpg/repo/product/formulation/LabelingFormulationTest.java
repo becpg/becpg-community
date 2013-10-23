@@ -27,6 +27,8 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleType;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.productList.RequirementType;
 
 /**
  * 
@@ -86,7 +88,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
     @Test
 	public void testNullIng() throws Exception {
 		
-       final NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+        NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished product "+Calendar.getInstance().getTimeInMillis());
@@ -130,29 +132,47 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Legal Raw material 16 100% (ing1 french, ing3 french 55%, ing2 french)", Locale.FRENCH);
 		
-		//TODO J'ai 2 MP qui ont l'ing Eau. Pour une des 2, la qté est null dans la LI. Dans l'étiquetage, j'ai null.
 		
-		// --> Ajoute un warning
+		final NodeRef finishProduct1 = createTestProduct(null);
 		
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-//			public NodeRef execute() throws Throwable {
-//				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
-//				formulatedProduct.setQty(7d);
-//				formulatedProduct.getCompoListView().getCompoList().add(new CompoListDataItem(null, null, 5d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-//				 alfrescoRepository.save(formulatedProduct);
-//				 return null;
-//			}
-//		}, false, true);
-//		
-//		labelingRuleList = new ArrayList<>();
-//
-//		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
-//		labelingRuleList.add(new LabelingRuleListDataItem("Declare", null, LabelingRuleType.Declare, Arrays.asList(rawMaterial16NodeRef), null));
-//		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
-//		
-//		checkILL(finishedProductNodeRef1, labelingRuleList, "Legal Raw material 16 100% (ing1 french, ing3 french 55%, ing2 french)", Locale.FRENCH);
+		final NodeRef finishProduct2 = createTestProduct(null);
 		
-//	    Auxiliaires technologiques
+
+		 finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				FinishedProductData finishedProduct1 = new FinishedProductData();
+				finishedProduct1.setName("Finished product "+Calendar.getInstance().getTimeInMillis());
+				finishedProduct1.setLegalName("Legal Finished product 1");
+				finishedProduct1.setQty(2d);
+				finishedProduct1.setUnit(ProductUnit.kg);
+				finishedProduct1.setDensity(1d);
+				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
+				compoList1.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+				compoList1.add(new CompoListDataItem(null, compoList1.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Group, finishProduct1));
+				compoList1.add(new CompoListDataItem(null, compoList1.get(0), 2d, null, CompoListUnit.kg, 0d, DeclarationType.Group, finishProduct2));
+				compoList1.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+				compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
+				compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial16NodeRef));
+
+				finishedProduct1.getCompoListView().setCompoList(compoList1);
+				
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+			}
+		}, false, true);
+		 
+		 
+		labelingRuleList = new ArrayList<>(); 
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group,Arrays.asList(rawMaterial13NodeRef,rawMaterial16NodeRef),null));
+		
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>Aggr (38,7%):</b> ing3 french 100%, ing1 french, ing2 french<br/><b>Legal Finished product 1 (33,3%):</b> Pâte french 50% (Legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), Garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/><b>Legal Finished product 1 (16,7%):</b> Pâte french 50% (Legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), Garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/>Garniture french 11,3%", Locale.FRENCH);
+		
+		checkError(finishedProductNodeRef1,labelingRuleList, "Impossible de déclarer ou d'aggreger l'ingrédient ing2 sans quantité, changer le type de déclaration du composant");
+
+
+//	TODO    Auxiliaires technologiques
 //
 //        J'ai un aux tech dans ma MP sel. J'utilise la MP sel dans le SF pâte. Si je dis de masquer lex aux tech, je vois l'aux tech du sel car l'info est perdu au niveau du SF
 //        J'ai un aux tech dans ma MP sel. J'utilise ce même aux tech dans le SF pâte qui utilise aussi le sel. Si je dis de masquer lex aux tech, il faut prendre dans le calcul slmt la qté MeO dans le SF.
@@ -172,7 +192,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 		
 		
-		NodeRef finishedProductNodeRef1 =  transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished product "+Calendar.getInstance().getTimeInMillis());
@@ -744,7 +764,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					assertEquals("Incorrect label :"+formulatedIll+"\n   - compare to "+ill, ill,formulatedIll );
 
 				}
-
+				
+				
 				return null;
 
 			}
@@ -752,7 +773,32 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
+	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
+				ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
+
+
+				formulatedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
+
+				productService.formulate(formulatedProduct);
+				
+				assertFalse(formulatedProduct.getCompoListView().getReqCtrlList().isEmpty());
+				
+				for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
+					if(RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())){
+						String error = reqCtrlListDataItem.getReqMessage();
+						assertEquals("Incorrect label :"+error+"\n   - compare to "+errorMessage, error, errorMessage );
+					}
+				}
+
+				return null;
+
+			}
+		}, false, true);
+
+	}
 	
 
 

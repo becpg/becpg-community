@@ -199,12 +199,11 @@
 						      bcpg.getMessage('claimProcess.mail.notify.closing.subject',bpm_workflowDescription),
 						      bcpg.getMessage('claimProcess.mail.notify.closing.message'));  
 						 }
-							  
-				
-               
+	   
                task.setVariable('qa_claimResponseState', execution.getVariable('qa_claimResponseState'));
 			   	task.setVariable('qa_claimResponseDetails', execution.getVariable('qa_claimResponseDetails'));
 			   	task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
+			   	task.setVariable('qa_claimTreatementPrevActions', execution.getVariable('qa_claimTreatementPrevActions'));
 			   	task.setVariable('qa_claimType', execution.getVariable('qa_claimType'));
           
                task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
@@ -375,7 +374,7 @@
                task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
             
 	            if(task.getVariable('ncwf_claimRejectedState') == 'none'){
-	              task.setVariable('qa_claimTreatmentDate', new  java.util.Date());
+	              task.setVariable('qa_claimTreatementDate', new  java.util.Date());
 	              if(execution.getVariable('qa_claimResponseActor')!=null){
 	               task.setVariable('ncwf_ncState','response');
 	              } else {
@@ -402,8 +401,9 @@
                  execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
                }
               
-          	  execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
-          	  execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
+	          	execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
+	          	execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
+	          	execution.setVariable('qa_claimTreatementPrevActions', task.getVariable('qa_claimTreatementPrevActions'));
         
         			execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
         			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));</activiti:string>
