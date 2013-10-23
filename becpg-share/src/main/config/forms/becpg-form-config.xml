@@ -239,8 +239,8 @@
 		         <show id="pack:height"   />
 		         
 		         <!-- Tare -->
-					<show id="pack:tare"      force="true"  />
-		         <show id="pack:tareUnit"  force="true" />
+					<show id="pack:tare" />
+		         <show id="pack:tareUnit" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1322,8 +1322,8 @@
 					<show id="rep:reportTpls" />
 					
 					<!-- Tare -->
-					<show id="pack:tare"      force="true"  />
-		         <show id="pack:tareUnit"  force="true" />
+					<show id="pack:tare" force="true"  />
+		         <show id="pack:tareUnit" force="true" />
 		       
 		         <!-- Dimension -->
 		         <show id="pack:length"   />
@@ -1503,8 +1503,8 @@
 					<show id="rep:reportTpls" />
 					
 					<!-- tare -->
-					<show id="pack:tare"      force="true"  />
-		         <show id="pack:tareUnit"  force="true" />
+					<show id="pack:tare" force="true"  />
+		         <show id="pack:tareUnit" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1629,6 +1629,10 @@
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteria" />
 					<show id="bcpg:certificateDate" force="true" />
+					
+					<!-- Tare -->
+					<show id="pack:tare" />
+		         <show id="pack:tareUnit" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1646,6 +1650,8 @@
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="consumer" appearance="bordered-panel" label-id="becpg.forms.set.consumer.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="tare" appearance="bordered-panel"
+						label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -1733,6 +1739,10 @@
 						</control>
 					</field>
 					<field id="bcpg:certificateDate" set="consumer" />
+					
+					<!-- tare -->
+					<field id="pack:tare" set="tare"/>
+               <field id="pack:tareUnit" set="tare"/>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -1995,8 +2005,8 @@
 		         <show id="pack:height"   />
 		         
 		         <!-- Tare -->
-					<show id="pack:tare"      force="true"  />
-		         <show id="pack:tareUnit"  force="true" />
+					<show id="pack:tare" />
+		         <show id="pack:tareUnit" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />

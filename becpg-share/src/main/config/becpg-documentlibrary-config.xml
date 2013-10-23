@@ -32,7 +32,8 @@
 				<aspect name="dsg:configAspect" />
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="pack:palletAspect" />
-				<aspect name="pack:sizeAspect" />				
+				<aspect name="pack:sizeAspect" />
+				<aspect name="pack:tareAspect" />							
 				<aspect name="ext1:customAspect" />
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
