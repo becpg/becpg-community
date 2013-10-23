@@ -384,8 +384,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			NodeRef productNodeRef = compoList.getProduct();
 			QName type = nodeService.getType(productNodeRef);
 			Double qty = FormulationHelper.getQty(compoList);
-			logger.info("###qty: " + qty);
-			logger.info("###netWeight: " + productData.getNetWeight());
+			if(logger.isDebugEnabled()){
+				logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + 
+						"qty: " + qty + " netWeight " + productData.getNetWeight());
+			}
 			if(qty != null && productData.getNetWeight() != null){
 				qty = parentQty * qty * FormulationHelper.getYield(compoList) / (100 * productData.getNetWeight());
 				

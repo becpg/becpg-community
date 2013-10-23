@@ -240,14 +240,16 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				
 				String value = VALUE_NULL;	
 				if (property.getValue() != null) {
-
-					// value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-					if (property.getValue() instanceof Date) {
+					
+					if (property.getValue() instanceof NodeRef){						
+						value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
+					}
+					else if (property.getValue() instanceof Date) {
 						value = ISO8601DateFormat.format((Date) property.getValue());
 					} else {
 						value = property.getValue().toString();
 					}
-				}			
+				}					
 				
 				values.put(propertyDef, value);
 			}			
