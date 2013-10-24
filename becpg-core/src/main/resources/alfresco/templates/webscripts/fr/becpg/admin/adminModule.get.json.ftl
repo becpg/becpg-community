@@ -13,10 +13,16 @@
 	   [
 	      <#list users as item>
 	      {
+	      <#attempt>
 	      <#assign currentPerson = people.getPerson(item)>
 	         "username" : "${item}",
 	         "fullName" : "${currentPerson.properties["cm:firstName"]} ${currentPerson.properties["cm:lastName"]}",
 	         "email" : "${currentPerson.properties["cm:email"]}"
+	      <#recover>
+	      	"username" : "${item}",
+	         "fullName" : "${item}",
+	         "email" : ""
+	      </#attempt>   
 	      }<#if item_has_next>,</#if>
 	     </#list>
 	   ]

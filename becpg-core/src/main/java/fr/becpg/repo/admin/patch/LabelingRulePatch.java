@@ -7,6 +7,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -51,17 +52,23 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 
 		for (NodeRef dataListNodeRef : dataListNodeRefs) {
 			if (nodeService.exists(dataListNodeRef)) {
-
-				String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, encodedPath, nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_ING_TYPE));
-
-				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-				if (!resultSet.isEmpty()) {
-					nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_ING_TYPE_V2, resultSet.get(0));
-					nodeService.removeProperty(dataListNodeRef, BeCPGModel.PROP_ING_TYPE);
-					logger.info("Update ing type for " + nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME));
-				} else {
-					logger.warn("Type not found for : " + queryPath);
+				try{
+					String queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, encodedPath, nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_ING_TYPE));
+	
+					List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+	
+					if (!resultSet.isEmpty()) {
+						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_ING_TYPE_V2, resultSet.get(0));
+						nodeService.removeProperty(dataListNodeRef, BeCPGModel.PROP_ING_TYPE);
+						logger.info("Update ing type for " + nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME));
+					} else {
+						logger.warn("Type not found for : " + queryPath);
+					}
+				} catch (Exception e){
+					if(e instanceof ConcurrencyFailureException){
+						throw e;
+					}
+					logger.error(e,e);
 				}
 
 			} else {
