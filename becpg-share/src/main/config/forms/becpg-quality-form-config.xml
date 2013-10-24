@@ -366,6 +366,7 @@
 					<show id="cm:name" />
 					<show id="qa:ncType" />
 					<show id="qa:ncState" />
+					<show id="qa:claimDescription" force="true" />
 					
 					<!-- batch -->
 					<show id="qa:batchId" force="true"/>
@@ -383,7 +384,7 @@
 					<show  id="qa:claimSource" force="true"/>
 					<show id="qa:claimType" force="true"/>
 					
-
+					
    			   <show id="qa:claimOriginHierarchy1" force="true"/>
 					<show id="qa:claimOriginHierarchy2" force="true"/>
 
@@ -452,9 +453,8 @@
 					<show id="cm:name" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
-					<!-- <show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:productState" /> -->
+					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:subsidiary" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
@@ -477,6 +477,7 @@
 
 					<!-- mainInfo -->
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:clientTel" />
 					<show id="bcpg:clientEmail" />
 					<show id="bcpg:clientFax" />
