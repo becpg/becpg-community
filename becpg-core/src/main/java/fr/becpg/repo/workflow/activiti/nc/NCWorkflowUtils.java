@@ -22,12 +22,11 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.helper.impl.AssociationServiceImpl;
 import fr.becpg.util.ApplicationContextHelper;
 
 public class NCWorkflowUtils {
@@ -73,6 +72,7 @@ public class NCWorkflowUtils {
 			AspectDefinition aspectDef = serviceRegistry.getDictionaryService().getAspect(aspectQname);
 			for (QName propQname : aspectDef.getProperties().keySet()) {
 				Serializable attr = (Serializable) task.getVariable(propQname.toPrefixString(serviceRegistry.getNamespaceService()).replaceFirst(":", "_"));
+				
 				if (attr != null) {
 					properties.put(propQname, attr);
 				}
