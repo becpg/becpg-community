@@ -11,12 +11,12 @@ export DEPLOY_ROOT=$SERVER/../../deploy
 
 install_core_amp(){
 	echo "deploy $1"
-	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install $1 $SERVER/webapps/alfresco.war -force -nobackup 
+	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/alfresco.war -force -nobackup 
 }
 
 install_share_amp(){
 	echo "deploy $1"
-	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install $1 $SERVER/webapps/share.war -force -nobackup
+	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force -nobackup
 }
 
 if [[ $2 = *core* ]]; then
@@ -32,37 +32,15 @@ if [[ $2 = *core* ]]; then
 	rm -rf $SERVER/webapps/share
 	cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
 	
-	 cd amps
-	 for ampfile in `ls -rt *.amp` 
-	 do
-		if [[ $ampfile = *-share* ]]; then
-	 	   install_share_amp $ampfile
-	 	 else
-	      install_core_amp $ampfile
-		 fi
-	 done
+	 install_core_amp alfresco-core-patch-*.amp
+	 install_core_amp becpg-controls-core-*.amp 
+	 install_core_amp becpg-designer-core-*.amp
+	 install_core_amp becpg-core-*.amp
 	 
-	
-	 for warfile in `ls *.war`
-	 do
-		 rm -rf $SERVER/webapps/${warfile%%.*}
-		 cp -L $warfile $SERVER/webapps/${warfile%-*}.war
-	 done
-	 cd ..
-	
-	 echo "Deploy patch"
-	 if test -d "dist/share" ; then
-	 	jar ufv $SERVER/webapps/share.war -C dist/share .
-	 fi
-	 if test -d "dist/alfresco" ; then
-	   jar ufv $SERVER/webapps/alfresco.war -C dist/alfresco .
-	 fi
-	
-	
-	 #Clean dir 
-	 rm -rf $SERVER/temp/*
-	 rm -rf $SERVER/work/*
-	 rm -rf $SERVER/webapps/*.bak
+	 install_share_amp becpg-controls-share-*.amp
+	 install_share_amp becpg-designer-share-*.amp
+	 install_share_amp becpg-share-*.amp
+
 fi
 
 
