@@ -2,8 +2,6 @@
 
 . ./common.sh
 
-
-
 echo "**********************************************************"
 echo "Build AMP"
 echo "**********************************************************"
@@ -18,6 +16,8 @@ echo "**********************************************************"
 cd $BECPG_ROOT/distribution/target
 scp -P 22222 becpg-*-distribution.tar.gz  root@www.becpg.fr:/srv/becpg-data/becpg-repo/releases
 
-cd $BECPG_OLAP_ROOT/target
-scp -P 22222 becpg-olap-*-distribution.tar.gz  root@www.becpg.fr:/srv/becpg-data/becpg-repo/releases
-
+read -p "Release report server (y/n)" ans
+if [ "$ans" = "y" ]; then
+	cd $BECPG_ROOT/becpg-report/target
+	scp -P 22222  becpg-report-*.war root@www.becpg.fr:/srv/becpg-data/becpg-repo/releases/addons
+fi
