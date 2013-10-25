@@ -366,7 +366,7 @@
 					<show id="cm:name" />
 					<show id="qa:ncType" />
 					<show id="qa:ncState" />
-					<show id="qa:claimDescription" force="true" />
+					<!-- <show id="qa:claimDescription" force="true" /> -->
 					
 					<!-- batch -->
 					<show id="qa:batchId" force="true"/>
