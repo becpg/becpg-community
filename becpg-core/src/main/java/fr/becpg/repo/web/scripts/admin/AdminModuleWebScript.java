@@ -6,12 +6,16 @@ package fr.becpg.repo.web.scripts.admin;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -57,6 +61,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	
 	private AbstractAuthenticationService authenticationService;
 	
+	private TenantAdminService tenantAdminService;
+	
 	public void setEntitySystemService(EntitySystemService entitySystemService) {
 		this.entitySystemService = entitySystemService;
 	}
@@ -99,6 +105,17 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
 		
+		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
+		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
+			String user = (String) iterator.next();
+			if("guest".equals(user)){
+				iterator.remove();
+			} else if(tenantAdminService.isEnabled() && !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user))){
+				iterator.remove();
+			}
+		}
+		
+		
 		// #378 : force to use server locale 
 		I18NUtil.setLocale(Locale.getDefault());
 
@@ -121,7 +138,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			ret.put("systemFolders", entitySystemService.getSystemFolders());
 		} else if (action.equals(ACTION_GET_CONNECTED_USERS)) {
 			logger.debug("Get connected users");
-			ret.put("users", authenticationService.getUsersWithTickets(true));
+			ret.put("users", users);
 		} else {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 		}
@@ -141,7 +158,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		ret.put("freeMemory", runtime.freeMemory()/ 1000000d);
 		ret.put("maxMemory", runtime.maxMemory()/ 1000000d);
 		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed()/ 1000000d);
-		ret.put("connectedUsers", authenticationService.getUsersWithTickets(true).size()-1);
+		ret.put("connectedUsers", users.size());
 		
 		
 		

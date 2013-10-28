@@ -411,12 +411,10 @@
 
                                  for (j in response.json.users) {
                                     var user = response.json.users[j];
-                                    if (user.username != "guest") {
                                        ret += "<li >";
                                        ret += '<span class="avatar" title="' + user.fullName + '">';
                                        ret += Alfresco.Share.userAvatar(user.username, 64);
                                        ret += '</span><span class="username" ><a id="yui-gen59" class="theme-color-1" tabindex="0" href="/share/page/user/'+user.username+'/profile">' + user.fullName +'</a></span></li>';
-                                    }
                                  }
                                  
                                  ret += "</ul></div></div>";

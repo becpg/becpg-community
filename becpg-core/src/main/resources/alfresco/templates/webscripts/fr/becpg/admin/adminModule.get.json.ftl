@@ -14,7 +14,7 @@
 	      <#list users as item>
 	      {
 	      <#attempt>
-	      <#assign currentPerson = people.getPerson(item)>
+	     		<#assign currentPerson = people.getPerson(item)>
 	         "username" : "${item}",
 	         "fullName" : "${currentPerson.properties["cm:firstName"]} ${currentPerson.properties["cm:lastName"]}",
 	         "email" : "${currentPerson.properties["cm:email"]}"
