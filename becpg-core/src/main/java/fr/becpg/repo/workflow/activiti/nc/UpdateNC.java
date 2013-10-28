@@ -4,6 +4,7 @@
 package fr.becpg.repo.workflow.activiti.nc;
 
 import java.util.List;
+import java.util.Set;
 
 import org.activiti.engine.delegate.DelegateTask;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -55,8 +56,15 @@ public class UpdateNC extends ScriptTaskListener {
 						NCWorkflowUtils.updateNC(ncNodeRef, new fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask() {
 							
 							public Object getVariable(String name) {
+								
 								return task.getVariable(name);
 							}
+							
+							public Set<String> getVariableNames(){
+								return task.getVariableNames();
+							}
+							
+							
 						} , getServiceRegistry());
 					}
 				}

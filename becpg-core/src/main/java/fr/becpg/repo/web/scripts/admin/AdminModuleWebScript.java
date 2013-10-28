@@ -63,6 +63,10 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	
 	private TenantAdminService tenantAdminService;
 	
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
+	}
+
 	public void setEntitySystemService(EntitySystemService entitySystemService) {
 		this.entitySystemService = entitySystemService;
 	}

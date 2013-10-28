@@ -65,9 +65,11 @@
         			   
         			   execution.setVariable('bpm_workflowDueDate', task.getVariable('bpm_workflowDueDate'));
         			   execution.setVariable('bpm_workflowPriority', task.getVariable('bpm_workflowPriority'));
+        			   
+        			   
                   
                   execution.setVariable('skipClassification',false);
-                   
+                  
             	   task.setVariable('ncwf_ncState',"analysis");</activiti:string>
           </activiti:field>
         </activiti:taskListener>
