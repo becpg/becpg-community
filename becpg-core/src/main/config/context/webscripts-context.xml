@@ -22,6 +22,7 @@
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
 		<property name="entitySystemService" ref="entitySystemService"/>
 		<property name="authenticationService" ref="authenticationService"/>
+		<property name="tenantAdminService" ref="tenantAdminService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript"
