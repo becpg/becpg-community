@@ -8,7 +8,7 @@ if [%1]==[] goto usage
 set SERVER=%1
 set DEPLOY_ROOT=%SERVER%\..\..\deploy
 
-set /p ansreport=Deploy saiku? (y/n):
+set /p anssaiku=Deploy saiku? (y/n):
 
 @echo "**********************************************************"
 @echo "Deploy core AMP"
