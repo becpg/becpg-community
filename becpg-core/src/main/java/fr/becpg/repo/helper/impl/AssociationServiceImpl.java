@@ -47,8 +47,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 				} else if (!assocNodeRefs.contains(assocRef.getTargetRef())) {
 					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
 				} else {
-					dbTargetNodeRefs.add(assocRef.getTargetRef());// already in
-																	// db
+					dbTargetNodeRefs.add(assocRef.getTargetRef());// already in	// db
 				}
 			}
 		}
