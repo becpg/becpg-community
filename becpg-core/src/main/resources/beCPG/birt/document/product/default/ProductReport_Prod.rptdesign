@@ -6578,6 +6578,10 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="1522">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="whiteSpace">nowrap</property>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
@@ -6609,13 +6613,17 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="3014">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
                                                     <property name="name">pvValidationDate</property>
                                                     <text-property name="displayName">pvValidationDate</text-property>
                                                     <expression name="expression" type="javascript">dataSetRow["pvValidationDate"]</expression>
-                                                    <property name="dataType">string</property>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
