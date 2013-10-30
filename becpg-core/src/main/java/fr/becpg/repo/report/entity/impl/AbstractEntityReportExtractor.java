@@ -13,6 +13,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -241,14 +242,11 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				String value = VALUE_NULL;	
 				if (property.getValue() != null) {
 					
-					if (property.getValue() instanceof NodeRef){						
+					if (DataTypeDefinition.TEXT.toString().equals(propertyDef.getDataType())
+							|| DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType())
+							|| DataTypeDefinition.MLTEXT.toString().equals(propertyDef.getDataType())) {
 						value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-					}
-					else if (property.getValue() instanceof String) {
-						// for constraint multi-value to avoid [Petit]
-						value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-					}
-					else if (property.getValue() instanceof Date) {
+					} else if (property.getValue() instanceof Date) {
 						value = ISO8601DateFormat.format((Date) property.getValue());
 					}					
 					else {
