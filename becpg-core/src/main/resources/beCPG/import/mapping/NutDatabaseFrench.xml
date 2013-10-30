@@ -96,7 +96,6 @@
 			<column id="AG 20:5 5c,8c,11c,14c,17c (n-3), EPA" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 20:5 5c,8c,11c,14c,17c (n-3), EPA" type="Characteristic" />
 			<column id="AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA" type="Characteristic" />
 	
-			
 			<column id="Cholestérol" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Cholestérol" type="Characteristic" />
 			<column id="Iode" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Iode" type="Characteristic" />
 			<column id="Protéines brutes (N x 6.25)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Protéines brutes (N x 6.25)" type="Characteristic" />			

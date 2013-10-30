@@ -590,7 +590,8 @@
 					<show id="bcpg:subsidiary" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
-					<show id="bcpg:clients" />					
+					<show id="bcpg:clients" />	
+					<show id="bcpg:entityTplRef" force="true" >				
 					<show id="rep:reportTpls" />					
 					
 					<!-- consumer aspect -->										
