@@ -1121,8 +1121,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 			<ingLabelingList language="français">
 				<illGrp prefix="illGrp"><![CDATA[Etiquetage]]></illGrp>
 				<illValue prefix="illValue"><![CDATA[Sucre, Lait, crème fraiche, Eau, oeuf blanc, raisins au rhum 4,5% (Raisins au rhum 99%, Gomme Xanthane), oeuf jaune, rhum gélifié 0,3% (Rhum gélifié, Gomme Xanthane), Oeuf entier, Farine de blé, Levure boulangère]]></illValue>
-				<illManualValue prefix="illManualValue"><![CDATA[]]>
-				</illManualValue>
+				<illManualValue prefix="illManualValue"><![CDATA[]]></illManualValue>
 			</ingLabelingList>
 			<ingLabelingList language="français">
 				<illGrp prefix="illGrp"><![CDATA[Etiquetage2]]></illGrp>

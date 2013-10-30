@@ -1943,7 +1943,7 @@ row["illValue"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingLists/ingLabelingList]#:#{language;STRING;/language},{illValue;STRING;/illValue},{illManualValue;STRING;/illManualValue},{illGrp;STRING;/illGrp}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLabelingLists/ingLabelingList]#:#{language;STRING;/@language},{illValue;STRING;/illValue},{illManualValue;STRING;/illManualValue},{illGrp;STRING;/illGrp}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -5694,306 +5694,6 @@ row["illValue"]
                 </ex-property>
             </list-property>
         </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="rawMaterials" id="3250">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">legalName</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">legalName</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">compoListQty</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">compoListQty</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">lclIsClaimed_Elevage</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">lclIsClaimed_Elevage</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">suppliers</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">suppliers</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">erpCode</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">erpCode</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">modified</property>
-                    <property name="analysis">dimension</property>
-                    <text-property name="heading">modified</text-property>
-                </structure>
-            </list-property>
-            <list-property name="parameters"/>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">legalName</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">compoListQty</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">lclIsClaimed_Elevage</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">4</property>
-                        <property name="name">suppliers</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">5</property>
-                        <property name="name">erpCode</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">6</property>
-                        <property name="name">modified</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">legalName</property>
-                    <property name="nativeName">legalName</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">compoListQty</property>
-                    <property name="nativeName">compoListQty</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">lclIsClaimed_Elevage</property>
-                    <property name="nativeName">lclIsClaimed_Elevage</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">4</property>
-                    <property name="name">suppliers</property>
-                    <property name="nativeName">suppliers</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">5</property>
-                    <property name="name">erpCode</property>
-                    <property name="nativeName">erpCode</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">6</property>
-                    <property name="name">modified</property>
-                    <property name="nativeName">modified</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/rawMaterials/rawMaterial]#:#{legalName;STRING;/legalName},{compoListQty;STRING;/compoListQty},{lclIsClaimed_Elevage;STRING;/dataLists/labelClaimLists/labelClaimList[@lclLabelClaim="Elevage"]/@lclIsClaimed},{suppliers;STRING;/suppliers},{erpCode;STRING;/erpCode},{modified;STRING;/modified}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>legalName</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>legalName</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>compoListQty</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>compoListQty</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="rawMaterialsIngList" id="3304">
-            <list-property name="columnHints">
-                <structure>
-                    <property name="columnName">ingListIng</property>
-                    <text-property name="heading">ingListIng</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">ingListGeoOrigin</property>
-                    <text-property name="heading">ingListGeoOrigin</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">ingListBioOrigin</property>
-                    <text-property name="heading">ingListBioOrigin</text-property>
-                </structure>
-            </list-property>
-            <structure name="cachedMetaData">
-                <list-property name="resultSet">
-                    <structure>
-                        <property name="position">1</property>
-                        <property name="name">ingListIng</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">2</property>
-                        <property name="name">ingListGeoOrigin</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
-                        <property name="name">ingListBioOrigin</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                </list-property>
-            </structure>
-            <property name="dataSource">DataXml</property>
-            <list-property name="resultSet">
-                <structure>
-                    <property name="position">1</property>
-                    <property name="name">ingListIng</property>
-                    <property name="nativeName">ingListIng</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">2</property>
-                    <property name="name">ingListGeoOrigin</property>
-                    <property name="nativeName">ingListGeoOrigin</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
-                    <property name="name">ingListBioOrigin</property>
-                    <property name="nativeName">ingListBioOrigin</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-            </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/rawMaterials/rawMaterial/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListBioOrigin;STRING;/@ingListBioOrigin}]]></xml-property>
-            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
-  <Version>2.0</Version>
-  <design:ResultSets derivedMetaData="true">
-    <design:resultSetDefinitions>
-      <design:resultSetColumns>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>ingListIng</design:name>
-              <design:position>1</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>ingListIng</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>ingListGeoOrigin</design:name>
-              <design:position>2</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>ingListGeoOrigin</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-        <design:resultColumnDefinitions>
-          <design:attributes>
-            <design:identifier>
-              <design:name>ingListBioOrigin</design:name>
-              <design:position>3</design:position>
-            </design:identifier>
-            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
-            <design:precision>-1</design:precision>
-            <design:scale>-1</design:scale>
-            <design:nullability>Unknown</design:nullability>
-          </design:attributes>
-          <design:usageHints>
-            <design:label>ingListBioOrigin</design:label>
-            <design:formattingHints/>
-          </design:usageHints>
-        </design:resultColumnDefinitions>
-      </design:resultSetColumns>
-      <design:criteria/>
-    </design:resultSetDefinitions>
-  </design:ResultSets>
-</model:DesignValues>]]></xml-property>
-            <list-property name="privateDriverProperties">
-                <ex-property>
-                    <name>MAX_ROW</name>
-                    <value>-1</value>
-                </ex-property>
-                <ex-property>
-                    <name>XML_FILE</name>
-                </ex-property>
-            </list-property>
-        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -6217,6 +5917,10 @@ row["illValue"]
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="1522">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="whiteSpace">nowrap</property>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
@@ -6248,13 +5952,17 @@ row["illValue"]
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="3014">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
                                                     <property name="name">pvValidationDate</property>
                                                     <text-property name="displayName">pvValidationDate</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["pvValidationDate"],17)</expression>
-                                                    <property name="dataType">string</property>
+                                                    <expression name="expression" type="javascript">dataSetRow["pvValidationDate"]</expression>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
@@ -8447,7 +8155,7 @@ else{
             </row>
             <row id="3061">
                 <cell id="3062">
-                    <label id="2712"/>
+                    <label id="3174"/>
                 </cell>
             </row>
             <row id="3063">
@@ -8622,89 +8330,89 @@ en m</text-property>
                             </cell>
                         </row>
                     </grid>
+                    <label id="2712"/>
+                    <table id="3137">
+                        <property name="style">becpg-table</property>
+                        <property name="dataSet">LabelingTemplateList</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">packagingListProduct</property>
+                                <text-property name="displayName">packagingListProduct</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">labelingPosition</property>
+                                <text-property name="displayName">labelingPosition</text-property>
+                                <expression name="expression" type="javascript">"Position : " + dataSetRow["labelingPosition"]</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                            <structure>
+                                <property name="name">description</property>
+                                <text-property name="displayName">description</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["description"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">legalName</property>
+                                <text-property name="displayName">legalName</text-property>
+                                <expression name="expression" type="javascript">"Support : " + dataSetRow["legalName"]</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
+                            </structure>
+                        </list-property>
+                        <column id="3151"/>
+                        <header>
+                            <row id="3138">
+                                <property name="style">becpg-col-header</property>
+                                <property name="textAlign">center</property>
+                                <cell id="3140">
+                                    <label id="3155">
+                                        <text-property name="text">Marquages</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="3165">
+                                <property name="style">becpg-row-border</property>
+                                <cell id="3167">
+                                    <grid id="3175">
+                                        <column id="3176"/>
+                                        <column id="3177"/>
+                                        <row id="3178">
+                                            <cell id="3179">
+                                                <data id="3159">
+                                                    <property name="textAlign">center</property>
+                                                    <property name="resultSetColumn">legalName</property>
+                                                </data>
+                                            </cell>
+                                            <cell id="3180">
+                                                <data id="3156">
+                                                    <property name="textAlign">center</property>
+                                                    <property name="resultSetColumn">labelingPosition</property>
+                                                </data>
+                                            </cell>
+                                        </row>
+                                    </grid>
+                                </cell>
+                            </row>
+                            <row id="3142">
+                                <property name="style">becpg-row-border</property>
+                                <property name="textAlign">center</property>
+                                <cell id="3144">
+                                    <text id="3173">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["description"]</VALUE-OF>]]></text-property>
+                                    </text>
+                                </cell>
+                            </row>
+                        </detail>
+                    </table>
                 </cell>
             </row>
         </grid>
-        <label id="3174"/>
-        <table id="3137">
-            <property name="style">becpg-table</property>
-            <property name="dataSet">LabelingTemplateList</property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">packagingListProduct</property>
-                    <text-property name="displayName">packagingListProduct</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">labelingPosition</property>
-                    <text-property name="displayName">labelingPosition</text-property>
-                    <expression name="expression" type="javascript">"Position : " + dataSetRow["labelingPosition"]</expression>
-                    <property name="dataType">string</property>
-                    <property name="allowExport">true</property>
-                </structure>
-                <structure>
-                    <property name="name">description</property>
-                    <text-property name="displayName">description</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["description"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">legalName</property>
-                    <text-property name="displayName">legalName</text-property>
-                    <expression name="expression" type="javascript">"Support : " + dataSetRow["legalName"]</expression>
-                    <property name="dataType">string</property>
-                    <property name="allowExport">true</property>
-                </structure>
-            </list-property>
-            <column id="3151"/>
-            <header>
-                <row id="3138">
-                    <property name="style">becpg-col-header</property>
-                    <property name="textAlign">center</property>
-                    <cell id="3140">
-                        <label id="3155">
-                            <text-property name="text">Marquages</text-property>
-                        </label>
-                    </cell>
-                </row>
-            </header>
-            <detail>
-                <row id="3165">
-                    <property name="style">becpg-row-border</property>
-                    <cell id="3167">
-                        <grid id="3175">
-                            <column id="3176"/>
-                            <column id="3177"/>
-                            <row id="3178">
-                                <cell id="3179">
-                                    <data id="3159">
-                                        <property name="textAlign">center</property>
-                                        <property name="resultSetColumn">legalName</property>
-                                    </data>
-                                </cell>
-                                <cell id="3180">
-                                    <data id="3156">
-                                        <property name="textAlign">center</property>
-                                        <property name="resultSetColumn">labelingPosition</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </grid>
-                    </cell>
-                </row>
-                <row id="3142">
-                    <property name="style">becpg-row-border</property>
-                    <property name="textAlign">center</property>
-                    <cell id="3144">
-                        <text id="3173">
-                            <property name="contentType">html</property>
-                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["description"]</VALUE-OF>]]></text-property>
-                        </text>
-                    </cell>
-                </row>
-            </detail>
-        </table>
     </body>
     <list-property name="images">
         <structure>

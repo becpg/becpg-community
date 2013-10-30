@@ -146,16 +146,16 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 						for(BeCPGDataObject dataListItem : dataListItems){
 							
 							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+							
+							if(dataListItem instanceof CompositionDataItem){
+								CompositionDataItem compositionDataItem = (CompositionDataItem)dataListItem;
+								loadProductData(compositionDataItem.getProduct(), nodeElt);
+							}
+							
 							loadDataListItemAttributes(dataListItem.getNodeRef(), nodeElt, false);
 							
 							if(dataListItem instanceof AbstractManualVariantListDataItem){
 								extractVariants(((AbstractManualVariantListDataItem)dataListItem).getVariants(), nodeElt, defaultVariantNodeRef);
-							}			
-							
-							if(dataListItem instanceof CompositionDataItem){
-								CompositionDataItem compositionDataItem = (CompositionDataItem)dataListItem;
-								nodeElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(compositionDataItem.getProduct()).toPrefixString(namespaceService));
-								nodeElt.addAttribute(ATTR_ASPECTS, extractAspects(compositionDataItem.getProduct()));
 							}
 						}
 					}										
@@ -207,11 +207,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					if (dataItem.getProduct() !=null && nodeService.exists(dataItem.getProduct())) {
 						
 						Element partElt = compoListElt.addElement(BeCPGModel.TYPE_COMPOLIST.getLocalName());
-						loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);
 						loadProductData(dataItem.getProduct(), partElt);
-																				
-						partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
-						partElt.addAttribute(ATTR_ASPECTS, extractAspects(dataItem.getProduct()));
+						loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);																										
 						extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 					}
 				}
@@ -233,13 +230,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				for (ProcessListDataItem dataItem : productData.getProcessList(EffectiveFilters.EFFECTIVE)) {
 
 					Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
-					loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);
 					loadProductData(dataItem.getProduct(), partElt);
-					
-					if (dataItem.getProduct() !=null && nodeService.exists(dataItem.getProduct())) {					
-						partElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(dataItem.getProduct()).toPrefixString(namespaceService));
-						partElt.addAttribute(ATTR_ASPECTS, extractAspects(dataItem.getProduct()));														
-					}
+					loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);										
 					
 					extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 				}
@@ -487,15 +479,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {		
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
-		Element partElt = packagingListElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());
-		loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);
+		Element partElt = packagingListElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());		
 		loadProductData(dataItem.getProduct(), partElt);
-		
-		//we want to have true instead of Vrai
-		partElt.addAttribute(BeCPGModel.PROP_PACKAGINGLIST_ISMASTER.getLocalName(), dataItem.getIsMaster() == null ? VALUE_NULL : dataItem.getIsMaster().toString());
-																
-		partElt.addAttribute(ATTR_ITEM_TYPE, nodeType.toPrefixString(namespaceService));
-		partElt.addAttribute(ATTR_ASPECTS, extractAspects(dataItem.getProduct()));
+		loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);		
+
 		extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_TARE)) {
@@ -514,24 +501,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					packagingData.setTareTertiary(packagingData.getTareTertiary() + tare);
 				}				
 			}
-			
-			partElt.addAttribute(PackModel.PROP_TARE.getLocalName(), toString((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_TARE)));
-			partElt.addAttribute(PackModel.PROP_TARE_UNIT.getLocalName(), (String) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_TARE_UNIT));
-
 		}
-		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_SIZE)) {
-			partElt.addAttribute(PackModel.PROP_LENGTH.getLocalName(), toString((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
-			partElt.addAttribute(PackModel.PROP_WIDTH.getLocalName(), toString((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
-			partElt.addAttribute(PackModel.PROP_HEIGHT.getLocalName(), toString((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
-		}
-
+		
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET)) {
 			logger.debug("load pallet aspect ");
-			partElt.addAttribute(PackModel.PROP_PALLET_BOXES_PER_LAYER.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_LAYER)));
-			partElt.addAttribute(PackModel.PROP_PALLET_LAYERS.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_LAYERS)));
-			partElt.addAttribute(PackModel.PROP_PALLET_BOXES_PER_PALLET.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET)));			
-			partElt.addAttribute(PackModel.PROP_PALLET_HEIGHT.getLocalName(), toString((Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_HEIGHT)));
-						
+			
 			// product per box and boxes per pallet
 			if(defaultVariantNodeRef == null || dataItem.getVariants() == null || dataItem.getVariants().contains(defaultVariantNodeRef)){
 				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
@@ -539,12 +513,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				packagingData.setBoxesPerPallet((Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
 			}			
 		}
-
-		if (nodeService.hasAspect(dataItem.getNodeRef(), PackModel.ASPECT_LABELING)) {	
-			partElt.addAttribute(PackModel.PROP_LABELING_POSITION.getLocalName(), (String) nodeService.getProperty(dataItem.getNodeRef(), PackModel.PROP_LABELING_POSITION));
-			extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt);
-		}
-		
 		return partElt;
 	}
 	
@@ -640,18 +608,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	}
 	
 	protected void loadProductData(NodeRef nodeRef, Element dataListItemElt){
-		
 		if(nodeRef != null){
-			QName [] props = { BeCPGModel.PROP_CODE, BeCPGModel.PROP_ERP_CODE, BeCPGModel.PROP_LEGAL_NAME, BeCPGModel.PROP_LEGAL_NAME};
-			QName [] assocs = { BeCPGModel.ASSOC_SUPPLIERS};
+			loadNodeAttributes(nodeRef, dataListItemElt, false);
 			
-			for(QName prop : props){
-				dataListItemElt.addAttribute(prop.getLocalName(), (String)nodeService.getProperty(nodeRef, prop));
-			}
-					
-			for(QName assoc : assocs){
-				dataListItemElt.addAttribute(assoc.getLocalName(), extractNames(associationService.getTargetAssocs(nodeRef, assoc)));
-			}
+			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(nodeRef).toPrefixString(namespaceService));
+			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(nodeRef));
 		}			
 	}
 }

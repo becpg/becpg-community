@@ -1905,6 +1905,10 @@
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="1522">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="whiteSpace">nowrap</property>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
@@ -1936,6 +1940,10 @@
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="3014">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
