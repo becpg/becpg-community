@@ -239,11 +239,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				String value = VALUE_NULL;
 				if (property.getValue() != null) {
 
-					if (property.getValue() instanceof NodeRef) {
-						value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-					} else if (property.getValue() instanceof String) {
-						value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-					}else if (property.getValue() instanceof List) {
+					if (property.getValue() instanceof NodeRef || property.getValue() instanceof String || property.getValue() instanceof List) {
 						value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
 					}
 					else if (property.getValue() instanceof Date) {
@@ -252,6 +248,11 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 					} else {
 						value = property.getValue().toString();
 					}
+					
+					if(value==null){
+						value = VALUE_NULL;
+					}
+					
 				}
 
 				values.put(propertyDef, value);
