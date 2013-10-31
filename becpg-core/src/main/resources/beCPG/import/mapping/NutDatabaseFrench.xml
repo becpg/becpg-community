@@ -77,24 +77,26 @@
 			<column id="Bêta-carotène" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Bêta-carotène" type="Characteristic" />
 			<column id="Activité vitaminique E (en équivalents alpha-tocophérol)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Activité vitaminique E (en équivalents alpha-tocophérol)" type="Characteristic" />
 			<column id="Vitamine D" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamine D" type="Characteristic" />
+			<column id="Vitamine K" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Vitamine K" type="Characteristic" />
+			
 			<column id="AG saturés" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG saturés" type="Characteristic" />
 			<column id="AG monoinsaturés" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG monoinsaturés" type="Characteristic" />
 			<column id="AG polyinsaturés" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG polyinsaturés" type="Characteristic" />
 			
-			<column id="AG 4:0, butyrique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 4:0, butyrique" type="Characteristic" />
-			<column id="AG 6:0, caproïque" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 6:0, caproïque" type="Characteristic" />
-			<column id="AG 8:0, caprylique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 8:0, caprylique" type="Characteristic" />
-			<column id="AG 10:0, caprique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 10:0, caprique" type="Characteristic" />
-			<column id="AG 12:0, laurique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 12:0, laurique" type="Characteristic" />
-			<column id="AG 14:0, myristique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 14:0, myristique" type="Characteristic" />
-			<column id="AG 16:0, palmitique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 16:0, palmitique" type="Characteristic" />
-			<column id="AG 18:0, stéarique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18:0, stéarique" type="Characteristic" />
-			<column id="AG 18:1 9c (n-9), oléique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18:1 9c (n-9), oléique" type="Characteristic" />
-			<column id="AG 18:2 9c,12c (n-6), linoléique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18:2 9c,12c (n-6), linoléique" type="Characteristic" />
-			<column id="AG 18:3 c9,c12,c15 (n-3), alpha-linolénique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18:3 c9,c12,c15 (n-3), alpha-linolénique" type="Characteristic" />
-			<column id="AG 20:4 5c,8c,11c,14c (n-6), arachidonique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 20:4 5c,8c,11c,14c (n-6), arachidonique" type="Characteristic" />
-			<column id="AG 20:5 5c,8c,11c,14c,17c (n-3), EPA" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 20:5 5c,8c,11c,14c,17c (n-3), EPA" type="Characteristic" />
-			<column id="AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA" type="Characteristic" />
+			<column id="AG 4:0, butyrique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 4-0, butyrique" type="Characteristic" />
+			<column id="AG 6:0, caproïque" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 6-0, caproïque" type="Characteristic" />
+			<column id="AG 8:0, caprylique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 8-0, caprylique" type="Characteristic" />
+			<column id="AG 10:0, caprique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 10-0, caprique" type="Characteristic" />
+			<column id="AG 12:0, laurique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 12-0, laurique" type="Characteristic" />
+			<column id="AG 14:0, myristique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 14-0, myristique" type="Characteristic" />
+			<column id="AG 16:0, palmitique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 16-0, palmitique" type="Characteristic" />
+			<column id="AG 18:0, stéarique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18-0, stéarique" type="Characteristic" />
+			<column id="AG 18:1 9c (n-9), oléique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18-1 9c (n-9), oléique" type="Characteristic" />
+			<column id="AG 18:2 9c,12c (n-6), linoléique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18-2 9c,12c (n-6), linoléique" type="Characteristic" />
+			<column id="AG 18:3 c9,c12,c15 (n-3), alpha-linolénique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 18-3 c9,c12,c15 (n-3), alpha-linolénique" type="Characteristic" />
+			<column id="AG 20:4 5c,8c,11c,14c (n-6), arachidonique" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 20-4 5c,8c,11c,14c (n-6), arachidonique" type="Characteristic" />
+			<column id="AG 20:5 5c,8c,11c,14c,17c (n-3), EPA" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 20-5 5c,8c,11c,14c,17c (n-3), EPA" type="Characteristic" />
+			<column id="AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="AG 22-6 4c,7c,10c,13c,16c,19c (n-3), DHA" type="Characteristic" />
 	
 			<column id="Cholestérol" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Cholestérol" type="Characteristic" />
 			<column id="Iode" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Iode" type="Characteristic" />
@@ -105,6 +107,9 @@
 			<column id="Polyols totaux" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Polyols totaux" type="Characteristic" />
 			<column id="Alcool (éthanol)" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Alcool (éthanol)" type="Characteristic" />
 			<column id="Acides organiques" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Acides organiques" type="Characteristic" />
+			
+			<column id="hierarchy1"  type="Hierarchy" attribute="bcpg:productHierarchy1"   />
+			<column id="hierarchy2"  type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1" />
 			
 			<!-- files -->
 			<column id="img1Path" attribute="cm:content" path="Images/produit.jpg"

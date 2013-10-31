@@ -20,6 +20,8 @@
 		</columns>
 	</mapping>	
 	
+	
+	
 	<!-- Allergens -->
 	<mapping name="bcpg:allergen">
 		<nodeColumnKeys>

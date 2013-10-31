@@ -1,61 +1,62 @@
-PATH;/System/Characts/bcpg:entityLists/Nuts;;;;;
-TYPE;bcpg:nut;;;;;
-COLUMNS;cm:name;bcpg:nutUnit;bcpg:nutType;bcpg:nutGroup;bcpg:legalName;bcpg:legalName_en
-VALUES;Energie kJ, étiquetage;kJ;Valeur énergétique;Groupe 1;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011
-VALUES;Energie kcal, étiquetage;kcal;Valeur énergétique;Groupe 1;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011
-VALUES;Energie kJ;kJ;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, avec fibres;Energy, N x Jones' factor, with fibres
-VALUES;Energie kcal;kcal;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, avec fibres;Energy, N x Jones' factor, with fibres
-VALUES;Eau;g;Nutriment;Autre;Eau;Water
-VALUES;Sodium;mg;Minéraux;Groupe 2;Sodium;Sodium
-VALUES;Sel;g;Minéraux;Groupe 2;Sel;salt
-VALUES;Magnésium;mg;Minéraux;Autre;Magnésium;Magnesium
-VALUES;Phosphore;mg;Minéraux;Autre;Phosphore;Phosphorus
-VALUES;Potassium;mg;Minéraux;Autre;Potassium;Potassium
-VALUES;Calcium;mg;Minéraux;Autre;Calcium;Calcium
-VALUES;Manganèse;mg;Minéraux;Autre;Manganèse;Manganese
-VALUES;Fer total;mg;Minéraux;Autre;Fer total;Iron, total
-VALUES;Cuivre;mg;Minéraux;Autre;Cuivre;Copper
-VALUES;Zinc;mg;Minéraux;Autre;Zinc;Zinc
-VALUES;Sélénium;µg;Minéraux;Autre;Sélénium;Selenium
-VALUES;Iode;µg;Minéraux;Autre;Iode;Iodide
-VALUES;Protéines;g;Nutriment;Groupe 1;Protéines;Protein
-VALUES;Protéines brutes (N x 6.25);g;Nutriment;Autre;Protéines brutes (N x 6.25);total nitrogen x 6.25)
-VALUES;Glucides;g;Nutriment;Groupe 1;Glucides;Carbohydrate
-VALUES;Sucres;g;Nutriment;Groupe 2;Sucres;Sugars
-VALUES;Amidon;g;Nutriment;Autre;Amidon;Starch
-VALUES;Polyols totaux;g;Nutriment;Autre;Polyols totaux;Polyols, total
-VALUES;Fibres alimentaires;g;Nutriment;Groupe 2;Fibres alimentaires;Fibres
-VALUES;Lipides;g;Nutriment;Groupe 1;Lipides;Fat
-VALUES;AG saturés;g;Nutriment;Groupe 2;AG saturés;FA saturated
-VALUES;AG monoinsaturés;g;Nutriment;Autre;AG monoinsaturés;FA monounsaturated
-VALUES;AG polyinsaturés;g;Nutriment;Autre;AG polyinsaturés;FA polyunsaturated
-VALUES;Rétinol;µg;Vitamine;Autre;Rétinol;Retinol
-VALUES;Bêta-carotène;µg;Vitamine;Autre;Bêta-carotène;Beta-carotene
-VALUES;Vitamine A;mg;Vitamine;Autre;Vitamine A;Vitamin A
-VALUES;Vitamine D;µg;Vitamine;Autre;Vitamine D;Vitamin D
-VALUES;Activité vitaminique E (en équivalents alpha-tocophérol);mg;Vitamine;Autre;Activité vitaminique E (en équivalents alpha-tocophérol);alpha-tocopherol equivalent)
-VALUES;Vitamine C totale;mg;Vitamine;Autre;Vitamine C totale;Vitamin C, total
-VALUES;Vitamine B1 ou Thiamine;mg;Vitamine;Autre;Vitamine B1 ou Thiamine;Vitamin B1)
-VALUES;Vitamine B2 ou Riboflavine;mg;Vitamine;Autre;Vitamine B2 ou Riboflavine;Vitamin B2)
-VALUES;Vitamine B3 ou PP ou Niacine;mg;Vitamine;Autre;Vitamine B3 ou PP ou Niacine;Vitamin B3 or PP)
-VALUES;Vitamine B5 ou Acide pantothénique;mg;Vitamine;Autre;Vitamine B5 ou Acide pantothénique;Vitamien B5 or Pantothenic acid
-VALUES;Vitamine B6 ou Pyridoxine;mg;Vitamine;Autre;Vitamine B6 ou Pyridoxine;Vitamin B6
-VALUES;Vitamine B12 ou Cobalamines;µg;Vitamine;Autre;Vitamine B12 ou Cobalamines;Vitamin B12 or Cobalamin
-VALUES;Vitamine B9 ou Folates totaux;µg;Vitamine;Autre;Vitamine B9 ou Folates totaux;Vitamin B9)
-VALUES;Alcool (éthanol);g;Nutriment;Autre;Alcool (éthanol);ethanol )
-VALUES;Acides organiques;g;Nutriment;Autre;Acides organiques;Organic acids, total
-VALUES;Cholestérol;mg;Nutriment;Autre;Cholestérol;Cholesterol
-VALUES;AG 4:0, butyrique;g;Nutriment;Autre;AG 4:0, butyrique;FA 4:0, butyric
-VALUES;AG 6:0, caproïque;g;Nutriment;Autre;AG 6:0, caproïque;FA 6:0, caproic
-VALUES;AG 8:0, caprylique;g;Nutriment;Autre;AG 8:0, caprylique;FA 8:0, caprylic
-VALUES;AG 10:0, caprique;g;Nutriment;Autre;AG 10:0, caprique;FA 10:0, capric
-VALUES;AG 12:0, laurique;g;Nutriment;Autre;AG 12:0, laurique;FA 12:0, lauric
-VALUES;AG 14:0, myristique;g;Nutriment;Autre;AG 14:0, myristique;FA 14:0 , myristic
-VALUES;AG 16:0, palmitique;g;Nutriment;Autre;AG 16:0, palmitique;FA 16:0, palmitic
-VALUES;AG 18:0, stéarique;g;Nutriment;Autre;AG 18:0, stéarique;FA 18:0, stearic
-VALUES;AG 18:1 9c (n-9), oléique;g;Nutriment;Autre;AG 18:1 9c (n-9), oléique;FA 18:1 n-9 cis, oleic
-VALUES;AG 18:2 9c,12c (n-6), linoléique;g;Nutriment;Autre;AG 18:2 9c,12c (n-6), linoléique;FA 18:2 9c,12c (n-6), linoleic
-VALUES;AG 18:3 c9,c12,c15 (n-3), alpha-linolénique;g;Nutriment;Autre;AG 18:3 c9,c12,c15 (n-3), alpha-linolénique;FA 18:3 c9,c12,c15 (n-3), alpha-linolenic
-VALUES;AG 20:4 5c,8c,11c,14c (n-6), arachidonique;g;Nutriment;Autre;AG 20:4 5c,8c,11c,14c (n-6), arachidonique;FA 20:4 5c,8c,11c,14c (n-6), arachidonic
-VALUES;AG 20:5 5c,8c,11c,14c,17c (n-3), EPA;g;Nutriment;Autre;AG 20:5 5c,8c,11c,14c,17c (n-3), EPA;FA 20:5 5c,8c,11c,14c,17c (n-3), EPA
-VALUES;AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA;g;Nutriment;Autre;AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA;FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA
+PATH;/System/Characts/bcpg:entityLists/Nuts;;;;;;
+TYPE;bcpg:nut;;;;;;
+COLUMNS;cm:name;bcpg:nutUnit;bcpg:nutType;bcpg:nutGroup;bcpg:legalName;bcpg:legalName_en;bcpg:isDeleted
+VALUES;Energie kJ, étiquetage;kJ;Valeur énergétique;Groupe 1;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011;false
+VALUES;Energie kcal, étiquetage;kcal;Valeur énergétique;Groupe 1;Energie, Règlement UE 1169/2011;Energie, Règlement UE 1169/2011;false
+VALUES;Energie kJ;kJ;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, avec fibres;Energy, N x Jones' factor, with fibres;false
+VALUES;Energie kcal;kcal;Valeur énergétique;Groupe 1;Energie, N x facteur Jones, avec fibres;Energy, N x Jones' factor, with fibres;false
+VALUES;Eau;g;Nutriment;Autre;Eau;Water;false
+VALUES;Sodium;mg;Minéraux;Groupe 2;Sodium;Sodium;false
+VALUES;Sel;g;Minéraux;Groupe 2;Sel;salt;false
+VALUES;Magnésium;mg;Minéraux;Autre;Magnésium;Magnesium;false
+VALUES;Phosphore;mg;Minéraux;Autre;Phosphore;Phosphorus;false
+VALUES;Potassium;mg;Minéraux;Autre;Potassium;Potassium;false
+VALUES;Calcium;mg;Minéraux;Autre;Calcium;Calcium;false
+VALUES;Manganèse;mg;Minéraux;Autre;Manganèse;Manganese;false
+VALUES;Fer total;mg;Minéraux;Autre;Fer total;Iron, total;false
+VALUES;Cuivre;mg;Minéraux;Autre;Cuivre;Copper;false
+VALUES;Zinc;mg;Minéraux;Autre;Zinc;Zinc;false
+VALUES;Sélénium;µg;Minéraux;Autre;Sélénium;Selenium;false
+VALUES;Iode;µg;Minéraux;Autre;Iode;Iodide;false
+VALUES;Protéines;g;Nutriment;Groupe 1;Protéines;Protein;false
+VALUES;Protéines brutes (N x 6.25);g;Nutriment;Autre;Protéines brutes (N x 6.25);total nitrogen x 6.25);false
+VALUES;Glucides;g;Nutriment;Groupe 1;Glucides;Carbohydrate;false
+VALUES;Sucres;g;Nutriment;Groupe 2;Sucres;Sugars;false
+VALUES;Amidon;g;Nutriment;Autre;Amidon;Starch;false
+VALUES;Polyols totaux;g;Nutriment;Autre;Polyols totaux;Polyols, total;false
+VALUES;Fibres alimentaires;g;Nutriment;Groupe 2;Fibres alimentaires;Fibres;false
+VALUES;Lipides;g;Nutriment;Groupe 1;Lipides;Fat;false
+VALUES;AG saturés;g;Nutriment;Groupe 2;AG saturés;FA saturated;false
+VALUES;AG monoinsaturés;g;Nutriment;Autre;AG monoinsaturés;FA monounsaturated;false
+VALUES;AG polyinsaturés;g;Nutriment;Autre;AG polyinsaturés;FA polyunsaturated;false
+VALUES;Rétinol;µg;Vitamine;Autre;Rétinol;Retinol;false
+VALUES;Bêta-carotène;µg;Vitamine;Autre;Bêta-carotène;Beta-carotene;false
+VALUES;Vitamine A;mg;Vitamine;Autre;Vitamine A;Vitamin A;false
+VALUES;Vitamine D;µg;Vitamine;Autre;Vitamine D;Vitamin K;false
+VALUES;Vitamine K;µg;Vitamine;Autre;Vitamine K;Vitamin D;false
+VALUES;Activité vitaminique E (en équivalents alpha-tocophérol);mg;Vitamine;Autre;Activité vitaminique E (en équivalents alpha-tocophérol);alpha-tocopherol equivalent);false
+VALUES;Vitamine C totale;mg;Vitamine;Autre;Vitamine C totale;Vitamin C, total;false
+VALUES;Vitamine B1 ou Thiamine;mg;Vitamine;Autre;Vitamine B1 ou Thiamine;Vitamin B1);false
+VALUES;Vitamine B2 ou Riboflavine;mg;Vitamine;Autre;Vitamine B2 ou Riboflavine;Vitamin B2);false
+VALUES;Vitamine B3 ou PP ou Niacine;mg;Vitamine;Autre;Vitamine B3 ou PP ou Niacine;Vitamin B3 or PP);false
+VALUES;Vitamine B5 ou Acide pantothénique;mg;Vitamine;Autre;Vitamine B5 ou Acide pantothénique;Vitamien B5 or Pantothenic acid;false
+VALUES;Vitamine B6 ou Pyridoxine;mg;Vitamine;Autre;Vitamine B6 ou Pyridoxine;Vitamin B6;false
+VALUES;Vitamine B12 ou Cobalamines;µg;Vitamine;Autre;Vitamine B12 ou Cobalamines;Vitamin B12 or Cobalamin;false
+VALUES;Vitamine B9 ou Folates totaux;µg;Vitamine;Autre;Vitamine B9 ou Folates totaux;Vitamin B9);false
+VALUES;Alcool (éthanol);g;Nutriment;Autre;Alcool (éthanol);ethanol );false
+VALUES;Acides organiques;g;Nutriment;Autre;Acides organiques;Organic acids, total;false
+VALUES;Cholestérol;mg;Nutriment;Autre;Cholestérol;Cholesterol;false
+VALUES;AG 4:0, butyrique;g;Nutriment;Autre;AG 4:0, butyrique;FA 4:0, butyric;false
+VALUES;AG 6:0, caproïque;g;Nutriment;Autre;AG 6:0, caproïque;FA 6:0, caproic;false
+VALUES;AG 8:0, caprylique;g;Nutriment;Autre;AG 8:0, caprylique;FA 8:0, caprylic;false
+VALUES;AG 10:0, caprique;g;Nutriment;Autre;AG 10:0, caprique;FA 10:0, capric;false
+VALUES;AG 12:0, laurique;g;Nutriment;Autre;AG 12:0, laurique;FA 12:0, lauric;false
+VALUES;AG 14:0, myristique;g;Nutriment;Autre;AG 14:0, myristique;FA 14:0 , myristic;false
+VALUES;AG 16:0, palmitique;g;Nutriment;Autre;AG 16:0, palmitique;FA 16:0, palmitic;false
+VALUES;AG 18:0, stéarique;g;Nutriment;Autre;AG 18:0, stéarique;FA 18:0, stearic;false
+VALUES;AG 18:1 9c (n-9), oléique;g;Nutriment;Autre;AG 18:1 9c (n-9), oléique;FA 18:1 n-9 cis, oleic;false
+VALUES;AG 18:2 9c,12c (n-6), linoléique;g;Nutriment;Autre;AG 18:2 9c,12c (n-6), linoléique;FA 18:2 9c,12c (n-6), linoleic;false
+VALUES;AG 18:3 c9,c12,c15 (n-3), alpha-linolénique;g;Nutriment;Autre;AG 18:3 c9,c12,c15 (n-3), alpha-linolénique;FA 18:3 c9,c12,c15 (n-3), alpha-linolenic;false
+VALUES;AG 20:4 5c,8c,11c,14c (n-6), arachidonique;g;Nutriment;Autre;AG 20:4 5c,8c,11c,14c (n-6), arachidonique;FA 20:4 5c,8c,11c,14c (n-6), arachidonic;false
+VALUES;AG 20:5 5c,8c,11c,14c,17c (n-3), EPA;g;Nutriment;Autre;AG 20:5 5c,8c,11c,14c,17c (n-3), EPA;FA 20:5 5c,8c,11c,14c,17c (n-3), EPA;false
+VALUES;AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA;g;Nutriment;Autre;AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA;FA 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA;false
