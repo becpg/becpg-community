@@ -78,6 +78,10 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 
 				if (column instanceof PropertyDefinition) {
 					Serializable value = ImportHelper.loadPropertyValue(importContext, values, z_idx);
+					if(ImportHelper.NULL_VALUE.equals(value)){
+						value = null;
+					}
+					
 					logger.debug("import characteristic: " + charactMapping.getId() + " - value: " + value);
 
 					// look in the cache
