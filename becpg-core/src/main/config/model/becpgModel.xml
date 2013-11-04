@@ -1312,7 +1312,7 @@
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false" />
+					<index enabled="true" />
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
 					</constraints>
