@@ -4979,7 +4979,6 @@
 			  <field-visibility>
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:nutListGroup" />
-					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:nutListGroup">
