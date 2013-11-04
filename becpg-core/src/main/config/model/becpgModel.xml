@@ -846,15 +846,15 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- ________________________________________________________________ LISTES DE CARACT. ________________________________________________________________ -->
 
 		<type name="bcpg:entityListItem">
 			<parent>cm:content</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:productListItem">
@@ -915,9 +915,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:costList">
@@ -955,9 +952,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- @Deprecated -->
@@ -1007,9 +1001,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:priceList">
@@ -1061,7 +1052,6 @@
 				</association>
 			</associations>
 			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>
 				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
@@ -1095,9 +1085,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:labelingRuleList">
@@ -1149,7 +1136,6 @@
 			</associations>
 
 			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>bcpg:isManualListItemAspect</aspect>
 			</mandatory-aspects>
 		</type>
@@ -1235,9 +1221,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:microbioList">
@@ -1278,9 +1261,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:nutList">
@@ -1338,9 +1318,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:organoList">
@@ -1365,9 +1342,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:physicoChemList">
@@ -1409,9 +1383,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- List used to specify what is forbidden -->
@@ -1488,9 +1459,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- List used to display the result of the requirement controls -->
@@ -1524,9 +1492,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- Data List - Contact List -->
@@ -1620,9 +1585,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- Dynamic charact list -->
@@ -1658,9 +1620,6 @@
 					<default>000000</default>
 				</property>
 			</properties>
-			<mandatory-aspects>
-				<aspect>bcpg:sortableListAspect</aspect>
-			</mandatory-aspects>
 		</type>
 		<!-- ________________________________________________________________ AUTO COMP ________________________________________________________________ -->
 

@@ -289,4 +289,15 @@
         </property>
     </bean> 
     
+   <bean id="patch.bcpg.entitySortableListPatch" class="fr.becpg.repo.admin.patch.EntitySortableListPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.entitySortableListPatch</value></property>
+        <property name="description"><value>patch.bcpg.entitySortableListPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10020</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+    
 </beans>
