@@ -162,6 +162,35 @@
 	   }
 	});
 	
+	
+	   YAHOO.Bubbling.fire("registerAction", {
+	       actionName : "onActionCompareEntity",
+	       fn : function onActionShowCharact(p_record) {
+	            var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + p_record.nodeRef.replace(":/", "") + "/compare.pdf";
+
+	            // Always create a new instance
+	            this.modules.entityCompare = new Alfresco.module.SimpleDialog(this.id + "-entityCompare").setOptions({
+	               width : "33em",
+	               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-compare/entity-compare",
+	               actionUrl : actionUrl,
+	               validateOnSubmit : false,
+	               firstFocus : this.id + "-entityCompare-entities-field",
+	               doBeforeFormSubmit : {
+	                  fn : function(form) {
+	                     this.modules.entityCompare.form.setAJAXSubmit(false);
+	                     this.modules.entityCompare.hide();
+	                     window.location.href=actionUrl+"?entities="+YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value;
+	                  },
+	                  scope : this
+	               },
+	            });
+	            
+	            
+	            this.modules.entityCompare.show();
+	       }
+	    });
+	
+	
 	YAHOO.Bubbling.fire("registerAction", {
        actionName : "onActionShowDocs",
        fn : function onActionShowCharact(p_record) {
