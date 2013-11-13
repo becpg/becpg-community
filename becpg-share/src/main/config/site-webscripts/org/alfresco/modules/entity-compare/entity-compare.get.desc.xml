@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>entity-compare</shortname>
+  <description>Compare several entity</description>
+  <url>/modules/entity-compare/entity-compare</url>
+</webscript>
