@@ -3,6 +3,7 @@ package fr.becpg.repo.product.data.spel;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,9 +59,8 @@ public class LabelingFormulaContext {
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	
-	private List<ReqCtrlListDataItem> errors = new ArrayList<>(); 
-	
+	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
+
 	public List<ReqCtrlListDataItem> getErrors() {
 		return errors;
 	}
@@ -272,9 +272,9 @@ public class LabelingFormulaContext {
 
 	}
 
-	private Map<NodeRef, AggregateRule> aggregateRules = new HashMap<>();
+	private Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 
-	public Map<NodeRef, AggregateRule> getAggregateRules() {
+	public Map<NodeRef, List<AggregateRule>> getAggregateRules() {
 		return aggregateRules;
 	}
 
@@ -314,8 +314,7 @@ public class LabelingFormulaContext {
 		return true;
 	}
 
-
-	private void aggregate(String name,List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labelingRuleType) {
+	private void aggregate(String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labelingRuleType) {
 		String[] qtys = formula != null && !formula.isEmpty() ? formula.split(",") : null;
 
 		// components peut être ING, SF ou MP
@@ -342,9 +341,13 @@ public class LabelingFormulaContext {
 			aggregateRule.setLabelingRuleType(labelingRuleType);
 
 			i++;
-			aggregateRules.put(component, aggregateRule);
-			
-			
+
+			if (aggregateRules.containsKey(component)) {
+				aggregateRules.get(component).add(aggregateRule);
+			} else {
+				aggregateRules.put(component, new LinkedList<>(Arrays.asList(aggregateRule)));
+			}
+
 		}
 	}
 
@@ -374,20 +377,20 @@ public class LabelingFormulaContext {
 						qtyPerc = qtyPerc * compositeLabeling.getQty();
 					}
 
-					if (toMerged == null) {		
+					if (toMerged == null) {
 						AbstractLabelingComponent clonedSubComponent = null;
-						if(subComponent instanceof CompositeLabeling){
-							clonedSubComponent = new CompositeLabeling((CompositeLabeling)subComponent);
+						if (subComponent instanceof CompositeLabeling) {
+							clonedSubComponent = new CompositeLabeling((CompositeLabeling) subComponent);
 						} else {
-							clonedSubComponent = new IngItem((IngItem)subComponent);
+							clonedSubComponent = new IngItem((IngItem) subComponent);
 						}
 						clonedSubComponent.setQty(qtyPerc);
 						merged.add(clonedSubComponent);
 					} else {
-						if (qtyPerc != null && toMerged.getQty()!=null) {
+						if (qtyPerc != null && toMerged.getQty() != null) {
 							toMerged.setQty(toMerged.getQty() + qtyPerc);
 						}
-						 //TODO else add warning	
+						// TODO else add warning
 					}
 				}
 			} else {
@@ -420,7 +423,7 @@ public class LabelingFormulaContext {
 
 		List<AbstractLabelingComponent> components = new LinkedList<>(lblCompositeContext.getIngList().values());
 		Collections.sort(components);
-				
+
 		for (AbstractLabelingComponent component : components) {
 
 			String ingName = getIngName(component);
@@ -459,7 +462,7 @@ public class LabelingFormulaContext {
 			} else {
 				appendEOF = false;
 			}
-			
+
 			if (kv.getKey() != null && getIngName(kv.getKey()) != null) {
 				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()), renderLabelingComponent(compositeLabeling, kv.getValue()) }));
 			} else {
@@ -537,16 +540,17 @@ public class LabelingFormulaContext {
 				ingType = ((IngItem) lblComponent).getIngType();
 
 				if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
-					AggregateRule aggregateRule = aggregateRules.get(lblComponent.getNodeRef());
-					if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
-						if (aggregateRule.getReplacement() != null) {
-							RepositoryEntity repositoryEntity = alfrescoRepository.findOne(aggregateRule.getReplacement());
-							if (repositoryEntity instanceof IngTypeItem) {
-								ingType = (IngTypeItem) repositoryEntity;
+					for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {
+						if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
+							if (aggregateRule.getReplacement() != null) {
+								RepositoryEntity repositoryEntity = alfrescoRepository.findOne(aggregateRule.getReplacement());
+								if (repositoryEntity instanceof IngTypeItem) {
+									ingType = (IngTypeItem) repositoryEntity;
+								}
+							} else {
+								ingType = new IngTypeItem();
+								ingType.setLegalName(aggregateRule.getLabel());
 							}
-						} else {
-							ingType = new IngTypeItem();
-							ingType.setLegalName(aggregateRule.getLabel());
 						}
 					}
 
@@ -556,13 +560,14 @@ public class LabelingFormulaContext {
 
 					// Type replacement
 					if (aggregateRules.containsKey(ingType.getNodeRef())) {
-						AggregateRule aggregateRule = aggregateRules.get(ingType.getNodeRef());
-						if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
-							if (aggregateRule.getReplacement() != null) {
-								ingType = (IngTypeItem) alfrescoRepository.findOne(aggregateRule.getReplacement());
-							} else {
-								ingType = new IngTypeItem();
-								ingType.setLegalName(aggregateRule.getLabel());
+						for (AggregateRule aggregateRule : aggregateRules.get(ingType.getNodeRef())) {
+							if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
+								if (aggregateRule.getReplacement() != null) {
+									ingType = (IngTypeItem) alfrescoRepository.findOne(aggregateRule.getReplacement());
+								} else {
+									ingType = new IngTypeItem();
+									ingType.setLegalName(aggregateRule.getLabel());
+								}
 							}
 						}
 						// Ing IngType replacement
@@ -606,7 +611,7 @@ public class LabelingFormulaContext {
 
 		}
 
-		 keepOrder = DeclarationType.Detail.equals(compositeLabeling.getDeclarationType()) && keepOrder;
+		keepOrder = DeclarationType.Detail.equals(compositeLabeling.getDeclarationType()) && keepOrder;
 
 		/*
 		 * Sort by qty, default is always first
