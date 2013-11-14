@@ -170,7 +170,11 @@
                                     var form = Dom.get(formsRuntime.formId);
                                     for ( var j = 0; j < form.elements.length; j++) {
                                        if (Alfresco.util.isVisible(form.elements[j])) {
-                                          try {form.elements[j].focus();  break;} catch (e){/*Ie 8*/}      
+                                          try {
+                                             form.elements[j].focus();
+                                             break;
+                                          } catch (e) {/* Ie 8 */
+                                          }
                                        }
                                     }
 
@@ -257,29 +261,31 @@
                               lock : false
                            };
 
-                           YAHOO.Bubbling.on("dirtyDataTable", function() {
-                              if (!me.fullScreen.lock) {
-                                 me.fullScreen.lock = true;
-                                 Alfresco.util.Ajax
-                                 .request({
-                                    method : Alfresco.util.Ajax.GET,
-                                    url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + me.options.entityNodeRef
-                                          .replace(":/", "")+"?fast=true",
-                                    successCallback : {
-                                       fn : function(response) {
-                                          YAHOO.Bubbling.fire("refreshDataGrids", {
-                                             updateOnly : true,
-                                             callback : function (){
-                                                me.fullScreen.lock = false;
-                                             }
-                                          });
-                                       },
-                                       scope : this
-                                    }
-                                 });
-                              }
-                           }, this);
-
+                           YAHOO.Bubbling
+                                 .on(
+                                       "dirtyDataTable",
+                                       function() {
+                                          if (!me.fullScreen.lock) {
+                                             me.fullScreen.lock = true;
+                                             Alfresco.util.Ajax
+                                                   .request({
+                                                      method : Alfresco.util.Ajax.GET,
+                                                      url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + me.options.entityNodeRef
+                                                            .replace(":/", "") + "?fast=true",
+                                                      successCallback : {
+                                                         fn : function(response) {
+                                                            YAHOO.Bubbling.fire("refreshDataGrids", {
+                                                               updateOnly : true,
+                                                               callback : function() {
+                                                                  me.fullScreen.lock = false;
+                                                               }
+                                                            });
+                                                         },
+                                                         scope : this
+                                                      }
+                                                   });
+                                          }
+                                       }, this);
 
                            Dom.setStyle("alf-content", "margin-left", null);
 
@@ -334,6 +340,49 @@
                                  }
 
                               });
+                     }
+                  });
+
+      YAHOO.Bubbling
+            .fire(
+                  "registerToolbarButtonAction",
+                  {
+                     actionName : "product-metadata",
+                     evaluate : function(asset, entity) {
+                        return asset.name !== null && (asset.name === "compoList") && entity != null && entity.userAccess.edit;
+                     },
+                     fn : function(instance) {
+
+                        var templateUrl = YAHOO.lang
+                              .substitute(
+                                    Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&formId=formulation&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
+                                    {
+                                       itemId : this.options.entityNodeRef
+                                    });
+
+                        var editProductMetadata = new Alfresco.module.SimpleDialog(this.id + "-editProductMetadata");
+
+                        editProductMetadata.setOptions(
+                              {
+                                 width : "33em",
+                                 successMessage : this.msg("message.details.success"),
+                                 failureMessage : this.msg("message.details.failure"),
+                                 templateUrl : templateUrl,
+                                 destroyOnHide : true,
+                                 doBeforeDialogShow : {
+                                    fn : function(p_form, p_dialog) {
+                                       Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
+                                             this.msg("label.product-metadata.title") ]);
+                                       if (Dom.get(p_dialog.id + "-form-bulkAction")) {
+                                          Dom.setStyle(p_dialog.id + "-form-bulkAction", 'display', 'none');
+                                      }
+
+                                    },
+                                    scope : this
+                                 }
+                                 
+                              }).show();
+
                      }
                   });
 
@@ -501,7 +550,7 @@
          right : true,
          actionName : "datalist-state",
          evaluate : function(asset, entity) {
-            return entity != null && asset.state !== null && asset.name.indexOf("WUsed")<0;
+            return entity != null && asset.state !== null && asset.name.indexOf("WUsed") < 0;
          },
          createWidget : function(containerDiv, instance) {
 
@@ -543,29 +592,30 @@
             return stateCkeckbox;
          }
       });
-      
-      
-      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         actionName : "export-csv",
-         right : true,
-         evaluate : function(asset, entity) {
-            return asset.name !== null && asset.name.indexOf("WUsed")>-1;
-         },
-         fn : function(instance) {
-            
-            var dt = Alfresco.util.ComponentManager.find({
-               name : "beCPG.module.EntityDataGrid"
-            })[0];
-            
-            var PAGE_SIZE = 5000;
-            
-            document.location.href = dt._getDataUrl(PAGE_SIZE).replace("/node?","/node.csv?") + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON.stringify(dt
-                  ._buildDataGridParams()));
-            
-            
-         }
-      });
-      
+
+      YAHOO.Bubbling
+            .fire(
+                  "registerToolbarButtonAction",
+                  {
+                     actionName : "export-csv",
+                     right : true,
+                     evaluate : function(asset, entity) {
+                        return asset.name !== null && asset.name.indexOf("WUsed") > -1;
+                     },
+                     fn : function(instance) {
+
+                        var dt = Alfresco.util.ComponentManager.find({
+                           name : "beCPG.module.EntityDataGrid"
+                        })[0];
+
+                        var PAGE_SIZE = 5000;
+
+                        document.location.href = dt._getDataUrl(PAGE_SIZE).replace("/node?", "/node.csv?") + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+                              .stringify(dt._buildDataGridParams()));
+
+                     }
+                  });
+
    }
 
 })();

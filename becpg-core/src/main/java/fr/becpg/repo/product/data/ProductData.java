@@ -15,7 +15,6 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
@@ -81,7 +80,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	private List<MicrobioListDataItem> microbioList;
 	private List<PhysicoChemListDataItem> physicoChemList;
-	private List<ForbiddenIngListDataItem> forbiddenIngList;
+	
 	private List<LabelClaimListDataItem> labelClaimList;
 	/*
 	 * View
@@ -97,6 +96,24 @@ public class ProductData extends AbstractEffectiveDataItem {
 	 */
 	
 	private List<VariantData> variants;
+	
+	/*
+	 * Product specifications
+	 */
+	
+	private List<ProductSpecificationData> productSpecifications;
+	
+	
+	@AlfMultiAssoc(isEntity=true)
+	@AlfQname(qname="bcpg:productSpecifications")
+	@AlfReadOnly
+	public List<ProductSpecificationData> getProductSpecifications() {
+		return productSpecifications;
+	}
+
+	public void setProductSpecifications(List<ProductSpecificationData> productSpecifications) {
+		this.productSpecifications = productSpecifications;
+	}
 
 	@AlfMultiAssoc(isChildAssoc=true, isEntity=true)
 	@AlfQname(qname="bcpg:variants")
@@ -387,15 +404,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 	}
 
 	@DataList
-	@AlfQname(qname = "bcpg:forbiddenIngList")
-	public List<ForbiddenIngListDataItem> getForbiddenIngList() {
-		return forbiddenIngList;
-	}
-
-	public void setForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
-		this.forbiddenIngList = forbiddenIngList;
-	}
-	@DataList
 	@AlfQname(qname="bcpg:labelClaimList")
 	public List<LabelClaimListDataItem> getLabelClaimList() {
 		return labelClaimList;
@@ -540,7 +548,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
 		result = prime * result + ((entityTpl == null) ? 0 : entityTpl.hashCode());
-		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
 		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
@@ -609,11 +616,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 			if (other.entityTpl != null)
 				return false;
 		} else if (!entityTpl.equals(other.entityTpl))
-			return false;
-		if (forbiddenIngList == null) {
-			if (other.forbiddenIngList != null)
-				return false;
-		} else if (!forbiddenIngList.equals(other.forbiddenIngList))
 			return false;
 		if (hierarchy1 == null) {
 			if (other.hierarchy1 != null)

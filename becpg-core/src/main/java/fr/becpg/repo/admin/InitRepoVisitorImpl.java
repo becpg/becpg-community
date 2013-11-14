@@ -772,6 +772,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
+		dataLists.add(BeCPGModel.TYPE_LABELING_RULE_LIST);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists, null);
 
 		// visit controlPlan

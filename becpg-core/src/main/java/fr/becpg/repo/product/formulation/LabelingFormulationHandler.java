@@ -32,6 +32,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
@@ -202,6 +203,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 		}
+		
+		
+		if(formulatedProduct.getProductSpecifications()!=null){
+			for(ProductSpecificationData productSpecificationData : formulatedProduct.getProductSpecifications()){
+				for (LabelingRuleListDataItem modelLabelingRuleListDataItem : productSpecificationData.getLabelingRuleList()) {
+					if ( Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsActive())) {
+						ret.add(modelLabelingRuleListDataItem);
+					}
+				}
+			}
+		}
 
 		return ret;
 	}
@@ -222,7 +234,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						modelLabelingRuleListDataItem.setParentNodeRef(null);
 						formulatedProduct.getLabelingListView().getLabelingRuleList().add(modelLabelingRuleListDataItem);
 					}
-
 				}
 			}
 
