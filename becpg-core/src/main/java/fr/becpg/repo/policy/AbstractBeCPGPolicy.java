@@ -146,12 +146,13 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			}
 			keys.add(key);
 			AlfrescoTransactionSupport.bindResource(key, pendingNodes);
+			AlfrescoTransactionSupport.bindListener(this.transactionListener);
 		}
 		if(!pendingNodes.contains(nodeRef)){
 			pendingNodes.add(nodeRef);
 		}	
 		
-		AlfrescoTransactionSupport.bindListener(this.transactionListener);
+		
 
 	}
 
