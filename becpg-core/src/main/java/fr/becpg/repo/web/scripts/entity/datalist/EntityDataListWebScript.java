@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -306,7 +307,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			
 			boolean hasWriteAccess = true;
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
-				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
+				hasWriteAccess = !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT) 
+						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
 			}
 
 //			TODO : #546
