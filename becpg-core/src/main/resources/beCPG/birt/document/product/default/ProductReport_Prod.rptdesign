@@ -6951,28 +6951,6 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                 </data>
                             </cell>
                         </row>
-                        <row id="2550">
-                            <cell id="2551">
-                                <label id="2873">
-                                    <property name="style">becpg-row-header</property>
-                                    <text-property name="text">DLC (J) :</text-property>
-                                </label>
-                            </cell>
-                            <cell id="2552">
-                                <data id="2874">
-                                    <property name="dataSet">Product</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">useByDate</property>
-                                            <text-property name="displayName">useByDate</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["useByDate"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">useByDate</property>
-                                </data>
-                            </cell>
-                        </row>
                         <row id="2920">
                             <cell id="2921">
                                 <label id="2923">
@@ -7958,6 +7936,7 @@ en m</text-property>
                             <row id="2467">
                                 <property name="pageBreakInside">avoid</property>
                                 <cell id="2468">
+                                    <property name="textAlign">center</property>
                                     <data id="2469">
                                         <property name="fontWeight">bold</property>
                                         <property name="textAlign">center</property>
@@ -7965,7 +7944,6 @@ en m</text-property>
                                     </data>
                                     <image id="2470">
                                         <property name="height">2.435114503816794in</property>
-                                        <property name="width">3.236641221374046in</property>
                                         <property name="source">expr</property>
                                         <expression name="valueExpr">row["img"]</expression>
                                     </image>
@@ -8060,6 +8038,7 @@ en m</text-property>
                             <row id="2476">
                                 <property name="pageBreakInside">avoid</property>
                                 <cell id="2477">
+                                    <property name="textAlign">center</property>
                                     <data id="2478">
                                         <property name="fontWeight">bold</property>
                                         <property name="textAlign">center</property>
@@ -8067,7 +8046,6 @@ en m</text-property>
                                     </data>
                                     <image id="2479">
                                         <property name="height">2.435114503816794in</property>
-                                        <property name="width">3.236641221374046in</property>
                                         <property name="source">expr</property>
                                         <expression name="valueExpr">row["img"]</expression>
                                     </image>
@@ -8294,6 +8272,7 @@ true
                             <row id="2834">
                                 <property name="pageBreakInside">avoid</property>
                                 <cell id="2835">
+                                    <property name="textAlign">center</property>
                                     <data id="2836">
                                         <property name="fontWeight">bold</property>
                                         <property name="textAlign">center</property>
@@ -8302,7 +8281,6 @@ true
                                     <label id="2854"/>
                                     <image id="2837">
                                         <property name="height">2.435114503816794in</property>
-                                        <property name="width">3.236641221374046in</property>
                                         <property name="source">expr</property>
                                         <expression name="valueExpr">row["img"]</expression>
                                     </image>
@@ -8397,6 +8375,7 @@ true
                             <row id="2845">
                                 <property name="pageBreakInside">avoid</property>
                                 <cell id="2846">
+                                    <property name="textAlign">center</property>
                                     <data id="2847">
                                         <property name="fontWeight">bold</property>
                                         <property name="textAlign">center</property>
@@ -8405,7 +8384,6 @@ true
                                     <label id="2855"/>
                                     <image id="2848">
                                         <property name="height">2.435114503816794in</property>
-                                        <property name="width">3.236641221374046in</property>
                                         <property name="source">expr</property>
                                         <property name="fitToContainer">true</property>
                                         <expression name="valueExpr">row["img"]</expression>

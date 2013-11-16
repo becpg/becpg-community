@@ -1421,7 +1421,6 @@
 				<property name="bcpg:filReqType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -1500,7 +1499,6 @@
 				<property name="bcpg:rclReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>

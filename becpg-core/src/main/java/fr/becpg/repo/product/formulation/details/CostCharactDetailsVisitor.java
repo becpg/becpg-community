@@ -28,14 +28,14 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
 
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
-		Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = FormulationHelper.getNetQtyInLorKg(productData.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		/*
 		 * Calculate cost details
 		 */
 		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {		
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.EFFECTIVE));		
-			visitCompoListChildren(productData, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, netWeight);
+			visitCompoListChildren(productData, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, netQty);
 		}		
 
 		/*
@@ -44,7 +44,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
 				Double qty = FormulationHelper.getQty(packagingListDataItem);
-				visitPart(packagingListDataItem.getProduct(), ret, qty, netWeight);
+				visitPart(packagingListDataItem.getProduct(), ret, qty, netQty);
 
 			}
 		}
@@ -55,14 +55,14 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		if (productData.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			for (ProcessListDataItem processListDataItem : productData.getProcessList(EffectiveFilters.EFFECTIVE)) {
 				Double qty = FormulationHelper.getQty(productData, processListDataItem);
-				visitPart(processListDataItem.getResource(), ret, qty, netWeight);
+				visitPart(processListDataItem.getResource(), ret, qty, netQty);
 			}
 		}
 
 		return ret;
 	}
 	
-	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio, Double netWeight) throws FormulateException{
+	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio, Double netQty) throws FormulateException{
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 
@@ -77,12 +77,12 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				
 				// calculate children				
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				visitCompoListChildren(formulatedProduct, c, ret, newLossPerc, netWeight);							
+				visitCompoListChildren(formulatedProduct, c, ret, newLossPerc, netQty);							
 			}
 			else{
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, parentLossRatio);
-				visitPart(compoListDataItem.getProduct(), ret, qty, netWeight);
+				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
 			}			
 		}
 	}

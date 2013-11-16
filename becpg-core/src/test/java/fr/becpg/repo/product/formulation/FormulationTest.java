@@ -2360,7 +2360,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				logger.info("density: " + density);
 				
 				if(compoListDataItem.getProduct().equals(rawMaterial3NodeRef)){					
-					assertEquals(null, volume);
+					assertEquals(0.2, volume);
 					checks++;
 				}
 				else if(compoListDataItem.getProduct().equals(rawMaterial4NodeRef)){					

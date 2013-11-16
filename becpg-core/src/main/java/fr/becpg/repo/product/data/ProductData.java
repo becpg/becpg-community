@@ -57,6 +57,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private Double yieldVolume;
 	private Double netWeight;
 	private Double servingSize;
+	private Double recipeQtyUsed;
 	
 	private Double tare;
 	private TareUnit tareUnit;
@@ -222,6 +223,14 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setYieldVolume(Double yieldVolume) {
 		this.yieldVolume = yieldVolume;
+	}	
+
+	public Double getRecipeQtyUsed() {
+		return recipeQtyUsed;
+	}
+
+	public void setRecipeQtyUsed(Double recipeQtyUsed) {
+		this.recipeQtyUsed = recipeQtyUsed;
 	}
 	
 	@AlfProp
