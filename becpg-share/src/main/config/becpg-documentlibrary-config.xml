@@ -300,6 +300,8 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entityTpl</evaluator>
 			</action>
 
+			
+
 			<action id="entity-checkin" type="javascript"
 				label="actions.document.checkin-entity">
 				<param name="function">onActionCheckInEntity</param>
@@ -331,6 +333,11 @@
 				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
 			</action>
 
+
+		   <action id="entity-compare" type="javascript"
+				label="actions.entity.compare">
+				<param name="function">onActionCompareEntity</param>
+			</action>
 
 			
 			<action id="entity-view-documents" type="javascript"
@@ -471,11 +478,12 @@
 
          <actionGroup id="entity-details">
             <action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
-				<action index="102" id="entity-checkin" />
-				<action index="103" id="entity-checkout" />
-				<action index="104" id="entity-cancel-editing" />
-				<action index="105" id="entity-view-original" />
-				<action index="106" id="entity-view-working-copy" />
+				<action index="101" id="entity-checkin" />
+				<action index="102" id="entity-checkout" />
+				<action index="103" id="entity-cancel-editing" />
+				<action index="104" id="entity-view-original" />
+				<action index="105" id="entity-view-working-copy" />
+				<action index="106" id="entity-compare" icon="compare"/>
 				<action index="107" id="entity-refresh-reports" />
 				<action index="108" id="entityTpl-synchronize-entities" />
 				<action index="109" id="entityTpl-formulate-entities" />

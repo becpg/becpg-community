@@ -62,6 +62,15 @@
 		<property name="dataListSortService" ref="dataListSortService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
+	
+	<!-- Variant -->
+	
+	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy"
+		parent="abstractBeCPGPolicy">
+		<property name="copyService" ref="copyService" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityListDAO" ref="entityListDAO"/>
+	</bean>
 
 
 

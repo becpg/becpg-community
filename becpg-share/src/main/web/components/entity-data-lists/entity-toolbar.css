@@ -48,6 +48,13 @@
    padding-left: 24px;
 }
 
+
+.datalist-toolbar .product-metadata span.first-child
+{
+   background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 .datalist-toolbar .full-screen span.first-child
 {
    background: url(../images/full-screen-16.png) no-repeat 5px 4px;
