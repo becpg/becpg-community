@@ -80,8 +80,7 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="associationService" ref="associationService"/>							
+					<property name="alfrescoRepository" ref="alfrescoRepository" />					
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.LabelingFormulationHandler">
 				   <property name="nodeService" ref="nodeService" />

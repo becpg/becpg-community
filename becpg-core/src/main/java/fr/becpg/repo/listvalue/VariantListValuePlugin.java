@@ -40,7 +40,6 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 		List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
 		for (ChildAssociationRef childAssoc : childAssocs) {
 			ret.add(childAssoc.getChildRef());
-
 		}
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
 

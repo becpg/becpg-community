@@ -524,6 +524,33 @@
 
 				</appearance>
 			</form>
+			<form id="formulation">
+            <field-visibility>
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productUnit" />	
+					<show id="bcpg:netWeight" force="true" />				
+					<show id="bcpg:productDensity" />					
+					<show id="bcpg:productSpecifications" />			
+            </field-visibility>
+            <appearance>
+            	<field id="bcpg:productQty"  />
+					<field id="bcpg:productUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:netWeight"  />					
+					<field id="bcpg:productDensity" />		
+					<field id="bcpg:productSpecifications" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>												
+            </appearance>
+          </form>
+			
 			<!-- Document Library pop-up Edit Metadata form -->
          <form id="doclib-simple-metadata">
             <field-visibility>
@@ -590,7 +617,8 @@
 					<show id="bcpg:subsidiary" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
-					<show id="bcpg:clients" />					
+					<show id="bcpg:clients" />	
+					<show id="bcpg:entityTplRef" force="true" />				
 					<show id="rep:reportTpls" />					
 					
 					<!-- consumer aspect -->										
@@ -2162,6 +2190,33 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
+			<form id="formulation">
+            <field-visibility>
+          	  <!-- formulation -->
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productUnit" />	
+					<show id="bcpg:netWeight" force="true" />				
+					<show id="bcpg:productDensity" />					
+					<show id="bcpg:productSpecifications" />			
+            </field-visibility>
+            <appearance>
+            	<field id="bcpg:productQty"  />
+					<field id="bcpg:productUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:netWeight"  />					
+					<field id="bcpg:productDensity" />		
+					<field id="bcpg:productSpecifications" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>												
+            </appearance>
+          </form>
 			<!-- Document Library pop-up Edit Metadata form -->
          <form id="doclib-simple-metadata">
             <field-visibility>
@@ -3073,7 +3128,6 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
-
 				</field-visibility>
 
 				<appearance>
@@ -3091,8 +3145,20 @@
 					<show id="cm:name" />
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
-					<show id="bcpg:nutUnit" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:nutGroup">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nutType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4964,6 +5030,20 @@
 					<field id="bcpg:variantIds" label="hidden" ></field>
 					<field id="bcpg:nutListUnit" read-only="true" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
+				</appearance>
+			</form>
+			
+			<form id="filter">
+			  <field-visibility>
+					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListGroup" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:nutListGroup">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

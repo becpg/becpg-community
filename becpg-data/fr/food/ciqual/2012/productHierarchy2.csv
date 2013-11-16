@@ -1,7 +1,7 @@
 MAPPING;Default;
 PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;lkvValue
 VALUES;CIQUAL;Abats
 VALUES;CIQUAL;Aliments lactés diététiques
 VALUES;CIQUAL;Autres matières grasses animales

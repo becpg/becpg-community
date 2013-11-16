@@ -27,8 +27,8 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -1310,7 +1310,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 											(String)properties.get(ContentModel.PROP_NAME)), 
 											BeCPGModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 							
-							ProductData productSpecification1 = alfrescoRepository.findOne(productSpecificationNodeRef1);
+							ProductSpecificationData productSpecification1 = (ProductSpecificationData)alfrescoRepository.findOne(productSpecificationNodeRef1);
 							
 							List<NodeRef> ings = new ArrayList<NodeRef>();
 							List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
@@ -1349,7 +1349,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 											(String)properties.get(ContentModel.PROP_NAME)), 
 											BeCPGModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 							
-							ProductData productSpecification2 = alfrescoRepository.findOne(productSpecificationNodeRef2);
+							ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 														
 							List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<ForbiddenIngListDataItem>();
 							

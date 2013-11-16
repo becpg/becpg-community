@@ -276,12 +276,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				List<String> values = (List<String>) v;
 
 				for (String tempValue : values) {
-
-					if (value != null) {
-						value += RepoConsts.LABEL_SEPARATOR;
+					if(tempValue!=null){
+						if (value != null) {
+							value += RepoConsts.LABEL_SEPARATOR;
+						} else {
+							value="";
+						}
+	
+						value += constraintName != null ? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale()) : tempValue;
 					}
-
-					value += constraintName != null ? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale()) : tempValue;
 
 				}
 			} else {

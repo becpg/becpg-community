@@ -25,6 +25,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -57,9 +58,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
 	
-	private AssociationService associationService;
-	
-	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -68,9 +66,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
@@ -96,16 +91,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 		
 		// Load product specification
-		List<ProductData> productSpecicationDataList = new ArrayList<ProductData>();    	
-    	List<NodeRef> productSpecificationAssocRefs = associationService.getTargetAssocs(formulatedProduct.getNodeRef(), BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
-    	if(productSpecificationAssocRefs != null && !productSpecificationAssocRefs.isEmpty()){    		
-    		for(NodeRef productSpecificationAssocRef : productSpecificationAssocRefs){
-    			productSpecicationDataList.add((ProductData) alfrescoRepository.findOne(productSpecificationAssocRef));            	
-    		}    		
-    	}
+		
 		
     	//IngList
-		calculateIL(formulatedProduct, productSpecicationDataList);
+		calculateIL(formulatedProduct);
     	
 //		//IngLabeling
 //		logger.debug("Calculate Ingredient Labeling");
@@ -144,7 +133,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @return the list
 	 * @throws FormulateException 
 	 */
-	private void calculateIL(ProductData formulatedProduct, List<ProductData> productSpecicationDataList) throws FormulateException{
+	private void calculateIL(ProductData formulatedProduct) throws FormulateException{
 	
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT);
 		
@@ -162,7 +151,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		Double totalQtyUsed = 0d;
 		if(compoList != null){
 			for(CompoListDataItem compoItem : compoList){				
-				visitILOfPart(productSpecicationDataList, compoItem, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, reqCtrlMap);
+				visitILOfPart(formulatedProduct.getProductSpecifications(), compoItem, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, reqCtrlMap);
 				
 				QName type = nodeService.getType(compoItem.getProduct());
 				if(type != null && (type.isMatch(BeCPGModel.TYPE_RAWMATERIAL) ||
@@ -193,7 +182,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 		
 		//check formulated product
-		checkILOfFormulatedProduct(formulatedProduct.getIngList(), productSpecicationDataList, reqCtrlMap);
+		checkILOfFormulatedProduct(formulatedProduct.getIngList(), formulatedProduct.getProductSpecifications(), reqCtrlMap);
 		
 		//sort collection					
 		sortIL(formulatedProduct.getIngList());		
@@ -209,7 +198,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap the total qty ing map
 	 * @throws FormulateException 
 	 */
-	private void visitILOfPart(List<ProductData> productSpecicationDataList, 
+	private void visitILOfPart(List<ProductSpecificationData> productSpecicationDataList, 
 			CompoListDataItem compoListDataItem, 
 			List<IngListDataItem> ingList, 
 			List<IngListDataItem> retainNodes, 
@@ -324,7 +313,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param ingMap the ing map
 	 * @param totalQtyIngMap the total qty ing map
 	 */
-	private void checkILOfPart(NodeRef productNodeRef, List<IngListDataItem> ingList, List<ProductData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
+	private void checkILOfPart(NodeRef productNodeRef, List<IngListDataItem> ingList, List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
 		
 		
 		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))){
@@ -354,7 +343,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 			}
 			else{
-				for(ProductData productSpecificationData : productSpecicationDataList){
+				for(ProductSpecificationData productSpecificationData : productSpecicationDataList){
 					
 					for(IngListDataItem ingListDataItem : ingList){	
 						if(logger.isDebugEnabled()){
@@ -432,9 +421,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * check the ingredients of the part according to the specification
 	 *
 	 */
-	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, List<ProductData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
+	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
 		
-		for(ProductData productSpecification : productSpecicationDataList){
+		for(ProductSpecificationData productSpecification : productSpecicationDataList){
 		
 			for(IngListDataItem ingListDataItem : ingList){										
 				
