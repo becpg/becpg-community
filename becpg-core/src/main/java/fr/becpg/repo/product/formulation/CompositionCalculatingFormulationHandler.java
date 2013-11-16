@@ -54,17 +54,16 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
 		
-		if(netWeight != null){
-			// calculate on every item		
-			visitQtyChildren(formulatedProduct, netWeight, compositeAll);
+		// calculate on every item		
+		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
+		
+		// Yield		
+		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
 			
-			// Yield		
-			visitYieldChildren(formulatedProduct, netWeight, compositeDefaultVariant);
-					
-			Double qtyUsed = calculateQtyUsed(compositeDefaultVariant);
-			if(qtyUsed != null && qtyUsed != 0d){
-				formulatedProduct.setYield(100 * netWeight / qtyUsed);
-			}
+		Double qtyUsed = calculateQtyUsed(compositeDefaultVariant);
+		formulatedProduct.setRecipeQtyUsed(qtyUsed);
+		if(netWeight != null && qtyUsed != null && qtyUsed != 0d){
+			formulatedProduct.setYield(100 * netWeight / qtyUsed);
 		}
 		
 		// Volume
@@ -83,29 +82,26 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
-			// qty and sub formula qty are defined and not equal to 0
-			if(parentQty != null && !parentQty.equals(0d)){
-				
-				Double qtySubFormula = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
-				logger.debug("qtySubFormula: " + qtySubFormula + " parentQty: " + parentQty);
-				if(qtySubFormula != null){
-										
-					// take in account percentage
-					if(component.getData().getCompoListUnit() != null && 
-							component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){
-						qtySubFormula = qtySubFormula * parentQty / 100;
-					}
-					
-					// Take in account yield that is defined on component
-					Double qty = null;
-					if(component.isLeaf()){						
-						qty = qtySubFormula * 100 / FormulationHelper.getYield(component.getData());
-					}
-					else{
-						qty = qtySubFormula;
-					}													
-					component.getData().setQty(qty);					
+			Double qtySubFormula = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
+			logger.debug("qtySubFormula: " + qtySubFormula + " parentQty: " + parentQty);
+			if(qtySubFormula != null){
+									
+				// take in account percentage
+				if(component.getData().getCompoListUnit() != null && 
+						component.getData().getCompoListUnit().equals(CompoListUnit.Perc) &&
+						parentQty != null && !parentQty.equals(0d)){
+					qtySubFormula = qtySubFormula * parentQty / 100;
 				}
+				
+				// Take in account yield that is defined on component
+				Double qty = null;
+				if(component.isLeaf()){						
+					qty = qtySubFormula * 100 / FormulationHelper.getYield(component.getData());
+				}
+				else{
+					qty = qtySubFormula;
+				}													
+				component.getData().setQty(qty);					
 			}
 			
 			// calculate volume ?			
@@ -117,7 +113,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				
 				// take in account percentage
 				if(component.getData().getCompoListUnit() != null && 
-						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
+						component.getData().getCompoListUnit().equals(CompoListUnit.Perc) &&
+						parentQty != null && !parentQty.equals(0d)){	
 					
 					visitQtyChildren(formulatedProduct, parentQty, component);
 					
@@ -137,7 +134,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 	}
 
-	private void visitYieldChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException{				
+	private void visitYieldChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite) throws FormulateException{				
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
@@ -148,11 +145,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				if(component.getData().getCompoListUnit() != null && 
 						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
 					
-					visitYieldChildren(formulatedProduct, parentQty, component);
+					visitYieldChildren(formulatedProduct, component);
 					component.getData().setYieldPerc(null);
 				}
 				else{
-					visitYieldChildren(formulatedProduct, component.getData().getQty(),component);
+					visitYieldChildren(formulatedProduct,component);
 					
 					// Yield				
 					component.getData().setYieldPerc(calculateYield(component));
@@ -205,7 +202,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				// calculate children
 				qty += calculateQtyUsed(component);
 			}else{
-				qty += FormulationHelper.getQty(component.getData()) * FormulationHelper.getYield(component.getData()) / 100;					
+				qty += FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData()) / 100;					
 			}
 		}
 		return qty;

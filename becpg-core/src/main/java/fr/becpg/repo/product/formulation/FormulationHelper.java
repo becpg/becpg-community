@@ -37,6 +37,8 @@ public class FormulationHelper {
 	
 	public static final Double DEFAULT_YIELD = 100d;
 	
+	public static final Double DEFAULT_OVERRUN = 0d;
+	
 	private static Log logger = LogFactory.getLog(FormulationHelper.class);
 	
 	/**
@@ -256,15 +258,40 @@ public class FormulationHelper {
 						}
 						return qty;
 					}
-					else if(BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(nodeRef))){
-						return qty;
-					}
-				}
-				else if(FormulationHelper.isProductUnitP(productUnit)){
-					return QTY_FOR_PIECE;
-				}								
+				}							
 			}
 		}	
+		
+		return defaultValue;
+	}
+	
+	/**
+	 * 
+	 * @param productData
+	 * @return
+	 */
+	public static Double getNetQtyInLorKg(NodeRef nodeRef, NodeService nodeService, Double defaultValue) {
+				
+		ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
+		if(productUnit != null){
+			Double qty = getProductQty(nodeRef, nodeService);
+			if(qty == null){
+				qty = defaultValue;
+			}
+			
+			if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
+				if(productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)){
+					qty = qty / 1000;
+				}
+				return qty;
+			}
+			else if(FormulationHelper.isProductUnitP(productUnit)){
+				return FormulationHelper.getNetWeight(nodeRef, nodeService, defaultValue);					
+			}
+			else if(BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(nodeRef))){
+				return qty;
+			}								
+		}
 		
 		return defaultValue;
 	}
@@ -290,22 +317,25 @@ public class FormulationHelper {
 	}
 	
 	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException {
-		
-		Double volume = FormulationHelper.getNetVolume(compoListDataItem.getProduct(), nodeService);
-		if(volume == null){			
+							
+		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+		if(qty != null){				
 			Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC);
-			Double qty = FormulationHelper.getQty(compoListDataItem);
-			if(overrun != null && qty != null){
-				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
-				if(density == null || density.equals(0d)){
-					logger.warn("Cannot calculate volume since density is null or equals to 0");
-				}
-				else{
-					volume = (100 + overrun) * qty / (density * 100);					
-				}
+			if(overrun == null){
+				overrun = FormulationHelper.DEFAULT_OVERRUN;
+			}
+			Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
+			if(density == null || density.equals(0d)){
+				if(logger.isDebugEnabled()){
+					logger.debug("Cannot calculate volume since density is null or equals to 0");
+				}				
+			}
+			else{
+				return (100 + overrun) * qty / (density * 100);					
 			}
 		}
-		return volume;
+		
+		return null;
 	}
 	
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight){

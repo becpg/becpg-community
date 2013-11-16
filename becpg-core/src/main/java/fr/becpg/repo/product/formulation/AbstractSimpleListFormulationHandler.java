@@ -106,7 +106,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			
@@ -116,7 +116,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double qty = FormulationHelper.getQty(compoItem);
 				
 				if(qty != null){
-					visitPart(compoItem.getProduct(), simpleListDataList, qty, netWeight, mandatoryCharacts);
+					visitPart(compoItem.getProduct(), simpleListDataList, qty, netQty, mandatoryCharacts);
 				}			
 			}
 			
@@ -144,7 +144,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected void visitPart(NodeRef componentNodeRef,  
 			List<T> simpleListDataList,
 			Double qtyUsed, 
-			Double netWeight, 
+			Double netQty, 
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts) throws FormulateException{								
 		
 		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))){
@@ -186,7 +186,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
 							Double value = slDataItem.getValue();
 							if(value != null){
-								newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netWeight));
+								newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netQty));
 							}
 							else{
 								value = 0d;
@@ -195,13 +195,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
 							Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
 							if(miniValue < value || origMini < origValue){
-								newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netWeight));
+								newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netQty));
 							}
 							
 							Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
 							Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
 							if(maxiValue > value || origMaxi > origValue){
-								newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netWeight));
+								newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
 							}					
 							
 							if(logger.isDebugEnabled()){

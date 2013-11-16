@@ -1988,6 +1988,7 @@
 					<show id="bcpg:productUnit" />			
 					<show id="bcpg:netWeight" force="true" />		
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:productSpecifications" />
 					
 					<!-- Consumer -->
@@ -2092,6 +2093,7 @@
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2238,6 +2240,7 @@
 					<show id="bcpg:productUnit" />					
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:productSpecifications" />
 
 					<!-- tags and categories -->
@@ -2340,6 +2343,7 @@
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />
 					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3990,7 +3994,7 @@
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
 					<show id="bcpg:compoListUnit" />
-					<show id="bcpg:compoListQty" />					
+					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />

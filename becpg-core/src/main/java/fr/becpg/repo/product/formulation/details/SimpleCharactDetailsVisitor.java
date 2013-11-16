@@ -48,12 +48,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
 
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
-		Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = FormulationHelper.getNetQtyInLorKg(productData.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 			for (CompoListDataItem compoListDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
 				Double qty = FormulationHelper.getQty(compoListDataItem);			
-				visitPart(compoListDataItem.getProduct(), ret, qty, netWeight);
+				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
 			}
 		}		
 
@@ -76,7 +76,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qty, Double netWeight)
+	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qty, Double netQty)
 			throws FormulateException {
 
 		if(entityNodeRef == null){
@@ -95,8 +95,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				Double value = (simpleCharact.getValue() != null ? simpleCharact.getValue() : 0d);
 				value = value * qty;
-				if (netWeight != 0d) {
-					value = value / netWeight;
+				if (netQty != 0d) {
+					value = value / netQty;
 				}
 				
 				if (logger.isDebugEnabled()) {
