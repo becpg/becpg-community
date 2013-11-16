@@ -1,9 +1,9 @@
 PATH;/System/EntityTemplates/ProductTemplates/finishedProduct/bcpg:entityLists/bcpg:ingLabelingList;;;;;;
 TYPE;bcpg:labelingRuleList;;;;;;
 COLUMNS;cm:name;bcpg:lrFormula;bcpg:lrType;bcpg:lrIsActive;bcpg:isManualListItem;bcpg:lrLabel;bcpg:lrLabel_en
-VALUES;Afficher les %;{0} {1,number,0.#%};Format;false;true;;
-VALUES;Masquer les auxiliaires technologiques;ingListDataItem.isProcessingAid == true;Omit;false;true;;
+VALUES;Afficher les %;{0} {1,number,0.#%};Format;true;true;;
+VALUES;Masquer les auxiliaires technologiques;ingListDataItem.isProcessingAid == true;Omit;true;true;;
 VALUES;Étiquetage 1;render();Render;true;false;Étiquetage 1;Labeling 1
 VALUES;Étiquetage 2;"renderGroupList()+""<br/>""+render(false)";Render;true;false;Étiquetage 2;Labeling 2
-VALUES;Langues;fr,en,de,es,it,ja,nl,ru,zh,pt,no,sv,el;Locale;false;false;;
+VALUES;Langues;fr,en;Locale;true;false;;
 VALUES;Masquer les types;;DoNotDeclare;false;false;;
