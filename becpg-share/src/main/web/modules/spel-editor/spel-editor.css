@@ -254,6 +254,13 @@ div.current-formula
 	padding-left: 20px;
 }
 
+.spel-editor span.labelClaimList,
+.spel-editor span.labelClaimList {
+	background: url(../../components/images/filetypes/generic-labelClaim-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
 
 .spel-editor span.packagingList {
 	background: url(../../components/images/filetypes/generic-packagingKit-16.png) no-repeat;
