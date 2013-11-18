@@ -198,7 +198,7 @@
                         Dom.get(this.id + "-cancel-button").name = "-";
 
                         this.widgets.dialog = Alfresco.util.createYUIPanel(this.editorId, {
-                           width : "60em"
+                           width : "63em"
                         });
                         this.widgets.dialog.hideEvent.subscribe(this.onCancel, null, this);
                         Dom.addClass(this.editorId, "spel-editor");
@@ -291,12 +291,42 @@
                                           text : '$list.?[$property == $value]'
                                        }, {
                                           text : '$list.![$property]'
-                                       } ]
+                                       } , {
+                                          text : 'sum($range,$formula)'
+                                       }, {
+                                          text : 'avg($range,$formula)'
+                                       }, {
+                                          text : 'children($compoListDataItem)'
+                                       }]
                                     }
 
                                     ]
 
-                                 } ]
+                                 } , {
+                                    group : 'variables',
+                                    label : instance.msg("form.control.spel-editor.editor.variables"),
+                                    buttons : [
+
+                                    {
+                                       type : 'select',
+                                       label : instance.msg("form.control.spel-editor.editor.choose"),
+                                       value : 'variable',
+                                       menu : [ {
+                                          text : 'entity'
+                                       }, {
+                                          text : 'dataListItem'
+                                       }, {
+                                          text : 'dataListItemEntity'
+                                       }, {
+                                          text : '#this'
+                                       }, {
+                                          text : '#root'
+                                       } ]
+                                    }
+
+                                 ]
+                                 
+                                 }]
                               }
                            });
 
@@ -309,6 +339,10 @@
                               });
 
                               this.toolbar.on('functionClick', function(o) {
+                                 me.execCommand('inserthtml', " " + o.button.value + " ");
+                              });
+                              
+                              this.toolbar.on('variableClick', function(o) {
                                  me.execCommand('inserthtml', " " + o.button.value + " ");
                               });
 
