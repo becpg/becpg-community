@@ -389,7 +389,7 @@
                   },
 
                   generateFavourite : function BeCPGCatalog_generateFavourite(scope, record) {
-                     var i18n = "favourite." + (record.getData("isFolder") ? "folder." : "document."), html = "";
+                     var i18n = "favourite.document.", html = "";
 
                      if (record.getData("isFavourite")) {
                         html = '<a class="favourite-action ' + scope.substitute(FAVOURITE_EVENTCLASS) + ' enabled" title="' + scope
@@ -401,6 +401,40 @@
 
                      return html;
                   },
+                  
+                  onFavourite: function BeCPGCatalog_onFavourite(row)
+                  {
+                     var record = this.widgets.alfrescoDataTable.getRecord(row),
+                        file = record.getData(),
+                        nodeRef = file.nodeRef;
+
+                     file.isFavourite = !file.isFavourite;
+                     this.widgets.alfrescoDataTable.getDataTable().updateRow(record, file);
+
+                     var responseConfig =
+                     {
+                        failureCallback:
+                        {
+                           fn: function SimpleDocList_onFavourite_failure(event, p_oRow)
+                           {
+                              // Reset the flag to it's previous state
+                              var record = this.widgets.alfrescoDataTable.getRecord(p_oRow),
+                                 file = record.getData();
+
+                              file.isFavourite = !file.isFavourite;
+                              this.widgets.alfrescoDataTable.getDataTable().updateRow(record, file);
+                              Alfresco.util.PopupManager.displayPrompt(
+                              {
+                                 text: this.msg("message.save.failure", file.displayName)
+                              });
+                           },
+                           scope: this,
+                           obj: row
+                        }
+                     };
+
+                     this.services.preferences[file.isFavourite ? "add" : "remove"].call(this.services.preferences, Alfresco.service.Preferences.FAVOURITE_FOLDERS, nodeRef, responseConfig);
+                  } ,
 
                   /**
                    * Search Handlers
