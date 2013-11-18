@@ -300,4 +300,17 @@
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
     
+      <bean id="patch.bcpg.nutParentLevelPatch" class="fr.becpg.repo.admin.patch.NutParentLevelPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.nutParentLevelPatch</value></property>
+        <property name="description"><value>patch.bcpg.nutParentLevelPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10021</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="associationService" ref="associationService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+    
 </beans>

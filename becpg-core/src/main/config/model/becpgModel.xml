@@ -1318,6 +1318,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:organoList">
