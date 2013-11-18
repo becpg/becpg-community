@@ -21,6 +21,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -542,44 +543,54 @@ public class EntityServiceImpl implements EntityService {
      * @param entityNodeRef : entity
      */
 	@Override
-	public void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef) {
+	public void classifyByHierarchy(final NodeRef containerNodeRef, final NodeRef entityNodeRef) {
 
-		NodeRef destinationNodeRef = null;	
-		QName type = nodeService.getType(entityNodeRef);
-		ClassDefinition classDef = dictionaryService.getClass(type);
+		AuthenticationUtil.runAsSystem(new RunAsWork<Void>() {
+
+			@Override
+			public Void doWork() throws Exception {
+				NodeRef destinationNodeRef = null;	
+				QName type = nodeService.getType(entityNodeRef);
+				ClassDefinition classDef = dictionaryService.getClass(type);
+				
+				//TODO : generic
+				NodeRef hierarchyNodeRef = null;		
+				if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
+					hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+					if(hierarchyNodeRef == null){
+						hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+					}
+				}
+				else if(type.isMatch(ProjectModel.TYPE_PROJECT)){	
+					hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2);
+					if(hierarchyNodeRef == null){
+						hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY1);
+					}
+				}
+				else if(type.isMatch(BeCPGModel.TYPE_CLIENT)){			
+				}
+				else if(type.isMatch(BeCPGModel.TYPE_SUPPLIER)){			
+				}
+							
+				if(hierarchyNodeRef != null){				
+					NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle());
+					destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, classFolder);				
+					if (destinationNodeRef != null) {
+						// classify
+						repoService.moveNode(entityNodeRef, destinationNodeRef);
+					} else {
+						logger.debug("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+					}
+				}
+				else {
+					logger.debug("Cannot classify entity since it doesn't have a hierarchy.");
+				}			
+				return null;
+			}
+			
+		});
 		
-		//TODO : generic
-		NodeRef hierarchyNodeRef = null;		
-		if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)){
-			hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-			if(hierarchyNodeRef == null){
-				hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-			}
-		}
-		else if(type.isMatch(ProjectModel.TYPE_PROJECT)){	
-			hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2);
-			if(hierarchyNodeRef == null){
-				hierarchyNodeRef = (NodeRef)nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY1);
-			}
-		}
-		else if(type.isMatch(BeCPGModel.TYPE_CLIENT)){			
-		}
-		else if(type.isMatch(BeCPGModel.TYPE_SUPPLIER)){			
-		}
-					
-		if(hierarchyNodeRef != null){				
-			NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle());
-			destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, classFolder);				
-			if (destinationNodeRef != null) {
-				// classify
-				repoService.moveNode(entityNodeRef, destinationNodeRef);
-			} else {
-				logger.debug("Failed to classify entity. entityNodeRef: " + entityNodeRef);
-			}
-		}
-		else {
-			logger.debug("Cannot classify entity since it doesn't have a hierarchy.");
-		}			
+	
 	}
 
 	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
