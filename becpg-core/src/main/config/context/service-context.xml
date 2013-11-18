@@ -108,6 +108,12 @@
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 	</bean>
 	
+	<bean id="nutListValuePlugin" parent="entityListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.NutListValuePlugin">
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="associationService" ref="associationService"/>
+	</bean>
+	
 	<bean id="variantListValuePlugin" parent="entityListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
 	</bean>

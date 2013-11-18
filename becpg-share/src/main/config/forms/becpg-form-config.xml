@@ -4999,6 +4999,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5006,7 +5007,14 @@
 					<field id="bcpg:nutListNut">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>					
+					</field>		
+					<field id="bcpg:parentLevel">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+ 							<control-param name="ds">becpg/autocomplete/nutListParentLevel</control-param>	
+ 							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+ 					</field> 			
 				</appearance>
 			</form>
 
@@ -5014,6 +5022,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true"/>
+					<show id="bcpg:depthLevel" />
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListUnit" />
@@ -5028,6 +5037,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:depthLevel" label="hidden" ></field>
 					<field id="bcpg:nutListUnit" read-only="true" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
@@ -5059,6 +5069,7 @@
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListMethod" />	
+					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5066,7 +5077,14 @@
 					<field id="bcpg:nutListNut">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>					
+					</field>			
+					<field id="bcpg:parentLevel">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+ 							<control-param name="ds">becpg/autocomplete/nutListParentLevel</control-param>	
+ 							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+ 					</field> 		
 				</appearance>
 			</form>
 		</forms>

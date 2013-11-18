@@ -147,7 +147,11 @@ public class DataListSortServiceImpl implements DataListSortService {
 			if (parentLevel != null) {
 
 				level = (Integer) nodeService.getProperty(parentLevel, BeCPGModel.PROP_DEPTH_LEVEL);
-				level++;
+				if(level == null){
+					level = DEFAULT_LEVEL+1;
+				} else {
+					level++;
+				}
 			} else {
 				level = DEFAULT_LEVEL;
 			}
