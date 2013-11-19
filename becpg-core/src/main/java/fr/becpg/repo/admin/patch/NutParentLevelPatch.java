@@ -134,7 +134,7 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 					if (nodeService.getPrimaryParent(item).getParentRef().equals((nodeService.getPrimaryParent(check)).getParentRef())) {
 						logger.info("Updating parent for nut" + nutName + " " + item + " with " + check);
 						nodeService.setProperty(item, BeCPGModel.PROP_PARENT_LEVEL, check);
-						nodeService.setProperty(item, BeCPGModel.PROP_DEPTH_LEVEL, 1);
+						nodeService.setProperty(item, BeCPGModel.PROP_DEPTH_LEVEL, 2);
 					}
 				}
 			}
