@@ -73,7 +73,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					n.setMethod(NUT_FORMULATED);
 				}
 			}		
+		
 		}
+		
+		
 		
 		//sort
 		//sort(formulatedProduct.getNutList());
@@ -124,6 +127,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 //			@Override
 //			public int compare(NutListDataItem n1, NutListDataItem n2) {
 //
+//				
+//				
+//				
 //				if (n1 != null && n2 != null) {
 //					if (n1.equals(n2)) {
 //						return EQUAL;
