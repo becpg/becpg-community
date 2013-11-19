@@ -5011,8 +5011,7 @@
 					<field id="bcpg:parentLevel">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
- 							<control-param name="ds">becpg/autocomplete/nutListParentLevel</control-param>	
- 							<control-param name="urlParamsToPass">itemId</control-param>
+ 							<control-param name="ds">becpg/autocomplete/nutListParentLevel</control-param>
 						</control>
  					</field> 			
 				</appearance>
