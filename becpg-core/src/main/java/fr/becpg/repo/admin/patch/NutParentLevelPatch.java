@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2005-2010 Alfresco Software Limited.
- *
- * This file is part of Alfresco
- *
- * Alfresco is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Alfresco is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
- */
-
 package fr.becpg.repo.admin.patch;
 
 import java.io.Serializable;
@@ -84,7 +65,66 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 				}
 			}
 
+			int i = 1;
 			updateParents();
+			applySort("Energie kJ, étiquetage", i++);
+			applySort("Energie kcal, étiquetage", i++);
+			applySort("Energie kJ", i++);
+			applySort("Energie kcal", i++);
+			applySort("Lipides", i++);
+				applySort("AG saturés", i++);
+				applySort("AG monoinsaturés", i++);
+				applySort("AG polyinsaturés", i++);
+			applySort("Glucides", i++);
+				applySort("Sucres", i++);
+				applySort("Amidon", i++);
+			applySort("Polyols totaux", i++);
+			applySort("Fibres alimentaires", i++);
+			applySort("Iode", i++);
+			applySort("Protéines", i++);
+			applySort("Protéines brutes (N x 6.25)", i++);
+			applySort("Eau", i++);
+			applySort("Sodium", i++);
+			applySort("Sel", i++);
+			applySort("Magnésium", i++);
+			applySort("Phosphore", i++);
+			applySort("Potassium", i++);
+			applySort("Calcium", i++);
+			applySort("Manganèse", i++);
+			applySort("Fer total", i++);
+			applySort("Cuivre", i++);
+			applySort("Zinc", i++);
+			applySort("Sélénium", i++);
+			applySort("Rétinol", i++);
+			applySort("Bêta-carotène", i++);
+			applySort("Vitamine A", i++);
+			applySort("Vitamine D", i++);
+			applySort("Activité vitaminique E (en équivalents alpha-tocophérol)", i++);
+			applySort("Vitamine C totale", i++);
+			applySort("Vitamine B1 ou Thiamine", i++);
+			applySort("Vitamine B2 ou Riboflavine", i++);
+			applySort("Vitamine B3 ou PP ou Niacine", i++);
+			applySort("Vitamine B5 ou Acide pantothénique", i++);
+			applySort("Vitamine B6 ou Pyridoxine", i++);
+			applySort("Vitamine B12 ou Cobalamines", i++);
+			applySort("Vitamine B9 ou Folates totaux", i++);
+			applySort("Alcool (éthanol)", i++);
+			applySort("Acides organiques", i++);
+			applySort("Cholestérol", i++);
+			applySort("AG 4:0, butyrique", i++);
+			applySort("AG 6:0, caproïque", i++);
+			applySort("AG 8:0, caprylique", i++);
+			applySort("AG 10:0, caprique", i++);
+			applySort("AG 12:0, laurique", i++);
+			applySort("AG 14:0, myristique", i++);
+			applySort("AG 16:0, palmitique", i++);
+			applySort("AG 18:0, stéarique", i++);
+			applySort("AG 18:1 9c (n-9), oléique", i++);
+			applySort("AG 18:2 9c,12c (n-6), linoléique", i++);
+			applySort("AG 18:3 c9,c12,c15 (n-3), alpha-linolénique", i++);
+			applySort("AG 20:4 5c,8c,11c,14c (n-6), arachidonique", i++);
+			applySort("AG 20:5 5c,8c,11c,14c,17c (n-3), EPA", i++);
+			applySort("AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA", i++);
 
 		} finally {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
@@ -103,6 +143,16 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 	// AG monoinsaturés
 	// AG polyinsaturés
 
+	private void applySort(String nutName, int sort) {
+		NodeRef parent = firstOrNull(beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"" + nutName + "\" "));
+		if (parent != null) {
+			List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
+			for (NodeRef item : parents) {
+				nodeService.setProperty(item, BeCPGModel.PROP_SORT, sort);
+			}
+		}
+	}
+
 	private void updateParents() {
 		NodeRef parent = firstOrNull(beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"Glucides\" "));
 		List<NodeRef> childs = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND( @cm\\:name:\"Sucre\" OR @cm\\:name:\"Amidon\" OR @cm\\:name:\"Polyols totaux\") ");
@@ -117,29 +167,28 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 	}
 
 	private NodeRef firstOrNull(List<NodeRef> nodeRefs) {
-		return nodeRefs!=null && !nodeRefs.isEmpty() ? nodeRefs.get(0): null;
+		return nodeRefs != null && !nodeRefs.isEmpty() ? nodeRefs.get(0) : null;
 	}
 
 	private void updateParent(NodeRef parent, List<NodeRef> childs) {
-		if(parent!=null && childs!=null){
-		List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
-		logger.info("Found " + parents.size() + " to check");
+		if (parent != null && childs != null) {
+			List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
+			logger.info("Found " + parents.size() + " to check");
 
-		for (NodeRef child : childs) {
-			String nutName = (String) nodeService.getProperty(child, ContentModel.PROP_NAME);
-			List<NodeRef> items = associationService.getSourcesAssocs(child, BeCPGModel.ASSOC_NUTLIST_NUT);
-			logger.info("Look for nutList: " + nutName + " (" + items.size() + ")");
-			for (NodeRef check : parents) {
-				for (NodeRef item : items) {
-					if (nodeService.getPrimaryParent(item).getParentRef().equals((nodeService.getPrimaryParent(check)).getParentRef())) {
-						logger.info("Updating parent for nut" + nutName + " " + item + " with " + check);
-						nodeService.setProperty(item, BeCPGModel.PROP_PARENT_LEVEL, check);
-						nodeService.setProperty(item, BeCPGModel.PROP_DEPTH_LEVEL, 2);
+			for (NodeRef child : childs) {
+				String nutName = (String) nodeService.getProperty(child, ContentModel.PROP_NAME);
+				List<NodeRef> items = associationService.getSourcesAssocs(child, BeCPGModel.ASSOC_NUTLIST_NUT);
+				logger.info("Look for nutList: " + nutName + " (" + items.size() + ")");
+				for (NodeRef check : parents) {
+					for (NodeRef item : items) {
+						if (nodeService.getPrimaryParent(item).getParentRef().equals((nodeService.getPrimaryParent(check)).getParentRef())) {
+							logger.info("Updating parent for nut" + nutName + " " + item + " with " + check);
+							nodeService.setProperty(item, BeCPGModel.PROP_PARENT_LEVEL, check);
+							nodeService.setProperty(item, BeCPGModel.PROP_DEPTH_LEVEL, 2);
+						}
 					}
 				}
 			}
-
-		}
 		}
 	}
 }
