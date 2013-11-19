@@ -512,134 +512,134 @@ public class FormulationTest extends AbstractFinishedProductTest {
 		   
 	   }
 	
-	/**
-	 * Test sort nut list.
-	 */
-	@Test
-	public void testSortNutList(){
-		
-		logger.info("testSortNutList");
-		
-		 final NodeRef SFProduct2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-				public NodeRef execute() throws Throwable {					   				
-								
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-					properties.put(ContentModel.PROP_NAME, "nut3");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-					NodeRef nut3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "nut14");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-					NodeRef nut14 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "nut5");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-					NodeRef nut5 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "nut26");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-					NodeRef nut26 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "nut17");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-					NodeRef nut17 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "nut8");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-					NodeRef nut8 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					properties.clear();		
-					properties.put(ContentModel.PROP_NAME, "nut9");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-					NodeRef nut9 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					properties.clear();
-					properties.put(ContentModel.PROP_NAME, "nut10");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-					NodeRef nut10 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
-					
-					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut10, false));
-					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut3, false));
-					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut5, false));
-					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut14, false));
-					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut9, false));
-					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
-					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 2", nut26, false));
-					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 2", nut2, false));
-					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 2", nut17, false));
-					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut8, false));
-					
-					//SF1
-					SemiFinishedProductData SFProduct1 = new SemiFinishedProductData();
-					SFProduct1.setName("semi fini 1");
-					SFProduct1.setLegalName("Legal semi fini 1");
-					SFProduct1.setUnit(ProductUnit.kg);
-					SFProduct1.setQty(1d);
-					SFProduct1.setNutList(nutList);					
-					NodeRef SFProduct1NodeRef = alfrescoRepository.create(testFolderNodeRef, SFProduct1).getNodeRef();
-					
-					alfrescoRepository.findOne(SFProduct1NodeRef).getNodeRef();					
-					
-					//SF2
-					SemiFinishedProductData SFProduct2 = new SemiFinishedProductData();
-					SFProduct2.setName("semi fini 2");
-					SFProduct2.setLegalName("Legal semi fini 2");
-					SFProduct2.setUnit(ProductUnit.kg);
-					SFProduct2.setQty(1d);
-					List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-					compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, SFProduct1NodeRef));			
-					SFProduct2.getCompoListView().setCompoList(compoList2);
-					
-					nutList = new ArrayList<NutListDataItem>();
-					NodeRef [] nuts = {nut10, nut3, nut5, nut14, nut9, nut1, nut26, nut2, nut17, nut8};
-					for(NodeRef nut : nuts){
-						nutList.add(new NutListDataItem(null, null, null, null, null, null, nut, null));
-					}
-					SFProduct2.setNutList(nutList);
-					
-					NodeRef productNodeRef =  alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
-
-					productService.formulate(productNodeRef);
-									
-					
-					
-					
-					return  productNodeRef;
-					
-				}},false,true);
-		 
-		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-				public NodeRef execute() throws Throwable {	
-					
-					ProductData formulatedSF2 = alfrescoRepository.findOne(SFProduct2NodeRef);
-					
-					String [] nutNames = {"nut1", "nut14", "nut3", "nut5", "nut17", "nut2", "nut26", "nut10", "nut8", "nut9"}; 
-					int i = 0;
-					
-					for(String nutName : nutNames){
-						logger.debug("nutName : " + nutName+" "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
-						assertEquals(nutName, (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
-						i++;
-					}
-		
-			        return null;
-			
-				}},false,true);
-	}
+//	/**
+//	 * Test sort nut list.
+//	 */
+//	@Test
+//	public void testSortNutList(){
+//		
+//		logger.info("testSortNutList");
+//		
+//		 final NodeRef SFProduct2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+//				public NodeRef execute() throws Throwable {					   				
+//								
+//					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+//					properties.put(ContentModel.PROP_NAME, "nut3");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
+//					NodeRef nut3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					properties.clear();
+//					properties.put(ContentModel.PROP_NAME, "nut14");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
+//					NodeRef nut14 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					properties.clear();
+//					properties.put(ContentModel.PROP_NAME, "nut5");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
+//					NodeRef nut5 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					properties.clear();
+//					properties.put(ContentModel.PROP_NAME, "nut26");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
+//					NodeRef nut26 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					properties.clear();
+//					properties.put(ContentModel.PROP_NAME, "nut17");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
+//					NodeRef nut17 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					properties.clear();
+//					properties.put(ContentModel.PROP_NAME, "nut8");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
+//					NodeRef nut8 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					properties.clear();		
+//					properties.put(ContentModel.PROP_NAME, "nut9");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
+//					NodeRef nut9 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					properties.clear();
+//					properties.put(ContentModel.PROP_NAME, "nut10");
+//					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
+//					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
+//					NodeRef nut10 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					
+//					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+//					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut10, false));
+//					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut3, false));
+//					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut5, false));
+//					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut14, false));
+//					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut9, false));
+//					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+//					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 2", nut26, false));
+//					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 2", nut2, false));
+//					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d,  0d, "Groupe 2", nut17, false));
+//					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut8, false));
+//					
+//					//SF1
+//					SemiFinishedProductData SFProduct1 = new SemiFinishedProductData();
+//					SFProduct1.setName("semi fini 1");
+//					SFProduct1.setLegalName("Legal semi fini 1");
+//					SFProduct1.setUnit(ProductUnit.kg);
+//					SFProduct1.setQty(1d);
+//					SFProduct1.setNutList(nutList);					
+//					NodeRef SFProduct1NodeRef = alfrescoRepository.create(testFolderNodeRef, SFProduct1).getNodeRef();
+//					
+//					alfrescoRepository.findOne(SFProduct1NodeRef).getNodeRef();					
+//					
+//					//SF2
+//					SemiFinishedProductData SFProduct2 = new SemiFinishedProductData();
+//					SFProduct2.setName("semi fini 2");
+//					SFProduct2.setLegalName("Legal semi fini 2");
+//					SFProduct2.setUnit(ProductUnit.kg);
+//					SFProduct2.setQty(1d);
+//					List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
+//					compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, SFProduct1NodeRef));			
+//					SFProduct2.getCompoListView().setCompoList(compoList2);
+//					
+//					nutList = new ArrayList<NutListDataItem>();
+//					NodeRef [] nuts = {nut10, nut3, nut5, nut14, nut9, nut1, nut26, nut2, nut17, nut8};
+//					for(NodeRef nut : nuts){
+//						nutList.add(new NutListDataItem(null, null, null, null, null, null, nut, null));
+//					}
+//					SFProduct2.setNutList(nutList);
+//					
+//					NodeRef productNodeRef =  alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
+//
+//					productService.formulate(productNodeRef);
+//									
+//					
+//					
+//					
+//					return  productNodeRef;
+//					
+//				}},false,true);
+//		 
+//		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+//				public NodeRef execute() throws Throwable {	
+//					
+//					ProductData formulatedSF2 = alfrescoRepository.findOne(SFProduct2NodeRef);
+//					
+//					String [] nutNames = {"nut1", "nut14", "nut3", "nut5", "nut17", "nut2", "nut26", "nut10", "nut8", "nut9"}; 
+//					int i = 0;
+//					
+//					for(String nutName : nutNames){
+//						logger.debug("nutName : " + nutName+" "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
+//						assertEquals(nutName, (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
+//						i++;
+//					}
+//		
+//			        return null;
+//			
+//				}},false,true);
+//	}
 	
 	/**
 	 * Test allergen list calculating.

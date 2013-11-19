@@ -104,19 +104,24 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 	// AG polyinsaturés
 
 	private void updateParents() {
-		NodeRef parent = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"Glucides\" ").get(0);
+		NodeRef parent = firstOrNull(beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"Glucides\" "));
 		List<NodeRef> childs = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND( @cm\\:name:\"Sucre\" OR @cm\\:name:\"Amidon\" OR @cm\\:name:\"Polyols totaux\") ");
 
 		updateParent(parent, childs);
 
-		parent = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"Lipides\" ").get(0);
+		parent = firstOrNull(beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"Lipides\" "));
 		childs = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND( @cm\\:name:\"AG saturés\" OR @cm\\:name:\"AG monoinsaturés\" OR @cm\\:name:\"AG polyinsaturés\") ");
 
 		updateParent(parent, childs);
 
 	}
 
+	private NodeRef firstOrNull(List<NodeRef> nodeRefs) {
+		return nodeRefs!=null && !nodeRefs.isEmpty() ? nodeRefs.get(0): null;
+	}
+
 	private void updateParent(NodeRef parent, List<NodeRef> childs) {
+		if(parent!=null && childs!=null){
 		List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
 		logger.info("Found " + parents.size() + " to check");
 
@@ -135,6 +140,6 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 			}
 
 		}
-
+		}
 	}
 }
