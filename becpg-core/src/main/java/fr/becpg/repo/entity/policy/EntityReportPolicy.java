@@ -69,13 +69,7 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 		onUpdateProduct(assocRef.getSourceRef());
 	}
 
-	private void onUpdateProduct(NodeRef entityNodeRef) {
-		if (nodeService.exists(entityNodeRef) && !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && isNotLocked(entityNodeRef)
-				&& !isVersionStoreNode(entityNodeRef)) {
-			queueNode(entityNodeRef);
-		}
-	}
-
+	
 	@Override
 	public void onUpdateProperties(NodeRef entityNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
@@ -106,6 +100,14 @@ public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServi
 		}
 	}
 
+	private void onUpdateProduct(NodeRef entityNodeRef) {
+		if (nodeService.exists(entityNodeRef) && !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) && isNotLocked(entityNodeRef)
+				&& !isVersionStoreNode(entityNodeRef)) {
+			queueNode(entityNodeRef);
+		}
+	}
+
+	
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 

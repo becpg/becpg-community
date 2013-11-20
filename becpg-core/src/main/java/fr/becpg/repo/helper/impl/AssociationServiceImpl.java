@@ -1,9 +1,11 @@
 package fr.becpg.repo.helper.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -23,7 +25,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 @Service
 public class AssociationServiceImpl extends AbstractBeCPGPolicy implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnCreateChildAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnDeleteChildAssociationPolicy,
-		NodeServicePolicies.OnDeleteNodePolicy {
+		NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
 
 	private static Log logger = LogFactory.getLog(AssociationServiceImpl.class);
 
@@ -47,7 +49,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 				} else if (!assocNodeRefs.contains(assocRef.getTargetRef())) {
 					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
 				} else {
-					dbTargetNodeRefs.add(assocRef.getTargetRef());// already in	// db
+					dbTargetNodeRefs.add(assocRef.getTargetRef());// already in
+																	// // db
 				}
 			}
 		}
@@ -61,7 +64,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 			}
 		}
 
-		removeCachedAssoc(assocCacheName(),nodeRef, qName);
+		removeCachedAssoc(assocCacheName(), nodeRef, qName);
 	}
 
 	@Override
@@ -81,8 +84,8 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		if (createAssoc && assocNodeRef != null) {
 			nodeService.createAssociation(nodeRef, assocNodeRef, qName);
 		}
-		
-		removeCachedAssoc(assocCacheName(),nodeRef, qName);
+
+		removeCachedAssoc(assocCacheName(), nodeRef, qName);
 
 	}
 
@@ -206,8 +209,10 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 				"onDeleteChildAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ContentModel.TYPE_CONTENT, new JavaBehaviour(this, "onDeleteNode"));
-
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ContentModel.TYPE_FOLDER, new JavaBehaviour(this, "onDeleteNode"));
+
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_CONTENT, new JavaBehaviour(this, "onCheckIn"));
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_FOLDER, new JavaBehaviour(this, "onCheckIn"));
 
 	}
 
@@ -248,7 +253,26 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public void onDeleteNode(ChildAssociationRef associationRef, boolean arg1) {
 		logger.debug("onDeleteNode");
+		// TODO test est appels onDeleteAssociation
+
 		removeCachedAssoc(childAssocCacheName(), associationRef.getParentRef(), associationRef.getTypeQName());
+	}
+
+	@Override
+	public void onCheckIn(NodeRef nodeRef) {
+		// Bad but not so often
+		for (String cacheName : Arrays.asList(assocCacheName(), childAssocCacheName())) {
+			for (String cacheKey : beCPGCacheService.getCacheKeys(cacheName)) {
+				if (cacheKey.startsWith(nodeRef.toString())) {
+					if(logger.isDebugEnabled()){
+						logger.debug("In checkin delete:"+cacheKey);
+					}
+					
+					beCPGCacheService.removeFromCache(cacheName, cacheKey);
+				}
+			}
+		}
+
 	}
 
 }

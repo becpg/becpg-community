@@ -196,6 +196,7 @@ public class BeCPGTestHelper {
 		rawMaterial.setName(name);
 		rawMaterial.setHierarchy1(RepoBaseTestCase.INSTANCE.HIERARCHY1_SEA_FOOD_REF);
 		rawMaterial.setHierarchy2(RepoBaseTestCase.INSTANCE.HIERARCHY2_FISH_REF);
+		
 
 		// Allergens
 		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();

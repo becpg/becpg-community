@@ -439,7 +439,8 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
     			entityService.classifyByHierarchy(productsFolder, rawMaterialNodeRef);
 
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				String expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish/";
+				String expected = "/app:company_home/cm:Products/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
+				
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				// Check out
@@ -457,7 +458,7 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				assertEquals("Check state new version", SystemState.ToValidate.toString(), nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE));
 
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				expected = "/app:company_home/cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish/";
+				expected = "/app:company_home/cm:Products/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				return null;
@@ -587,8 +588,11 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				
+				
+				
 				// check
 				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				
 				assertEquals("Assert 3", 3, targetNodeRefs.size());
 				
 				//Check out
