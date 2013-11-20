@@ -371,6 +371,19 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			nodeService.createNode(labelingPositionFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
+
+//		// Quality
+//		NodeRef qualityListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_QUALITY_LISTS);
+//
+//		NodeRef controlUnitsFolder = entitySystemService.getSystemEntityDataList(qualityListsFolder, RepoConsts.PATH_CONTROL_UNITS);
+//		String[] controlUnits = { "kcal/100g", "mg/100g", "µg/100g", "g/100g" };
+//		for (String controlUnit : controlUnits) {
+//			properties = new HashMap<QName, Serializable>();
+//			properties.put(ContentModel.PROP_NAME, controlUnit);
+//			nodeService.createNode(controlUnitsFolder, ContentModel.ASSOC_CONTAINS,
+//					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+//		}
+
 	}
 
 	private void initTasks() {
@@ -535,6 +548,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		rawMaterialData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(0), null));
 		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
 		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
+
 		alfrescoRepository.save(rawMaterialData);
 
 		NodeRef packMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_PACKAGINGMATERIAL);

@@ -30,11 +30,7 @@ public class EntityTplServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityTplServiceTest.class);
 
-	@Resource
-	private EntityService entityService;
 	
-	@Resource
-	private EntityTplService entityTplService;
 	
 	@Resource
 	private AlfrescoRepository<ProductData> alfrescoRepository;
