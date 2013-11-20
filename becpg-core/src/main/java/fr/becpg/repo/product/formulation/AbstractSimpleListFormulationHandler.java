@@ -1,8 +1,6 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +99,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		visitChildren(formulatedProduct, simpleListDataList);		
 		
 		//sort
-		sort(simpleListDataList);
+	//	sort(simpleListDataList);
 	}
 	
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
@@ -245,36 +243,36 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 		return null;		
 	}
-	
-	/**
-	 * Sort by name.
-	 *
-	 * @param costList the cost list
-	 * @return the list
-	 */
-	protected void sort(List<T> simpleList){
-			
-		Collections.sort(simpleList, new Comparator<T>(){
-        	
-            @Override
-			public int compare(T c1, T c2){
-            	
-            	String name1 = (String)nodeService.getProperty(c1.getCharactNodeRef(), ContentModel.PROP_NAME);
-            	String name2 = (String)nodeService.getProperty(c2.getCharactNodeRef(), ContentModel.PROP_NAME);
-            	
-            	// increase
-                return name1.compareTo(name2);                
-            }
-
-        });  
-		
-		int i=1;
-		for(T sl : simpleList){
-			sl.setSort(i);
-			i++;
-		}
-	}
-	
+//	
+//	/**
+//	 * Sort by name.
+//	 *
+//	 * @param costList the cost list
+//	 * @return the list
+//	 */
+//	protected void sort(List<T> simpleList){
+//			
+//		Collections.sort(simpleList, new Comparator<T>(){
+//        	
+//            @Override
+//			public int compare(T c1, T c2){
+//            	
+//            	String name1 = (String)nodeService.getProperty(c1.getCharactNodeRef(), ContentModel.PROP_NAME);
+//            	String name2 = (String)nodeService.getProperty(c2.getCharactNodeRef(), ContentModel.PROP_NAME);
+//            	
+//            	// increase
+//                return name1.compareTo(name2);                
+//            }
+//
+//        });  
+//		
+//		int i=1;
+//		for(T sl : simpleList){
+//			sl.setSort(i);
+//			i++;
+//		}
+//	}
+//	
 	/**
 	 * Copy missing item from template
 	 * @param formulatedProduct
