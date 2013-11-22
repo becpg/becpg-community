@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import org.alfresco.model.ContentModel;
@@ -78,7 +79,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
-	private Striped<Lock> stripedLocs = Striped.lazyWeakLock(64);
+	private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
 
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
@@ -128,9 +129,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
-
-		Lock lock = stripedLocs.get(entityNodeRef);
-	    lock.lock();
+		Lock lock  = stripedLocs.get(entityNodeRef);
+		lock.lock();	
 		try {
 			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 				@Override
@@ -139,7 +139,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 						@Override
 						public Object execute() {
 							try {
-
 								policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
 								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
@@ -168,6 +167,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			lock.unlock();
 		}
 	}
+	
 
 	private void generateReportImpl(NodeRef entityNodeRef) {
 

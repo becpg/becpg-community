@@ -49,8 +49,25 @@
 		<property name="transactionService" ref="transactionService" />
 	</bean>
 	
+	<!-- Thread pool for reports async generation -->
+	<bean id="reportAsyncThreadPool" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName">
+            <value>becpgReportAsyncAction</value>
+        </property>
+        <property name="corePoolSize">
+            <value>8</value>
+        </property>
+        <property name="maximumPoolSize">
+            <value>20</value>
+        </property>
+        <property name="threadPriority">
+            <value>1</value>
+        </property>
+    </bean>
+	
+	
 	<bean id="entityReportAsyncGenerator" class="fr.becpg.repo.report.entity.impl.EntityReportAsyncGeneratorImpl">
-		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
+		<property name="threadExecuter" ref="reportAsyncThreadPool" />
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>
 	
