@@ -398,6 +398,7 @@
 				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
 			</action>
 			
+		
 			<action id="reportTpl-update-permissions" type="javascript"
 				icon="document-manage-permissions" label="actions.reportTpl-update-permissions">
 				<param name="function">onActionReportTplUpdatePermissions</param>
@@ -437,6 +438,13 @@
 				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>		
+
+			<action id="entityTpl-wused" type="pagelink" icon="entity-wused" label="actions.entity.wused" >
+				 <param name="page">wused?assocName=assoc_bcpg_entityTplRef&amp;nodeRefs={node.nodeRef}</param>
+				 <evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
+				 <evaluator>evaluator.becpg.doclib.action.product</evaluator>
+			</action>
+
 
 		</actions>
 
@@ -487,7 +495,8 @@
 				<action index="107" id="entity-refresh-reports" />
 				<action index="108" id="entityTpl-synchronize-entities" />
 				<action index="109" id="entityTpl-formulate-entities" />
-            <action index="110" id="document-approve" icon="folder-approve" />
+				<action index="110" id="entityTpl-wused" />
+            <action index="111" id="document-approve" icon="folder-approve" />
             <action index="120" id="document-reject" icon="folder-reject" />
             <action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
             <action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
