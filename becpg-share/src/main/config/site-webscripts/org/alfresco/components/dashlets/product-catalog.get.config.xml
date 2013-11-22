@@ -5,4 +5,10 @@
       <filter type="ToValidate" />
       <filter type="favourites" />
    </filters>
+   <types>
+   	<type name="finishedProduct" />
+   	<type name="rawMaterial" />
+   	<type name="packagingMaterial" />
+   	<type name="product" />
+   </types>
 </config>

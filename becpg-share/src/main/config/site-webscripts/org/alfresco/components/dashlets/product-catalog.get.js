@@ -17,6 +17,22 @@ function getFilters()
    return filters;
 }
 
+function getTypes()
+{
+   var myConfig = new XML(config.script),
+      types = [];
+
+   for each (var xmlType in myConfig..type)
+   {
+      types.push(
+      {
+         name: xmlType.@name.toString(),
+         parameters: xmlType.@parameters.toString()
+      });
+   }
+   return types;
+}
+
 /* Max Items */
 function getMaxItems()
 {
@@ -29,7 +45,14 @@ function getMaxItems()
    }
    return parseInt(maxItems && maxItems.length > 0 ? maxItems : 25, 10);
 }
+var site = page.url.templateArgs.site;
+var prefs = "org.alfresco.share.product.catalog.dashlet";
 
-model.preferences = AlfrescoUtil.getPreferences("org.alfresco.share.product.catalog.dashlet");
+if(site!=null && site.length>0){
+   prefs+="."+site;
+}
+
+model.preferences = AlfrescoUtil.getPreferences(prefs);
 model.filters = getFilters();
+model.types = getTypes();
 model.maxItems = getMaxItems();

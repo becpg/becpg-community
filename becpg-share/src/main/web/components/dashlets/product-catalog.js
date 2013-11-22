@@ -17,7 +17,10 @@
    /**
     * Preferences
     */
-   var PREFERENCES_BECPGCATALOG_DASHLET = "org.alfresco.share.{type}.catalog.dashlet", PREFERENCES_BECPGCATALOG_DASHLET_FILTER = PREFERENCES_BECPGCATALOG_DASHLET + ".filter", PREFERENCES_BECPGCATALOG_DASHLET_VIEW = PREFERENCES_BECPGCATALOG_DASHLET + ".simpleView";
+   var PREFERENCES_BECPGCATALOG_DASHLET = "org.alfresco.share.product.catalog.dashlet{site}", 
+   PREFERENCES_BECPGCATALOG_DASHLET_FILTER = PREFERENCES_BECPGCATALOG_DASHLET + ".filter", 
+   PREFERENCES_BECPGCATALOG_DASHLET_VIEW = PREFERENCES_BECPGCATALOG_DASHLET + ".simpleView", 
+   PREFERENCES_BECPGCATALOG_DASHLET_TYPE = PREFERENCES_BECPGCATALOG_DASHLET + ".type";
 
    /**
     * Use the getDomId function to get unique names for global event handling
@@ -62,6 +65,16 @@
                            : this.options.validFilters[0];
                      this.widgets.filter.set("label", this.msg("filter." + filter));
                      this.widgets.filter.value = filter;
+
+                     this.widgets.type = Alfresco.util.createYUIButton(this, "types", this.onTypeChange, {
+                        type : "menu",
+                        menu : "types-menu",
+                        lazyloadmenu : false
+                     });
+
+                     // Select the preferred type in the ui
+                     this.widgets.type.set("label", this.msg("type." + this.options.catalogType));
+                     this.widgets.type.value = this.options.catalogType;
 
                      // Detailed/Simple List button
                      this.widgets.simpleDetailed = new YAHOO.widget.ButtonGroup(this.id + "-simpleDetailed");
@@ -144,8 +157,8 @@
                         if (oResponse.results && oResponse.results.length === 0) {
                            oResponse.results.unshift({
                               isInfo : true,
-                              title : me.msg("empty." + me.options.catalogType + ".title"),
-                              description : me.msg("empty." + me.options.catalogType + ".description")
+                              title : me.msg("empty.product.title"),
+                              description : me.msg("empty.product.description")
                            });
                         }
 
@@ -178,9 +191,9 @@
                    */
                   getWebscriptUrl : function BeCPGCatalog_getWebscriptUrl() {
                      if (Alfresco.constants.SITE !== null && Alfresco.constants.SITE.length > 0) {
-                        return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/" + this.options.catalogType + "/site/" + Alfresco.constants.SITE + "/documentLibrary?max=" + this.options.maxItems;
-                     } 
-                    return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/" + this.options.catalogType + "/node/alfresco/company/home?max=" + this.options.maxItems;
+                        return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/product/site/" + Alfresco.constants.SITE + "/documentLibrary?max=" + this.options.maxItems;
+                     }
+                     return Alfresco.constants.PROXY_URI + "slingshot/doclib/doclist/product/node/alfresco/company/home?max=" + this.options.maxItems;
                   },
 
                   /**
@@ -190,7 +203,7 @@
                    * @override
                    */
                   getParameters : function BeCPGCatalog_getParameters() {
-                     var parameters = "type=" + this.options.catalogType + "&filter=" + this.widgets.filter.value;
+                     var parameters = "type=" + this.widgets.type.value + "&filter=" + this.widgets.filter.value;
 
                      if (this.searchTerm !== null && this.searchTerm.length > 0) {
                         parameters += "&searchTerm=" + this.searchTerm;
@@ -213,9 +226,30 @@
                      if (menuItem) {
                         this.widgets.filter.set("label", menuItem.cfg.getProperty("text"));
                         this.widgets.filter.value = menuItem.value;
-
+                        
                         this.services.preferences.set(this.substitute(PREFERENCES_BECPGCATALOG_DASHLET_FILTER),
                               this.widgets.filter.value);
+
+                        var searchText = this.getSearchText();
+                        if (searchText.replace(/\*/g, "").length < 3) {
+                           this.searchTerm = null;
+                        } else {
+                           this.searchTerm = searchText;
+
+                        }
+
+                        this.reloadDataTable();
+                     }
+                  },
+
+                  onTypeChange : function BeCPGCatalog_onTypeChange(p_sType, p_aArgs) {
+                     var menuItem = p_aArgs[1];
+                     if (menuItem) {
+                        this.widgets.type.set("label", menuItem.cfg.getProperty("text"));
+                        this.widgets.type.value = menuItem.value;
+
+                        this.services.preferences.set(this.substitute(PREFERENCES_BECPGCATALOG_DASHLET_TYPE),
+                              this.widgets.type.value);
 
                         var searchText = this.getSearchText();
                         if (searchText.replace(/\*/g, "").length < 3) {
@@ -401,40 +435,33 @@
 
                      return html;
                   },
-                  
-                  onFavourite: function BeCPGCatalog_onFavourite(row)
-                  {
-                     var record = this.widgets.alfrescoDataTable.getRecord(row),
-                        file = record.getData(),
-                        nodeRef = file.nodeRef;
+
+                  onFavourite : function BeCPGCatalog_onFavourite(row) {
+                     var record = this.widgets.alfrescoDataTable.getRecord(row), file = record.getData(), nodeRef = file.nodeRef;
 
                      file.isFavourite = !file.isFavourite;
                      this.widgets.alfrescoDataTable.getDataTable().updateRow(record, file);
 
-                     var responseConfig =
-                     {
-                        failureCallback:
-                        {
-                           fn: function SimpleDocList_onFavourite_failure(event, p_oRow)
-                           {
+                     var responseConfig = {
+                        failureCallback : {
+                           fn : function SimpleDocList_onFavourite_failure(event, p_oRow) {
                               // Reset the flag to it's previous state
-                              var record = this.widgets.alfrescoDataTable.getRecord(p_oRow),
-                                 file = record.getData();
+                              var record = this.widgets.alfrescoDataTable.getRecord(p_oRow), file = record.getData();
 
                               file.isFavourite = !file.isFavourite;
                               this.widgets.alfrescoDataTable.getDataTable().updateRow(record, file);
-                              Alfresco.util.PopupManager.displayPrompt(
-                              {
-                                 text: this.msg("message.save.failure", file.displayName)
+                              Alfresco.util.PopupManager.displayPrompt({
+                                 text : this.msg("message.save.failure", file.displayName)
                               });
                            },
-                           scope: this,
-                           obj: row
+                           scope : this,
+                           obj : row
                         }
                      };
 
-                     this.services.preferences[file.isFavourite ? "add" : "remove"].call(this.services.preferences, Alfresco.service.Preferences.FAVOURITE_FOLDERS, nodeRef, responseConfig);
-                  } ,
+                     this.services.preferences[file.isFavourite ? "add" : "remove"].call(this.services.preferences,
+                           Alfresco.service.Preferences.FAVOURITE_FOLDERS, nodeRef, responseConfig);
+                  },
 
                   /**
                    * Search Handlers
@@ -536,9 +563,9 @@
                   },
 
                   substitute : function BeCPGCatalog_substitute(text) {
-
+                     
                      return YAHOO.lang.substitute(text, {
-                        type : this.options.catalogType
+                        site : Alfresco.constants.SITE !== null && Alfresco.constants.SITE.length > 0 ? "."+Alfresco.constants.SITE: ""
                      });
                   }
 
