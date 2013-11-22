@@ -24,6 +24,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -83,6 +84,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private List<PhysicoChemListDataItem> physicoChemList;
 	
 	private List<LabelClaimListDataItem> labelClaimList;
+	private List<ControlDefListDataItem> controlDefList;
+	
 	/*
 	 * View
 	 */
@@ -422,7 +425,16 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.labelClaimList = labelClaimList;
 	}
 	
-	
+	@DataList
+	@AlfQname(qname="qa:controlDefList")
+	public List<ControlDefListDataItem> getControlDefList() {
+		return controlDefList;
+	}
+
+	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
+		this.controlDefList = controlDefList;
+	}
+
 	@DataListView
 	@AlfQname(qname = "bcpg:ingLabelingList")
 	public LabelingListView getLabelingListView() {

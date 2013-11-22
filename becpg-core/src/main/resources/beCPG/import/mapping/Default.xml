@@ -125,4 +125,13 @@
 		</columns>
 	</mapping>
    -->
+   <mapping name="qa:nc">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="qa:claimOriginHierarchy1"  type="Hierarchy" attribute="qa:claimOriginHierarchy1"   />
+			<column id="qa:claimOriginHierarchy2"  type="Hierarchy" attribute="qa:claimOriginHierarchy2" parentLevel="qa:claimOriginHierarchy1" />
+		</columns>
+	</mapping>
 </mappings>

@@ -513,6 +513,12 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				packagingData.setBoxesPerPallet((Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
 			}			
 		}
+
+		// we want labeling template <labelingTemplate>...</labelingTemplate>
+        if (nodeService.hasAspect(dataItem.getNodeRef(), PackModel.ASPECT_LABELING)) {        
+            extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt);
+        }
+		
 		return partElt;
 	}
 	
