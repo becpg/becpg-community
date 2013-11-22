@@ -4,4 +4,5 @@
 	<url>/becpg/entity/compare/{store_type}/{store_id}/{id}/{versionLabel}/{Id}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
+	<transaction allow="readonly" >required</transaction>
 </webscript>
