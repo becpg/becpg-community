@@ -66,16 +66,10 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		}
 
 		Map<String, Object> props = new HashMap<String, Object>();
+		String assocName = associationName.toPrefixString(namespaceService);
+		
 		props.put(PROP_ACCESSRIGHT, true); // TODO
-		props.put(PROP_REVERSE_ASSOC, associationName.toPrefixString(namespaceService));
-
-		Iterator<String> it = metadataFields.iterator();
-		while (it.hasNext()) {
-			String propName = (String) it.next();
-			if (propName.equals(props.get(PROP_REVERSE_ASSOC))) {
-				it.remove();
-			}
-		}
+		props.put(PROP_REVERSE_ASSOC,assocName );
 
 		int pageSize = pagination.getPageSize();
 		int startIndex = (pagination.getPage() - 1) * pagination.getPageSize();
@@ -89,6 +83,8 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 
 		ret.setFullListSize(wUsedData.getSize());
+		
+		
 		return ret;
 
 	}
