@@ -220,7 +220,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		
 		
 	}
-
+	
+	
 	@Override
 	public PropertyFormats getPropertyFormats() {
 		return propertyFormats;

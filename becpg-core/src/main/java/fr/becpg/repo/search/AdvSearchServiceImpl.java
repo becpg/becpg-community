@@ -120,7 +120,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (datatype != null) {
 			ftsQuery = "TYPE:\"" + datatype + "\"" + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
 		} else {
-			ftsQuery += "AND -TYPE:\"cm:thumbnail\" " +
+			ftsQuery += " AND -TYPE:\"cm:thumbnail\" " +
 					"AND -TYPE:\"cm:failedThumbnail\" " +
 					"AND -TYPE:\"cm:rating\" " +
 					"AND -TYPE:\"bcpg:entityListItem\" " +
