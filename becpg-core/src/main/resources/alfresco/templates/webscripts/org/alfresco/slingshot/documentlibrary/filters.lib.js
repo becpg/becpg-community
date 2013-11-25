@@ -181,6 +181,8 @@ var Filters =
             break;
          case "Valid":
          case "ToValidate":
+         case "Archived":
+         case "Refused":
          	filterQuery += this.constructPathQuery(parsedArgs);
          	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
             filterParams.query = filterQuery + filterQueryDefaults;
