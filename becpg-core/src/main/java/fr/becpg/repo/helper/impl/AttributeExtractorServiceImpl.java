@@ -216,9 +216,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return AttributeExtractorServiceImpl.this;
 		}
 
-
-		
-		
 	}
 	
 	
