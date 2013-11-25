@@ -229,7 +229,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats) {
 
 		String value = null;
-
+		
 		if (v == null || propertyDef == null) {
 			return value;
 		}
@@ -322,13 +322,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				value = v.toString();
 			}
 		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
+			
 			if (v.equals(BeCPGModel.TYPE_COMPOLIST)) {
 				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_compoList.title");
 			} else if (v.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
-				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_packaging.title");
+				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_packagingList.title");
 			} else {
 				value = v.toString();
 			}
+			
 		}
 
 		else {
