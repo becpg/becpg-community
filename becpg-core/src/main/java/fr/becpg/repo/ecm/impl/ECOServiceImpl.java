@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -17,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -64,9 +66,14 @@ public class ECOServiceImpl implements ECOService {
 
 	private NodeService nodeService;
 	private CheckOutCheckInService checkOutCheckInService;
+	private TransactionService transactionService;
 
 	private ProductService productService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
 
 	public void setwUsedListService(WUsedListService wUsedListService) {
 		this.wUsedListService = wUsedListService;
@@ -91,16 +98,16 @@ public class ECOServiceImpl implements ECOService {
 	@Override
 	public void doSimulation(NodeRef ecoNodeRef) {
 		logger.debug("Run simulation");
-		doRun(ecoNodeRef, ECOState.Simulated);
+		doRun(ecoNodeRef, ECOState.Simulated, false);
 	}
 
 	@Override
-	public void apply(NodeRef ecoNodeRef) {
+	public void apply(NodeRef ecoNodeRef, boolean requireNewTx) {
 		logger.debug("Run apply");
-		doRun(ecoNodeRef, ECOState.Applied);
+		doRun(ecoNodeRef, ECOState.Applied,requireNewTx);
 	}
 
-	private void doRun(NodeRef ecoNodeRef, final ECOState state) {
+	private void doRun(NodeRef ecoNodeRef, final ECOState state,final boolean requireNewTx) {
 
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
@@ -114,7 +121,7 @@ public class ECOServiceImpl implements ECOService {
 				}
 
 				// Clear changeUnitList
-				resetTreatedWUseds(ecoData);
+				resetTreatedWUseds(ecoData,true);
 
 				// Reset simulation item
 				if (ECOState.Simulated.equals(state)) {
@@ -122,10 +129,15 @@ public class ECOServiceImpl implements ECOService {
 				}
 
 				// Visit Wused
-				visitChildrens(CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList()), ecoData, ECOState.Simulated.equals(state));
-
+				visitChildrens(CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList()), ecoData, ECOState.Simulated.equals(state),requireNewTx);
+	
 				// Change eco state
 				ecoData.setEcoState(state);
+				
+				
+				if(ECOState.Simulated.equals(state)){
+					resetTreatedWUseds(ecoData,false);
+				}
 
 				if (logger.isDebugEnabled()) {
 					watch.stop();
@@ -159,7 +171,8 @@ public class ECOServiceImpl implements ECOService {
 					List<NodeRef> sourceList = new ArrayList<>(replacementListDataItem.getSourceItems());
 
 					//
-					// TODO ici stocker le lien vers le replacementListDataItem dans parent pour usage après
+					// TODO ici stocker le lien vers le replacementListDataItem
+					// dans parent pour usage après
 					//
 					WUsedListDataItem parent = new WUsedListDataItem(null, null, null, true, null, sourceList);
 
@@ -232,11 +245,12 @@ public class ECOServiceImpl implements ECOService {
 					}
 				}
 			}
-			// TODO 
+			// TODO
 			// Ici les liens doivent être multiple cas 2 vers 1
-			// Les liens doivent être mis à jour ou supprimer lors de la création d'une version 
+			// Les liens doivent être mis à jour ou supprimer lors de la
+			// création d'une version
 			// sinon impossible de sauvegarder l'ECM
-			
+
 			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem(null, parent, dataListQName, true, /*
 																											 * kv
 																											 * .
@@ -257,25 +271,27 @@ public class ECOServiceImpl implements ECOService {
 	 * 
 	 * @param ecoNodeRef
 	 */
-	private void resetTreatedWUseds(ChangeOrderData ecoData) {
+	private void resetTreatedWUseds(ChangeOrderData ecoData, boolean full) {
 
 		for (ChangeUnitDataItem cul : ecoData.getChangeUnitList()) {
 
 			if (cul.getTreated()) {
 				cul.setTreated(Boolean.FALSE);
-				cul.setReqDetails(null);
-				cul.setReqType(null);
+				if(full){
+					cul.setReqDetails(null);
+					cul.setReqType(null);
+				}
 			}
 		}
 	}
 
-	private void visitChildrens(Composite<WUsedListDataItem> composite, ChangeOrderData ecoData, boolean isSimulation) {
-		for (Composite<WUsedListDataItem> component : composite.getChildren()) {
+	private void visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData,final boolean isSimulation, boolean requireNewTx) {
+		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
 			// Not First level
 			if (component.getData() != null && component.getData().getDepthLevel() > 1) {
 
-				ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(component.getData().getSourceItems().get(0));
+				final ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(component.getData().getSourceItems().get(0));
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get ChangeUnit for " + nodeService.getProperty(component.getData().getSourceItems().get(0), ContentModel.PROP_NAME));
@@ -288,8 +304,9 @@ public class ECOServiceImpl implements ECOService {
 
 				// We break if product treated
 				if (changeUnitDataItem != null && !changeUnitDataItem.getTreated()) {
-
-					// We test if all referring nodes are treated before apply
+					
+					// We test if all referring nodes are treated before
+					// apply
 					// to branch
 					if (component.getData().getDepthLevel() > 2 && shouldSkipCurrentBranch(ecoData, changeUnitDataItem)) {
 						if (logger.isDebugEnabled()) {
@@ -298,44 +315,61 @@ public class ECOServiceImpl implements ECOService {
 						break;
 					}
 
-					NodeRef productNodeRef = getProductToImpact(ecoData, changeUnitDataItem, isSimulation);
+					transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Void>() {
 
-					if (productNodeRef != null) {
+						@Override
+						public Void execute() throws Throwable {
 
-						ProductData productToFormulateData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+						
+							NodeRef productNodeRef = getProductToImpact(ecoData, changeUnitDataItem, isSimulation);
 
-						// Before formulate we create simulation List
-						createCalculatedCharactValues(ecoData, productToFormulateData);
+							if (productNodeRef != null) {
 
-						// Level 2
-						if (component.getData().getDepthLevel() == 2) {
-							applyReplacementList(ecoData, productToFormulateData);
-						} else {
-							// Level 3 OR more
-							applyImpactedProductsData(ecoData, changeUnitDataItem, productToFormulateData);
+								ProductData productToFormulateData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+
+								// Before formulate we create simulation List
+								createCalculatedCharactValues(ecoData, productToFormulateData);
+
+								// Level 2
+								if (component.getData().getDepthLevel() == 2) {
+									applyReplacementList(ecoData, productToFormulateData);
+								} else {
+									// Level 3 OR more
+									applyImpactedProductsData(ecoData, changeUnitDataItem, productToFormulateData);
+								}
+
+								formulate(productToFormulateData);
+
+								// update simulation List
+								updateCalculatedCharactValues(ecoData, productToFormulateData);
+
+								// check req
+								checkRequirements(changeUnitDataItem, productToFormulateData);
+
+								alfrescoRepository.save(productToFormulateData);
+
+							} else {
+								logger.warn("Product to impact is empty");
+							}
+							
+							changeUnitDataItem.setTreated(Boolean.TRUE);
+							// isTreated and save in DB
+							if(!isSimulation){
+								alfrescoRepository.save(changeUnitDataItem);
+							}
+							
+
+							return null;
 						}
 
-						formulate(productToFormulateData);
+					}, isSimulation, requireNewTx);
 
-						// update simulation List
-						updateCalculatedCharactValues(ecoData, productToFormulateData);
-
-						// check req
-						checkRequirements(changeUnitDataItem, productToFormulateData);
-
-						alfrescoRepository.save(productToFormulateData);
-
-					} else {
-						logger.warn("Product to impact is empty");
-					}
-					// isTreated and save in DB
-					changeUnitDataItem.setTreated(Boolean.TRUE);
 				}
 
 			}
 
 			if (!component.isLeaf()) {
-				visitChildrens((Composite<WUsedListDataItem>) component, ecoData, isSimulation);
+				visitChildrens((Composite<WUsedListDataItem>) component, ecoData, isSimulation, requireNewTx);
 			}
 
 		}
@@ -344,8 +378,9 @@ public class ECOServiceImpl implements ECOService {
 
 	private boolean shouldSkipCurrentBranch(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem) {
 
-		//TODO On doit également stopper la propagation si  !wulDataItem.getIsWUsedImpacted()
-		
+		// TODO On doit également stopper la propagation si
+		// !wulDataItem.getIsWUsedImpacted()
+
 		boolean skip = false;
 		for (WUsedListDataItem wulDataItem : ecoData.getWUsedList()) {
 			if (wulDataItem.getParent() != null && wulDataItem.getSourceItems().contains(changeUnitDataItem.getSourceItem())) {
@@ -362,8 +397,9 @@ public class ECOServiceImpl implements ECOService {
 
 	private void applyImpactedProductsData(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, ProductData product) {
 
-		//TODO On doit également stopper la propagation si  !wulDataItem.getIsWUsedImpacted()
-		
+		// TODO On doit également stopper la propagation si
+		// !wulDataItem.getIsWUsedImpacted()
+
 		for (WUsedListDataItem wulDataItem : ecoData.getWUsedList()) {
 			if (wulDataItem.getParent() != null && wulDataItem.getSourceItems().contains(changeUnitDataItem.getSourceItem())) {
 				ChangeUnitDataItem toApply = ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0));
@@ -401,7 +437,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@Deprecated
-	// On doit passer par wused pour faire ça en utilisants les liens multiples  
+	// On doit passer par wused pour faire ça en utilisants les liens multiples
 	// Et le premier lien vers la replacementList
 	//
 	private <T extends CompositionDataItem> void applyToList(ChangeOrderData ecoData, List<T> items) {
@@ -428,7 +464,7 @@ public class ECOServiceImpl implements ECOService {
 									CompositionDataItem compoListDataItem2 = (CompoListDataItem) iterator2.next();
 									if (replacementListDataItem.getSourceItems().get(i).equals(compoListDataItem2.getProduct())) {
 										apply = true;
-										//DELETE
+										// DELETE
 										toDelete.add(compoListDataItem2.getNodeRef());
 									}
 								}
@@ -488,6 +524,10 @@ public class ECOServiceImpl implements ECOService {
 				 */
 				if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 
+					if(changeUnitDataItem.getTargetItem()!=null){
+						return changeUnitDataItem.getTargetItem();
+					}
+					
 					VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
 
 					// checkout
@@ -502,11 +542,10 @@ public class ECOServiceImpl implements ECOService {
 
 					changeUnitDataItem.setTargetItem(targetNodeRef);
 
-					productToImpact = targetNodeRef;
+					return targetNodeRef;
 				}
 			}
-			//TODO mettre à jour les wUsedLink
-			
+			// TODO mettre à jour les wUsedLink
 		}
 
 		return productToImpact;
