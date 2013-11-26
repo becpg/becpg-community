@@ -7,11 +7,14 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
+
+import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -55,13 +58,27 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 			List<NodeRef> dataListNodeRefs = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nutList\" NOT ASPECT:\"bcpg:depthLevelAspect\" ");
 			logger.info("EntitySortableListPatch add sort in bcpg:entityListItem, size: " + dataListNodeRefs.size());
 
-			for (NodeRef dataListNodeRef : dataListNodeRefs) {
-				if (nodeService.exists(dataListNodeRef)) {
-					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(BeCPGModel.PROP_DEPTH_LEVEL, 1);
-					nodeService.addAspect(dataListNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, properties);
-				} else {
-					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
+			for (final List<NodeRef> subList : Lists.partition(dataListNodeRefs, 500)) {
+				try {
+					transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Void>() {
+
+						@Override
+						public Void execute() throws Throwable {
+							for (NodeRef dataListNodeRef : subList) {
+								if (nodeService.exists(dataListNodeRef)) {
+									Map<QName, Serializable> properties = new HashMap<>();
+									properties.put(BeCPGModel.PROP_DEPTH_LEVEL, 1);
+									nodeService.addAspect(dataListNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, properties);
+								} else {
+									logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
+								}
+							}
+							return null;
+						}
+
+					}, false, true);
+				} catch (Throwable e) {
+					logger.warn(e, e);
 				}
 			}
 
@@ -72,12 +89,12 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 			applySort("Energie kJ", i++);
 			applySort("Energie kcal", i++);
 			applySort("Lipides", i++);
-				applySort("AG saturés", i++);
-				applySort("AG monoinsaturés", i++);
-				applySort("AG polyinsaturés", i++);
+			applySort("AG saturés", i++);
+			applySort("AG monoinsaturés", i++);
+			applySort("AG polyinsaturés", i++);
 			applySort("Glucides", i++);
-				applySort("Sucres", i++);
-				applySort("Amidon", i++);
+			applySort("Sucres", i++);
+			applySort("Amidon", i++);
 			applySort("Polyols totaux", i++);
 			applySort("Fibres alimentaires", i++);
 			applySort("Iode", i++);
@@ -143,13 +160,25 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 	// AG monoinsaturés
 	// AG polyinsaturés
 
-	private void applySort(String nutName, int sort) {
-		NodeRef parent = firstOrNull(beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"" + nutName + "\" "));
-		if (parent != null) {
-			List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
-			for (NodeRef item : parents) {
-				nodeService.setProperty(item, BeCPGModel.PROP_SORT, sort);
-			}
+	private void applySort(final String nutName, final int sort) {
+		try {
+			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Void>() {
+
+				@Override
+				public Void execute() throws Throwable {
+					NodeRef parent = firstOrNull(beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nut\" AND +@cm\\:name:\"" + nutName + "\" "));
+					if (parent != null) {
+						List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
+						for (NodeRef item : parents) {
+							nodeService.setProperty(item, BeCPGModel.PROP_SORT, sort);
+						}
+					}
+					return null;
+				}
+
+			}, false, true);
+		} catch (Throwable e) {
+			logger.warn(e, e);
 		}
 	}
 
@@ -172,20 +201,35 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 
 	private void updateParent(NodeRef parent, List<NodeRef> childs) {
 		if (parent != null && childs != null) {
-			List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
+			final List<NodeRef> parents = associationService.getSourcesAssocs(parent, BeCPGModel.ASSOC_NUTLIST_NUT);
 			logger.info("Found " + parents.size() + " to check");
 
 			for (NodeRef child : childs) {
-				String nutName = (String) nodeService.getProperty(child, ContentModel.PROP_NAME);
+				final String nutName = (String) nodeService.getProperty(child, ContentModel.PROP_NAME);
 				List<NodeRef> items = associationService.getSourcesAssocs(child, BeCPGModel.ASSOC_NUTLIST_NUT);
 				logger.info("Look for nutList: " + nutName + " (" + items.size() + ")");
-				for (NodeRef check : parents) {
-					for (NodeRef item : items) {
-						if (nodeService.getPrimaryParent(item).getParentRef().equals((nodeService.getPrimaryParent(check)).getParentRef())) {
-							logger.info("Updating parent for nut" + nutName + " " + item + " with " + check);
-							nodeService.setProperty(item, BeCPGModel.PROP_PARENT_LEVEL, check);
-							nodeService.setProperty(item, BeCPGModel.PROP_DEPTH_LEVEL, 2);
-						}
+				for (final List<NodeRef> subList : Lists.partition(items, 100)) {
+					try {
+						transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Void>() {
+
+							@Override
+							public Void execute() throws Throwable {
+
+								for (NodeRef check : parents) {
+									for (NodeRef item : subList) {
+										if (nodeService.getPrimaryParent(item).getParentRef().equals((nodeService.getPrimaryParent(check)).getParentRef())) {
+											logger.info("Updating parent for nut" + nutName + " " + item + " with " + check);
+											nodeService.setProperty(item, BeCPGModel.PROP_PARENT_LEVEL, check);
+											nodeService.setProperty(item, BeCPGModel.PROP_DEPTH_LEVEL, 2);
+										}
+									}
+								}
+								return null;
+							}
+
+						}, false, true);
+					} catch (Throwable e) {
+						logger.warn(e, e);
 					}
 				}
 			}
