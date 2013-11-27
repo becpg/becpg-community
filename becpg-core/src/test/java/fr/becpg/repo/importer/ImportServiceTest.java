@@ -59,11 +59,6 @@ public class ImportServiceTest extends RepoBaseTestCase {
 	/** The PAT h_ products. */
 	private static String PATH_PRODUCTS = "Products";
 
-	/** The PAT h_ classi f_ folder. */
-	private static String PATH_CLASSIF_FOLDER_RM = "./cm:Products/cm:RawMaterial/cm:Sea_x0020_food/cm:Fish";
-
-	private static String PATH_CLASSIF_FOLDER_FP = "./cm:Products/cm:FinishedProduct/cm:Frozen/cm:Pizza";
-
 	private static String PATH_SITE_FOLDER = "./st:sites/cm:folder";
 
 	/** The logger. */

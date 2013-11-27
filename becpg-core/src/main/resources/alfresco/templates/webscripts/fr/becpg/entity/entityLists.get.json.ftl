@@ -55,6 +55,7 @@
    ],
    "entity" : {
          "nodeRef": "${entity.nodeRef}",
+         "parentNodeRef" : "${entity.parent.nodeRef}",
          "name": "${entity.name}",
          "userAccess":
          {

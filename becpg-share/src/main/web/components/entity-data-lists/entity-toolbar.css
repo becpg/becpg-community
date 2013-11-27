@@ -77,11 +77,6 @@ div.flat-button  span.yui-checkbox-button-checked {
    background: url(../images/job-success-16.png) no-repeat 4px 4px;
 }
 
-.datalist-toolbar .import span.first-child
-{
-   background: url(../images/publish-external-16.png) no-repeat 12px 4px;
-   padding-left: 24px;
-}
 
 .datalist-toolbar .onActionUp
 {
