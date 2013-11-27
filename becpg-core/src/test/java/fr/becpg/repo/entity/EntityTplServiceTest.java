@@ -63,8 +63,6 @@ public class EntityTplServiceTest extends RepoBaseTestCase {
 				rm1Data =  (RawMaterialData) alfrescoRepository.create(testFolderNodeRef, rm1Data);
 				
 				
-				System.out.println(rm1Data);
-				
 				assertTrue(rm1Data.getCostList()==null);
 				
 
@@ -74,6 +72,8 @@ public class EntityTplServiceTest extends RepoBaseTestCase {
 				costList.add(new CostListDataItem(null, null, null, null, costs.get(1), null));
 				rmTplData.setCostList(costList);
 				alfrescoRepository.save(rmTplData);
+				
+				assertEquals(2, rmTplData.getCostList().size());
 				
 				return rm1Data.getNodeRef();
 			}

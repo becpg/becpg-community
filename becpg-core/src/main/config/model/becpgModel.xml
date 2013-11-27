@@ -30,6 +30,7 @@
 		<constraint name="bcpg:systemState" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>Simulation</value>
 					<value>ToValidate</value>
 					<value>Valid</value>
 					<value>Refused</value>

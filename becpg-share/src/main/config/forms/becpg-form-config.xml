@@ -526,6 +526,7 @@
 			</form>
 			<form id="formulation">
             <field-visibility>
+            	<show id="cm:name" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
@@ -793,6 +794,33 @@
 
 				</appearance>
 			</form>
+			<form id="formulation">
+            <field-visibility>
+            	<show id="cm:name" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productUnit" />	
+					<show id="bcpg:netWeight" force="true" />				
+					<show id="bcpg:productDensity" />					
+					<show id="bcpg:productSpecifications" />			
+            </field-visibility>
+            <appearance>
+            	<field id="bcpg:productQty"  />
+					<field id="bcpg:productUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:netWeight"  />					
+					<field id="bcpg:productDensity" />		
+					<field id="bcpg:productSpecifications" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>												
+            </appearance>
+          </form>
 		</forms>
 	</config>
 
@@ -1014,6 +1042,11 @@
 					</field>
 
 				</appearance>
+			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
@@ -1986,6 +2019,16 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="rep:reportTpls" />				
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:productDensity" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 
@@ -2192,7 +2235,7 @@
 			</form>
 			<form id="formulation">
             <field-visibility>
-          	  <!-- formulation -->
+          	   <show id="cm:name" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
@@ -2426,6 +2469,33 @@
 
 				</appearance>
 			</form>
+		   <form id="formulation">
+            <field-visibility>
+          	   <show id="cm:name" />
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productUnit" />	
+					<show id="bcpg:netWeight" force="true" />				
+					<show id="bcpg:productDensity" />					
+					<show id="bcpg:productSpecifications" />			
+            </field-visibility>
+            <appearance>
+            	<field id="bcpg:productQty"  />
+					<field id="bcpg:productUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:netWeight"  />					
+					<field id="bcpg:productDensity" />		
+					<field id="bcpg:productSpecifications" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>												
+            </appearance>
+          </form>
 		</forms>
 	</config>
 

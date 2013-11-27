@@ -104,7 +104,6 @@
 				<subtype name="bcpg:physicoChemList" />
 			</type>
 
-
 			<type name="trx:transferTarget">
 				<subtype name="trx:fileTransferTarget" />
 			</type>
@@ -112,41 +111,35 @@
 
 
 	<indicators>
+		<indicator id="entity-simulation" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.entity.simulation</evaluator>
+		</indicator>
 		<indicator id="entity-tovalidate" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate</evaluator>
 		</indicator>
 		<indicator id="entity-valid" index="10">
 			<evaluator>evaluator.becpg.doclib.indicator.entity.valid</evaluator>
 		</indicator>
 		<indicator id="entity-refused" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.entity.refused
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.entity.refused</evaluator>
 		</indicator>
 		<indicator id="entity-archived" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.entity.archived
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.entity.archived</evaluator>
 		</indicator>
-
 		<indicator id="project-planned" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.planned
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.planned</evaluator>
 		</indicator>
 		<indicator id="project-inprogress" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.inprogress
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.inprogress</evaluator>
 		</indicator>
 		<indicator id="project-onhold" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.onhold
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.onhold</evaluator>
 		</indicator>
 		<indicator id="project-cancelled" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.cancelled
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.cancelled</evaluator>
 		</indicator>
 		<indicator id="project-completed" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.completed
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.completed</evaluator>
 		</indicator>
 	</indicators>
 

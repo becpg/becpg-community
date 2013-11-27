@@ -193,7 +193,7 @@ public class ECOServiceImpl implements ECOService {
 		}
 
 		// change state
-		ecoData.setEcoState(ECOState.Simulated);
+		ecoData.setEcoState(ECOState.WUsedCalculated);
 
 		alfrescoRepository.save(ecoData);
 

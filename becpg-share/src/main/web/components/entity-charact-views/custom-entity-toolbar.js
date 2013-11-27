@@ -355,7 +355,7 @@
 
                         var templateUrl = YAHOO.lang
                               .substitute(
-                                    Alfresco.constants.URL_SERVICECONTEXT + "components/form?bulkEdit=true&formId=formulation&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
+                                    Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=formulation&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
                                     {
                                        itemId : this.options.entityNodeRef
                                     });
@@ -373,106 +373,44 @@
                                     fn : function(p_form, p_dialog) {
                                        Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
                                              this.msg("label.product-metadata.title") ]);
-                                       if (Dom.get(p_dialog.id + "-form-bulkAction")) {
-                                          Dom.setStyle(p_dialog.id + "-form-bulkAction", 'display', 'none');
-                                      }
-
                                     },
                                     scope : this
                                  }
-                                 
+
                               }).show();
 
                      }
                   });
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         actionName : "import",
+         actionName : "rapid-link",
+         right : false,
          evaluate : function(asset, entity) {
             return asset.name !== null && (asset.name === "compoList") && entity != null && entity.userAccess.edit;
          },
-         fn : function(instance) {
-            var actionUrl = Alfresco.constants.PROXY_URI + "becpg/remote/import";
+         createWidget : function(containerDiv, instance) {
 
-            var doSetupFormsValidation = function FormulationView_onActionEntityImport_doSetupFormsValidation(form) {
+            var divEl = document.createElement("div");
 
-               // TODO form.addValidation(this.modules.entityImporter.id +
-               // "-entities-field", Alfresco.forms.validation.mandatory, null,
-               // "blur");
-               // form.setShowSubmitStateDynamically(true, false);
-            };
+            containerDiv.appendChild(divEl);
 
-            // Always create a new instance
-            this.modules.entityImporter = new Alfresco.module.SimpleDialog(this.id + "-entityImporter").setOptions({
-               width : "33em",
-               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-importer/entity-importer",
-               actionUrl : actionUrl,
-               validateOnSubmit : false,
-               doSetupFormsValidation : {
-                  fn : doSetupFormsValidation,
-                  scope : this
-               },
-               firstFocus : this.id + "-entityImporter-supplier-field",
-               doBeforeFormSubmit : {
-                  fn : function FormulationView_onActionEntityImport_doBeforeFormSubmit(form) {
+            Dom.setAttribute(divEl, "id", instance.id + "-rapidLink");
 
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.import.please-wait")
-                     });
+            Dom.addClass(divEl, "rapidLink");
+            
+            var dataListNodeRef = instance.datalistMeta.nodeRef != null ? instance.datalistMeta.nodeRef
+                  : instance.options.parentNodeRef;
 
-                  },
-                  scope : this
-               },
-               onSuccess : {
-                  fn : function FormulationView_onActionEntityImport_success(response) {
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.import.success")
-                     });
-                  },
-                  scope : this
-               },
-               onFailure : {
-                  fn : function FormulationView_onActionEntityImport_failure(response) {
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.import.failure")
-                     });
-                  },
-                  scope : this
-               }
+            var picker = new beCPG.component.RapidLinkToolbar(instance.id + "-rapidLink").setOptions({
+               dataListNodeRef : dataListNodeRef,
+               entity : instance.entity,
+               containerDiv : divEl,
+               siteId : instance.options.siteId
             });
-            this.modules.entityImporter.show();
+
+            return picker;
          }
       });
-
-      var refreshReports = function(scope, url) {
-         Alfresco.util.PopupManager.displayMessage({
-            text : scope.msg("message.generate-report.please-wait")
-         });
-
-         Alfresco.util.Ajax.request({
-            method : Alfresco.util.Ajax.GET,
-            url : Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + scope.options.entityNodeRef
-                  .replace(":/", "") + "/check-datalists",
-            successCallback : {
-               fn : function EntityDataListthis_onFinish_success(response) {
-                  Alfresco.util.PopupManager.displayMessage({
-                     text : scope.msg("message.generate-report.success")
-                  });
-                  window.location = url;
-               },
-               scope : scope
-            },
-            failureCallback : {
-               fn : function EntityDataListthis_onFinish_failure(response) {
-                  Alfresco.util.PopupManager.displayMessage({
-                     text : scope.msg("message.generate-report.failure")
-                  });
-               },
-               scope : scope
-            }
-         });
-
-      };
 
       YAHOO.Bubbling
             .fire(
@@ -506,6 +444,36 @@
                         return picker;
                      }
                   });
+
+      var refreshReports = function(scope, url) {
+         Alfresco.util.PopupManager.displayMessage({
+            text : scope.msg("message.generate-report.please-wait")
+         });
+
+         Alfresco.util.Ajax.request({
+            method : Alfresco.util.Ajax.GET,
+            url : Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + scope.options.entityNodeRef
+                  .replace(":/", "") + "/check-datalists",
+            successCallback : {
+               fn : function EntityDataListthis_onFinish_success(response) {
+                  Alfresco.util.PopupManager.displayMessage({
+                     text : scope.msg("message.generate-report.success")
+                  });
+                  window.location = url;
+               },
+               scope : scope
+            },
+            failureCallback : {
+               fn : function EntityDataListthis_onFinish_failure(response) {
+                  Alfresco.util.PopupManager.displayMessage({
+                     text : scope.msg("message.generate-report.failure")
+                  });
+               },
+               scope : scope
+            }
+         });
+
+      };
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "view-details",
@@ -609,7 +577,7 @@
                         })[0];
 
                         var PAGE_SIZE = 5000;
-                        
+
                         document.location.href = dt._getDataUrl(PAGE_SIZE).replace("/node?", "/node.csv?") + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
                               .stringify(dt._buildDataGridParams()));
 
