@@ -118,16 +118,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		
 		
 		if (datatype != null) {
-			ftsQuery = "TYPE:\"" + datatype + "\"" + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
-		} else {
-			ftsQuery += " AND -TYPE:\"cm:thumbnail\" " +
+			ftsQuery = "+TYPE:\"" + datatype + "\"" + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
+		} 
+		
+		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " +
 					"AND -TYPE:\"cm:failedThumbnail\" " +
 					"AND -TYPE:\"cm:rating\" " +
 					"AND -TYPE:\"bcpg:entityListItem\" " +
 					"AND -TYPE:\"systemfolder\" " +
 					"AND -TYPE:\"rep:report\"";
-		}
-		
 		
 		// extract data type for this search - advanced search query is type
 		// specific
@@ -198,9 +197,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 							// property name - convert to DD property name
 							// format
 							if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
-								propName = propName.replace("_", ":");
+								propName = "+"+propName.replace("_", ":");
 							} else {
-								propName = "@" + propName.replace("_", "\\:");
+								propName = "+@" + propName.replace("_", "\\:");
 							}
 
 							// special case for range packed properties
