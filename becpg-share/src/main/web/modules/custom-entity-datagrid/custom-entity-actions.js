@@ -163,17 +163,24 @@
       },
       
       onActionSimulate : function EntityDataGrid_onActionSimulate(p_items) {
-         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
+         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], me=this, nodeRefs = "";
 
+         for ( var i = 0, ii = items.length; i < ii; i++) {
+            if(nodeRefs.length>0){
+               nodeRefs+=",";
+            }
+            nodeRefs+=items[i].nodeRef;
+         }
+         
          Alfresco.util.Ajax.request({
             method : Alfresco.util.Ajax.POST,
-            url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems="+items.join(","),
+            url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems="+nodeRefs,
             successCallback : {
                fn : function(resp) {
                   if (resp.json) {
                      for ( var i = 0, ii = items.length; i < ii; i++) {
                         YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
-                           nodeRef : items[i]
+                           nodeRef : items[i].nodeRef
                         });
                      }
                   }
