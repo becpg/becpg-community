@@ -76,11 +76,14 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 			}
 		}
 		dataListNodeRefs = beCPGSearchService.luceneSearch(String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, encodedPath));
+		
+		
+		
 		for (NodeRef dataListNodeRef : dataListNodeRefs) {
 			if (nodeService.exists(dataListNodeRef)) {
 				logger.info("Change node type for " + nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME));
 				nodeService.setType(dataListNodeRef, BeCPGModel.TYPE_ING_TYPE_ITEM);
-
+				
 				nodeService.setProperty(nodeService.getPrimaryParent(dataListNodeRef).getParentRef(), DataListModel.PROP_DATALISTITEMTYPE,
 						BeCPGModel.TYPE_ING_TYPE_ITEM.toPrefixString(namespaceService));
 			} else {
