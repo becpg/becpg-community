@@ -18,6 +18,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
@@ -32,7 +33,7 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	private static final String PARAM_DATALISTITEMS = "dataListItems";
 
-	private AlfrescoRepository<CompoListDataItem> alfrescoRepository;
+	private AssociationService associationService;
 
 	private EntityListDAO entityListDAO;
 
@@ -41,8 +42,8 @@ public class SimulationWebScript extends AbstractWebScript {
 	private CopyService copyService;
 	
 	
-	public void setAlfrescoRepository(AlfrescoRepository<CompoListDataItem> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
@@ -79,23 +80,20 @@ public class SimulationWebScript extends AbstractWebScript {
 
 		if (!dataListItemsNodeRefs.isEmpty()) {
 			for (NodeRef dataListItem : dataListItemsNodeRefs) {
-				CompoListDataItem compoListDataItem = alfrescoRepository.findOne(dataListItem);
-				simulationNodeRef = createSimulationNodeRef(compoListDataItem.getProduct(), nodeService.getPrimaryParent(entityListDAO.getEntity(dataListItem)).getParentRef());
-				compoListDataItem.setProduct(simulationNodeRef);
-				alfrescoRepository.save(compoListDataItem);
+				
+				simulationNodeRef = createSimulationNodeRef(associationService.getTargetAssoc(dataListItem, BeCPGModel.ASSOC_COMPOLIST_PRODUCT), nodeService.getPrimaryParent(entityListDAO.getEntity(dataListItem)).getParentRef());
+				associationService.update(dataListItem, BeCPGModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
 
 			}
 		} else if (entityNodeRef != null) {
-			simulationNodeRef = createSimulationNodeRef(entityNodeRef, nodeService.getPrimaryParent(entityListDAO.getEntity(entityNodeRef)).getParentRef());
+			simulationNodeRef = createSimulationNodeRef(entityNodeRef, nodeService.getPrimaryParent(entityNodeRef).getParentRef());
 		}
 
 		try {
 			JSONObject ret = new JSONObject();
 
 			if (simulationNodeRef != null) {
-
 				ret.put("persistedObject", simulationNodeRef);
-
 			}
 
 			res.setContentType("application/json");
@@ -108,7 +106,7 @@ public class SimulationWebScript extends AbstractWebScript {
 	}
 
 	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
-		NodeRef simulationNodeRef = copyService.copy(entityNodeRef, parentRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+		NodeRef simulationNodeRef = copyService.copyAndRename(entityNodeRef, parentRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 		nodeService.setProperty(simulationNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 		return simulationNodeRef;
 	}

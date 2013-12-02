@@ -58,8 +58,12 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 			List<NodeRef> dataListNodeRefs = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:nutList\" NOT ASPECT:\"bcpg:depthLevelAspect\" ");
 			logger.info("EntitySortableListPatch add sort in bcpg:entityListItem, size: " + dataListNodeRefs.size());
 
-			for (final List<NodeRef> subList : Lists.partition(dataListNodeRefs, 500)) {
+			int i=0; 
+			List<List<NodeRef>> batches =  Lists.partition(dataListNodeRefs, 300);
+			for (final List<NodeRef> subList : batches) {
 				try {
+					i++;
+					logger.info("Batch "+i+" over " +batches.size());
 					transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Void>() {
 
 						@Override
@@ -82,7 +86,7 @@ public class NutParentLevelPatch extends AbstractBeCPGPatch {
 				}
 			}
 
-			int i = 1;
+			i = 1;
 			updateParents();
 			applySort("Energie kJ, étiquetage", i++);
 			applySort("Energie kcal, étiquetage", i++);
