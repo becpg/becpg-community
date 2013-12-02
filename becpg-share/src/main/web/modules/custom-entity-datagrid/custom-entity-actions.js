@@ -154,13 +154,45 @@
 
       },
 
-      onAddLabelingAspect : function EntityDataGrid_onActionShowDetails(p_items) {
+      onAddLabelingAspect : function EntityDataGrid_onAddLabelingAspect(p_items) {
          var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
          for ( var i = 0, ii = items.length; i < ii; i++) {
             this._manageAspect(items[i].nodeRef, "pack:labelingAspect");
          }
       },
+      
+      onActionSimulate : function EntityDataGrid_onActionSimulate(p_items) {
+         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
+
+         Alfresco.util.Ajax.request({
+            method : Alfresco.util.Ajax.POST,
+            url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems="+items.join(","),
+            successCallback : {
+               fn : function(resp) {
+                  if (resp.json) {
+                     for ( var i = 0, ii = items.length; i < ii; i++) {
+                        YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+                           nodeRef : items[i]
+                        });
+                     }
+                  }
+               },
+               scope : this
+            },
+            failureCallback : {
+               fn : function EntityDataGrid_onActionUp_refreshFailure(response) {
+                   Alfresco.util.PopupManager.displayMessage({
+                       text : me.msg("message.details.failure")
+                   });
+               },
+               scope : this
+            }
+         });
+         
+         
+      },
+      
 
       _manageAspect : function EntityDataGrid_manageAspect(itemNodeRef, aspect) {
          var itemUrl = itemNodeRef.replace(":/", ""), me = this;
