@@ -16,13 +16,7 @@ import fr.becpg.common.BeCPGException;
  */
 public interface EntityService {
 
-	/**
-	 * Check if the datalists have been modified after the modification of the entity
-	 * @return
-	 */
-	 boolean hasDataListModified(NodeRef nodeRef);
-	
-    
+	    
 	/**
 	 * Gets the image defined in the image folder of the entity
 	 *

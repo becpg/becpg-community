@@ -25,6 +25,7 @@
 			<property name="nodeService" ref="nodeService" />
 			<property name="beCPGCacheService" ref="beCPGCacheService" />
 			<property name="serviceRegistry" ref="ServiceRegistry"/>
+			<property name="entityReportService" ref="entityReportService"/>
     </bean>
     
     

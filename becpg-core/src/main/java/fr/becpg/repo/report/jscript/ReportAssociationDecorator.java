@@ -1,15 +1,11 @@
 package fr.becpg.repo.report.jscript;
 
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -22,42 +18,33 @@ import org.json.simple.JSONObject;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 
 public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAssociationDecorator {
 	private static Log logger = LogFactory.getLog(ReportAssociationDecorator.class);
 
 	private ReportTplService reportTplService;
-
-	private PreferenceService preferenceService;
-
-	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
-	private static final String PREF_REPORT_SUFFIX = ".view";
 	
-    private final static String CONTENT_DOWNLOAD_API_URL = "api/node/content/{0}/{1}/{2}/{3}";
+	private EntityReportService entityReportService;
+
+    private final static String CONTENT_DOWNLOAD_API_URL = "becpg/report/node/content/{0}/{1}/{2}/{3}?entityNodeRef={4}";
 
 	public void setReportTplService(ReportTplService reportTplService) {
 		this.reportTplService = reportTplService;
 	}
 
-	public void setPreferenceService(PreferenceService preferenceService) {
-		this.preferenceService = preferenceService;
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
 	}
+
+
 
 	@SuppressWarnings("unchecked")
 	public JSONAware decorate(QName propertyName, NodeRef nodeRef, List<NodeRef> assocs) {
 		JSONArray array = new JSONArray();
 
-		String username = AuthenticationUtil.getFullyAuthenticatedUser();
-		String typeName = nodeService.getType(nodeRef).toPrefixString(namespaceService).replace(":", "_");
-
-		Map<String, Serializable> preferences = preferenceService.getPreferences(username);
-
-		String reportName = (String) preferences.get(PREF_REPORT_PREFIX + typeName + PREF_REPORT_SUFFIX);
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Getting: " + reportName + " from preference for: " + username + " and type: " + typeName);
-		}
+		String reportName = entityReportService.getSelectedReportName(nodeRef);
 
 		for (NodeRef obj : assocs) {
 			if(permissionService.hasPermission(obj, "Read") == AccessStatus.ALLOWED){
@@ -90,7 +77,7 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 						            		obj.getStoreRef().getProtocol(),
 						            		obj.getStoreRef().getIdentifier(),
 						            		obj.getId(),
-						                    URLEncoder.encode(name,"UTF-8")});
+						                    URLEncoder.encode(name,"UTF-8"), nodeRef.toString()});
 
 						jsonObj.put("contentURL", contentURL);
 					} catch (UnsupportedEncodingException e) {

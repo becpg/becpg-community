@@ -445,35 +445,7 @@
                      }
                   });
 
-      var refreshReports = function(scope, url) {
-         Alfresco.util.PopupManager.displayMessage({
-            text : scope.msg("message.generate-report.please-wait")
-         });
-
-         Alfresco.util.Ajax.request({
-            method : Alfresco.util.Ajax.GET,
-            url : Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + scope.options.entityNodeRef
-                  .replace(":/", "") + "/check-datalists",
-            successCallback : {
-               fn : function EntityDataListthis_onFinish_success(response) {
-                  Alfresco.util.PopupManager.displayMessage({
-                     text : scope.msg("message.generate-report.success")
-                  });
-                  window.location = url;
-               },
-               scope : scope
-            },
-            failureCallback : {
-               fn : function EntityDataListthis_onFinish_failure(response) {
-                  Alfresco.util.PopupManager.displayMessage({
-                     text : scope.msg("message.generate-report.failure")
-                  });
-               },
-               scope : scope
-            }
-         });
-
-      };
+    
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          actionName : "view-details",
@@ -485,11 +457,8 @@
 
             var url = beCPG.util.entityDetailsURL(this.options.siteId, this.options.entityNodeRef, this.entity.type);
 
-            if (beCPG.util.isEntity(this.entity)) {
-               refreshReports(this, url);
-            } else {
-               window.location.href = url;
-            }
+            window.location.href = url;
+   
          }
 
       });
@@ -504,11 +473,7 @@
 
             var url = beCPG.util.entityDocumentsURL(this.options.siteId, this.entity.path, this.entity.name);
 
-            if (beCPG.util.isEntity(this.entity)) {
-               refreshReports(this, url);
-            } else {
-               window.location.href = url;
-            }
+            window.location.href = url;
 
          }
 
