@@ -1,7 +1,12 @@
 package fr.becpg.repo.report.entity.impl;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -15,19 +20,26 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.boolean_factor_return;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.json.simple.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -54,7 +66,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private static final String DEFAULT_EXTRACTOR = "default";
 	private static final String REPORT_NAME = "%s - %s";
 
+	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
+	private static final String PREF_REPORT_SUFFIX = ".view";
+
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
+
+	private NamespaceService namespaceService;
+
+	private PreferenceService preferenceService;
 
 	private NodeService nodeService;
 
@@ -126,10 +145,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	public void setPreferenceService(PreferenceService preferenceService) {
+		this.preferenceService = preferenceService;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
-		Lock lock  = stripedLocs.get(entityNodeRef);
-		lock.lock();	
+		Lock lock = stripedLocs.get(entityNodeRef);
+		lock.lock();
 		try {
 			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 				@Override
@@ -166,7 +193,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 			lock.unlock();
 		}
 	}
-	
 
 	private void generateReportImpl(NodeRef entityNodeRef) {
 
@@ -388,5 +414,69 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 
 		permissionService.setInheritParentPermissions(documentNodeRef, inheritParentPermissions);
+	}
+
+	@Override
+	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
+		// TODO
+		// test template date also
+		// and image data
+
+		Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+		Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+
+		return modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime();
+
+	}
+
+	@Override
+	public NodeRef getSelectedReport(NodeRef entityNodeRef) {
+
+		String reportName = getSelectedReportName( entityNodeRef);
+		
+		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
+
+		NodeRef ret = null;
+
+		for (NodeRef reportNodeRef : dbReports) {
+			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
+
+				String name = (String) this.nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+
+				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
+				if (reportTemplateNodeRef != null) {
+					String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
+					if (templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
+						templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
+					}
+
+					if ((Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)) {
+						ret = reportNodeRef;
+					}
+					if (templateName.equalsIgnoreCase(reportName)) {
+						return reportNodeRef;
+					}
+				}
+
+			}
+		}
+		return ret;
+	}
+	
+	@Override
+	public String getSelectedReportName(NodeRef entityNodeRef) {
+
+		String username = AuthenticationUtil.getFullyAuthenticatedUser();
+		String typeName = nodeService.getType(entityNodeRef).toPrefixString(namespaceService).replace(":", "_");
+
+		Map<String, Serializable> preferences = preferenceService.getPreferences(username);
+
+		String reportName = (String) preferences.get(PREF_REPORT_PREFIX + typeName + PREF_REPORT_SUFFIX);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting: " + reportName + " from preference for: " + username + " and type: " + typeName);
+		}
+		
+		return reportName;
 	}
 }

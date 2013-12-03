@@ -262,7 +262,7 @@
 					<value>min</value>
 					<value>°B</value>
 					<value>mosm/L</value>
-					<value>meq/kg</value>					
+					<value>meq/kg</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -398,6 +398,11 @@
 				<property name="bcpg:productState">
 					<type>d:text</type>
 					<default>ToValidate</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:systemState" />
 					</constraints>
@@ -478,6 +483,11 @@
 				<property name="bcpg:allergenType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:allergenType" />
 					</constraints>
@@ -521,7 +531,7 @@
 				</property>
 			</properties>
 		</type>
-		
+
 		<type name="bcpg:ingTypeItem">
 			<parent>bcpg:listValue</parent>
 			<mandatory-aspects>
@@ -529,7 +539,7 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
-		
+
 
 		<type name="bcpg:ing">
 			<parent>bcpg:charact</parent>
@@ -537,7 +547,7 @@
 				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
 				</property>
-			  <property name="bcpg:ingTypeV2">
+				<property name="bcpg:ingTypeV2">
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
 				</property>
@@ -559,6 +569,11 @@
 				<property name="bcpg:nutGroup">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
 					</constraints>
@@ -566,6 +581,11 @@
 				<property name="bcpg:nutType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:nutType" />
 					</constraints>
@@ -1101,6 +1121,11 @@
 				</property>
 				<property name="bcpg:lrType">
 					<type>d:text</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:lrTypes" />
 					</constraints>
@@ -1289,11 +1314,15 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
-				</property>				
+				</property>
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
 					</constraints>
@@ -1301,6 +1330,11 @@
 				<property name="bcpg:nutListMethod">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
@@ -1396,6 +1430,11 @@
 				<property name="bcpg:filReqType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -1471,6 +1510,11 @@
 				<property name="bcpg:rclReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -1557,6 +1601,11 @@
 			<properties>
 				<property name="bcpg:lclType">
 					<type>d:text</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:labelClaimTypes" />
 					</constraints>
@@ -1613,6 +1662,11 @@
 				</property>
 				<property name="bcpg:dynamicCharactColumn">
 					<type>d:text</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactColumns" />
 					</constraints>
@@ -1691,6 +1745,11 @@
 				</property>
 				<property name="bcpg:autoNumPrefix">
 					<type>d:text</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:autoNumPrefix" />
 					</constraints>
@@ -1703,6 +1762,11 @@
 			<properties>
 				<property name="bcpg:labelClaimType">
 					<type>d:text</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:labelClaimTypes" />
 					</constraints>
@@ -1764,7 +1828,7 @@
 				<property name="bcpg:productHierarchy2">
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
-				</property>				
+				</property>
 				<property name="bcpg:productQty">
 					<type>d:double</type>
 					<mandatory>true</mandatory>
@@ -2030,6 +2094,8 @@
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
+					<duplicate>false</duplicate>
+					<propagateTimestamps>true</propagateTimestamps>
 				</child-association>
 			</associations>
 		</aspect>
@@ -2146,6 +2212,7 @@
 						<many>true</many>
 					</target>
 					<duplicate>false</duplicate>
+					<propagateTimestamps>true</propagateTimestamps>
 				</child-association>
 			</associations>
 		</aspect>
@@ -2155,6 +2222,11 @@
 				<property name="bcpg:entityDataListState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="bcpg:entityDataListStates"></constraint>
 					</constraints>
@@ -2438,7 +2510,7 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 		<aspect name="bcpg:nutListServingAspect">
 			<properties>
 				<property name="bcpg:nutListValuePerServing">

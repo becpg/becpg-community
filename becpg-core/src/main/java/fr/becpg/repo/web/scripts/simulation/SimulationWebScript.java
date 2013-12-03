@@ -19,8 +19,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * 

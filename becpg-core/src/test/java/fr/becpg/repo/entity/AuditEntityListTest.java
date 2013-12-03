@@ -6,6 +6,7 @@ package fr.becpg.repo.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -28,67 +28,28 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.test.RepoBaseTestCase;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ProductReportServiceTest.
+ * The Class AuditEntityListTest.
  * 
- * @author querephi
+ * @author matthieu
  */
-public class EntityServiceTest extends RepoBaseTestCase {
+public class AuditEntityListTest extends RepoBaseTestCase {
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityServiceTest.class);
-
-	@Resource
-	private BehaviourFilter policyBehaviourFilter;
+	private static Log logger = LogFactory.getLog(AuditEntityListTest.class);
 
 	@Resource
 	private EntityListDAO entityListDAO;
 
-	@Resource
-	private EntityService entityService;	
-	
-	//force init repo (otherwise failed depending of previous tests)
-	protected boolean forceInit = true;
 
-	/** The sf node ref. */
-	private NodeRef sfNodeRef;
-
-
-	/**
-	 * Reset the property modified.
-	 */
-	private void resetModified() {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				Calendar cal = Calendar.getInstance();
-
-				policyBehaviourFilter.disableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
-				nodeService.setProperty(sfNodeRef, ContentModel.PROP_MODIFIED, cal.getTime());
-				policyBehaviourFilter.enableBehaviour(sfNodeRef, ContentModel.ASPECT_AUDITABLE);
-				return null;
-
-			}
-		}, false, true);
-
-	}
-
-	/**
-	 * Test is report up to date.
-	 * 
-	 * @throws InterruptedException
-	 *             the interrupted exception
-	 */
 	@Test
-	public void testHasDataListsModified() throws InterruptedException {
+	public void testDateModified() throws InterruptedException {
 
+		long timestamps = Calendar.getInstance().getTimeInMillis();
+		
 		logger.debug("testHasDataListsModified()");
 
 		// create product
-		sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
@@ -109,13 +70,19 @@ public class EntityServiceTest extends RepoBaseTestCase {
 		}, false, true);
 
 		// load SF and test it
+	
+		Date modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+
+		logger.info("Compare : "+timestamps+" "+modified.getTime());
+		assertTrue(timestamps<modified.getTime());
+		
+		timestamps = Calendar.getInstance().getTimeInMillis();
+
+		assertFalse(timestamps<modified.getTime());
+		
 		final SemiFinishedProductData sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
 
-		// reset
-		resetModified();
-
-		assertEquals("datalist has not been modified", false, entityService.hasDataListModified(sfNodeRef));
-
+		
 		// setProperty of allergen without changing anything => nothing changed
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -127,8 +94,10 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 			}
 		}, false, true);
+		
+		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
 
-		assertEquals("datalist has not been modified", false, entityService.hasDataListModified(sfNodeRef));
+		assertFalse(timestamps<modified.getTime());
 
 		// setProperty of allergen and change smth => modified
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -136,7 +105,7 @@ public class EntityServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
-				logger.debug("allergen prev value " + nodeService.getProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY));
+				logger.info("allergen prev value " + nodeService.getProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY));
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 
 				return null;
@@ -144,10 +113,14 @@ public class EntityServiceTest extends RepoBaseTestCase {
 			}
 		}, false, true);
 
-		assertEquals("datalist has been modified", true, entityService.hasDataListModified(sfNodeRef));
+		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+		logger.info("Compare : "+timestamps+" "+modified.getTime());
+		
+		assertTrue(timestamps<modified.getTime());
+		
+		timestamps = Calendar.getInstance().getTimeInMillis();
 
-		// reset
-		resetModified();
+		assertFalse(timestamps<modified.getTime());
 
 		// add an allergen
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -173,11 +146,14 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 			}
 		}, false, true);
+		
+		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
+		logger.info("Compare : "+timestamps+" "+modified.getTime());
+		assertTrue(timestamps<modified.getTime());
+		
+		timestamps = Calendar.getInstance().getTimeInMillis();
 
-		assertEquals("datalist has been modified", true, entityService.hasDataListModified(sfNodeRef));
-
-		// reset
-		resetModified();
+		assertFalse(timestamps<modified.getTime());
 
 		// remove an allergen
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -191,59 +167,16 @@ public class EntityServiceTest extends RepoBaseTestCase {
 
 			}
 		}, false, true);
+		
+		modified = (Date) nodeService.getProperty(sfNodeRef, ContentModel.PROP_MODIFIED);
 
-		assertEquals("datalist has been modified", true, entityService.hasDataListModified(sfNodeRef));
+		assertTrue(timestamps<modified.getTime());
+		
+		timestamps = Calendar.getInstance().getTimeInMillis();
+
+		assertFalse(timestamps<modified.getTime());
 
 	}
 	
-//	@Test
-//	public void testEntityFolder(){
-//		 Date start = new Date();
-//		
-//		// Create a product
-//		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-//			public NodeRef execute() throws Throwable {
-//
-//				return BeCPGTestHelper.createMultiLevelProduct(testFolderNodeRef, repoBaseTestCase);
-//			}
-//		}, false, true);
-//		
-//		Date startEffectivity = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
-//		assertNotNull(startEffectivity);
-//		assertTrue(start.getTime()<startEffectivity.getTime());
-//		
-//		// entityFolder check
-//		NodeRef parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
-//		QName parentEntityType = nodeService.getType(parentEntityNodeRef);
-//		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
-//		
-//		// compare names
-//		String entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
-//		String productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);
-//		assertEquals(entityFolderName, BeCPGTestHelper.PRODUCT_NAME);
-//		assertEquals(entityFolderName, productName);
-//		
-//		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-//			public NodeRef execute() throws Throwable {
-//
-//				return copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-//			}
-//		}, false, true);
-//		
-//		Date startEffectivity2 = (Date)nodeService.getProperty(sfNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
-//		assertNotNull(startEffectivity2);
-//		assertTrue(startEffectivity.getTime()<startEffectivity2.getTime());
-//		
-//		// entityFolder check
-//		parentEntityNodeRef = nodeService.getPrimaryParent(sfNodeRef).getParentRef();
-//		parentEntityType = nodeService.getType(parentEntityNodeRef);		
-//		assertTrue(parentEntityType.equals(BeCPGModel.TYPE_ENTITY_FOLDER));
-//
-//		// compare names
-//		entityFolderName = (String)nodeService.getProperty(parentEntityNodeRef, ContentModel.PROP_NAME);
-//		productName = (String)nodeService.getProperty(sfNodeRef, ContentModel.PROP_NAME);		
-//		assertNotSame(parentEntityNodeRef, BeCPGTestHelper.PRODUCT_NAME);
-//		assertTrue(entityFolderName.contains(productName));
-//	}
 	
 }

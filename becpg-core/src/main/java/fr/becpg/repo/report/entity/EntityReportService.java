@@ -4,29 +4,17 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface EntityReportService {
 
-	
+	void registerExtractor(String typeName, EntityReportExtractor extractor);
 
-	/**
-	 * Register new extractor
-	 * @param typeName
-	 * @param extractor
-	 */
-	public void registerExtractor(String typeName, EntityReportExtractor extractor);
-		
-	
-	/**
-	 * Generate Entity Report
-	 * @param entityNodeRef
-	 */
-	public void generateReport(NodeRef entityNodeRef);
+	void generateReport(NodeRef entityNodeRef);
 
-	
-	/**
-	 * Retrieve XML report dataSource 
-	 * @param entityNodeRef
-	 * @return
-	 */
-	public String getXmlReportDataSource(NodeRef entityNodeRef);
+	String getXmlReportDataSource(NodeRef entityNodeRef);
 
-	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef);	
+	void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef);
+
+	boolean shouldGenerateReport(NodeRef entityNodeRef);
+
+	NodeRef getSelectedReport(NodeRef entityNodeRef);
+
+	String getSelectedReportName(NodeRef entityNodeRef);
 }

@@ -29,6 +29,7 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
  * @author querephi, matthieu
  */
 @Service
+@Deprecated
 public class EntityReportPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy {
 
