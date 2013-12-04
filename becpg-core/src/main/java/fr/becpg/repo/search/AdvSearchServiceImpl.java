@@ -35,7 +35,6 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 
-
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 
 	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
@@ -197,9 +196,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 							// property name - convert to DD property name
 							// format
 							if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
-								propName = "+"+propName.replace("_", ":");
+								propName = propName.replace("_", ":");
 							} else {
-								propName = "+@" + propName.replace("_", "\\:");
+								propName = "@" + propName.replace("_", "\\:");
 							}
 
 							// special case for range packed properties
