@@ -44,6 +44,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private NodeRef hierarchy2;
 	private MLText legalName;
 	private String title;
+	private String erpCode;
 	private SystemState state = SystemState.ToValidate;
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
@@ -174,6 +175,16 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:erpCode")
+	public String getErpCode() {
+		return erpCode;
+	}
+
+	public void setErpCode(String erpCode) {
+		this.erpCode = erpCode;
 	}
 
 	@AlfProp
@@ -553,10 +564,19 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
-				+ ",  qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
-				+ ", servingSize=" + servingSize + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice
-				+ ", profitability=" + profitability + ", breakEven=" + breakEven + ", variants=" + variants + ", nodeRef=" + nodeRef + ", name=" + name + "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName
+				+ ", title=" + title + ", erpCode=" + erpCode + ", state=" + state + ", unit=" + unit + ", entityTpl="
+				+ entityTpl + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume="
+				+ yieldVolume + ", netWeight=" + netWeight + ", servingSize=" + servingSize + ", recipeQtyUsed="
+				+ recipeQtyUsed + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost
+				+ ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven
+				+ ", allergenList=" + allergenList + ", costList=" + costList + ", priceList=" + priceList
+				+ ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList + ", microbioList="
+				+ microbioList + ", physicoChemList=" + physicoChemList + ", labelClaimList=" + labelClaimList
+				+ ", controlDefList=" + controlDefList + ", compoListView=" + compoListView + ", processListView="
+				+ processListView + ", packagingListView=" + packagingListView + ", labelingListView="
+				+ labelingListView + ", variants=" + variants + ", productSpecifications=" + productSpecifications
+				+ "]";
 	}
 
 	@Override
@@ -566,9 +586,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
 		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
+		result = prime * result + ((controlDefList == null) ? 0 : controlDefList.hashCode());
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
 		result = prime * result + ((entityTpl == null) ? 0 : entityTpl.hashCode());
+		result = prime * result + ((erpCode == null) ? 0 : erpCode.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
 		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
@@ -583,8 +605,10 @@ public class ProductData extends AbstractEffectiveDataItem {
 		result = prime * result + ((physicoChemList == null) ? 0 : physicoChemList.hashCode());
 		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
 		result = prime * result + ((processListView == null) ? 0 : processListView.hashCode());
+		result = prime * result + ((productSpecifications == null) ? 0 : productSpecifications.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
 		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((tare == null) ? 0 : tare.hashCode());
@@ -623,6 +647,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!compoListView.equals(other.compoListView))
 			return false;
+		if (controlDefList == null) {
+			if (other.controlDefList != null)
+				return false;
+		} else if (!controlDefList.equals(other.controlDefList))
+			return false;
 		if (costList == null) {
 			if (other.costList != null)
 				return false;
@@ -637,6 +666,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 			if (other.entityTpl != null)
 				return false;
 		} else if (!entityTpl.equals(other.entityTpl))
+			return false;
+		if (erpCode == null) {
+			if (other.erpCode != null)
+				return false;
+		} else if (!erpCode.equals(other.erpCode))
 			return false;
 		if (hierarchy1 == null) {
 			if (other.hierarchy1 != null)
@@ -708,6 +742,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!processListView.equals(other.processListView))
 			return false;
+		if (productSpecifications == null) {
+			if (other.productSpecifications != null)
+				return false;
+		} else if (!productSpecifications.equals(other.productSpecifications))
+			return false;
 		if (profitability == null) {
 			if (other.profitability != null)
 				return false;
@@ -717,6 +756,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 			if (other.qty != null)
 				return false;
 		} else if (!qty.equals(other.qty))
+			return false;
+		if (recipeQtyUsed == null) {
+			if (other.recipeQtyUsed != null)
+				return false;
+		} else if (!recipeQtyUsed.equals(other.recipeQtyUsed))
 			return false;
 		if (servingSize == null) {
 			if (other.servingSize != null)
