@@ -384,16 +384,16 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		}
 	}
 	
-	//Check that image has not been update
+	//Check that images has not been update
 	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
-		Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
-			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-				if (fileInfo.getModifiedDate() == null || generatedReportDate == null || fileInfo.getModifiedDate().getTime() > generatedReportDate.getTime()) {
-					return true;
-				}
+			Date modified = (Date) nodeService.getProperty(imagesFolderNodeRef, ContentModel.PROP_MODIFIED);
+			Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+		    if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+				return true;
 			}
+			
 		}
 		
 		return false;

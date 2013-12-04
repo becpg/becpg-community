@@ -438,6 +438,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			}
 
+			logger.debug("Check from extractor");
 		
 			return retrieveExtractor(entityNodeRef).shouldGenerateReport(entityNodeRef);
 		} finally {

@@ -54,14 +54,11 @@ public abstract class AbstractBeCPGReportClient {
 	}
 
 
-
-
-
 	protected HttpClient getHttpClient() {
-	
 		
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		
+
 		if(userName!=null && password!=null){
 			UsernamePasswordCredentials creds = new UsernamePasswordCredentials(userName, password);
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
