@@ -393,6 +393,14 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		    if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
 				return true;
 			}
+		    for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
+		    	modified = fileInfo.getModifiedDate();
+		    	if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+					return true;
+				}		
+		    	
+		    }
+		    
 			
 		}
 		
