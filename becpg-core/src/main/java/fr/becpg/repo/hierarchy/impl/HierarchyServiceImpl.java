@@ -145,7 +145,8 @@ public class HierarchyServiceImpl implements HierarchyService{
 			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString()));
 		}
 		else if(!all){
-			query += LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL));
+			//query += LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL));
+			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_DEPTH_LEVEL, "1"));
 		}
 		
 		// value == * -> return all
