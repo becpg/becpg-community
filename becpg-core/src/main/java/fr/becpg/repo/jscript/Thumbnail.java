@@ -103,9 +103,9 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 			entityReportService.generateReport(sourceNode.getNodeRef());
 
 		}
-		if(reportNodeRef==null) {
-			reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
-		}
+		
+		reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+		
 
 		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) : sourceNode;
 
