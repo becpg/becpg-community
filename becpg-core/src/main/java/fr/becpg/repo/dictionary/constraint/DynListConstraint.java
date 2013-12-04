@@ -116,29 +116,31 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	@Override
 	public List<String> getAllowedValues() {
 
-		allowedValues = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>() {
-			@Override
-			public List<String> execute() throws Throwable {
-
-				List<String> allowedValues = new ArrayList<String>();
-
-				for (String path : paths) {
-					NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-					List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService), QName.createQName(constraintProp, namespaceService));
-					allowedValues.addAll(values);
+		if(allowedValues==null) {
+			allowedValues = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>() {
+				@Override
+				public List<String> execute() throws Throwable {
+	
+					List<String> allowedValues = new ArrayList<String>();
+	
+					for (String path : paths) {
+						NamespaceService namespaceService = serviceRegistry.getNamespaceService();
+						List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService), QName.createQName(constraintProp, namespaceService));
+						allowedValues.addAll(values);
+					}
+					
+					if (addEmptyValue != null && addEmptyValue && !allowedValues.contains("")) {
+						allowedValues.add("");
+					}
+	
+					return allowedValues;
+	
 				}
-				
-				if (addEmptyValue != null && addEmptyValue && !allowedValues.contains("")) {
-					allowedValues.add("");
-				}
-
-				return allowedValues;
-
+			}, true, false);
+	
+			if (allowedValues.isEmpty()) {
+				allowedValues.add(UNDIFINED_CONSTRAINT_VALUE);
 			}
-		}, true, false);
-
-		if (allowedValues.isEmpty()) {
-			allowedValues.add(UNDIFINED_CONSTRAINT_VALUE);
 		}
 
 		return allowedValues;

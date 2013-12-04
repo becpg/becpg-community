@@ -23,6 +23,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * @author querephi
  */
 @Service
+@Deprecated
 public class ReportWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(ReportWebScript.class);

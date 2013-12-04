@@ -1,9 +1,6 @@
 package fr.becpg.repo.report.entity.impl;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,7 +21,6 @@ import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -34,12 +30,9 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.boolean_factor_return;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.json.simple.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -156,6 +149,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
 		Lock lock = stripedLocs.get(entityNodeRef);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Acquire lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
+		}
 		lock.lock();
 		try {
 			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
@@ -191,6 +187,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 			AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
 		} finally {
 			lock.unlock();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Release lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
+			}
 		}
 	}
 
@@ -418,30 +417,48 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
-		// TODO
-		// test template date also
-		// and image data
+		StopWatch watch = new StopWatch();
+		if (logger.isDebugEnabled()) {
+			watch.start();
+		}
+		try {
+			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+			Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 
-		Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
-		Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+			if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+				return true;
+			}
 
-		return modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime();
+			List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
 
+			for (NodeRef tplNodeRef : tplsNodeRef) {
+				modified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);
+				if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+					return true;
+				}
+			}
+
+		
+			return retrieveExtractor(entityNodeRef).shouldGenerateReport(entityNodeRef);
+		} finally {
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("ShouldGenerateReport executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+			}
+		}
 	}
 
 	@Override
 	public NodeRef getSelectedReport(NodeRef entityNodeRef) {
 
-		String reportName = getSelectedReportName( entityNodeRef);
-		
+		String reportName = getSelectedReportName(entityNodeRef);
+
 		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
 
 		NodeRef ret = null;
 
 		for (NodeRef reportNodeRef : dbReports) {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
-
-				String name = (String) this.nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 
 				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
 				if (reportTemplateNodeRef != null) {
@@ -462,7 +479,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public String getSelectedReportName(NodeRef entityNodeRef) {
 
@@ -476,7 +493,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Getting: " + reportName + " from preference for: " + username + " and type: " + typeName);
 		}
-		
+
 		return reportName;
 	}
 }

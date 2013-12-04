@@ -35,6 +35,7 @@ import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
@@ -381,5 +382,20 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 			// TODO : manage prefix correctly
 			cDATAElt.addAttribute("prefix", prefixes.iterator().next());
 		}
+	}
+	
+	//Check that image has not been update
+	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
+		Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		if (imagesFolderNodeRef != null) {
+			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
+				if (fileInfo.getModifiedDate() == null || generatedReportDate == null || fileInfo.getModifiedDate().getTime() > generatedReportDate.getTime()) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }

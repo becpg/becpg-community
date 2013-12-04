@@ -4312,6 +4312,13 @@
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:packagingListPkgLevel" />
+					<show id="bcpg:packagingListIsMaster" />
+				</field-visibility>
+			</form>
+			
 			<form id="datagridWUsed">
 				<field-visibility>
 					<show id="bcpg:packagingListProduct" />
