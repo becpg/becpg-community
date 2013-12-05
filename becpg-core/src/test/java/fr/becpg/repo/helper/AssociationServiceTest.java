@@ -20,8 +20,6 @@ import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
@@ -37,9 +35,6 @@ import fr.becpg.test.RepoBaseTestCase;
  * @author querephi
  */
 public class AssociationServiceTest extends RepoBaseTestCase {
-
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(AssociationServiceTest.class);
 
 	@Resource
 	private CheckOutCheckInService checkOutCheckInService;

@@ -83,65 +83,6 @@ public class ProductVersionServiceTest extends RepoBaseTestCase {
 	private NodeRef rawMaterialNodeRef;
 	private NodeRef finishedProductNodeRef;
 
-//	/**
-//	 * Test create version.
-//	 */
-//	public void testCreateVersion() {
-//
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-//			@Override
-//			public NodeRef execute() throws Throwable {
-//
-//				logger.info("testCreateVersion");
-//
-//				NodeRef rawMaterialNodeRef = createRawMaterial(testFolderNodeRef, "MP test report");
-//
-//				Version vRawMaterialNodeRefV0_1 = versionService.createVersion(rawMaterialNodeRef, null);
-//
-//				logger.debug("version: " + vRawMaterialNodeRefV0_1.getVersionLabel());
-//				assertEquals("0.1", vRawMaterialNodeRefV0_1.getVersionLabel());
-//
-//				NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
-//				assertNotNull("Has list container", listContainerNodeRef);
-//
-//				Collection<QName> dataLists = productDictionaryService.getDataLists();
-//				ProductData rawMaterial = productDAO.find(rawMaterialNodeRef, dataLists);
-//				NodeRef evRawMaterialNodeRefV0_1 = entityVersionService.getEntityVersion(vRawMaterialNodeRefV0_1);
-//				assertNotNull(evRawMaterialNodeRefV0_1);
-//				ProductData vRawMaterial = productDAO.find(evRawMaterialNodeRefV0_1, dataLists);
-//
-//				assertEquals("Check costs size", rawMaterial.getCostList().size(), vRawMaterial.getCostList().size());
-//
-//				for (int i = 0; i < rawMaterial.getCostList().size(); i++) {
-//					CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
-//					CostListDataItem vCostListDataItem = vRawMaterial.getCostList().get(i);
-//
-//					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
-//					assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
-//					assertEquals("Check cost value", costListDataItem.getValue(), vCostListDataItem.getValue());
-//					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
-//				}
-//
-//				Version vRawMaterialNodeRefV0_2 = versionService.createVersion(rawMaterialNodeRef, null);
-//				logger.debug("version: " + vRawMaterialNodeRefV0_2.getVersionLabel());
-//				assertEquals("0.2", vRawMaterialNodeRefV0_2.getVersionLabel());
-//
-//				Map<String, Serializable> properties = new HashMap<String, Serializable>();
-//				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
-//				Version vRawMaterialNodeRefV0_3 = versionService.createVersion(rawMaterialNodeRef, properties);
-//				assertEquals("0.3", vRawMaterialNodeRefV0_3.getVersionLabel());
-//
-//				properties.clear();
-//				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-//				Version vRawMaterialNodeRefV1_0 = versionService.createVersion(rawMaterialNodeRef, properties);
-//				assertEquals("1.0", vRawMaterialNodeRefV1_0.getVersionLabel());
-//
-//				return null;
-//
-//			}
-//		}, false, true);
-//
-//	}
 
 	/**
 	 * Test check out check in.

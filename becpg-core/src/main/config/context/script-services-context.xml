@@ -39,7 +39,6 @@
     
     <bean id="jsonConversionComponent" class="fr.becpg.repo.jscript.app.BeCPGJSONConversionComponent" parent="baseJsonConversionComponent">
     	<property name="associationService" ref="associationService"/>
-    	<property name="dictionaryService" ref="dictionaryService"/>
     </bean>
     
     <bean id="baseAssocDecorator" abstract="true" init-method="init">

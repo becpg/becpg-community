@@ -38,11 +38,8 @@
 	<bean id="entityCheckOutCheckInServicePolicy"
 		class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"
 		parent="abstractBeCPGPolicy">
-		<property name="authenticationService" ref="authenticationService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="permissionService" ref="permissionService" />
 		<property name="entityVersionService" ref="entityVersionService" />
-		<property name="entityService" ref="entityService" />
+		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator"/>
 	</bean>
 
 	<!-- Entity Datalist Policies -->

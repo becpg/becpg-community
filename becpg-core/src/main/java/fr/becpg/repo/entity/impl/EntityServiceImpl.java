@@ -328,74 +328,7 @@ public class EntityServiceImpl implements EntityService {
 
 	@Override
 	public void copyFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef) {
-
-		// // copy files
-		// if(targetNodeRef != null && sourceNodeRef != null){
-		// for (FileInfo file : fileFolderService.list(sourceNodeRef)) {
-		//
-		// if(nodeService.getChildByName(targetNodeRef,
-		// ContentModel.ASSOC_CONTAINS, file.getName()) == null){
-		//
-		// logger.debug("copy file: " + file.getName() + " sourceNodeRef: " +
-		// sourceNodeRef + " targetNodeRef: " + targetNodeRef);
-		// NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(),
-		// targetNodeRef, ContentModel.ASSOC_CONTAINS,
-		// ContentModel.ASSOC_CHILDREN, true);
-		// nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME,
-		// file.getName());
-		//
-		// // initialize permissions according to template
-		// if (file.isFolder() && nodeService.hasAspect(file.getNodeRef(),
-		// BeCPGModel.ASPECT_PERMISSIONS_TPL)) {
-		//
-		// QName[] permissionGroupAssociations = {
-		// BeCPGModel.ASSOC_PERMISSIONS_TPL_CONSUMER_GROUPS,
-		// BeCPGModel.ASSOC_PERMISSIONS_TPL_EDITOR_GROUPS,
-		// BeCPGModel.ASSOC_PERMISSIONS_TPL_CONTRIBUTOR_GROUPS,
-		// BeCPGModel.ASSOC_PERMISSIONS_TPL_COLLABORATOR_GROUPS };
-		// String[] permissionNames = { RepoConsts.PERMISSION_CONSUMER,
-		// RepoConsts.PERMISSION_EDITOR, RepoConsts.PERMISSION_CONTRIBUTOR,
-		// RepoConsts.PERMISSION_COLLABORATOR };
-		//
-		// for (int cnt = 0; cnt < permissionGroupAssociations.length; cnt++) {
-		//
-		// QName permissionGroupAssociation = permissionGroupAssociations[cnt];
-		// String permissionName = permissionNames[cnt];
-		// List<AssociationRef> groups =
-		// nodeService.getTargetAssocs(file.getNodeRef(),
-		// permissionGroupAssociation);
-		//
-		// if (groups!=null && !groups.isEmpty()) {
-		// for (AssociationRef assocRef : groups) {
-		// NodeRef groupNodeRef = assocRef.getTargetRef();
-		// String authorityName = (String) nodeService.getProperty(groupNodeRef,
-		// ContentModel.PROP_AUTHORITY_NAME);
-		// logger.debug("add permission, folder: " + file.getName() +
-		// " authority: " + authorityName + " perm: " + permissionName);
-		// permissionService.setPermission(subFolderNodeRef, authorityName,
-		// permissionName, true);
-		//
-		// // remove association
-		// nodeService.removeAssociation(subFolderNodeRef, groupNodeRef,
-		// permissionGroupAssociation);
-		// }
-		// }
-		// }
-		//
-		// // TODO
-		// // remove aspect when every association has been
-		// // removed
-		// // nodeService.removeAspect(subFolderNodeRef,
-		// // BeCPGModel.ASPECT_PERMISSIONS_TPL);
-		//
-		// //TODO also copy datalist
-		// }
-		// }
-		// }
-		// }
-
 		copyOrMoveFiles(sourceNodeRef, targetNodeRef, true);
-
 	}
 
 	@Override
@@ -423,6 +356,8 @@ public class EntityServiceImpl implements EntityService {
 						// copy/move files that are not report
 						if (!ReportModel.TYPE_REPORT.equals(file2.getType())) {
 							copyOrMoveFile(file2, documentsFolderNodeRef, isCopy);
+						} else {
+							logger.debug("Ignore "+file2.getName()+" for copy");
 						}
 					}
 				} else {
