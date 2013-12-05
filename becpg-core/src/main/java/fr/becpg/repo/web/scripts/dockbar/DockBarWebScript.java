@@ -115,8 +115,10 @@ public class DockBarWebScript extends AbstractWebScript {
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Entity NodeRef empty : " + productNodeRef != null);
-				logger.debug("Subclass of product :"
-							+ serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT));
+				if(productNodeRef!=null) {
+					logger.debug("Subclass of product :"
+								+ serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT));
+				}
 				logger.debug("Element.size(): " + elements.size());
 			}
 

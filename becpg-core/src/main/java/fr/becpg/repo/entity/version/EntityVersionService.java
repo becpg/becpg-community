@@ -60,5 +60,9 @@ public interface EntityVersionService {
 	public NodeRef createVersion(NodeRef nodeRef, Map<String,Serializable> versionProperties);
 	
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef);
+
+	public NodeRef checkOutDataListAndFiles(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
+
+	public void cancelCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 	
 }

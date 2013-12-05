@@ -91,4 +91,9 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 		return array;
 	}
 
+	@Override
+	public QName getAspect() {
+		return ReportModel.ASPECT_REPORT_ENTITY;
+	}
+
 }

@@ -18,4 +18,6 @@ public interface AssociationDecorator {
 
 	JSONAware decorate(QName qName, NodeRef nodeRef, List<NodeRef> targetAssocs);
 
+	QName getAspect();
+
 }

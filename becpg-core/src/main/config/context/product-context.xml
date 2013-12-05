@@ -40,13 +40,6 @@
 	</bean>
 	
 	
-	<!-- Product Listeners -->
-	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">
-		<property name="nodeService" ref="nodeService" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-	</bean>
-	
 	<!-- Workflow -->
 	<bean id="ValidateProduct" parent="baseJavaDelegate"
 		class="fr.becpg.repo.workflow.activiti.product.ValidateProduct">

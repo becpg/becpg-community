@@ -394,22 +394,9 @@
 
 		<type name="bcpg:product">
 			<parent>bcpg:entityV2</parent>
-			<properties>
-				<property name="bcpg:productState">
-					<type>d:text</type>
-					<default>ToValidate</default>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
-					<constraints>
-						<constraint ref="bcpg:systemState" />
-					</constraints>
-				</property>
-			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:productStateAspect</aspect>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:productAspect</aspect>
 				<aspect>bcpg:entityTplRefAspect</aspect>
@@ -1812,6 +1799,23 @@
 			<properties>
 				<property name="bcpg:legalName">
 					<type>d:mltext</type>
+				</property>
+			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:productStateAspect">
+			<properties>
+				<property name="bcpg:productState">
+					<type>d:text</type>
+					<default>ToValidate</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
 				</property>
 			</properties>
 		</aspect>

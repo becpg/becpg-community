@@ -116,8 +116,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 
-		logger.debug("SortableListPolicy.onAddAspect: " + aspect);		
-		
 		// try to avoid to do two times the work, otherwise it duplicates nodeRef in lucene index !!!
 		if (nodeService.exists(nodeRef) && nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null && 
 				(aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) || 

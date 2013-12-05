@@ -54,25 +54,26 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 	public void doInit() {
 
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.TYPE_VARIANT, new JavaBehaviour(this, "onCopyComplete"));
+
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.ASPECT_ENTITY_VARIANT, new JavaBehaviour(this, "onCheckOut"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.ASPECT_ENTITY_VARIANT, new JavaBehaviour(this, "beforeCheckIn"));
 
 	}
 
-	public static String VARIANTS_TO_UPDATE;
-
 	@Override
-	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
+	public void onCopyComplete(QName classRef, final NodeRef sourceNodeRef, final NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 		logger.debug("On copy complete Variant");
 
-		
 		NodeRef entityNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
-		
+
 		String query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLIST_VARIANT));
 		query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_VARIANTIDS, sourceNodeRef.toString(), LuceneHelper.Operator.AND);
-		
-		logger.debug("Search for"+query);
-		
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Entity of destination " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " " + entityNodeRef);
+			logger.debug("Search for" + query);
+		}
+
 		List<NodeRef> result = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
 
 		if (!result.isEmpty()) {
@@ -80,8 +81,9 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				logger.debug("Found " + result.size() + " entityDataList to check for update variant");
 			}
 			for (NodeRef entityDataListNodeRef : result) {
-
-				if (entityNodeRef.equals(entityListDAO.getEntity(entityDataListNodeRef))) {
+				NodeRef tmpNodeRef = entityListDAO.getEntity(entityDataListNodeRef);
+				logger.debug("Check is " + tmpNodeRef + "is entity");
+				if (entityNodeRef.equals(tmpNodeRef)) {
 					logger.debug("Ok for replacement");
 					@SuppressWarnings("unchecked")
 					List<NodeRef> variantIds = (List<NodeRef>) nodeService.getProperty(entityDataListNodeRef, BeCPGModel.PROP_VARIANTIDS);
@@ -92,6 +94,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				}
 			}
 		}
+
 	}
 
 	@Override
@@ -111,9 +114,12 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 						logger.debug("Copy variant " + nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME) + " to workingCopy ");
 					}
 
-					copyService.copy(childAssoc.getChildRef(), workingCopyNodeRef,BeCPGModel.ASSOC_VARIANTS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
-	                        QName.createValidLocalName((String)nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME))),false);
+					copyService.copyAndRename(
+							childAssoc.getChildRef(),
+							workingCopyNodeRef,
+							BeCPGModel.ASSOC_VARIANTS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									QName.createValidLocalName((String) nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME))), false);
 				}
 
 				return null;
@@ -130,7 +136,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			public Void doWork() throws Exception {
 				NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
 
-				if(origNodeRef!=null){
+				if (origNodeRef != null) {
 					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
 					for (ChildAssociationRef childAssoc : childAssocs) {
 						nodeService.removeChildAssociation(childAssoc);
@@ -142,6 +148,9 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			}
 		}, AuthenticationUtil.getSystemUserName());
 	}
+	
+	//TODO on checkout update variant
+	
 
 	private NodeRef getCheckedOut(NodeRef nodeRef) {
 		NodeRef original = null;
@@ -158,7 +167,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			} else {
 				logger.warn("No working copy link found");
 			}
-		} else{
+		} else {
 			logger.warn("Node is not a working copy");
 		}
 

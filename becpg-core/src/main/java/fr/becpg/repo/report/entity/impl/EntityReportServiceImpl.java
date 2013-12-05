@@ -160,23 +160,23 @@ public class EntityReportServiceImpl implements EntityReportService {
 					RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
 						@Override
 						public Object execute() {
-							try {
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+							if (nodeService.exists(entityNodeRef)) {
+								try {
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 
-								if (logger.isDebugEnabled()) {
-									logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-								}
+									if (logger.isDebugEnabled()) {
+										logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+									}
 
-								if (nodeService.exists(entityNodeRef)) {
 									generateReportImpl(entityNodeRef);
-								}
 
-							} finally {
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								} finally {
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								}
 							}
 							return null;
 						}
@@ -348,12 +348,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		// #417 : refresh reports assoc (delete obsolete reports if we rename
 		// entity)
-		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
-		for (NodeRef dbReport : dbReports) {
-			if (!newReports.contains(dbReport)) {
-				logger.debug("delete old report: " + dbReport);
-				nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(dbReport);
+		if(!nodeService.hasAspect(entityNodeRef,ContentModel.ASPECT_WORKING_COPY)) {
+			List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
+			for (NodeRef dbReport : dbReports) {
+				if (!newReports.contains(dbReport)) {
+					logger.debug("delete old report: " + dbReport);
+					nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(dbReport);
+				}
 			}
 		}
 		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
@@ -439,7 +441,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 
 			logger.debug("Check from extractor");
-		
+
 			return retrieveExtractor(entityNodeRef).shouldGenerateReport(entityNodeRef);
 		} finally {
 			if (logger.isDebugEnabled()) {

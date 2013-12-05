@@ -212,6 +212,9 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="entityService" ref="entityService" />
 		<property name="versionService" ref="versionService" />
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="permissionService" ref="permissionService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 	</bean>
 
 	<!-- Migrator -->
