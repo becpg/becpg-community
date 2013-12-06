@@ -10,7 +10,7 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 
 @AlfType
-@AlfQname(qname = "bcpg:labelList")
+@AlfQname(qname = "pack:labelingList")
 public class LabelListDataItem extends AbstractManualDataItem {
 
 	private NodeRef label;
