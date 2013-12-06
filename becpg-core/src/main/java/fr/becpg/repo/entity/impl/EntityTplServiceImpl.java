@@ -224,6 +224,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		logger.debug("synchronizeEntities");
 		RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
+		
+		logger.debug("entityTpl"+ entityTpl.toString());
+		
 		final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
 
 		if (datalistsTpl != null && !datalistsTpl.isEmpty()) {
@@ -239,12 +242,15 @@ public class EntityTplServiceImpl implements EntityTplService {
 					NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
 					for (QName dataListQName : datalistsTpl.keySet()) {
+						
 
 						@SuppressWarnings("unchecked")
 						List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+	
 						boolean update = false;
 
 						for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
+							
 
 							Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
@@ -262,6 +268,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 								}
 
 								if (!isFound) {
+									
 									dataListItemTpl.setNodeRef(null);
 									dataListItemTpl.setParentNodeRef(null);
 

@@ -418,6 +418,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="permissionService" ref="permissionService" />
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">

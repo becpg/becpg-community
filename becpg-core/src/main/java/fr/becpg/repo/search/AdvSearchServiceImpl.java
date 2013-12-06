@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
@@ -34,24 +36,29 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 @Service
 public class AdvSearchServiceImpl implements AdvSearchService {
 
-
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 
 	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
 
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
 
+	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
+
+	private static final String CRITERIA_PACK_LABEL_POSITION = "prop_pack_llPosition";
+
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	private NodeService nodeService;
-	
+
 	private DictionaryService dictionaryService;
-	
+
 	private NamespaceService namespaceService;
 
 	private BeCPGSearchService beCPGSearchService;
 
 	private PermissionService permissionService;
+
+	private EntityListDAO entityListDAO;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -73,6 +80,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
 	@Override
 	public List<NodeRef> queryAdvSearch(String searchQuery, String language, QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxResults) {
 
@@ -81,7 +92,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 
 		searchQuery = appendCriteria(searchQuery, language, criteria);
-		
+
 		boolean isAssocSearch = isAssocSearch(criteria);
 
 		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, isAssocSearch ? RepoConsts.MAX_RESULTS_UNLIMITED : maxResults, language);
@@ -91,11 +102,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 			if (datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)) {
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
-			}			
+				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
+			}
 		}
-		
+
 		nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
-		
+
 		return nodes;
 	}
 
@@ -104,44 +116,36 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		String ftsQuery = "";
 		// Simple keyword search and tag specific search
 		if (term != null && term.length() != 0) {
-			ftsQuery =  term + " ";
+			ftsQuery = term + " ";
 		} else if (tag != null && tag.length() != 0) {
-			ftsQuery = "TAG:"+ tag ;
+			ftsQuery = "TAG:" + tag;
 		}
 
 		// we processed the search terms, so suffix the PATH query
-	
+
 		if (!isRepo) {
-			ftsQuery = LuceneHelper.getSiteSearchPath(siteId, containerId) + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
-		}	
-		
-		
+			ftsQuery = LuceneHelper.getSiteSearchPath(siteId, containerId) + (ftsQuery.length() > 0 ? " AND (" + ftsQuery + ")" : "");
+		}
+
 		if (datatype != null) {
-			ftsQuery = "+TYPE:\"" + datatype + "\"" + (ftsQuery.length() >0 ? " AND ("+ftsQuery+")" : "");
-		} 
-		
-		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " +
-					"AND -TYPE:\"cm:failedThumbnail\" " +
-					"AND -TYPE:\"cm:rating\" " +
-					"AND -TYPE:\"bcpg:entityListItem\" " +
-					"AND -TYPE:\"systemfolder\" " +
-					"AND -TYPE:\"rep:report\"";
-		
+			ftsQuery = "+TYPE:\"" + datatype + "\"" + (ftsQuery.length() > 0 ? " AND (" + ftsQuery + ")" : "");
+		}
+
+		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " + "AND -TYPE:\"cm:failedThumbnail\" " + "AND -TYPE:\"cm:rating\" " + "AND -TYPE:\"bcpg:entityListItem\" "
+				+ "AND -TYPE:\"systemfolder\" " + "AND -TYPE:\"rep:report\"";
+
 		// extract data type for this search - advanced search query is type
 		// specific
-		ftsQuery += " AND -ASPECT:\"ecm:simulationEntityAspect\""
-				    +" AND -ASPECT:\"bcpg:hiddenFolder\""
-				    +" AND -ASPECT:\"bcpg:compositeVersion\""
-				    +" AND -ASPECT:\"bcpg:entityTplAspect\"";
+		ftsQuery += " AND -ASPECT:\"ecm:simulationEntityAspect\"" + " AND -ASPECT:\"bcpg:hiddenFolder\"" + " AND -ASPECT:\"bcpg:compositeVersion\""
+				+ " AND -ASPECT:\"bcpg:entityTplAspect\"";
 
-		if(logger.isDebugEnabled()){
-			logger.debug(" build searchQueryByProperties :" +ftsQuery );
+		if (logger.isDebugEnabled()) {
+			logger.debug(" build searchQueryByProperties :" + ftsQuery);
 		}
-		
+
 		return ftsQuery;
 	}
 
-	
 	private boolean isAssocSearch(Map<String, String> criteria) {
 		if (criteria != null) {
 			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
@@ -258,7 +262,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								if (maxLevel != null) {
 									formQuery += operator + propName + ":[0 TO " + propValue + "]";
 								}
-							} else {
+							} else if (!propName.contains("llPosition") ){
 
 								// beCPG - bug fix : pb with operator -, AND, OR
 								// poivre AND -noir
@@ -295,19 +299,19 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private String getHierarchyQuery(String propName, String hierachyName) {
 		List<NodeRef> nodes = null;
-		
-		if(!NodeRef.isNodeRef(hierachyName)){
-			
-			//TODO use HierarchyService, not generic
-			String searchQuery = String.format(
-					RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
-					LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/" + BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)
-							), hierachyName);
-	
+
+		if (!NodeRef.isNodeRef(hierachyName)) {
+
+			// TODO use HierarchyService, not generic
+			String searchQuery = String
+					.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
+							LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
+									+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)), hierachyName);
+
 			if (propName.endsWith("productHierarchy1")) {
-				searchQuery += " +ISNULL:bcpg\\:parentLevel";
+				searchQuery += " +@bcpg\\:depthLevel:1";
 			}
-			nodes =  beCPGSearchService.luceneSearch(searchQuery, -1);
+			nodes = beCPGSearchService.luceneSearch(searchQuery, -1);
 		}
 		String ret = "";
 		if (nodes != null && !nodes.isEmpty()) {
@@ -315,7 +319,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				ret += " \"" + node.toString() + "\"";
 			}
 		} else {
-			ret += "\""+hierachyName+"\"";
+			ret += "\"" + hierachyName + "\"";
 		}
 
 		return ret;
@@ -346,7 +350,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
 					// TODO : should be generic
-					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)) {
+					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN) && !key.equals(CRITERIA_PACK_LABEL)) {
 
 						assocName = assocName.substring(0, assocName.length() - 6);
 						assocName = assocName.replace("_", ":");
@@ -498,19 +502,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 				if (isWorkSpaceProtocol(ingListItem)) {
 
-					NodeRef ingListNodeRef = nodeService.getPrimaryParent(ingListItem).getParentRef();
-					if (ingListNodeRef != null) {
+					NodeRef rootNodeRef = entityListDAO.getEntity(ingListItem);
 
-						NodeRef dataListsNodeRef = nodeService.getPrimaryParent(ingListNodeRef).getParentRef();
-						if (dataListsNodeRef != null) {
-
-							NodeRef rootNodeRef = nodeService.getPrimaryParent(dataListsNodeRef).getParentRef();
-
-							// we don't display history version
-							if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-								productNodeRefs.add(rootNodeRef);
-							}
-						}
+					// we don't display history version
+					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+						productNodeRefs.add(rootNodeRef);
 					}
 				}
 			}
@@ -523,6 +519,90 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (logger.isDebugEnabled()) {
 			watch.stop();
 			logger.debug("getSearchNodesByIngListCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
+
+		return nodes;
+	}
+
+	/**
+	 * Take in account criteria on ing list criteria
+	 * 
+	 * @return
+	 */
+	private List<NodeRef> getSearchNodesByLabelingCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
+
+		List<NodeRef> labelingListItems = null;
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		if(criteria.containsKey(CRITERIA_PACK_LABEL)) {
+
+			String propValue = criteria.get(CRITERIA_PACK_LABEL);
+
+			// criteria on label
+			if (!propValue.isEmpty()) {
+
+				NodeRef nodeRef = new NodeRef(propValue);
+
+				if (nodeService.exists(nodeRef)) {
+
+					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PackModel.ASSOC_LL_LABEL);
+					labelingListItems = new ArrayList<NodeRef>(assocRefs.size());
+
+					
+					for (AssociationRef assocRef : assocRefs) {
+
+						NodeRef n = assocRef.getSourceRef();
+						if (isWorkSpaceProtocol(n)) {
+
+							if(criteria.containsKey(CRITERIA_PACK_LABEL_POSITION)
+									&& !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
+
+								
+								if(criteria.get(CRITERIA_PACK_LABEL_POSITION).equals("\""+nodeService.getProperty(n, PackModel.PROP_LL_POSITION)+"\"")) {	
+									labelingListItems.add(n);
+								}
+							} else {
+							
+								labelingListItems.add(n);
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		// determine the product WUsed of the ing list items
+		if (labelingListItems != null) {
+
+			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
+			for (NodeRef labelingListItem : labelingListItems) {
+
+				if (isWorkSpaceProtocol(labelingListItem)) {
+
+					NodeRef rootNodeRef = entityListDAO.getEntity(labelingListItem);
+
+					// we don't display history version
+					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+						productNodeRefs.add(rootNodeRef);
+					}
+
+				}
+			}
+
+			if (productNodeRefs != null) {
+				nodes.retainAll(productNodeRefs);
+			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("getSearchNodesByLabelingCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
 
 		return nodes;

@@ -4,13 +4,16 @@
 package fr.becpg.repo.dictionary.constraint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintException;
@@ -59,7 +62,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private Boolean addEmptyValue = null;
 
-	private List<String> allowedValues;
+	private Map<String,List<String>> allowedValues = new HashMap<>();
 
 	public void setPath(List<String> paths) {
 
@@ -115,9 +118,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	@Override
 	public List<String> getAllowedValues() {
-
-		if(allowedValues==null) {
-			allowedValues = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>() {
+		
+		
+		if(allowedValues.get(TenantUtil.getCurrentDomain())==null) {
+			allowedValues.put(TenantUtil.getCurrentDomain(),   serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>() {
 				@Override
 				public List<String> execute() throws Throwable {
 	
@@ -136,14 +140,14 @@ public class DynListConstraint extends ListOfValuesConstraint {
 					return allowedValues;
 	
 				}
-			}, true, false);
+			}, true, false));
 	
-			if (allowedValues.isEmpty()) {
-				allowedValues.add(UNDIFINED_CONSTRAINT_VALUE);
+			if (allowedValues.get(TenantUtil.getCurrentDomain()).isEmpty()) {
+				allowedValues.get(TenantUtil.getCurrentDomain()).add(UNDIFINED_CONSTRAINT_VALUE);
 			}
 		}
 
-		return allowedValues;
+		return allowedValues.get(TenantUtil.getCurrentDomain());
 
 	}
 
@@ -160,11 +164,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			throw new ConstraintException(ERR_NON_STRING, value);
 		}
 
-		if (allowedValues == null) {
-			getAllowedValues();
-		}
 
-		if (!allowedValues.contains(valueStr)) {
+		if (!getAllowedValues().contains(valueStr)) {
 			throw new ConstraintException(ERR_INVALID_VALUE, value);
 		}
 

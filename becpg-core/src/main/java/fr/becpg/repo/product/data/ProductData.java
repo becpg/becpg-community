@@ -80,10 +80,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private List<IngListDataItem> ingList;
 	private List<NutListDataItem> nutList;
 	private List<OrganoListDataItem> organoList;
-
 	private List<MicrobioListDataItem> microbioList;
 	private List<PhysicoChemListDataItem> physicoChemList;
-	
 	private List<LabelClaimListDataItem> labelClaimList;
 	private List<ControlDefListDataItem> controlDefList;
 	
