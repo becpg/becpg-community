@@ -5921,6 +5921,17 @@
 		</forms>
 	</config>
 
+	<config evaluator="aspect" condition="bcpg:docLinkedEntitiesAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:docLinkedEntities" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
 	<config evaluator="aspect" condition="bcpg:supplierAspect">
 		<forms>
 			<form>

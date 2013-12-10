@@ -101,4 +101,7 @@ public interface EntityService {
 	     * @param entityNodeRef the entity node ref
 	     */
 	 void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef);
+
+
+     NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef);
 }

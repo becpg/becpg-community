@@ -202,7 +202,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				// calculate children
 				qty += calculateQtyUsed(component);
 			}else{
-				qty += FormulationHelper.getQtyInKg(component.getData()) * FormulationHelper.getYield(component.getData()) / 100;					
+				Double qtyInKg =  FormulationHelper.getQtyInKg(component.getData());
+				if(qtyInKg!=null) {
+					qty += qtyInKg * FormulationHelper.getYield(component.getData()) / 100;				
+				}
 			}
 		}
 		return qty;

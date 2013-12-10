@@ -256,8 +256,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return documentName;
 	}
 
+	@Deprecated //Use entityService instead
 	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName) {
-
+		
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
 		if (documentsFolderNodeRef == null) {
