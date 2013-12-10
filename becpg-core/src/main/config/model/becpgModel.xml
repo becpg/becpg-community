@@ -2221,6 +2221,22 @@
 			</associations>
 		</aspect>
 
+		<aspect name="bcpg:docLinkedEntitiesAspect">
+			<associations>
+				<association name="bcpg:docLinkedEntities">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
 		<aspect name="bcpg:entityDataListStateAspect">
 			<properties>
 				<property name="bcpg:entityDataListState">

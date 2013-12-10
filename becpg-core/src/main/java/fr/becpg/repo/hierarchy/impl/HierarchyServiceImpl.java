@@ -106,6 +106,8 @@ public class HierarchyServiceImpl implements HierarchyService{
 		properties.put(BeCPGModel.PROP_LKV_VALUE, hierachy);
 		if (parentHierachy != null) {
 			properties.put(BeCPGModel.PROP_PARENT_LEVEL, parentHierachy);
+		} else {
+			properties.put(BeCPGModel.PROP_DEPTH_LEVEL, 1);
 		}
 
 		NodeRef entityNodeRef = nodeService.getChildByName(dataListNodeRef, ContentModel.ASSOC_CONTAINS, hierachy);
@@ -166,7 +168,6 @@ public class HierarchyServiceImpl implements HierarchyService{
 		path.append("./cm:"+RepoConsts.PATH_PRODUCTS);
 		 
 		appendNamePath(path, hierarchyNodeRef);
-		
 		
 		return path.toString();
 	}

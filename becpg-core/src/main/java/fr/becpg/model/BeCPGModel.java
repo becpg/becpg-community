@@ -720,5 +720,9 @@ public interface BeCPGModel {
 	
 	QName PROP_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
 
+	QName ASPECT_DOC_LINKED_ENTITIES = QName.createQName(BECPG_URI, "docLinkedEntitiesAspect");
+	
+	QName ASSOC_DOC_LINKED_ENTITIES = QName.createQName(BECPG_URI, "docLinkedEntities");
+	
 
 }

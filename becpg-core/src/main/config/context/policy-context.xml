@@ -5,8 +5,7 @@
 
 	<!-- Entity Policies -->
 
-	<bean id="abstractBeCPGPolicy" abstract="true"
-		class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init">
+	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="nodeService" ref="nodeService" />
@@ -14,59 +13,53 @@
 	</bean>
 
 
-	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy"
-		parent="abstractBeCPGPolicy">
+	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" parent="abstractBeCPGPolicy">
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 
-	<bean id="entityTplRefAspectPolicy" class="fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy"
-		init-method="init" parent="abstractBeCPGPolicy">
+	<bean id="docLinkedEntitiesPolicy" class="fr.becpg.repo.entity.policy.DocLinkedEntitiesPolicy" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
-		<property name="associationService" ref="associationService"/>
+	</bean>
+
+
+	<bean id="entityTplRefAspectPolicy" class="fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
+		<property name="entityService" ref="entityService" />
+		<property name="associationService" ref="associationService" />
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
-	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy"
-		init-method="init" parent="abstractBeCPGPolicy">
+	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
-		<property name="associationService" ref="associationService"/>
+		<property name="associationService" ref="associationService" />
 	</bean>
 
-	<bean id="entityCheckOutCheckInServicePolicy"
-		class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"
-		parent="abstractBeCPGPolicy">
+	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy" parent="abstractBeCPGPolicy">
 		<property name="entityVersionService" ref="entityVersionService" />
-		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator"/>
+		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator" />
 	</bean>
 
 	<!-- Entity Datalist Policies -->
-	<bean id="initEntityListPolicy"
-		class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy"
-		parent="abstractBeCPGPolicy">
+	<bean id="initEntityListPolicy" class="fr.becpg.repo.entity.datalist.policy.InitEntityListPolicy" parent="abstractBeCPGPolicy">
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
-	<bean id="auditEntityListItemPolicies"
-		class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy"
-		parent="abstractBeCPGPolicy">
+	<bean id="auditEntityListItemPolicies" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
 		<property name="authenticationService" ref="authenticationService" />
 	</bean>
-	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy"
-		parent="abstractBeCPGPolicy">
+	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
 		<property name="dataListSortService" ref="dataListSortService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
-	
+
 	<!-- Variant -->
-	
-	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy"
-		parent="abstractBeCPGPolicy">
+
+	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy">
 		<property name="copyService" ref="copyService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 

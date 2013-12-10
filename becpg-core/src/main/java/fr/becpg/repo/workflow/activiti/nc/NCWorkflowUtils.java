@@ -137,6 +137,7 @@ public class NCWorkflowUtils {
 		return ret;
 	}
 
+	@Deprecated //Use entityService instead
 	public static NodeRef getDocumentsFolder(NodeRef entityNodeRef, ServiceRegistry serviceRegistry) {
 
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
