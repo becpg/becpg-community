@@ -235,7 +235,9 @@
                         url : Alfresco.constants.PROXY_URI + "api/type/bcpg:compoList/formprocessor",
                         dataObj : {
                            "alf_destination" : instance.options.dataListNodeRef,
-                           "assoc_bcpg_compoListProduct_added" : nodeRef
+                           "assoc_bcpg_compoListProduct_added" : nodeRef,
+                           "prop_bcpg_compoListUnit":"kg",
+                           "prop_bcpg_compoListQtySubFormula":"0"
                         },
                         successCallback : {
                            fn : function(resp) {
