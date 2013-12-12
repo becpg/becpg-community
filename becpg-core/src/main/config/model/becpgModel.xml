@@ -411,6 +411,7 @@
 				<aspect>bcpg:transformationAspect</aspect>
 				<aspect>bcpg:clientsAspect</aspect>
 				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
+				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:semiFinishedProduct">
@@ -418,6 +419,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:transformationAspect</aspect>
 				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
+				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:localSemiFinishedProduct">
@@ -434,6 +436,7 @@
 		<type name="bcpg:packagingKit">
 			<parent>bcpg:product</parent>
 			<mandatory-aspects>
+				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:packagingMaterial">
@@ -1794,6 +1797,15 @@
 
 
 	<aspects>
+
+		<aspect name="bcpg:formulatedEntityAspect">
+			<properties>
+				<property name="bcpg:formulatedDate">
+					<type>d:datetime</type>
+				</property>
+			</properties>
+		</aspect>
+	
 
 		<aspect name="bcpg:legalNameAspect">
 			<properties>

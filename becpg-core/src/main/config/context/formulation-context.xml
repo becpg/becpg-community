@@ -61,6 +61,7 @@
 			<list>
 				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
+					<property name="productService" ref="productService"/>
 				</bean>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
@@ -112,6 +113,7 @@
 			<list>
 				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
+					<property name="productService" ref="productService"/>
 				</bean>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />

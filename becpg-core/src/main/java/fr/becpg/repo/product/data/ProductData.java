@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -12,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -38,7 +40,7 @@ import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.variant.model.VariantData;
 
 
-public class ProductData extends AbstractEffectiveDataItem {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity {
 
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
@@ -71,6 +73,13 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private Double profitability;
 	private Long breakEven;
 
+	
+	/*
+	 * Formulation
+	 */
+	private Date formulatedDate;
+	
+	
 	/*
 	 * DataList
 	 */
@@ -91,7 +100,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private CompoListView compoListView = new CompoListView();
 	private ProcessListView processListView = new ProcessListView();
 	private PackagingListView packagingListView = new PackagingListView();
-
 	private LabelingListView labelingListView = new LabelingListView();
 	
 	/*
@@ -148,6 +156,17 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:formulatedDate")
+	public Date getFormulatedDate() {
+		return formulatedDate;
+	}
+
+	public void setFormulatedDate(Date formulatedDate) {
+		this.formulatedDate = formulatedDate;
 	}
 
 	@AlfMlText

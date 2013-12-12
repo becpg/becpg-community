@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -11,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
@@ -39,9 +39,18 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	
 	private NodeService nodeService;
 	
+	private ProductService productService;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
+
+	
+	public void setProductService(ProductService productService) {
+		this.productService = productService;
+	}
+
+
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
@@ -66,7 +75,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		
 		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
 		(productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
-		(productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {			
+		(productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {		
+			
+			checkShouldFormulateComponents(productData);
 			
 			checkMissingProperties(productData);			
 			
@@ -76,6 +87,22 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		// Skip formulation
 		return false;
 
+	}
+
+	private void checkShouldFormulateComponents(ProductData formulatedProduct) throws FormulateException {
+		for(CompoListDataItem c : formulatedProduct.getCompoList()){	
+			if(productService.shouldFormulate(c.getProduct())){
+				productService.formulate(c.getProduct());
+			}
+			
+		}
+		
+		for(PackagingListDataItem p : formulatedProduct.getPackagingList()){	
+			if(productService.shouldFormulate(p.getProduct())){
+				productService.formulate(p.getProduct());
+			}
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")
