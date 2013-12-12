@@ -11,6 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -21,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
@@ -36,7 +38,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class RemoteEntityServiceImpl implements RemoteEntityService {
 
-	
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
@@ -46,7 +47,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private BeCPGSearchService beCPGSearchService;
 
 	private EntityService entityService;
-	
+
+	// Remove this crap !!!
+	@Deprecated
+	private BehaviourFilter policyBehaviourFilter;
+
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
@@ -64,11 +69,14 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-	
-	
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
+	}
+	
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	@Override
@@ -92,7 +100,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 			NodeRef ret = null;
 			try {
-				ret =  xmlEntityVisitor.visit(entityNodeRef, in);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				ret = xmlEntityVisitor.visit(entityNodeRef, in);
+
 			} catch (IOException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (SAXException e) {
@@ -100,9 +111,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			} catch (ParserConfigurationException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} finally {
-				if(ret == null){
+				if (ret == null) {
 					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format);
 				}
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+
 			}
 			return ret;
 		}
@@ -165,7 +179,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		try {
 			for (NodeRef imageNodeRef : entityService.getImages(entityNodeRef)) {
-	
+
 				images.put((String) nodeService.getProperty(imageNodeRef, ContentModel.PROP_NAME), entityService.getImage(imageNodeRef));
 			}
 		} catch (BeCPGException e) {
@@ -176,7 +190,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	}
 
 	@Override
-	public boolean containsData(NodeRef entityNodeRef)  {
+	public boolean containsData(NodeRef entityNodeRef) {
 		QName type = nodeService.getType(entityNodeRef);
 		return entityService.hasAssociatedImages(type);
 	}
