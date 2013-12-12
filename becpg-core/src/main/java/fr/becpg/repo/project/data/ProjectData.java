@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -26,7 +27,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "pjt:project")
-public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem {
+public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity {
 
 	
 	private NodeRef hierarchy1;
@@ -47,6 +48,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem 
 	private String creator;
 	private String modifier;
 	private NodeRef projectManager;
+	
+	/*
+	 * Formulation
+	 */
+	private Date formulatedDate;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -99,6 +105,17 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem 
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
+	}
+	
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:formulatedDate")
+	public Date getFormulatedDate() {
+		return formulatedDate;
+	}
+
+	public void setFormulatedDate(Date formulatedDate) {
+		this.formulatedDate = formulatedDate;
 	}
 
 	@AlfProp

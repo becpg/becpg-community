@@ -724,5 +724,13 @@ public interface BeCPGModel {
 	
 	QName ASSOC_DOC_LINKED_ENTITIES = QName.createQName(BECPG_URI, "docLinkedEntities");
 	
+	
+	/**
+	 * Formulation
+	 */
+	
+	QName ASPECT_FORMULATED_ENTITY = QName.createQName(BECPG_URI, "formulatedEntityAspect");
 
+	QName PROP_FORMULATED_DATE = QName.createQName(BECPG_URI, "formulatedDate");
+	
 }

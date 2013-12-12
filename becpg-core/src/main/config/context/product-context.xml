@@ -15,6 +15,7 @@
 		<property name="formulationService" ref="formulationService" />
 		<property name="charactDetailsVisitorFactory" ref="charactDetailsVisitorFactory" />		
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="nodeService" ref="nodeService"/>
 	</bean>
 
 	

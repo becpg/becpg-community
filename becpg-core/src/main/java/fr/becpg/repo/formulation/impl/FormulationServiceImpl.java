@@ -1,5 +1,6 @@
 package fr.becpg.repo.formulation.impl;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +12,11 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChain;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * 
@@ -24,7 +25,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @param <T>
  */
 @Service
-public class FormulationServiceImpl<T extends RepositoryEntity> implements FormulationService<T>{
+public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>{
 
 	private static final String DEFAULT_CHAIN_ID = "default";
 
@@ -115,6 +116,7 @@ public class FormulationServiceImpl<T extends RepositoryEntity> implements Formu
 			
 			if(chain!=null){
 				chain.executeChain(repositoryEntity);
+				repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
 			} else {
 				logger.error("No formulation chain define for :"+repositoryEntity.getClass().getName());
 			}

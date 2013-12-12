@@ -2,10 +2,8 @@ package fr.becpg.repo.formulation;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.RepositoryEntity;
 
-
-public interface FormulationService<T extends RepositoryEntity> {
+public interface FormulationService<T extends FormulatedEntity> {
 
     public T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
     

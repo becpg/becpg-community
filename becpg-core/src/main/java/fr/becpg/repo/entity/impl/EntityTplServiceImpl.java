@@ -33,6 +33,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -60,7 +61,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	private BeCPGSearchService beCPGSearchService;
 
-	private FormulationService<RepositoryEntity> formulationService;
+	private FormulationService<FormulatedEntity> formulationService;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
@@ -94,7 +95,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		this.beCPGSearchService = beCPGSearchService;
 	}
 
-	public void setFormulationService(FormulationService<RepositoryEntity> formulationService) {
+	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
 		this.formulationService = formulationService;
 	}
 
