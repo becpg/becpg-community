@@ -18,6 +18,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	
 	private RequirementType reqType;
 	private String reqMessage;
+	private Integer sort;
 	private List<NodeRef> sources = new ArrayList<NodeRef>();
 
 	@AlfProp
@@ -38,6 +39,16 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	public void setReqMessage(String reqMessage) {
 		this.reqMessage = reqMessage;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:sort")
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
 	}
 
 	@AlfMultiAssoc
