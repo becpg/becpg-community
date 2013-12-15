@@ -73,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
 		try {
 			// disable on all product since components can be formulated
 			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-			// TODO : disable policy to have modified date < formulated date, better way ?
+			// disable policy to have modified date < formulated date, better way ?
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
