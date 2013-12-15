@@ -417,7 +417,7 @@
 					<field id="pjt:project" set="project"/>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" set="formulation" mandatory="true" />
 					<field id="bcpg:productUnit" set="formulation" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -531,10 +531,11 @@
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
 					<show id="bcpg:productDensity" />					
-					<show id="bcpg:productSpecifications" />			
+					<show id="bcpg:productSpecifications" />		
+					<show id="bcpg:entityTplRef" force="true" />	
             </field-visibility>
             <appearance>
-            	<field id="bcpg:productQty"  />
+            	<field id="bcpg:productQty" mandatory="true" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -548,7 +549,14 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
-					</field>												
+					</field>
+					<field id="bcpg:entityTplRef" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>											
             </appearance>
           </form>
 			
@@ -748,7 +756,7 @@
 					</field>	
 					
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" set="formulation" mandatory="true" />
 					<field id="bcpg:productUnit" set="formulation" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -801,10 +809,11 @@
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
 					<show id="bcpg:productDensity" />					
-					<show id="bcpg:productSpecifications" />			
+					<show id="bcpg:productSpecifications" />	
+					<show id="bcpg:entityTplRef" force="true" />		
             </field-visibility>
             <appearance>
-            	<field id="bcpg:productQty"  />
+            	<field id="bcpg:productQty" mandatory="true" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -816,6 +825,13 @@
 					<field id="bcpg:productSpecifications" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>												
@@ -1922,6 +1938,25 @@
                </field>
             </appearance>
           </form>
+          <form id="formulation">
+				<field-visibility>
+					<show id="cm:name" />				
+					<show id="bcpg:productQty" />
+					<show id="bcpg:productUnit" />
+					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:productDensity" />
+					<show id="bcpg:entityTplRef" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 		</forms>
 	</config>
 
@@ -2074,13 +2109,22 @@
 			</form>
 			<form id="formulation">
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="rep:reportTpls" />				
+					<show id="cm:name" />				
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -2208,7 +2252,7 @@
 					<field id="rep:reportTpls" set="mainInfo" />
 					
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" set="formulation" mandatory="true" />
 					<field id="bcpg:productUnit" set="formulation" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2293,10 +2337,11 @@
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
 					<show id="bcpg:productDensity" />					
-					<show id="bcpg:productSpecifications" />			
+					<show id="bcpg:productSpecifications" />		
+					<show id="bcpg:entityTplRef" force="true" />	
             </field-visibility>
             <appearance>
-            	<field id="bcpg:productQty"  />
+            	<field id="bcpg:productQty" mandatory="true" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2308,6 +2353,13 @@
 					<field id="bcpg:productSpecifications" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>												
@@ -2485,7 +2537,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" set="formulation" mandatory="true" />
 					<field id="bcpg:productUnit" set="formulation" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2529,10 +2581,11 @@
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
 					<show id="bcpg:productDensity" />					
-					<show id="bcpg:productSpecifications" />			
+					<show id="bcpg:productSpecifications" />		
+					<show id="bcpg:entityTplRef" force="true" />	
             </field-visibility>
             <appearance>
-            	<field id="bcpg:productQty"  />
+            	<field id="bcpg:productQty" mandatory="true" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2546,7 +2599,14 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
-					</field>												
+					</field>						
+					<field id="bcpg:entityTplRef" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>						
             </appearance>
           </form>
 		</forms>
