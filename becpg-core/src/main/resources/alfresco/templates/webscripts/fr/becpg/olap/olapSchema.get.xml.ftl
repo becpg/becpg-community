@@ -332,6 +332,76 @@
 		</CalculatedMember> 
 		
 	</Cube>
+	
+	<Cube name="Evaluation des projets" cache="true" enabled="true" defaultMeasure="Note">
+		<View alias="projectScore">
+			<SQL dialect="generic">
+			<![CDATA[
+				select
+					datalist.id as id,
+					datalist.datalist_id as noderef,
+					datalist.entity_fact_id as entity_fact_id,
+					datalist.is_last_version as isLastVersion,
+					MAX(IF(prop.prop_name = "pjt:slCriterion",prop.string_value,NULL)) as slCriterion,
+					MAX(IF(prop.prop_name = "pjt:slWeight",prop.long_value,NULL)) as slWeight,
+					MAX(IF(prop.prop_name = "pjt:slScore",prop.long_value,NULL)) as slScore,					
+					datalist.instance_id as instance_id
+				from
+					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
+				where
+					datalist.datalist_name = "scoreList" and datalist.item_type = "pjt:scoreList"
+				group by 
+					id
+				]]>
+			</SQL>
+		</View>
+		
+		
+		<Dimension  name="D&#233;signation" >
+			<Hierarchy name="Crit&#232;re par nom" hasAll="true" allMemberCaption="Toutes les critères">
+				<Level name="Crit&#232;re" column="slCriterion"  type="String"    />
+			</Hierarchy>
+		</Dimension>		
+		
+		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="Projet">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les projets" primaryKey="id">
+				<View alias="pjt">
+						<SQL dialect="generic">
+							<![CDATA[
+							select
+								entity.entity_id as entity_noderef,
+								entity.entity_name as name,
+								entity.is_last_version as isLastVersion,
+								MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
+								MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
+								MAX(IF(prop.prop_name = "pjt:projectManager",prop.string_value,NULL)) as projectManager,
+								entity.id as id
+							from
+								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+							where
+								 entity.entity_type = "pjt:project" and entity.is_last_version = true and entity.instance_id = ${instanceId}
+							group by id
+							]]>
+						</SQL>
+					</View>		
+				<Level name="Famille" column="projectHierarchy1" type="String"   >
+				</Level>
+				<Level name="Sous famille" column="projectHierarchy2" type="String"   >
+				</Level>
+				<Level name="Chef de projet" column="projectManager"  type="String"    >
+				</Level>
+				<Level name="Projet" column="entity_noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Measure name="Pond&#233;ration" column="slWeight" datatype="Numeric" aggregator="sum" visible="true" />
+		<Measure name="Note" column="slScore" datatype="Numeric" aggregator="avg" visible="true"  />
+		
+		<CalculatedMember name="Note pond&#233;r&#233;e" dimension="Measures" visible="true">
+			<Formula>[Measures].[Pond&#233;ration] * [Measures].[Note] / 100</Formula>
+		</CalculatedMember> 
+	</Cube>
 
 	<Cube name="Projets" cache="true" enabled="true" defaultMeasure="Nombre de projets (Distinct)">
 		<View alias="projet">
@@ -414,7 +484,7 @@
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifié'
 	                            WHEN projectState='InProgress' THEN 'En cours'
-	                            WHEN projectState='OnHold' THEN 'Arrêté'
+	                            WHEN projectState='OnHold' THEN 'En attente'
 	                            WHEN projectState='Cancelled' THEN 'Annulé'
 	                            WHEN projectState='Completed' THEN 'Terminé'
 	                            ELSE 'Vide'
