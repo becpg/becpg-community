@@ -58,9 +58,6 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_PRODUCT_STATE. */
 	QName PROP_PRODUCT_STATE = QName.createQName(BECPG_URI, "productState");
-	
-
-	QName PROP_PRODUCT_STATE_ASPECT = QName.createQName(BECPG_URI, "productStateAspect");
 
 	/** The Constant PROP_PRODUCT_UNIT. */
 	QName PROP_PRODUCT_UNIT = QName.createQName(BECPG_URI, "productUnit");
