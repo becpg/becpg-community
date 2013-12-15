@@ -213,6 +213,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					//Nuts
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut1");
+					properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
 					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
 					nut1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();

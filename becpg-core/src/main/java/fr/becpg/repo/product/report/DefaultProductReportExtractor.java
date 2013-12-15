@@ -152,7 +152,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 								loadProductData(compositionDataItem.getProduct(), nodeElt);
 							}
 							
-							loadDataListItemAttributes(dataListItem.getNodeRef(), nodeElt, false);
+							loadDataListItemAttributes(dataListItem, nodeElt);
 							
 							if(dataListItem instanceof AbstractManualVariantListDataItem){
 								extractVariants(((AbstractManualVariantListDataItem)dataListItem).getVariants(), nodeElt, defaultVariantNodeRef);
@@ -208,7 +208,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 						
 						Element partElt = compoListElt.addElement(BeCPGModel.TYPE_COMPOLIST.getLocalName());
 						loadProductData(dataItem.getProduct(), partElt);
-						loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);																										
+						loadDataListItemAttributes(dataItem, partElt);																										
 						extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 					}
 				}
@@ -231,7 +231,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 					Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 					loadProductData(dataItem.getProduct(), partElt);
-					loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);										
+					loadDataListItemAttributes(dataItem, partElt);										
 					
 					extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 				}
@@ -333,7 +333,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				for (MicrobioListDataItem dataItem : microbioMap.values()) {
 
 					Element nodeElt = organoListElt.addElement(BeCPGModel.TYPE_MICROBIOLIST.getLocalName());
-					loadDataListItemAttributes(dataItem.getNodeRef(), nodeElt, false);				
+					loadDataListItemAttributes(dataItem, nodeElt);				
 				}
 			}
 		}		
@@ -481,7 +481,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		Element partElt = packagingListElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());		
 		loadProductData(dataItem.getProduct(), partElt);
-		loadDataListItemAttributes(dataItem.getNodeRef(), partElt, false);		
+		loadDataListItemAttributes(dataItem, partElt);		
 
 		extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 

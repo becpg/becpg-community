@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
@@ -43,6 +42,8 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
 
@@ -69,8 +70,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
-
-	private static final String VALUE_PERSON = "%s %s";
+	
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
 	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
@@ -203,11 +203,16 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes);
 	}
 
-	protected void loadDataListItemAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt) {
 		List<QName> hiddentAttributes = new ArrayList<>();
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
-		loadAttributes(nodeRef, nodeElt, useCData, hiddentAttributes);
+		loadAttributes(dataListItem.getNodeRef(), nodeElt, false, hiddentAttributes);
+		// extract charact properties (legalname,...)
+		if(dataListItem instanceof SimpleCharactDataItem){
+			nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), 
+					(String)nodeService.getProperty(((SimpleCharactDataItem) dataListItem).getCharactNodeRef(), BeCPGModel.PROP_LEGAL_NAME));
+		}
 	}
 
 	/**
@@ -236,27 +241,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 					logger.error("This property doesn't exist. Name: " + property.getKey());
 					continue;
 				}
-
-				String value = VALUE_NULL;
-				if (property.getValue() != null) {
-
-					if (property.getValue() instanceof NodeRef || property.getValue() instanceof String || property.getValue() instanceof List) {
-						value = attributeExtractorService.getStringValue(propertyDef, property.getValue(), propertyFormats);
-					}
-					else if (property.getValue() instanceof Date) {
-
-						value = ISO8601DateFormat.format((Date) property.getValue());
-					} else {
-						value = property.getValue().toString();
-					}
-					
-					if(value==null){
-						value = VALUE_NULL;
-					}
-					
-				}
-
-				values.put(propertyDef, value);
+				values.put(propertyDef, attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats));
 			}
 		}
 
@@ -267,16 +252,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		for (AssociationRef assocRef : associations) {
 
 			QName qName = assocRef.getTypeQName();
-			NodeRef targetNodeRef = assocRef.getTargetRef();
-			QName targetQName = nodeService.getType(targetNodeRef);
-			String name = "";
-
-			if (targetQName.equals(ContentModel.TYPE_PERSON)) {
-				name = String.format(VALUE_PERSON, (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
-						(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
-			} else {
-				name = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
-			}
+			String name = attributeExtractorService.extractAssociationForReport(assocRef);
 
 			if (tempValues.containsKey(qName)) {
 				String names = tempValues.get(qName);

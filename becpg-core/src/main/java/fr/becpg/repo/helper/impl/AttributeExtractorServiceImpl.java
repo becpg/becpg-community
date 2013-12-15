@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
@@ -700,7 +701,37 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return null;
 	}
-	
-	
 
+	@Override
+	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value,
+			PropertyFormats propertyFormats) {
+		
+		if (value != null) {
+			if (value instanceof NodeRef || value instanceof String || value instanceof List) {
+				return getStringValue(propertyDef, value, propertyFormats);
+			}
+			else if (value instanceof Date) {
+				return ISO8601DateFormat.format((Date) value);
+			} else {
+				return value.toString();
+			}								
+		}
+		else{
+			return "";
+		}		
+	}
+
+	@Override
+	public String extractAssociationForReport(AssociationRef assocRef) {
+		NodeRef targetNodeRef = assocRef.getTargetRef();
+		QName targetQName = nodeService.getType(targetNodeRef);
+
+		if (targetQName.equals(ContentModel.TYPE_PERSON)) {
+			return String.format("%s %s",
+					(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
+					(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
+		} else {
+			return (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
+		}
+	}	
 }
