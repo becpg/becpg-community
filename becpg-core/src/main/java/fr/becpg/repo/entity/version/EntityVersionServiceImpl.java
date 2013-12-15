@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -230,15 +229,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						removeRemovedAssociation(workingCopyNodeRef, origNodeRef);
 
 						// Move workingCopyNodeRef DataList to origNodeRef
-						try {
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-							entityService.deleteDataLists(origNodeRef, true);
-						} finally {
-							policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-							policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-						}
-
+						entityService.deleteDataLists(origNodeRef, true);
 						entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
 						// Move files to origNodeRef
 						entityService.deleteFiles(origNodeRef, true);
@@ -407,17 +398,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("delete versionHistoryRef " + versionHistoryRef);
 			}
-			try {
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-				nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(versionHistoryRef);
-			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-			}
-			
-
+			nodeService.deleteNode(versionHistoryRef);			
 		}
 	}
 

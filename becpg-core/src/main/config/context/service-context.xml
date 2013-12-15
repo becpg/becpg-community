@@ -322,7 +322,6 @@
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 	<!-- Public API -->
