@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export>
+	<query>
+		<columns>
+			<!-- Node properties -->
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="name" attribute="cm:name" type="Attribute" />
+			<column id="description" attribute="cm:description" type="Attribute" />		
+			<column id="hierarchy1" attribute="pjt:projectHierarchy1" type="Attribute" />
+			<column id="hierarchy2" attribute="pjt:projectHierarchy2" type="Attribute" />
+			<column id="projectPriority" attribute="pjt:projectPriority" type="Attribute" />			
+			<column id="projectState" attribute="pjt:projectState" type="Attribute" />
+			<column id="projectOverdue" attribute="pjt:projectOverdue" type="Attribute" />
+			<column id="projectScore" attribute="pjt:projectScore" type="Attribute" />
+			<column id="projectStartDate" attribute="pjt:projectStartDate" type="Attribute" />
+			<column id="projectDueDate" attribute="pjt:projectDueDate" type="Attribute" />
+			<column id="completionPercent" attribute="pjt:completionPercent" type="Attribute" />
+			<column id="projectManager" attribute="pjt:projectManager" type="Attribute" />
+			<column id="projectCompletionDate" attribute="pjt:projectCompletionDate" type="Attribute" />						
+			
+		</columns>
+	</query>
+	<nodes>
+		<node id="1" code="22223333" name="Project 1" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="2"
+			projectManager="Philippe" projectCompletionDate="2013-10-15T00:00:00.000+02:00"
+			projectState="InProgress" projectOverdue="8" completionPercent="70" projectStartDate="2013-10-15T00:00:00.000+02:00" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="12" score1="12" score2="18" score3="52"/>
+			
+		<node id="2" code="22223333" name="Project 2" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="3" 
+			projectState="Completed" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="22" score1="5" score2="70" score3="32"/>
+		
+		<node id="1" code="22223333" name="Project 6" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="12" score1="12" score2="18" score3="52"/>
+			
+		<node id="2" code="22223333" name="Project 7" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="22" score1="5" score2="70" score3="32"/>
+			
+			<node id="1" code="22223333" name="Project 1" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="2"
+			projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="12" score1="12" score2="18" score3="52"/>
+			
+		<node id="2" code="22223333" name="Project 2" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="3" 
+			projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="22" score1="5" score2="70" score3="32"/>
+		
+		<node id="1" code="22223333" name="Project 6" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="12" score1="12" score2="18" score3="52"/>
+			
+		<node id="2" code="22223333" name="Project 7" description="descr"
+			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="22" score1="5" score2="70" score3="32"/>
+			
+				
+			<node id="1" code="22223333" name="Project 3" description="descr"
+			hierarchy1="hierarchy2.1" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="12" score1="12" score2="18" score3="52"/>
+			
+		<node id="2" code="22223333" name="Project 4" description="descr"
+			hierarchy1="hierarchy2.1" hierarchy2="hierarchy1.2" projectState="Planned" projectOverdue="8" completionPercent="70" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="22" score1="5" score2="70" score3="32"/>
+	</nodes>
+</export>

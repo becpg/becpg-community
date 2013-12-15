@@ -28,6 +28,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
@@ -86,6 +87,9 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				finishedProduct.setCostList(costList);
+				List<NutListDataItem> nutList = new ArrayList<>();
+				nutList.add(new NutListDataItem(null, 12d, "kg/100g", 0d, 0d, "Group1", nut1, false));
+				finishedProduct.setNutList(nutList);
 				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
