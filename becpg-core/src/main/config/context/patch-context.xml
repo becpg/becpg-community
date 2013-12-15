@@ -320,6 +320,7 @@
         <property name="fixesToSchema"><value>${version.schema}</value></property>
         <property name="targetSchema"><value>10022</value></property>
         <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>

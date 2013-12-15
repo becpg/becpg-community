@@ -2,7 +2,9 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.patch.AbstractPatch;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -25,8 +27,14 @@ public class EntityFormulatedPatch extends AbstractPatch {
 
 	private BeCPGSearchService beCPGSearchService;
 	
+	private BehaviourFilter policyBehaviourFilter;
+	
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
+	}
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	@Override
@@ -42,15 +50,19 @@ public class EntityFormulatedPatch extends AbstractPatch {
 			
 			for(NodeRef productNodeRef : productNodeRefs){
 				if(nodeService.exists(productNodeRef)){
-					nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY, null);
+					try{
+						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY, null);
+					}
+					finally{
+						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					}					
 				}
 				else{
 					logger.warn("productNodeRef doesn't exist : " + productNodeRef);
 				}			
 			}
 		}
-		
-		
 		
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
