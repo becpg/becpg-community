@@ -19,6 +19,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -78,7 +79,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException{				
 		
-		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = null;
+		if(formulatedProduct instanceof PackagingKitData){
+			netQty = FormulationHelper.QTY_FOR_PIECE;
+		}
+		else{
+			netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+		}		
 		
 		/*
 		 * Composition
