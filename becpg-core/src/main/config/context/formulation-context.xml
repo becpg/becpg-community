@@ -100,6 +100,7 @@
 					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
@@ -131,6 +132,7 @@
 					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />

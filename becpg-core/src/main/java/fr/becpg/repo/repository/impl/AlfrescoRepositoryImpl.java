@@ -315,7 +315,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
-					if (dataListItem != null && !dataListItem.isTransient()) {
+					if (dataListItem != null && dataListItem.getNodeRef() != null && !dataListItem.isTransient()) {
 						nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(dataListItem.getNodeRef());
 					}

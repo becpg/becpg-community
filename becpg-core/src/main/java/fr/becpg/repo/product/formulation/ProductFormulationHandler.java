@@ -10,11 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -54,8 +54,20 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
-
-		//First Reset 			
+		
+		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
+		(productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
+		(productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {		
+						
+			checkShouldFormulateComponents(productData);
+			
+			checkMissingProperties(productData);
+			
+			// Continue
+			return true;
+		}
+		
+		//Reset 			
 		if(productData.getCompoListView()!=null && productData.getCompoListView().getReqCtrlList()!=null){
 			productData.getCompoListView().getReqCtrlList().clear();
 		}		
@@ -65,28 +77,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if(productData.getProcessListView()!=null && productData.getProcessListView().getReqCtrlList()!=null){
 			productData.getProcessListView().getReqCtrlList().clear();
 		}
-		if(productData.getPackagingListView()!=null && productData.getPackagingListView().getReqCtrlList()!=null){
-			productData.getPackagingListView().getReqCtrlList().clear();
-		}
-		if(productData.getProcessListView()!=null && productData.getProcessListView().getReqCtrlList()!=null){
-			productData.getProcessListView().getReqCtrlList().clear();
-		}
 		
-		
-		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
-		(productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
-		(productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {		
-			
-			checkShouldFormulateComponents(productData);
-			
-			checkMissingProperties(productData);			
-			
-			// Continue
-			return true;
-		}
 		// Skip formulation
 		return false;
-
 	}
 
 	private void checkShouldFormulateComponents(ProductData formulatedProduct) throws FormulateException {

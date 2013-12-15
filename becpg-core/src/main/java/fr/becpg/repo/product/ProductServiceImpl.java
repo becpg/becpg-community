@@ -8,10 +8,13 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.CharactDetails;
@@ -23,6 +26,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 @Service
 public class ProductServiceImpl implements ProductService {
+	
+	private static Log logger = LogFactory.getLog(ProductServiceImpl.class);
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
@@ -66,7 +71,11 @@ public class ProductServiceImpl implements ProductService {
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
 		
 		try {
-			policyBehaviourFilter.disableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+			// disable on all product since components can be formulated
+			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			// TODO : disable policy to have modified date < formulated date, better way ?
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 			if(fast){
 				formulationService.formulate(productNodeRef,"fastProductFormulationChain");
@@ -75,7 +84,9 @@ public class ProductServiceImpl implements ProductService {
 			}
 
 		} finally {
-			policyBehaviourFilter.enableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
 		
 	}

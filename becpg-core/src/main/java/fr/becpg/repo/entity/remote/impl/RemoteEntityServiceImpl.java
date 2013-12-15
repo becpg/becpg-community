@@ -11,7 +11,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -22,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
@@ -48,10 +46,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	private EntityService entityService;
 
-	// Remove this crap !!!
-	@Deprecated
-	private BehaviourFilter policyBehaviourFilter;
-
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
@@ -74,11 +68,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		this.entityService = entityService;
 	}
 	
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
@@ -100,8 +89,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 			NodeRef ret = null;
 			try {
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				ret = xmlEntityVisitor.visit(entityNodeRef, in);
 
 			} catch (IOException e) {
@@ -114,9 +101,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				if (ret == null) {
 					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format);
 				}
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-
 			}
 			return ret;
 		}
