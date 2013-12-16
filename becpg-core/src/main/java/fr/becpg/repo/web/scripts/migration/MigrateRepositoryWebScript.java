@@ -53,6 +53,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -356,7 +357,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}
 		else if(ACTION_CREATE_GEN_RAWMATERIAL.equals(action)){
 			
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_RAWMATERIAL));
+			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_RAWMATERIAL)) +
+						LuceneHelper.exclude(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_ERP_CODE)) +
+						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)) + 
+						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
 			List<NodeRef> rawMaterialNodeRefs = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_ERP_CODE));
 			Map<String, List<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<String, List<NodeRef>>();
 			
@@ -376,35 +380,55 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				
 				if(kv.getValue().size()>1){
 					
-					NodeRef rawMaterialNodeRef = kv.getValue().get(0);
-					ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialNodeRef);
-					RawMaterialData genRawMaterialData = new RawMaterialData();
-					genRawMaterialData.setName(kv.getKey() + "-GEN");
-					genRawMaterialData.setHierarchy1(rawMaterialData.getHierarchy1());
-					genRawMaterialData.setHierarchy2(rawMaterialData.getHierarchy2());
+					logger.info("kv.getKey(): " + kv.getKey());
 					
-//					List<NodeRef> supplierNodeRefs = new ArrayList<NodeRef>(kv.getValue().size());
-					
-					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(kv.getValue().size());
-					for(NodeRef rmNodeRef : kv.getValue()){
-						Double subQty = new Double(100 / kv.getValue().size());						
-						compoList.add(new CompoListDataItem(null, null, null, subQty, CompoListUnit.Perc, null, DeclarationType.Declare, rmNodeRef));
-						
-						List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(rmNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
-//						supplierNodeRefs.addAll(rawMaterialSupplierNodeRefs);
-						
-						// generate a new ERP
-						String newERPCode = kv.getKey();						
-						for(NodeRef rawMaterialSupplierNodeRef : rawMaterialSupplierNodeRefs){
-							newERPCode += "-" + (String)nodeService.getProperty(rawMaterialSupplierNodeRef, BeCPGModel.PROP_ERP_CODE);
+					// look for generic
+					NodeRef genRMNodeRef = null;
+					List<NodeRef> supplierRMNodeRefs = new ArrayList<>();
+					for(NodeRef n : kv.getValue()){
+						RawMaterialData rawMaterialData = (RawMaterialData)alfrescoRepository.findOne(n);
+						if(rawMaterialData.hasCompoListEl(EffectiveFilters.ALL)){
+							if(genRMNodeRef == null){
+								genRMNodeRef = n;
+							}					
+							else{
+								logger.warn("There is several generic raw materials with this ERP code: " + kv.getKey());
+							}
 						}
-						nodeService.setProperty(rmNodeRef, BeCPGModel.PROP_ERP_CODE, newERPCode);						
-					}								
-					
-					genRawMaterialData.getCompoListView().setCompoList(compoList);
-					ProductData productData = alfrescoRepository.create(repository.getCompanyHome(), genRawMaterialData);
-					nodeService.setProperty(productData.getNodeRef(), BeCPGModel.PROP_ERP_CODE, kv.getKey());
-//					associationService.update(genProductData.getNodeRef(), BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs);					
+						else{
+							supplierRMNodeRefs.add(n);
+							
+							// generate a new ERP code
+							String newERPCode = kv.getKey();	
+							List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(n, BeCPGModel.ASSOC_SUPPLIERS);
+							for(NodeRef rawMaterialSupplierNodeRef : rawMaterialSupplierNodeRefs){
+								newERPCode += "-" + (String)nodeService.getProperty(rawMaterialSupplierNodeRef, BeCPGModel.PROP_ERP_CODE);
+							}
+							logger.info("Set ERP code for " + n + " code " + newERPCode);
+							nodeService.setProperty(n, BeCPGModel.PROP_ERP_CODE, newERPCode);
+						}
+					}
+										
+					if(genRMNodeRef == null){
+						NodeRef rawMaterialNodeRef = kv.getValue().get(0);
+						ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialNodeRef);
+						RawMaterialData genRawMaterialData = new RawMaterialData();
+						genRawMaterialData.setName(kv.getKey() + "-GEN");
+						genRawMaterialData.setHierarchy1(rawMaterialData.getHierarchy1());
+						genRawMaterialData.setHierarchy2(rawMaterialData.getHierarchy2());
+						genRawMaterialData.setErpCode(kv.getKey());
+						
+						List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(kv.getValue().size());
+						for(NodeRef rmNodeRef : supplierRMNodeRefs){
+							Double subQty = new Double(100 / kv.getValue().size());						
+							compoList.add(new CompoListDataItem(null, null, null, subQty, CompoListUnit.Perc, null, DeclarationType.Declare, rmNodeRef));						
+						}								
+						
+						genRawMaterialData.getCompoListView().setCompoList(compoList);
+						logger.info("Create new gen raw material " + kv.getKey());						
+						ProductData productData = alfrescoRepository.create(repository.getCompanyHome(), genRawMaterialData);
+						//nodeService.setProperty(productData.getNodeRef(), BeCPGModel.PROP_ERP_CODE, kv.getKey());	
+					}						
 				}
 			}
 		}
