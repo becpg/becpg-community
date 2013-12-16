@@ -1,8 +1,12 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -18,10 +22,12 @@ import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -41,16 +47,25 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	
 	private ProductService productService;
 	
+	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	private boolean formulateChildren = false;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
 	}
+	
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
-
+	public void setFormulateChildren(boolean formulateChildren) {
+		this.formulateChildren = formulateChildren;
+	}
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
@@ -59,7 +74,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		(productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) ||
 		(productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {		
 						
-			checkShouldFormulateComponents(productData);
+			if(formulateChildren){
+				checkShouldFormulateComponents(true, productData, new HashSet<NodeRef>());
+			}
 			
 			checkMissingProperties(productData);
 			
@@ -82,20 +99,49 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		return false;
 	}
 
-	private void checkShouldFormulateComponents(ProductData formulatedProduct) throws FormulateException {
-		for(CompoListDataItem c : formulatedProduct.getCompoList()){	
-			if(productService.shouldFormulate(c.getProduct())){
-				productService.formulate(c.getProduct());
-			}
+	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData, Set<NodeRef> checkedProducts) throws FormulateException {
+		boolean isFormulated = false;
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("checkShouldFormulateComponents: " + productData.getName());
+		}		
+		
+		if(!checkedProducts.contains(productData.getNodeRef())){
 			
+			Set<CompositionDataItem> compositionDataItems = new HashSet<>();
+			compositionDataItems.addAll(productData.getCompoList());
+			compositionDataItems.addAll(productData.getPackagingList());
+			
+			if(!compositionDataItems.isEmpty()){
+				
+				boolean shouldFormulate = false;
+				for(CompositionDataItem c : compositionDataItems){					
+					ProductData p = alfrescoRepository.findOne(c.getProduct());	
+					// recursive
+					if(checkShouldFormulateComponents(false, p, checkedProducts)){
+						shouldFormulate = true;
+					}					
+					
+					// check modified date on component			
+					Date modified = (Date) nodeService.getProperty(c.getProduct(), ContentModel.PROP_MODIFIED);
+					if (modified == null || productData.getFormulatedDate() == null || modified.getTime() > productData.getFormulatedDate().getTime()) {
+						shouldFormulate = true;
+					}
+				}				
+				
+				if(!isRoot && (shouldFormulate || productService.shouldFormulate(productData.getNodeRef()))){
+					
+					if(logger.isDebugEnabled()){
+						logger.debug("auto-formulate: " + productData.getName());
+					}				
+					productService.formulate(productData.getNodeRef());
+					isFormulated = true;
+				}
+			}		
+			checkedProducts.add(productData.getNodeRef());
 		}
-		
-		for(PackagingListDataItem p : formulatedProduct.getPackagingList()){	
-			if(productService.shouldFormulate(p.getProduct())){
-				productService.formulate(p.getProduct());
-			}
-		}
-		
+				
+		return isFormulated;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -219,5 +265,5 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			sources.add(sourceNodeRef);
 		}			
 		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null,  RequirementType.Forbidden, message, sources));
-	}
+	}	
 }
