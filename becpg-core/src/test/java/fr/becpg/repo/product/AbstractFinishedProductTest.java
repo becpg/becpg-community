@@ -168,6 +168,10 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
     
     protected NodeRef physicoChem4;
     
+    protected NodeRef supplier1;
+    
+    protected NodeRef supplier2;
+    
     /**
 	 * Inits the parts.
 	 */
@@ -321,6 +325,13 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					properties.put(BeCPGModel.PROP_PHYSICO_CHEM_FORMULATED, true);
 					physicoChem4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PHYSICO_CHEM, properties).getChildRef();			
 					
+					//Suppliers
+					properties.put(ContentModel.PROP_NAME, "supplier1");			 					 				
+					supplier1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "supplier2");			 					 				
+					supplier2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+					
 					/*-- Create raw materials --*/
 					logger.debug("/*-- Create raw materials --*/");
 					/*-- Raw material 1 --*/
@@ -331,6 +342,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 1");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 1");
 					rawMaterial1.setLegalName(legalName);
+					rawMaterial1.setSuppliers(Arrays.asList(supplier1));
 					//costList
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 					costList.add(new CostListDataItem(null, 3d, "€/kg", 3.1d, cost1, false));
@@ -378,6 +390,7 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 2");
 					rawMaterial2.setLegalName(legalName);
 					rawMaterial2.setDensity(1d);
+					rawMaterial2.setSuppliers(Arrays.asList(supplier2));
 					//costList
 					costList = new ArrayList<CostListDataItem>();
 					costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false));

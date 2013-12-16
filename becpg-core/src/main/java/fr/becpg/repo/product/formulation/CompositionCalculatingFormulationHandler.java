@@ -1,6 +1,10 @@
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,8 +17,10 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -25,8 +31,14 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	
 	private NodeService nodeService;
 	
+	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -73,7 +85,12 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if(calculatedVolume != 0d){
 				formulatedProduct.setYieldVolume(100 * netVolume / calculatedVolume);
 			}			
-		}		
+		}
+		
+		// generic raw material
+		if(formulatedProduct instanceof RawMaterialData){
+			((RawMaterialData) formulatedProduct).setSuppliers(calculateSuppliers(compositeAll));
+		}
 		
 		return true;
 	}
@@ -231,5 +248,20 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			volume += value;
 		}		
 		return volume;
-	}	
+	}
+	
+	private List<NodeRef> calculateSuppliers(Composite<CompoListDataItem> composite){
+		List<NodeRef> supplierNodeRefs = new ArrayList<>();		
+		for(Composite<CompoListDataItem> component : composite.getChildren()){			
+			ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
+			if(productData instanceof RawMaterialData){
+				for(NodeRef supplierNodeRef : ((RawMaterialData)productData).getSuppliers()){
+					if(!supplierNodeRefs.contains(supplierNodeRef)){
+						supplierNodeRefs.add(supplierNodeRef);
+					}
+				}
+			}			
+		}
+		return supplierNodeRefs;
+	}
 }
