@@ -134,7 +134,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					if(logger.isDebugEnabled()){
 						logger.debug("auto-formulate: " + productData.getName());
 					}				
-					productService.formulate(productData.getNodeRef());
+					productService.formulate(productData);
+					alfrescoRepository.save(productData);
 					isFormulated = true;
 				}
 			}		
