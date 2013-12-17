@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
 	
 	private NodeService nodeService;
 	
-	public BehaviourFilter policyBehaviourFilter;
+	private BehaviourFilter policyBehaviourFilter;
 
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 	

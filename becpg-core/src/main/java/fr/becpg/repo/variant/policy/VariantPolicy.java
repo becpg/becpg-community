@@ -56,8 +56,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.TYPE_VARIANT, new JavaBehaviour(this, "onCopyComplete"));
 
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.ASPECT_ENTITY_VARIANT, new JavaBehaviour(this, "onCheckOut"));
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.ASPECT_ENTITY_VARIANT, new JavaBehaviour(this, "beforeCheckIn"));
-
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.ASPECT_ENTITY_VARIANT, new JavaBehaviour(this, "beforeCheckIn"));		
 	}
 
 	@Override
@@ -70,7 +69,8 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_VARIANTIDS, sourceNodeRef.toString(), LuceneHelper.Operator.AND);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Entity of destination " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " " + entityNodeRef);
+			logger.debug("Entity of destination " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " " + entityNodeRef + 
+					" variant: " + nodeService.getProperty(sourceNodeRef, ContentModel.PROP_NAME));
 			logger.debug("Search for" + query);
 		}
 
@@ -89,16 +89,22 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					List<NodeRef> variantIds = (List<NodeRef>) nodeService.getProperty(entityDataListNodeRef, BeCPGModel.PROP_VARIANTIDS);
 					variantIds.remove(sourceNodeRef);
 					variantIds.add(destinationRef);
+					
+					if (logger.isDebugEnabled()) {
+						logger.debug("entityDataListNodeRef " + entityDataListNodeRef);
+						logger.debug("VariantIds remove " + sourceNodeRef + " " + nodeService.getProperty(sourceNodeRef, ContentModel.PROP_NAME));
+						logger.debug("VariantIds add " + destinationRef + " " + nodeService.getProperty(destinationRef, ContentModel.PROP_NAME));
+					}
 
 					nodeService.setProperty(entityDataListNodeRef, BeCPGModel.PROP_VARIANTIDS, (Serializable) variantIds);
 				}
 			}
 		}
-
 	}
 
 	@Override
 	public void onCheckOut(final NodeRef workingCopyNodeRef) {
+		logger.debug("On check out Variant");
 
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
 			@Override
@@ -131,6 +137,8 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 	@Override
 	public void beforeCheckIn(final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties, String contentUrl, boolean keepCheckedOut) {
+		logger.debug("On check in Variant");
+		
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
 			@Override
 			public Void doWork() throws Exception {
@@ -139,7 +147,19 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 				if (origNodeRef != null) {
 					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
 					for (ChildAssociationRef childAssoc : childAssocs) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Remove variant on OrigNode" + childAssoc.getChildRef() + " " + nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
+						}
 						nodeService.removeChildAssociation(childAssoc);
+					}
+					
+					// move variants of working copy
+					childAssocs = nodeService.getChildAssocs(workingCopyNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL);
+					for (ChildAssociationRef childAssoc : childAssocs) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("move variant of workfingCopy" + childAssoc.getChildRef() + " " + nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
+						}
+						nodeService.moveNode(childAssoc.getChildRef(), origNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS);
 					}
 				}
 
@@ -173,5 +193,4 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 		return original;
 	}
-
 }
