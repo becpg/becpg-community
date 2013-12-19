@@ -266,6 +266,15 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:microbioControlSteps" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>à J0</value>
+					<value>à DLC</value>							
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:productHierarchy1"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -1076,7 +1085,7 @@
 
 		<type name="bcpg:microbioList">
 			<parent>bcpg:productListItem</parent>
-			<properties>
+			<properties>							
 				<property name="bcpg:mblValue">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
@@ -1093,6 +1102,13 @@
 				</property>
 				<property name="bcpg:mblTextCriteria">
 					<type>d:text</type>					
+				</property>
+				<property name="bcpg:mblControlStep">
+					<title>Etape de contrôle</title>
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:microbioControlSteps" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>

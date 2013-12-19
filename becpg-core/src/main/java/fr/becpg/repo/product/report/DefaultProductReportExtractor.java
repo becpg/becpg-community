@@ -227,9 +227,13 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
 		
 		//TODO make it more generic!!!!
 		ProductData productData = productDAO.find(entityNodeRef, productDictionaryService.getDataLists());
+		return loadDataListsFromProductData(productData, dataListsElt);
+	}
+	
+	protected Element loadDataListsFromProductData(ProductData productData, Element dataListsElt) {
 		
 		//allergen    	
-    	if(productData.getAllergenList() != null){
+    	if(dataListsElt.selectSingleNode(TAG_ALLERGENLIST) == null && productData.getAllergenList() != null){
     		Element allergenListElt = dataListsElt.addElement(TAG_ALLERGENLIST);	    	
 	    	
 	    	for(AllergenListDataItem dataItem :productData.getAllergenList()){
@@ -264,7 +268,7 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
     	}
     	
     	//compoList
-    	if(productData.getCompoList() != null){
+    	if(dataListsElt.selectSingleNode(TAG_COMPOLIST) == null && productData.getCompoList() != null){
     		Element compoListElt = dataListsElt.addElement(TAG_COMPOLIST);	    	
 	    	
 	    	for(CompoListDataItem dataItem :productData.getCompoList()){	    			    	
@@ -282,7 +286,7 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
     	}
     	
     	//CostList
-    	if(productData.getCostList() != null){
+    	if(dataListsElt.selectSingleNode(TAG_COSTLIST) == null && productData.getCostList() != null){
     		Element costListElt = dataListsElt.addElement(TAG_COSTLIST);	    	
 	    	
 	    	for(CostListDataItem dataItem :productData.getCostList()){	    			    	
@@ -297,7 +301,7 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
     	}
     	
     	//IngList
-    	if(productData.getIngList() != null){
+    	if(dataListsElt.selectSingleNode(TAG_INGLIST) == null && productData.getIngList() != null){
     		Element ingListElt = dataListsElt.addElement(TAG_INGLIST);	    	
 	    	
 	    	for(IngListDataItem dataItem :productData.getIngList()){	    			    	
@@ -333,7 +337,7 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
     	}
     	
     	//IngLabelingList
-    	if(productData.getIngLabelingList() != null){
+    	if(dataListsElt.selectSingleNode(TAG_INGLABELINGLIST) == null && productData.getIngLabelingList() != null){
     		Element ingListElt = dataListsElt.addElement(TAG_INGLABELINGLIST);	    	
     		String frenchILLGrpName = BeCPGModel.PROP_ILL_GRP.getLocalName() + SUFFIX_LOCALE_FRENCH;
     		String englishILLGrpName = BeCPGModel.PROP_ILL_GRP.getLocalName() + SUFFIX_LOCALE_ENGLISH;
@@ -352,7 +356,7 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
     	}
     	
     	//NutList
-    	if(productData.getNutList() != null){
+    	if(dataListsElt.selectSingleNode(TAG_NUTLIST) == null && productData.getNutList() != null){
     		
     		Element nutListElt = dataListsElt.addElement(TAG_NUTLIST);
 	    	
@@ -369,7 +373,7 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
     	}
     	
     	//OrganoList
-		if(productData.getOrganoList() != null){
+		if(dataListsElt.selectSingleNode(TAG_ORGANOLIST) == null && productData.getOrganoList() != null){
     		
     		Element organoListElt = dataListsElt.addElement(TAG_ORGANOLIST);
 	    	
@@ -384,7 +388,7 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
     	}
 		
 		//MicrobioList
-		if(productData.getMicrobioList() != null){
+		if(dataListsElt.selectSingleNode(TAG_MICROBIOLIST) == null && productData.getMicrobioList() != null){
     		
     		Element organoListElt = dataListsElt.addElement(TAG_MICROBIOLIST);
 	    	
@@ -398,11 +402,15 @@ public class DefaultProductReportExtractor  extends AbstractEntityReportExtracto
 	    		microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_UNIT.getLocalName(), dataItem.getUnit());
 	    		microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_MAXI.getLocalName(), dataItem.getMaxi() == null ? VALUE_NULL : Float.toString(dataItem.getMaxi()));
 	    		microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_TEXT_CRITERIA.getLocalName(), dataItem.getTextCriteria());
+	    		String controlStep = (String)nodeService.getProperty(dataItem.getNodeRef(), BeCPGModel.PROP_MICROBIOLIST_CONTROL_STEP);
+	    		if(controlStep != null){
+	    			microbioElt.addAttribute(BeCPGModel.PROP_MICROBIOLIST_CONTROL_STEP.getLocalName(), (String)nodeService.getProperty(dataItem.getNodeRef(), BeCPGModel.PROP_MICROBIOLIST_CONTROL_STEP));
+	    		}	    		
 	    	}	    		    	
     	}
 		
 		//PhysicoChemList
-		if(productData.getPhysicoChemList() != null){
+		if(dataListsElt.selectSingleNode(TAG_PHYSICOCHEMLIST) == null && productData.getPhysicoChemList() != null){
     		
     		Element physicoChemListElt = dataListsElt.addElement(TAG_PHYSICOCHEMLIST);
 	    	

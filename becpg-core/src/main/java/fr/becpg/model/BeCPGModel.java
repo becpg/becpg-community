@@ -359,6 +359,9 @@ public interface BeCPGModel {
 	static final QName PROP_MICROBIOLIST_TEXT_CRITERIA = QName.createQName(BECPG_URI,
 			"mblTextCriteria");
 	
+	static final QName PROP_MICROBIOLIST_CONTROL_STEP = QName.createQName(BECPG_URI,
+			"mblControlStep");
+	
 	/** The Constant ASSOC_MICROBIOLIST_MICROBIO. */
 	static final QName ASSOC_MICROBIOLIST_MICROBIO = QName.createQName(
 			BECPG_URI, "mblMicrobio");
