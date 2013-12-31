@@ -23,7 +23,7 @@
 	<nodes>
 		<node id="1" code="22223333" name="Project 1" description="descr"
 			hierarchy1="hierarchy1.1" hierarchy2="hierarchy1.2" projectPriority="2"
-			projectManager="Philippe" projectCompletionDate="2013-10-15T00:00:00.000+02:00"
+			projectManager="Philippe" projectCompletionDate="2013-10-25T00:00:00.000+02:00"
 			projectState="InProgress" projectOverdue="8" completionPercent="70" projectStartDate="2013-10-15T00:00:00.000+02:00" projectDueDate="2013-10-15T00:00:00.000+02:00" projectScore="12" score1="12" score2="18" score3="52"/>
 			
 		<node id="2" code="22223333" name="Project 2" description="descr"

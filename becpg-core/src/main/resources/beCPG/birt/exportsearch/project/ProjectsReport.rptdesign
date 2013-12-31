@@ -873,7 +873,7 @@
                 </structure>
                 <structure>
                     <property name="name">duration</property>
-                    <expression name="expression">BirtDateTime.diffDay(row["projectDueDate"],row["projectStartDate"])</expression>
+                    <expression name="expression">BirtDateTime.diffDay(row["projectStartDate"], row["projectCompletionDate"])</expression>
                     <property name="dataType">integer</property>
                 </structure>
             </list-property>
@@ -1485,7 +1485,7 @@
                                 <property name="fontSize">16pt</property>
                                 <property name="fontWeight">bold</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Suivi des projets</text-property>
+                                <text-property name="text">Synthèse des projets</text-property>
                             </label>
                         </cell>
                         <cell id="3016">
@@ -1604,6 +1604,13 @@
                     <text-property name="displayName">group</text-property>
                     <expression name="expression" type="javascript">dataSetRow["group"]</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">projectCompletionDate</property>
+                    <text-property name="displayName">projectCompletionDate</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["projectCompletionDate"]</expression>
+                    <property name="dataType">date</property>
                     <property name="allowExport">true</property>
                 </structure>
             </list-property>
@@ -2548,9 +2555,8 @@
                                                 </data>
                                             </cell>
                                             <cell id="80">
-                                                <data id="93">
-                                                    <property name="style">becpg-data</property>
-                                                    <property name="resultSetColumn">projectDueDate</property>
+                                                <data id="3145">
+                                                    <property name="resultSetColumn">projectCompletionDate</property>
                                                 </data>
                                             </cell>
                                         </row>
@@ -2884,6 +2890,24 @@ else{
                         </data>
                     </cell>
                     <cell id="3094">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">gt</property>
+                                <property name="backgroundColor">#FF0000</property>
+                                <expression name="testExpr" type="javascript">row["projectOverdue"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">le</property>
+                                <property name="backgroundColor">#008000</property>
+                                <expression name="testExpr" type="javascript">row["projectOverdue"]</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
                         <data id="3119">
                             <property name="style">becpg-data</property>
                             <property name="resultSetColumn">projectOverdue</property>
