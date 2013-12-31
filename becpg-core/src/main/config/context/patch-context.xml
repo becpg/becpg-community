@@ -324,5 +324,18 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+	 <bean id="patch.bcpg.ingParentLevelPatch" class="fr.becpg.repo.admin.patch.IngParentLevelPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.ingParentLevelPatch</value></property>
+        <property name="description"><value>patch.bcpg.ingParentLevelPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10023</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="associationService" ref="associationService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
     
 </beans>

@@ -114,6 +114,12 @@
 		<property name="associationService" ref="associationService"/>
 	</bean>
 	
+	<bean id="ingListValuePlugin" parent="entityListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.IngListValuePlugin">
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="associationService" ref="associationService"/>
+	</bean>
+	
 	<bean id="variantListValuePlugin" parent="entityListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
 	</bean>

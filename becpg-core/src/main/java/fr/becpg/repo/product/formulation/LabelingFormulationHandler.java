@@ -574,63 +574,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (!isMultiLevel && productData.getIngList() != null && !productData.getIngList().isEmpty()) {
 
-				for (IngListDataItem ingListDataItem : productData.getIngList()) {
-
-					DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListDataItem, labelingFormulaContext);
-
-					if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
-
-						NodeRef ingNodeRef = ingListDataItem.getIng();
-						IngItem ingItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
-
-						if (ingItem == null) {
-							ingItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
-
-							if (ingListDataItem.getIngListSubIng().size() > 0) {
-								for (NodeRef subIng : ingListDataItem.getIngListSubIng()) {
-									ingItem.getSubIngs().add((IngItem) alfrescoRepository.findOne(subIng));
-								}
-							}
-
-							compositeLabeling.add(ingItem);
-							if (logger.isTraceEnabled()) {
-								logger.trace("- Add new ing to current Label: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
-							}
-						} else if (logger.isDebugEnabled()) {
-							logger.trace("- Update ing value: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
-						}
-
-						Double qtyPerc = ingListDataItem.getQtyPerc();
-
-						if (qtyPerc == null) {
-							ingItem.setQty(null);
-						} else {
-							// if one ingItem has null perc -> must be null
-							if (ingItem.getQty() != null && qty != null) {
-
-								Double totalQtyIng = ingItem.getQty();
-
-								Double valueToAdd = qty * qtyPerc / 100;
-								totalQtyIng += valueToAdd;
-								ingItem.setQty(totalQtyIng);
-
-								if (logger.isTraceEnabled()) {
-									logger.trace(" -- new qty to add :" + valueToAdd);
-								}
-
-							} else {
-								String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingItem.getName());
-								ReqCtrlListDataItem error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, Arrays.asList(productData.getNodeRef()));
-								if (logger.isDebugEnabled()) {
-									logger.debug("Adding aggregate error " + error.toString());
-								}
-								labelingFormulaContext.getErrors().add(error);
-							}
-						}
-					}
-
-				}
-
+				Composite<IngListDataItem> compositeIngList = CompositeHelper.getHierarchicalCompoList(productData.getIngList());
+				loadIngList(productData.getNodeRef(), compositeIngList, qty, labelingFormulaContext, compoListDataItem, compositeLabeling);
 			}
 
 			// Recur
@@ -648,6 +593,81 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		return parent;
 
+	}
+	
+	private void loadIngList(NodeRef productNodeRef, Composite<IngListDataItem> compositeIngList, Double qty, 
+			LabelingFormulaContext labelingFormulaContext, 
+			CompoListDataItem compoListDataItem, CompositeLabeling compositeLabeling){
+				
+		for (Composite<IngListDataItem> component : compositeIngList.getChildren()) {
+
+			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, component.getData(), labelingFormulaContext);
+
+			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
+
+				NodeRef ingNodeRef = component.getData().getIng();
+				IngItem ingItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
+
+				if (ingItem == null) {
+					ingItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
+
+					if(!component.isLeaf()){
+						if(qty != null && component.getData().getQtyPerc() != null){
+							qty *= component.getData().getQtyPerc() / 100;
+						}
+						else{
+							qty = null;
+						}			
+						CompositeLabeling c = new CompositeLabeling();
+						c.setNodeRef(ingItem.getNodeRef());
+						c.setName(ingItem.getName());
+						c.setLegalName(ingItem.getLegalName());
+						c.setDeclarationType(DeclarationType.Detail);
+						c.setQty(qty);
+						compositeLabeling.add(c);
+						loadIngList(productNodeRef, component, qty, labelingFormulaContext, compoListDataItem, c);
+					}
+					else{
+						compositeLabeling.add(ingItem);
+					}
+					
+					if (logger.isTraceEnabled()) {
+						logger.trace("- Add new ing to current Label: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
+					}
+				} else if (logger.isDebugEnabled()) {
+					logger.trace("- Update ing value: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
+				}
+
+				Double qtyPerc = component.getData().getQtyPerc();
+
+				if (qtyPerc == null) {
+					ingItem.setQty(null);
+				} else {
+					// if one ingItem has null perc -> must be null
+					if (ingItem.getQty() != null && qty != null) {
+
+						Double totalQtyIng = ingItem.getQty();
+
+						Double valueToAdd = qty * qtyPerc / 100;
+						totalQtyIng += valueToAdd;
+						ingItem.setQty(totalQtyIng);
+
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- new qty to add :" + valueToAdd);
+						}
+
+					} else {
+						String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingItem.getName());
+						ReqCtrlListDataItem error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, Arrays.asList(productNodeRef));
+						if (logger.isDebugEnabled()) {
+							logger.debug("Adding aggregate error " + error.toString());
+						}
+						labelingFormulaContext.getErrors().add(error);
+					}
+				}
+			}
+
+		}
 	}
 
 	private DeclarationType getDeclarationType(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem, LabelingFormulaContext labelingFormulaContext) {

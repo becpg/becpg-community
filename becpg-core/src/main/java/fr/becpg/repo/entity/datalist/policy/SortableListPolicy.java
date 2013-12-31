@@ -121,15 +121,38 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 
 		// try to avoid to do two times the work, otherwise it duplicates nodeRef in lucene index !!!
-		if (nodeService.exists(nodeRef) && nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null && 
-				((aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) || 
-				(aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)))) {
+		if (nodeService.exists(nodeRef)) {
 			
 			if (logger.isDebugEnabled()) {
-				logger.debug("Add sortable aspect policy ");
+				logger.debug("onAddAspect");
+			}
+			
+			boolean addInQueue = false;
+			if(nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null && aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && 
+					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)){
+				addInQueue = true;
+				if (logger.isDebugEnabled()) {
+					logger.debug("Add sortable aspect policy ");
+				}
+			}
+			
+			if((nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null || nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null) && 
+					aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)){
+				addInQueue = true;
+				// queue parent before
+				NodeRef parentNodeRef = (NodeRef)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+				if(parentNodeRef != null && 
+						(nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_SORT) == null || nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null)){
+					queueNode(parentNodeRef);
+				}
+				if (logger.isDebugEnabled()) {
+					logger.debug("Add depthLevel aspect policy ");
+				}
 			}
 	
-			queueNode(nodeRef);			
+			if(addInQueue){
+				queueNode(nodeRef);
+			}					
 		}
 	}	
 	

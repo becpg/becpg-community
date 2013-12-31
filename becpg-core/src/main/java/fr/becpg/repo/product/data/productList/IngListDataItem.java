@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -18,7 +19,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:ingList")
-public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem {
+public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
 
 	
 	private Double qtyPerc = 0d;
@@ -38,6 +39,10 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	private Boolean isManual;
 
 	private Boolean isProcessingAid = false;
+	
+	private Integer depthLevel;
+	
+	private IngListDataItem parent;
 	
 	
 	@AlfProp
@@ -162,6 +167,29 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		
 	}
 	
+	@Override
+	@AlfProp
+	@AlfQname(qname="bcpg:depthLevel")
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
+	}
+
+	@Override
+	@AlfProp
+	@AlfQname(qname="bcpg:parentLevel")
+	public IngListDataItem getParent() {
+		return this.parent;
+	}
+
+
+	@Override
+	public void setParent(IngListDataItem parent) {
+		this.parent = parent;		
+	}
 	
 	/**
 	 * Instantiates a new ing list data item.
@@ -175,6 +203,20 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	public IngListDataItem(NodeRef nodeRef,	Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
+		setQtyPerc(qtyPerc);
+		setGeoOrigin(geoOrigin);
+		setBioOrigin(bioOrigin);
+		setIsGMO(isGMO);
+		setIsIonized(isIonized);
+		setIng(ing);
+		setIsManual(isManual);
+		setIsProcessingAid(processingAid);
+	}
+	
+	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
+	{
+		setNodeRef(nodeRef);
+		setParent(ingList);
 		setQtyPerc(qtyPerc);
 		setGeoOrigin(geoOrigin);
 		setBioOrigin(bioOrigin);
@@ -280,6 +322,4 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", ingListSubIng=" + ingListSubIng + ", isGMO=" + isGMO
 				+ ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual + ", isProcessingAid=" + isProcessingAid + "]";
 	}
-
-
 }
