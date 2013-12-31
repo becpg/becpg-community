@@ -21,6 +21,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
@@ -192,7 +194,26 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 		
 		// calculate ingList of formulated product
-		calculateILOfPart(compoListDataItem, componentIngList, ingList, retainNodes, totalQtyIngMap);		
+		List<IngListDataItem> retainedComponentIngList = new ArrayList<>(); 
+		calculateIngListOfPart(CompositeHelper.getHierarchicalCompoList(componentIngList), 1d, retainedComponentIngList);
+		calculateILOfPart(compoListDataItem, retainedComponentIngList, ingList, retainNodes, totalQtyIngMap);		
+	}
+	
+	// Keep ingList that don't have children
+	private void calculateIngListOfPart(Composite<IngListDataItem> compositeIngList, Double parentQty, List<IngListDataItem> retainedComponentIngList){
+		
+		for (Composite<IngListDataItem> component : compositeIngList.getChildren()) {		
+			if(component.isLeaf()){
+				retainedComponentIngList.add(component.getData());				
+			}
+			else{
+				Double qty = null;
+				if(parentQty != null && component.getData().getQtyPerc() != null){
+					qty = parentQty * component.getData().getQtyPerc() / 100;
+				}
+				calculateIngListOfPart(component, qty, retainedComponentIngList);
+			}
+		}		
 	}
 	
 	/**

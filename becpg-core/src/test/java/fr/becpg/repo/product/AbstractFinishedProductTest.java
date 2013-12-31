@@ -577,7 +577,8 @@ public abstract class AbstractFinishedProductTest extends RepoBaseTestCase{
 					//ingList : ing5
 					ingList = new ArrayList<IngListDataItem>();			
 					ingList.add(new IngListDataItem(null, 100d, null, null, false, false,false, ing5, false));
-					ingList.get(0).getIngListSubIng().addAll(Arrays.asList(ing1,ing4));
+					ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, false, false,false, ing1, false));
+					ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, false, false,false, ing4, false));
 					rawMaterial7.setIngList(ingList);
 					rawMaterial7NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial7).getNodeRef();
 					

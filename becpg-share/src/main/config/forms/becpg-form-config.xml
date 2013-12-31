@@ -5016,7 +5016,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
-					<show id="bcpg:ingListSubIng" />
+					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5037,9 +5037,11 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListSubIng">
+					<field id="bcpg:parentLevel">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+ 							<control-param name="ds">becpg/autocomplete/ingListParentLevel</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -5047,6 +5049,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true"/>
+					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
@@ -5055,12 +5058,12 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
-					<show id="bcpg:ingListSubIng" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:depthLevel" label="hidden" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
@@ -5080,7 +5083,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
-					<show id="bcpg:ingListSubIng" />
+					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5101,9 +5104,11 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListSubIng">
+					<field id="bcpg:parentLevel">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+ 							<control-param name="ds">becpg/autocomplete/ingListParentLevel</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>

@@ -218,6 +218,9 @@ public interface BeCPGModel {
 
 	/** The Constant ASSOC_INGLIST_ING. */
 	QName ASSOC_INGLIST_ING = QName.createQName(BECPG_URI, "ingListIng");
+	
+	@Deprecated
+	QName ASSOC_INGLIST_SUBING = QName.createQName(BECPG_URI, "ingListSubIng");	
 
 	// nutList
 	/** The Constant TYPE_NUTLIST. */

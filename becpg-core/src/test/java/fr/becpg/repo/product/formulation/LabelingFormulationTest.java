@@ -678,7 +678,9 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        ├──[ing3 french - 5.0]
 //			        └──[ing4 french - 1.0]
 		
-		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 7 66,7% (Epaississant french: ing5 french (ing1 french, ing4 french)), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)", Locale.FRENCH);
+		//#814
+		//checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 7 66,7% (Epaississant french: ing5 french (ing1 french, ing4 french)), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 7 66,7% (ing5 french 100% (ing1 french, ing4 french)), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)", Locale.FRENCH);
 		
 		
 		//MultiLevel
