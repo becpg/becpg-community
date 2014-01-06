@@ -113,6 +113,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="pack:llType" />
 				</field-visibility>
 			</form>
 

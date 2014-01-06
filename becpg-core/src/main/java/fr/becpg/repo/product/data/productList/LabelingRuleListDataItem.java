@@ -3,24 +3,53 @@ package fr.becpg.repo.product.data.productList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfEnforced;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelingRuleList")
-public class LabelingRuleListDataItem extends AbstractManualDataItem {
+public class LabelingRuleListDataItem extends AbstractManualDataItem implements Synchronisable {
 	
 	private String formula;
-	private String errorLog;
+	private MLText label;
 	private LabelingRuleType labelingRuleType;
 	private List<NodeRef> components = new ArrayList<NodeRef>();
 	private List<NodeRef> replacements = new ArrayList<NodeRef>();
+	private Boolean isActive = true;
 	
+	
+	
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname="bcpg:lrLabel")
+	public MLText getLabel() {
+		return label;
+	}
+
+	public void setLabel(MLText label) {
+		this.label = label;
+	}
+	
+	
+	@AlfProp
+	@AlfEnforced
+	@AlfQname(qname="bcpg:lrIsActive")
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:lrFormula")
@@ -62,26 +91,40 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 		this.labelingRuleType = labelingRuleType;
 	}
 
-	@AlfProp
-	@AlfQname(qname="bcpg:lrErrorLog")
-	public String getErrorLog() {
-		return errorLog;
-	}
-
-	public void setErrorLog(String errorLog) {
-		this.errorLog = errorLog;
-	}
-	
 	
 
 	public LabelingRuleListDataItem() {
 		super();
 	}
 
-	public LabelingRuleListDataItem(String title, String formula, LabelingRuleType labelingRuleType) {
+	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType) {
 		super();
+		this.name = name;
 		this.formula = formula;
 		this.labelingRuleType = labelingRuleType;
+	}
+
+	
+	
+	
+	
+	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
+		super();
+		this.name = name;
+		this.formula = formula;
+		this.labelingRuleType = labelingRuleType;
+		this.components = components;
+		this.replacements = replacements;
+	}
+
+	public LabelingRuleListDataItem(String name, MLText label ,String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
+		super();
+		this.name = name;
+		this.label = label;
+		this.formula = formula;
+		this.labelingRuleType = labelingRuleType;
+		this.components = components;
+		this.replacements = replacements;
 	}
 
 	@Override
@@ -89,8 +132,8 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((components == null) ? 0 : components.hashCode());
-		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
 		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((labelingRuleType == null) ? 0 : labelingRuleType.hashCode());
 		result = prime * result + ((replacements == null) ? 0 : replacements.hashCode());
 		return result;
@@ -110,15 +153,15 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 				return false;
 		} else if (!components.equals(other.components))
 			return false;
-		if (errorLog == null) {
-			if (other.errorLog != null)
-				return false;
-		} else if (!errorLog.equals(other.errorLog))
-			return false;
 		if (formula == null) {
 			if (other.formula != null)
 				return false;
 		} else if (!formula.equals(other.formula))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
 			return false;
 		if (labelingRuleType != other.labelingRuleType)
 			return false;
@@ -132,11 +175,15 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem {
 
 	@Override
 	public String toString() {
-		return "LabelingRuleListDataItem [ formula=" + formula + ", components=" + components + ", replacements=" + replacements + ", labelingRuleType="
-				+ labelingRuleType + ", errorLog=" + errorLog + "]";
+		return "LabelingRuleListDataItem [formula=" + formula + ", label=" + label + ", labelingRuleType=" + labelingRuleType + ", components=" + components + ", replacements="
+				+ replacements + "]";
 	}
 
-	
+	@Override
+	public boolean isSynchronisable() {
+		return Boolean.TRUE.equals(getIsManual());
+	}
+
 	
 
 }

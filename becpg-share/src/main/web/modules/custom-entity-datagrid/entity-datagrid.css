@@ -67,6 +67,64 @@
 	padding-left: 20px;
 }
 
+
+.datagrid span.finishedProduct-Simulation {
+	background: url(../../components/images/states/simulation-10.png),
+		url(../../components/images/filetypes/generic-finishedProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.datagrid span.localSemiFinishedProduct-Simulation {
+	background: url(../../components/images/states/simulation-10.png),
+		url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.datagrid span.packagingKit-Simulation {
+	background: url(../../components/images/states/simulation-10.png),
+		url(../../components/images/filetypes/generic-packagingKit-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.datagrid span.packagingMaterial-Simulation {
+	background: url(../../components/images/states/simulation-10.png),
+		url(../../components/images/filetypes/generic-packagingMaterial-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.datagrid span.rawMaterial-Simulation {
+	background: url(../../components/images/states/simulation-10.png),
+		url(../../components/images/filetypes/generic-rawMaterial-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.datagrid span.semiFinishedProduct-Simulation {
+	background: url(../../components/images/states/simulation-10.png),
+		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+.datagrid span.resourceProduct-Simulation {
+	background: url(../../components/images/states/simulation-10.png),
+		url(../../components/images/filetypes/generic-resourceProduct-16.png);
+	background-repeat: no-repeat;
+	background-position: 8px 2px, 0 0;
+	padding-left: 20px;
+}
+
+
 .datagrid span.finishedProduct-Archived {
 	background: url(../../components/images/states/archived-10.png),
 		url(../../components/images/filetypes/generic-finishedProduct-16.png);

@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
@@ -97,9 +98,11 @@ public class ECOTest extends RepoBaseTestCase {
 	private NodeRef nut2;
 
 	@Override
+	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 
+		
 		cost1 = costs.get(0);
 		cost2 = costs.get(1);
 
@@ -251,21 +254,17 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				finishedProduct.setHierarchy2(HIERARCHY2_PIZZA_REF);
+				finishedProduct.setDensity(1d);
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 
-				CompoListDataItem compo1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
-
-				compoList.add(compo1);
-				compoList.add(new CompoListDataItem(null, compo1, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compo1, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-
-				CompoListDataItem compo2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
-
-				compoList.add(compo2);
-				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compo2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
@@ -307,7 +306,7 @@ public class ECOTest extends RepoBaseTestCase {
 
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - unit: " + costListDataItem.getUnit();
-					logger.debug(trace);
+					logger.info(trace);
 					if (costListDataItem.getCost().equals(cost1)) {
 						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
@@ -322,7 +321,7 @@ public class ECOTest extends RepoBaseTestCase {
 				for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
 							+ nutListDataItem.getUnit();
-					logger.debug(trace);
+					logger.info(trace);
 					if (nutListDataItem.getNut().equals(nut1)) {
 						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
 					}
@@ -473,7 +472,7 @@ public class ECOTest extends RepoBaseTestCase {
 				assertEquals(8, checks);
 
 				// apply
-				ecoService.apply(ecoNodeRef);
+				ecoService.apply(ecoNodeRef,false);
 
 				return null;
 				
@@ -721,7 +720,7 @@ public class ECOTest extends RepoBaseTestCase {
 				assertEquals(12, checks);
 
 				// apply
-				ecoService.apply(ecoNodeRef);
+				ecoService.apply(ecoNodeRef,false);
 
 				return null;
 

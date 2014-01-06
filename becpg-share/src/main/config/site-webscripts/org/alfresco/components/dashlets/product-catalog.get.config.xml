@@ -1,8 +1,17 @@
 <config>
    <max-items>25</max-items>
    <filters>
+   	<filter type="ToValidate" />
       <filter type="Valid" />
-      <filter type="ToValidate" />
+      <filter type="Refused" />
+      <filter type="Archived" />
+      <filter type="all" />
       <filter type="favourites" />
    </filters>
+   <types>
+   	<type name="finishedProduct" />
+   	<type name="rawMaterial" />
+   	<type name="packagingMaterial" />
+   	<type name="product" />
+   </types>
 </config>

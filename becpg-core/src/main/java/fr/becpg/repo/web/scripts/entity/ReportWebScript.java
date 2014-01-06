@@ -17,13 +17,13 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
  * @author querephi
  */
 @Service
+@Deprecated
 public class ReportWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(ReportWebScript.class);
@@ -36,17 +36,12 @@ public class ReportWebScript extends AbstractWebScript {
 	private static final String PARAM_STORE_ID = "store_id";
 	private static final String PARAM_ID = "id";
 
-	private EntityService entityService;
-
 	private NodeService nodeService;
 
 	private LockService lockService;
 
 	private EntityReportService entityReportService;
 
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
 
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
@@ -75,7 +70,7 @@ public class ReportWebScript extends AbstractWebScript {
 		if (nodeService.exists(nodeRef) && lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK) {
 
 			if (ACTION_CHECK_DATALISTS.equals(action)) {
-				generateReport = entityService.hasDataListModified(nodeRef);
+				generateReport = entityReportService.shouldGenerateReport(nodeRef);
 			} else if (ACTION_FORCE.equals(action)) {
 				generateReport = true;
 			} else {

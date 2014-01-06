@@ -36,7 +36,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class RemoteEntityServiceImpl implements RemoteEntityService {
 
-	
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
@@ -46,7 +45,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private BeCPGSearchService beCPGSearchService;
 
 	private EntityService entityService;
-	
+
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
@@ -64,13 +63,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
-	
-	
 
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
-
+	
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
@@ -90,15 +87,22 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		if (format.equals(RemoteEntityFormat.xml)) {
 			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
+			NodeRef ret = null;
 			try {
-				return xmlEntityVisitor.visit(entityNodeRef, in);
+				ret = xmlEntityVisitor.visit(entityNodeRef, in);
+
 			} catch (IOException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (SAXException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (ParserConfigurationException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
+			} finally {
+				if (ret == null) {
+					logger.error("Cannot create or update entity :" + entityNodeRef + " at format " + format);
+				}
 			}
+			return ret;
 		}
 		throw new BeCPGException("Unknow format " + format.toString());
 	}
@@ -159,7 +163,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
 		try {
 			for (NodeRef imageNodeRef : entityService.getImages(entityNodeRef)) {
-	
+
 				images.put((String) nodeService.getProperty(imageNodeRef, ContentModel.PROP_NAME), entityService.getImage(imageNodeRef));
 			}
 		} catch (BeCPGException e) {
@@ -170,7 +174,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	}
 
 	@Override
-	public boolean containsData(NodeRef entityNodeRef)  {
+	public boolean containsData(NodeRef entityNodeRef) {
 		QName type = nodeService.getType(entityNodeRef);
 		return entityService.hasAssociatedImages(type);
 	}

@@ -14,6 +14,20 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	protected Double qty = 0d;
 
 	protected MLText legalName;
+	
+	
+	public AbstractLabelingComponent() {
+		super();
+	}
+
+
+	public AbstractLabelingComponent(AbstractLabelingComponent abstractLabelingComponent) 
+	{
+		super(abstractLabelingComponent);
+	    this.qty = abstractLabelingComponent.qty;
+	    this.legalName = abstractLabelingComponent.legalName;
+	}
+
 
 	@AlfMlText
 	@AlfProp
@@ -28,14 +42,19 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 
 	@Override
 	public String getLegalName(Locale locale) {
+		String ret = null;
 		if (legalName != null) {
 			if (legalName.containsKey(locale)) {
-				return legalName.get(locale);
+				ret =  legalName.get(locale);
 			} else {
-				return legalName.getClosestValue(locale);
+				ret =  legalName.getClosestValue(locale);
 			}
 		}
-		return name;
+		if(ret==null || ret.isEmpty()){
+			return name;
+		}
+		
+		return ret;
 	}
 
 	@Override
@@ -46,6 +65,8 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
+	
+	
 
 	@Override
 	public int hashCode() {
@@ -86,13 +107,22 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	@Override
 	public int compareTo(LabelingComponent lblComponent) {
 
+		if (lblComponent instanceof CompositeLabeling && ((CompositeLabeling) lblComponent).isGroup()
+				&& !(this instanceof CompositeLabeling && ((CompositeLabeling) this).isGroup())) {
+			return 1;
+		}
+
+		if (!(lblComponent instanceof CompositeLabeling && ((CompositeLabeling) lblComponent).isGroup()) && 
+				(this instanceof CompositeLabeling
+				&& ((CompositeLabeling) this).isGroup())) {
+			return -1;
+		}
+
 		if (lblComponent.getQty() != null && this.getQty() != null) {
 			return Double.compare(lblComponent.getQty(), this.getQty());
-		}
-		else if (this.getQty() == null && lblComponent.getQty() != null) {
+		} else if (this.getQty() == null && lblComponent.getQty() != null) {
 			return 1; // after
-		}
-		else if (this.getQty() != null && lblComponent.getQty() == null) {
+		} else if (this.getQty() != null && lblComponent.getQty() == null) {
 			return -1; // before
 		}
 		return 0;// equals

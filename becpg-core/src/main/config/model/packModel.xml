@@ -25,7 +25,6 @@
                 <list>
                     <value>g</value>
                     <value>kg</value>
-                    <value>g/m2</value>
                 </list>
             </parameter>
             <parameter name="caseSensitive">

@@ -4,13 +4,12 @@
    <url>/becpg/entity/datalists/data/node/{store_type}/{store_id}/{id}</url>
    <url>/becpg/entity/datalists/data/node</url>
    <url>/becpg/entity/datalists/item/node/{store_type}/{store_id}/{id}?entityNodeRef={entityNodeRef}</url>
-   <format default="json">argument</format>
+   <format default="json">any</format>
    <authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>
 	<lifecycle>internal</lifecycle>
 	<cache>
-	  <never>false</never>
-	  <public>false</public>
-	  <mustrevalidate>true</mustrevalidate>
-	</cache>
+    <never>false</never>
+    <mustrevalidate>true</mustrevalidate>
+  </cache>
 </webscript>

@@ -192,8 +192,10 @@ public abstract class  AbstractProjectTestCase extends RepoBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						rawMaterialNodeRef = BeCPGTestHelper.createRawMaterial(testFolderNodeRef, "Raw material");
+						List<NodeRef> productNodeRefs = new ArrayList<>(1);
+						productNodeRefs.add(rawMaterialNodeRef);		
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
-								endDate, null, 2, projectState, projectTplNodeRef, 0, rawMaterialNodeRef);
+								endDate, null, 2, projectState, projectTplNodeRef, 0, productNodeRefs);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
 

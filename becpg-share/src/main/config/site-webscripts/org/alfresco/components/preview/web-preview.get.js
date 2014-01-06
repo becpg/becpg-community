@@ -70,19 +70,21 @@ function main()
 	   if(nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){
 	      
 	   	model.reports = nodeDetails.item.node.associations["rep:reports"];
-	   	
+	   	model.entityNodeRef =  model.nodeRef;
 	   	first = true;
 	   	for(var j in model.reports){
       		if(first &&  model.reports[j].nodeRef){
-      			//Set First as default
+      			// Set First as default
       			model.nodeRef = model.reports[j].nodeRef;
       			first = false;
       		}
 				if(model.reports[j].isSelected || model.reports[j].isDefault){
-					//Override with default
-					model.nodeRef = model.reports[j].nodeRef;
+					// Override with default
+					
+				   model.nodeRef = model.reports[j].nodeRef;
+					
 					if(model.reports[j].isSelected){
-						//If selected here we are
+						// If selected here we are
 						break;
 					}
 				} 
@@ -108,13 +110,13 @@ function main()
          name : "Alfresco.WebPreview",
          options : {
             thumbnailModification : nodeMetadata.thumbnailModifications,
-            nodeRef : model.nodeRef,
+            nodeRef : model.entityNodeRef? model.entityNodeRef :model.nodeRef,
             name : nodeMetadata.name,
             mimeType : nodeMetadata.mimeType,
             size: nodeMetadata.size,
             thumbnails : nodeMetadata.thumbnails,
             pluginConditions : pluginConditionsJSON,
-            api: model.api,
+            api:  model.api,
             proxy: model.proxy
          }
       };

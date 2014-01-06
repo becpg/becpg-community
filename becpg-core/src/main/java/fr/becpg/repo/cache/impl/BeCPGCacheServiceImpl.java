@@ -49,13 +49,13 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	
 	private TenantAdminService tenantAdminService;
 
-	private Map<String, DefaultSimpleCache<Serializable, ?>> caches = new ConcurrentHashMap<String, DefaultSimpleCache<Serializable, ?>>();
+	private Map<String, DefaultSimpleCache<String, ?>> caches = new ConcurrentHashMap<String, DefaultSimpleCache<String, ?>>();
 
 	public void setMaxCacheItems(int maxCacheItems) {
 		this.maxCacheItems = maxCacheItems;
 	}
 
-	public Map<String, DefaultSimpleCache<Serializable, ?>> getCaches() {
+	public Map<String, DefaultSimpleCache<String, ?>> getCaches() {
 		return  Collections.unmodifiableMap(caches);
 	}
 
@@ -90,7 +90,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback) {
 	
 		cacheKey = computeCacheKey(cacheKey);
-		SimpleCache<Serializable, T> cache = (DefaultSimpleCache<Serializable,T>) getCache(cacheName);
+		SimpleCache<String, T> cache = (DefaultSimpleCache<String,T>) getCache(cacheName);
 		T ret = null;
 		try {
 			ret = disableAllCache? null : cache.get(cacheKey);
@@ -150,7 +150,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	@Override
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
-		SimpleCache<Serializable, ?> cache = getCache(cacheName);
+		SimpleCache<String, ?> cache = getCache(cacheName);
 		if(isDebugEnable && cache.get(cacheKey)==null){
 			logger.debug("Cache "+cacheKey+" object doesn't exists");
 		}
@@ -158,11 +158,18 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 
 	}
+	
+	@Override
+	public Collection<String> getCacheKeys(String cacheName) {
+		SimpleCache<String, ?> cache = getCache(cacheName);
+		return cache.getKeys();
+	}
+	
 
 	@Override
 	public void clearAllCaches() {
 		logger.info("Clear all cache");
-		for (SimpleCache<Serializable, ?> cache : caches.values()) {
+		for (SimpleCache<String, ?> cache : caches.values()) {
 			cache.clear();
 		}
 
@@ -178,8 +185,8 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private DefaultSimpleCache<Serializable, ?> getCache(String cacheName) {
-		DefaultSimpleCache<Serializable, ?> cache = caches.get(cacheName);
+	private DefaultSimpleCache<String, ?> getCache(String cacheName) {
+		DefaultSimpleCache<String, ?> cache = caches.get(cacheName);
 		
 		if (cache == null) {
 			Integer cacheSize = cacheSizes.get(cacheName);
@@ -282,6 +289,8 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		}
 
 	}
+
+	
 
 
 }

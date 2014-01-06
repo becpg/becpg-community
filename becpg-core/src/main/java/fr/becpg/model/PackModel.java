@@ -54,4 +54,5 @@ public class PackModel {
 	public static final QName TYPE_LABELING_LIST = QName.createQName(PACK_URI, "labelingList");
 	public static final QName ASSOC_LL_LABEL = QName.createQName(PACK_URI, "llLabel");
 	public static final QName PROP_LL_TYPE = QName.createQName(PACK_URI, "llType");
+	public static final QName PROP_LL_POSITION = QName.createQName(PACK_URI, "llPosition");
 }

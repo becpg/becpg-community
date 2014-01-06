@@ -22,10 +22,13 @@ import org.junit.Test;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
@@ -64,56 +67,34 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {
-
-				/*-- Packaging material 1 --*/					
-				PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
-				packagingMaterial1.setName("Packaging material 1");
-				packagingMaterial1.setLegalName("Legal Packaging material 1");
-				//costList
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
-				packagingMaterial1.setCostList(costList);					
-				packagingMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial1).getNodeRef();
-				
-				/*-- Packaging material 2 --*/					
-				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
-				packagingMaterial2.setName("Packaging material 2");
-				packagingMaterial2.setLegalName("Legal Packaging material 2");
-				//costList
-				costList.clear();
-				costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
-				packagingMaterial2.setCostList(costList);					
-				packagingMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial2).getNodeRef();
-				
-				/*-- Packaging material 1 --*/					
-				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
-				packagingMaterial3.setName("Packaging material 3");
-				packagingMaterial3.setLegalName("Legal Packaging material 3");
-				//costList
-				costList.clear();
-				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
-				packagingMaterial3.setCostList(costList);					
-				packagingMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial3).getNodeRef();
 				
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setHierarchy1(HIERARCHY1_FROZEN_REF);
+				finishedProduct.setHierarchy2(HIERARCHY2_FISH_REF);
 				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(2d);
+				finishedProduct.setQty(2d);		
+				finishedProduct.setNetWeight(2d);
 				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 				finishedProduct.getPackagingListView().setPackagingList(packagingList);
-				costList.clear();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 				finishedProduct.setCostList(costList);
+				List<NutListDataItem> nutList = new ArrayList<>();
+				nutList.add(new NutListDataItem(null, 12d, "kg/100g", 0d, 0d, "Group1", nut1, false));
+				finishedProduct.setNutList(nutList);
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
+				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
 				
 				// add labelingTemplate aspect

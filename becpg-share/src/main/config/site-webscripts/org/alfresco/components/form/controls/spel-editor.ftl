@@ -2,20 +2,6 @@
 <#if field.control.params.rows??><#assign rows=field.control.params.rows><#else><#assign rows=2></#if>
 <#if field.control.params.columns??><#assign columns=field.control.params.columns><#else><#assign columns=60></#if>
 
-<#--
-<@markup id="css" >
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/spel-editor/spel-editor.css" group="form" />
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/spel-editor/shThemeDefault.css" group="form" />
-</@>
-
-<@markup id="js">
-	<@script type="text/javascript" src="${url.context}/res/yui/editor/editor.js" group="form" />
-	<@script type="text/javascript" src="${url.context}/res/modules/spel-editor/spel-editor.js" group="form" />
-	<@script type="text/javascript" src="${url.context}/res/modules/spel-editor/shCore.js" group="form" />
-	<@script type="text/javascript" src="${url.context}/res/modules/spel-editor/shBrushJScript.js" group="form" />
-</@>
--->
-
 
 <@markup id="widgets">
    	<@inlineScript group="form">

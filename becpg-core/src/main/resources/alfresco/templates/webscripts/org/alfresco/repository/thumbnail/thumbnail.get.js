@@ -30,12 +30,14 @@ function main()
    }
    
 
-   //beCPG
-   if(node.isSubType("bcpg:entityV2")){
-	   node = bThumbnail.getThumbnailNode(node);
-	}
-   
-   
+    //beCPG
+    if(node.isSubType("bcpg:entityV2")){
+	  if(thumbnailName == "webpreview" && node.assocs && node.assocs["rep:reports"] ) {
+	     node = bThumbnail.getReportNode(node);
+	  } else {
+	     node = bThumbnail.getThumbnailNode(node);
+	  }
+    }
    
    // Get the queue/force create setting
    var qc = false;

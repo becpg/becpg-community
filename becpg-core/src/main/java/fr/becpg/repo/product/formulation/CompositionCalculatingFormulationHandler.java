@@ -1,59 +1,44 @@
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
-import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.filters.EffectiveFilters;
-import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 @Service
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
-
-	private static final String MESSAGE_RM_WATER = "message.formulate.rawmaterial.water";	
-	private static final String KEY_RM_WATER = "RMWater";	
 	
 	private static Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 	
 	private NodeService nodeService;
 	
-	private BeCPGSearchService beCPGSearchService;
-	
-	private BeCPGCacheService beCPGCacheService;
+	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -77,27 +62,34 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				formulatedProduct.setNetWeight(formulatedProduct.getQty());
 			}
 		}
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);			
-		
-		// calculate on every item
+		Double netWeight = formulatedProduct.getNetWeight();			
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
-		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
-		visitYieldChildren(formulatedProduct, netWeight, compositeAll);
-		
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
 		
-		// Yield		
-		Double qtyUsed = calculateQtyUsedBeforeProcess(compositeDefaultVariant);
-		if(qtyUsed != null && qtyUsed != 0d){
-			formulatedProduct.setYield(100 * netWeight / qtyUsed);
-		}	
+		// calculate on every item		
+		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
 		
+		// Yield		
+		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
+			
+		Double qtyUsed = calculateQtyUsed(compositeDefaultVariant);
+		formulatedProduct.setRecipeQtyUsed(qtyUsed);
+		if(netWeight != null && qtyUsed != null && qtyUsed != 0d){
+			formulatedProduct.setYield(100 * netWeight / qtyUsed);
+		}
+		
+		// Volume
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct.getNodeRef(), nodeService);
 		if(netVolume != null){
 			Double calculatedVolume = calculateVolumeFromChildren(compositeDefaultVariant);
 			if(calculatedVolume != 0d){
 				formulatedProduct.setYieldVolume(100 * netVolume / calculatedVolume);
 			}			
+		}
+		
+		// generic raw material
+		if(formulatedProduct instanceof RawMaterialData){
+			((RawMaterialData) formulatedProduct).setSuppliers(calculateSuppliers(compositeAll));
 		}
 		
 		return true;
@@ -107,41 +99,26 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
-			// qty and sub formula qty are defined and not equal to 0
-			if(parentQty != null && !parentQty.equals(0d)){
-				
-				Double qtySubFormula = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
-				logger.debug("qtySubFormula: " + qtySubFormula + " parentQty: " + parentQty);
-				if(qtySubFormula != null){
-					
-					Double qty = null;
-					// take in account percentage
-					if(component.getData().getCompoListUnit() != null && 
-							component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){
-						qtySubFormula = qtySubFormula * parentQty / 100;
-					}
-					
-					// Take in account yield that is defined on component	
-					Double yield = FormulationHelper.DEFAULT_YIELD;					
-					if(component.isLeaf() && component.getData().getYieldPerc() != null && component.getData().getYieldPerc() != 0d){
-						
-						yield = component.getData().getYieldPerc();							
-						Double qtyWater = qtySubFormula * (1 - FormulationHelper.DEFAULT_YIELD / yield);							
-						CompoListDataItem waterCompoListDataItem = new CompoListDataItem(null, 
-												composite.getData(), 
-												qtyWater, null,
-												component.getData().getCompoListUnit(), 
-												component.getData().getLossPerc(), 
-												DeclarationType.Declare, 
-												getWaterRawMaterial());
-						
-						waterCompoListDataItem.setTransient(true);
-						formulatedProduct.getCompoListView().getCompoList().add(waterCompoListDataItem);
-					}
-					qty = qtySubFormula * 100 / yield;			
-					
-					component.getData().setQty(qty);					
+			Double qtySubFormula = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
+			logger.debug("qtySubFormula: " + qtySubFormula + " parentQty: " + parentQty);
+			if(qtySubFormula != null){
+									
+				// take in account percentage
+				if(component.getData().getCompoListUnit() != null && 
+						component.getData().getCompoListUnit().equals(CompoListUnit.Perc) &&
+						parentQty != null && !parentQty.equals(0d)){
+					qtySubFormula = qtySubFormula * parentQty / 100;
 				}
+				
+				// Take in account yield that is defined on component
+				Double qty = null;
+				if(component.isLeaf()){						
+					qty = qtySubFormula * 100 / FormulationHelper.getYield(component.getData());
+				}
+				else{
+					qty = qtySubFormula;
+				}													
+				component.getData().setQty(qty);					
 			}
 			
 			// calculate volume ?			
@@ -153,7 +130,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				
 				// take in account percentage
 				if(component.getData().getCompoListUnit() != null && 
-						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
+						component.getData().getCompoListUnit().equals(CompoListUnit.Perc) &&
+						parentQty != null && !parentQty.equals(0d)){	
 					
 					visitQtyChildren(formulatedProduct, parentQty, component);
 					
@@ -173,7 +151,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 	}
 
-	private void visitYieldChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException{				
+	private void visitYieldChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite) throws FormulateException{				
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
@@ -184,11 +162,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				if(component.getData().getCompoListUnit() != null && 
 						component.getData().getCompoListUnit().equals(CompoListUnit.Perc)){	
 					
-					visitYieldChildren(formulatedProduct, parentQty, component);
+					visitYieldChildren(formulatedProduct, component);
 					component.getData().setYieldPerc(null);
 				}
 				else{
-					visitYieldChildren(formulatedProduct, component.getData().getQty(),component);
+					visitYieldChildren(formulatedProduct,component);
 					
 					// Yield				
 					component.getData().setYieldPerc(calculateYield(component));
@@ -208,8 +186,12 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			Double qty = FormulationHelper.getQty(component.getData());
 			if(qty != null){
 				// water can be taken in account on Raw Material
-				Double yield = component.isLeaf() && component.getData().getYieldPerc() != null ? component.getData().getYieldPerc() : FormulationHelper.DEFAULT_YIELD;
-				qtyUsed += qty * yield / 100;
+				if(component.isLeaf()){
+					qtyUsed += qty * FormulationHelper.getYield(component.getData()) / 100;
+				}
+				else{
+					qtyUsed += qty;
+				}				
 			}
 		}
 		
@@ -227,7 +209,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return yieldPerc;
 	}	
 	
-	private Double calculateQtyUsedBeforeProcess(Composite<CompoListDataItem> composite) throws FormulateException{				
+	private Double calculateQtyUsed(Composite<CompoListDataItem> composite) throws FormulateException{				
 		
 		Double qty = 0d;
 		
@@ -235,37 +217,15 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			
 			if(!component.isLeaf()){
 				// calculate children
-				qty += calculateQtyUsedBeforeProcess(component);
+				qty += calculateQtyUsed(component);
 			}else{
-				qty += FormulationHelper.getQty(component.getData());
+				Double qtyInKg =  FormulationHelper.getQtyInKg(component.getData());
+				if(qtyInKg!=null) {
+					qty += qtyInKg * FormulationHelper.getYield(component.getData()) / 100;				
+				}
 			}
 		}
-		
 		return qty;
-	}
-	
-	private NodeRef getWaterRawMaterial(){
-		
-		return beCPGCacheService.getFromCache(CompositionCalculatingFormulationHandler.class.getName(), KEY_RM_WATER , new BeCPGCacheDataProviderCallBack<NodeRef>() {
-
-			@Override
-			public NodeRef getData() {
-								
-				List<NodeRef> resultSet = null;
-				String waterIngName = I18NUtil.getMessage(MESSAGE_RM_WATER, Locale.getDefault());
-				
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_RAWMATERIAL)) + 
-						LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, waterIngName));
-				resultSet = beCPGSearchService.search(query, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE, SearchService.LANGUAGE_LUCENE);
-				
-				if (!resultSet.isEmpty()) {
-					return resultSet.get(0);
-				}
-				
-				logger.error("Failed to find water raw material. name: " + waterIngName);
-				return null;
-			}			
-		});
 	}
 	
 	private Double calculateVolumeFromChildren(Composite<CompoListDataItem> composite) throws FormulateException{				
@@ -290,4 +250,18 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return volume;
 	}
 	
+	private List<NodeRef> calculateSuppliers(Composite<CompoListDataItem> composite){
+		List<NodeRef> supplierNodeRefs = new ArrayList<>();		
+		for(Composite<CompoListDataItem> component : composite.getChildren()){			
+			ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
+			if(productData instanceof RawMaterialData){
+				for(NodeRef supplierNodeRef : ((RawMaterialData)productData).getSuppliers()){
+					if(!supplierNodeRefs.contains(supplierNodeRef)){
+						supplierNodeRefs.add(supplierNodeRef);
+					}
+				}
+			}			
+		}
+		return supplierNodeRefs;
+	}
 }

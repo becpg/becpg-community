@@ -20,6 +20,8 @@
 		</columns>
 	</mapping>	
 	
+	
+	
 	<!-- Allergens -->
 	<mapping name="bcpg:allergen">
 		<nodeColumnKeys>
@@ -98,6 +100,16 @@
 					attribute="bcpg:labelClaimFormula" />
 			</columns>
 		</mapping>
+		
+		<mapping name="bcpg:dynamicCharactList">
+			<nodeColumnKeys>
+				<nodeColumnKey attribute="cm:name" />
+			</nodeColumnKeys>
+			<columns>
+				<column id="bcpg:dynamicCharactFormula" type="Formula"
+					attribute="bcpg:dynamicCharactFormula" />
+			</columns>
+		</mapping>
 	
 	<!-- Sample for multi-hierarchy
 		
@@ -113,4 +125,13 @@
 		</columns>
 	</mapping>
    -->
+   <mapping name="qa:nc">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:code" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="qa:claimOriginHierarchy1"  type="Hierarchy" attribute="qa:claimOriginHierarchy1"   />
+			<column id="qa:claimOriginHierarchy2"  type="Hierarchy" attribute="qa:claimOriginHierarchy2" parentLevel="qa:claimOriginHierarchy1" />
+		</columns>
+	</mapping>
 </mappings>

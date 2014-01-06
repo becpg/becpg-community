@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -18,7 +19,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:ingList")
-public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem {
+public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
 
 	
 	private Double qtyPerc = 0d;
@@ -26,6 +27,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
 	
 	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
+	
+	private List<NodeRef> ingListSubIng = new ArrayList<NodeRef>();
 	
 	private Boolean isGMO = false;
 	
@@ -36,6 +39,10 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	private Boolean isManual;
 
 	private Boolean isProcessingAid = false;
+	
+	private Integer depthLevel;
+	
+	private IngListDataItem parent;
 	
 	
 	@AlfProp
@@ -71,6 +78,19 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		this.bioOrigin = bioOrigin;
 	}
 	
+	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:ingListSubIng")
+	public List<NodeRef> getIngListSubIng() {
+		return ingListSubIng;
+	}
+
+
+	public void setIngListSubIng(List<NodeRef> ingListSubIng) {
+		this.ingListSubIng = ingListSubIng;
+	}
+
+
 	@AlfProp
 	@AlfEnforced
 	@AlfQname(qname="bcpg:ingListIsGMO")
@@ -147,26 +167,40 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		
 	}
 	
+	@Override
+	@AlfProp
+	@AlfQname(qname="bcpg:depthLevel")
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
+	}
+
+	@Override
+	@AlfProp
+	@AlfQname(qname="bcpg:parentLevel")
+	public IngListDataItem getParent() {
+		return this.parent;
+	}
+
+
+	@Override
+	public void setParent(IngListDataItem parent) {
+		this.parent = parent;		
+	}
 	
 	/**
 	 * Instantiates a new ing list data item.
 	 */
 	public IngListDataItem()
 	{
+		super();
 	}
 	
-	/**
-	 * Instantiates a new ing list data item.
-	 *
-	 * @param nodeRef the node ref
-	 * @param qtyPerc the qty perc
-	 * @param geoOrigin the geo origin
-	 * @param bioOrigin the bio origin
-	 * @param isGMO the is gmo
-	 * @param isIonized the is ionized
-	 * @param ing the ing
-	 */
-	public IngListDataItem(NodeRef nodeRef,	Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, NodeRef ing, Boolean isManual)
+
+	public IngListDataItem(NodeRef nodeRef,	Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setQtyPerc(qtyPerc);
@@ -176,6 +210,21 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsIonized(isIonized);
 		setIng(ing);
 		setIsManual(isManual);
+		setIsProcessingAid(processingAid);
+	}
+	
+	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
+	{
+		setNodeRef(nodeRef);
+		setParent(ingList);
+		setQtyPerc(qtyPerc);
+		setGeoOrigin(geoOrigin);
+		setBioOrigin(bioOrigin);
+		setIsGMO(isGMO);
+		setIsIonized(isIonized);
+		setIng(ing);
+		setIsManual(isManual);
+		setIsProcessingAid(processingAid);
 	}
 	
 	/**
@@ -192,6 +241,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsIonized(i.getIsIonized());
 		setIng(i.getIng());
 		setIsManual(i.getIsManual());
+		setIsProcessingAid(i.getIsProcessingAid());
 	}
 
 	@Override
@@ -201,6 +251,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		result = prime * result + ((bioOrigin == null) ? 0 : bioOrigin.hashCode());
 		result = prime * result + ((geoOrigin == null) ? 0 : geoOrigin.hashCode());
 		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
+		result = prime * result + ((ingListSubIng == null) ? 0 : ingListSubIng.hashCode());
 		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
 		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
@@ -233,6 +284,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				return false;
 		} else if (!ing.equals(other.ing))
 			return false;
+		if (ingListSubIng == null) {
+			if (other.ingListSubIng != null)
+				return false;
+		} else if (!ingListSubIng.equals(other.ingListSubIng))
+			return false;
 		if (isGMO == null) {
 			if (other.isGMO != null)
 				return false;
@@ -263,9 +319,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing
-				+ ", isManual=" + isManual + ", isProcessingAid=" + isProcessingAid + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", ingListSubIng=" + ingListSubIng + ", isGMO=" + isGMO
+				+ ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual + ", isProcessingAid=" + isProcessingAid + "]";
 	}
-
-
 }

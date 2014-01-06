@@ -47,6 +47,10 @@
 					    		<button type="button" name="${el}-empty-cache" id="${el}-empty-cache-button">${msg("button.empty-cache")}</button>
 					    		<label for="${el}-empty-cache-button">${msg("label.empty-cache")}</label>    		
 					  		  </div>
+					  		  <div class="action">
+					    		<button type="button" name="${el}-show-users" id="${el}-show-users-button">${msg("button.show-users")}</button>
+					    		<label for="${el}-show-users-button">${msg("label.show-users")}</label>    		
+					  		  </div>
 				 			 </td>
 				 			</tr>
 						</table>

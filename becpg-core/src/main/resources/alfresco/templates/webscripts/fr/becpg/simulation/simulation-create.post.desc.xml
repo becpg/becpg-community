@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Create a simulation entity</shortname>
+  <description>Create a simulation entity</description>
+  <url>/becpg/entity/simulation/create?entityNodeRef={entityNodeRef}</url>
+  <format default="json" />
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <lifecycle>internal</lifecycle>
+</webscript>

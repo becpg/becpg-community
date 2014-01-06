@@ -3,7 +3,8 @@
  */
 package fr.becpg.repo.entity.datalist.policy;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -23,8 +24,12 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author querephi
  */
 @Service
-public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy {
+public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy,
+		NodeServicePolicies.OnCreateNodePolicy {
 
+	private static String KEY_LIST_ITEM = "KeyListItem";
+	private static String KEY_LIST = "KeyList";
+	
 	private static Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
 
 	private AuthenticationService authenticationService;
@@ -34,19 +39,31 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 		this.authenticationService = authenticationService;
 	}
 
-
 	public void doInit() {
 		logger.debug("Init AuditEntityListItemPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onUpdateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onCreateNode"));
 	}
 
+	@Override
+	public void onCreateNode(ChildAssociationRef childAssocRef) {
+		queueListNodeRef(KEY_LIST, childAssocRef.getParentRef());
+	}
 
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
-		NodeRef listNodeRef = childAssocRef.getParentRef();
+		queueListNodeRef(KEY_LIST, childAssocRef.getParentRef());
+	}
 
-		if (listNodeRef != null) {
-			queueNode(listNodeRef);
+	@Override
+	public void onUpdateNode(NodeRef listItemNodeRef) {				
+		queueListNodeRef(KEY_LIST_ITEM, listItemNodeRef);
+	}
+	
+	private void queueListNodeRef(String key, NodeRef listNodeRef){		
+		if(policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+			queueNode(key, listNodeRef);
 		}
 	}
 
@@ -54,20 +71,43 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 	 * Store in the entity list folder that an item has been deleted.
 	 * 
 	 */
-	 @Override
+	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-		for (NodeRef listNodeRef : pendingNodes) {
-			if (nodeService.exists(listNodeRef) && !isVersionNode(listNodeRef)) {
-				try {
-					policyBehaviourFilter.disableBehaviour(listNodeRef, ContentModel.ASPECT_AUDITABLE);
-					nodeService.setProperty(listNodeRef, ContentModel.PROP_MODIFIED, new Date());
-					nodeService.setProperty(listNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
-				} finally {
-					policyBehaviourFilter.enableBehaviour(listNodeRef, ContentModel.ASPECT_AUDITABLE);
+		
+		Set<NodeRef> listNodeRefs = new HashSet<>();
+		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
+		
+		for(NodeRef pendingNode : pendingNodes){			
+			if(nodeService.exists(pendingNode)){
+				
+				NodeRef listNodeRef = null;			
+				if(key.equals(KEY_LIST_ITEM)){
+					listNodeRef = nodeService.getPrimaryParent(pendingNode).getParentRef();
 				}
-			}
+				else{
+					listNodeRef = pendingNode;
+				}
+				
+				if(!listNodeRefs.contains(listNodeRef)){
+					listNodeRefs.add(listNodeRef);					
+					NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+					
+					if(!listContainerNodeRefs.contains(listContainerNodeRef)){
+						listContainerNodeRefs.add(listContainerNodeRef);
+						NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+						if (!isVersionNode(entityNodeRef)) {
+							try {
+								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+								nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
+								nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
+							} finally {
+								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+							}
+						}
+					}					
+				}				
+			}			
 		}
-
 	}
 
 }

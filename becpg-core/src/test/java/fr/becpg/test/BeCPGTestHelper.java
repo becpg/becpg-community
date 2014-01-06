@@ -196,6 +196,7 @@ public class BeCPGTestHelper {
 		rawMaterial.setName(name);
 		rawMaterial.setHierarchy1(RepoBaseTestCase.INSTANCE.HIERARCHY1_SEA_FOOD_REF);
 		rawMaterial.setHierarchy2(RepoBaseTestCase.INSTANCE.HIERARCHY2_FISH_REF);
+		
 
 		// Allergens
 		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
@@ -216,7 +217,7 @@ public class BeCPGTestHelper {
 		// Ings
 		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
 		for (int j = 0; j < RepoBaseTestCase.INSTANCE.ings.size(); j++) {
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, RepoBaseTestCase.INSTANCE.ings.get(j), false);
+			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false,false, RepoBaseTestCase.INSTANCE.ings.get(j), false);
 			ingList.add(ingListItemData);
 		}
 		rawMaterial.setIngList(ingList);

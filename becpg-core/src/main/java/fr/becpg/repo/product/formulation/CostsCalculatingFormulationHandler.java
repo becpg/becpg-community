@@ -19,6 +19,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -78,7 +79,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException{				
 		
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);
+		Double netQty = null;
+		if(formulatedProduct instanceof PackagingKitData){
+			netQty = FormulationHelper.QTY_FOR_PIECE;
+		}
+		else{
+			netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+		}		
 		
 		/*
 		 * Composition
@@ -87,7 +94,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){									
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT));
-			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netWeight, mandatoryCharacts1);
+			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
 		}
 		
 		addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
@@ -100,7 +107,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if(formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
-				visitPart(packagingListDataItem.getProduct(), costList, qty, netWeight, mandatoryCharacts2);
+				visitPart(packagingListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts2);
 			}
 		}
 
@@ -116,7 +123,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if(processListDataItem.getResource() != null && qty != null){
-					visitPart(processListDataItem.getResource(), costList, qty, netWeight, mandatoryCharacts3);
+					visitPart(processListDataItem.getResource(), costList, qty, netQty, mandatoryCharacts3);
 				}																		
 			}
 		}
@@ -128,7 +135,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			Composite<CompoListDataItem> composite, 
 			List<CostListDataItem> costList,
 			Double parentLossRatio, 
-			Double netWeight,
+			Double netQty,
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts) throws FormulateException{
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
@@ -144,12 +151,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				
 				// calculate children				
 				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
-				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netWeight, mandatoryCharacts);							
+				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);							
 			}
 			else{
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, parentLossRatio);				
-				visitPart(compoListDataItem.getProduct(), costList, qty, netWeight, mandatoryCharacts);
+				visitPart(compoListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts);
 			}			
 		}
 	}
@@ -190,7 +197,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){
 		
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);
+		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double unitTotalVariableCost = 0d;
 		Double unitTotalFixedCost = 0d;
 		
@@ -203,7 +210,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					unitTotalFixedCost += c.getValue();					
 				}
 				else{
-					unitTotalVariableCost += c.getValue() * netWeight;
+					unitTotalVariableCost += c.getValue() * netQty;
 				}
 			}			
 		}

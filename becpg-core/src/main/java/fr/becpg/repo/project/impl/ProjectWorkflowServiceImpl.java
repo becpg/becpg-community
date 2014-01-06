@@ -72,7 +72,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
 		}
 
-		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
+		workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());	
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
 		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());
 		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
@@ -88,17 +88,22 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		}
 		AuthenticationUtil.setFullyAuthenticatedUser(authenticatedUser);
 		
+		
 		NodeRef wfPackage = workflowService.createPackage(null);
 		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
 				ContentModel.ASSOC_CHILDREN);
-		if (projectData.getEntity() != null) {
-			nodeService.addChild(wfPackage, projectData.getEntity(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-					ContentModel.ASSOC_CHILDREN);
+		if (!projectData.getEntities().isEmpty()) {
+			for(NodeRef entity : projectData.getEntities()){
+				nodeService.addChild(wfPackage, entity, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+						ContentModel.ASSOC_CHILDREN);
+			}			
 		}
 		workflowProps.put(WorkflowModel.ASSOC_PACKAGE, wfPackage);
 
 		String workflowDefId = getWorkflowDefId(taskListDataItem.getWorkflowName());
-		logger.debug("workflowDefId: " + workflowDefId);
+		if(logger.isDebugEnabled()){
+			logger.debug("workflowDefId: " + workflowDefId + " props " + workflowProps);
+		}		
 		if (workflowDefId != null) {
 
 			WorkflowPath wfPath = workflowService.startWorkflow(workflowDefId, workflowProps);

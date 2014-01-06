@@ -10,6 +10,8 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,11 +21,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
-import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingLevel;
@@ -38,6 +38,8 @@ import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
  */
 public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
+	protected static Log logger = LogFactory.getLog(CharactDetailsFormulationTest.class);
+	
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -123,7 +125,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 	
 	/**
 	 * Test formulate product and check cost details
-	 *
+	 *message
 	 * @throws Exception the exception
 	 */
 	@Test
@@ -133,43 +135,6 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 		
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
-					
-				/*
-				 * Prepare packaging 
-				 */
-				
-				/*-- Packaging material 1 --*/					
-				PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
-				packagingMaterial1.setName("Packaging material 1");
-				packagingMaterial1.setLegalName("Legal Packaging material 1");
-				//costList
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
-				packagingMaterial1.setCostList(costList);					
-				packagingMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial1).getNodeRef();
-				
-				/*-- Packaging material 2 --*/					
-				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
-				packagingMaterial2.setName("Packaging material 2");
-				packagingMaterial2.setLegalName("Legal Packaging material 2");
-				//costList
-				costList.clear();
-				costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
-				packagingMaterial2.setCostList(costList);					
-				packagingMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial2).getNodeRef();
-				
-				/*-- Packaging material 1 --*/					
-				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
-				packagingMaterial3.setName("Packaging material 3");
-				packagingMaterial3.setLegalName("Legal Packaging material 3");
-				//costList
-				costList.clear();
-				costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
-				packagingMaterial3.setCostList(costList);					
-				packagingMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial3).getNodeRef();
 				
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
@@ -219,7 +184,9 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 					
 					for(Map.Entry<NodeRef, Double> kv2 : kv.getValue().entrySet()){
 						
-						String trace = "cost: " + nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME) + "source: " + nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME) + " - value: " + kv.getValue();
+						String trace = "cost: " + nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME) + 
+								" - source: " + nodeService.getProperty(kv2.getKey(), ContentModel.PROP_NAME) + 
+								" - value: " + kv.getValue();
 						logger.debug(trace);
 						
 						//cost1
@@ -268,7 +235,10 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 								checks++;
 								assertEquals("cost.getValue() == 3.6, actual values: " + trace, df.format(3.6d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 50.1742, actual values: " + trace, df.format(50.1742), df.format(kv2.getPercentage()));
-							}	
+							}
+							else if(kv2.getKey().equals(rawMaterial4NodeRef)){								
+								checks++;
+							}
 							else{
 								checks++;
 							}
@@ -332,7 +302,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 					
 				}
 				
-				assertEquals("Verify checks done", 12, checks);
+				assertEquals("Verify checks done", 13, checks);
 							
 				return null;
 

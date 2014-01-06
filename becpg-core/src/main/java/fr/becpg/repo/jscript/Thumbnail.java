@@ -2,6 +2,7 @@ package fr.becpg.repo.jscript;
 
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.service.ServiceRegistry;
@@ -16,6 +17,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 public final class Thumbnail extends BaseScopableProcessorExtension {
@@ -28,6 +30,8 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	private NodeService nodeService;
 
 	private EntityService entityService;
+
+	private EntityReportService entityReportService;
 
 	private BeCPGSearchService beCPGSearchService;
 
@@ -51,8 +55,10 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
-	
-	
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
+	}
+
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -79,6 +85,29 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		}
 
 		return img != null ? new ScriptNode(img, serviceRegistry, getScope()) : sourceNode;
+
+	}
+
+	public ScriptNode getReportNode(ScriptNode sourceNode) {
+		NodeRef reportNodeRef = null;
+		if (entityReportService.shouldGenerateReport(sourceNode.getNodeRef())) {
+			logger.debug("Entity report is not up to date for " + sourceNode.getNodeRef());
+			reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+			if (reportNodeRef != null) {
+				NodeRef thumbNodeRef = serviceRegistry.getThumbnailService().getThumbnailByName(reportNodeRef, ContentModel.PROP_CONTENT, "webpreview");
+				if (thumbNodeRef != null) {
+					// Ensure thumbnail is regenerated before preview
+					nodeService.deleteNode(thumbNodeRef);
+				}
+			}
+			entityReportService.generateReport(sourceNode.getNodeRef());
+
+		}
+		
+		reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+		
+
+		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) : sourceNode;
 
 	}
 

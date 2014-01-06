@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.activiti.engine.delegate.DelegateExecution;
 import org.alfresco.email.server.EmailServerModel;
@@ -133,6 +134,11 @@ public class CreateNC extends BaseJavaDelegate {
 						
 						public Object getVariable(String name) {
 							return task.getVariable(name);
+						}
+
+						@Override
+						public Set<String> getVariableNames() {
+							return task.getVariableNames();
 						}
 					}, serviceRegistry);
 

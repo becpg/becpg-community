@@ -61,11 +61,13 @@
 			<list>
 				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
+					<property name="productService" ref="productService"/>
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="formulateChildren" value="true" />
 				</bean>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
-					<property name="beCPGSearchService" ref="BeCPGSearchService" />
-					<property name="beCPGCacheService" ref="beCPGCacheService" />	
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
 				</bean>
@@ -82,8 +84,7 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="associationService" ref="associationService"/>							
+					<property name="alfrescoRepository" ref="alfrescoRepository" />					
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.LabelingFormulationHandler">
 				   <property name="nodeService" ref="nodeService" />
@@ -93,12 +94,16 @@
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
 					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
@@ -112,11 +117,12 @@
 			<list>
 				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
+					<property name="productService" ref="productService"/>
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
-					<property name="beCPGSearchService" ref="BeCPGSearchService" />
-					<property name="beCPGCacheService" ref="beCPGCacheService" />	
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
@@ -131,6 +137,7 @@
 					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />

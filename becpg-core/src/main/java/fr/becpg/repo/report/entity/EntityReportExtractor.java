@@ -12,8 +12,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public interface EntityReportExtractor{
 	
-	
 	public EntityReportData extract(NodeRef entityNodeRef);
+
+	public boolean shouldGenerateReport(NodeRef entityNodeRef);
 	
 	
 }

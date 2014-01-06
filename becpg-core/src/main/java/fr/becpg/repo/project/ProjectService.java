@@ -58,4 +58,6 @@ public interface ProjectService {
 	public void formulate(NodeRef projectNodeRef) throws FormulateException;
 
 	public void deleteTask(NodeRef taskListNodeRef);
+	
+	public void submitTask(NodeRef taskListNodeRef);
 }

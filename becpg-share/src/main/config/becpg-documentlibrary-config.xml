@@ -32,11 +32,14 @@
 				<aspect name="dsg:configAspect" />
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="pack:palletAspect" />
-				<aspect name="pack:sizeAspect" />				
+				<aspect name="pack:sizeAspect" />
+				<aspect name="pack:tareAspect" />							
 				<aspect name="ext1:customAspect" />
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
 				<aspect name="pjt:projectAspect"/>
+				<aspect name="bcpg:docLinkedEntitiesAspect"/>
+				
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -50,6 +53,7 @@
 
 		<types>
 			<type name="cm:content">
+				<subtype name="bcpg:product" />
 				<subtype name="bcpg:productMicrobioCriteria" />
 				<subtype name="bcpg:productSpecification" />
 
@@ -102,7 +106,6 @@
 				<subtype name="bcpg:physicoChemList" />
 			</type>
 
-
 			<type name="trx:transferTarget">
 				<subtype name="trx:fileTransferTarget" />
 			</type>
@@ -110,41 +113,35 @@
 
 
 	<indicators>
+		<indicator id="entity-simulation" index="10">
+			<evaluator>evaluator.becpg.doclib.indicator.entity.simulation</evaluator>
+		</indicator>
 		<indicator id="entity-tovalidate" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.entity.tovalidate</evaluator>
 		</indicator>
 		<indicator id="entity-valid" index="10">
 			<evaluator>evaluator.becpg.doclib.indicator.entity.valid</evaluator>
 		</indicator>
 		<indicator id="entity-refused" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.entity.refused
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.entity.refused</evaluator>
 		</indicator>
 		<indicator id="entity-archived" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.entity.archived
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.entity.archived</evaluator>
 		</indicator>
-
 		<indicator id="project-planned" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.planned
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.planned</evaluator>
 		</indicator>
 		<indicator id="project-inprogress" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.inprogress
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.inprogress</evaluator>
 		</indicator>
 		<indicator id="project-onhold" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.onhold
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.onhold</evaluator>
 		</indicator>
 		<indicator id="project-cancelled" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.cancelled
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.cancelled</evaluator>
 		</indicator>
 		<indicator id="project-completed" index="10">
-			<evaluator>evaluator.becpg.doclib.indicator.project.completed
-			</evaluator>
+			<evaluator>evaluator.becpg.doclib.indicator.project.completed</evaluator>
 		</indicator>
 	</indicators>
 
@@ -227,6 +224,11 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
+			<content id="project-npd" label="menu.create-content.project-npd"
+				type="pagelink" index="111" icon="generic-project">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create-npd&amp;isEntity=true
+				</param>
+			</content>
 			<content id="supplier" label="menu.create-content.supplier"
 				type="pagelink" index="120" icon="generic-supplier">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create&amp;isEntity=true
@@ -293,6 +295,8 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entityTpl</evaluator>
 			</action>
 
+			
+
 			<action id="entity-checkin" type="javascript"
 				label="actions.document.checkin-entity">
 				<param name="function">onActionCheckInEntity</param>
@@ -324,6 +328,11 @@
 				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
 			</action>
 
+
+		   <action id="entity-compare" type="javascript"
+				label="actions.entity.compare">
+				<param name="function">onActionCompareEntity</param>
+			</action>
 
 			
 			<action id="entity-view-documents" type="javascript"
@@ -384,6 +393,7 @@
 				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
 			</action>
 			
+		
 			<action id="reportTpl-update-permissions" type="javascript"
 				icon="document-manage-permissions" label="actions.reportTpl-update-permissions">
 				<param name="function">onActionReportTplUpdatePermissions</param>
@@ -423,6 +433,13 @@
 				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>		
+
+			<action id="entityTpl-wused" type="pagelink" icon="entity-wused" label="actions.entity.wused" >
+				 <param name="page">wused?assocName=assoc_bcpg_entityTplRef&amp;nodeRefs={node.nodeRef}</param>
+				 <evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
+				 <evaluator>evaluator.becpg.doclib.action.product</evaluator>
+			</action>
+
 
 		</actions>
 
@@ -464,15 +481,17 @@
 
          <actionGroup id="entity-details">
             <action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
-				<action index="102" id="entity-checkin" />
-				<action index="103" id="entity-checkout" />
-				<action index="104" id="entity-cancel-editing" />
-				<action index="105" id="entity-view-original" />
-				<action index="106" id="entity-view-working-copy" />
+				<action index="101" id="entity-checkin" />
+				<action index="102" id="entity-checkout" />
+				<action index="103" id="entity-cancel-editing" />
+				<action index="104" id="entity-view-original" />
+				<action index="105" id="entity-view-working-copy" />
+				<action index="106" id="entity-compare" icon="compare"/>
 				<action index="107" id="entity-refresh-reports" />
 				<action index="108" id="entityTpl-synchronize-entities" />
 				<action index="109" id="entityTpl-formulate-entities" />
-            <action index="110" id="document-approve" icon="folder-approve" />
+				<action index="110" id="entityTpl-wused" />
+            <action index="111" id="document-approve" icon="folder-approve" />
             <action index="120" id="document-reject" icon="folder-reject" />
             <action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
             <action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />

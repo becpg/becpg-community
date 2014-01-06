@@ -35,8 +35,11 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * The Class ProjectPolicy.
@@ -56,6 +59,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	private ProjectService projectService;
 	private AssociationService associationService;
 	private ProjectActivityService projectActivityService;
+	private AlfrescoRepository<ProjectData> alfrescoRepository;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -71,6 +75,10 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
+	}
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	/**
@@ -184,8 +192,12 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			
 			if (afterState.equals(ProjectState.InProgress.toString())) {
 				logger.debug("onUpdateProperties:start project");
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE,
-						ProjectHelper.removeTime(new Date()));
+				Date startDate = ProjectHelper.removeTime(new Date());
+				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
+				ProjectData projectData = alfrescoRepository.findOne(nodeRef);
+				for(TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)){
+					nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
+				}
 				formulateProject = true;
 			} else if (afterState.equals(ProjectState.Cancelled.toString())) {
 				logger.debug("onUpdateProperties:cancel project");

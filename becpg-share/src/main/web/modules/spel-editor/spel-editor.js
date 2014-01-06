@@ -198,7 +198,7 @@
                         Dom.get(this.id + "-cancel-button").name = "-";
 
                         this.widgets.dialog = Alfresco.util.createYUIPanel(this.editorId, {
-                           width : "60em"
+                           width : "63em"
                         });
                         this.widgets.dialog.hideEvent.subscribe(this.onCancel, null, this);
                         Dom.addClass(this.editorId, "spel-editor");
@@ -291,12 +291,42 @@
                                           text : '$list.?[$property == $value]'
                                        }, {
                                           text : '$list.![$property]'
-                                       } ]
+                                       } , {
+                                          text : 'sum($range,$formula)'
+                                       }, {
+                                          text : 'avg($range,$formula)'
+                                       }, {
+                                          text : 'children($compoListDataItem)'
+                                       }]
                                     }
 
                                     ]
 
-                                 } ]
+                                 } , {
+                                    group : 'variables',
+                                    label : instance.msg("form.control.spel-editor.editor.variables"),
+                                    buttons : [
+
+                                    {
+                                       type : 'select',
+                                       label : instance.msg("form.control.spel-editor.editor.choose"),
+                                       value : 'variable',
+                                       menu : [ {
+                                          text : 'entity'
+                                       }, {
+                                          text : 'dataListItem'
+                                       }, {
+                                          text : 'dataListItemEntity'
+                                       }, {
+                                          text : '#this'
+                                       }, {
+                                          text : '#root'
+                                       } ]
+                                    }
+
+                                 ]
+                                 
+                                 }]
                               }
                            });
 
@@ -309,6 +339,10 @@
                               });
 
                               this.toolbar.on('functionClick', function(o) {
+                                 me.execCommand('inserthtml', " " + o.button.value + " ");
+                              });
+                              
+                              this.toolbar.on('variableClick', function(o) {
                                  me.execCommand('inserthtml', " " + o.button.value + " ");
                               });
 
@@ -408,21 +442,21 @@
 
                   _cleanHtml : function(html) {
 
-                     return html.replace(new RegExp("'<div id=\"", "g"), "'").replace(new RegExp("\" class=.*?'", "g"),
+                     return html.replace(new RegExp("'<div id=\"", "g"), "'").replace(new RegExp("\" class=.*?div>'", "g"),
                            "'").replace(new RegExp("&nbsp;", "g")," ").replace(new RegExp("<br>", "g")," ").trim();
 
                   },
 
                   _createHtml : function(text, items) {
 
-                     var item,ret = text ;
+                     var item,ret = text;
                      if (items != null && ret.indexOf("workspace://") > 0) {
                         for ( var i = 0, il = items.length; i < il; i++) {
                            item = items[i];
                            ret = ret
                                  .replace(
                                        "== '" + item.nodeRef,
-                                       "== '<div id='" + item.nodeRef + "' class='spel-editor-nodeRef' >" + item.name + "</div>");
+                                       "== '<div id='" + item.nodeRef + "' class='spel-editor-nodeRef' >" + $html(item.name) + "</div>");
 
                         }
                      }
@@ -436,7 +470,7 @@
                      if (items != null) {
                         for ( var i = 0, il = items.length; i < il; i++) {
                            item = items[i];
-                           ret = ret.replace(item.nodeRef, item.name);
+                           ret = ret.replace(item.nodeRef,  $html(item.name));
 
                         }
                      }

@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
@@ -33,6 +34,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.config.format.CSVPropertyFormats;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -71,6 +73,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	private SecurityService securityService;
 
 	private PropertyFormats propertyFormats = new PropertyFormats(false);
+	
+	private PropertyFormats csvPropertyFormats = new CSVPropertyFormats(false);
 
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
@@ -213,11 +217,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return AttributeExtractorServiceImpl.this;
 		}
 
-
-		
-		
 	}
-
+	
+	
 	@Override
 	public PropertyFormats getPropertyFormats() {
 		return propertyFormats;
@@ -228,7 +230,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats) {
 
 		String value = null;
-
+		
 		if (v == null || propertyDef == null) {
 			return value;
 		}
@@ -273,12 +275,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				List<String> values = (List<String>) v;
 
 				for (String tempValue : values) {
-
-					if (value != null) {
-						value += RepoConsts.LABEL_SEPARATOR;
+					if(tempValue!=null){
+						if (value != null) {
+							value += RepoConsts.LABEL_SEPARATOR;
+						} else {
+							value="";
+						}
+	
+						value += constraintName != null ? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale()) : tempValue;
 					}
-
-					value += constraintName != null ? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale()) : tempValue;
 
 				}
 			} else {
@@ -318,13 +323,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				value = v.toString();
 			}
 		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
+			
 			if (v.equals(BeCPGModel.TYPE_COMPOLIST)) {
 				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_compoList.title");
 			} else if (v.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
-				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_packaging.title");
+				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_packagingList.title");
 			} else {
 				value = v.toString();
 			}
+			
 		}
 
 		else {
@@ -450,7 +457,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		if (attribute instanceof PropertyDefinition) {
 
 			value = properties.get(attribute.getName());
-			displayName = getStringValue((PropertyDefinition) attribute, value, propertyFormats);
+			displayName = getStringValue((PropertyDefinition) attribute, value,AttributeExtractorMode.CSV.equals(mode)? csvPropertyFormats :  propertyFormats);
 
 			if (AttributeExtractorMode.CSV.equals(mode)) {
 				return displayName;
@@ -694,7 +701,37 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return null;
 	}
-	
-	
 
+	@Override
+	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value,
+			PropertyFormats propertyFormats) {
+		
+		if (value != null) {
+			if (value instanceof NodeRef || value instanceof String || value instanceof List) {
+				return getStringValue(propertyDef, value, propertyFormats);
+			}
+			else if (value instanceof Date) {
+				return ISO8601DateFormat.format((Date) value);
+			} else {
+				return value.toString();
+			}								
+		}
+		else{
+			return "";
+		}		
+	}
+
+	@Override
+	public String extractAssociationForReport(AssociationRef assocRef) {
+		NodeRef targetNodeRef = assocRef.getTargetRef();
+		QName targetQName = nodeService.getType(targetNodeRef);
+
+		if (targetQName.equals(ContentModel.TYPE_PERSON)) {
+			return String.format("%s %s",
+					(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_FIRSTNAME),
+					(String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_LASTNAME));
+		} else {
+			return (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
+		}
+	}	
 }

@@ -103,14 +103,14 @@ fct_echo "# ==================================================================="
 date >>$FICHIER_LOG 2>&1
 
 
-read -p  "Do you want to install addons libs ? (y/n)" ans
-if [ "$ans" = "y" ]; then
+#read -p  "Do you want to install addons libs ? (y/n)" ans
+#if [ "$ans" = "y" ]; then
 
-cd $BOOTSTRAP_HOME/addons
-echo -ne "Installing ... "
-fct_mvn_install repo de.fme jsconsole 0.5.1 javascript-console-repo-0.5.1.jar
-fct_mvn_install share de.fme jsconsole 0.5.1 javascript-console-share-0.5.1.jar
-fi
+#cd $BOOTSTRAP_HOME/addons
+#echo -ne "Installing ... "
+#fct_mvn_install repo de.fme jsconsole 0.5.1 javascript-console-repo-0.5.1.jar
+#fct_mvn_install share de.fme jsconsole 0.5.1 javascript-console-share-0.5.1.jar
+#fi
 
 #read -p "Do you want to install locally Alfresco Patch ? (y/n)" ans 
 #if [ "$ans" = "y" ]; then

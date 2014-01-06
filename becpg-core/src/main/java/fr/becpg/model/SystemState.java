@@ -10,14 +10,14 @@ package fr.becpg.model;
  */
 public enum SystemState {
 	
+		Simulation,
 		ToValidate,
 		Valid,
 		Refused,
 		Archived;
 		
 		
-		public static SystemState getSystemState(String systemState) {
-			
-			return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
+		public static SystemState getSystemState(String systemState) {	
+		   return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
 		}
 }

@@ -16,13 +16,7 @@ import fr.becpg.common.BeCPGException;
  */
 public interface EntityService {
 
-	/**
-	 * Check if the datalists have been modified after the modification of the entity
-	 * @return
-	 */
-	 boolean hasDataListModified(NodeRef nodeRef);
-	
-    
+	    
 	/**
 	 * Gets the image defined in the image folder of the entity
 	 *
@@ -98,4 +92,16 @@ public interface EntityService {
 	 * @param deleteArchivedNode (delete from trash)
 	 */
 	 void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes);
+	 
+
+	    /**
+	     * Classify by hierarchy.
+	     *
+	     * @param containerNodeRef the container node ref
+	     * @param entityNodeRef the entity node ref
+	     */
+	 void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef);
+
+
+     NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef);
 }

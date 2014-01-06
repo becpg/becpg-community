@@ -13,4 +13,25 @@
      	<property name="nodeService" ref="nodeService" />
     </bean>  
     
+	<bean id="compress-image" class="fr.becpg.repo.action.executer.ImageCompressorActionExecuter" parent="action-executer">
+      <property name="contentService" ref="contentService" />
+      <property name="imageMagickContentTransformer">
+          <ref bean="transformer.ImageMagick" />
+      </property>   
+    </bean> 
+    
+    <bean id="classify-by-hierarchy" class="fr.becpg.repo.action.executer.ClassifyByHierarchyActionExecuter" parent="action-executer">
+      <property name="entityService" ref="entityService" />      
+    </bean>
+    
+    <!-- I18N -->
+   
+   <bean id="actionResourceBundles" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+        <property name="resourceBundles">
+            <list>
+                <value>alfresco/module/${artifactId}/messages/action-config</value>
+            </list>
+        </property>
+   </bean>
+    
 </beans>

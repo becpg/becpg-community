@@ -4,7 +4,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
-public interface CompositionDataItem extends RepositoryEntity, Cloneable  {
+public interface CompositionDataItem extends RepositoryEntity  {
 
 	NodeRef getProduct();
 

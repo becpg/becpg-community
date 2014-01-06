@@ -75,7 +75,6 @@
                 <structure>
                     <property name="columnName">modified</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">modified</text-property>
                 </structure>
                 <structure>
@@ -141,7 +140,6 @@
                 <structure>
                     <property name="columnName">pvValidationDate</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pvValidationDate</text-property>
                 </structure>
                 <structure>
@@ -264,7 +262,7 @@
                     <structure>
                         <property name="position">8</property>
                         <property name="name">modified</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">9</property>
@@ -319,7 +317,7 @@
                     <structure>
                         <property name="position">19</property>
                         <property name="name">pvValidationDate</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date-time</property>
                     </structure>
                     <structure>
                         <property name="position">20</property>
@@ -443,8 +441,8 @@
                     <property name="position">8</property>
                     <property name="name">modified</property>
                     <property name="nativeName">modified</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
@@ -520,8 +518,8 @@
                     <property name="position">19</property>
                     <property name="name">pvValidationDate</property>
                     <property name="nativeName">pvValidationDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date-time</property>
+                    <property name="nativeDataType">93</property>
                 </structure>
                 <structure>
                     <property name="position">20</property>
@@ -615,7 +613,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;STRING;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;STRING;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1400,8 +1398,7 @@
                 </structure>
                 <structure>
                     <property name="columnName">dynamicCharactValue</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">dynamicCharactValue</text-property>
                 </structure>
             </list-property>
@@ -1416,7 +1413,7 @@
                     <structure>
                         <property name="position">2</property>
                         <property name="name">dynamicCharactValue</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1433,11 +1430,11 @@
                     <property name="position">2</property>
                     <property name="name">dynamicCharactValue</property>
                     <property name="nativeName">dynamicCharactValue</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/dynamicCharactLists/dynamicCharactList]#:#{dynamicCharactTitle;STRING;/@dynamicCharactTitle},{dynamicCharactValue;STRING;/@dynamicCharactValue}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/dynamicCharactLists/dynamicCharactList]#:#{dynamicCharactTitle;STRING;/@dynamicCharactTitle},{dynamicCharactValue;DOUBLE;/@dynamicCharactValue}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1908,14 +1905,18 @@
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="1522">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="whiteSpace">nowrap</property>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
                                                     <property name="name">modified</property>
                                                     <text-property name="displayName">modified</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["modified"],17)</expression>
-                                                    <property name="dataType">string</property>
+                                                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
@@ -1939,13 +1940,17 @@
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <data id="3014">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
                                             <property name="dataSet">Product</property>
                                             <list-property name="boundDataColumns">
                                                 <structure>
                                                     <property name="name">pvValidationDate</property>
                                                     <text-property name="displayName">pvValidationDate</text-property>
-                                                    <expression name="expression" type="javascript">BirtStr.left(dataSetRow["pvValidationDate"],17)</expression>
-                                                    <property name="dataType">string</property>
+                                                    <expression name="expression" type="javascript">dataSetRow["pvValidationDate"]</expression>
+                                                    <property name="dataType">date</property>
                                                     <property name="allowExport">true</property>
                                                 </structure>
                                             </list-property>
@@ -2240,6 +2245,10 @@ false
                     </cell>
                     <cell id="3390">
                         <data id="3399">
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
                             <property name="resultSetColumn">dynamicCharactValue</property>
                         </data>
                     </cell>
@@ -2369,18 +2378,6 @@ dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
                 <property name="width">0.42748091603053434in</property>
                 <property name="style">becpg-col-border</property>
             </column>
-            <column id="3326">
-                <property name="width">0.5419847328244275in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
-            <column id="3329">
-                <property name="width">0.5190839694656488in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
-            <column id="3332">
-                <property name="width">0.5038167938931297in</property>
-                <property name="style">becpg-col-border</property>
-            </column>
             <header>
                 <row id="2911">
                     <property name="style">becpg-col-header</property>
@@ -2412,22 +2409,7 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3321">
                         <label id="3333">
-                            <text-property name="text">% SF</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3324">
-                        <label id="3335">
-                            <text-property name="text">Poids brut MeO (g)</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3327">
-                        <label id="3337">
-                            <text-property name="text">Poids net MeO (g)</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3330">
-                        <label id="3340">
-                            <text-property name="text">% PF</text-property>
+                            <text-property name="text">Qté Labo (g)</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2460,40 +2442,23 @@ MP/UVC (g/UVC)</text-property>
                     </cell>
                     <cell id="3286">
                         <data id="3292">
+                            <property name="style">becpg-data</property>
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListYieldPerc</property>
                         </data>
                     </cell>
                     <cell id="3289">
                         <data id="3294">
+                            <property name="style">becpg-data</property>
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListLossPerc</property>
                         </data>
                     </cell>
                     <cell id="3322">
                         <data id="3334">
+                            <property name="style">becpg-data</property>
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">dynamicCharactColumn1</property>
-                        </data>
-                    </cell>
-                    <cell id="3325">
-                        <data id="3336">
-                            <structure name="numberFormat">
-                                <property name="category">General Number</property>
-                                <property name="pattern">General Number</property>
-                            </structure>
-                            <property name="resultSetColumn">dynamicCharactColumn2</property>
-                        </data>
-                    </cell>
-                    <cell id="3328">
-                        <data id="3338">
-                            <structure name="numberFormat">
-                                <property name="category">General Number</property>
-                                <property name="pattern">General Number</property>
-                            </structure>
-                            <property name="resultSetColumn">dynamicCharactColumn3</property>
-                        </data>
-                    </cell>
-                    <cell id="3331">
-                        <data id="3341">
-                            <property name="resultSetColumn">dynamicCharactColumn4</property>
                         </data>
                     </cell>
                 </row>
@@ -2617,16 +2582,6 @@ true
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
-                        <list-property name="filter">
-                            <structure>
-                                <property name="operator">like</property>
-                                <expression name="expr" type="javascript">row["pclPhysicoChem"]</expression>
-                                <simple-property-list name="value1">
-                                    <value>"%sauce%"</value>
-                                </simple-property-list>
-                                <property name="updateAggregation">true</property>
-                            </structure>
-                        </list-property>
                         <column id="3280">
                             <property name="width">50%</property>
                         </column>
@@ -2642,9 +2597,9 @@ true
                                 </cell>
                             </row>
                             <row id="3270">
+                                <property name="style">becpg-col-header</property>
                                 <cell id="3271">
                                     <label id="3272">
-                                        <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
                                         <property name="textAlign">left</property>
                                         <text-property name="text">Critères</text-property>
@@ -2652,7 +2607,6 @@ true
                                 </cell>
                                 <cell id="3273">
                                     <label id="3274">
-                                        <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
                                         <property name="textAlign">left</property>
                                         <text-property name="text">Valeur</text-property>
@@ -2798,11 +2752,7 @@ true
                                                     <property name="resultSetColumn">organoListOrgano</property>
                                                 </data>
                                             </cell>
-                                            <cell id="1532">
-                                                <data id="3455">
-                                                    <property name="resultSetColumn">organoListValue</property>
-                                                </data>
-                                            </cell>
+                                            <cell id="1532"/>
                                         </row>
                                     </detail>
                                 </table>
@@ -2886,7 +2836,6 @@ true
                                                 <property name="textAlign">center</property>
                                                 <image id="3444">
                                                     <property name="backgroundColor">white</property>
-                                                    <property name="height">1.0916030534351144in</property>
                                                     <property name="width">1.5648854961832062in</property>
                                                     <structure name="toc"/>
                                                     <property name="source">expr</property>

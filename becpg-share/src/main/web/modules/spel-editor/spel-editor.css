@@ -40,7 +40,7 @@ div.current-formula
    display: none;
    margin-left: 2em;
    margin-top: 0.3em;
-   width: 60em;
+   width: 63em;
 }
 
 .spel-editor .bd
@@ -253,6 +253,13 @@ div.current-formula
 	background: url(../../components/images/filetypes/generic-finishedProduct-16.png) no-repeat;
 	padding-left: 20px;
 }
+
+.spel-editor span.labelClaimList,
+.spel-editor span.labelClaimList {
+	background: url(../../components/images/filetypes/generic-labelClaim-16.png) no-repeat;
+	padding-left: 20px;
+}
+
 
 
 .spel-editor span.packagingList {

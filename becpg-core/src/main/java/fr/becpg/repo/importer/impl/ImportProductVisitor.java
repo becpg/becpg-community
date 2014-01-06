@@ -20,7 +20,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
@@ -85,9 +84,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				// import in a site
 				if (nodeRef == null && !importContext.isSiteDocLib()) {
 
-					// SystemProductType
-					SystemProductType systemProductType = SystemProductType.valueOf(type);
-					if (!systemProductType.equals(SystemProductType.Unknown)) {
+					if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
 
 						// TODO change by unique hierachy field
 						// hierarchy
@@ -96,7 +93,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 
 							// look for path where product should be
 							// stored
-							String path = hierarchyService.getHierarchyPath(hierarchy, systemProductType);
+							String path = hierarchyService.getHierarchyPath(hierarchy);
 
 							List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
 

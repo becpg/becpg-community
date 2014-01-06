@@ -200,22 +200,7 @@
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
 	
-	<bean id="patch.bcpg.redeployClaimWf" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
-        <property name="id"><value>patch.bcpg.redeployClaimWf</value></property>
-        <property name="description"><value>patch.bcpg.redeployClaimWf.description</value></property>
-        <property name="fixesFromSchema"><value>0</value></property>
-        <property name="fixesToSchema"><value>${version.schema}</value></property>
-        <property name="targetSchema"><value>10013</value></property>
-        <property name="workflowDefinitions">
-            <list>
-					<props>
-						<prop key="engineId">activiti</prop>
-						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
-						<prop key="mimetype">text/xml</prop>
-					</props>	
-            </list>
-        </property>
-    </bean> 
+
 	
 	<bean id="patch.bcpg.qualityListPatch" class="fr.becpg.repo.admin.patch.QualityListPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.qualityListPatch</value></property>
@@ -228,8 +213,7 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
-	
-	
+
 	<bean id="patch.bcpg.labelingRulePatch" class="fr.becpg.repo.admin.patch.LabelingRulePatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.labelingRulePatch</value></property>
         <property name="description"><value>patch.bcpg.labelingRulePatch.description</value></property>
@@ -241,4 +225,117 @@
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
 	
+	<bean id="patch.bcpg.redeployWfProjectProcess2" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployWfProjectProcess2</value></property>
+        <property name="description"><value>patch.bcpg.redeployWfProjectProcess.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10016</value></property>
+        <property name="workflowDefinitions">
+            <list>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-adhoc.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>				
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="patch.bcpg.ingLabelingPatch" class="fr.becpg.repo.admin.patch.IngLabelingPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.ingLabelingPatch</value></property>
+        <property name="description"><value>patch.bcpg.ingLabelingPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10017</value></property>
+        <property name="alfrescoRepository" ref="alfrescoRepository"/>
+        <property name="entityTplService" ref="entityTplService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+	
+	<bean id="patch.bcpg.removeDataListPatch1" class="fr.becpg.repo.admin.patch.RemoveDataListPatch1" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.removeDataListPatch1</value></property>
+        <property name="description"><value>patch.bcpg.removeDataListPatch1.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10018</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="fileFolderService" ref="fileFolderService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+    
+    
+    <bean id="patch.bcpg.redeployClaimWf2" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployClaimWf2</value></property>
+        <property name="description"><value>patch.bcpg.redeployClaimWf.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10019</value></property>
+        <property name="workflowDefinitions">
+            <list>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>	
+            </list>
+        </property>
+    </bean> 
+    
+   <bean id="patch.bcpg.entitySortableListPatch" class="fr.becpg.repo.admin.patch.EntitySortableListPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.entitySortableListPatch</value></property>
+        <property name="description"><value>patch.bcpg.entitySortableListPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10020</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+    
+      <bean id="patch.bcpg.nutParentLevelPatch" class="fr.becpg.repo.admin.patch.NutParentLevelPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.nutParentLevelPatch</value></property>
+        <property name="description"><value>patch.bcpg.nutParentLevelPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10021</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="associationService" ref="associationService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+	
+	<bean id="patch.bcpg.entityFormulatedPatch" class="fr.becpg.repo.admin.patch.EntityFormulatedPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.entityFormulatedPatch</value></property>
+        <property name="description"><value>patch.bcpg.entityFormulatedPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10022</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+	
+	 <bean id="patch.bcpg.ingParentLevelPatch" class="fr.becpg.repo.admin.patch.IngParentLevelPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.ingParentLevelPatch</value></property>
+        <property name="description"><value>patch.bcpg.ingParentLevelPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10023</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="associationService" ref="associationService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+    
 </beans>

@@ -8,6 +8,8 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Arrays;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -38,7 +40,6 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 
 	private EntityProviderCallBack entityProviderCallBack;
 
-	
 	public void setRemoteServer(String remoteServer) {
 		this.remoteServer = remoteServer;
 	}
@@ -48,7 +49,7 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 	}
 
 	public void setRemotePwd(char[] remotePwd) {
-		if(remotePwd!=null){
+		if (remotePwd != null) {
 			this.remotePwd = Arrays.copyOf(remotePwd, remotePwd.length);
 		}
 	}
@@ -102,28 +103,36 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
 		try {
+
 			JSONObject json = (JSONObject) req.parseContent();
 			String entities = "";
-				if (json != null && json.has("entities")) {
-					entities = (String) json.get("entities");
-				}
-		
+			if (json != null && json.has("entities")) {
+				entities = (String) json.get("entities");
+			}
+
 			JSONArray ret = new JSONArray();
-			for(String entity : entities.split(",")){
-				NodeRef entityNodeRef = entityProviderCallBack.provideNode(new NodeRef(entity));
+			for (final String entity : entities.split(",")) {
+				NodeRef entityNodeRef = AuthenticationUtil.runAsSystem(new RunAsWork<NodeRef>() {
+					@Override
+					public NodeRef doWork() throws Exception {
+						try {
+							return entityProviderCallBack.provideNode(new NodeRef(entity));
+						} catch (BeCPGException e) {
+							logger.error("Cannot import entity ", e);
+							throw new WebScriptException(e.getMessage());
+						}
+					}
+				});
 				ret.put(entityNodeRef);
 			}
-			
+
 			resp.setContentType("application/json");
 			resp.setContentEncoding("UTF-8");
 			resp.getWriter().write(ret.toString(3));
-		} catch (BeCPGException e) {
-			logger.error("Cannot import entity", e);
-			throw new WebScriptException(e.getMessage());
 		} catch (JSONException e) {
 			throw new WebScriptException(e.getMessage());
 		}
-		
+
 	}
 
 }

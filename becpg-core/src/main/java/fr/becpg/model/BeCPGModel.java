@@ -207,6 +207,8 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_INGLIST_IS_IONIZED. */
 	QName PROP_INGLIST_IS_IONIZED = QName.createQName(BECPG_URI, "ingListIsIonized");
+	
+	QName PROP_ING_LIST_IS_PROCESSING_AID = QName.createQName(BECPG_URI, "ingListIsProcessingAid");
 
 	/** The Constant ASSOC_INGLIST_GEO_ORIGIN. */
 	QName ASSOC_INGLIST_GEO_ORIGIN = QName.createQName(BECPG_URI, "ingListGeoOrigin");
@@ -216,6 +218,9 @@ public interface BeCPGModel {
 
 	/** The Constant ASSOC_INGLIST_ING. */
 	QName ASSOC_INGLIST_ING = QName.createQName(BECPG_URI, "ingListIng");
+	
+	@Deprecated
+	QName ASSOC_INGLIST_SUBING = QName.createQName(BECPG_URI, "ingListSubIng");	
 
 	// nutList
 	/** The Constant TYPE_NUTLIST. */
@@ -247,6 +252,9 @@ public interface BeCPGModel {
 	// ingLabelingList
 	/** The Constant TYPE_INGLABELINGLIST. */
 	QName TYPE_INGLABELINGLIST = QName.createQName(BECPG_URI, "ingLabelingList");
+	
+	QName TYPE_LABELING_RULE_LIST = QName.createQName(BECPG_URI, "labelingRuleList");
+	QName PROP_LABELING_RULE_LABEL = QName.createQName(BECPG_URI, "lrLabel");
 
 	/** The Constant ASSOC_ILL_GRP. */
 	QName ASSOC_ILL_GRP = QName.createQName(BECPG_URI, "illGrp");
@@ -353,6 +361,7 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_ING_CEECODE. */
 	QName PROP_ING_CEECODE = QName.createQName(BECPG_URI, "ingCEECode");
+	
 
 	/** The Constant PROP_ING_TYPE. */
 	@Deprecated
@@ -394,6 +403,8 @@ public interface BeCPGModel {
 
 	/** The Constant PROP_NUTUNIT. */
 	QName PROP_NUTUNIT = QName.createQName(BECPG_URI, "nutUnit");
+	
+	QName PROP_NUTGDA = QName.createQName(BECPG_URI, "nutGDA");
 
 	// organo
 	/** The Constant TYPE_ORGANO. */
@@ -709,5 +720,17 @@ public interface BeCPGModel {
 	
 	QName PROP_INSTRUCTION = QName.createQName(BECPG_URI, "instruction");
 
+	QName ASPECT_DOC_LINKED_ENTITIES = QName.createQName(BECPG_URI, "docLinkedEntitiesAspect");
+	
+	QName ASSOC_DOC_LINKED_ENTITIES = QName.createQName(BECPG_URI, "docLinkedEntities");
+	
+	
+	/**
+	 * Formulation
+	 */
+	
+	QName ASPECT_FORMULATED_ENTITY = QName.createQName(BECPG_URI, "formulatedEntityAspect");
 
+	QName PROP_FORMULATED_DATE = QName.createQName(BECPG_URI, "formulatedDate");
+	
 }

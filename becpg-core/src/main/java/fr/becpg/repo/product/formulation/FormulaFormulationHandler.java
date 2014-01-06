@@ -50,7 +50,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
-	public static final int DYN_COLUMN_SIZE = 5;
+	public static final int DYN_COLUMN_SIZE = 10;
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -91,7 +91,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		// ClaimLabel list
-
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				labelClaimListDataItem.setIsFormulated(false);
@@ -161,13 +160,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							nullDynColumnNames.remove(columnName);
 						}
 						for (CompositionDataItem dataListItem : view.getMainDataList()) {
-							// check node is not in memory (water when yield)
-							if (dataListItem.getNodeRef() != null) {
-								EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,productData, dataListItem));
-								Object value = exp.getValue(dataContext);
-								dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-								logger.debug("Value :" + value);
-							}
+							EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,productData, dataListItem));
+							Object value = exp.getValue(dataContext);
+							dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+							logger.debug("Value :" + value);
 						}
 						dynamicCharactListItem.setValue(null);
 					} else {
@@ -213,8 +209,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
-		if (formulatedProduct.getEntityTplRef() != null) {
-			ProductData templateProductData = alfrescoRepository.findOne(formulatedProduct.getEntityTplRef());
+		if (formulatedProduct.getEntityTpl() != null) {
+			ProductData templateProductData = formulatedProduct.getEntityTpl();
 
 			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(), formulatedProduct.getCompoListView().getDynamicCharactList());
 			copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(), formulatedProduct.getPackagingListView().getDynamicCharactList());

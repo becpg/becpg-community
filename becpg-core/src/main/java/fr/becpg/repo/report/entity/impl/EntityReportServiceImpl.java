@@ -1,12 +1,15 @@
 package fr.becpg.repo.report.entity.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -14,6 +17,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -21,7 +25,9 @@ import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -30,6 +36,8 @@ import org.dom4j.Element;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
+
+import com.google.common.util.concurrent.Striped;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
@@ -51,7 +59,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private static final String DEFAULT_EXTRACTOR = "default";
 	private static final String REPORT_NAME = "%s - %s";
 
+	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
+	private static final String PREF_REPORT_SUFFIX = ".view";
+
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
+
+	private NamespaceService namespaceService;
+
+	private PreferenceService preferenceService;
 
 	private NodeService nodeService;
 
@@ -70,18 +85,19 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private AssociationService associationService;
 
 	private PermissionService permissionService;
-	
+
 	private TransactionService transactionService;
-	
+
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
+	private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
 
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
 		logger.debug("Register report extractor :" + typeName + " - " + extractor.getClass().getSimpleName());
 		entityExtractors.put(typeName, extractor);
 	}
-	
+
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
@@ -122,42 +138,59 @@ public class EntityReportServiceImpl implements EntityReportService {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	public void setPreferenceService(PreferenceService preferenceService) {
+		this.preferenceService = preferenceService;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
-
-		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-			@Override
-			public Object doWork() throws Exception {
-				RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-					@Override
-					public Object execute() {
-						try {
-
-							policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-							policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-							policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-
-							if (logger.isDebugEnabled()) {
-								logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-							}
-
+		Lock lock = stripedLocs.get(entityNodeRef);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Acquire lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
+		}
+		lock.lock();
+		try {
+			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+				@Override
+				public Object doWork() throws Exception {
+					RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+						@Override
+						public Object execute() {
 							if (nodeService.exists(entityNodeRef)) {
-								generateReportImpl(entityNodeRef);
+								try {
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+
+									if (logger.isDebugEnabled()) {
+										logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+									}
+
+									generateReportImpl(entityNodeRef);
+
+								} finally {
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								}
 							}
-
-						} finally {
-							policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-							policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-							policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+							return null;
 						}
-						return null;
-					}
-				};
-				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
+					};
+					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
+				}
+			};
+			AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+		} finally {
+			lock.unlock();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Release lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
 			}
-		};
-		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-
+		}
 	}
 
 	private void generateReportImpl(NodeRef entityNodeRef) {
@@ -223,8 +256,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return documentName;
 	}
 
+	@Deprecated //Use entityService instead
 	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName) {
-
+		
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
 		if (documentsFolderNodeRef == null) {
@@ -315,12 +349,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		// #417 : refresh reports assoc (delete obsolete reports if we rename
 		// entity)
-		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
-		for (NodeRef dbReport : dbReports) {
-			if (!newReports.contains(dbReport)) {
-				logger.debug("delete old report: " + dbReport);
-				nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(dbReport);
+		if(!nodeService.hasAspect(entityNodeRef,ContentModel.ASPECT_WORKING_COPY)) {
+			List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
+			for (NodeRef dbReport : dbReports) {
+				if (!newReports.contains(dbReport)) {
+					logger.debug("delete old report: " + dbReport);
+					nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(dbReport);
+				}
 			}
 		}
 		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
@@ -380,5 +416,88 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 
 		permissionService.setInheritParentPermissions(documentNodeRef, inheritParentPermissions);
+	}
+
+	@Override
+	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
+		StopWatch watch = new StopWatch();
+		if (logger.isDebugEnabled()) {
+			watch.start();
+		}
+		try {
+			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+			Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
+
+			if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+				return true;
+			}
+
+			List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
+
+			for (NodeRef tplNodeRef : tplsNodeRef) {
+				modified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);
+				if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+					return true;
+				}
+			}
+
+			logger.debug("Check from extractor");
+
+			return retrieveExtractor(entityNodeRef).shouldGenerateReport(entityNodeRef);
+		} finally {
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("ShouldGenerateReport executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+			}
+		}
+	}
+
+	@Override
+	public NodeRef getSelectedReport(NodeRef entityNodeRef) {
+
+		String reportName = getSelectedReportName(entityNodeRef);
+
+		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
+
+		NodeRef ret = null;
+
+		for (NodeRef reportNodeRef : dbReports) {
+			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
+
+				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
+				if (reportTemplateNodeRef != null) {
+					String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
+					if (templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
+						templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
+					}
+
+					if ((Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)) {
+						ret = reportNodeRef;
+					}
+					if (templateName.equalsIgnoreCase(reportName)) {
+						return reportNodeRef;
+					}
+				}
+
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public String getSelectedReportName(NodeRef entityNodeRef) {
+
+		String username = AuthenticationUtil.getFullyAuthenticatedUser();
+		String typeName = nodeService.getType(entityNodeRef).toPrefixString(namespaceService).replace(":", "_");
+
+		Map<String, Serializable> preferences = preferenceService.getPreferences(username);
+
+		String reportName = (String) preferences.get(PREF_REPORT_PREFIX + typeName + PREF_REPORT_SUFFIX);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting: " + reportName + " from preference for: " + username + " and type: " + typeName);
+		}
+
+		return reportName;
 	}
 }

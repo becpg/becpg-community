@@ -11,14 +11,11 @@
 
 	<!-- Product -->
 	<bean id="productService" class="fr.becpg.repo.product.ProductServiceImpl">
-		<property name="nodeService" ref="nodeService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="productDictionaryService" ref="productDictionaryService" />
 		<property name="formulationService" ref="formulationService" />
-		<property name="repoService" ref="repoService" />
-		<property name="ownableService" ref="ownableService" />
 		<property name="charactDetailsVisitorFactory" ref="charactDetailsVisitorFactory" />		
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="nodeService" ref="nodeService"/>
 	</bean>
 
 	
@@ -37,29 +34,19 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
-	<bean id="classifyProductPolicy" class="fr.becpg.repo.product.policy.ClassifyProductPolicy"
+	
+	<bean id="labelingRuleListPolicy" class="fr.becpg.repo.product.policy.LabelingRuleListPolicy"
 		parent="abstractBeCPGPolicy">
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="repositoryHelper" ref="repositoryHelper" />
-		<property name="productService" ref="productService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
-	
-	<!-- Product Listeners -->
-	<bean id="productCheckInListener" class="fr.becpg.repo.product.listener.ProductCheckInListener">
-		<property name="nodeService" ref="nodeService" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-	</bean>
 	
 	<!-- Workflow -->
 	<bean id="ValidateProduct" parent="baseJavaDelegate"
 		class="fr.becpg.repo.workflow.activiti.product.ValidateProduct">
 		<property name="nodeService" ref="nodeService" />
-		<property name="productService" ref="productService" />
-		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="ownableService" ref="ownableService" />		
 	</bean>
-
-
+	
 </beans>
