@@ -1201,6 +1201,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, QName type, String value, boolean searchByName) throws ImporterException {
 
 		NodeRef nodeRef = null;
+		
+		//Try value is a nodeRef
+		try {
+			nodeRef = new NodeRef(value);
+			if(nodeService.exists(nodeRef)){
+				return nodeRef;
+			}
+		} catch (Exception e){
+			logger.debug("Value is not a nodeRef");
+		}
+		
+		
 		StringBuilder queryPath = new StringBuilder(128);
 		queryPath.append(String.format(QUERY_NODE_BY_TYPE, type));
 		ClassMapping classMapping = importContext.getClassMappings().get(type);

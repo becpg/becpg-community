@@ -6,8 +6,6 @@ import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.repository.RepositoryEntity;
-
 /**
  * 
  * <!-- Chains -->
@@ -29,7 +27,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * 
  * @param <T> Any type passed as context information.
  */
-public class FormulationChain<T extends RepositoryEntity> {
+public class FormulationChain<T extends FormulatedEntity> {
 	private Log logger = LogFactory.getLog(FormulationChain.class);
 	
 	private Class<T> contextClass;

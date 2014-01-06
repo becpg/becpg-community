@@ -1,0 +1,1046 @@
+PATH;/System/Characts/bcpg:entityLists/Ings;;;;;
+TYPE;bcpg:ing;;;;;
+COLUMNS;cm:name;bcpg:ingType;bcpg:ingCEECode;bcpg:legalName;bcpg:legalname_en;bcpg:isDeleted
+;;;;;;
+#;http://passion-cuisine.skynetblogs.be/archive/2008/01/05/les-parties-du-boeuf.html;;;;;
+VALUES;Entrecôte de boeuf;Ingrédient;;Entrecôte de boeuf;Beef steak;false
+VALUES;Faux-filet ou filet de boeuf;Ingrédient;;Faux-filet ou filet de boeuf;Beef sirloin or tenderloin;false
+VALUES;Rumsteck de boeuf;Ingrédient;;Rumsteck de boeuf;Beef rump;false
+VALUES;Culotte de boeuf;Ingrédient;;Culotte de boeuf;Beef panties;false
+VALUES;Gîte de boeuf;Ingrédient;;Gîte de boeuf;Beef cottage;false
+VALUES;Tranche grasse et aiguillette de boeuf;Ingrédient;;Tranche grasse et aiguillette de boeuf;Beef knuckle and lanyard;false
+VALUES;Paleron de boeuf;Ingrédient;;Paleron de boeuf;Beef chuck;false
+VALUES;Macreuse de boeuf;Ingrédient;;Macreuse de boeuf;Beef scoter;false
+VALUES;Talon de boeuf;Ingrédient;;Talon de boeuf;Beef heel;false
+VALUES;Griffe de boeuf;Ingrédient;;Griffe de boeuf;Beef claw;false
+VALUES;Bavette de boeuf;Ingrédient;;Bavette de boeuf;Beef steak;false
+VALUES;Collier de boeuf;Ingrédient;;Collier de boeuf;Beef necklace;false
+VALUES;Poitrine de boeuf;Ingrédient;;Poitrine de boeuf;Beef chest;false
+VALUES;Crosse de boeuf;Ingrédient;;Crosse de boeuf;Beef stick;false
+VALUES;Gîte avant de boeuf;Ingrédient;;Gîte avant de boeuf;Beef before bed;false
+VALUES;Plat de côtes de boeuf;Ingrédient;;Plat de côtes de boeuf;Beef short ribs;false
+VALUES;Poitrine de boeuf;Ingrédient;;Poitrine de boeuf;Beef chest;false
+VALUES;Tendron de boeuf;Ingrédient;;Tendron de boeuf;Beef brisket;false
+VALUES;Flanchet de boeuf;Ingrédient;;Flanchet de boeuf;Beef flank;false
+VALUES;Gîte arrière de boeuf;Ingrédient;;Gîte arrière de boeuf;Beef back heel;false
+VALUES;Cervelle de boeuf;Ingrédient;;Cervelle de boeuf;Beef brain;false
+VALUES;Coeur de boeuf;Ingrédient;;Coeur de boeuf;Beef heart;false
+VALUES;Foie de boeuf;Ingrédient;;Foie de boeuf;Beef liver;false
+VALUES;Langue de boeuf;Ingrédient;;Langue de boeuf;Beef tongue;false
+VALUES;Rognons de boeuf;Ingrédient;;Rognons de boeuf;Beef kidney;false
+VALUES;Tête de boeuf;Ingrédient;;Tête de boeuf;Beef head;false
+VALUES;Tripes de boeuf;Ingrédient;;Tripes de boeuf;Beef tripe;false
+;;;;;;false
+VALUES;Carré couvert de mouton;Ingrédient;;Carré couvert de mouton;Sheep rack;false
+VALUES;Filet de mouton;Ingrédient;;Filet de mouton;Sheep netting;false
+VALUES;Selle de mouton;Ingrédient;;Selle de mouton;Lamb saddle;false
+VALUES;Gigot de mouton;Ingrédient;;Gigot de mouton;Mouton lamb;false
+VALUES;Carré découvert de mouton;Ingrédient;;Carré découvert de mouton;Mouton square discovered;false
+VALUES;Épaule de mouton;Ingrédient;;Épaule de mouton;Lamb shoulder;false
+VALUES;Collier de mouton;Ingrédient;;Collier de mouton;Mouton collar;false
+VALUES;Haut de côtelettes de mouton;Ingrédient;;Haut de côtelettes de mouton;Mutton chops up;false
+VALUES;Poitrine de mouton;Ingrédient;;Poitrine de mouton;Mouton chest;false
+VALUES;Cervelle de mouton;Ingrédient;;Cervelle de mouton;Sheep brains;false
+VALUES;Coeur de mouton;Ingrédient;;Coeur de mouton;Sheep heart;false
+VALUES;Foie de mouton;Ingrédient;;Foie de mouton;Sheep liver;false
+VALUES;Langue de mouton;Ingrédient;;Langue de mouton;Mouton tongue;false
+VALUES;Rognons de mouton;Ingrédient;;Rognons de mouton;Sheep kidney;false
+;;;;;;false
+VALUES;Côtes secondes de veau;Ingrédient;;Côtes secondes de veau;Veal rib seconds;false
+VALUES;Côtes premières de veau;Ingrédient;;Côtes premières de veau;Veal ribs first;false
+VALUES;Longe de veau;Ingrédient;;Longe de veau;Veal loin;false
+VALUES;Quasi et culotte de veau;Ingrédient;;Quasi et culotte de veau;Veal and panties almost;false
+VALUES;"Cuisse ; noix, sous-noix de veau";Ingrédient;;"Cuisse ; noix, sous-noix de veau";Veal thigh nuts, nut sub-;false
+VALUES;Côtes découvertes de veau;Ingrédient;;Côtes découvertes de veau;Veal ribs;false
+VALUES;Épaule de veau;Ingrédient;;Épaule de veau;Veal shoulder;false
+VALUES;Pied de veau;Ingrédient;;Pied de veau;Calf walk;false
+VALUES;Tendron de veau;Ingrédient;;Tendron de veau;Veal brisket;false
+VALUES;Flanchet de veau;Ingrédient;;Flanchet de veau;Veal flank;false
+VALUES;Jarret de veau;Ingrédient;;Jarret de veau;Veal shank;false
+VALUES;Poitrine de veau;Ingrédient;;Poitrine de veau;Veal breast;false
+VALUES;Collier de veau;Ingrédient;;Collier de veau;Veal necklace;false
+VALUES;Tête de veau;Ingrédient;;Tête de veau;Veal head;false
+VALUES;Cervelle de veau;Ingrédient;;Cervelle de veau;Calf brains;false
+VALUES;Coeur de veau;Ingrédient;;Coeur de veau;Calf heart;false
+VALUES;Foie de veau;Ingrédient;;Foie de veau;Calf liver;false
+VALUES;Langue de veau;Ingrédient;;Langue de veau;Veal tongue;false
+VALUES;Rognons de veau;Ingrédient;;Rognons de veau;Veal kidneys;false
+VALUES;Tête de veau;Ingrédient;;Tête de veau;Veal head;false
+;;;;;;false
+VALUES;Jambon de porc;Ingrédient;;Jambon de porc;Pork ham;false
+VALUES;Jambonneau de porc;Ingrédient;;Jambonneau de porc;Pork knuckle;false
+VALUES;Pied de porc;Ingrédient;;Pied de porc;Pig foot;false
+VALUES;Pointe de porc;Ingrédient;;Pointe de porc;Pork advanced;false
+VALUES;Filet de porc;Ingrédient;;Filet de porc;Pork fillet;false
+VALUES;Carré de porc;Ingrédient;;Carré de porc;Pork square;false
+VALUES;Échine de porc;Ingrédient;;Échine de porc;Pork loin;false
+VALUES;Palette de porc;Ingrédient;;Palette de porc;Range pork;false
+VALUES;Plat de côtes de porc;Ingrédient;;Plat de côtes de porc;Pork ribs;false
+VALUES;Travers de côtes de porc;Ingrédient;;Travers de côtes de porc;Pork ribs through;false
+VALUES;Gorge de porc;Ingrédient;;Gorge de porc;Pork throat;false
+VALUES;Poitrine de porc;Ingrédient;;Poitrine de porc;Pork chest;false
+VALUES;Épaule de porc;Ingrédient;;Épaule de porc;Pork shoulder;false
+VALUES;Tête de porc;Ingrédient;;Tête de porc;Pig head;false
+VALUES;Coeur de porc;Ingrédient;;Coeur de porc;Pig heart;false
+VALUES;Foie de porc;Ingrédient;;Foie de porc;Pork liver;false
+VALUES;Rognons de porc;Ingrédient;;Rognons de porc;Pig kidneys;false
+VALUES;Tête de porc;Ingrédient;;Tête de porc;Pig head;false
+;;;;;;false
+#;;Ingrédient;;;;false
+VALUES;Poitrine de poulet;Ingrédient;;Poitrine de poulet;Chicken breast;false
+VALUES;Haut de cuisse de poulet;Ingrédient;;Haut de cuisse de poulet;Chicken thigh;false
+VALUES;Pilon de poulet;Ingrédient;;Pilon de poulet;Chicken drumstick;false
+VALUES;Fouet de poulet;Ingrédient;;Fouet de poulet;Chicken whip;false
+VALUES;Médiane de poulet;Ingrédient;;Médiane de poulet;Chicken median;false
+VALUES;Blanquette de poulet;Ingrédient;;Blanquette de poulet;Chicken stew;false
+VALUES;Croupion de poulet;Ingrédient;;Croupion de poulet;Chicken rump;false
+VALUES;Cou de canard;Ingrédient;;Cou de canard;Duck neck;false
+VALUES;Filet de canard;Ingrédient;;Filet de canard;Duck fillet;false
+VALUES;Pilon de canard;Ingrédient;;Pilon de canard;Duck drumstick;false
+VALUES;Croupion de canard;Ingrédient;;Croupion de canard;Duck tail;false
+VALUES;Fouet de canard;Ingrédient;;Fouet de canard;Duck whip;false
+VALUES;Aileron de canard;Ingrédient;;Aileron de canard;Duck wing;false
+VALUES;Manchon  de canard;Ingrédient;;Manchon  de canard;Duck sleeve;false
+VALUES;Cou de dinde;Ingrédient;;Cou de dinde;Turkey neck;false
+VALUES;Poitrine de dinde;Ingrédient;;Poitrine de dinde;Turkey breast;false
+VALUES;Haut de cuisse de dinde;Ingrédient;;Haut de cuisse de dinde;Turkey thigh;false
+VALUES;Pilon de dinde;Ingrédient;;Pilon de dinde;Turkey drumstick;false
+VALUES;Croupion de dinde;Ingrédient;;Croupion de dinde;Turkey tail;false
+VALUES;Fouet de dinde;Ingrédient;;Fouet de dinde;Turkey whip;false
+VALUES;Aileron de dinde;Ingrédient;;Aileron de dinde;Turkey wing;false
+VALUES;Blanquette de dinde;Ingrédient;;Blanquette de dinde;Turkey stew;false
+;;;;;;false
+;;;;;;false
+VALUES;Arachide;Ingrédient;;Arachide;Peanut;false
+VALUES;Arrow-root;Ingrédient;;Arrow-root;Arrow-root;false
+VALUES;Bambou;Ingrédient;;Bambou;Bamboo;false
+VALUES;Brocoli;Ingrédient;;Brocoli;Broccoli;false
+VALUES;Carotte;Ingrédient;;Carotte;Carrot;false
+VALUES;Chayote;Ingrédient;;Chayote;Chayote;false
+VALUES;Châtaigne d'eau;Ingrédient;;Châtaigne d'eau;Water chestnut;false
+VALUES;Concombre;Ingrédient;;Concombre;Cucumber;false
+VALUES;Cornichon;Ingrédient;;Cornichon;Gherkin;false
+VALUES;Courgette;Ingrédient;;Courgette;Zucchini;false
+VALUES;Crosne;Ingrédient;;Crosne;Crosne;false
+VALUES;Câpre;Ingrédient;;Câpre;Caper;false
+VALUES;Céleri;Ingrédient;;Céleri;Celery;false
+VALUES;Céleri-rave;Ingrédient;;Céleri-rave;Celeriac;false
+VALUES;Dachine;Ingrédient;;Dachine;Dachine;false
+VALUES;Daikon;Ingrédient;;Daikon;Daikon;false
+VALUES;Fenouil;Ingrédient;;Fenouil;Fennel;false
+VALUES;Fruit à pain;Ingrédient;;Fruit à pain;Breadfruit;false
+VALUES;Haricot noir;Ingrédient;;Haricot noir;Black bean;false
+VALUES;Igname;Ingrédient;;Igname;Yam;false
+VALUES;Jicama;Ingrédient;;Jicama;Jicama;false
+VALUES;Liseron d'eau;Ingrédient;;Liseron d'eau;Water spinach;false
+VALUES;Maïs;Ingrédient;;Maïs;Corn;false
+VALUES;Navet / Rabiole;Ingrédient;;Navet / Rabiole;Turnips / turnip;false
+VALUES;Nopal;Ingrédient;;Nopal;Nopal;false
+VALUES;Oignon;Ingrédient;;Oignon;Onion;false
+VALUES;Okra ou Gumbo;Ingrédient;;Okra ou Gumbo;Okra or gumbo;false
+VALUES;Panais;Ingrédient;;Panais;Parsnip;false
+VALUES;Patate douce;Ingrédient;;Patate douce;Sweet potato;false
+VALUES;Plantain;Ingrédient;;Plantain;Plantain;false
+VALUES;Pois chiche;Ingrédient;;Pois chiche;Chickpea;false
+VALUES;Pois pigeon;Ingrédient;;Pois pigeon;Pigeon pea;false
+VALUES;Pois vert;Ingrédient;;Pois vert;Green peas;false
+VALUES;Polenta;Ingrédient;;Polenta;Polenta;false
+VALUES;Radis;Ingrédient;;Radis;Radish;false
+VALUES;Raifort;Ingrédient;;Raifort;Horseradish;false
+VALUES;Rutabaga;Ingrédient;;Rutabaga;Rutabaga;false
+VALUES;Réglisse;Ingrédient;;Réglisse;Liquorice;false
+VALUES;Salsifis;Ingrédient;;Salsifis;Salsify;false
+VALUES;Soya;Ingrédient;;Soya;Soy;false
+VALUES;Tamarin;Ingrédient;;Tamarin;Tamarind;false
+VALUES;Taro;Ingrédient;;Taro;Taro;false
+VALUES;Ti feuille;Ingrédient;;Ti feuille;Ti leaf;false
+VALUES;Ti-concombre;Ingrédient;;Ti-concombre;Ti-cucumber;false
+VALUES;Tomate;Ingrédient;;Tomate;Tomato;false
+VALUES;Tomatille (tomatillo);Ingrédient;;Tomatille (tomatillo);Tomatillo (tomatillo);false
+VALUES;Topinambour;Ingrédient;;Topinambour;Jerusalem artichoke;false
+VALUES;Tête de violon;Ingrédient;;Tête de violon;Fiddlehead;false
+VALUES;Wasabi;Ingrédient;;Wasabi;Wasabi;false
+VALUES;Échalote;Ingrédient;;Échalote;Shallot;false
+VALUES;Épinard;Ingrédient;;Épinard;Spinach;false
+VALUES;Champignon;Ingrédient;;Champignon;Mushroom;false
+VALUES;Truffe;Ingrédient;;Truffe;Truffle;false
+VALUES;Laitue et verdurette;Ingrédient;;Laitue et verdurette;Lettuce and verduret;false
+VALUES;Courge;Ingrédient;;Courge;Squash;false
+VALUES;Poireau;Ingrédient;;Poireau;Leek;false
+VALUES;Pomme de terre;Ingrédient;;Pomme de terre;Potato;false
+VALUES;Asperge;Ingrédient;;Asperge;Asparagus;false
+VALUES;Haricot sec;Ingrédient;;Haricot sec;Dry bean;false
+VALUES;Haricot frais;Ingrédient;;Haricot frais;Cool beans;false
+VALUES;Gourgane;Ingrédient;;Gourgane;Broad bean;false
+VALUES;Haricot vert;Ingrédient;;Haricot vert;Green bean;false
+VALUES;Aubergine;Ingrédient;;Aubergine;Eggplant;false
+VALUES;Bette;Ingrédient;;Bette;Bette;false
+VALUES;Chou;Ingrédient;;Chou;Cabbage;false
+VALUES;Betterave;Ingrédient;;Betterave;Beet;false
+VALUES;Poivron;Ingrédient;;Poivron;Pepper;false
+VALUES;Manioc;Ingrédient;;Manioc;Cassava;false
+VALUES;Oignon;Ingrédient;;Oignon;Onion;false
+VALUES;Concombre;Ingrédient;;Concombre;Cucumber;false
+;;;;;;false
+VALUES;Agneau;Ingrédient;;Agneau;Lamb;false
+VALUES;Bison;Ingrédient;;Bison;Bison;false
+VALUES;Boeuf;Ingrédient;;Boeuf;Beef;false
+VALUES;Cabri;Ingrédient;;Cabri;Cabri;false
+VALUES;Caribou;Ingrédient;;Caribou;Caribou;false
+VALUES;Kangourou;Ingrédient;;Kangourou;Kangaroo;false
+VALUES;Lapin;Ingrédient;;Lapin;Rabbit;false
+VALUES;Lièvre;Ingrédient;;Lièvre;Hare;false
+VALUES;Sanglier;Ingrédient;;Sanglier;Boar;false
+VALUES;Tripes;Ingrédient;;Tripes;Tripe;false
+VALUES;Veau;Ingrédient;;Veau;Calf;false
+VALUES;Porc;Ingrédient;;Porc;Pork;false
+VALUES;Autruche;Ingrédient;;Autruche;Ostrich;false
+VALUES;Caille;Ingrédient;;Caille;Quail;false
+VALUES;Canard;Ingrédient;;Canard;Duck;false
+VALUES;Dinde;Ingrédient;;Dinde;Turkey;false
+VALUES;Faisan;Ingrédient;;Faisan;Pheasant;false
+VALUES;Foie gras;Ingrédient;;Foie gras;Foie gras;false
+VALUES;Oie;Ingrédient;;Oie;Goose;false
+VALUES;Perdrix;Ingrédient;;Perdrix;Partridge;false
+VALUES;Pintade;Ingrédient;;Pintade;Guinea fowl;false
+VALUES;Poularde de Bresse;Ingrédient;;Poularde de Bresse;Bresse;false
+VALUES;Poulet;Ingrédient;;Poulet;Chicken;false
+VALUES;Pigeon;Ingrédient;;Pigeon;Pigeon;false
+;;;;;;false
+VALUES;Abadèche;Ingrédient;;Abadèche;Cusk;false
+VALUES;Aiglefin;Ingrédient;;Aiglefin;Haddock;false
+VALUES;Anchois;Ingrédient;;Anchois;Anchovy;false
+VALUES;Anguille;Ingrédient;;Anguille;Eel;false
+VALUES;Bar;Ingrédient;;Bar;Bar;false
+VALUES;Barramundi;Ingrédient;;Barramundi;Barramundi;false
+VALUES;Baudroie;Ingrédient;;Baudroie;Monkfish;false
+VALUES;Brochet;Ingrédient;;Brochet;Pike;false
+VALUES;Capelan;Ingrédient;;Capelan;Capelin;false
+VALUES;Carpe;Ingrédient;;Carpe;Carp;false
+VALUES;Chapon / rascasse;Ingrédient;;Chapon / rascasse;Chapon / scorpion;false
+VALUES;Chevesne;Ingrédient;;Chevesne;Chub;false
+VALUES;Cobia;Ingrédient;;Cobia;Cobia;false
+VALUES;Congre;Ingrédient;;Congre;Conger;false
+VALUES;Daurade;Ingrédient;;Daurade;Bream;false
+VALUES;Doré;Ingrédient;;Doré;Golden;false
+VALUES;Escolier;Ingrédient;;Escolier;Escolar;false
+VALUES;Espada;Ingrédient;;Espada;Espada;false
+VALUES;Espadon;Ingrédient;;Espadon;Swordfish;false
+VALUES;Esturgeon;Ingrédient;;Esturgeon;Sturgeon;false
+VALUES;Flétan;Ingrédient;;Flétan;Halibut;false
+VALUES;Grenouille;Ingrédient;;Grenouille;Frog;false
+VALUES;Grondin Perlon;Ingrédient;;Grondin Perlon;Grondin perlon;false
+VALUES;Hareng;Ingrédient;;Hareng;Herring;false
+VALUES;Lingue;Ingrédient;;Lingue;Ling;false
+VALUES;Loup de mer;Ingrédient;;Loup de mer;Catfish;false
+VALUES;Légine australe;Ingrédient;;Légine australe;Patagonian toothfish;false
+VALUES;Mahi Mahi;Ingrédient;;Mahi Mahi;Mahi mahi;false
+VALUES;Maquereau;Ingrédient;;Maquereau;Mackerel;false
+VALUES;Merlan;Ingrédient;;Merlan;Whiting;false
+VALUES;Merlu, Colin;Ingrédient;;Merlu, Colin;Hake, colin;false
+VALUES;Mérou;Ingrédient;;Mérou;Grouper;false
+VALUES;Omble chevalier;Ingrédient;;Omble chevalier;Char;false
+VALUES;Onaga;Ingrédient;;Onaga;Onaga;false
+VALUES;Pangasius;Ingrédient;;Pangasius;Pangasius;false
+VALUES;Perche;Ingrédient;;Perche;Pole;false
+VALUES;Perche du Nil;Ingrédient;;Perche du Nil;Nile perch;false
+VALUES;Pieuvre;Ingrédient;;Pieuvre;Octopus;false
+VALUES;Plie ou carrelet;Ingrédient;;Plie ou carrelet;Plaice;false
+VALUES;Requin;Ingrédient;;Requin;Shark;false
+VALUES;Rouget;Ingrédient;;Rouget;Red mullet;false
+VALUES;Saint-Pierre;Ingrédient;;Saint-Pierre;Saint-pierre;false
+VALUES;Sandre;Ingrédient;;Sandre;Sandre;false
+VALUES;Sardine;Ingrédient;;Sardine;Sardine;false
+VALUES;Silure;Ingrédient;;Silure;Catfish;false
+VALUES;Sole;Ingrédient;;Sole;Sole;false
+VALUES;Stockfish;Ingrédient;;Stockfish;Stockfish;false
+VALUES;Surimi;Ingrédient;;Surimi;Surimi;false
+VALUES;Thon;Ingrédient;;Thon;Tuna;false
+VALUES;Tobiko;Ingrédient;;Tobiko;Tobiko;false
+VALUES;Turbot;Ingrédient;;Turbot;Turbot;false
+VALUES;Vivaneau;Ingrédient;;Vivaneau;Red snapper;false
+VALUES;Éperlan;Ingrédient;;Éperlan;Smelt;false
+VALUES;Truite;Ingrédient;;Truite;Trout;false
+VALUES;Saumon;Ingrédient;;Saumon;Salmon;false
+VALUES;Seiche;Ingrédient;;Seiche;Cuttlefish;false
+VALUES;Caviar;Ingrédient;;Caviar;Caviar;false
+VALUES;Cabillaud;Ingrédient;;Cabillaud;Cod;false
+;;;;;;false
+VALUES;Bigorneau;Ingrédient;;Bigorneau;Periwinkle;false
+VALUES;Buccin;Ingrédient;;Buccin;Whelk;false
+VALUES;Cigale de mer;Ingrédient;;Cigale de mer;Slipper lobster;false
+VALUES;Coque;Ingrédient;;Coque;Shell;false
+VALUES;Couteau;Ingrédient;;Couteau;Knife;false
+VALUES;Crevette / Gambas;Ingrédient;;Crevette / Gambas;Shrimp / prawns;false
+VALUES;Crevette nordique;Ingrédient;;Crevette nordique;Northern shrimp;false
+VALUES;Crépidule;Ingrédient;;Crépidule;Slipper limpet;false
+VALUES;Escargot;Ingrédient;;Escargot;Snail;false
+VALUES;Homard;Ingrédient;;Homard;Lobster;false
+VALUES;Lambi, Conque;Ingrédient;;Lambi, Conque;Conch, conch;false
+VALUES;Langoustine;Ingrédient;;Langoustine;Langoustine;false
+VALUES;Moule;Ingrédient;;Moule;Mold;false
+VALUES;Ormeau;Ingrédient;;Ormeau;Abalone;false
+VALUES;Oursin;Ingrédient;;Oursin;Sea urchin;false
+VALUES;Palourde;Ingrédient;;Palourde;Clam;false
+VALUES;Patelle;Ingrédient;;Patelle;Limpet;false
+VALUES;Pousse-pied ou anatife;Ingrédient;;Pousse-pied ou anatife;Barnacle barnacle or;false
+VALUES;Pétoncle;Ingrédient;;Pétoncle;Scallop;false
+VALUES;Saint-Jacques;Ingrédient;;Saint-Jacques;Scallop;false
+VALUES;Violet;Ingrédient;;Violet;Purple;false
+VALUES;Écrevisse;Ingrédient;;Écrevisse;Crayfish;false
+VALUES;Huître;Ingrédient;;Huître;Oyster;false
+VALUES;Crabe;Ingrédient;;Crabe;Crab;false
+;;;;;;false
+VALUES;Ail;Ingrédient;;Ail;Garlic;false
+VALUES;Anis;Ingrédient;;Anis;Anise;false
+VALUES;Asa foetida;Ingrédient;;Asa foetida;Asa foetida;false
+VALUES;Cannelle;Ingrédient;;Cannelle;Cinnamon;false
+VALUES;Cardamome;Ingrédient;;Cardamome;Cardamom;false
+VALUES;Caripoulé;Ingrédient;;Caripoulé;Caripoulé;false
+VALUES;Carvi;Ingrédient;;Carvi;Caraway;false
+VALUES;Clou de girofle;Ingrédient;;Clou de girofle;Clove;false
+VALUES;Cumin;Ingrédient;;Cumin;Cumin;false
+VALUES;Curcuma;Ingrédient;;Curcuma;Turmeric;false
+VALUES;Curry;Ingrédient;;Curry;Curry;false
+VALUES;Fenugreek;Ingrédient;;Fenugreek;Fenugreek;false
+VALUES;Garam Massala;Ingrédient;;Garam Massala;Garam masala;false
+VALUES;Genièvre;Ingrédient;;Genièvre;Juniper;false
+VALUES;Gingembre;Ingrédient;;Gingembre;Ginger;false
+VALUES;Macis;Ingrédient;;Macis;Mace;false
+VALUES;Massala;Ingrédient;;Massala;Massala;false
+VALUES;Moutarde;Ingrédient;;Moutarde;Mustard;false
+VALUES;Muscade;Ingrédient;;Muscade;Nutmeg;false
+VALUES;Mélange d'épices bajan;Ingrédient;;Mélange d'épices bajan;Bajan spice mix;false
+VALUES;Ras-el-hanout;Ingrédient;;Ras-el-hanout;Ras el hanout;false
+VALUES;Safran;Ingrédient;;Safran;Saffron;false
+VALUES;Sassafras;Ingrédient;;Sassafras;Sassafras;false
+VALUES;Saté;Ingrédient;;Saté;Sate;false
+VALUES;Sumac;Ingrédient;;Sumac;Sumach;false
+VALUES;Sésame;Ingrédient;;Sésame;Sesame;false
+VALUES;Vanille;Ingrédient;;Vanille;Vanilla;false
+VALUES;Piment;Ingrédient;;Piment;Spice;false
+VALUES;Poivre;Ingrédient;;Poivre;Pepper;false
+VALUES;Sel;Ingrédient;;Sel;Salt;false
+;;;;;;false
+VALUES;Aneth;Ingrédient;;Aneth;Dill;false
+VALUES;Basilic;Ingrédient;;Basilic;Basil;false
+VALUES;Bourrache;Ingrédient;;Bourrache;Borage;false
+VALUES;Ciboulette;Ingrédient;;Ciboulette;Chive;false
+VALUES;Ciboulette chinoise;Ingrédient;;Ciboulette chinoise;Chinese chives;false
+VALUES;Citronnelle;Ingrédient;;Citronnelle;Lemongrass;false
+VALUES;Coriandre;Ingrédient;;Coriandre;Coriander;false
+VALUES;Hysope;Ingrédient;;Hysope;Hyssop;false
+VALUES;Lavande;Ingrédient;;Lavande;Lavender;false
+VALUES;Marjolaine;Ingrédient;;Marjolaine;Marjoram;false
+VALUES;Myrte;Ingrédient;;Myrte;Myrtle;false
+VALUES;Mélisse;Ingrédient;;Mélisse;Melissa;false
+VALUES;Origan;Ingrédient;;Origan;Oregano;false
+VALUES;Persil;Ingrédient;;Persil;Parsley;false
+VALUES;Romarin;Ingrédient;;Romarin;Rosemary;false
+VALUES;Salicorne;Ingrédient;;Salicorne;Salicorne;false
+VALUES;Sariette;Ingrédient;;Sariette;Sariette;false
+VALUES;Sauge;Ingrédient;;Sauge;Sage;false
+VALUES;Thym;Ingrédient;;Thym;Thyme;false
+VALUES;Tilleul;Ingrédient;;Tilleul;Lime;false
+VALUES;Verveine;Ingrédient;;Verveine;Verbena;false
+VALUES;Violette;Ingrédient;;Violette;Violet;false
+;;;;;;false
+VALUES;Érable;Ingrédient;;Érable;Maple;false
+VALUES;Cassonade;Ingrédient;;Cassonade;Brown sugar;false
+VALUES;Miel;Ingrédient;;Miel;Honey;false
+VALUES;Mélasse;Ingrédient;;Mélasse;Treacle;false
+VALUES;Sucre;Ingrédient;;Sucre;Sugar;false
+VALUES;Riz;Ingrédient;;Riz;Rice;false
+VALUES;Café;Ingrédient;;Café;Coffee;false
+VALUES;Avoine;Ingrédient;;Avoine;Oat;false
+VALUES;Blé;Ingrédient;;Blé;Wheat;false
+VALUES;Boulghol / Boulgour;Ingrédient;;Boulghol / Boulgour;Boulghol / boulgour;false
+VALUES;Houblon;Ingrédient;;Houblon;Hop;false
+VALUES;Orge;Ingrédient;;Orge;Barley;false
+VALUES;Quinoa;Ingrédient;;Quinoa;Quinoa;false
+VALUES;Sarrasin;Ingrédient;;Sarrasin;Buckwheat;false
+VALUES;Seigle;Ingrédient;;Seigle;Rye;false
+VALUES;Semoule / Couscous;Ingrédient;;Semoule / Couscous;Semolina / couscous;false
+VALUES;Sorgho;Ingrédient;;Sorgho;Sorghum;false
+VALUES;Épeautre;Ingrédient;;Épeautre;Spelt;false
+VALUES;Thé;Ingrédient;;Thé;Tea;false
+;;;;;;false
+#;Principaux fromages - http://www.economie.gouv.fr/files/directions_services/daj/marches_publics/oeap/gem/produits_laitiers/annexe5.pdf;;;;;false
+VALUES;Petit-suisse;Ingrédient;;Petit-suisse;Petit-suisse;false
+VALUES;Demi-sel;Ingrédient;;Demi-sel;Salted;false
+VALUES;Camembert,;Ingrédient;;Camembert,;Camembert,;false
+VALUES;Coulommiers;Ingrédient;;Coulommiers;Coulsdon;false
+VALUES;Brie;Ingrédient;;Brie;Brie;false
+VALUES;Carré de l’est;Ingrédient;;Carré de l’est;Carré de l’est;false
+VALUES;Saint-Marcellin;Ingrédient;;Saint-Marcellin;Saint-marcellin;false
+VALUES;Saint-Florentin;Ingrédient;;Saint-Florentin;Saint-florentin;false
+VALUES;Brillat-Savarin;Ingrédient;;Brillat-Savarin;Brillat-savarin;false
+VALUES;Bleu;Ingrédient;;Bleu;Blue;false
+VALUES;Emmental;Ingrédient;;Emmental;Emmental;false
+VALUES;Raclette;Ingrédient;;Raclette;Raclette;false
+VALUES;Mimolette;Ingrédient;;Mimolette;Mimolette;false
+VALUES;Saint-Paulin;Ingrédient;;Saint-Paulin;Saint-paulin;false
+VALUES;Edam;Ingrédient;;Edam;Edam;false
+VALUES;Gouda;Ingrédient;;Gouda;Gouda;false
+VALUES;Tome;Ingrédient;;Tome;Volume;false
+VALUES;Mozzarella;Ingrédient;;Mozzarella;Mozzarella;false
+VALUES;Chabichou;Ingrédient;;Chabichou;Chabichou;false
+VALUES;Crottin;Ingrédient;;Crottin;Dung;false
+VALUES;Sainte-Maure;Ingrédient;;Sainte-Maure;Sainte-maure;false
+VALUES;Cabécou;Ingrédient;;Cabécou;Cabécou;false
+VALUES;Brousse;Ingrédient;;Brousse;Bush;false
+;;;;;;false
+#;AOC - http://fr.wikipedia.org/wiki/Liste_des_AOC_laiti%C3%A8res;;;;;false
+VALUES;Abondance;Ingrédient;;Abondance;Abondance;false
+VALUES;Banon;Ingrédient;;Banon;Banon;false
+VALUES;Beaufort;Ingrédient;;Beaufort;Beaufort;false
+VALUES;Bleu d'Auvergne;Ingrédient;;Bleu d'Auvergne;Bleu d'auvergne;false
+VALUES;Bleu de Gex;Ingrédient;;Bleu de Gex;Bleu de gex;false
+VALUES;Bleu des Causses;Ingrédient;;Bleu des Causses;Bleu des causses;false
+VALUES;Bleu du Vercors-Sassenage;Ingrédient;;Bleu du Vercors-Sassenage;Bleu du vercors-sassenage;false
+VALUES;Brie de Meaux;Ingrédient;;Brie de Meaux;Brie de meaux;false
+VALUES;Brie de Melun;Ingrédient;;Brie de Melun;Brie de melun;false
+VALUES;Brocciu corse;Ingrédient;;Brocciu corse;Brocciu corse;false
+VALUES;Camembert de Normandie;Ingrédient;;Camembert de Normandie;Camembert de normandie;false
+VALUES;Cantal;Ingrédient;;Cantal;Cantal;false
+VALUES;Chabichou du Poitou;Ingrédient;;Chabichou du Poitou;Chabichou poitou;false
+VALUES;Chambérat;Ingrédient;;Chambérat;Chambérat;false
+VALUES;Chaource;Ingrédient;;Chaource;Chaource;false
+VALUES;Charolais;Ingrédient;;Charolais;Charolais;false
+VALUES;Chevrotin;Ingrédient;;Chevrotin;Chevrotin;false
+VALUES;Comté;Ingrédient;;Comté;County;false
+VALUES;Crottin de Chavignol;Ingrédient;;Crottin de Chavignol;Chavignol goat cheese;false
+VALUES;Époisses;Ingrédient;;Époisses;Epoisses;false
+VALUES;Fourme d'Ambert;Ingrédient;;Fourme d'Ambert;Fourme d'ambert;false
+VALUES;Fourme de Montbrison;Ingrédient;;Fourme de Montbrison;Fourme montbrison;false
+VALUES;Laguiole;Ingrédient;;Laguiole;Laguiole;false
+VALUES;Langres;Ingrédient;;Langres;Langres;false
+VALUES;Livarot;Ingrédient;;Livarot;Livarot;false
+VALUES;Maroilles;Ingrédient;;Maroilles;Maroilles;false
+VALUES;Mont-d'or;Ingrédient;;Mont-d'or;Mont-d'or;false
+VALUES;Morbier;Ingrédient;;Morbier;Morbier;false
+VALUES;Munster;Ingrédient;;Munster;Munster;false
+VALUES;Neufchâtel;Ingrédient;;Neufchâtel;Neufchatel;false
+VALUES;Ossau-iraty;Ingrédient;;Ossau-iraty;Ossau-iraty;false
+VALUES;Pélardon;Ingrédient;;Pélardon;Pélardon;false
+VALUES;Picodon;Ingrédient;;Picodon;Picodon;false
+VALUES;Pont-l'évêque;Ingrédient;;Pont-l'évêque;Pont l'eveque;false
+VALUES;Pouligny-saint-pierre;Ingrédient;;Pouligny-saint-pierre;Pouligny-saint-pierre;false
+VALUES;Reblochon;Ingrédient;;Reblochon;Reblochon;false
+VALUES;Rigotte de Condrieu;Ingrédient;;Rigotte de Condrieu;Rigotte condrieu;false
+VALUES;Rocamadour;Ingrédient;;Rocamadour;Rocamadour;false
+VALUES;Roquefort;Ingrédient;;Roquefort;Roquefort;false
+VALUES;Saint-nectaire;Ingrédient;;Saint-nectaire;Saint-nectaire;false
+VALUES;Sainte-maure-de-touraine;Ingrédient;;Sainte-maure-de-touraine;Sainte-maure-de-touraine;false
+VALUES;Salers;Ingrédient;;Salers;Salers;false
+VALUES;Selles-sur-cher;Ingrédient;;Selles-sur-cher;Selles-sur-cher;false
+VALUES;Tome des Bauges;Ingrédient;;Tome des Bauges;Volume bauges;false
+VALUES;Valençay;Ingrédient;;Valençay;Valençay;false
+;;;;;;false
+;;;;;;false
+VALUES;Amande;Ingrédient;;Amande;Almond;false
+VALUES;Arbouse;Ingrédient;;Arbouse;Arbutus;false
+VALUES;Carambole;Ingrédient;;Carambole;Carambola;false
+VALUES;Chadec;Ingrédient;;Chadec;Chadec;false
+VALUES;Chicoutai;Ingrédient;;Chicoutai;Chicoutai;false
+VALUES;Châtaigne / Marron;Ingrédient;;Châtaigne / Marron;Chestnut / brown;false
+VALUES;Corossol;Ingrédient;;Corossol;Soursop;false
+VALUES;Dourian;Ingrédient;;Dourian;Durian;false
+VALUES;Jacquier;Ingrédient;;Jacquier;Jacquier;false
+VALUES;Longane;Ingrédient;;Longane;Longan;false
+VALUES;Macadamia;Ingrédient;;Macadamia;Macadamia;false
+VALUES;Noix;Ingrédient;;Noix;Nuts;false
+VALUES;Noix de pécan;Ingrédient;;Noix de pécan;Pecans;false
+VALUES;Physalis;Ingrédient;;Physalis;Physalis;false
+VALUES;Pimpin / Vacoa / Pandanus;Ingrédient;;Pimpin / Vacoa / Pandanus;Pimpin / vacoa / pandanus;false
+VALUES;Sapotille;Ingrédient;;Sapotille;Sapodilla;false
+VALUES;Combawa ou Combava;Ingrédient;;Combawa ou Combava;Combawa or combava;false
+VALUES;Cédrat;Ingrédient;;Cédrat;Citron;false
+VALUES;Kumquat;Ingrédient;;Kumquat;Kumquat;false
+VALUES;Main de Boudha;Ingrédient;;Main de Boudha;Hand of buddha;false
+VALUES;Lait de coco;Ingrédient;;Lait de coco;Coconut milk;false
+VALUES;Noix de coco;Ingrédient;;Noix de coco;Coconut;false
+;;;;;;false
+VALUES;Abricot;Ingrédient;;Abricot;Apricot;false
+VALUES;Canneberge;Ingrédient;;Canneberge;Cranberry;false
+VALUES;Cassis;Ingrédient;;Cassis;Blackcurrant;false
+VALUES;Cerise;Ingrédient;;Cerise;Cherry;false
+VALUES;Coing;Ingrédient;;Coing;Quince;false
+VALUES;Datte;Ingrédient;;Datte;Date;false
+VALUES;Figue;Ingrédient;;Figue;Fig;false
+VALUES;Fraise;Ingrédient;;Fraise;Strawberry;false
+VALUES;Framboise;Ingrédient;;Framboise;Raspberry;false
+VALUES;Fruit de la passion;Ingrédient;;Fruit de la passion;Passion fruit;false
+VALUES;Goyave;Ingrédient;;Goyave;Guava;false
+VALUES;Groseille;Ingrédient;;Groseille;Currant;false
+VALUES;Kaki;Ingrédient;;Kaki;Khaki;false
+VALUES;Kiwi;Ingrédient;;Kiwi;Kiwi;false
+VALUES;Litchi;Ingrédient;;Litchi;Litchi;false
+VALUES;Mangue;Ingrédient;;Mangue;Mango;false
+VALUES;Myrtille;Ingrédient;;Myrtille;Blueberry;false
+VALUES;Nectarine;Ingrédient;;Nectarine;Nectarine;false
+VALUES;Papaye;Ingrédient;;Papaye;Papaya;false
+VALUES;Pomme grenade;Ingrédient;;Pomme grenade;Pomegranate;false
+VALUES;Pêche;Ingrédient;;Pêche;Fishing;false
+VALUES;Rhubarbe;Ingrédient;;Rhubarbe;Rhubarb;false
+VALUES;Raisins;Ingrédient;;Raisins;Grapes;false
+VALUES;Mirabelle;Ingrédient;;Mirabelle;Mirabelle;false
+VALUES;Prune;Ingrédient;;Prune;Prune;false
+VALUES;Pruneau d'Agen;Ingrédient;;Pruneau d'Agen;Agen prunes;false
+VALUES;Quetsche;Ingrédient;;Quetsche;Damson;false
+VALUES;Reine-Claude;Ingrédient;;Reine-Claude;Greengage;false
+VALUES;Banane;Ingrédient;;Banane;Banana;false
+VALUES;Poires;Ingrédient;;Poires;Pears;false
+VALUES;Pommes;Ingrédient;;Pommes;Apples;false
+VALUES;Melon;Ingrédient;;Melon;Melon;false
+VALUES;Agrumes;Ingrédient;;Agrumes;Citrus;false
+VALUES;Citron;Ingrédient;;Citron;Lemon;false
+VALUES;Clémentine;Ingrédient;;Clémentine;Clementine;false
+VALUES;Mandarine;Ingrédient;;Mandarine;Mandarine;false
+VALUES;Orange;Ingrédient;;Orange;Orange;false
+VALUES;Pamplemousse;Ingrédient;;Pamplemousse;Grapefruit;false
+VALUES;Pomelo;Ingrédient;;Pomelo;Grapefruit;false
+VALUES;Ananas;Ingrédient;;Ananas;Pineapple;false
+;;;;;;false
+VALUES;Jus d'abricot;Ingrédient;;Jus d'abricot;Apricot juice;false
+VALUES;Jus de canneberge;Ingrédient;;Jus de canneberge;Cranberry juice;false
+VALUES;Jus de cassis;Ingrédient;;Jus de cassis;Blackcurrant juice;false
+VALUES;Jus de cerise;Ingrédient;;Jus de cerise;Cherry juice;false
+VALUES;Jus de coing;Ingrédient;;Jus de coing;Quince juice;false
+VALUES;Jus de datte;Ingrédient;;Jus de datte;Date juice;false
+VALUES;Jus de figue;Ingrédient;;Jus de figue;Fig juice;false
+VALUES;Jus de fraise;Ingrédient;;Jus de fraise;Strawberry juice;false
+VALUES;Jus de framboise;Ingrédient;;Jus de framboise;Raspberry juice;false
+VALUES;Jus de fruit de la passion;Ingrédient;;Jus de fruit de la passion;Juice of passion;false
+VALUES;Jus de goyave;Ingrédient;;Jus de goyave;Guava juice;false
+VALUES;Jus de groseille;Ingrédient;;Jus de groseille;Currant juice;false
+VALUES;Jus de kaki;Ingrédient;;Jus de kaki;Persimmon juice;false
+VALUES;Jus de kiwi;Ingrédient;;Jus de kiwi;Kiwi juice;false
+VALUES;Jus de litchi;Ingrédient;;Jus de litchi;Lychee juice;false
+VALUES;Jus de mangue;Ingrédient;;Jus de mangue;Mango juice;false
+VALUES;Jus de myrtille;Ingrédient;;Jus de myrtille;Blueberry juice;false
+VALUES;Jus de nectarine;Ingrédient;;Jus de nectarine;Nectarine juice;false
+VALUES;Jus de papaye;Ingrédient;;Jus de papaye;Papaya juice;false
+VALUES;Jus de pomme grenade;Ingrédient;;Jus de pomme grenade;Pomegranate juice;false
+VALUES;Jus de pêche;Ingrédient;;Jus de pêche;Peach juice;false
+VALUES;Jus de rhubarbe;Ingrédient;;Jus de rhubarbe;Rhubarb juice;false
+VALUES;Jus de raisins;Ingrédient;;Jus de raisins;Grape juice;false
+VALUES;Jus de mirabelle;Ingrédient;;Jus de mirabelle;Plum juice;false
+VALUES;Jus de prune;Ingrédient;;Jus de prune;Prune juice;false
+VALUES;Jus de pruneau d'agen;Ingrédient;;Jus de pruneau d'agen;Agen prune juice;false
+VALUES;Jus de quetsche;Ingrédient;;Jus de quetsche;Plum juice;false
+VALUES;Jus de reine-claude;Ingrédient;;Jus de reine-claude;Greengage juice;false
+VALUES;Jus de banane;Ingrédient;;Jus de banane;Banana juice;false
+VALUES;Jus de poires;Ingrédient;;Jus de poires;Pear juice;false
+VALUES;Jus de pommes;Ingrédient;;Jus de pommes;Apple juice;false
+VALUES;Jus de melon;Ingrédient;;Jus de melon;Melon juice;false
+VALUES;Jus d'agrumes;Ingrédient;;Jus d'agrumes;Citrus juice;false
+VALUES;Jus de citron;Ingrédient;;Jus de citron;Lemon juice;false
+VALUES;Jus de clémentine;Ingrédient;;Jus de clémentine;Clementine juice;false
+VALUES;Jus de mandarine;Ingrédient;;Jus de mandarine;Tangerine juice;false
+VALUES;Jus d'orange;Ingrédient;;Jus d'orange;Orange juice;false
+VALUES;Jus de pamplemousse;Ingrédient;;Jus de pamplemousse;Grapefruit juice;false
+VALUES;Jus de pomelo;Ingrédient;;Jus de pomelo;Grapefruit juice;false
+VALUES;Jus d'ananas;Ingrédient;;Jus d'ananas;Pineapple juice;false
+;;;;;;false
+VALUES;Jus d'abricot concentré;Ingrédient;;Jus d'abricot concentré;Apricot juice concentrate;false
+VALUES;Jus de canneberge concentré;Ingrédient;;Jus de canneberge concentré;Cranberry juice concentrate;false
+VALUES;Jus de cassis concentré;Ingrédient;;Jus de cassis concentré;Blackcurrant juice concentrate;false
+VALUES;Jus de cerise concentré;Ingrédient;;Jus de cerise concentré;Cherry juice concentrate;false
+VALUES;Jus de coing concentré;Ingrédient;;Jus de coing concentré;Quince juice concentrate;false
+VALUES;Jus de datte concentré;Ingrédient;;Jus de datte concentré;Date juice concentrate;false
+VALUES;Jus de figue concentré;Ingrédient;;Jus de figue concentré;Fig juice concentrate;false
+VALUES;Jus de fraise concentré;Ingrédient;;Jus de fraise concentré;Strawberry juice concentrate;false
+VALUES;Jus de framboise concentré;Ingrédient;;Jus de framboise concentré;Raspberry juice concentrate;false
+VALUES;Jus de fruit de la passion concentré;Ingrédient;;Jus de fruit de la passion concentré;Fruit juice concentrated passion;false
+VALUES;Jus de goyave concentré;Ingrédient;;Jus de goyave concentré;Guava juice concentrate;false
+VALUES;Jus de groseille concentré;Ingrédient;;Jus de groseille concentré;Currant juice concentrate;false
+VALUES;Jus de kaki concentré;Ingrédient;;Jus de kaki concentré;Persimmon juice concentrate;false
+VALUES;Jus de kiwi concentré;Ingrédient;;Jus de kiwi concentré;Kiwi juice concentrate;false
+VALUES;Jus de litchi concentré;Ingrédient;;Jus de litchi concentré;Lychee juice concentrate;false
+VALUES;Jus de mangue concentré;Ingrédient;;Jus de mangue concentré;Mango juice concentrate;false
+VALUES;Jus de myrtille concentré;Ingrédient;;Jus de myrtille concentré;Blueberry juice concentrate;false
+VALUES;Jus de nectarine concentré;Ingrédient;;Jus de nectarine concentré;Nectarine juice concentrate;false
+VALUES;Jus de papaye concentré;Ingrédient;;Jus de papaye concentré;Papaya juice concentrate;false
+VALUES;Jus de pomme grenade concentré;Ingrédient;;Jus de pomme grenade concentré;Pomegranate juice concentrate;false
+VALUES;Jus de pêche concentré;Ingrédient;;Jus de pêche concentré;Peach juice concentrate;false
+VALUES;Jus de rhubarbe concentré;Ingrédient;;Jus de rhubarbe concentré;Rhubarb juice concentrate;false
+VALUES;Jus de raisins concentré;Ingrédient;;Jus de raisins concentré;Concentrated grape juice;false
+VALUES;Jus de mirabelle concentré;Ingrédient;;Jus de mirabelle concentré;Plum juice concentrate;false
+VALUES;Jus de prune concentré;Ingrédient;;Jus de prune concentré;Plum juice concentrate;false
+VALUES;Jus de pruneau d'agen concentré;Ingrédient;;Jus de pruneau d'agen concentré;Agen prune juice concentrate;false
+VALUES;Jus de quetsche concentré;Ingrédient;;Jus de quetsche concentré;Plum juice concentrate;false
+VALUES;Jus de reine-claude concentré;Ingrédient;;Jus de reine-claude concentré;Greengage juice concentrate;false
+VALUES;Jus de banane concentré;Ingrédient;;Jus de banane concentré;Banana juice concentrate;false
+VALUES;Jus de poires concentré;Ingrédient;;Jus de poires concentré;Pear juice concentrate;false
+VALUES;Jus de pommes concentré;Ingrédient;;Jus de pommes concentré;Apple juice concentrate;false
+VALUES;Jus de melon concentré;Ingrédient;;Jus de melon concentré;Melon juice concentrate;false
+VALUES;Jus d'agrumes concentré;Ingrédient;;Jus d'agrumes concentré;Concentrated citrus juice;false
+VALUES;Jus de citron concentré;Ingrédient;;Jus de citron concentré;Concentrated lemon juice;false
+VALUES;Jus de clémentine concentré;Ingrédient;;Jus de clémentine concentré;Clementine juice concentrate;false
+VALUES;Jus de mandarine concentré;Ingrédient;;Jus de mandarine concentré;Tangerine juice concentrate;false
+VALUES;Jus d'orange concentré;Ingrédient;;Jus d'orange concentré;Orange juice concentrate;false
+VALUES;Jus de pamplemousse concentré;Ingrédient;;Jus de pamplemousse concentré;Grapefruit juice concentrate;false
+VALUES;Jus de pomelo concentré;Ingrédient;;Jus de pomelo concentré;Grapefruit juice concentrate;false
+VALUES;Jus d'ananas concentré;Ingrédient;;Jus d'ananas concentré;Concentrated pineapple juice;false
+;;;;;;false
+VALUES;Morceaux d'abricot;Ingrédient;;Morceaux d'abricot;Apricot pieces;false
+VALUES;Morceaux de canneberge;Ingrédient;;Morceaux de canneberge;Cranberry pieces;false
+VALUES;Morceaux de cassis;Ingrédient;;Morceaux de cassis;Blackcurrant pieces;false
+VALUES;Morceaux de cerise;Ingrédient;;Morceaux de cerise;Cherry pieces;false
+VALUES;Morceaux de coing;Ingrédient;;Morceaux de coing;Quince pieces;false
+VALUES;Morceaux de datte;Ingrédient;;Morceaux de datte;Date pieces;false
+VALUES;Morceaux de figue;Ingrédient;;Morceaux de figue;Fig pieces;false
+VALUES;Morceaux de fraise;Ingrédient;;Morceaux de fraise;Strawberry pieces;false
+VALUES;Morceaux de framboise;Ingrédient;;Morceaux de framboise;Raspberry pieces;false
+VALUES;Morceaux de fruit de la passion;Ingrédient;;Morceaux de fruit de la passion;Passion fruit pieces;false
+VALUES;Morceaux de goyave;Ingrédient;;Morceaux de goyave;Guava pieces;false
+VALUES;Morceaux de groseille;Ingrédient;;Morceaux de groseille;Gooseberry pieces;false
+VALUES;Morceaux de kaki;Ingrédient;;Morceaux de kaki;Persimmon pieces;false
+VALUES;Morceaux de kiwi;Ingrédient;;Morceaux de kiwi;Kiwi pieces;false
+VALUES;Morceaux de litchi;Ingrédient;;Morceaux de litchi;Lychee pieces;false
+VALUES;Morceaux de mangue;Ingrédient;;Morceaux de mangue;Mango pieces;false
+VALUES;Morceaux de myrtille;Ingrédient;;Morceaux de myrtille;Blueberry pieces;false
+VALUES;Morceaux de nectarine;Ingrédient;;Morceaux de nectarine;Nectarine pieces;false
+VALUES;Morceaux de papaye;Ingrédient;;Morceaux de papaye;Papaya pieces;false
+VALUES;Morceaux de pomme grenade;Ingrédient;;Morceaux de pomme grenade;Pomegranate pieces;false
+VALUES;Morceaux de pêche;Ingrédient;;Morceaux de pêche;Peach pieces;false
+VALUES;Morceaux de rhubarbe;Ingrédient;;Morceaux de rhubarbe;Rhubarb pieces;false
+VALUES;Morceaux de raisins;Ingrédient;;Morceaux de raisins;Grapes pieces;false
+VALUES;Morceaux de mirabelle;Ingrédient;;Morceaux de mirabelle;Mirabelle plum pieces;false
+VALUES;Morceaux de prune;Ingrédient;;Morceaux de prune;Plum pieces;false
+VALUES;Morceaux de pruneau d'agen;Ingrédient;;Morceaux de pruneau d'agen;Agen prunes pieces;false
+VALUES;Morceaux de quetsche;Ingrédient;;Morceaux de quetsche;Damson plum pieces;false
+VALUES;Morceaux de reine-claude;Ingrédient;;Morceaux de reine-claude;Pieces of greengage;false
+VALUES;Morceaux de banane;Ingrédient;;Morceaux de banane;Pieces of banana;false
+VALUES;Morceaux de poires;Ingrédient;;Morceaux de poires;Pears;false
+VALUES;Morceaux de pommes;Ingrédient;;Morceaux de pommes;Apple pieces;false
+VALUES;Morceaux de melon;Ingrédient;;Morceaux de melon;Melon pieces;false
+VALUES;Morceaux d'agrumes;Ingrédient;;Morceaux d'agrumes;Citrus pieces;false
+VALUES;Morceaux de citron;Ingrédient;;Morceaux de citron;Lemon wedges;false
+VALUES;Morceaux de clémentine;Ingrédient;;Morceaux de clémentine;Clementine pieces;false
+VALUES;Morceaux de mandarine;Ingrédient;;Morceaux de mandarine;Mandarin pieces;false
+VALUES;Morceaux d'orange;Ingrédient;;Morceaux d'orange;Orange pieces;false
+VALUES;Morceaux de pamplemousse;Ingrédient;;Morceaux de pamplemousse;Grapefruit pieces;false
+VALUES;Morceaux de pomelo;Ingrédient;;Morceaux de pomelo;Pomelo pieced;false
+VALUES;Morceaux d'ananas;Ingrédient;;Morceaux d'ananas;Pineapple chunks;false
+;;;;;;false
+VALUES;Purée d'abricot;Ingrédient;;Purée d'abricot;Apricot puree;false
+VALUES;Purée de canneberge;Ingrédient;;Purée de canneberge;Cranberry puree;false
+VALUES;Purée de cassis;Ingrédient;;Purée de cassis;Puree;false
+VALUES;Purée de cerise;Ingrédient;;Purée de cerise;Cherry puree;false
+VALUES;Purée de coing;Ingrédient;;Purée de coing;Quince puree;false
+VALUES;Purée de datte;Ingrédient;;Purée de datte;Mashed date;false
+VALUES;Purée de figue;Ingrédient;;Purée de figue;Fig puree;false
+VALUES;Purée de fraise;Ingrédient;;Purée de fraise;Strawberry puree;false
+VALUES;Purée de framboise;Ingrédient;;Purée de framboise;Raspberry puree;false
+VALUES;Purée de fruit de la passion;Ingrédient;;Purée de fruit de la passion;Puree passion fruit;false
+VALUES;Purée de goyave;Ingrédient;;Purée de goyave;Guava puree;false
+VALUES;Purée de groseille;Ingrédient;;Purée de groseille;Currant puree;false
+VALUES;Purée de kaki;Ingrédient;;Purée de kaki;Persimmon puree;false
+VALUES;Purée de kiwi;Ingrédient;;Purée de kiwi;Kiwi puree;false
+VALUES;Purée de litchi;Ingrédient;;Purée de litchi;Lychee puree;false
+VALUES;Purée de mangue;Ingrédient;;Purée de mangue;Mango puree;false
+VALUES;Purée de myrtille;Ingrédient;;Purée de myrtille;Blueberry puree;false
+VALUES;Purée de nectarine;Ingrédient;;Purée de nectarine;Nectarine puree;false
+VALUES;Purée de papaye;Ingrédient;;Purée de papaye;Mashed papaya;false
+VALUES;Purée de pomme grenade;Ingrédient;;Purée de pomme grenade;Pomegranate puree;false
+VALUES;Purée de pêche;Ingrédient;;Purée de pêche;Peach puree;false
+VALUES;Purée de rhubarbe;Ingrédient;;Purée de rhubarbe;Rhubarb puree;false
+VALUES;Purée de raisins;Ingrédient;;Purée de raisins;Mashed grapes;false
+VALUES;Purée de mirabelle;Ingrédient;;Purée de mirabelle;Plum puree;false
+VALUES;Purée de prune;Ingrédient;;Purée de prune;Plum puree;false
+VALUES;Purée de pruneau d'agen;Ingrédient;;Purée de pruneau d'agen;Agen prune puree;false
+VALUES;Purée de quetsche;Ingrédient;;Purée de quetsche;Damson puree;false
+VALUES;Purée de reine-claude;Ingrédient;;Purée de reine-claude;Mashed greengage;false
+VALUES;Purée de banane;Ingrédient;;Purée de banane;Banana puree;false
+VALUES;Purée de poires;Ingrédient;;Purée de poires;Pear purée;false
+VALUES;Purée de pommes;Ingrédient;;Purée de pommes;Applesauce;false
+VALUES;Purée de melon;Ingrédient;;Purée de melon;Puree melon;false
+VALUES;Purée d'agrumes;Ingrédient;;Purée d'agrumes;Puree citrus;false
+VALUES;Purée de citron;Ingrédient;;Purée de citron;Lemon puree;false
+VALUES;Purée de clémentine;Ingrédient;;Purée de clémentine;Clementine puree;false
+VALUES;Purée de mandarine;Ingrédient;;Purée de mandarine;Tangerine puree;false
+VALUES;Purée d'orange;Ingrédient;;Purée d'orange;Orange puree;false
+VALUES;Purée de pamplemousse;Ingrédient;;Purée de pamplemousse;Mashed grapefruit;false
+VALUES;Purée de pomelo;Ingrédient;;Purée de pomelo;Mashed pomelo;false
+VALUES;Purée d'ananas;Ingrédient;;Purée d'ananas;Pineapple puree;false
+;;;;;;false
+VALUES;Purée d'abricot concentrée;Ingrédient;;Purée d'abricot concentrée;Concentrated apricot puree;false
+VALUES;Purée de canneberge concentrée;Ingrédient;;Purée de canneberge concentrée;Concentrated cranberry puree;false
+VALUES;Purée de cassis concentrée;Ingrédient;;Purée de cassis concentrée;Concentrated blackcurrant puree;false
+VALUES;Purée de cerise concentrée;Ingrédient;;Purée de cerise concentrée;Concentrated cherry puree;false
+VALUES;Purée de coing concentrée;Ingrédient;;Purée de coing concentrée;Concentrated quince puree;false
+VALUES;Purée de datte concentrée;Ingrédient;;Purée de datte concentrée;Concentrated mashed date;false
+VALUES;Purée de figue concentrée;Ingrédient;;Purée de figue concentrée;Concentrated fig puree ;false
+VALUES;Purée de fraise concentrée;Ingrédient;;Purée de fraise concentrée;Concentrated strawberry puree;false
+VALUES;Purée de framboise concentrée;Ingrédient;;Purée de framboise concentrée;Concentrated raspberry puree ;false
+VALUES;Purée de fruit de la passion concentrée;Ingrédient;;Purée de fruit de la passion concentrée;Concentrated mashed passion fruit ;false
+VALUES;Purée de goyave concentrée;Ingrédient;;Purée de goyave concentrée;Concentrated guava puree ;false
+VALUES;Purée de groseille concentrée;Ingrédient;;Purée de groseille concentrée;Concentrated red currant puree ;false
+VALUES;Purée de kaki concentrée;Ingrédient;;Purée de kaki concentrée;Concentrated persimmon puree ;false
+VALUES;Purée de kiwi concentrée;Ingrédient;;Purée de kiwi concentrée;Concentrate kiwi puree ;false
+VALUES;Purée de litchi concentrée;Ingrédient;;Purée de litchi concentrée;Concentrated lychee puree;false
+VALUES;Purée de mangue concentrée;Ingrédient;;Purée de mangue concentrée;Concentrated Mango puree;false
+VALUES;Purée de myrtille concentrée;Ingrédient;;Purée de myrtille concentrée;Concentrated Blueberry puree;false
+VALUES;Purée de nectarine concentrée;Ingrédient;;Purée de nectarine concentrée;Concentrated nectarine puree;false
+VALUES;Purée de papaye concentrée;Ingrédient;;Purée de papaye concentrée;Concentrated mashed papaya ;false
+VALUES;Purée de pomme grenade concentrée;Ingrédient;;Purée de pomme grenade concentrée;Concentrated pomegranate puree;false
+VALUES;Purée de pêche concentrée;Ingrédient;;Purée de pêche concentrée;Concentrated peach puree;false
+VALUES;Purée de rhubarbe concentrée;Ingrédient;;Purée de rhubarbe concentrée;Concentrated rhubarb puree ;false
+VALUES;Purée de raisins concentrée;Ingrédient;;Purée de raisins concentrée;Concentrated mashed grapes ;false
+VALUES;Purée de mirabelle concentrée;Ingrédient;;Purée de mirabelle concentrée;Concentrated mirabelle plum puree;false
+VALUES;Purée de prune concentrée;Ingrédient;;Purée de prune concentrée;Concentrated plum puree;false
+VALUES;Purée de pruneau d'agen concentrée;Ingrédient;;Purée de pruneau d'agen concentrée;Concentrated Agen prune puree ;false
+VALUES;Purée de quetsche concentrée;Ingrédient;;Purée de quetsche concentrée;Concentrated Damsonprune puree ;false
+VALUES;Purée de reine-claude concentrée;Ingrédient;;Purée de reine-claude concentrée;Concentrated mashed greengage ;false
+VALUES;Purée de banane concentrée;Ingrédient;;Purée de banane concentrée;Concentrated banana puree;false
+VALUES;Purée de poires concentrée;Ingrédient;;Purée de poires concentrée;Concentrated pear puree;false
+VALUES;Purée de pommes concentrée;Ingrédient;;Purée de pommes concentrée;Concentrated apple puree;false
+VALUES;Purée de melon concentrée;Ingrédient;;Purée de melon concentrée;Concentrated melon puree;false
+VALUES;Purée d'agrumes concentrée;Ingrédient;;Purée d'agrumes concentrée;Concentrated citrus puree;false
+VALUES;Purée de citron concentrée;Ingrédient;;Purée de citron concentrée;Concentrated lemon puree;false
+VALUES;Purée de clémentine concentrée;Ingrédient;;Purée de clémentine concentrée;Concentrated clementine puree ;false
+VALUES;Purée de mandarine concentrée;Ingrédient;;Purée de mandarine concentrée;Concentrated tangerine puree ;false
+VALUES;Purée d'orange concentrée;Ingrédient;;Purée d'orange concentrée;Concentrated orange puree;false
+VALUES;Purée de pamplemousse concentrée;Ingrédient;;Purée de pamplemousse concentrée;Concentrated grapefruit puree;false
+VALUES;Purée de pomelo concentrée;Ingrédient;;Purée de pomelo concentrée;Concentrated grapefruit puree;false
+VALUES;Purée d'ananas concentrée;Ingrédient;;Purée d'ananas concentrée;Concentrated pineapple puree;false
+;;;;;;false
+;;;;;;false
+#;other;;;;;false
+VALUES;Alcool;Ingrédient;;Alcool;Alcohol;false
+VALUES;Alcool benzylique;Ingrédient;;Alcool benzylique;Benzyl alcohol;false
+VALUES;Alcool éthylique;Ingrédient;;Alcool éthylique;Ethyl alcohol;false
+VALUES;Amidon acétylé;Ingrédient;;Amidon acétylé;Acetylated starch;false
+VALUES;Amidon de riz modifié;Ingrédient;;Amidon de riz modifié;Modified rice starch;false
+VALUES;Amidon modifié;Ingrédient;;Amidon modifié;Modified starch;false
+VALUES;Amidon natif;Ingrédient;;Amidon natif;Native starch;false
+VALUES;Amidon transformé;Ingrédient;;Amidon transformé;Modified starch;false
+VALUES;Aromate;Ingrédient;;Aromate;Herb;false
+VALUES;Extrait d'aromate;Ingrédient;;Extrait d'aromate;Aromatic extract;false
+VALUES;Aromates;Ingrédient;;Aromates;Herbs;false
+VALUES;Extrait d'aromates;Ingrédient;;Extrait d'aromates;Extract of spices;false
+VALUES;Arome;Ingrédient;;Arome;Flavor;false
+VALUES;Arome ail;Ingrédient;;Arome ail;Garlic flavor;false
+VALUES;Arome ail naturel;Ingrédient;;Arome ail naturel;Natural garlic flavor ;false
+VALUES;Arome beurre;Ingrédient;;Arome beurre;Butter flavor;false
+VALUES;Arome beurre naturel;Ingrédient;;Arome beurre naturel;Natural butter flavor;false
+VALUES;Arome champignon naturel;Ingrédient;;Arome champignon naturel;Natural mushroom flavor;false
+VALUES;Arome coq au vin;Ingrédient;;Arome coq au vin;Coq au vin flavor;false
+VALUES;Arome coq au vin naturel;Ingrédient;;Arome coq au vin naturel;Coq au vin natural flavor;false
+VALUES;Arome crabe;Ingrédient;;Arome crabe;Crab flavor;false
+VALUES;Arome de transformation;Ingrédient;;Arome de transformation;Transformation flavor;false
+VALUES;Arome échalote naturel;Ingrédient;;Arome échalote naturel;Natural flavor shallot;false
+VALUES;Arome fond de boeuf;Ingrédient;;Arome fond de boeuf;Beef stock flavor;false
+VALUES;Arome fond de gibier;Ingrédient;;Arome fond de gibier;Game stock flavor;false
+VALUES;Arome fumée;Ingrédient;;Arome fumée;Smoke flavor;false
+VALUES;Arome fumet de poisson;Ingrédient;;Arome fumet de poisson;Fish stock flavor;false
+VALUES;Arome fumet de poisson naturel;Ingrédient;;Arome fumet de poisson naturel;Natural fish stock flavor;false
+VALUES;Arome grillé;Ingrédient;;Arome grillé;Roasted flavor;false
+VALUES;Arome jus d'agneau;Ingrédient;;Arome jus d'agneau;Lamb jus flavor;false
+VALUES;Arome langouste;Ingrédient;;Arome langouste;Lobster flavor;false
+VALUES;Arome moule;Ingrédient;;Arome moule;Mussel flavor;false
+VALUES;Arome nature identique;Ingrédient;;Arome nature identique;Nature identical flavor;false
+VALUES;Arome nature identique paprika;Ingrédient;;Arome nature identique paprika;Nature identical paprika flavor;false
+VALUES;Arome nature identique tomate;Ingrédient;;Arome nature identique tomate;Nature identical tomato flavor;false
+VALUES;Arome naturel;Ingrédient;;Arome naturel;Natural flavor;false
+VALUES;Arome naturel : gousses de vanille infusées;Ingrédient;;Arome naturel : gousses de vanille infusées;Natural flavor: infused vanilla pod;false
+VALUES;Arome naturel fromage;Ingrédient;;Arome naturel fromage;Natural cheese flavor;false
+VALUES;Arome noix naturel;Ingrédient;;Arome noix naturel;Natural nut flavor;false
+VALUES;Arome orange;Ingrédient;;Arome orange;Orange flavor;false
+VALUES;Arome paprika;Ingrédient;;Arome paprika;Paprika flavor;false
+VALUES;Arome poivre naturel;Ingrédient;;Arome poivre naturel;Natural pepper flavor ;false
+VALUES;Arome poulet rôti;Ingrédient;;Arome poulet rôti;Roast chicken flavor;false
+VALUES;Arome poulet rôti naturel;Ingrédient;;Arome poulet rôti naturel;Roast chicken natural flavor;false
+VALUES;Arome pruneau;Ingrédient;;Arome pruneau;Prune flavor;false
+VALUES;Arome saint jacques;Ingrédient;;Arome saint jacques;Scallop Flavor;false
+VALUES;Arome vanille;Ingrédient;;Arome vanille;Vanilla flavor;false
+VALUES;Arome vanilline;Ingrédient;;Arome vanilline;Vanillin flavor;false
+VALUES;Arome vin blanc naturel;Ingrédient;;Arome vin blanc naturel;White wine natural flavor;false
+VALUES;Arome vin rouge naturel;Ingrédient;;Arome vin rouge naturel;Red wine natural flavor;false
+VALUES;Aromes;Ingrédient;;Aromes;Flavors;false
+VALUES;Aromes de transformation;Ingrédient;;Aromes de transformation;Processing flavor;false
+VALUES;Aromes nature identiques;Ingrédient;;Aromes nature identiques;Nature identical flavors;false
+VALUES;Aromes naturels;Ingrédient;;Aromes naturels;Natural flavors;false
+VALUES;Amidon de blé;Ingrédient;;Amidon de blé;Wheat starch;false
+VALUES;Amidon de blé transformé;Ingrédient;;Amidon de blé transformé;Modifier wheat starch;false
+VALUES;Chapelure de blé;Ingrédient;;Chapelure de blé;Wheat crumbs;false
+VALUES;Dextrose de blé;Ingrédient;;Dextrose de blé;Wheat dextrose;false
+VALUES;Farine de blé dur;Ingrédient;;Farine de blé dur;Durum wheat flour;false
+VALUES;Semoule de blé dur;Ingrédient;;Semoule de blé dur;Durum wheat;false
+VALUES;Farine de blé;Ingrédient;;Farine de blé;Wheat flour;false
+VALUES;Fibre de blé;Ingrédient;;Fibre de blé;Wheat fiber;false
+VALUES;Flocon de blé;Ingrédient;;Flocon de blé;Snowflake wheat;false
+VALUES;Blé germé;Ingrédient;;Blé germé;Sprouted wheat;false
+VALUES;Germes de blé;Ingrédient;;Germes de blé;Wheat germs;false
+VALUES;Gluten de blé;Ingrédient;;Gluten de blé;Wheat gluten;false
+VALUES;Farine de blé noir;Ingrédient;;Farine de blé noir;Buckwheat flour;false
+VALUES;Protéines de blé;Ingrédient;;Protéines de blé;Wheat protein;false
+VALUES;Son de blé;Ingrédient;;Son de blé;Wheat bran;false
+VALUES;Farine de blé tendre;Ingrédient;;Farine de blé tendre;Wheat flour;false
+VALUES;Bouillon naturel;Ingrédient;;Bouillon naturel;Natural stock;false
+VALUES;Boyau artificiel;Ingrédient;;Boyau artificiel;Artificial casing;false
+VALUES;Boyau de collagène;Ingrédient;;Boyau de collagène;Collagen casing;false
+VALUES;Boyau naturel;Ingrédient;;Boyau naturel;Natural casing;false
+VALUES;Cacao;Ingrédient;;Cacao;Cocoa;false
+VALUES;Beurre de cacao;Ingrédient;;Beurre de cacao;Cocoa butter;false
+VALUES;Cacao dégraissé;Ingrédient;;Cacao dégraissé;Defatted cocoa;false
+VALUES;Poudre de cacao dégraissé;Ingrédient;;Poudre de cacao dégraissé;Defatted cocoa powder;false
+VALUES;Extrait de cacao;Ingrédient;;Extrait de cacao;Cocoa extract;false
+VALUES;Cacao maigre;Ingrédient;;Cacao maigre;Low fat cocoa;false
+VALUES;Poudre de cacao maigre;Ingrédient;;Poudre de cacao maigre;Fat cocoa powder;false
+VALUES;Pate de cacao;Ingrédient;;Pate de cacao;Cocoa paste;false
+VALUES;Poudre de cacao;Ingrédient;;Poudre de cacao;Cocoa powder;false
+VALUES;Cacao sec dégraissé;Ingrédient;;Cacao sec dégraissé;Cocoa solids;false
+VALUES;Eau;Ingrédient;;Eau;Water;false
+VALUES;Eau de vie;Ingrédient;;Eau de vie;Brandy;false
+VALUES;Echalote;Ingrédient;;Echalote;Shallot;false
+VALUES;Epice;Ingrédient;;Epice;Spice;false
+VALUES;Epice extrait;Ingrédient;;Epice extrait;Spice extract;false
+VALUES;Epices;Ingrédient;;Epices;Spices;false
+VALUES;Epices curry rouge;Ingrédient;;Epices curry rouge;Red curry spices;false
+VALUES;Epices et extraits d'épices;Ingrédient;;Epices et extraits d'épices;Spices and spice extracts;false
+VALUES;Epices et plantes aromatiques;Ingrédient;;Epices et plantes aromatiques;Spices and herbs;false
+VALUES;Extraits d'epices;Ingrédient;;Extraits d'epices;Spice extracts;false
+VALUES;Extraits naturels d'epices;Ingrédient;;Extraits naturels d'epices;Natural spices extracts;false
+VALUES;Sirop d'erable;Ingrédient;;Sirop d'erable;Maple syrup;false
+VALUES;Escargots;Ingrédient;;Escargots;Snails;false
+VALUES;Farine;Ingrédient;;Farine;Flour;false
+VALUES;Ferments;Ingrédient;;Ferments;Ferments;false
+VALUES;Ferments de maturation;Ingrédient;;Ferments de maturation;Ripening ferments;false
+VALUES;Ferments fongiques;Ingrédient;;Ferments fongiques;Fungal enzymes;false
+VALUES;Ferments lactiques;Ingrédient;;Ferments lactiques;Lactic ferments;false
+VALUES;Flageolet;Ingrédient;;Flageolet;Flageolet;false
+VALUES;Fromage;Ingrédient;;Fromage;Cheese;false
+VALUES;Fromage blanc nature;Ingrédient;;Fromage blanc nature;Natural white cheese;false
+VALUES;Fromage blanc pasteurisé;Ingrédient;;Fromage blanc pasteurisé;White cheese pasteurized;false
+VALUES;Fromage fondu;Ingrédient;;Fromage fondu;Melted cheese;false
+VALUES;Fromage frais;Ingrédient;;Fromage frais;Fresh cheese;false
+VALUES;Froment;Ingrédient;;Froment;Wheat;false
+VALUES;Farine de Froment;Ingrédient;;Farine de Froment;Wheat flour;false
+VALUES;Extrait de fumée;Ingrédient;;Extrait de fumée;Smoke extract;false
+VALUES;Fumée naturelle;Ingrédient;;Fumée naturelle;Natural smoke;false
+VALUES;Gluten;Ingrédient;;Gluten;Gluten;false
+VALUES;Graisse animale;Ingrédient;;Graisse animale;Animal fat;false
+VALUES;Graisse végétale;Ingrédient;;Graisse végétale;Shortening;false
+VALUES;Graisse végétale hydrogénée;Ingrédient;;Graisse végétale hydrogénée;Hydrogenated vegetable fat;false
+VALUES;Graisse végétale raffinée;Ingrédient;;Graisse végétale raffinée;Refined vegetable fat;false
+VALUES;Extrait d'herbe aromatique;Ingrédient;;Extrait d'herbe aromatique;Herb extract;false
+VALUES;Herbes;Ingrédient;;Herbes;Herbs;false
+VALUES;Herbes aromatiques;Ingrédient;;Herbes aromatiques;Herbs;false
+VALUES;Extraits d'herbes aromatiques;Ingrédient;;Extraits d'herbes aromatiques;Herbal extracts;false
+VALUES;Herbes de provence;Ingrédient;;Herbes de provence;Herbes de provence;false
+VALUES;Herbes fines;Ingrédient;;Herbes fines;Herbs;false
+VALUES; Extrait d'houblon;Ingrédient;;Extrait d'houblon;Hops extract;false
+VALUES;Huile de noix de coco et de palme;Ingrédient;;Huile de noix de coco et de palme;Coconut and palm oil;false
+VALUES;Huile de tournesol;Ingrédient;;Huile de tournesol;Sunflower oil;false
+VALUES;Huile végétale;Ingrédient;;Huile végétale;Vegetable oil;false
+VALUES;Huile végétale hydrogénée;Ingrédient;;Huile végétale hydrogénée;Hydrogenated vegetable oil;false
+VALUES;Huile végétale partiellement hydrogénée;Ingrédient;;Huile végétale partiellement hydrogénée;Partially hydrogenated vegetable oil;false
+VALUES;Huile végétale raffinée;Ingrédient;;Huile végétale raffinée;Refined vegetable oil;false
+VALUES;Huiles essentielles;Ingrédient;;Huiles essentielles;Essential oils;false
+VALUES;Huiles et matières grasses végétales en l'état et/ou hydrogénées (palme, palmiste);Ingrédient;;Huiles et matières grasses végétales en l'état et/ou hydrogénées (palme, palmiste);Vegetable oils and fats in the state and / or hydrogenated (palm, palm kernel);false
+VALUES;Huiles végétales en l'état et/ ou hydrogénées (palme, colza);Ingrédient;;Huiles végétales en l'état et/ ou hydrogénées (palme, colza);Vegetable oils in the state and / or hydrogenated (palm, rapeseed);false
+VALUES;Lait;Ingrédient;;Lait;Milk;false
+VALUES;Lait concentré;Ingrédient;;Lait concentré;Condensed milk;false
+VALUES;Lait concentré sucré;Ingrédient;;Lait concentré sucré;Sweetened Condensed milk;false
+VALUES;Lait demi écrémé;Ingrédient;;Lait demi écrémé;Semi-skimmed milk;false
+VALUES;Lait écrémé;Ingrédient;;Lait écrémé;Skim milk;false
+VALUES;Lait écrémé concentré;Ingrédient;;Lait écrémé concentré;Concentrated skim milk;false
+VALUES;Poudre de lait écrémé;Ingrédient;;Poudre de lait écrémé;Skim milk powder;false
+VALUES;Protéines de lait écrémé;Ingrédient;;Protéines de lait écrémé;Skimmed milk proteins;false
+VALUES;Lait entier;Ingrédient;;Lait entier;Full-cream milk;false
+VALUES;Lait entier concentré sucre;Ingrédient;;Lait entier concentré sucre;Concentrated whole milk sugar;false
+VALUES;Poudre de lait entier;Ingrédient;;Poudre de lait entier;Whole milk powder;false
+VALUES;Minéraux du lait;Ingrédient;;Minéraux du lait;Milk minerals;false
+VALUES;Lait partiellement écrémé;Ingrédient;;Lait partiellement écrémé;Partly skimmed milk;false
+VALUES;Lait pasteurisé;Ingrédient;;Lait pasteurisé;Pasteurized milk;false
+VALUES;Lait pasteurisé écrémé;Ingrédient;;Lait pasteurisé écrémé;Pasteurized skim milk;false
+VALUES;Petit-lait en poudre;Ingrédient;;Petit-lait en poudre;Whey powder;false
+VALUES;Petit-lait reconstitué;Ingrédient;;Petit-lait reconstitué;Reconstituted whey;false
+VALUES;Poudre de lait;Ingrédient;;Poudre de lait;Milk powder;false
+VALUES;Protéine de lait;Ingrédient;;Protéine de lait;Milk protein;false
+VALUES;Protéine et extrait lactique de lait;Ingrédient;;Protéine et extrait lactique de lait;Protein extract and lactic milk;false
+VALUES;Protéines de lait;Ingrédient;;Protéines de lait;Milk protein;false
+VALUES;Lécithine de colza;Ingrédient;;Lécithine de colza;Rapeseed lecithin;false
+VALUES;Lécithine de soja;Ingrédient;;Lécithine de soja;Soy lecithin;false
+VALUES;Lécithines;Ingrédient;;Lécithines;Lecithins;false
+VALUES;Levure;Ingrédient;;Levure;Yeast;false
+VALUES;Levure boulangère;Ingrédient;;Levure boulangère;Baker's yeast;false
+VALUES;Levure désactivée;Ingrédient;;Levure désactivée;Inactive yeast;false
+VALUES;Extrait de levure;Ingrédient;;Extrait de levure;Yeast extract;false
+VALUES;Amidon de mais;Ingrédient;;Amidon de mais;Cornstarch;false
+VALUES;Amidon de mais modifié;Ingrédient;;Amidon de mais modifié;Modified corn starch;false
+VALUES;Amidon de mais transformé;Ingrédient;;Amidon de mais transformé;Modified corn starch;false
+VALUES;Dextrose de mais;Ingrédient;;Dextrose de mais;Corn dextrose;false
+VALUES;Farine de mais;Ingrédient;;Farine de mais;Corn flour;false
+VALUES;Glucose de maïs en poudre;Ingrédient;;Glucose de maïs en poudre;Glucose powder but;false
+VALUES;Maïs grains;Ingrédient;;Maïs grains;But grains;false
+VALUES;Amidon de manioc;Ingrédient;;Amidon de manioc;Cassava starch;false
+VALUES;Amidon de manioc modifié;Ingrédient;;Amidon de manioc modifié;Cassava starch modified;false
+VALUES;Amidon de manioc transformé;Ingrédient;;Amidon de manioc transformé;Processed cassava starch;false
+VALUES;Fécule de manioc;Ingrédient;;Fécule de manioc;Manioc;false
+VALUES;Fécule prégélatinisée de manioc;Ingrédient;;Fécule prégélatinisée de manioc;Gelatinized tapioca starch;false
+VALUES;Matière grasse animale;Ingrédient;;Matière grasse animale;Animal fat;false
+VALUES;Matière grasse butyrique;Ingrédient;;Matière grasse butyrique;Fat butyric;false
+VALUES;Matière grasse végétale;Ingrédient;;Matière grasse végétale;Vegetable fat;false
+VALUES;Matière grasse végétale en l'état et hydrogénée;Ingrédient;;Matière grasse végétale en l'état et hydrogénée;Vegetable fat and hydrogenated in the state;false
+VALUES;Matière grasse végétale hydrogénée;Ingrédient;;Matière grasse végétale hydrogénée;Hydrogenated vegetable fat;false
+VALUES;Matière grasse végétale non hydrogénée;Ingrédient;;Matière grasse végétale non hydrogénée;Material non-hydrogenated vegetable fat;false
+VALUES;Matière grasse végétale partiellement hydrogénée;Ingrédient;;Matière grasse végétale partiellement hydrogénée;Partially hydrogenated vegetable fat;false
+VALUES;Matières grasses végétales hydrogénées et partiellement hydrogénées;Ingrédient;;Matières grasses végétales hydrogénées et partiellement hydrogénées;Hydrogenated vegetable fats and partially hydrogenated;false
+VALUES;Miel;Ingrédient;;Miel;Honey;false
+VALUES;Oeuf;Ingrédient;;Oeuf;Egg;false
+VALUES;Blanc d'oeuf;Ingrédient;;Blanc d'oeuf;Egg white;false
+VALUES;Blanc d'oeuf en poudre;Ingrédient;;Blanc d'oeuf en poudre;Egg white powder;false
+VALUES;Oeuf entier;Ingrédient;;Oeuf entier;Whole egg;false
+VALUES;Oeuf entier pasteurisé;Ingrédient;;Oeuf entier pasteurisé;Pasteurized whole egg;false
+VALUES;Oeuf entier en poudre;Ingrédient;;Oeuf entier en poudre;Whole egg powder;false
+VALUES;Oeuf frais;Ingrédient;;Oeuf frais;Fresh egg;false
+VALUES;Jaune d'oeuf;Ingrédient;;Jaune d'oeuf;Yolk;false
+VALUES;Jaune d'oeuf frais;Ingrédient;;Jaune d'oeuf frais;Fresh egg yolk;false
+VALUES;Jaune d'oeuf en poudre;Ingrédient;;Jaune d'oeuf en poudre;Egg yolk powder;false
+VALUES;Oeufs durs;Ingrédient;;Oeufs durs;Boiled eggs;false
+VALUES;Oeufs pasteurisés;Ingrédient;;Oeufs pasteurisés;Pasteurized eggs;false
+VALUES;Graisse de palme;Ingrédient;;Graisse de palme;Palm fat;false
+VALUES;Graisse hydrogénée de palme;Ingrédient;;Graisse hydrogénée de palme;Hydrogenated palm fat;false
+VALUES;Graisse partiellement hydrogénée de palme;Ingrédient;;Graisse partiellement hydrogénée de palme;Fat partially hydrogenated palm;false
+VALUES;Huile de palme;Ingrédient;;Huile de palme;Palm oil;false
+VALUES;Huile hydrogénée de palme;Ingrédient;;Huile hydrogénée de palme;Hydrogenated palm oil;false
+VALUES;Huile partiellement hydrogénée de palme;Ingrédient;;Huile partiellement hydrogénée de palme;Partially hydrogenated palm oil;false
+VALUES;Pâtes;Ingrédient;;Pâtes;Pasta;false
+VALUES;Pâtes aux épinards;Ingrédient;;Pâtes aux épinards;Spinach pasta;false
+VALUES;Pâtes aux tomates;Ingrédient;;Pâtes aux tomates;Pasta with tomatoes;false
+VALUES;Pâtes demi-penne;Ingrédient;;Pâtes demi-penne;Half penne pasta;false
+VALUES;Pâtes farfalles;Ingrédient;;Pâtes farfalles;Farfalle pasta;false
+VALUES;Pâtes langue d'oiseau;Ingrédient;;Pâtes langue d'oiseau;Pasta language bird;false
+VALUES;Pâtes macaroni;Ingrédient;;Pâtes macaroni;Macaroni pasta;false
+VALUES;Pâtes mini-torsades;Ingrédient;;Pâtes mini-torsades;Pasta mini twists;false
+VALUES;Pâtes orechiette;Ingrédient;;Pâtes orechiette;Orecchiette pasta;false
+VALUES;Pâtes spaghetti;Ingrédient;;Pâtes spaghetti;Pasta spaghetti;false
+VALUES;Pâtes tagliatelles;Ingrédient;;Pâtes tagliatelles;Tagliatelle pasta;false
+VALUES;Pignons de pin;Ingrédient;;Pignons de pin;Pine nuts;false
+VALUES;Piment;Ingrédient;;Piment;Pepper;false
+VALUES;Piment doux;Ingrédient;;Piment doux;Paprika;false
+VALUES;Piment extra fort;Ingrédient;;Piment extra fort;Hot chilli;false
+VALUES;Piment fort;Ingrédient;;Piment fort;Pepper;false
+VALUES;Piment jamaïque;Ingrédient;;Piment jamaïque;Jamaica pepper;false
+VALUES;Pulpe de piment;Ingrédient;;Pulpe de piment;Pulp pepper;false
+VALUES;Purée de piment;Ingrédient;;Purée de piment;Chili paste;false
+VALUES;Piment rouge;Ingrédient;;Piment rouge;Red pepper;false
+VALUES;Piment vert;Ingrédient;;Piment vert;Green pepper;false
+VALUES;Plante aromatique;Ingrédient;;Plante aromatique;Herb;false
+VALUES;Plantes aromatiques;Ingrédient;;Plantes aromatiques;Herbs;false
+VALUES;Plantes aromatiques et épices;Ingrédient;;Plantes aromatiques et épices;Herbs and spices;false
+VALUES;Extrait de plantes aromatiques;Ingrédient;;Extrait de plantes aromatiques;Extracted from aromatic plants;false
+VALUES;Extraits naturels de plantes;Ingrédient;;Extraits naturels de plantes;Natural plant extracts;false
+VALUES;Poivre;Ingrédient;;Poivre;Pepper;false
+VALUES;Poivre blanc;Ingrédient;;Poivre blanc;White pepper;false
+VALUES;Poivre de cayenne;Ingrédient;;Poivre de cayenne;Cayenne;false
+VALUES;Poivre de cayenne oléorésine;Ingrédient;;Poivre de cayenne oléorésine;Cayenne pepper oleoresin;false
+VALUES;Poivre du chili;Ingrédient;;Poivre du chili;Chili pepper;false
+VALUES;Poivre du sichuan;Ingrédient;;Poivre du sichuan;Sichuan pepper;false
+VALUES;Extrait naturel de poivre;Ingrédient;;Extrait naturel de poivre;Natural pepper extract;false
+VALUES;Poivre gris;Ingrédient;;Poivre gris;Pepper gray;false
+VALUES;Poivre noir;Ingrédient;;Poivre noir;Black pepper;false
+VALUES;Extrait de poivre noir;Ingrédient;;Extrait de poivre noir;Black pepper extract;false
+VALUES;Poivre vert;Ingrédient;;Poivre vert;Green pepper;false
+VALUES;Baies de poivre vert;Ingrédient;;Baies de poivre vert;Green pepper berries;false
+VALUES;Poivron;Ingrédient;;Poivron;Pepper;false
+VALUES;Poivron déshydraté;Ingrédient;;Poivron déshydraté;Pepper dehydrated;false
+VALUES;Poivron jaune;Ingrédient;;Poivron jaune;Yellow pepper;false
+VALUES;Poivron marine;Ingrédient;;Poivron marine;Navy pepper;false
+VALUES;Poivron rouge;Ingrédient;;Poivron rouge;Red pepper;false
+VALUES;Poudre de poivron rouge;Ingrédient;;Poudre de poivron rouge;Red pepper powder;false
+VALUES;Poivron vert;Ingrédient;;Poivron vert;Green pepper;false
+VALUES;Compote de pomme;Ingrédient;;Compote de pomme;Applesauce;false
+VALUES;Amidon de pomme de terre;Ingrédient;;Amidon de pomme de terre;Potato starch;false
+VALUES;Amidon de pomme de terre modifiée;Ingrédient;;Amidon de pomme de terre modifiée;Modified potato starch;false
+VALUES;Amidon de pomme de terre transformée;Ingrédient;;Amidon de pomme de terre transformée;Modified potato starch;false
+VALUES;Pomme de terre déshydratée;Ingrédient;;Pomme de terre déshydratée;Dehydrated potato;false
+VALUES;Fécule de pomme de terre;Ingrédient;;Fécule de pomme de terre;Potato starch;false
+VALUES;Fibre de pomme de terre;Ingrédient;;Fibre de pomme de terre;Potato fiber;false
+VALUES;Flocons de pomme de terre;Ingrédient;;Flocons de pomme de terre;Potato flakes;false
+VALUES;Maltodextrine de pomme de terre;Ingrédient;;Maltodextrine de pomme de terre;Potato maltodextrin ;false
+VALUES;Poudre à lever;Ingrédient;;Poudre à lever;Baking powder;false
+VALUES;Poudre de lactosérum;Ingrédient;;Poudre de lactosérum;Whey powder;false
+VALUES;Poudre de lait écrémé;Ingrédient;;Poudre de lait écrémé;Skim milk powder;false
+VALUES;Poudre de lait entier;Ingrédient;;Poudre de lait entier;Whole milk powder;false
+VALUES;Présure;Ingrédient;;Présure;Rennet;false
+VALUES;Présure microbienne;Ingrédient;;Présure microbienne;Microbial rennet;false
+VALUES;Protéine de lait et lactose;Ingrédient;;Protéine de lait et lactose;Milk protein and lactose;false
+VALUES;Protéine végétale;Ingrédient;;Protéine végétale;Vegetable protein;false
+VALUES;Protéines de lait;Ingrédient;;Protéines de lait;Milk protein;false
+VALUES;Protéines de soja;Ingrédient;;Protéines de soja;Soy protein;false
+VALUES;Protéines végétales;Ingrédient;;Protéines vegetales;Vegetable protein;false
+VALUES;Amidon de riz;Ingrédient;;Amidon de riz;Rice starch;false
+VALUES;Riz basmati;Ingrédient;;Riz basmati;Basmati rice;false
+VALUES;Farine de riz;Ingrédient;;Farine de riz;Rice flour;false
+VALUES;Riz sauvage;Ingrédient;;Riz sauvage;Wild rice;false
+VALUES;Sel;Ingrédient;;Sel;Salt;false
+VALUES;Sel de fonte;Ingrédient;;Sel de fonte;Emulsifying salt;false
+VALUES;Sel de guérande;Ingrédient;;Sel de guérande;Guérande salt;false
+VALUES;Sel de saumure;Ingrédient;;Sel de saumure;Brine salt;false
+VALUES;Sel fin;Ingrédient;;Sel fin;Fine salt;false
+VALUES;Sel gemme;Ingrédient;;Sel gemme;Rock salt;false
+VALUES;Sel gros;Ingrédient;;Sel gros;Coarse salt;false
+VALUES;Sel iodé;Ingrédient;;Sel iodé;Iodized salt;false
+VALUES;Sel marin;Ingrédient;;Sel marin;Sea salt;false
+VALUES;Sel nitrité;Ingrédient;;Sel nitrité;Nitrited salt;false
+VALUES;Sirop de fructose;Ingrédient;;Sirop de fructose;Fructose syrup;false
+VALUES;Sirop de glucose;Ingrédient;;Sirop de glucose;Glucose syrup;false
+VALUES;Sirop de glucose-fructose;Ingrédient;;Sirop de glucose-fructose;Glucose-fructose syrup;false
+VALUES;Sirop de saccharose;Ingrédient;;Sirop de saccharose;Sucrose syrup;false
+VALUES;Extrait de soja;Ingrédient;;Extrait de soja;Soy extract;false
+VALUES;Farine de soja;Ingrédient;;Farine de soja;Soybean meal;false
+VALUES;Fève de soja;Ingrédient;;Fève de soja;Soybean;false
+VALUES;Graine de soja;Ingrédient;;Graine de soja;Soybean;false
+VALUES;Huile hydrogénée de soja;Ingrédient;;Huile hydrogénée de soja;Hydrogenated soybean oil;false
+VALUES;Isolat de soja;Ingrédient;;Isolat de soja;Soy isolate;false
+VALUES;Pousses de soja;Ingrédient;;Pousses de soja;Beansprouts;false
+VALUES;Protéine de soja;Ingrédient;;Protéine de soja;Soybean protein;false
+VALUES;Protéine réhydratée de soja;Ingrédient;;Protéine réhydratée de soja;Rehydrated soy protein;false
+VALUES;Protéines de soja;Ingrédient;;Protéines de soja;Soy protein;false
+VALUES;Soude;Ingrédient;;Soude;Soda;false
+VALUES;Sucre;Ingrédient;;Sucre;Sugar;false
+VALUES;Sucre brun;Ingrédient;;Sucre brun;Brown sugar;false
+VALUES;Sucre caramélisé;Ingrédient;;Sucre caramélisé;Caramelized sugar;false
+VALUES;Sucre de canne;Ingrédient;;Sucre de canne;Cane sugar;false
+VALUES;Sucre inverti;Ingrédient;;Sucre inverti;Invert sugar;false
+VALUES;Sucre roux;Ingrédient;;Sucre roux;Brown sugar;false
+VALUES;Sucre sirop;Ingrédient;;Sucre sirop;Sugar syrup;false
+VALUES;Sucre vanille;Ingrédient;;Sucre vanille;Vanilla sugar;false
+VALUES;Concentré de tomate;Ingrédient;;Concentré de tomate;Tomato concentrate;false
+VALUES;Tomate confite;Ingrédient;;Tomate confite;Sundried tomato;false
+VALUES;Coulis de tomate;Ingrédient;;Coulis de tomate;Tomato coulis;false
+VALUES;Tomate déshydratée;Ingrédient;;Tomate déshydratée;Dehydrated tomato;false
+VALUES;Double concentré de tomate;Ingrédient;;Double concentré de tomate;Double concentrated tomato;false
+VALUES;Jus de tomate;Ingrédient;;Jus de tomate;Tomato juice;false
+VALUES;Tomate pelée concassée;Ingrédient;;Tomate pelée concassée;Peeled crushed tomatoes;false
+VALUES;Poudre de tomate;Ingrédient;;Poudre de tomate;Tomato powder;false
+VALUES;Purée de tomate;Ingrédient;;Purée de tomate;Tomato puree;false
+VALUES;Purée de double concentré de tomate;Ingrédient;;Purée de double concentré de tomate;Puree double concentrate tomato;false
+VALUES;Tomate semi-déshydratée;Ingrédient;;Tomate semi-déshydratée;Semi-dried tomato;false
+VALUES;Tomates concassées;Ingrédient;;Tomates concassées;Crushed tomatoes;false
+VALUES;Tomates marinées;Ingrédient;;Tomates marinées;Marinated tomatoes;false
+VALUES;Tomates pelées;Ingrédient;;Tomates pelées;Peeled tomatoes;false
+VALUES;Tomates séchées;Ingrédient;;Tomates séchées;Dried tomatoes;false
+VALUES;Vin;Ingrédient;;Vin;Wine;false
+VALUES;Vin blanc;Ingrédient;;Vin blanc;White wine;false
+VALUES;Extrait de vin blanc;Ingrédient;;Extrait de vin blanc;White wine extract;false
+VALUES;Vin blanc réduit;Ingrédient;;Vin blanc réduit;Reduced white wine;false
+VALUES;Vin jaune;Ingrédient;;Vin jaune;Yellow wine;false
+VALUES;Vin rosé;Ingrédient;;Vin rosé;Rosé wine;false
+VALUES;Vin rouge;Ingrédient;;Vin rouge;Red wine;false
+VALUES;Réduit de vin rouge;Ingrédient;;Réduit de vin rouge;Reduced red wine;false
+VALUES;Vinaigre;Ingrédient;;Vinaigre;Vinegar;false
+VALUES;Vinaigre balsamique;Ingrédient;;Vinaigre balsamique;Balsamic vinegar;false
+VALUES;Vinaigre d'alcool;Ingrédient;;Vinaigre d'alcool;Spirit vinegar;false
+VALUES;Vinaigre d'alcool coloré;Ingrédient;;Vinaigre d'alcool coloré;Colored alcohol vinegar  ;false
+VALUES;Vinaigre d'alcool réduit;Ingrédient;;Vinaigre d'alcool réduit;Reduced alcohol vinegar;false
+VALUES;Vinaigre de banyuls;Ingrédient;;Vinaigre de banyuls;Banyuls vinegar;false
+VALUES;Vinaigre de malt;Ingrédient;;Vinaigre de malt;Malt vinegar;false
+VALUES;Vinaigre de vin;Ingrédient;;Vinaigre de vin;Wine vinegar;false
+VALUES;Vinaigre de vin rouge;Ingrédient;;Vinaigre de vin rouge;Red wine vinegar;false
+VALUES;Vinaigre de xérès;Ingrédient;;Vinaigre de xérès;Sherry vinegar;false

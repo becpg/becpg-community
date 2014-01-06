@@ -1,8 +1,6 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,12 +99,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		visitChildren(formulatedProduct, simpleListDataList);		
 		
 		//sort
-		sort(simpleListDataList);
+	//	sort(simpleListDataList);
 	}
 	
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct.getNodeRef(), nodeService);
+		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			
@@ -116,7 +114,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double qty = FormulationHelper.getQty(compoItem);
 				
 				if(qty != null){
-					visitPart(compoItem.getProduct(), simpleListDataList, qty, netWeight, mandatoryCharacts);
+					visitPart(compoItem.getProduct(), simpleListDataList, qty, netQty, mandatoryCharacts);
 				}			
 			}
 			
@@ -144,7 +142,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected void visitPart(NodeRef componentNodeRef,  
 			List<T> simpleListDataList,
 			Double qtyUsed, 
-			Double netWeight, 
+			Double netQty, 
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts) throws FormulateException{								
 		
 		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))){
@@ -186,7 +184,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
 							Double value = slDataItem.getValue();
 							if(value != null){
-								newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netWeight));
+								newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netQty));
 							}
 							else{
 								value = 0d;
@@ -195,13 +193,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
 							Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
 							if(miniValue < value || origMini < origValue){
-								newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netWeight));
+								newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netQty));
 							}
 							
 							Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
 							Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
 							if(maxiValue > value || origMaxi > origValue){
-								newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netWeight));
+								newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
 							}					
 							
 							if(logger.isDebugEnabled()){
@@ -245,36 +243,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 		return null;		
 	}
-	
-	/**
-	 * Sort by name.
-	 *
-	 * @param costList the cost list
-	 * @return the list
-	 */
-	protected void sort(List<T> simpleList){
-			
-		Collections.sort(simpleList, new Comparator<T>(){
-        	
-            @Override
-			public int compare(T c1, T c2){
-            	
-            	String name1 = (String)nodeService.getProperty(c1.getCharactNodeRef(), ContentModel.PROP_NAME);
-            	String name2 = (String)nodeService.getProperty(c2.getCharactNodeRef(), ContentModel.PROP_NAME);
-            	
-            	// increase
-                return name1.compareTo(name2);                
-            }
 
-        });  
-		
-		int i=1;
-		for(T sl : simpleList){
-			sl.setSort(i);
-			i++;
-		}
-	}
-	
 	/**
 	 * Copy missing item from template
 	 * @param formulatedProduct
@@ -282,9 +251,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected void copyProductTemplateList(ProductData formulatedProduct, List<T> simpleListDataList){
 		
-		if(formulatedProduct.getEntityTplRef() !=null){
-		
-			List<T> templateSimpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getEntityTplRef(), getDataListVisited(), getDataListVisited());
+		if(formulatedProduct.getEntityTpl() !=null){
+			
+			//TODO do not use loadDataList
+			List<T> templateSimpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getEntityTpl().getNodeRef(), getDataListVisited(), getDataListVisited());
 			
 			for(T tsl : templateSimpleListDataList){
 				if(tsl.getCharactNodeRef() != null){

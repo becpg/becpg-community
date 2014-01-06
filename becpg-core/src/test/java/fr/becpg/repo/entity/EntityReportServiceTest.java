@@ -186,15 +186,29 @@ public class EntityReportServiceTest extends RepoBaseTestCase {
 				
 				// change nothing
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);				
-				assertFalse(entityService.hasDataListModified(pfNodeRef));
 				
+				
+				return null;
+			}
+		});
+		
+		assertFalse(entityReportService.shouldGenerateReport(pfNodeRef));
+		
+		// Test datalist modified
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				FinishedProductData pfData = (FinishedProductData) alfrescoRepository.findOne(pfNodeRef);
+				NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
 				// change something
 				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);				
-				assertTrue(entityService.hasDataListModified(pfNodeRef));
+				
 				return null;
 
 			}
 		});
+		
+		assertTrue(entityReportService.shouldGenerateReport(pfNodeRef));
 		
 		// Delete report tpl -> report should be deleted
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

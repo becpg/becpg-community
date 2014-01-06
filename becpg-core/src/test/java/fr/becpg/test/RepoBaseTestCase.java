@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -24,7 +23,6 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -44,7 +42,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
@@ -62,10 +59,8 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -77,10 +72,10 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "classpath:alfresco/application-context.xml")
-@ContextConfiguration(locations = {"classpath:alfresco/application-context.xml",
-			"classpath:alfresco/web-scripts-application-context.xml",
-			"classpath:alfresco/web-scripts-application-context-test.xml"})
+// @ContextConfiguration(locations =
+// "classpath:alfresco/application-context.xml")
+@ContextConfiguration(locations = { "classpath:alfresco/application-context.xml", "classpath:alfresco/web-scripts-application-context.xml",
+		"classpath:alfresco/web-scripts-application-context-test.xml" })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
@@ -112,7 +107,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	protected List<NodeRef> organos = new ArrayList<NodeRef>();
 	protected List<NodeRef> labelClaims = new ArrayList<NodeRef>();
 
-	protected NodeRef ingWater;
 	protected NodeRef labelingTemplateNodeRef = null;
 
 	protected NodeRef testFolderNodeRef;
@@ -184,7 +178,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	protected EntityTplService entityTplService;
-	
+
 	@Resource
 	protected PermissionService permissionService;
 
@@ -199,7 +193,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			logger.debug("setupBeforeClass : Start wiser");
 			wiser.start();
 		} catch (Exception e) {
-			logger.warn("cannot open wiser!",e);
+			logger.warn("cannot open wiser!", e);
 		}
 	}
 
@@ -209,14 +203,14 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			logger.debug("tearDownBeforeClass : Stop wiser");
 			wiser.stop();
 		} catch (Exception e) {
-			logger.warn("cannot stop wiser!",e);
+			logger.warn("cannot stop wiser!", e);
 		}
 
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		
+
 		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				// As system user
@@ -236,49 +230,45 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		logger.debug("setUp shouldInit :" + shouldInit);
 
-		systemFolderNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
 			}
 		}, false, true);
 
-	
 		doInitRepo(shouldInit);
-		
 
 	}
 
 	private void doInitRepo(final boolean shouldInit) {
 
-		if(shouldInit){
+		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
-	
-					
+
 					// Init repo for test
 					initRepoVisitor.visitContainer(repositoryHelper.getCompanyHome());
-	
+
 					Assert.assertEquals(5, entitySystemService.getSystemEntities().size());
-	
+
 					initConstraints();
 					initTasks();
-	
+
 					return false;
-	
+
 				}
 			}, false, true);
 		}
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				if(shouldInit){
+				if (shouldInit) {
 					dictionaryDAO.reset();
 				}
 				initCharacteristics();
-				if(shouldInit){
+				if (shouldInit) {
 					initEntityTemplates();
-					initSystemProducts();
 				}
 				initHierarchyLists();
 				// initSystemProducts();
@@ -306,13 +296,13 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 				for (NodeRef productNodeRef : productNodeRefs) {
 					if (nodeService.exists(productNodeRef)) {
-						
-						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService );
-					//	if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
-							logger.debug("   - Deleting :"+nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
-							logger.debug("   - PATH :"+path);
-							nodeService.deleteNode(productNodeRef);
-					//	}
+
+						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
+						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
+						logger.debug("   - Deleting :" + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
+						logger.debug("   - PATH :" + path);
+						nodeService.deleteNode(productNodeRef);
+						// }
 					}
 				}
 				logger.debug("   - Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME));
@@ -381,6 +371,19 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			nodeService.createNode(labelingPositionFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
+
+//		// Quality
+//		NodeRef qualityListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_QUALITY_LISTS);
+//
+//		NodeRef controlUnitsFolder = entitySystemService.getSystemEntityDataList(qualityListsFolder, RepoConsts.PATH_CONTROL_UNITS);
+//		String[] controlUnits = { "kcal/100g", "mg/100g", "µg/100g", "g/100g" };
+//		for (String controlUnit : controlUnits) {
+//			properties = new HashMap<QName, Serializable>();
+//			properties.put(ContentModel.PROP_NAME, controlUnit);
+//			nodeService.createNode(controlUnitsFolder, ContentModel.ASSOC_CONTAINS,
+//					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+//		}
+
 	}
 
 	private void initTasks() {
@@ -472,19 +475,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}
 		}
 
-		ingWater = nodeService.getChildByName(ingFolder, ContentModel.ASSOC_CONTAINS, "eau");
-
-		if (ingWater == null) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, "eau");
-			MLText mlName = new MLText();
-			mlName.addValue(I18NUtil.getContentLocaleLang(), "eau default");
-			mlName.addValue(Locale.ENGLISH, "eau english");
-			properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-			ingWater = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
-		}
-
 		// nuts
 		NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_NUTS);
 		List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
@@ -528,14 +518,13 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		for (FileInfo fileInfo : taskLegendsFileInfo) {
 			taskLegends.add(fileInfo.getNodeRef());
 		}
-		
-		
+
 		// claim labelling
 		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_LABELCLAIMS);
 		List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
 		if (labelClaimsFileInfo.size() == 0) {
 
-			String[] labelClaimNames = { "Faible valeur énergétique","Sans apport énergétique" };
+			String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique" };
 			for (String labelClaim : labelClaimNames) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, labelClaim);
@@ -549,23 +538,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				labelClaims.add(fileInfo.getNodeRef());
 			}
 		}
-		
-	}
 
-	private void initSystemProducts() {
-
-		/*-- Raw material Water --*/					
-		RawMaterialData rawMaterialWater = new RawMaterialData();
-		rawMaterialWater.setName("Eau réseau");
-		rawMaterialWater.setDensity(1d);
-		MLText legalName = new MLText("Legal Raw material Eau");
-		legalName.addValue(Locale.FRENCH, "Legal Raw material Eau");
-		legalName.addValue(Locale.ENGLISH, "Legal Raw material Eau");
-		rawMaterialWater.setLegalName(legalName);
-		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
-		ingList.add(new IngListDataItem(null, 100d, null, null, false, false, ingWater, false));
-		rawMaterialWater.setIngList(ingList);		
-		alfrescoRepository.create(repositoryHelper.getCompanyHome(), rawMaterialWater).getNodeRef();
 	}
 
 	private void initEntityTemplates() {
@@ -575,6 +548,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		rawMaterialData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(0), null));
 		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
 		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
+
 		alfrescoRepository.save(rawMaterialData);
 
 		NodeRef packMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_PACKAGINGMATERIAL);

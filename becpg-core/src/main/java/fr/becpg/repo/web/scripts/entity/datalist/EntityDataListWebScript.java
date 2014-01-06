@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -128,7 +129,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	private DataListExtractorFactory dataListExtractorFactory;
 
 	private DataListSortService dataListSortService;
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -176,7 +177,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		pagination.setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
 		pagination.setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
 		pagination.setQueryExecutionId(req.getParameter(PARAM_QUERY_EXECUTION_ID));
-		
 
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
 		dataListFilter.setDataListName(req.getParameter(PARAM_DATA_LIST_NAME));
@@ -221,7 +221,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		String entityNodeRefs = req.getParameter(PARAM_ENTITY_NODEREF);
 		List<NodeRef> entityNodeRefsList = new ArrayList<>();
 		if (entityNodeRefs != null && !entityNodeRefs.isEmpty()) {
-			for(String entityNodeRef :  entityNodeRefs.split(",")){
+			for (String entityNodeRef : entityNodeRefs.split(",")) {
 				entityNodeRefsList.add(new NodeRef(entityNodeRef));
 			}
 			dataListFilter.setEntityNodeRefs(entityNodeRefsList);
@@ -290,8 +290,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				}
 			}
 
-			
-
 			dataListFilter.buildQueryFilter(filterId, filterData, filterParams);
 
 			if (logger.isDebugEnabled()) {
@@ -302,14 +300,14 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			}
 
 			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
-			
-			
+
 			boolean hasWriteAccess = true;
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
-				hasWriteAccess = securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
+				hasWriteAccess = !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
+						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
 			}
 
-
+			// TODO : #546
 			Date lastModified = extractor.computeLastModified(dataListFilter);
 
 			if (shouldReturnNotModified(req, lastModified)) {
@@ -321,8 +319,12 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			}
 
 			Cache cache = new Cache(getDescription().getRequiredCache());
-
+			cache.setIsPublic(false);
+			cache.setMustRevalidate(true);
+			cache.setNeverCache(false);
+			cache.setMaxAge(0L);
 			cache.setLastModified(lastModified);
+			res.setCache(cache);
 
 			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
 
@@ -331,24 +333,24 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				res.setContentEncoding("ISO-8859-1");
 
 				CSVConfig csvConfig = new CSVConfig();
-				
+
 				csvConfig.setDelimiter(';');
 				csvConfig.setValueDelimiter('"');
 				csvConfig.setIgnoreValueDelimiter(false);
 
-				appendCSVField(csvConfig, extractedItems.getComputedFields(),null);
+				appendCSVField(csvConfig, extractedItems.getComputedFields(), null);
 
 				CSVWriter csvWriter = new CSVWriter(csvConfig);
 
 				csvWriter.setWriter(res.getWriter());
-	
-				Map<String,String> headers = new HashMap<>();
+
+				Map<String, String> headers = new HashMap<>();
 				appendCSVHeader(headers, extractedItems.getComputedFields(), null, null);
 				csvWriter.writeRecord(headers);
 
 				writeToCSV(extractedItems, csvWriter);
 
-				res.setHeader("Content-disposition","attachment; filename=export.csv");
+				res.setHeader("Content-disposition", "attachment; filename=export.csv");
 			} else {
 
 				JSONObject ret = new JSONObject();
@@ -358,7 +360,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 					ret.put("totalRecords", extractedItems.getFullListSize());
 					if (pagination.getQueryExecutionId() != null) {
 						ret.put(PARAM_QUERY_EXECUTION_ID, pagination.getQueryExecutionId());
-						cache.setETag(pagination.getQueryExecutionId());
 					}
 
 				}
@@ -372,7 +373,9 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				JSONObject permissions = new JSONObject();
 				JSONObject userAccess = new JSONObject();
 
-				userAccess.put("create", ( extractor.hasWriteAccess() && hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+				userAccess
+						.put("create",
+								(extractor.hasWriteAccess() && hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
 
 				permissions.put("userAccess", userAccess);
 
@@ -394,8 +397,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				ret.write(res.getWriter());
 			}
 
-			res.setCache(cache);
-
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
@@ -408,28 +409,31 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	}
 
 	private void appendCSVField(CSVConfig csvConfig, List<AttributeExtractorStructure> fields, String prefix) {
-		for (AttributeExtractorStructure field : fields) {
-			if (field.isNested() ) {
-				appendCSVField(csvConfig, field.getChildrens(), field.getFieldName());
-			} else {
-				if(prefix!=null){
-					csvConfig.addField(new CSVField(prefix+"_"+field.getFieldName()));
+		if (fields != null) {
+			for (AttributeExtractorStructure field : fields) {
+				if (field.isNested()) {
+					appendCSVField(csvConfig, field.getChildrens(), field.getFieldName());
 				} else {
-					csvConfig.addField(new CSVField(field.getFieldName()));
+					if (prefix != null) {
+						csvConfig.addField(new CSVField(prefix + "_" + field.getFieldName()));
+					} else {
+						csvConfig.addField(new CSVField(field.getFieldName()));
+					}
 				}
 			}
 		}
-
 	}
-	
-	private void appendCSVHeader(Map<String,String> headers, List<AttributeExtractorStructure> fields, String fieldNamePrefix, String titlePrefix) {
-		for (AttributeExtractorStructure field : fields) {
-			if (field.isNested()) {
-				appendCSVHeader(headers, field.getChildrens(), field.getFieldName(),field.getFieldDef()!=null ? field.getFieldDef().getTitle(): null);
-			} else {
-				String fieldName = fieldNamePrefix != null ? fieldNamePrefix + "_" + field.getFieldName() : field.getFieldName();
-				String fullTitle = titlePrefix != null ? titlePrefix + " - " + field.getFieldDef().getTitle() : field.getFieldDef().getTitle();				
-				headers.put(fieldName, fullTitle);
+
+	private void appendCSVHeader(Map<String, String> headers, List<AttributeExtractorStructure> fields, String fieldNamePrefix, String titlePrefix) {
+		if (fields != null) {
+			for (AttributeExtractorStructure field : fields) {
+				if (field.isNested()) {
+					appendCSVHeader(headers, field.getChildrens(), field.getFieldName(), field.getFieldDef() != null ? field.getFieldDef().getTitle() : null);
+				} else {
+					String fieldName = fieldNamePrefix != null ? fieldNamePrefix + "_" + field.getFieldName() : field.getFieldName();
+					String fullTitle = titlePrefix != null ? titlePrefix + " - " + field.getFieldDef().getTitle() : field.getFieldDef().getTitle();
+					headers.put(fieldName, fullTitle);
+				}
 			}
 		}
 	}

@@ -15,13 +15,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 /**
  * 
@@ -66,16 +66,10 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		}
 
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(PROP_ACCESSRIGHT, false); // TODO
-		props.put(PROP_REVERSE_ASSOC, associationName.toPrefixString(namespaceService));
-
-		Iterator<String> it = metadataFields.iterator();
-		while (it.hasNext()) {
-			String propName = (String) it.next();
-			if (propName.equals(props.get(PROP_REVERSE_ASSOC))) {
-				it.remove();
-			}
-		}
+		String assocName = associationName.toPrefixString(namespaceService);
+		
+		props.put(PROP_ACCESSRIGHT, true); // TODO
+		props.put(PROP_REVERSE_ASSOC,assocName );
 
 		int pageSize = pagination.getPageSize();
 		int startIndex = (pagination.getPage() - 1) * pagination.getPageSize();
@@ -89,6 +83,8 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 
 		ret.setFullListSize(wUsedData.getSize());
+		
+		
 		return ret;
 
 	}
@@ -132,6 +128,26 @@ public class WUsedExtractor extends MultiLevelExtractor {
 			}
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, Object> extractJSON(NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
+	    Map<String, Object> ret = super.extractJSON(nodeRef, metadataFields, props, cache);
+		
+		Map<String, Object> permissions = (Map<String, Object>) ret.get(PROP_PERMISSIONS);
+		Map<String, Boolean> userAccess = (Map<String, Boolean>) permissions.get("userAccess");
+
+		userAccess.put("delete", userAccess.get("delete"));
+		userAccess.put("create", false);
+		userAccess.put("edit", userAccess.get("edit"));
+		userAccess.put("sort", false);
+		userAccess.put("details", false);
+
+		ret.put(PROP_PERMISSIONS, permissions);
+		
+		return ret;
+	}
+	
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {

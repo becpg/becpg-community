@@ -79,6 +79,9 @@ public class ImportServiceImpl implements ImportService {
 	private static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
 
 	private static final String PFX_STOP_ON_FIRST_ERROR = "STOP_ON_FIRST_ERROR";
+	
+	
+	private static final String PFX_DELETE_DATALIST = "DELETE_DATALIST";
 
 	/** The Constant PFX_COLUMS. */
 	private static final String PFX_COLUMS = "COLUMNS";
@@ -512,6 +515,14 @@ public class ImportServiceImpl implements ImportService {
 				if (!stopOnFirstErrorValue.isEmpty()) {
 					importContext.setStopOnFirstError(Boolean.valueOf(stopOnFirstErrorValue));
 				}
+			} else if (prefix.equals(PFX_DELETE_DATALIST)) {
+
+					String deleteDataList = arrStr[COLUMN_TYPE];
+					if (!deleteDataList.isEmpty()) {
+						importContext.setDeleteDataList(Boolean.valueOf(deleteDataList));
+					}
+	
+				
 			} else if (prefix.equals(PFX_COLUMS)) {
 
 				boolean undefinedColumns = true;

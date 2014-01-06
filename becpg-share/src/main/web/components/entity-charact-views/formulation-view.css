@@ -63,15 +63,21 @@
 	padding-left: 22px;
 }
 
-.datagrid-bar .onAddLabelingAspect, .datagrid .onAddLabelingAspect a
+.formulation-view  .datagrid-bar  .onActionSimulate,.datagrid .onActionSimulate a
 	{
+	background: transparent url(../images/states/simulation-16.png)
+		no-repeat 12px 4px;
+	padding-left: 22px;
+}
+
+.datagrid-bar .onAddLabelingAspect,.datagrid .onAddLabelingAspect a {
 	background: transparent url(../images/tag-16.png) no-repeat 12px 4px;
 	padding-left: 22px;
 }
 
 .datagrid .labeling-aspect {
 	background: url("../images/tag-16.png") no-repeat scroll 0 0 transparent;
-   padding-left: 14px;
+	padding-left: 14px;
 }
 
 /* Hide New Item */

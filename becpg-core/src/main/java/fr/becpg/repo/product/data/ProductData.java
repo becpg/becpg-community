@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -12,10 +13,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
@@ -25,6 +26,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -38,15 +40,16 @@ import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.variant.model.VariantData;
 
 
-public class ProductData extends AbstractEffectiveDataItem {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity {
 
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
 	private String title;
+	private String erpCode;
 	private SystemState state = SystemState.ToValidate;
 	private ProductUnit unit = ProductUnit.kg;
-	private NodeRef entityTplRef;
+	private ProductData entityTpl;
 
 	/*
 	 * Transformable properties
@@ -56,6 +59,11 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private Double yield;
 	private Double yieldVolume;
 	private Double netWeight;
+	private Double servingSize;
+	private Double recipeQtyUsed;
+	
+	private Double tare;
+	private TareUnit tareUnit;
 
 	/*
 	 * Profitability properties
@@ -65,6 +73,13 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private Double profitability;
 	private Long breakEven;
 
+	
+	/*
+	 * Formulation
+	 */
+	private Date formulatedDate;
+	
+	
 	/*
 	 * DataList
 	 */
@@ -74,18 +89,17 @@ public class ProductData extends AbstractEffectiveDataItem {
 	private List<IngListDataItem> ingList;
 	private List<NutListDataItem> nutList;
 	private List<OrganoListDataItem> organoList;
-
 	private List<MicrobioListDataItem> microbioList;
 	private List<PhysicoChemListDataItem> physicoChemList;
-	private List<ForbiddenIngListDataItem> forbiddenIngList;
 	private List<LabelClaimListDataItem> labelClaimList;
+	private List<ControlDefListDataItem> controlDefList;
+	
 	/*
 	 * View
 	 */
 	private CompoListView compoListView = new CompoListView();
 	private ProcessListView processListView = new ProcessListView();
 	private PackagingListView packagingListView = new PackagingListView();
-
 	private LabelingListView labelingListView = new LabelingListView();
 	
 	/*
@@ -93,6 +107,24 @@ public class ProductData extends AbstractEffectiveDataItem {
 	 */
 	
 	private List<VariantData> variants;
+	
+	/*
+	 * Product specifications
+	 */
+	
+	private List<ProductSpecificationData> productSpecifications;
+	
+	
+	@AlfMultiAssoc(isEntity=true)
+	@AlfQname(qname="bcpg:productSpecifications")
+	@AlfReadOnly
+	public List<ProductSpecificationData> getProductSpecifications() {
+		return productSpecifications;
+	}
+
+	public void setProductSpecifications(List<ProductSpecificationData> productSpecifications) {
+		this.productSpecifications = productSpecifications;
+	}
 
 	@AlfMultiAssoc(isChildAssoc=true, isEntity=true)
 	@AlfQname(qname="bcpg:variants")
@@ -125,6 +157,17 @@ public class ProductData extends AbstractEffectiveDataItem {
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:formulatedDate")
+	public Date getFormulatedDate() {
+		return formulatedDate;
+	}
+
+	public void setFormulatedDate(Date formulatedDate) {
+		this.formulatedDate = formulatedDate;
+	}
 
 	@AlfMlText
 	@AlfProp
@@ -152,6 +195,16 @@ public class ProductData extends AbstractEffectiveDataItem {
 	}
 
 	@AlfProp
+	@AlfQname(qname = "bcpg:erpCode")
+	public String getErpCode() {
+		return erpCode;
+	}
+
+	public void setErpCode(String erpCode) {
+		this.erpCode = erpCode;
+	}
+
+	@AlfProp
 	@AlfQname(qname = "bcpg:productState")
 	public SystemState getState() {
 		return state;
@@ -171,14 +224,14 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.unit = unit;
 	}
 
-	@AlfSingleAssoc
+	@AlfSingleAssoc(isEntity = true)
 	@AlfQname(qname="bcpg:entityTplRef")
-	public NodeRef getEntityTplRef() {
-		return entityTplRef;
+	public ProductData getEntityTpl() {
+		return entityTpl;
 	}
 
-	public void setEntityTplRef(NodeRef entityTplRef) {
-		this.entityTplRef = entityTplRef;
+	public void setEntityTpl(ProductData entityTpl) {
+		this.entityTpl = entityTpl;
 	}
 
 	@AlfProp
@@ -186,6 +239,8 @@ public class ProductData extends AbstractEffectiveDataItem {
 	public Double getQty() {
 		return qty;
 	}
+
+	
 
 	public void setQty(Double qty) {
 		this.qty = qty;
@@ -201,6 +256,7 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.density = density;
 	}
 
+
 	public Double getYield() {
 		return yield;
 	}
@@ -215,6 +271,14 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setYieldVolume(Double yieldVolume) {
 		this.yieldVolume = yieldVolume;
+	}	
+
+	public Double getRecipeQtyUsed() {
+		return recipeQtyUsed;
+	}
+
+	public void setRecipeQtyUsed(Double recipeQtyUsed) {
+		this.recipeQtyUsed = recipeQtyUsed;
 	}
 	
 	@AlfProp
@@ -225,6 +289,36 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	public void setNetWeight(Double netWeight) {
 		this.netWeight = netWeight;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:servingSize")
+	public Double getServingSize() {
+		return servingSize;
+	}
+
+	public void setServingSize(Double servingSize) {
+		this.servingSize = servingSize;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pack:tare")
+	public Double getTare() {
+		return tare;
+	}
+
+	public void setTare(Double tare) {
+		this.tare = tare;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "pack:tareUnit")
+	public TareUnit getTareUnit() {
+		return tareUnit;
+	}
+
+	public void setTareUnit(TareUnit tareUnit) {
+		this.tareUnit = tareUnit;
 	}
 
 	@AlfProp
@@ -350,15 +444,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 	}
 
 	@DataList
-	@AlfQname(qname = "bcpg:forbiddenIngList")
-	public List<ForbiddenIngListDataItem> getForbiddenIngList() {
-		return forbiddenIngList;
-	}
-
-	public void setForbiddenIngList(List<ForbiddenIngListDataItem> forbiddenIngList) {
-		this.forbiddenIngList = forbiddenIngList;
-	}
-	@DataList
 	@AlfQname(qname="bcpg:labelClaimList")
 	public List<LabelClaimListDataItem> getLabelClaimList() {
 		return labelClaimList;
@@ -368,7 +453,16 @@ public class ProductData extends AbstractEffectiveDataItem {
 		this.labelClaimList = labelClaimList;
 	}
 	
-	
+	@DataList
+	@AlfQname(qname="qa:controlDefList")
+	public List<ControlDefListDataItem> getControlDefList() {
+		return controlDefList;
+	}
+
+	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
+		this.controlDefList = controlDefList;
+	}
+
 	@DataListView
 	@AlfQname(qname = "bcpg:ingLabelingList")
 	public LabelingListView getLabelingListView() {
@@ -487,43 +581,32 @@ public class ProductData extends AbstractEffectiveDataItem {
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", state=" + state + ", unit=" + unit
-				+ ", entityTplRef=" + entityTplRef + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
-				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList="
-				+ allergenList + ", costList=" + costList + ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList
-				+ ", microbioList=" + microbioList + ", physicoChemList=" + physicoChemList + ", forbiddenIngList=" + forbiddenIngList + ", labelClaimList=" + labelClaimList
-				+ ", compoListView=" + compoListView + ", processListView=" + processListView + ", packagingListView=" + packagingListView + ", labelingListView="
-				+ labelingListView + ", variants=" + variants + "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode=" + erpCode + ", state="
+				+ state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
+				+ ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost
+				+ ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
-		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
-		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
-		result = prime * result + ((entityTplRef == null) ? 0 : entityTplRef.hashCode());
-		result = prime * result + ((forbiddenIngList == null) ? 0 : forbiddenIngList.hashCode());
+		result = prime * result + ((erpCode == null) ? 0 : erpCode.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
 		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
-		result = prime * result + ((labelClaimList == null) ? 0 : labelClaimList.hashCode());
-		result = prime * result + ((labelingListView == null) ? 0 : labelingListView.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
-		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
 		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
 		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
-		result = prime * result + ((organoList == null) ? 0 : organoList.hashCode());
-		result = prime * result + ((packagingListView == null) ? 0 : packagingListView.hashCode());
-		result = prime * result + ((physicoChemList == null) ? 0 : physicoChemList.hashCode());
-		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
-		result = prime * result + ((processListView == null) ? 0 : processListView.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
+		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((tare == null) ? 0 : tare.hashCode());
+		result = prime * result + ((tareUnit == null) ? 0 : tareUnit.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((unitPrice == null) ? 0 : unitPrice.hashCode());
@@ -543,40 +626,20 @@ public class ProductData extends AbstractEffectiveDataItem {
 		if (getClass() != obj.getClass())
 			return false;
 		ProductData other = (ProductData) obj;
-		if (allergenList == null) {
-			if (other.allergenList != null)
-				return false;
-		} else if (!allergenList.equals(other.allergenList))
-			return false;
 		if (breakEven == null) {
 			if (other.breakEven != null)
 				return false;
 		} else if (!breakEven.equals(other.breakEven))
-			return false;
-		if (compoListView == null) {
-			if (other.compoListView != null)
-				return false;
-		} else if (!compoListView.equals(other.compoListView))
-			return false;
-		if (costList == null) {
-			if (other.costList != null)
-				return false;
-		} else if (!costList.equals(other.costList))
 			return false;
 		if (density == null) {
 			if (other.density != null)
 				return false;
 		} else if (!density.equals(other.density))
 			return false;
-		if (entityTplRef == null) {
-			if (other.entityTplRef != null)
+		if (erpCode == null) {
+			if (other.erpCode != null)
 				return false;
-		} else if (!entityTplRef.equals(other.entityTplRef))
-			return false;
-		if (forbiddenIngList == null) {
-			if (other.forbiddenIngList != null)
-				return false;
-		} else if (!forbiddenIngList.equals(other.forbiddenIngList))
+		} else if (!erpCode.equals(other.erpCode))
 			return false;
 		if (hierarchy1 == null) {
 			if (other.hierarchy1 != null)
@@ -593,25 +656,10 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!ingList.equals(other.ingList))
 			return false;
-		if (labelClaimList == null) {
-			if (other.labelClaimList != null)
-				return false;
-		} else if (!labelClaimList.equals(other.labelClaimList))
-			return false;
-		if (labelingListView == null) {
-			if (other.labelingListView != null)
-				return false;
-		} else if (!labelingListView.equals(other.labelingListView))
-			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
 		} else if (!legalName.equals(other.legalName))
-			return false;
-		if (microbioList == null) {
-			if (other.microbioList != null)
-				return false;
-		} else if (!microbioList.equals(other.microbioList))
 			return false;
 		if (netWeight == null) {
 			if (other.netWeight != null)
@@ -623,31 +671,6 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!nutList.equals(other.nutList))
 			return false;
-		if (organoList == null) {
-			if (other.organoList != null)
-				return false;
-		} else if (!organoList.equals(other.organoList))
-			return false;
-		if (packagingListView == null) {
-			if (other.packagingListView != null)
-				return false;
-		} else if (!packagingListView.equals(other.packagingListView))
-			return false;
-		if (physicoChemList == null) {
-			if (other.physicoChemList != null)
-				return false;
-		} else if (!physicoChemList.equals(other.physicoChemList))
-			return false;
-		if (priceList == null) {
-			if (other.priceList != null)
-				return false;
-		} else if (!priceList.equals(other.priceList))
-			return false;
-		if (processListView == null) {
-			if (other.processListView != null)
-				return false;
-		} else if (!processListView.equals(other.processListView))
-			return false;
 		if (profitability == null) {
 			if (other.profitability != null)
 				return false;
@@ -658,7 +681,24 @@ public class ProductData extends AbstractEffectiveDataItem {
 				return false;
 		} else if (!qty.equals(other.qty))
 			return false;
+		if (recipeQtyUsed == null) {
+			if (other.recipeQtyUsed != null)
+				return false;
+		} else if (!recipeQtyUsed.equals(other.recipeQtyUsed))
+			return false;
+		if (servingSize == null) {
+			if (other.servingSize != null)
+				return false;
+		} else if (!servingSize.equals(other.servingSize))
+			return false;
 		if (state != other.state)
+			return false;
+		if (tare == null) {
+			if (other.tare != null)
+				return false;
+		} else if (!tare.equals(other.tare))
+			return false;
+		if (tareUnit != other.tareUnit)
 			return false;
 		if (title == null) {
 			if (other.title != null)

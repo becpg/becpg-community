@@ -60,6 +60,7 @@
 		<property name="projectService" ref="projectService" />
 		<property name="associationService" ref="associationService" />
 		<property name="projectActivityService" ref="projectActivityService"/>	
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
 
 	<bean id="taskValuePlugin" parent="baseListValuePlugin"

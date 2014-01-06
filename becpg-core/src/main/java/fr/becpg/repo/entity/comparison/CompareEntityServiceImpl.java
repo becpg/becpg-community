@@ -270,7 +270,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PHYSICOCHEMLIST.getLocalName())){
 			pivotProperty = BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM;
-		}				
+		}
+		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PRICELIST.getLocalName())){
+			pivotProperty = BeCPGModel.ASSOC_PRICELIST_COST;
+		}
+		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_LABELCLAIMLIST.getLocalName())){
+			pivotProperty = BeCPGModel.ASSOC_LCL_LABELCLAIM;
+		}
 		else{
 			//TODO : specific entityLists ? Not implemented
 			return;
@@ -361,7 +367,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		
 		
 		// compare properties of characteristics
-		for(CharacteristicToCompare c : characteristicsToCmp){
+		for(CharacteristicToCompare c : characteristicsToCmp){			
 			compareNode(entityList, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition, true, comparisonMap);
 		}
 	}
@@ -456,7 +462,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				AbstractComparableItem c2 = compositeItem2 == null ? null : compositeItem2.get(key);
 				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();
 				
-				NodeRef charactNodeRef = new NodeRef(key);				
+				// key is nodeRef + counter
+				NodeRef charactNodeRef = new NodeRef(key.substring(0, 60));				
 				CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(charactPath, charactNodeRef, c1.getNodeRef(), nodeRef2);
 				characteristicsToCmp.add(characteristicToCmp);
 				
@@ -469,7 +476,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					tempCompositeItem2 = (CompositeComparableItem)c2;
 				}
 				
-				List<NodeRef> tempCharactPath = new ArrayList<NodeRef>(charactPath);
+				List<NodeRef> tempCharactPath = new ArrayList<NodeRef>(charactPath);				
 				tempCharactPath.add(charactNodeRef);
 				compareCompositeDataLists(tempCharactPath, characteristicsToCmp, tempCompositeItem1, tempCompositeItem2);
 			}
@@ -482,12 +489,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				
 				if((compositeItem1 == null) || (compositeItem1 != null && compositeItem1.get(key) == null)){
 										
-					NodeRef charactNodeRef = new NodeRef(key);	
+					// key is nodeRef + counter
+					NodeRef charactNodeRef = new NodeRef(key.substring(0, 60));	
 					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(charactPath, charactNodeRef, null, c2.getNodeRef());
 					characteristicsToCmp.add(characteristicToCmp);
 					
 					if(c2 instanceof CompositeComparableItem){
-						List<NodeRef> tempCharactPath = new ArrayList<NodeRef>(charactPath);
+						List<NodeRef> tempCharactPath = new ArrayList<NodeRef>(charactPath);						
 						tempCharactPath.add(charactNodeRef);
 						compareCompositeDataLists(tempCharactPath, characteristicsToCmp, null, (CompositeComparableItem)c2);
 					}
@@ -883,6 +891,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				qName.equals(BeCPGModel.PROP_START_EFFECTIVITY) ||
 				qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) ||
 				qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED) ||
+				qName.equals(ReportModel.ASSOC_REPORTS) ||
 				qName.equals(BeCPGModel.PROP_VERSION_LABEL)){
 			
 			isCompareable = false;

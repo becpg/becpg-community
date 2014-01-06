@@ -1,14 +1,11 @@
 package fr.becpg.repo.report.entity.impl;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.google.common.collect.Lists;
 
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -16,16 +13,13 @@ import fr.becpg.repo.report.entity.EntityReportService;
 /**
  * 
  * @author matthieu
- *
+ * 
  */
 public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerator {
-	
 
 	private ThreadPoolExecutor threadExecuter;
 
 	private EntityReportService entityReportService;
-
-	private ConcurrentLinkedQueue<NodeRef> reportsQueue = new ConcurrentLinkedQueue<>();
 
 	private static Log logger = LogFactory.getLog(EntityReportAsyncGeneratorImpl.class);
 
@@ -39,42 +33,68 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	@Override
 	public void queueNodes(List<NodeRef> pendingNodes) {
-
-		for (List<NodeRef> subList : Lists.partition(pendingNodes, 100)) {
-			Runnable runnable = new ProductReportGenerator(subList);
-			threadExecuter.execute(runnable);
+		for(NodeRef entityNodeRef : pendingNodes){
+			
+			Runnable command = new ProductReportGenerator(entityNodeRef);
+			if(!threadExecuter.getQueue().contains(command)){
+				threadExecuter.execute(command);
+			} else {
+				logger.warn("Report job already in queue for "+entityNodeRef);
+				logger.info("Report active task size "+threadExecuter.getActiveCount());
+				logger.info("Report queue size "+threadExecuter.getTaskCount());
+			}
 		}
-
 	}
 
 	private class ProductReportGenerator implements Runnable {
 
-		private List<NodeRef> entityNodeRefs;
+		private NodeRef entityNodeRef;
 
-		private ProductReportGenerator(List<NodeRef> entityNodeRefs) {
-			this.entityNodeRefs = entityNodeRefs;
+		private ProductReportGenerator(NodeRef entityNodeRef) {
+			this.entityNodeRef = entityNodeRef;
 		}
 
 		@Override
 		public void run() {
-			for (final NodeRef entityNodeRef : entityNodeRefs) {
+			try {
+				entityReportService.generateReport(entityNodeRef);
 
-				if (!reportsQueue.contains(entityNodeRef)) {
-					try {
-						reportsQueue.add(entityNodeRef);
-						entityReportService.generateReport(entityNodeRef);
-
-					} catch (Exception e) {
-						logger.error("Unable to generate product reports ", e);
-					} finally {
-						reportsQueue.remove(entityNodeRef);
-					}
-
-				} else {
-					logger.warn("NodeRef already in queue: " + entityNodeRef);
-				}
+			} catch (Exception e) {
+				logger.error("Unable to generate product reports ", e);
 			}
-
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((entityNodeRef == null) ? 0 : entityNodeRef.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ProductReportGenerator other = (ProductReportGenerator) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (entityNodeRef == null) {
+				if (other.entityNodeRef != null)
+					return false;
+			} else if (!entityNodeRef.equals(other.entityNodeRef))
+				return false;
+			return true;
+		}
+
+		private EntityReportAsyncGeneratorImpl getOuterType() {
+			return EntityReportAsyncGeneratorImpl.this;
+		}
+		
 	}
 }

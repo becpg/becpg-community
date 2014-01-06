@@ -15,7 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemProductType;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
@@ -107,6 +106,8 @@ public class HierarchyServiceImpl implements HierarchyService{
 		properties.put(BeCPGModel.PROP_LKV_VALUE, hierachy);
 		if (parentHierachy != null) {
 			properties.put(BeCPGModel.PROP_PARENT_LEVEL, parentHierachy);
+		} else {
+			properties.put(BeCPGModel.PROP_DEPTH_LEVEL, 1);
 		}
 
 		NodeRef entityNodeRef = nodeService.getChildByName(dataListNodeRef, ContentModel.ASSOC_CONTAINS, hierachy);
@@ -146,7 +147,8 @@ public class HierarchyServiceImpl implements HierarchyService{
 			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString()));
 		}
 		else if(!all){
-			query += LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL));
+			//query += LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL));
+			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_DEPTH_LEVEL, "1"));
 		}
 		
 		// value == * -> return all
@@ -159,14 +161,13 @@ public class HierarchyServiceImpl implements HierarchyService{
 	
 
 	@Override
-	public String getHierarchyPath(NodeRef hierarchyNodeRef, SystemProductType systemProductType) {
+	public String getHierarchyPath(NodeRef hierarchyNodeRef) {
 		
 		StringBuilder  path = new StringBuilder();
 		
 		path.append("./cm:"+RepoConsts.PATH_PRODUCTS);
 		 
 		appendNamePath(path, hierarchyNodeRef);
-		
 		
 		return path.toString();
 	}

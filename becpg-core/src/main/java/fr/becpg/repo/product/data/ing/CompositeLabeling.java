@@ -3,46 +3,60 @@
  */
 package fr.becpg.repo.product.data.ing;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.DeclarationType;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
 public class CompositeLabeling extends AbstractLabelingComponent {
 
 	private Map<NodeRef, AbstractLabelingComponent> ingList = new LinkedHashMap<NodeRef, AbstractLabelingComponent>();
 
-	private Map<NodeRef, AbstractLabelingComponent> ingListNotDeclared = new LinkedHashMap<NodeRef, AbstractLabelingComponent>();
 
 	private Double qtyRMUsed = 0d;
 	
-	private boolean isGroup = false;
 
-	public CompositeLabeling(ProductData productData) {
-		//TODO c null !!
-		this.name = productData.getName();
-		this.nodeRef = productData.getNodeRef();
-		this.legalName = productData.getLegalName();
-		
-	}
+	private DeclarationType declarationType;
+	
 
 	public CompositeLabeling() {
 		super();
 	}
 	
+	public CompositeLabeling(CompositeLabeling compositeLabeling) 
+	{
+		super(compositeLabeling);
+	    this.ingList = compositeLabeling.ingList;
+	    this.qtyRMUsed = compositeLabeling.qtyRMUsed;
+	    this.declarationType = compositeLabeling.declarationType;
+	}
 	
 
+	public CompositeLabeling(ProductData productData) {
+		this.name = productData.getName();
+		this.nodeRef = productData.getNodeRef();
+		this.legalName = productData.getLegalName();
+	}
+
+	
+	public DeclarationType getDeclarationType() {
+		return declarationType;
+	}
+
+	public void setDeclarationType(DeclarationType declarationType) {
+		this.declarationType = declarationType;
+	}
 
 	public boolean isGroup() {
-		return isGroup;
+		return DeclarationType.Group.equals(declarationType);
 	}
 
-	public void setGroup(boolean isGroup) {
-		this.isGroup = isGroup;
-	}
 
 	public Double getQtyRMUsed() {
 		return qtyRMUsed;
@@ -52,41 +66,46 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		this.qtyRMUsed = qtyRMUsed;
 	}
 
-	public void add(AbstractLabelingComponent ing, boolean isDeclared) {
-		if (isDeclared) {
-			ingList.put(ing.getNodeRef(), ing);
-		} else {
-			ingListNotDeclared.put(ing.getNodeRef(), ing);
-		}
+	public void add(AbstractLabelingComponent ing) {
+		ingList.put(ing.getNodeRef(), ing);
+		
 	}
 
-	public void remove(NodeRef ing, boolean isDeclared) {
-		if (isDeclared) {
-			ingList.remove(ing);
-		} else {
-			ingListNotDeclared.remove(ing);
-		}
+	public void remove(NodeRef ing) {
+		ingList.remove(ing);
 	}
 
-	public AbstractLabelingComponent get(NodeRef grpNodeRef, boolean isDeclared) {
+	public AbstractLabelingComponent get(NodeRef grpNodeRef) {
+		return ingList.get(grpNodeRef);
 
-		AbstractLabelingComponent ing = null;
-		if (isDeclared) {
-			ing = ingList.get(grpNodeRef);
-		} else {
-			ing = ingListNotDeclared.get(grpNodeRef);
-		}
-
-		return ing;
 	}
 
 	public Map<NodeRef, AbstractLabelingComponent> getIngList() {
 		return ingList;
 	}
 
-	public Map<NodeRef, AbstractLabelingComponent> getIngListNotDeclared() {
-		return ingListNotDeclared;
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n");
+		print(sb, "",true);
+		return sb.toString();
 	}
 
+	private void print(StringBuilder sb, String prefix, boolean isTail) {
+		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (getLegalName(I18NUtil.getContentLocaleLang())==null ? "root" : getLegalName(I18NUtil.getContentLocaleLang()))+" - "+getQty()+" ("+getQtyRMUsed()+") "+(declarationType!=null ? declarationType.toString():"")+"]\n");
+        for (Iterator<AbstractLabelingComponent> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
+        	AbstractLabelingComponent labelingComponent =  iterator.next();
+        	if(labelingComponent  instanceof CompositeLabeling) {
+				((CompositeLabeling)labelingComponent).print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
+			} else {
+				sb.append(prefix + (isTail ? "    " : "│   ") +(!iterator.hasNext() ? "└──[" : "├──[")+ labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())+" - "+labelingComponent.getQty()  +"]\n");
+			      
+			}
+ 
+        }
+    }
+	
 
 }

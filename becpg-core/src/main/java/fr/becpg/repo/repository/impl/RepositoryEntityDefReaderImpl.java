@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -120,7 +121,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	private <R, Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
 		Map<QName, R> ret = new HashMap<QName, R>();
 		
-			BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
+			BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(entity);
 			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 				Method readMethod = pd.getReadMethod();
 				if (readMethod != null) {

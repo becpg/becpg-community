@@ -41,6 +41,12 @@
 				<#elseif row.item.typeShort == "bcpg:compoList" >				
 				"name": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",
 				"title": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",	
+				<#elseif row.item.typeShort == "bcpg:nutList" >				
+				"name": "${row.item.assocs["bcpg:nutListNut"][0].properties.name!""}",
+				"title": "${row.item.assocs["bcpg:nutListNut"][0].properties.name!""}",	
+				<#elseif row.item.typeShort == "bcpg:ingList" >				
+				"name": "${row.item.assocs["bcpg:ingListIng"][0].properties.name!""}",
+				"title": "${row.item.assocs["bcpg:ingListIng"][0].properties.name!""}",					
 				<#elseif row.item.typeShort == "pjt:taskList" >
 				"name": "${row.item.properties["pjt:tlTaskName"]!""}",
 				"title": "${row.item.properties["pjt:tlTaskName"]!""}",			

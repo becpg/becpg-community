@@ -49,7 +49,7 @@
 					<show id="qa:claimOriginHierarchy1" />
 					<show id="qa:claimOriginHierarchy2" />
 
-					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatementDate" />
 					<show id="qa:claimTreatmentActor" />
 					<show id="qa:claimTreatementDetails" />
 					<show id="qa:claimTreatementPrevActions"/>
@@ -143,7 +143,7 @@
 						</control>
 					</field>
 
-					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatementDate" set="claim-info"/>
 					<field id="qa:claimTreatmentActor" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
 					<field id="qa:claimTreatementPrevActions" set="claim-info"/>
@@ -211,7 +211,7 @@
    			   <show id="qa:claimOriginHierarchy1" />
 					<show id="qa:claimOriginHierarchy2" />
 
-					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatementDate" />
 					<show id="qa:claimTreatmentActor" />
 					<show id="qa:claimTreatementDetails" />
 					<show id="qa:claimTreatementPrevActions"/>
@@ -303,7 +303,7 @@
 						</control>
 					</field>
 
-					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatementDate" set="claim-info"/>
 					<field id="qa:claimTreatmentActor" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
@@ -366,6 +366,7 @@
 					<show id="cm:name" />
 					<show id="qa:ncType" />
 					<show id="qa:ncState" />
+					<!-- <show id="qa:claimDescription" force="true" /> -->
 					
 					<!-- batch -->
 					<show id="qa:batchId" force="true"/>
@@ -383,14 +384,14 @@
 					<show  id="qa:claimSource" force="true"/>
 					<show id="qa:claimType" force="true"/>
 					
-
+					
    			   <show id="qa:claimOriginHierarchy1" force="true"/>
 					<show id="qa:claimOriginHierarchy2" force="true"/>
 
 					<show id="cm:creator"   />
 					<show id="cm:created"  />
 
-					<show id="qa:claimTreatmentDate" force="true"/>
+					<show id="qa:claimTreatementDate" force="true"/>
 					<show id="qa:claimTreatmentActor" force="true"/>
 
 					<show id="qa:claimResponseDate" force="true"/>
@@ -452,9 +453,8 @@
 					<show id="cm:name" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
-					<!-- <show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:productState" /> -->
+					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:subsidiary" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademark" force="true" />
@@ -477,6 +477,7 @@
 
 					<!-- mainInfo -->
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:clientTel" />
 					<show id="bcpg:clientEmail" />
 					<show id="bcpg:clientFax" />
@@ -544,7 +545,7 @@
    			   <show id="qa:claimOriginHierarchy1" />
 					<show id="qa:claimOriginHierarchy2" />
 
-					<show id="qa:claimTreatmentDate" />
+					<show id="qa:claimTreatementDate" />
 					<show id="qa:claimTreatmentActor" />
 					<show id="qa:claimTreatementDetails" />
 					<show id="qa:claimTreatementPrevActions"/>
@@ -636,7 +637,7 @@
 						</control>
 					</field>
 
-					<field id="qa:claimTreatmentDate" set="claim-info"/>
+					<field id="qa:claimTreatementDate" set="claim-info"/>
 					<field id="qa:claimTreatmentActor" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
 					<field id="qa:claimTreatementDetails" set="claim-info"/>
@@ -920,6 +921,27 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- qa:controlStep type (creating nodes) -->
+	<config evaluator="model-type" condition="qa:controlStep">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
 	<!-- qa:controlMethod type (existing nodes) -->
 	<config evaluator="node-type" condition="qa:controlMethod">
@@ -929,6 +951,100 @@
 					<show id="cm:name" />
 					<show id="cm:titled" />
 					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- qa:controlMethod type (creating nodes) -->
+	<config evaluator="model-type" condition="qa:controlMethod">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- qa:controlCharact type (existing nodes) -->
+	<config evaluator="node-type" condition="qa:controlCharact">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:controlCharactType" />
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- qa:controlCharact type (creating nodes) -->
+	<config evaluator="model-type" condition="qa:controlCharact">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:controlCharactType" />
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:controlCharactType" />
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- qa:controlUnit type (existing nodes) -->
+	<config evaluator="node-type" condition="qa:controlUnit">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- qa:controlUnit type (creating nodes) -->
+	<config evaluator="model-type" condition="qa:controlUnit">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:titled" />
 					<show id="bcpg:code" />
 				</field-visibility>
 			</form>
@@ -1093,23 +1209,36 @@
 			<form>
 				<field-visibility>
 					<show id="qa:clType" />
-					<show id="qa:clMethod" />
-					<show id="qa:clMini" />
-					<show id="qa:clMaxi" />
 					<show id="qa:clCharacts" />
+					<show id="qa:clTarget" />
+					<show id="qa:clUnit" />
+					<show id="qa:clMini" />
+					<show id="qa:clMaxi" />					
+					<show id="qa:clTextCriteria" />
 					<show id="qa:clRequired" />
+					<show id="qa:clMethod" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:clTextCriteria">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
 					<show id="qa:clType" />
-					<show id="qa:clMethod" />
 					<show id="qa:clCharacts" />
+					<show id="qa:clTarget" />
+					<show id="qa:clUnit" />
+					<show id="qa:clMini" />
+					<show id="qa:clMaxi" />		
+					<show id="qa:clTextCriteria" />			
 					<show id="qa:clRequired" />
+					<show id="qa:clMethod" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -1121,12 +1250,21 @@
 			<form>
 				<field-visibility>
 					<show id="qa:clType" />
-					<show id="qa:clMethod" />
 					<show id="qa:clCharacts" />
+					<show id="qa:clTarget" />
+					<show id="qa:clUnit" />
+					<show id="qa:clMini" />
+					<show id="qa:clMaxi" />	
+					<show id="qa:clTextCriteria" />				
 					<show id="qa:clRequired" />
+					<show id="qa:clMethod" />
 				</field-visibility>
-
 				<appearance>
+					<field id="qa:clTextCriteria">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

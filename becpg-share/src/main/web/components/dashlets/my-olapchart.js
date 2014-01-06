@@ -1,7 +1,7 @@
 /**
  * OlapGraph component.
  * 
- * @author "Matthieu Laborie <matthieu.laborie@becpg.fr
+ * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>
  * @namespace beCPG
  * @class beCPG.component.OlapGraph
  */

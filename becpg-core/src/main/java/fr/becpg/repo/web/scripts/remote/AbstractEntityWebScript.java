@@ -202,18 +202,17 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				@Override
 				public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
 					try {
-						logger.debug("EntityProviderCallBack call : " + callBack + "?nodeRef=" + nodeRef.toString());
+						
 
+						String url = callBack + "?nodeRef=" + nodeRef.toString();
+						
 						HttpClient httpClient = new DefaultHttpClient();
 						
-						Header authHeader = null;
-						
-							logger.debug("Set authentication for callback ");
-							authHeader = BasicScheme.authenticate(
+						Header authHeader  = BasicScheme.authenticate(
 									 new UsernamePasswordCredentials(user, password),
 									 "UTF-8", false);
 
-						HttpGet entityUrl = new HttpGet(callBack + "?nodeRef=" + nodeRef.toString());
+						HttpGet entityUrl = new HttpGet(url);
 						
 						entityUrl.addHeader(authHeader);
 			
@@ -222,6 +221,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 						InputStream dataStream = null;
 						
 						try {
+							logger.debug("Try getting nodeRef  from : " +url); 
 							
 							HttpResponse httpResponse = httpClient.execute(entityUrl);
 							HttpEntity responseEntity = httpResponse.getEntity();
@@ -242,17 +242,25 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 								remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
 							
 							}
+							
+							logger.debug("Getting node success for :"+url);
+							
 							return entityNodeRef;
 							
 						} finally {
 							IOUtils.closeQuietly(entityStream);
 							IOUtils.closeQuietly(dataStream);
 						}
+					
+						
 					} catch (MalformedURLException e) {
 						throw new BeCPGException(e);
 					} catch (IOException e) {
 						throw new BeCPGException(e);
-					}
+					}catch (Exception e) {
+						logger.error("Cannot import nodeRef: "+nodeRef,e);
+						throw e;
+					}	
 
 				}
 			};

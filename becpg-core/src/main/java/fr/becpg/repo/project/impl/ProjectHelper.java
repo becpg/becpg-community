@@ -150,14 +150,25 @@ public class ProjectHelper {
 		return totalWork != 0 ? 100 * workDone / totalWork : 0;
 	}
 
-	public static Date getLastEndDate(List<TaskListDataItem> tasks) {
+	public static Date getLastEndDate(ProjectData projectData) {
 		Date endDate = null;
-		for (TaskListDataItem task : tasks) {
-			if (task.getEnd() != null && (endDate == null || task.getEnd().after(endDate))) {
+		for (TaskListDataItem task : projectData.getTaskList()) {
+			if (endDate == null || (task.getEnd() != null && task.getEnd().after(endDate))) {
 				endDate = task.getEnd();
 			}
 		}
 		return endDate;
+	}
+	
+	public static Date getFirstStartDate(ProjectData projectData) {
+		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
+		Date startDate = null;
+		for (TaskListDataItem task : tasks) {
+			if (startDate == null || (task.getStart() != null && task.getStart().before(startDate))) {
+				startDate = task.getStart();
+			}
+		}
+		return startDate;
 	}
 
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {

@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ $# -ne 1 ]
+if [ $# -ne 2 ]
    then
-      echo "Usage: $0 <server path>"
+      echo "Usage: $0 <server path> <modules (core,saiku)>"
       exit 0
 fi
 
@@ -19,55 +19,53 @@ install_share_amp(){
 	java -jar  $DEPLOY_ROOT/alfresco-mmt.jar install amps/$1 $SERVER/webapps/share.war -force -nobackup
 }
 
-read -p "Deploy report server? (y/n)" ansreport
+if [[ $2 = *core* ]]; then
+	echo "**********************************************************"
+	echo "Deploy core "
+	echo "**********************************************************"
+	
+	rm $SERVER/webapps/alfresco.war
+	rm -rf $SERVER/webapps/alfresco
+	cp $SERVER/webapps/alfresco.war.setup $SERVER/webapps/alfresco.war
+	
+	rm $SERVER/webapps/share.war
+	rm -rf $SERVER/webapps/share
+	cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
+	
+	 install_core_amp alfresco-core-patch-*.amp
+	 install_core_amp becpg-controls-core-*.amp 
+	 install_core_amp becpg-designer-core-*.amp
+	 install_core_amp becpg-core-*.amp
+	 
+	 install_share_amp becpg-controls-share-*.amp
+	 install_share_amp becpg-designer-share-*.amp
+	 install_share_amp becpg-share-*.amp
 
-echo "**********************************************************"
-echo "Deploy core AMP"
-echo "**********************************************************"
-
-rm $SERVER/webapps/alfresco.war
-rm -rf $SERVER/webapps/alfresco
-cp $SERVER/webapps/alfresco.war.setup $SERVER/webapps/alfresco.war
-
-install_core_amp alfresco-core-patch-*.amp
-install_core_amp becpg-controls-core-*.amp 
-install_core_amp becpg-designer-core-*.amp
-install_core_amp becpg-core-*.amp
-install_core_amp alfresco-googledocs-repo-*.amp
-
-
-echo "**********************************************************"
-echo "Deploy share AMP"
-echo "**********************************************************"
-
-rm $SERVER/webapps/share.war
-rm -rf $SERVER/webapps/share
-cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
-
-#install_share_amp alfresco-share-patch-*.amp
-install_share_amp becpg-controls-share-*.amp
-install_share_amp becpg-designer-share-*.amp
-install_share_amp becpg-share-*.amp
-install_share_amp alfresco-googledocs-share-*.amp
-
-#clean dir
-rm -rf $SERVER/temp/*
-rm -rf $SERVER/work/*
-rm -rf $SERVER/webapps/*.bak
-
-
-echo "**********************************************************"
-echo "Deploy patch "
-echo "**********************************************************"
-
-jar ufv $SERVER/webapps/share.war -C dist/share .
-
-
-if [ "$ansreport" = "y" ]; then
-echo "**********************************************************"
-echo "Deploy Report Server"
-echo "**********************************************************"
-
-rm -rf $SERVER/webapps/becpg-report
-cp amps/becpg-report-*.war $SERVER/webapps/becpg-report.war
 fi
+
+
+if [[ $2 = *saiku* ]]; then
+	echo "**********************************************************"
+	echo "Deploy OLAP Cube"
+	echo "**********************************************************"
+	rm $SERVER/webapps/saiku.war
+	rm $SERVER/webapps/saiku-ui.war
+	rm -rf $SERVER/webapps/saiku
+	rm -rf $SERVER/webapps/saiku-ui
+	cp $SERVER/webapps/saiku.war.setup $SERVER/webapps/saiku.war
+	cp $SERVER/webapps/saiku-ui.war.setup $SERVER/webapps/saiku-ui.war
+	
+	jar ufv $SERVER/webapps/saiku.war -C dist/saiku .
+	jar ufv $SERVER/webapps/saiku-ui.war -C dist/saiku-ui .
+fi
+
+
+
+
+
+
+
+
+
+
+

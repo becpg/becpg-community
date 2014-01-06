@@ -1,6 +1,7 @@
 <formulation-view>
    <actionSetToolbar>
    	<action type="action-link" id="onActionBulkEdit"  permission="edit" label="actions.bulk-edit" />
+   	<action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.simulate" />
       <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
       <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
   		<action type="action-link" id="onActionUp" permission="sort" label="menu.selected-items.up" />
@@ -11,6 +12,7 @@
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
+      <action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.simulate" />
       <action type="action-link" id="onAddLabelingAspect" list="packagingList" permission="edit" label="actions.add-labelingAspect" />
    </actionSetDataGrid>
 </formulation-view>

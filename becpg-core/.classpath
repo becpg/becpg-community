@@ -22,8 +22,9 @@
   <classpathentry kind="var" path="M2_REPO/javax/xml/jaxrpc-api/1.1/jaxrpc-api-1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-  <classpathentry kind="src" path="/becpg-controls-core"/>
-  <classpathentry kind="src" path="/becpg-designer-core"/>
+  <classpathentry kind="var" path="M2_REPO/fr/becpg/becpg-controls-core/1.5.3/becpg-controls-core-1.5.3-api.jar"/>
+  <classpathentry kind="var" path="M2_REPO/fr/becpg/becpg-designer-core/1.5.3/becpg-designer-core-1.5.3-api.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/google/guava/guava/13.0/guava-13.0.jar"/>
   <classpathentry kind="src" path="/becpg-report"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-repository/4.2.c/alfresco-repository-4.2.c.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-data-model/4.2.c/alfresco-data-model-4.2.c.jar"/>

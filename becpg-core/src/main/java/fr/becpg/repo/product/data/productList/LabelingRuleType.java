@@ -11,9 +11,9 @@ public enum LabelingRuleType {
 
 	Rename,
 	
-	Combine,
+	Type,
 	
-	Aggregate,
+	Locale,
 	
 	Render,
 	
@@ -23,7 +23,10 @@ public enum LabelingRuleType {
 	
 	Detail,
 	
+	DoNotDetails,
+	
 	Group,
 	
 	DoNotDeclare;
+
 }

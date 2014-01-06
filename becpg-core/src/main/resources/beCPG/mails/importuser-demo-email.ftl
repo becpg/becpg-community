@@ -53,13 +53,13 @@
 															<br />- Password (I advice you to change it) : ${password}</p>
 															
 															<p>I advice you to use Firefox or Chrome browser.<br />
-															In the site "Projects", you will find some project samples.<br />
-															In the site "R&D", you will find some product samples.<br />
-															You can create new products or new projects in the existing sites or create new sites.<br />
+															In the site "Projects", you will find some projects.<br />
+															In the site "R&D", you will find some products (ie: A Custom quiche 400g).<br />
+															You can create new products or new projects in existing sites or create new sites.<br />
 															Visit this page to get some tutorials: <a href="http://www.becpg.net/documentation/starting-kit">http://www.becpg.net/documentation/starting-kit</a><br />
 															</p>
 															
-															<p>Feel free to come back to Philippe (philippe.quere@becpg.fr) for any question / comment or if you want a web demo of 30 minutes in order to have an overview of beCPG.</p>
+															<p>Feel free to come back to Philippe (philippe.quere@becpg.fr) for any question / comment or if you want a web demo of beCPG.</p>
                                              
                                              <p>Sincerely,<br />
                                              beCPG</p>

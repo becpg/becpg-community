@@ -5,8 +5,6 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.model.SystemProductType;
-
 public interface HierarchyService {
 
 	public NodeRef getRootHierarchy(QName type, String value);
@@ -18,6 +16,6 @@ public interface HierarchyService {
 	public List<NodeRef> getAllHierarchiesByPath(String path, String query);
 	public NodeRef createRootHierarchy(NodeRef dataListNodeRef, String value);
 	public NodeRef createHierarchy(NodeRef dataListNodeRef, NodeRef hierarchyParent, String value);
-	public String  getHierarchyPath(NodeRef hierarchy, SystemProductType systemProductType);
+	public String  getHierarchyPath(NodeRef hierarchy);
 	
 }

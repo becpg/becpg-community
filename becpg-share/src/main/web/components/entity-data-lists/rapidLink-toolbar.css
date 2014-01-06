@@ -1,0 +1,42 @@
+.datalist-toolbar .rapidLink ul span {
+	cursor: pointer;
+	display: block;
+	margin-left: -4px;
+	min-height: 16px;
+	padding: 2px 0px 1px 24px;
+}
+
+.datalist-toolbar .rapidLink span.first-child {
+	background: url(../documentlibrary/images/create-content-16.png)
+		no-repeat 12px 4px;
+	padding-left: 24px;
+}
+
+.datalist-toolbar .rapidLink  span.import {
+	background: url(../images/publish-external-16.png) no-repeat 2px 50%;
+}
+
+.datalist-toolbar .rapidLink  span.simulation {
+	background: url(images/eco-do-simulation-16.png) no-repeat 2px 50%;
+}
+
+.datalist-toolbar .rapidLink  span.finishedProduct {
+	background: url(../images/filetypes/generic-finishedProduct-16.png)
+		no-repeat 2px 50%;
+}
+
+.datalist-toolbar .rapidLink  span.rawMaterial {
+	background: url(../images/filetypes/generic-rawMaterial-16.png)
+		no-repeat 2px 50%;
+}
+
+.datalist-toolbar .rapidLink  span.semiFinishedProduct {
+	background: url(../images/filetypes/generic-semiFinishedProduct-16.png)
+		no-repeat 2px 50%;
+}
+
+.datalist-toolbar .rapidLink  span.localSemiFinishedProduct {
+	background:
+		url(../images/filetypes/generic-localSemiFinishedProduct-16.png)
+		no-repeat 2px 50%;
+}

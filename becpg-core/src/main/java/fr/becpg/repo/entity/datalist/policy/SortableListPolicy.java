@@ -4,6 +4,7 @@
 package fr.becpg.repo.entity.datalist.policy;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,8 +43,10 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 										   CopyServicePolicies.OnCopyNodePolicy,
 										   CopyServicePolicies.OnCopyCompletePolicy{
 
+	private static String KEY_CALCULATE_DEPTH_SORT = "KeyCalculateDepthSort";
+	private static String KEY_DELETE = "KeyDelete";
+	
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
-
 
 	private DataListSortService dataListSortService;
 	private BeCPGSearchService beCPGSearchService;
@@ -109,6 +112,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		}
 		
 		if(hasChanged){		
+			logger.debug("onUpdateProperties has changed");
 			queueNode(nodeRef);
 		}		
 	}
@@ -116,29 +120,51 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspect) {
 
-		logger.debug("SortableListPolicy.onAddAspect: " + aspect);		
-		
 		// try to avoid to do two times the work, otherwise it duplicates nodeRef in lucene index !!!
-		if (nodeService.exists(nodeRef) && (aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && 
-				!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL) && 
-				nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null) 
-				|| (aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL) && nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null)) {
+		if (nodeService.exists(nodeRef)) {
 			
 			if (logger.isDebugEnabled()) {
-				logger.debug("Add sortable aspect policy ");
+				logger.debug("onAddAspect");
+			}
+			
+			boolean addInQueue = false;
+			if(nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null && aspect.isMatch(BeCPGModel.ASPECT_SORTABLE_LIST) && 
+					!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)){
+				addInQueue = true;
+				if (logger.isDebugEnabled()) {
+					logger.debug("Add sortable aspect policy ");
+				}
+			}
+			
+			if((nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT) == null || nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null) && 
+					aspect.isMatch(BeCPGModel.ASPECT_DEPTH_LEVEL)){
+				addInQueue = true;
+				// queue parent before
+				NodeRef parentNodeRef = (NodeRef)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+				if(parentNodeRef != null && 
+						(nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_SORT) == null || nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_DEPTH_LEVEL) == null)){
+					queueNode(parentNodeRef);
+				}
+				if (logger.isDebugEnabled()) {
+					logger.debug("Add depthLevel aspect policy ");
+				}
 			}
 	
-			queueNode(nodeRef);			
+			if(addInQueue){
+				queueNode(nodeRef);
+			}					
 		}
 	}	
 	
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		
+		Set<NodeRef> deletedNodes = new HashSet<>();		
 		for (NodeRef nodeRef : pendingNodes) {
 			if(!nodeService.exists(nodeRef)){
-				pendingNodes.remove(nodeRef);
+				deletedNodes.add(nodeRef);				
 			}
 		}
+		pendingNodes.removeAll(deletedNodes);
 		
 		dataListSortService.computeDepthAndSort(pendingNodes);
 	}
@@ -148,7 +174,8 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 				
 		logger.debug("SortableListPolicy.onDeleteNode");
 		
-		//if(nodeService.exists(childRef.getParentRef()) && nodeService.exists(childRef.getChildRef())){
+		// if folder is deleted, all children are
+		if(nodeService.exists(childRef.getParentRef())){
 			try{
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
@@ -156,7 +183,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 			finally{
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 			}
-		//}				
+		}				
 	}
 
 	@Override
@@ -170,6 +197,36 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
             NodeRef destinationRef,
             boolean copyToNewNode,
             Map<NodeRef, NodeRef> copyMap){
+		
+		logger.debug("onCopyComplete destinationRef " + destinationRef);
+		
+		NodeRef sourceParentLevelNodeRef = (NodeRef)nodeService.getProperty(sourceNodeRef, BeCPGModel.PROP_PARENT_LEVEL);		
+		
+		// parent equals -> need to update the parent of copied node
+		if(sourceParentLevelNodeRef != null){
+			
+			NodeRef targetParentLevelNodeRef = (NodeRef)nodeService.getProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL);
+			if(sourceParentLevelNodeRef.equals(targetParentLevelNodeRef)){
+			
+				// we assume sort is keeped during copy
+				Integer sourceParentSort = (Integer)nodeService.getProperty(sourceParentLevelNodeRef, BeCPGModel.PROP_SORT);
+				
+				NodeRef targetParentNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
+				String query = LuceneHelper.getCondParent(targetParentNodeRef, null);
+				query += LuceneHelper.getCondType(nodeService.getType(sourceParentLevelNodeRef));
+				query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : "", LuceneHelper.Operator.AND);
+				List<NodeRef> result = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+				
+				if(!result.isEmpty()){
+					NodeRef copiedParentNodeRef = result.get(0);
+					logger.debug("update the parent of copied node " + targetParentLevelNodeRef + " with value " + copiedParentNodeRef);
+					nodeService.setProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL, copiedParentNodeRef);
+				}
+				else{
+					logger.warn("DepthLevelAspectCopyBehaviourCallback : parent not found.");
+				}
+			}			
+		}
 		
 		policyBehaviourFilter.enableBehaviour(destinationRef, BeCPGModel.ASPECT_DEPTH_LEVEL);
     }
@@ -187,34 +244,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {				
 			policyBehaviourFilter.disableBehaviour(copyDetails.getTargetNodeRef(), BeCPGModel.ASPECT_DEPTH_LEVEL);
 			return true;
-		}
-
-		@Override
-		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails,
-				Map<QName, Serializable> properties) {		
-			
-			logger.debug("DepthLevelAspectCopyBehaviourCallback.getCopyProperties()");			
-			NodeRef sourceParentNodeRef = (NodeRef)copyDetails.getSourceNodeProperties().get(BeCPGModel.PROP_PARENT_LEVEL);
-			NodeRef targetParentNodeRef = (NodeRef)properties.get(BeCPGModel.PROP_PARENT_LEVEL);
-			
-			// parent equals -> need to update the parent of copied node
-			if(sourceParentNodeRef != null && sourceParentNodeRef.equals(targetParentNodeRef)){
-				
-				// we assume sort is keeped during copy
-				Integer sourceParentSort = (Integer)nodeService.getProperty(sourceParentNodeRef, BeCPGModel.PROP_SORT);
-				
-				String query = LuceneHelper.getCondParent(copyDetails.getTargetParentNodeRef(), null);
-				query += LuceneHelper.getCondType(nodeService.getType(copyDetails.getSourceNodeRef()));
-				query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : "", LuceneHelper.Operator.AND);
-				List<NodeRef> result = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-				
-				if(!result.isEmpty()){
-					NodeRef copiedParentNodeRef = result.get(0);
-					logger.debug("update the parent of copied node " + copyDetails.getTargetNodeRef() + " with value " + copiedParentNodeRef);
-					properties.put(BeCPGModel.PROP_PARENT_LEVEL, copiedParentNodeRef);
-				}
-			}				
-			return properties;
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -9,11 +10,13 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -101,7 +104,7 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Override
 	public List<NodeRef> getTaskLegendList() {
-		return beCPGSearchService.luceneSearch(QUERY_TASK_LEGEND);
+		return beCPGSearchService.luceneSearch(QUERY_TASK_LEGEND, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true));
 	}
 
 	@Override
@@ -164,6 +167,23 @@ public class ProjectServiceImpl implements ProjectService {
 //			logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " + dlAssociationRef.getSourceRef());
 //			nodeService.deleteNode(dlAssociationRef.getSourceRef());
 //		}			
+	}
+
+	@Override
+	public void submitTask(NodeRef nodeRef) {
+		
+		Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+		Date endDate = ProjectHelper.removeTime(new Date());
+		
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Completed.toString());
+		// we want to keep the planned duration to calculate overdue				
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
+		//milestone duration is maximum 1 day or startDate is after endDate
+		Boolean isMileStone = (Boolean)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
+		if((isMileStone != null && isMileStone.booleanValue()) || 
+				(startDate == null || startDate.after(endDate))){
+			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
+		}		
 	}
 	
 }

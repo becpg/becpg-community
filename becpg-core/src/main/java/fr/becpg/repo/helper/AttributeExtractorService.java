@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -34,7 +35,7 @@ public interface AttributeExtractorService {
 	
 	
 	public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
-
+	
 	public String getPersonDisplayName(String userId);
 
 	public String convertDateValue(Serializable value);
@@ -61,7 +62,7 @@ public interface AttributeExtractorService {
 	//Use convertDateValue instead
 	public Serializable getProperty(NodeRef nodeRef, QName propName);
 
+	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 
-
-	
+	public String extractAssociationForReport(AssociationRef assocRef);
 }

@@ -13,20 +13,14 @@
 
 </@>
 
+<@markup id="widgets">
+  		<@createWidgets group="project-toolbar"/>
+</@>
+
 
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
-		<#if page.url.args.view??>
-				<#assign view=page.url.args.view?js_string>
-		<#else>
-			<#assign view="dataTable">
-		</#if>
-		<@inlineScript group="project-toolbar">
-			   new beCPG.component.ProjectListToolbar("${el}","${view}").setMessages(
-			      ${messages}
-			   );
-		</@>
 		<div id="${el}-body" class="project-list-toolbar datalist-toolbar toolbar">
 		   <div id="${el}-headerBar" class="header-bar flat-button theme-bg-2">
 		      <div class="left">
@@ -49,13 +43,23 @@
 		            </span>
 		         </div>
 		         <div class="separator">&nbsp;</div>
-		          <div class="export-csv">
+		         <div class="export-csv">
 		            <span id="${el}-export-csv-button" class="yui-button yui-checkbox-button">
 		               <span class="first-child">
 		                  <button name="exportCsv"></button>
 		               </span>
 		            </span>
 		         </div>
+		         <div class="separator">&nbsp;</div>
+		         <div class="reporting-menu">
+					    <span class="yui-button yui-push-button" id="${el}-reporting-menu-button">
+					         <span class="first-child">
+					         	<button name="downloadReport"></button>
+					         </span>
+					    </span>
+					    <select id="${el}-reporting-menu"  ></select>
+		         </div>
+		          
 		      </div>
 		   </div>
 		</div>

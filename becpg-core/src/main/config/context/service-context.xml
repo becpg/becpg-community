@@ -108,6 +108,18 @@
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
 	</bean>
 	
+	<bean id="nutListValuePlugin" parent="entityListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.NutListValuePlugin">
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="associationService" ref="associationService"/>
+	</bean>
+	
+	<bean id="ingListValuePlugin" parent="entityListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.IngListValuePlugin">
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="associationService" ref="associationService"/>
+	</bean>
+	
 	<bean id="variantListValuePlugin" parent="entityListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
 	</bean>
@@ -206,6 +218,9 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="entityService" ref="entityService" />
 		<property name="versionService" ref="versionService" />
+		<property name="authenticationService" ref="authenticationService"/>
+		<property name="permissionService" ref="permissionService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 	</bean>
 
 	<!-- Migrator -->
@@ -286,17 +301,18 @@
 		<property name="formulationService" ref="formulationService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
-		
+		<property name="transactionService" ref="transactionService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 	</bean>
 	<bean id="entityService" class="fr.becpg.repo.entity.impl.EntityServiceImpl">
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="fileFolderService" ref="fileFolderService" />		
 		<property name="copyService" ref="copyService" />
 		<property name="contentService" ref="contentService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="repoService" ref="repoService" />
 	</bean>
 	<bean id="entitySystemService" class="fr.becpg.repo.entity.impl.EntitySystemServiceImpl">
 		<property name="nodeService" ref="nodeService" />
@@ -408,6 +424,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="permissionService" ref="permissionService" />
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
 	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
@@ -438,10 +455,10 @@
 			<map>
 			  <entry key="fr.becpg.repo.security.SecurityService" value="10" />
 			  <entry key="fr.becpg.repo.entity.version.EntityVersionService" value="10" />
-			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="100" />
+			  <entry key="fr.becpg.repo.helper.AttributeExtractorService" value="500" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.childs" value="2000" />
 			  <entry key="fr.becpg.repo.helper.AssociationService.assocs" value="20000" />
-			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="100" />
+			  <entry key="fr.becpg.repo.jscript.Thumbnail" value="10" />
 			</map>
 		</property>
 	</bean>

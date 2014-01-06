@@ -35,6 +35,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
@@ -404,7 +405,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		if(attribute instanceof PropertyDefinition){
 			
 			Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());								
-			value = attributeExtractorService.getStringValue((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats());
+			value = attributeExtractorService.extractPropertyForReport((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats());
     		
 		}
 		else if(attribute instanceof AssociationDefinition){// associations
@@ -413,10 +414,10 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			
 			for(AssociationRef assocRef : assocRefs){
 				
-				if(!value.isEmpty())
+				if(!value.isEmpty()){
 					value += RepoConsts.LABEL_SEPARATOR;
-				
-				value += (String)nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME);
+				}									
+				value += attributeExtractorService.extractAssociationForReport(assocRef);
 			}
 		}
 		

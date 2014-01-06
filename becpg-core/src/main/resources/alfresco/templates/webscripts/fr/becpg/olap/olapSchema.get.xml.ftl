@@ -38,7 +38,7 @@
 
 	<#--
 	Top 10 des produits (Nb NC pour 1 000 000 			UVC facturés) + graph (camembert)
-	NC par mois avec filtre par usine, année, 			marque, famille, produit, nom/groupe (tjs ramené à 1000 000 UVC 			fab) + graph (histogramme + ligne)
+	NC par mois avec filtre par usine, année, marque, famille, produit, nom/groupe (tjs ramené à 1000 000 UVC 			fab) + graph (histogramme + ligne)
 	Affichage des défauts avec % + graph 			(camembert)
 	Nombre de NC par équipe et par défaut 			avec filtres possible
 	Nombre NC par Centrale – client (2 niv)
@@ -67,14 +67,14 @@
 					MAX(IF(prop.prop_name = "qa:claimOriginHierarchy1",prop.string_value,NULL)) as claimOriginHierarchy1, 
 					MAX(IF(prop.prop_name = "qa:claimOriginHierarchy2",prop.string_value,NULL)) as claimOriginHierarchy2, 
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as dateCreated,
-					MAX(IF(prop.prop_name = "qa:claimResponseDate",prop.long_value,NULL)) as claimResponseDate, 
-					MAX(IF(prop.prop_name = "qa:claimTreatmentDate",prop.long_value,NULL)) as claimTreatmentDate,
-					MAX(IF(prop.prop_name = "qa:claimClosingDate",prop.long_value,NULL)) as claimClosingDate,
+					MAX(IF(prop.prop_name = "qa:claimResponseDate",prop.date_value,NULL)) as claimResponseDate, 
+					MAX(IF(prop.prop_name = "qa:claimTreatementDate",prop.date_value,NULL)) as claimTreatmentDate,
+					MAX(IF(prop.prop_name = "qa:claimClosingDate",prop.date_value,NULL)) as claimClosingDate,
 					entity.instance_id as instance_id
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type IN ("qa:nc") and instance_id = ${instanceId} and is_last_version = true
+					entity.entity_type = "qa:nc" and instance_id = ${instanceId} and is_last_version = true
 				group by 
 					id
 				]]>
@@ -159,7 +159,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="Produits">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les produits liés" primaryKey="entity_id">
-				<View alias="products">
+				<View alias="qaProducts">
 						<SQL dialect="generic">
 							<![CDATA[
 							select
@@ -172,10 +172,11 @@
 								prop_entity.entity_id as entity_id
 							from
 								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
-																			  LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+																	    LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 								prop_entity.prop_name="qa:product"
-								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
+								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") 
+								and entity.instance_id = ${instanceId}
 							group by id
 							]]>
 						</SQL>
@@ -298,7 +299,7 @@
 							from
 								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
-								 entity.entity_type IN ("pjt:project") and entity.is_last_version = true and entity.instance_id = ${instanceId}
+								 entity.entity_type = "pjt:project" and entity.is_last_version = true and entity.instance_id = ${instanceId}
 							group by id
 							]]>
 						</SQL>
@@ -330,6 +331,76 @@
 			<Formula>([Measures].[Moyenne des durées],[Désignation.Etape par nom].PrevMember) + ([Measures].[Moyenne des durées])</Formula>
 		</CalculatedMember> 
 		
+	</Cube>
+	
+	<Cube name="Evaluation des projets" cache="true" enabled="true" defaultMeasure="Note">
+		<View alias="projectScore">
+			<SQL dialect="generic">
+			<![CDATA[
+				select
+					datalist.id as id,
+					datalist.datalist_id as noderef,
+					datalist.entity_fact_id as entity_fact_id,
+					datalist.is_last_version as isLastVersion,
+					MAX(IF(prop.prop_name = "pjt:slCriterion",prop.string_value,NULL)) as slCriterion,
+					MAX(IF(prop.prop_name = "pjt:slWeight",prop.long_value,NULL)) as slWeight,
+					MAX(IF(prop.prop_name = "pjt:slScore",prop.long_value,NULL)) as slScore,					
+					datalist.instance_id as instance_id
+				from
+					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
+				where
+					datalist.datalist_name = "scoreList" and datalist.item_type = "pjt:scoreList"
+				group by 
+					id
+				]]>
+			</SQL>
+		</View>
+		
+		
+		<Dimension  name="D&#233;signation" >
+			<Hierarchy name="Crit&#232;re par nom" hasAll="true" allMemberCaption="Toutes les critères">
+				<Level name="Crit&#232;re" column="slCriterion"  type="String"    />
+			</Hierarchy>
+		</Dimension>		
+		
+		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="Projet">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les projets" primaryKey="id">
+				<View alias="pjt">
+						<SQL dialect="generic">
+							<![CDATA[
+							select
+								entity.entity_id as entity_noderef,
+								entity.entity_name as name,
+								entity.is_last_version as isLastVersion,
+								MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
+								MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
+								MAX(IF(prop.prop_name = "pjt:projectManager",prop.string_value,NULL)) as projectManager,
+								entity.id as id
+							from
+								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+							where
+								 entity.entity_type = "pjt:project" and entity.is_last_version = true and entity.instance_id = ${instanceId}
+							group by id
+							]]>
+						</SQL>
+					</View>		
+				<Level name="Famille" column="projectHierarchy1" type="String"   >
+				</Level>
+				<Level name="Sous famille" column="projectHierarchy2" type="String"   >
+				</Level>
+				<Level name="Chef de projet" column="projectManager"  type="String"    >
+				</Level>
+				<Level name="Projet" column="entity_noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Measure name="Pond&#233;ration" column="slWeight" datatype="Numeric" aggregator="sum" visible="true" />
+		<Measure name="Note" column="slScore" datatype="Numeric" aggregator="avg" visible="true"  />
+		
+		<CalculatedMember name="Note pond&#233;r&#233;e" dimension="Measures" visible="true">
+			<Formula>[Measures].[Pond&#233;ration] * [Measures].[Note] / 100</Formula>
+		</CalculatedMember> 
 	</Cube>
 
 	<Cube name="Projets" cache="true" enabled="true" defaultMeasure="Nombre de projets (Distinct)">
@@ -365,7 +436,7 @@
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type IN ("pjt:project") and entity.instance_id = ${instanceId}
+					entity.entity_type = "pjt:project" and entity.instance_id = ${instanceId}
 				group by 
 					id
 				]]>
@@ -413,7 +484,7 @@
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifié'
 	                            WHEN projectState='InProgress' THEN 'En cours'
-	                            WHEN projectState='OnHold' THEN 'Arrêté'
+	                            WHEN projectState='OnHold' THEN 'En attente'
 	                            WHEN projectState='Cancelled' THEN 'Annulé'
 	                            WHEN projectState='Completed' THEN 'Terminé'
 	                            ELSE 'Vide'
@@ -425,7 +496,7 @@
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="Entités">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les entités liées" primaryKey="entity_id">
-				<View alias="compoList">
+				<View alias="projectEntity">
 						<SQL dialect="generic">
 							<![CDATA[
 							select
@@ -438,11 +509,11 @@
 								prop_entity.entity_id as entity_id
 							from
 								becpg_property AS prop_entity  LEFT JOIN becpg_entity AS entity  ON entity.entity_id = prop_entity.prop_id
-																			  LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+																		 LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 							where
 								prop_entity.prop_name="pjt:projectEntity"
 								and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2") and entity.instance_id = ${instanceId}
-							group by id
+							 group by id
 							]]>
 						</SQL>
 				</View>		

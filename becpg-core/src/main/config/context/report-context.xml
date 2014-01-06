@@ -47,10 +47,29 @@
 		<property name="permissionService" ref="permissionService"/>		
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>	
 		<property name="transactionService" ref="transactionService" />
+		<property name="preferenceService" ref="preferenceService"/>
+		<property name="namespaceService" ref="namespaceService"/>
 	</bean>
 	
+	<!-- Thread pool for reports async generation -->
+	<bean id="reportAsyncThreadPool" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName">
+            <value>becpgReportAsyncAction</value>
+        </property>
+        <property name="corePoolSize">
+            <value>8</value>
+        </property>
+        <property name="maximumPoolSize">
+            <value>20</value>
+        </property>
+        <property name="threadPriority">
+            <value>1</value>
+        </property>
+    </bean>
+	
+	
 	<bean id="entityReportAsyncGenerator" class="fr.becpg.repo.report.entity.impl.EntityReportAsyncGeneratorImpl">
-		<property name="threadExecuter" ref="defaultAsyncThreadPool" />
+		<property name="threadExecuter" ref="reportAsyncThreadPool" />
 		<property name="entityReportService" ref="entityReportService" />
 	</bean>
 	
@@ -87,19 +106,19 @@
 	</bean>	
 	
 	
-	<!-- Report Policy -->
+	<!-- Report Policy 
 	<bean id="entityReportPolicy" class="fr.becpg.repo.entity.policy.EntityReportPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator"/>
 	</bean>
 	
+	-->
+	
 	<!-- Report property decorator -->
 	 <bean id="reportAssociationDecorator" parent="baseAssocDecorator" class="fr.becpg.repo.report.jscript.ReportAssociationDecorator">    
         <property name="associationName" value="rep:reports" />    
         <property name="reportTplService" ref="reportTplService"/>
-        <property name="preferenceService" ref="preferenceService"/>
+        <property name="entityReportService" ref="entityReportService"/>
     </bean>
 	
-	
-   
 </beans>

@@ -167,6 +167,13 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : [ "bcpg:cost", "bcpg:allergen", "bcpg:nut", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin",
             "bcpg:geo", "bcpg:microbio", "bcpg:physicoChem", "bcpg:organo" ],
       renderer : function(oRecord, data, label, scope) {
+    
+         if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
+            var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+            return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">' + Alfresco.util
+                  .encodeHTML(data.displayValue) + '</span>';
+         }
+         
          return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
       }
 
@@ -328,9 +335,12 @@ if (beCPG.module.EntityDataGridRenderers) {
    });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName :  "bcpg:illValue" ,
+      propertyName :  ["bcpg:illValue","bcpg:illManualValue"] ,
       renderer : function(oRecord, data, label, scope) {
-         return '<div class="note rounded"> '+data.displayValue+'</div>';
+         if(data.value!=null && data.value.length>0){
+            return '<div class="note rounded"> '+data.displayValue+'</div>';
+         }
+         return "";
       }
 
    });

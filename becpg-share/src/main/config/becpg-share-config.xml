@@ -105,6 +105,14 @@
 
 
 	<config evaluator="string-compare" condition="Workflow">
+		<permission-workflows default="allow">
+			  <permission-workflow name="activiti$claimProcess">
+			        <authorities>
+			              <authority type="group">GROUP_ClaimStart</authority>
+			          </authorities>
+			   </permission-workflow>
+		</permission-workflows>
+	
 		<hidden-workflows>
 			<!-- Hide all WCM related workflows -->
 			<workflow name="jbpm$wcmwf:*" />

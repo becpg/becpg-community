@@ -270,11 +270,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String nutGroup = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_NUTGROUP);
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_NUTLIST_GROUP, nutGroup);
 						} else if (type.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)){
-
 							String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_PHYSICO_CHEM_UNIT);
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
 						} else if(type.equals(BeCPGModel.TYPE_LABELCLAIMLIST)){
-							
 							// labelClaimType
 							String labelClaimType = (String)nodeService.getProperty(targetNodeRef, BeCPGModel.PROP_LABEL_CLAIM_TYPE);
 							nodeService.setProperty(productListItemNodeRef, BeCPGModel.PROP_LCL_TYPE, labelClaimType);

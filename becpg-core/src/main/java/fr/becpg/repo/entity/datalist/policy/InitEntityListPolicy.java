@@ -10,6 +10,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.DuplicateChildNodeNameException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -95,8 +96,11 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 					
 					String dataListName = (String)nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
 					if(!dataListTypeQName.getLocalName().equals(dataListName)){
-					
-						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, dataListTypeQName.getLocalName());
+						try {
+						  nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, dataListTypeQName.getLocalName());
+						} catch (DuplicateChildNodeNameException e){
+							logger.warn(e,e);
+						}
 					}				
 				}
 			}

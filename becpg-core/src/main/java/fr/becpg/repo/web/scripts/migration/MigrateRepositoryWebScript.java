@@ -41,6 +41,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.BeCPGVersionMigrator;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.migration.impl.BeCPGSystemFolderMigrator;
 import fr.becpg.repo.migration.impl.EntityFolderMigrator;
@@ -52,6 +53,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.EffectiveFilters;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -72,7 +74,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	private static final String ACTION_RENAME_USER = "renameUser";
 	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";
-	private static final String ACTION_MIGRATE_CLASSIFY_PRODUCT = "classifyProduct";
 	private static final String ACTION_DELETE_UNUSED_INGS = "deleteUnusedIngs";
 	
 	private static final String ACTION_REMOVE_ASPECT = "removeAspect";
@@ -127,6 +128,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	protected TransactionService transactionService;
 	
 	protected AssociationService associationService;
+	
+	protected RepoService repoService;
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -192,6 +195,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		this.transactionService = transactionService;
 	}
 
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
+
 	public void doMigrateEntityFolderInMt() {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);
 		/*
@@ -249,19 +256,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			}
 		} else if (ACTION_MIGRATE_ENTITY_FOLDER.equals(action)) {
 			doMigrateEntityFolderInMt();
-		} else if (ACTION_MIGRATE_CLASSIFY_PRODUCT.equals(action)) {
-			try {
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-
-				// search for entities to migrate
-				List<NodeRef> productsNodeRef = beCPGSearchService.luceneSearch("+TYPE:\"bcpg:product\" -ASPECT:\"bcpg:compositeVersionable\" ", RepoConsts.MAX_RESULTS_UNLIMITED);
-
-				for (NodeRef productNodeRef : productsNodeRef) {
-					productService.classifyProduct(repository.getCompanyHome(), productNodeRef);
-				}
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			}
 		} else if(ACTION_ADD_MANDATORY_ASPECT.equals(action)){
 			String type = req.getParameter(PARAM_TYPE);
 			String aspect = req.getParameter(PARAM_ASPECT);
@@ -363,7 +357,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}
 		else if(ACTION_CREATE_GEN_RAWMATERIAL.equals(action)){
 			
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_RAWMATERIAL));
+			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_RAWMATERIAL)) +
+						LuceneHelper.exclude(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_ERP_CODE)) +
+						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)) + 
+						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
 			List<NodeRef> rawMaterialNodeRefs = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_ERP_CODE));
 			Map<String, List<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<String, List<NodeRef>>();
 			
@@ -383,35 +380,55 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				
 				if(kv.getValue().size()>1){
 					
-					NodeRef rawMaterialNodeRef = kv.getValue().get(0);
-					ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialNodeRef);
-					RawMaterialData genRawMaterialData = new RawMaterialData();
-					genRawMaterialData.setName(kv.getKey() + "-GEN");
-					genRawMaterialData.setHierarchy1(rawMaterialData.getHierarchy1());
-					genRawMaterialData.setHierarchy2(rawMaterialData.getHierarchy2());
+					logger.info("kv.getKey(): " + kv.getKey());
 					
-//					List<NodeRef> supplierNodeRefs = new ArrayList<NodeRef>(kv.getValue().size());
-					
-					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(kv.getValue().size());
-					for(NodeRef rmNodeRef : kv.getValue()){
-						Double subQty = new Double(100 / kv.getValue().size());						
-						compoList.add(new CompoListDataItem(null, null, null, subQty, CompoListUnit.Perc, null, DeclarationType.Declare, rmNodeRef));
-						
-						List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(rmNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
-//						supplierNodeRefs.addAll(rawMaterialSupplierNodeRefs);
-						
-						// generate a new ERP
-						String newERPCode = kv.getKey();						
-						for(NodeRef rawMaterialSupplierNodeRef : rawMaterialSupplierNodeRefs){
-							newERPCode += "-" + (String)nodeService.getProperty(rawMaterialSupplierNodeRef, BeCPGModel.PROP_ERP_CODE);
+					// look for generic
+					NodeRef genRMNodeRef = null;
+					List<NodeRef> supplierRMNodeRefs = new ArrayList<>();
+					for(NodeRef n : kv.getValue()){
+						RawMaterialData rawMaterialData = (RawMaterialData)alfrescoRepository.findOne(n);
+						if(rawMaterialData.hasCompoListEl(EffectiveFilters.ALL)){
+							if(genRMNodeRef == null){
+								genRMNodeRef = n;
+							}					
+							else{
+								logger.warn("There is several generic raw materials with this ERP code: " + kv.getKey());
+							}
 						}
-						nodeService.setProperty(rmNodeRef, BeCPGModel.PROP_ERP_CODE, newERPCode);						
-					}								
-					
-					genRawMaterialData.getCompoListView().setCompoList(compoList);
-					ProductData productData = alfrescoRepository.create(repository.getCompanyHome(), genRawMaterialData);
-					nodeService.setProperty(productData.getNodeRef(), BeCPGModel.PROP_ERP_CODE, kv.getKey());
-//					associationService.update(genProductData.getNodeRef(), BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs);					
+						else{
+							supplierRMNodeRefs.add(n);
+							
+							// generate a new ERP code
+							String newERPCode = kv.getKey();	
+							List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(n, BeCPGModel.ASSOC_SUPPLIERS);
+							for(NodeRef rawMaterialSupplierNodeRef : rawMaterialSupplierNodeRefs){
+								newERPCode += "-" + (String)nodeService.getProperty(rawMaterialSupplierNodeRef, BeCPGModel.PROP_ERP_CODE);
+							}
+							logger.info("Set ERP code for " + n + " code " + newERPCode);
+							nodeService.setProperty(n, BeCPGModel.PROP_ERP_CODE, newERPCode);
+						}
+					}
+										
+					if(genRMNodeRef == null){
+						NodeRef rawMaterialNodeRef = kv.getValue().get(0);
+						ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialNodeRef);
+						RawMaterialData genRawMaterialData = new RawMaterialData();
+						genRawMaterialData.setName(kv.getKey() + "-GEN");
+						genRawMaterialData.setHierarchy1(rawMaterialData.getHierarchy1());
+						genRawMaterialData.setHierarchy2(rawMaterialData.getHierarchy2());
+						genRawMaterialData.setErpCode(kv.getKey());
+						
+						List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(kv.getValue().size());
+						for(NodeRef rmNodeRef : supplierRMNodeRefs){
+							Double subQty = new Double(100 / kv.getValue().size());						
+							compoList.add(new CompoListDataItem(null, null, null, subQty, CompoListUnit.Perc, null, DeclarationType.Declare, rmNodeRef));						
+						}								
+						
+						genRawMaterialData.getCompoListView().setCompoList(compoList);
+						logger.info("Create new gen raw material " + kv.getKey());						
+						ProductData productData = alfrescoRepository.create(repository.getCompanyHome(), genRawMaterialData);
+						//nodeService.setProperty(productData.getNodeRef(), BeCPGModel.PROP_ERP_CODE, kv.getKey());	
+					}						
 				}
 			}
 		}
@@ -426,7 +443,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				List<AssociationRef> inVolAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES);
 				List<AssociationRef> volAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES);
 				
-				if(ingAssocRefs.isEmpty() && inVolAssocRefs.isEmpty() && volAssocRefs.isEmpty()){
+				if(ingAssocRefs.isEmpty() && inVolAssocRefs.isEmpty() && volAssocRefs.isEmpty() && nodeService.exists(ingNodeRef)){
 					logger.info("Delete ing : " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));
 					nodeService.deleteNode(ingNodeRef);
 				}							

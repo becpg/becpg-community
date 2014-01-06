@@ -57,44 +57,59 @@
 	padding-left: 24px;
 }
 
-
-
 .labeling-view  .note {
-   position:relative;
-   padding:1em 1em;
-   background: url("../images/welcome-background.png") repeat-x scroll 0 0 transparent;
-   overflow:hidden;
+	position: relative;
+	padding: 1em 1em;
+	background: url("../images/welcome-background.png") repeat-x scroll 0 0
+		transparent;
+	overflow: hidden;
+	color: black;
+	border : 1px solid #FFEA5B;
 }
 
-.labeling-view .yui-ft-highlighted .note:before {
-	 border-color:#CBCBCB #CBCBCB #FFEA5B #FFEA5B;
-	}
-
 .labeling-view .note:before {
-   content:"";
-   position:absolute;
-   top:0;
-   right:0;
-   border-width:0 16px 16px 0;
-   border-style:solid;
-   border-color:#fff #fff #FFEA5B #FFEA5B;
-   background:#FFEA5B;
-   -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
-   -moz-box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
-   box-shadow:0 1px 1px rgba(0,0,0,0.3), -1px 1px 1px rgba(0,0,0,0.2);
-   display:block; width:0; /* Firefox 3.0 damage limitation */
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	border-width: 0 16px 16px 0;
+	border-style: solid;
+	border-color: #fff #fff #FFEA5B #FFEA5B;
+	background: #FFEA5B;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), -1px 1px 1px
+		rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), -1px 1px 1px
+		rgba(0, 0, 0, 0.2);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), -1px 1px 1px
+		rgba(0, 0, 0, 0.2);
+	display: block;
+	width: 0; /* Firefox 3.0 damage limitation */
 }
 
 .labeling-view  .note.rounded {
-   -webkit-border-radius:5px 0 5px 5px;
-   -moz-border-radius:5px 0 5px 5px;
-   border-radius:5px 0 5px 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 
 .labeling-view  .note.rounded:before {
-   border-width:8px;
-   border-color:#fff #fff transparent transparent;
-   -webkit-border-bottom-left-radius:5px;
-   -moz-border-radius:0 0 0 5px;
-   border-radius:0 0 0 5px;
+	border-width: 8px;
+	border-color: #fff #fff transparent transparent;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius: 0 0 0 5px;
+	border-radius: 0 0 0 5px;
+}
+
+.labeling-view .yui-dt-odd .note.rounded:before {
+	border-color: #F8F8F8 #F8F8F8 #FFEA5B #FFEA5B;
+}					
+
+.labeling-view .yui-dt-odd .yui-dt-highlighted .note.rounded:before, 
+.labeling-view .yui-dt-highlighted .note.rounded:before {
+	border-color: #F5F5F5 #F5F5F5 #FFEA5B #FFEA5B;
+}
+
+.labeling-view .yui-dt-odd .yui-dt-selected .note.rounded:before,
+.labeling-view .yui-dt-selected .note.rounded:before {
+	border-color: #AAAAAA #AAAAAA #FFEA5B #FFEA5B;
 }

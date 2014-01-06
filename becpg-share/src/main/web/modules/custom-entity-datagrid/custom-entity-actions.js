@@ -61,26 +61,29 @@
       },
 
       onActionShowWused : function EntityDataGrid_onActionShowWused(p_items) {
-         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], nodeRefs = [];
-
-         for ( var i = 0, ii = items.length; i < ii; i++) {
-            nodeRefs.push(items[i].nodeRef);
-         }
-
+         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
          function onActionShowWused_redirect(itemAssocName, assocName ){
+            var nodeRefs = [];
+            
+            for ( var i = 0, ii = items.length; i < ii; i++) {
+               if(!assocName){
+                  nodeRefs.push(items[i].nodeRef);
+               } else {
+                  if(items[i].itemData[itemAssocName].value){
+                     nodeRefs.push(items[i].itemData[itemAssocName].value);
+                  }else {
+                     for ( var j in items[i].itemData[itemAssocName]) {
+                        nodeRefs.push(items[i].itemData[itemAssocName][j].value);
+                     }
+                  }
+               }
+            }
+            
             if(!assocName){
                window.location = Alfresco.constants.URL_PAGECONTEXT + "wused?type=" + items[0].itemType + "&nodeRefs=" + nodeRefs
                .join();
             } else {
-               nodeRefs = [];
-               if(items[0].itemData[itemAssocName].value){
-                  nodeRefs.push(items[0].itemData[itemAssocName].value);
-               }else {
-                  for ( var j in items[0].itemData[itemAssocName]) {
-                     nodeRefs.push(items[0].itemData[itemAssocName][j].value);
-                  }
-               }
                window.location = Alfresco.constants.URL_PAGECONTEXT + "wused?assocName=" + assocName + "&nodeRefs=" + nodeRefs
                      .join();
             }
@@ -130,33 +133,73 @@
                            onActionShowWused_redirect(val,val);
                         });
          } else {
-            
-            var val = null;
-            
             if(this.datalistMeta.name.indexOf("WUsed") == 0){
+               var val = null, val2 =  "assoc_bcpg_compoListProduct";
                if(this.datalistMeta.name.indexOf("|")>0){
                   val ="assoc_"+this.datalistMeta.name.split("|")[1].replace(":","_");
+               } else if(this.datalistMeta.itemType==="bcpg:packagingList"){
+                  val = "assoc_bcpg_packagingListProduct";
+                  val2 = val;
+               } else if(this.datalistMeta.itemType==="mpm:processList"){
+                  val = "assoc_mpm_plResource";
+                  val2 = val;
                } else {
                   val = "assoc_bcpg_compoListProduct";
                }
-               onActionShowWused_redirect(val,"assoc_bcpg_compoListProduct");
+               onActionShowWused_redirect(val, val2);
             } else {
                onActionShowWused_redirect();
             }
-            
-           
-            
          }
 
       },
 
-      onAddLabelingAspect : function EntityDataGrid_onActionShowDetails(p_items) {
+      onAddLabelingAspect : function EntityDataGrid_onAddLabelingAspect(p_items) {
          var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
          for ( var i = 0, ii = items.length; i < ii; i++) {
             this._manageAspect(items[i].nodeRef, "pack:labelingAspect");
          }
       },
+      
+      onActionSimulate : function EntityDataGrid_onActionSimulate(p_items) {
+         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], me=this, nodeRefs = "";
+
+         for ( var i = 0, ii = items.length; i < ii; i++) {
+            if(nodeRefs.length>0){
+               nodeRefs+=",";
+            }
+            nodeRefs+=items[i].nodeRef;
+         }
+         
+         Alfresco.util.Ajax.request({
+            method : Alfresco.util.Ajax.POST,
+            url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?dataListItems="+nodeRefs,
+            successCallback : {
+               fn : function(resp) {
+                  if (resp.json) {
+                     for ( var i = 0, ii = items.length; i < ii; i++) {
+                        YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+                           nodeRef : items[i].nodeRef
+                        });
+                     }
+                  }
+               },
+               scope : this
+            },
+            failureCallback : {
+               fn : function EntityDataGrid_onActionUp_refreshFailure(response) {
+                   Alfresco.util.PopupManager.displayMessage({
+                       text : me.msg("message.details.failure")
+                   });
+               },
+               scope : this
+            }
+         });
+         
+         
+      },
+      
 
       _manageAspect : function EntityDataGrid_manageAspect(itemNodeRef, aspect) {
          var itemUrl = itemNodeRef.replace(":/", ""), me = this;

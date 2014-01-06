@@ -30,11 +30,7 @@ public class EntityTplServiceTest extends RepoBaseTestCase {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityTplServiceTest.class);
 
-	@Resource
-	private EntityService entityService;
 	
-	@Resource
-	private EntityTplService entityTplService;
 	
 	@Resource
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -44,22 +40,32 @@ public class EntityTplServiceTest extends RepoBaseTestCase {
 
 		logger.debug("testSynchronize");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef rmTplNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
 				RawMaterialData rmTplData = new RawMaterialData();
 				rmTplData.setName("Raw material Tpl");				
 				rmTplData.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);				
-				NodeRef rmTplNodeRef = alfrescoRepository.create(testFolderNodeRef, rmTplData).getNodeRef();
-				
+				return alfrescoRepository.create(testFolderNodeRef, rmTplData).getNodeRef();
+
+			}
+		}, false, true);
+		
+		final NodeRef rm1NodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				RawMaterialData rmTplData = (RawMaterialData) alfrescoRepository.findOne(rmTplNodeRef);
 				RawMaterialData rm1Data = new RawMaterialData();
 				rm1Data.setName("Raw material 1");
-				rm1Data.setEntityTplRef(rmTplNodeRef);
-				NodeRef rm1NodeRef = alfrescoRepository.create(testFolderNodeRef, rm1Data).getNodeRef();
+				rm1Data.setEntityTpl(rmTplData);
+				rm1Data =  (RawMaterialData) alfrescoRepository.create(testFolderNodeRef, rm1Data);
 				
-				assertFalse(alfrescoRepository.hasDataList(rm1NodeRef, BeCPGModel.TYPE_COSTLIST));
 				
+				assertTrue(rm1Data.getCostList()==null);
+				
+
 				// add costList on template
 				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, costs.get(0), null));
@@ -67,17 +73,39 @@ public class EntityTplServiceTest extends RepoBaseTestCase {
 				rmTplData.setCostList(costList);
 				alfrescoRepository.save(rmTplData);
 				
+				assertEquals(2, rmTplData.getCostList().size());
+				
+				return rm1Data.getNodeRef();
+			}
+		}, false, true);
+		
+				
+		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+				@Override
+				public NodeRef execute() throws Throwable {
+				
+					
+					
 				entityTplService.synchronizeEntities(rmTplNodeRef);
 				
-				assertTrue(alfrescoRepository.hasDataList(rm1NodeRef, BeCPGModel.TYPE_COSTLIST));
-				rm1Data = (RawMaterialData)alfrescoRepository.findOne(rm1NodeRef);
-				assertEquals(2, rm1Data.getCostList().size());
-				
-				return null;
+			return null;
 
 			}
 		}, false, true);
 
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				RawMaterialData rm1Data = (RawMaterialData)alfrescoRepository.findOne(rm1NodeRef);
+				assertEquals(2, rm1Data.getCostList().size());
+				
+				return null;
+			}
+				
+			}, false, true);
 	}
+
 	
 }

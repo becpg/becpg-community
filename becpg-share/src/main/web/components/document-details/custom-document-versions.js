@@ -145,7 +145,7 @@
         
         var downloadDialog = Alfresco.getArchiveAndDownloadInstance(),
             config = { nodesToArchive: [{"nodeRef": nodeRef}],
-                       archiveName: this.latestVersion.name };
+                       archiveName: encodeURIComponent(this.latestVersion.name) };
         downloadDialog.show(config);
      },
      
@@ -157,8 +157,8 @@
       */
      getDocumentVersionMarkup: function DocumentVersions_getDocumentVersionMarkup(doc)
      {
-        var downloadURL = Alfresco.constants.PROXY_URI + '/api/node/content/' + doc.nodeRef.replace(":/", "") + '/' + doc.name + '?a=true',
-        compareURL = Alfresco.constants.PROXY_URI + '/becpg/entity/compare/' + this.options.nodeRef.replace(":/", "") + '/' + doc.label + '/' + doc.name + ".pdf",
+        var downloadURL = Alfresco.constants.PROXY_URI + 'api/node/content/' + doc.nodeRef.replace(":/", "") + '/' + encodeURIComponent(doc.name) + '?a=true',
+        compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + this.options.nodeRef.replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name) + ".pdf",
            html = '';
 
         html += '<div class="version-panel-left">';

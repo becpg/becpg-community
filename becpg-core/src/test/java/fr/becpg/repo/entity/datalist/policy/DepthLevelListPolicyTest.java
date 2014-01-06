@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -19,8 +20,14 @@ import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.datalist.DataListSortService;
+import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CompoListUnit;
+import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -37,6 +44,8 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 	@Resource
 	private DataListSortService dataListSortService;
 
+	@Resource
+	private CopyService copyService;
 	
 	/**
 	 * Test get Multilevel of the compoList
@@ -415,6 +424,80 @@ public class DepthLevelListPolicyTest extends RepoBaseTestCase {
 				return null;
 			}
 		}, false, true);		
+	}	
+	
+	/**
+	 * Test parent level copy (#637)
+	 * 
+     *	PF
+     *   	MP
+     *   	SFL
+	 */
+	@Test
+	public void testParentLevelCopy() {
+
+		logger.debug("testParentLevelCopy");
+		
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
+				RawMaterialData rawMaterial1 = new RawMaterialData();
+				rawMaterial1.setName("Raw material 1");
+				NodeRef rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
+				
+				LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
+				lSF1.setName("Local semi finished 1");
+				NodeRef lSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
+				
+				/*-- Create finished product --*/
+				logger.info("/*-- Create finished product --*/");
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("Produit fini 1");
+				finishedProduct.setLegalName("Legal Produit fini 1");
+				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setQty(1d);				
+				finishedProduct.setDensity(1d);
+				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, lSF1NodeRef));
+				finishedProduct.getCompoListView().setCompoList(compoList);
+				
+				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+			}
+		}, false, true);	
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+								
+				ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
+				
+				finishedProductLoaded.getCompoListView().getCompoList().get(0).setParent(finishedProductLoaded.getCompoListView().getCompoList().get(1));
+				alfrescoRepository.save(finishedProductLoaded);
+						
+				return finishedProductNodeRef;
+			}
+		}, false, true);	
+		
+		final NodeRef copiedNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				
+				logger.debug("copy product");
+				return copyService.copy(finishedProductNodeRef, testFolderNodeRef,
+						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+								
+			}
+		}, false, true);
+		
+		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
+		final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
+
+		logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+		logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
+		assertNull(finishedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
+		assertNull(copiedProductLoaded.getCompoListView().getCompoList().get(0).getParent());
+		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
+		assertNotNull(copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent());
+		assertNotSame(finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef(), copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 	}	
 	
 	public void printSort(List<CompoListDataItem> compoListDataItem) {

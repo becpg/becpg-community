@@ -8,14 +8,11 @@ if [ $# -ne 1 ]
       exit 0
 fi
 
-
-export SERVER=$INSTANCE_DIR/$1
-
 echo "**********************************************************"
 echo "Build AMP"
 echo "**********************************************************"
 
-mvn clean package -Dmaven.test.skip=true $MVN_PROFILE
+mvn -T 2C clean package  -Dmaven.test.skip=true $MVN_PROFILE
 
 
 echo "**********************************************************"
@@ -23,23 +20,7 @@ echo "Deploy becpg"
 echo "**********************************************************"
 
 cd $BECPG_ROOT/distribution/target
-tar xvfz becpg-*-distribution.tar.gz
-cd becpg-*
-./deploy.sh $SERVER
+buildnumber=`ls becpg-*-distribution.tar.gz`
 
-read -p "Deploy olap server? (y/n)" ans 
-if [ "$ans" = "y" ]; then
-	echo "**********************************************************"
-	echo "Deploy OLAP Cube"
-	echo "**********************************************************"
-	cd $BECPG_OLAP_ROOT/target
-	tar xvfz becpg-olap-*-distribution.tar.gz
-	cd becpg-olap-*
-	./deploy.sh $SERVER
-	cd $BECPG_OLAP_ROOT/target
-	rm -rf becpg-olap-*
-fi
-
-
-cd $INSTANCE_DIR/../deploy/addons
-./deploy.sh $SERVER
+cd $TC_DIR/deploy
+./deploy.sh $1 ${buildnumber%%-distribution.*}

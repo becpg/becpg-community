@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -214,9 +215,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		// Specifications
 		NodeRef qualSpecNodeRef = visitFolder(qualityNodeRef, RepoConsts.PATH_QUALITY_SPECIFICATIONS);
 		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_PLANS);
-		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_POINTS);
-		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_METHODS);
-		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_STEPS);
+		visitFolder(qualSpecNodeRef, RepoConsts.PATH_CONTROL_POINTS);		
 		
 		visitFolder(qualityNodeRef, RepoConsts.PATH_PRODUCT_SPECIFICATIONS);
 		
@@ -431,10 +430,6 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			specialiseType = QualityModel.TYPE_CONTROL_PLAN;
 		} else if (folderName == RepoConsts.PATH_CONTROL_POINTS) {
 			specialiseType = QualityModel.TYPE_CONTROL_POINT;
-		} else if (folderName == RepoConsts.PATH_CONTROL_STEPS) {
-			specialiseType = QualityModel.TYPE_CONTROL_STEP;
-		} else if (folderName == RepoConsts.PATH_CONTROL_METHODS) {
-			specialiseType = QualityModel.TYPE_CONTROL_METHOD;
 		} else if (folderName == RepoConsts.PATH_QUALITY_CONTROLS) {
 			specialiseType = QualityModel.TYPE_QUALITY_CONTROL;
 		} else if (folderName == RepoConsts.PATH_NC) {
@@ -478,6 +473,10 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		}
 		
 		else if (folderName == RepoConsts.PATH_NC) {
+			
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimStart,
+					PermissionService.WRITE, true);
+			
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimAnalysis.toString(),
 					PermissionService.WRITE, true);
 			
@@ -486,6 +485,8 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(),
 					PermissionService.WRITE, true);
+			
+	
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(),
 					PermissionService.WRITE, true);
@@ -556,7 +557,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 */
 	private NodeRef visitSystemCharactsEntity(NodeRef parentNodeRef, String path) {
 		
-		Map<String,QName> entityLists = new HashMap<String,QName>();
+		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
 		entityLists.put(RepoConsts.PATH_NUTS, BeCPGModel.TYPE_NUT);
 		entityLists.put(RepoConsts.PATH_INGS, BeCPGModel.TYPE_ING);
@@ -587,7 +588,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 
 	private NodeRef visitSystemHierachiesEntity(NodeRef parentNodeRef, String path) {
 		
-       Map<String,QName> entityLists = new HashMap<String,QName>();
+       Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
 		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RAWMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_PACKAGINGMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
@@ -597,9 +598,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_PACKAGINGKIT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		
-		
-		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
-		
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);		
 	}
 	
 
@@ -612,7 +611,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 */
 	private NodeRef visitSystemListValuesEntity(NodeRef parentNodeRef, String path) {
 		
-		Map<String,QName> entityLists = new HashMap<String,QName>();
+		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
 		entityLists.put(RepoConsts.PATH_ING_TYPES,BeCPGModel.TYPE_ING_TYPE_ITEM);
 		entityLists.put(RepoConsts.PATH_ALLERGEN_TYPES,BeCPGModel.TYPE_LIST_VALUE);
@@ -633,7 +632,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	 */
 	private NodeRef visitSystemProjectListValuesEntity(NodeRef parentNodeRef, String path) {
 		
-		Map<String,QName> entityLists = new HashMap<String,QName>();
+		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
 		entityLists.put(RepoConsts.PATH_TASK_LEGENDS,ProjectModel.TYPE_TASK_LEGEND);
 		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
@@ -650,12 +649,16 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 	
 	private NodeRef visitSystemQualityListValuesEntity(NodeRef parentNodeRef, String path) {
 		
-		Map<String,QName> entityLists = new HashMap<String,QName>();
+		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		entityLists.put(RepoConsts.PATH_CLAIM_ORIGIN_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(RepoConsts.PATH_CLAIM_SOURCES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_CLAIM_TRACKING_VALUES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_CLAIM_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(RepoConsts.PATH_CLAIM_RESPONSES_STATES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(RepoConsts.PATH_CONTROL_METHODS,QualityModel.TYPE_CONTROL_METHOD);
+		entityLists.put(RepoConsts.PATH_CONTROL_STEPS,QualityModel.TYPE_CONTROL_STEP);
+		entityLists.put(RepoConsts.PATH_CONTROL_CHARACTS,QualityModel.TYPE_CONTROL_CHARACT);
+		entityLists.put(RepoConsts.PATH_CONTROL_UNITS,BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 		
@@ -734,6 +737,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				dataLists.add(BeCPGModel.TYPE_COSTLIST);
 				dataLists.add(BeCPGModel.TYPE_NUTLIST);
 				dataLists.add(BeCPGModel.TYPE_INGLIST);
+				dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
 				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
 				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
@@ -751,6 +755,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			}
 
 			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists, subFolders);
+			
 		}
 	}
 
@@ -767,6 +772,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
+		dataLists.add(BeCPGModel.TYPE_LABELING_RULE_LIST);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists, null);
 
 		// visit controlPlan
@@ -865,7 +871,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(),
 					NC_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_NC, true, true, false);
 		} catch (Exception e) {
-			logger.error("Failed to create nc report tpl. SystemProductType: " + QualityModel.TYPE_NC, e);
+			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_NC, e);
 		}
 
 		// compare report
@@ -938,7 +944,7 @@ public class InitRepoVisitorImpl extends AbstractInitVisitorImpl implements Init
 				SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
 				SystemGroup.Production.toString(),
 				SystemGroup.ProductionUser.toString(), SystemGroup.ProductionMgr.toString(),
-				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(),
+				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(),NCGroup.ClaimStart.toString(),
 				NCGroup.ClaimAnalysis.toString(),NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(), 
 				NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString()
 					};

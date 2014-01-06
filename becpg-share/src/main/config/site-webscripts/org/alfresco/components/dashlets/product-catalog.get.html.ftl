@@ -7,7 +7,7 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
 	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="product-catalog"></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/dashlets/becpg-catalog.js"  group="product-catalog"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/dashlets/product-catalog.js"  group="product-catalog"></@script>
 </@>
 
 
@@ -16,13 +16,14 @@
 		<#include "../../include/alfresco-macros.lib.ftl" />
 		<#assign el=args.htmlid?html>
 		<#assign prefFilter = preferences.filter!"Valid">
+		<#assign prefType = preferences.type!"finishedProduct">
 		<#assign prefSimpleView = preferences.simpleView!false>
 		<script type="text/javascript">//<![CDATA[
 		(function()
 		{
 		    new beCPG.dashlet.BeCPGCatalog("${el}").setOptions(
 		   {
-		   	catalogType : "product",
+		   	catalogType: "${prefType?js_string}",
 		      filter: "${prefFilter?js_string}",
 		      validFilters: [<#list filters as filter>"${filter.type?js_string}"<#if filter_has_next>,</#if></#list>],
 		      simpleView: ${prefSimpleView?string?js_string},
@@ -73,6 +74,16 @@
 		         <select id="${el}-filters-menu">
 		         <#list filters as filter>
 		            <option value="${filter.type?html}">${msg("filter." + filter.type)}</option>
+		         </#list>
+		         </select>
+		         <span class="align-left yui-button yui-menu-button" id="${el}-types">
+		            <span class="first-child">
+		               <button type="button" tabindex="0"></button>
+		            </span>
+		         </span>
+		         <select id="${el}-types-menu">
+		         <#list types as type>
+		            <option value="${type.name?html}">${msg("type." + type.name)}</option>
 		         </#list>
 		         </select>
 		         <div id="${el}-simpleDetailed" class="align-right simple-detailed yui-buttongroup inline">
