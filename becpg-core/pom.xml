@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.5.2</version>
+		<version>1.6.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
-			<version>1.5.2</version>
+			<version>1.6.0</version>
 			<classifier>client</classifier>
 			<type>jar</type>
 			<exclusions>
@@ -110,16 +110,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<!-- Addons -->
-		
-<!-- 		<dependency>  -->
-<!-- 		  <groupId>de.fme</groupId> -->
-<!-- 		  <artifactId>jsconsole</artifactId> -->
-<!-- 		  <classifier>repo</classifier> -->
-<!-- 		  <version>0.5.1</version> -->
-<!-- 		  <scope>runtime</scope> -->
-<!-- 		</dependency>  -->
 
 
 	</dependencies>
@@ -132,10 +122,8 @@
 				<configuration>
 					<argLine>${app.testing.jvm.args}</argLine>
 					<excludes>
-						<!-- <exclude>**/*WebScriptTest.java</exclude> -->
 					   <exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 						<exclude>fr/becpg/repo/importer/UserImportServiceTest.java</exclude>
-						<!-- <exclude>fr/becpg/repo/product/ProductVersionServiceTest.java</exclude>  -->
 					</excludes>
 				</configuration>
 			</plugin>
@@ -159,28 +147,5 @@
 			
 		</plugins>
 	</build>
-	<!-- <profiles>
-		<profile>
-			<id>test-webscripts</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.16</version>
-						<configuration>
-							<argLine>${app.testing.jvm.args}</argLine>
-							<includes>
-								<include>**/*WebScriptTest.java</include>
-							</includes>
-							<excludes>
-									<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
-									<exclude>fr/becpg/repo/importer/UserImportServiceTest.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles> -->
+
 </project>
