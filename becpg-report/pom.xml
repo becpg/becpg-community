@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>fr.becpg</groupId>
 		<artifactId>becpg-parent</artifactId>
-		<version>1.5.2</version>
+		<version>1.6.0</version>
 	</parent>
 	<artifactId>becpg-report</artifactId>
 	<packaging>war</packaging>

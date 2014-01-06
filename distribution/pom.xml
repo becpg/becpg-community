@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.5.2</version>
+		<version>1.6.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -49,19 +49,19 @@
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-core</artifactId>
 			<type>amp</type>
-			<version>1.5.2</version>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-share</artifactId>
 			<type>amp</type>
-			<version>1.5.2</version>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-olap</artifactId>
 			<type>jar</type>
-			<version>1.5.2</version>
+			<version>1.6.0</version>
 		</dependency>
 		
 	</dependencies>
