@@ -216,12 +216,7 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
-
 					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
-
-					// Done by copy initializeEntityFolder(ret);
-
 					return ret;
 				}
 			}, AuthenticationUtil.getSystemUserName());
@@ -463,7 +458,7 @@ public class EntityServiceImpl implements EntityService {
 				}
 
 				if (hierarchyNodeRef != null) {
-					NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle());
+					NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle(dictionaryService));
 					destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, classFolder);
 					if (destinationNodeRef != null) {
 						// classify

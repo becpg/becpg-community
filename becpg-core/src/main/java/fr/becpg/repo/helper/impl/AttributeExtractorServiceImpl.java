@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -60,6 +61,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	
 	private EntityDictionaryService entityDictionaryService;
 
+	private DictionaryService dictionaryService;
+	
 	private AssociationService associationService;
 
 	private NamespaceService namespaceService;
@@ -98,6 +101,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
+	}
+	
+	
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 
 	public void setTaggingService(TaggingService taggingService) {
@@ -469,7 +478,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (AttributeExtractorMode.SEARCH.equals(mode)) {
 					tmp.put("order", order);
 					tmp.put("type", type);
-					tmp.put("label", attribute.getTitle());
+					tmp.put("label", attribute.getTitle(dictionaryService));
 				} else if (type != null) {
 					tmp.put("metadata", extractMetadata(type, nodeRef));
 				}
@@ -509,7 +518,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					nodeRefs += assocNodeRef.toString();
 				}
 				tmp.put("order", order);
-				tmp.put("label", attribute.getTitle());
+				tmp.put("label", attribute.getTitle(dictionaryService));
 				tmp.put("type", "subtype");
 				tmp.put("displayValue", displayName);
 				tmp.put("value", nodeRefs);

@@ -60,6 +60,7 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="permissionService" ref="PermissionService" />
 		<property name="dataListSortService" ref="dataListSortService" />
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 
 
@@ -173,11 +174,11 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="permissionService" ref="PermissionService" />
 		<property name="nodeService" ref="NodeService" />
-		<property name="contentService" ref="ContentService" />
 		<property name="dictionaryService" ref="DictionaryService" />
 		<property name="mimetypeService" ref="MimetypeService" />
 		<property name="CMISRenditionService" ref="CMISRenditionService" />
 		<property name="entityReportService" ref="entityReportService" />
+		<property name="delegate" ref="webscript.content.streamer" />
 	</bean>
 
 	<!-- Migration -->

@@ -31,6 +31,7 @@
 		<#list results as row>
 			{
 				"type": "${row.item.typeShort}",
+				"parentType": "${row.item.parentTypeShort!""}",
 				"isContainer": ${row.item.isContainer?string},
 				<#if row.item.typeShort == "bcpg:dynamicCharactList" >
 				"name": "${row.item.properties["bcpg:dynamicCharactTitle"]!""}",

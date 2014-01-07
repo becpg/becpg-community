@@ -64,7 +64,7 @@ var Filters =
    {
       var filterParams =
       {
-         query: "+PATH:\"" + parsedArgs.pathNode.qnamePath + "/*\"",
+         query: "",
          limitResults: null,
          sort: [
          {
@@ -73,8 +73,7 @@ var Filters =
          }],
          language: "lucene",
          templates: null,
-         variablePath: true,
-         ignoreTypes: Filters.IGNORED_TYPES
+         variablePath: true
       };
 
       optional = optional || {};
@@ -164,8 +163,7 @@ var Filters =
 
          case "editingMe":
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterQuery += " +((+ASPECT:\"workingcopy\"";
-            filterQuery += " +@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
+            filterQuery += " +((+@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
             filterQuery += " OR (+@cm\\:lockOwner:\"" + person.properties.userName + '"';
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
@@ -173,8 +171,8 @@ var Filters =
 
          case "editingOthers":
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterQuery += " +((+ASPECT:\"workingcopy\"";
-            filterQuery += " -@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
+            filterQuery += " +ASPECT:\"workingcopy\"";
+            filterQuery += " +((-@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
             filterQuery += " OR (-@cm\\:lockOwner:\"" + person.properties.userName + '"';
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
@@ -226,6 +224,18 @@ var Filters =
             filterParams.query = filterQuery;
             break;
 
+         case "synced":
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterQuery += " +ASPECT:\"sync:syncSetMemberNode\"";
+            filterParams.query = filterQuery;
+            break;
+
+         case "syncedErrors":
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterQuery += " +ASPECT:\"sync:failed\"";
+            filterParams.query = filterQuery;
+            break;
+
          case "node":
             filterParams.variablePath = false;
             filterParams.query = "+ID:\"" + parsedArgs.nodeRef + "\"";
@@ -239,7 +249,7 @@ var Filters =
             }
             
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\" "+ filterQueryDefaults;;
+            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\" " + filterQueryDefaults;
             break;
 
          case "category":
@@ -249,13 +259,7 @@ var Filters =
                filterData = filterData.slice(0, -1);
             }
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\" " + filterQueryDefaults;;
-            break;
-
-         case "aspect":
-            filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
-            filterQuery += "+ASPECT:\"" + args.filterData + "\"";
-            filterParams.query = filterQuery;
+            filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\" " + filterQueryDefaults;
             break;
 
          default: // "path"

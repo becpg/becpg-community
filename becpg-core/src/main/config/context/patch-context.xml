@@ -11,7 +11,7 @@
 		<property name="entitySystemService" ref="entitySystemService"/>
 		<property name="repoService" ref="repoService"/>	
 	</bean>
-	
+	<!-- 
 	<bean id="patch.bcpg.emailTemplatesPatch" class="fr.becpg.repo.admin.patch.EmailTemplatesPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.emailTemplatesPatch</value></property>
         <property name="description"><value>patch.bcpg.emailTemplatesPatch.description</value></property>
@@ -45,7 +45,7 @@
 						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-adhoc.bpmn</prop>
 						<prop key="mimetype">text/xml</prop>
 					</props>
-					<!-- Not email aware -->
+					Not email aware
 					<props>
 						<prop key="engineId">activiti</prop>
 						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn</prop>
@@ -72,7 +72,7 @@
         <property name="fixesFromSchema"><value>0</value></property>
         <property name="fixesToSchema"><value>${version.schema}</value></property>
         <property name="targetSchema"><value>10003</value></property>
-       <!--  <property name="initRepoVisitor" ref="initRepoVisitor"/> -->
+        <property name="initRepoVisitor" ref="initRepoVisitor"/>
         <property name="beCPGSearchService" ref="beCPGSearchService"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
@@ -337,5 +337,5 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
-    
+     -->
 </beans>

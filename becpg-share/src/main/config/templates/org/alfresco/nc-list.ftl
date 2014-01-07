@@ -8,9 +8,7 @@
 
 <@templateBody>
    <div id="alf-hd">
-	   <@region id="header" scope="global"/>
-	   <@region id="title" scope="template" />
-	   <@region id="navigation" scope="template" />
+	   <@region scope="global" id="share-header" chromeless="true"/>
    </div>
    <div id="bd">
       <div class="yui-t1" id="alfresco-nc-list">

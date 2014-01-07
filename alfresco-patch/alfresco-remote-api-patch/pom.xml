@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.becpg</groupId>
 		<artifactId>alfresco-patch</artifactId>
-		<version>1.5.2</version>
+		<version>1.6.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -37,7 +37,7 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.0</version>
@@ -51,9 +51,9 @@
 						  <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
 		              <shadedArtifactAttached>false</shadedArtifactAttached>
 		              <createDependencyReducedPom>false</createDependencyReducedPom>
-							<!-- <finalName>alfresco-repository-${alfresco.version}</finalName> 
-								<shadedArtifactAttached>true</shadedArtifactAttached> -->
-							<!-- <shadedArtifactId>alfresco-repository</shadedArtifactId> -->
+							<finalName>alfresco-repository-${alfresco.version}</finalName> 
+								<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedArtifactId>alfresco-repository</shadedArtifactId>
 							<artifactSet>
 								<includes>
 									<include>org.alfresco:alfresco-remote-api</include>
@@ -71,7 +71,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 </project>

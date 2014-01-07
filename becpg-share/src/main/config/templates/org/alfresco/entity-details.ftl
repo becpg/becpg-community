@@ -9,9 +9,7 @@
    <@markup id="alf-hd">
    <div id="alf-hd">
       <@region id="mobile-app" scope="template"/>
-      <@region id="header" scope="global"/>
-      <@region id="title" scope="template"/>
-      <@region id="navigation" scope="template"/>
+      <@region scope="global" id="share-header" chromeless="true"/>
    </div>
    </@>
    <@markup id="bd">
@@ -45,7 +43,6 @@
       <@region id="flash-upload" scope="template"/>
       <@region id="file-upload" scope="template"/>
       <@region id="dnd-upload" scope="template"/>
-      <@region id="archive-and-download" scope="template"/>
    </div>
    <@region id="doclib-custom" scope="template"/>
    </@>

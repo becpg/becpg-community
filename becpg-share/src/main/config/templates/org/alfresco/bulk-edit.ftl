@@ -3,8 +3,7 @@
 
 <@templateBody>
    <div id="alf-hd">
-      <@region id="header" scope="global" protected=true />
-      <@region id="title" scope="page" protected=true />
+      <@region scope="global" id="share-header" chromeless="true"/>
    </div>
    <div id="bd">
       <div class="yui-t1">

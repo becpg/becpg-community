@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.5.2</version>
+		<version>1.6.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -15,7 +15,7 @@
 	
 	<modules>
 			<module>alfresco-repository-patch</module>
-	      <module>alfresco-remote-api-patch</module> 
+	      <!-- <module>alfresco-remote-api-patch</module>  -->
 	      <module>alfresco-core-patch</module>	
 	      <module>distribution</module>
 	</modules>
