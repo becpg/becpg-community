@@ -4,12 +4,10 @@
   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/custom-toolbar.css" group="documentlibrary"/>
 </@>
 
- <#-- BUG HERE Why should I use replace ? -->
-<@markup id="customRepoToolbar-js" target="js" action="replace">
+<@markup id="customRepoToolbar-js" target="js" action="after">
    <#-- JavaScript Dependencies -->
-   <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/toolbar.js" group="documentlibrary"/>
-   <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/repo-toolbar.js" group="documentlibrary"/>
-	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-repo-toolbar.js"  group="documentlibrary" />
+   <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-toolbar.js"  group="documentlibrary" />
+  	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-repo-toolbar.js"  group="documentlibrary" />
 </@>
 
 

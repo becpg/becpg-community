@@ -42,6 +42,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
@@ -72,8 +74,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-// @ContextConfiguration(locations =
-// "classpath:alfresco/application-context.xml")
+//@ContextConfiguration("classpath:alfresco/application-context.xml")
 @ContextConfiguration(locations = { "classpath:alfresco/application-context.xml", "classpath:alfresco/web-scripts-application-context.xml",
 		"classpath:alfresco/web-scripts-application-context-test.xml" })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
@@ -122,7 +123,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	@Resource
 	protected Repository repositoryHelper;
 
-	@Resource
+	@Autowired
 	protected NodeService nodeService;
 
 	@Resource

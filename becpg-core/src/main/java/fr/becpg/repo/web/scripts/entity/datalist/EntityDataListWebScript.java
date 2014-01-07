@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -129,6 +130,12 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	private DataListExtractorFactory dataListExtractorFactory;
 
 	private DataListSortService dataListSortService;
+	
+	private DictionaryService dictionaryService;
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -428,10 +435,10 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
 				if (field.isNested()) {
-					appendCSVHeader(headers, field.getChildrens(), field.getFieldName(), field.getFieldDef() != null ? field.getFieldDef().getTitle() : null);
+					appendCSVHeader(headers, field.getChildrens(), field.getFieldName(), field.getFieldDef() != null ? field.getFieldDef().getTitle(dictionaryService) : null);
 				} else {
 					String fieldName = fieldNamePrefix != null ? fieldNamePrefix + "_" + field.getFieldName() : field.getFieldName();
-					String fullTitle = titlePrefix != null ? titlePrefix + " - " + field.getFieldDef().getTitle() : field.getFieldDef().getTitle();
+					String fullTitle = titlePrefix != null ? titlePrefix + " - " + field.getFieldDef().getTitle(dictionaryService) : field.getFieldDef().getTitle(dictionaryService);
 					headers.put(fieldName, fullTitle);
 				}
 			}

@@ -2,22 +2,24 @@
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
-	<@script type="text/javascript" src="${url.context}/res/yui/swf/swf.js" group="my-olapchart"></@script>
-	<@script type="text/javascript" src="${url.context}/res/yui/charts/charts.js" group="my-olapchart"></@script>
-	<@script type="text/javascript" src="${url.context}/components/dashlets/my-olapchart.js" group="my-olapchart"></@script>
+	<@script type="text/javascript" src="${url.context}/res/yui/swf/swf.js" group="dashlets"></@script>
+	<@script type="text/javascript" src="${url.context}/res/yui/charts/charts.js" group="dashlets"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/dashlets/my-olapchart.js" group="dashlets"></@script>
 </@>
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
-	<@link rel="stylesheet" type="text/css" href="${url.context}/components/dashlets/my-olapchart.css" group="my-olapchart"/>
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dashlets/my-olapchart.css" group="dashlets"/>
 </@>
-
-
+<#--
+<@markup id="widgets">
+   <@createWidgets group="dashlets"/>
+</@>
+-->
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
 		<script type="text/javascript">//<![CDATA[
-		
 		(function()
 		{
 		   var olapChart = new beCPG.dashlet.OlapChart("${el}").setOptions(

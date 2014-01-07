@@ -137,8 +137,9 @@
       <property name="name"><value>Repository Script Processor</value></property>
       <property name="extension"><value>js</value></property>
    </bean>
- 
-   <bean id="webscripts.container" class="org.alfresco.repo.web.scripts.RepositoryContainer" parent="webscripts.abstractcontainer">
+
+   <bean id="webscripts.container" class="org.alfresco.repo.web.scripts.TenantRepositoryContainer" parent="webscripts.abstractcontainer" init-method="setup">
+      <property name="configService" ref="webscripts.config" />
       <property name="name"><value>Repository</value></property>
       <property name="scriptObjects">
          <map merge="true">
@@ -206,11 +207,7 @@
            </entry>
          </map>
       </property>
-      <property name="registryFactory">
-          <bean class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
-             <property name="targetBeanName"><idref local="webscripts.registry.prototype"/></property>
-          </bean>
-      </property>
+      <property name="webScriptsRegistryCache" ref="webScriptsRegistryCache"/>
       <!-- Use the time-limited transaction helper to keep request times to an acceptable duration -->
       <property name="transactionService" ref="transactionService" />
       <!-- The transaction helper used to generate error responses must be unlimited -->
@@ -222,17 +219,28 @@
       <property name="scriptProcessorRegistry" ref="webscripts.repo.registry.scriptprocessor" />
       <property name="descriptorService" ref="DescriptorService" />
       <property name="tenantAdminService" ref="tenantAdminService" />
-      <property name="webScriptsRegistryCache" ref="webScriptsRegistryCache"/>
+      <property name="encryptTempFiles" value="${webscripts.encryptTempFiles}"/>
+      <property name="tempDirectoryName" value="${webscripts.tempDirectoryName}"/>
+      <property name="memoryThreshold" value="${webscripts.memoryThreshold}"/>
+      <property name="maxContentSize" value="${webscripts.setMaxContentSize}"/>
    </bean>
-   
+
    <bean id="webscripts.index.prototype" class="org.springframework.extensions.webscripts.JaxRSUriIndex" scope="prototype"/>
    
    <bean id="webscripts.registry.prototype" parent="webscripts.registry" scope="prototype">
       <property name="uriIndex" ref="webscripts.index.prototype" />
    </bean>
 
+   <bean name="webScriptsRegistryCache" class="org.alfresco.repo.web.scripts.RegistryAsynchronouslyRefreshedCache" parent="abstractAsynchronouslyRefreshedCache">
+      <property name="registryFactory">
+          <bean class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+             <property name="targetBeanName"><idref local="webscripts.registry.prototype"/></property>
+          </bean>
+      </property>
+      <property name="retryingTransactionHelper" ref="retryingTransactionHelper" />
+   </bean>
+   
    <bean id="webscripts.js.paging" class="org.alfresco.repo.web.util.paging.Paging" />
-
 
    <!--                            -->
    <!--  Web Script Authenticators -->
@@ -241,6 +249,13 @@
    <!--  HTTP Basic Authenticator (Servlet based) -->
    <bean id="webscripts.authenticator.basic" class="org.alfresco.repo.web.scripts.servlet.BasicHttpAuthenticatorFactory">
       <property name="authenticationService" ref="AuthenticationService" />
+      <property name="authenticationListener" ref="webScriptAuthenticationListener"/>
+   </bean>
+
+   <!--  HTTP Basic Authenticator (Servlet based) for MT -->
+   <bean id="webscripts.authenticator.basic.tenant" class="org.alfresco.repo.web.scripts.servlet.BasicHttpAuthenticatorFactory">
+      <property name="authenticationService" ref="AuthenticationService" />
+      <property name="authenticationListener" ref="webScriptAuthenticationListener"/>
    </bean>
 
    <!--  JSR-168 Authenticator (Portal based) -->
@@ -332,7 +347,9 @@
    <bean id="webscript.org.alfresco.cmiskind" class="org.alfresco.repo.cmis.rest.CMISWebScript" parent="webscript" scope="prototype" />
 
    <!-- CMIS Test Runner Web Script -->
+   <!-- This is a test and should not be in the bundled with the webapp. Redefined in the test context 
    <bean id="webscript.org.alfresco.cmis.test.post" class="org.alfresco.repo.cmis.rest.test.CMISTestRunnerWebScript" parent="webscript" />
+   -->
 
    <!--  Content Retrieval -->
    <bean id="webscript.org.alfresco.cmis.content.get" class="org.alfresco.repo.web.scripts.content.ContentGet" parent="webscript">
@@ -340,10 +357,10 @@
       <property name="namespaceService" ref="NamespaceService" />
       <property name="permissionService" ref="PermissionService" />
       <property name="nodeService" ref="NodeService" />
-      <property name="contentService" ref="ContentService" />
       <property name="dictionaryService" ref="DictionaryService" />
       <property name="mimetypeService" ref="MimetypeService" />
       <property name="CMISRenditionService" ref="CMISRenditionService" />
+      <property name="delegate" ref="webscript.content.streamer" />
    </bean>
    
    <!--  Content Info -->
@@ -351,8 +368,8 @@
       <property name="referenceFactory" ref="CMISReferenceFactory" />
       <property name="permissionService" ref="PermissionService" />
       <property name="nodeService" ref="NodeService" />
-      <property name="contentService" ref="ContentService" />
       <property name="mimetypeService" ref="MimetypeService" />
+      <property name="delegate" ref="webscript.content.streamer" />
    </bean>
    
    <!--  Content Write -->
@@ -454,8 +471,8 @@
    <bean id="webscript.org.alfresco.repository.content.stream" class="org.alfresco.repo.web.scripts.content.StreamContent" parent="webscript" scope="prototype">
       <property name="permissionService" ref="PermissionService" />
       <property name="nodeService" ref="NodeService" />
-      <property name="contentService" ref="ContentService" />
       <property name="mimetypeService" ref="MimetypeService" />
+      <property name="delegate" ref="webscript.content.streamer" />
    </bean>
    
    <!--  Content Write -->
@@ -493,6 +510,14 @@
       <property name="contentService" ref="ContentService"/>
       <property name="siteService" ref="SiteService" />
       <property name="hiddenAspect" ref="hiddenAspect" />
+      <property name="behaviourFilter" ref="policyBehaviourFilter" />
+   </bean>
+   <bean id="surfConfigCleaner" parent="webscript.org.alfresco.repository.store.remoteadm.get" class="org.alfresco.repo.surf.policy.SurfConfigCleaner"
+      init-method="init">
+      <property name="fileFolderService" ref="fileFolderService" />
+      <property name="nodeService" ref="nodeService" />
+      <property name="policyComponent" ref="policyComponent" />
+      <property name="siteService" ref="siteService" />
    </bean>
    <bean id="webscript.org.alfresco.repository.store.remoteadm.post" class="org.alfresco.repo.web.scripts.bean.ADMRemoteStore" parent="webscript">
       <property name="nodeService" ref="NodeService" />
@@ -502,6 +527,7 @@
       <property name="contentService" ref="ContentService"/>
       <property name="siteService" ref="SiteService" />
       <property name="hiddenAspect" ref="hiddenAspect" />
+      <property name="behaviourFilter" ref="policyBehaviourFilter" />
    </bean>
    <bean id="webscript.org.alfresco.repository.store.remoteadm.delete" class="org.alfresco.repo.web.scripts.bean.ADMRemoteStore" parent="webscript">
       <property name="nodeService" ref="NodeService" />
@@ -511,8 +537,8 @@
       <property name="contentService" ref="ContentService"/>
       <property name="siteService" ref="SiteService" />
       <property name="hiddenAspect" ref="hiddenAspect" />
+      <property name="behaviourFilter" ref="policyBehaviourFilter" />
    </bean>
-   
    
    <!--  Authenticated Web Framework AVM Store service -->
    <bean id="webscript.org.alfresco.webframework.avmstore.get" class="org.alfresco.repo.web.scripts.bean.AVMRemoteStore" parent="webscript">
@@ -672,6 +698,11 @@
       <property name="personService" ref="PersonService"/>
    </bean>
 
+
+	   <!--                         -->
+	   <!-- Import public REST API -->
+	   <!--                         -->
+   <import resource="classpath:alfresco/public-rest-context.xml"/>
    
    <!--                         -->
    <!-- Invite Service REST API -->
@@ -732,9 +763,7 @@
    <!--                         -->
    
    <!-- abstract site web script -->
-   <bean id="abstractSiteWebScript"
-          class="org.alfresco.repo.web.scripts.site.AbstractSiteWebscript"
-          parent="webscript" abstract="true">
+   <bean id="abstractSiteWebScript" parent="webscript" abstract="true">
       <property name="siteService" ref="SiteService"/>
       <property name="authorityService" ref="AuthorityService"/>
    </bean>
@@ -860,12 +889,8 @@
     
     
     <!-- GET IMAP SERVER STATUS -->
-    <bean id="webscript.org.alfresco.repository.imap.imap-enabled.get" class="org.alfresco.repo.imap.scripts.ServerStatusWebScript" parent="webscript">
-        <property name="imapService">
-            <ref bean="ImapService" />
-        </property>
-    </bean>
-
+    <bean id="webscript.org.alfresco.repository.imap.imap-enabled.get" class="org.alfresco.repo.imap.scripts.ServerStatusWebScript" parent="webscript"/>
+    
     <!--  Comment API supporting bean -->
     <bean id="commentServiceScript" parent="baseJavaScriptExtension" class="org.alfresco.repo.web.scripts.comment.ScriptCommentService">
         <property name="extensionName">
@@ -1046,6 +1071,7 @@
         <!-- The nodeArchiveService (small 'n') wraps the NodeService (big 'N') and adds
              archive/deletion-related services. There is no NodeArchiveService (big 'N'). -->
         <property name="nodeArchiveService" ref="nodeArchiveService"/>
+        <property name="maxSizeView"><value>${trashcan.MaxSize}</value></property>
     </bean>
    
     <bean id="webscript.org.alfresco.repository.archive.archivednodes.get"
@@ -1140,6 +1166,7 @@
           parent="webscript">
        <property name="mimetypeService" ref="MimetypeService" />
        <property name="workflowService" ref="WorkflowService" />
+       <property name="delegate" ref="webscript.content.streamer" />
     </bean>
 
     <!-- Retrieves all workflow instances. -->
@@ -1256,9 +1283,7 @@
     <!--                                   -->
 
     <!-- abstract audit web script -->
-    <bean id="abstractAuditWebScript"
-          class="org.alfresco.repo.web.scripts.audit.AbstractAuditWebscript"
-          parent="webscript" abstract="true">
+    <bean id="abstractAuditWebScript" parent="webscript" abstract="true">
         <property name="auditService" ref="AuditService" />
     </bean>
 
@@ -1279,6 +1304,12 @@
           class="org.alfresco.repo.web.scripts.audit.AuditClearPost"
           parent="abstractAuditWebScript">
     </bean>
+    
+    <!-- Delete audit entries -->
+    <bean id="webscript.org.alfresco.repository.audit.entry.delete"
+          class="org.alfresco.repo.web.scripts.audit.AuditEntryDelete"
+          parent="abstractAuditWebScript">
+    </bean>
 
     <!-- Query for audit entries for an application (time ranges, id ranges, user, forward/reverse, limit) -->
     <bean id="webscript.org.alfresco.repository.audit.query.get"
@@ -1291,10 +1322,9 @@
     <!--                                   -->
 
     <!-- abstract admin web script -->
-    <bean id="abstractAdminWebScript"
-          class="org.alfresco.repo.web.scripts.admin.AbstractAdminWebscript"
-          parent="webscript" abstract="true">
+    <bean id="abstractAdminWebScript" parent="webscript" abstract="true">
         <property name="repoAdminService" ref="RepoAdminService" />
+        <property name="descriptorService" ref="DescriptorService" />
     </bean>
 
     <!-- Gets the current usage restrictions -->
@@ -1534,6 +1564,7 @@
       <property name="nodeService" ref="nodeService"/>
       <property name="nodeDAO" ref="nodeDAO"/>
       <property name="transformerDebug" ref="transformerDebug" />
+      <property name="delegate" ref="webscript.content.streamer" />
    </bean>
 
    <bean id="webscript.org.alfresco.repository.solr.model.get"
@@ -1560,7 +1591,7 @@
       <property name="nodeLocatorService" ref="nodeLocatorService"/>
    </bean>
 
-   <!--  Google Doc API -->
+   <!--  GoogleDocsV1 status API -->
    <bean id="webscript.org.alfresco.repository.googledocs.status.get"
          class="org.alfresco.repo.web.scripts.googledocs.Status"
          parent="webscript">
@@ -1572,9 +1603,7 @@
    <!--                                        -->
    
    <!-- abstract links web script -->
-   <bean id="abstractLinksWebScript"
-          class="org.alfresco.repo.web.scripts.calendar.AbstractLinksWebscript"
-          parent="webscript" abstract="true">
+   <bean id="abstractLinksWebScript" parent="webscript" abstract="true">
         <property name="nodeService" ref="NodeService"/>
         <property name="siteService" ref="SiteService"/>
         <property name="linksService" ref="LinksService"/>
@@ -1624,9 +1653,7 @@
    <!--                                        -->
    
    <!-- abstract wiki web script -->
-   <bean id="abstractWikiWebScript"
-          class="org.alfresco.repo.web.scripts.wiki.AbstractWikiWebscript"
-          parent="webscript" abstract="true">
+   <bean id="abstractWikiWebScript" parent="webscript" abstract="true">
         <property name="nodeService" ref="NodeService"/>
         <property name="siteService" ref="SiteService"/>
         <property name="wikiService" ref="WikiService"/>
@@ -1680,9 +1707,7 @@
    <!--                                        -->
    
    <!-- abstract discussions web script -->
-   <bean id="abstractDiscussionWebScript"
-          class="org.alfresco.repo.web.scripts.discussion.AbstractDiscussionWebscript"
-          parent="webscript" abstract="true">
+   <bean id="abstractDiscussionWebScript" parent="webscript" abstract="true">
         <property name="nodeService" ref="NodeService"/>
         <property name="siteService" ref="SiteService"/>
         <property name="personService" ref="PersonService"/>
@@ -1765,9 +1790,7 @@
    <!--                                        -->
    
    <!-- abstract calendar web script -->
-   <bean id="abstractCalendarWebScript"
-          class="org.alfresco.repo.web.scripts.calendar.AbstractCalendarWebscript"
-          parent="webscript" abstract="true">
+   <bean id="abstractCalendarWebScript" parent="webscript" abstract="true">
         <property name="nodeService" ref="NodeService"/>
         <property name="siteService" ref="SiteService"/>
         <property name="activityService" ref="activityService"/>
@@ -1809,6 +1832,7 @@
    <bean id="webscript.org.alfresco.slingshot.calendar.userevents.get"
          class="org.alfresco.repo.web.scripts.calendar.UserCalendarEntriesGet"
          parent="abstractCalendarWebScript">
+       <property name="permissionService" ref="PermissionService" />
    </bean>
 
   <!-- Java-backed Web Scripts for the bulk filesystem importer -->
@@ -1861,6 +1885,30 @@
   </bean>
    
    
+   <!--                                                                                                       -->
+   <!-- Multi-Tenant Admin                                                                                    -->
+   <!--                                                                                                       -->
+   <!--                                                                                                       -->
+   
+   <bean id="abstractTenantAdminWebScript" parent="webscript" abstract="true">
+        <property name="tenantAdminService" ref="tenantAdminService"/>
+   </bean>
+   
+   <bean id="webscript.org.alfresco.repository.tenant.tenants.get"
+         class="org.alfresco.repo.web.scripts.tenant.TenantsGet"
+         parent="abstractTenantAdminWebScript">
+   </bean>
+   
+   <bean id="webscript.org.alfresco.repository.tenant.tenants.post"
+         class="org.alfresco.repo.web.scripts.tenant.TenantPost"
+         parent="abstractTenantAdminWebScript">
+   </bean>
+   
+   <bean id="webscript.org.alfresco.repository.tenant.tenants.delete"
+         class="org.alfresco.repo.web.scripts.tenant.TenantDelete"
+         parent="abstractTenantAdminWebScript">
+   </bean>
+
     <!-- BEGIN: QuickShare (aka PublicView) -->
     
     <!-- unauthenticated (note: equivalent to authenticated "content.get") -->
@@ -1869,12 +1917,12 @@
         <property name="namespaceService" ref="NamespaceService" />
         <property name="permissionService" ref="PermissionService" />
         <property name="nodeService" ref="NodeService" />
-        <property name="contentService" ref="ContentService" />
         <property name="dictionaryService" ref="DictionaryService" />
         <property name="mimetypeService" ref="MimetypeService" />
         <property name="CMISRenditionService" ref="CMISRenditionService" />
         <property name="quickShareService" ref="QuickShareService"/>
         <property name="enabled" value="${system.quickshare.enabled}" />
+        <property name="delegate" ref="webscript.content.streamer" />
     </bean>
     
     <!-- unauthenticated (note: equivalent to authenticated "thumbnail.get") -->
@@ -1882,6 +1930,7 @@
         <property name="thumbnailService" ref="ThumbnailService" />
         <property name="scriptThumbnailService" ref="thumbnailServiceScript" />
         <property name="serviceRegistry" ref="ServiceRegistry"/>
+        <property name="delegate" ref="webscript.content.streamer" />
     </bean>
     
     <bean id="org.alfresco.repository.quickshare.abstract" class="org.alfresco.repo.web.scripts.quickshare.AbstractQuickShareContent" abstract="true">
@@ -1909,11 +1958,15 @@
     <bean id="webscript.org.alfresco.repository.quickshare.unshare.delete" class="org.alfresco.repo.web.scripts.quickshare.UnshareContentDelete" parent="org.alfresco.repository.quickshare.abstract">
     </bean>
     
+    <!-- authenticated -->
+    <bean id="webscript.org.alfresco.repository.quickshare.read.get" class="org.alfresco.repo.web.scripts.quickshare.ReadGet" parent="org.alfresco.repository.quickshare.abstract">
+    </bean>
+
     <!-- END: QuickShare (aka PublicView) -->
 
     <!-- BEGIN: Download -->
 
-    <bean id="org.alfresco.repository.download.abstract" class="org.alfresco.repo.web.scripts.download.AbstractDownloadWebScript" abstract="true">
+    <bean id="org.alfresco.repository.download.abstract" class="org.alfresco.repo.web.scripts.download.AbstractDownloadWebscript" abstract="true">
         <property name="downloadService" ref="DownloadService"/>   
     </bean>
 
@@ -1934,6 +1987,20 @@
           parent="org.alfresco.repository.download.abstract"> 
         <property name="nodeService" ref="NodeService"/>   
     </bean>
-
     <!-- END: Download -->
+    
+    <!-- IE Specific set of API Formats -->
+    <bean id="webscripts.formats.IE" parent="webscripts.formatmap">
+       <property name="agent"><value>MSIE</value></property>
+       <property name="formats">
+          <props>
+             <prop key="atom">text/xml</prop>
+             <prop key="atomentry">text/xml</prop>
+             <prop key="atomfeed">text/xml</prop>
+             <prop key="rss">application/rss+xml</prop>
+             <prop key="opensearchdescription">text/xml</prop>
+          </props>
+       </property>
+    </bean>
+    
 </beans>

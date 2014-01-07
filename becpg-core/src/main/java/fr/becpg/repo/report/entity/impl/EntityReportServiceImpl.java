@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -36,8 +35,6 @@ import org.dom4j.Element;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
-
-import com.google.common.util.concurrent.Striped;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
@@ -90,7 +87,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
-	private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
+	//private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
 
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
@@ -148,12 +145,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
-		Lock lock = stripedLocs.get(entityNodeRef);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Acquire lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
-		}
-		lock.lock();
-		try {
+//		Lock lock = stripedLocs.get(entityNodeRef);
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("Acquire lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
+//		}
+//		lock.lock();
+//		try {
 			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 				@Override
 				public Object doWork() throws Exception {
@@ -185,12 +182,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 				}
 			};
 			AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-		} finally {
-			lock.unlock();
-			if (logger.isDebugEnabled()) {
-				logger.debug("Release lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
-			}
-		}
+//		} finally {
+//			lock.unlock();
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Release lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
+//			}
+//		}
 	}
 
 	private void generateReportImpl(NodeRef entityNodeRef) {

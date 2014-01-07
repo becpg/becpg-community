@@ -29,7 +29,8 @@ var Filters =
    IGNORED_ASPECTS:
    [
       "bcpg:compositeVersion", //beCPG
-      "bcpg:hiddenFolder" 
+      "bcpg:hiddenFolder",
+      "cm:checkedOut"
    ],
 
 
@@ -73,7 +74,8 @@ var Filters =
          language: "lucene",
          templates: null,
          variablePath: true,
-         ignoreTypes: Filters.IGNORED_TYPES
+         ignoreTypes: Filters.IGNORED_TYPES,
+         ignoreAspects: Filters.IGNORED_ASPECTS
       };
 
       optional = optional || {};
@@ -164,8 +166,7 @@ var Filters =
 
          case "editingMe":
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterQuery += " +((+ASPECT:\"workingcopy\"";
-            filterQuery += " +@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
+            filterQuery += " +((+@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
             filterQuery += " OR (+@cm\\:lockOwner:\"" + person.properties.userName + '"';
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
@@ -194,22 +195,25 @@ var Filters =
          	filterQuery += " +@pjt\\:projectState:\""+filter+"\"";
             filterParams.query = filterQuery + filterQueryDefaults;
          	break; 	
+         	
          case "favourites":
-            var foundOne = false;
-
             for (var favourite in favourites)
             {
-               if (foundOne)
+               if (filterQuery)
                {
                   filterQuery += " OR ";
                }
-               foundOne = true;
                filterQuery += "ID:\"" + favourite + "\"";
             }
             
-            if (filterQuery.length > 0)
+            if (filterQuery.length !== 0)
             {
-               filterQuery = "+(" + filterQuery + ") " + this.constructPathQuery(parsedArgs);
+               filterQuery = "+(" + filterQuery + ")";
+               // no need to specify path here for all sites - IDs are exact matches
+               if (parsedArgs.nodeRef != "alfresco://sites/home" && parsedArgs.nodeRef != "alfresco://company/home")
+               {
+                  filterQuery += ' +PATH:"' + parsedArgs.rootNode.qnamePath + '//*"';
+               }
             }
             else
             {
@@ -217,6 +221,18 @@ var Filters =
                filterQuery = "+ID:\"\"";
             }
             
+            filterParams.query = filterQuery;
+            break;
+
+         case "synced":
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterQuery += " +ASPECT:\"sync:syncSetMemberNode\"";
+            filterParams.query = filterQuery;
+            break;
+
+         case "syncedErrors":
+            filterQuery = this.constructPathQuery(parsedArgs);
+            filterQuery += " +ASPECT:\"sync:failed\"";
             filterParams.query = filterQuery;
             break;
 
@@ -231,9 +247,8 @@ var Filters =
             {
                filterData = filterData.slice(0, -1);
             }
-            
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\" "+ filterQueryDefaults;;
+            filterParams.query = filterQuery + " +PATH:\"/cm:taggable/cm:" + search.ISO9075Encode(filterData) + "/member\" "+ filterQueryDefaults;
             break;
 
          case "category":
@@ -243,7 +258,7 @@ var Filters =
                filterData = filterData.slice(0, -1);
             }
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\" " + filterQueryDefaults;;
+            filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\" " + filterQueryDefaults;
             break;
 
          case "aspect":
@@ -271,14 +286,18 @@ var Filters =
    constructPathQuery: function constructPathQuery(parsedArgs)
    {
       var pathQuery = "";
-      if (parsedArgs.nodeRef != "alfresco://company/home")
+      if (parsedArgs.libraryRoot != companyhome || parsedArgs.nodeRef != "alfresco://company/home")
       {
-         pathQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath;
          if (parsedArgs.nodeRef == "alfresco://sites/home")
          {
-            pathQuery += "/*/cm:documentLibrary";
+            // all sites query - better with //cm:*
+            pathQuery = '+PATH:"' + parsedArgs.rootNode.qnamePath + '//cm:*"';
          }
-         pathQuery += "//*\"";
+         else
+         {
+            // site specific query - better with //*
+            pathQuery = '+PATH:"' + parsedArgs.rootNode.qnamePath + '//*"';
+         }
       }
       return pathQuery;
    }

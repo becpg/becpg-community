@@ -62,25 +62,34 @@ var Evaluator =
     	    case "entity":               
             case "document":
                // Working Copy?
-               if (node.hasAspect("cm:workingcopy"))
+               if (node.hasAspect("{http://www.alfresco.org/model/content/1.0}workingcopy"))
                {
-                  var wcNode = node.assocs["cm:original"][0];
-                  workingCopy["isWorkingCopy"] = true;
-                  workingCopy["sourceNodeRef"] = wcNode.nodeRef;
-                  if (wcNode.hasAspect("cm:versionable") && wcNode.versionHistory !== null && wcNode.versionHistory.length > 0)
+                  var wcLink = node.sourceAssocs["cm:workingcopylink"];
+                  var isWorkingCopy = wcLink != null;
+                  if (isWorkingCopy)
                   {
-                     workingCopy["workingCopyVersion"] = wcNode.versionHistory[0].label;
-                  }
+                     var wcNode = wcLink[0];
+                     workingCopy["isWorkingCopy"] = true;
+                     workingCopy["sourceNodeRef"] = wcNode.nodeRef;
+                     if (wcNode.hasAspect("{http://www.alfresco.org/model/content/1.0}versionable"))
+                     {
+                        workingCopy["workingCopyVersion"] = wcNode.properties["cm:versionLabel"];
+                     }
 
-                  // Google Doc?
-                  if (node.hasAspect("{http://www.alfresco.org/model/googledocs/1.0}googleResource"))
+                     // Google Doc?
+                     if (node.hasAspect("{http://www.alfresco.org/model/googledocs/1.0}googleResource"))
+                     {
+                        // Property is duplicated here for convenience
+                        workingCopy["googleDocUrl"] = node.properties["gd:url"];
+                     }
+                  }
+                  else
                   {
-                     // Property is duplicated here for convenience
-                     workingCopy["googleDocUrl"] = node.properties["gd:url"];
+                     logger.error("Node: " + node.nodeRef +" hasn't \"cm:workingcopylink\" association");
                   }
                }
                // Locked?
-               else if (node.isLocked && !node.hasAspect("trx:transferred") && node.hasAspect("cm:checkedOut"))
+               else if (node.isLocked && !node.hasAspect("trx:transferred") && node.hasAspect("{http://www.alfresco.org/model/content/1.0}checkedOut"))
                {
                   var srcNode = node.assocs["cm:workingcopylink"][0];
                   workingCopy["hasWorkingCopy"] = true;
@@ -88,13 +97,13 @@ var Evaluator =
 
                   if (srcNode.hasPermission("Read"))
                   {
-                  // Google Doc?
-                  if (srcNode.hasAspect("{http://www.alfresco.org/model/googledocs/1.0}googleResource"))
-                  {
-                     workingCopy["googleDocUrl"] = srcNode.properties["gd:url"];
+                     // Google Doc?
+                     if (srcNode.hasAspect("{http://www.alfresco.org/model/googledocs/1.0}googleResource"))
+                     {
+                        workingCopy["googleDocUrl"] = srcNode.properties["gd:url"];
+                     }
                   }
                }
-         }
          }
 
          // Part of an active workflow? Guard against stale worklow tasks.

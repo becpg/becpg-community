@@ -25,13 +25,18 @@
             <version>${alfresco.version}</version>
             <scope>provided</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-share</artifactId>
             <version>${alfresco.version}</version>
             <scope>provided</scope>
-        </dependency>
-    
+            <exclusions>
+	            <exclusion>
+	            	<groupId>org.alfresco</groupId>
+	            	<artifactId>alfresco-web-framework-commons</artifactId>
+            	</exclusion>
+            </exclusions>
+       </dependency>    
 	</dependencies>
 	<properties>
         <alfresco.amp.config.dir>alfresco/module/${project.artifactId}/config</alfresco.amp.config.dir>

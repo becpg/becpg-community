@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>fr.becpg</groupId>
 		<artifactId>alfresco-patch</artifactId>
-		<version>1.5.2</version>
+		<version>1.6.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -55,16 +55,6 @@
 									<artifact>org.alfresco:alfresco-repository</artifact>
 									<excludes>																	
 										<exclude>org/alfresco/repo/forms/processor/node/TypeFormProcessor**</exclude>
-										<exclude>org/alfresco/repo/thumbnail/ThumbnailServiceImpl**</exclude>
-										<exclude>org/alfresco/repo/thumbnail/AddFailedThumbnailActionExecuter**</exclude>
-										<exclude>org/alfresco/repo/thumbnail/FailedThumbnailSourceAspect**</exclude>
-										<exclude>org/alfresco/repo/domain/node/AbstractNodeDAOImpl**</exclude>
-										<exclude>org/alfresco/repo/tagging/UpdateTagScopesActionExecuter**</exclude>
-										<exclude>org/alfresco/repo/rendition/executer/DeleteRenditionActionExecuter**</exclude>
-										<exclude>org/alfresco/repo/service/cmr/workflow/LazyActivitiWorkflowTask**</exclude>
-										<exclude>org/alfresco/repo/workflow/WorkflowObjectFactory**</exclude>
-										<exclude>org/alfresco/repo/workflow/activiti/ActivitiTypeConverter**</exclude>
-										<exclude>org/alfresco/repo/workflow/activiti/ActivitiWorkflowEngine**</exclude>
 									</excludes>
 								</filter>
 							</filters>

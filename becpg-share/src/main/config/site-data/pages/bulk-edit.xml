@@ -6,17 +6,4 @@
    <description-id>page.bulkEdit.description</description-id>
    <template-instance>bulk-edit</template-instance>
    <authentication>user</authentication>
-    <components>
-      <component>
-         <region-id>title</region-id>
-         <url>/components/title/simple-title</url>
-         <properties>
-            <title>title.bulk-edit</title>
-         </properties>
-      </component>
-      <component>
-         <region-id>bulk-edit</region-id>
-         <url>/components/bulk-edit/bulk-edit</url>
-      </component>
-   </components>
 </page>

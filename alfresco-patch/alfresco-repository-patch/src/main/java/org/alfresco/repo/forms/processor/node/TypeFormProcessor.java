@@ -183,7 +183,7 @@ public class TypeFormProcessor extends ContentModelFormProcessor<TypeDefinition,
             // create the parent NodeRef
             parentRef = new NodeRef((String) destination.getValue());
 
-
+            //#beCPG allow to choose form assoc
             // remove the destination data to avoid warning during persistence,
             // this can
             // always be retrieved by looking up the created node's parent

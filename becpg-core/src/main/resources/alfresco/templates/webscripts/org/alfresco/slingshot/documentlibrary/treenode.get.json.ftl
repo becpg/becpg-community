@@ -32,7 +32,7 @@
 	         "aspects": 
 	         [
 	         <#list item.aspects as aspect>
-	            "${shortQName(aspect)}"<#if aspect_has_next>,</#if>
+	            "${aspect}"<#if aspect_has_next>,</#if>
 	         </#list>
 	         ],
 	         "type":"${shortQName(t.type)}"
