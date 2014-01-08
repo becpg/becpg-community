@@ -22,8 +22,7 @@
     * @return {beCPG.component.DockBar} The new component instance
     * @constructor
     */
-   beCPG.component.DockBar = function DockBar_constructor(htmlId, instanceName) {
-      this.instanceName = instanceName;
+   beCPG.component.DockBar = function DockBar_constructor(htmlId) {
       return beCPG.component.DockBar.superclass.constructor.call(this, "beCPG.component.DockBar", htmlId, [ "button",
             "container", "datasource", "datatable", "animation" ]);
    };
@@ -136,28 +135,30 @@
                            curtop += obj.offsetTop;
                            obj = obj.offsetParent;
                         }
-                     } else if (obj.y)
+                     } else if (obj.y){
                         curtop += obj.y;
+                     }
                      return curtop;
                   },
                   start_float : function() {
-                     this.Float_Time = window.setInterval(this.instanceName + ".main()", 10);
+                     this.Float_Time = window.setInterval(this.main, 10);
                   },
                   lock_float : function() {
-                     if (this.Float_Time != 'Null')
+                     if (this.Float_Time != 'Null'){
                         window.clearInterval(this.Float_Time);
+                     }
                      this.Float_Time = 'Null';
-                     document.getElementById("lock_outils").className = 'unlock';
+                     document.getElementById(this.id+"-onglet_lock_btn_a").className = 'unlock';
                   },
                   lock_unlock_float : function() {
                      if (isFinite(this.Float_Time)) {
                         if (this.Float_Time != 'Null')
                            window.clearInterval(this.Float_Time);
                         this.Float_Time = 'Null';
-                        document.getElementById("lock_outils").className = 'unlock';
+                        document.getElementById(this.id+"-onglet_lock_btn_a").className = 'unlock';
                      } else {
-                        this.Float_Time = window.setInterval(this.instanceName + ".main()", 10);
-                        document.getElementById("lock_outils").className = 'lock';
+                        this.Float_Time = window.setInterval(this.main, 10);
+                        document.getElementById(this.id+"-onglet_lock_btn_a").className = 'lock';
                      }
                   },
                   slide_start : function() {
@@ -180,7 +181,7 @@
                            this.slide_x -= 10;
                         }
                         Dom.setStyle("onglet_outils", "width", (210 + this.slide_x) + 'px');
-                        setTimeout(this.instanceName + ".slide_entree()", 1);
+                        setTimeout(this.slide_entree, 1);
                      } else {
                         Dom.setStyle("onglet_contenu", "display", "none");
                         this.slide_ismoving = false;
@@ -197,7 +198,7 @@
                         }
                         Dom.setStyle("onglet_contenu", "display", "block");
                         Dom.setStyle("onglet_outils", "width", (210 + this.slide_x) + 'px');
-                        setTimeout(this.instanceName + ".slide_sortie()", 1);
+                        setTimeout(this.slide_sortie, 1);
                      } else {
                         this.slide_ismoving = false;
                      }
@@ -209,16 +210,17 @@
                    * @method onReady
                    */
                   onReady : function DockBar_onReady() {
-
-                     /**
-                      * Create datatable
-                      */
-
+                  
+                     
                      var me = this, nodeRef = YAHOO.util.History.getQueryStringParameter('nodeRef'), url = Alfresco.constants.PROXY_URI + "becpg/dockbar";
                      if (nodeRef !== null && nodeRef.length > 0) {
                         url += "?entityNodeRef=" + nodeRef;
                      }
 
+                     YAHOO.util.Event.addListener(me.id+"-onglet_open_btn_a", "click", me.slide_start);
+                     YAHOO.util.Event.addListener(me.id+"-onglet_lock_btn_a", "click", me.lock_unlock_float);
+                     
+                     
                      Alfresco.util.Ajax
                            .request({
                               url : url,

@@ -17,8 +17,6 @@ function main()
       {
          activity = activityFeed[i];
 
-         if (activity.activitySummaryFormat == "json")
-         {
             summary = eval("(" + activity.activitySummary + ")");
             fullName = trim(summary.firstName + " " + summary.lastName);
             date = AlfrescoUtil.fromISO8601(activity.postDate);
@@ -55,7 +53,6 @@ function main()
             
             // Run through specialize function for special cases
             activities.push(specialize(item, activity, summary));
-         }
       }
       
       siteTitles = getSiteTitles(sites);
@@ -72,13 +69,6 @@ function main()
  */
 function specialize(item, activity, summary)
 {
-   
-   var baseUrl = url.context+"/page/";
-   if(activity.siteNetwork!=null && activity.siteNetwork.length>0){
-      baseUrl+= "site/" + encodeURI(activity.siteNetwork) +"/";
-   }
-   
-   
    switch (activity.activityType)
    {
       case "org.alfresco.site.group-added":
@@ -332,7 +322,7 @@ function getCSSClasses()
    var myConfig = new XML(config.script),
       css = {};
 
-   for each (var xmlStyle in myConfig.style)
+   for each (var xmlStyle in myConfig..style)
    {
       css[xmlStyle.@type.toString()] = xmlStyle.@css.toString();
    }

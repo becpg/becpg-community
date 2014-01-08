@@ -1,0 +1,57 @@
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+
+var regionId = args['region-id'];
+var eventId = 
+
+      new Alfresco.widget.DashletResizer("${el}", "${instance.object.id}");
+   
+      var saikuAccessEvent = new YAHOO.util.CustomEvent("openSaikuClick");
+      saikuAccessEvent.subscribe(olapChart.openSaikuClick, olapChart, true);
+      
+    
+
+function main()
+{
+   // Widget instantiation metadata...
+   var olapChart = {
+      id : "OlapChart",
+      name : "beCPG.dashlet.OlapChart",
+      options : {
+         siteId: page.url.templateArgs.site!"",
+         regionId : regionId
+      }
+   };
+
+   var dashletResizer = {
+      id : "DashletResizer",
+      name : "Alfresco.widget.DashletResizer",
+      initArgs : ["\"" + args.htmlid + "\"", "\"" + instance.object.id + "\""],
+      useMessages: false
+   };
+
+   var dashletTitleBarActions = {
+      id : "DashletTitleBarActions",
+      name : "Alfresco.widget.DashletTitleBarActions",
+      useMessages : false,
+      options : {
+         actions: [
+               {
+                  cssClass: "saiku",
+                  eventOnClick: saikuAccessEvent,
+                  tooltip: msg.get("link.access.bi")
+               },
+             {
+                cssClass: "help",
+                bubbleOnClick:
+                {
+                   message: msg.get("dashlet.help")
+                },
+                tooltip: msg.get("dashlet.help.tooltip")
+             }
+         ]
+      }
+   };
+   model.widgets = [docSummary, dashletResizer, dashletTitleBarActions];
+}
+
+main();

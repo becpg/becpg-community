@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005-2010 Alfresco Software Limited.
+ * Copyright (C) 2005-2012 Alfresco Software Limited.
  *
  * This file is part of Alfresco
  *
@@ -293,22 +293,51 @@
                      {
                         element.checked = (savedValue === "true");
                      }
+                       else if (name.match("-range$") == "-range")
+                     {
+                        // found number range?
+                        var cntrl = Dom.get(element.id + "-cntrl-min");
+                        if (cntrl)
+                        {
+                           // populate number range elements
+                           cntrl.value = savedValue.substring(0, savedValue.indexOf("|"));
+                           cntrl = Dom.get(element.id + "-cntrl-max");
+                           cntrl.value = savedValue.substring(savedValue.indexOf("|") + 1, savedValue.length);
+                           // set range value to the input hidden field
+                           cntrl = Dom.get(element.id);
+                           cntrl.value = savedValue;                           
+                        }
+                        else
+                        {
+                           // probably date range - just set value and control will handle it
+                           element.value = savedValue;
+                        }
+                     }
                      // beCPG : clear the value, otherwise value is keeped in a hidden field and we don't understand the results
                      // TODO : assoc, now we clear saved value, but we should rendered it instead of clearing it
                      else if(name.indexOf("assoc_") != 0)
                      {
                         element.value = savedValue;
                      }
-                      // reverse value setting doesn't work with checkboxes because of the 
+                     
+                     // reverse value setting doesn't work with checkboxes or multi-select boxes because of the 
                      // hidden field used to store the underlying field value
                      if (element.type === "hidden")
                      {
-                     	// hidden fields could be a part of a checkbox in the Forms runtime
-                     	// so look if there is a checkbox attached this hidden field and set the value
-                     	var chk = Dom.get(element.id + "-entry");
-                     	if (chk && chk.type === "checkbox")
+                     	// hidden fields could be a part of a checkbox or similar in the Forms runtime
+                     	// so look if there is a entry element attached this hidden field and set the value
+                     	var cntrl = Dom.get(element.id + "-entry");
+                     	if (cntrl)
                      	{
-                     	   chk.checked = (savedValue === "true");
+                     	   switch (cntrl.type)
+                     	{
+                     	      case "checkbox":
+                           	   cntrl.checked = (savedValue === "true");
+                           	   break;
+                           	default: // "select-multiple" - and potentially others following the same pattern
+                           	   cntrl.value = savedValue;
+                           	   break;
+                        	}
                      	}
                      }
                   }
@@ -353,6 +382,9 @@
       {
          // extract the current form runtime - so we can reference it later
          this.currentForm.runtime = args[1].runtime;
+         
+         // remove Forms Runtime validators on the advanced search form
+ 	 	 	this.currentForm.runtime.validations = {};
          
          // Repopulate current form from url query data?
          if (this.currentForm.repopulate)

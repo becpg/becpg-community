@@ -190,6 +190,16 @@
                                  value : "CreateChildren"
                               });
                         this.dynamicControls.push(this.widgets.unsyncFromCloud);
+                        
+                        // Bulk edit
+
+                        this.widgets.bulkEdit = Alfresco.util.createYUIButton(this, "bulkEdit-button", this.onBulkEdit,
+                        {
+                             disabled: false
+                        });
+                        this.dynamicControls.push(this.widgets.bulkEdit);
+                          
+
 
                         // Selected Items menu button
                         this.widgets.selectedItems = Alfresco.util.createYUIButton(this, "selectedItems-button",

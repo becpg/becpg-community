@@ -102,6 +102,11 @@
                            jsonParameters = scopeParameters;
                         }
 
+                        if (Alfresco.util.CSRFPolicy.isFilterEnabled())
+                        {
+                           me.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(), Alfresco.util.CSRFPolicy.getToken(), false);
+                        }
+                        
                         me.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(jsonParameters), {
                            success : function DataTable_loadDataTable_success(oRequest, oResponse, oPayload) {
                               me.widgets.alfrescoDataTable.onDataReturnReplaceRows(oRequest, oResponse, oPayload);

@@ -320,6 +320,7 @@
 
          // Update submit elements & show the dialog
          this.widgets.form.validate();
+         this.widgets.form._toggleSubmitElements(true);
          this.widgets.dialog.show();
       },
 
@@ -349,7 +350,9 @@
             ];
             if (this.options.repositoryBrowsing === true)
             {
-               allowedViewModes.push(Alfresco.module.DoclibGlobalFolder.VIEW_MODE_REPOSITORY, Alfresco.module.DoclibGlobalFolder.VIEW_MODE_USERHOME);
+               allowedViewModes.push(Alfresco.module.DoclibGlobalFolder.VIEW_MODE_REPOSITORY,
+                                     Alfresco.module.DoclibGlobalFolder.VIEW_MODE_USERHOME, 
+                                     Alfresco.module.DoclibGlobalFolder.VIEW_MODE_SHARED);
             }
 
             this.widgets.destinationDialog.setOptions(

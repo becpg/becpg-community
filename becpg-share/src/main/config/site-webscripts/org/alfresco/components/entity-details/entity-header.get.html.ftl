@@ -27,6 +27,7 @@
             <#assign modifyLabel = "label.modified-by-user-on-date">
             <div class="node-header">
                <!-- Message banner -->
+               <#if showOnlyLocation == "false">
                <#if item.workingCopy??>
                   <#assign modifyLabel = "label.editing-started-on-date-by-user">
                   <#if item.workingCopy.isWorkingCopy??>
@@ -67,13 +68,15 @@
                      </div>
                   </#if>
                </#if>
+               </#if>
                <div class="node-info">
                <#if showPath == "true">
+                  <!-- Path-->
                   <div class="node-path">
                      <@renderPaths paths />
                   </div>
                </#if>
-               <#if pathMode == "false">
+               <#if showOnlyLocation == "false">
                
                 	<#assign idx=node.type?index_of(":")+1 />
                	<img src="${url.context}/components/images/filetypes/generic-${node.type?substring(idx)}-48.png"
@@ -81,11 +84,14 @@
                   <h1 class="thin dark">
                      ${displayName}<span id="document-version" class="document-version">${item.version}</span>
                   </h1>
+                  <!-- Modified & Social -->
                   <div>
+                     <span class="item-modifier">
                      <#assign modifyUser = node.properties["cm:modifier"]>
                      <#assign modifyDate = node.properties["cm:modified"]>
                      <#assign modifierLink = userProfileLink(modifyUser.userName, modifyUser.displayName, 'class="theme-color-1"') >
                      ${msg(modifyLabel, modifierLink, "<span id='${el}-modifyDate'>${modifyDate.iso8601}</span>")}
+                     </span>
                      <#if showFavourite == "true">
                      <span id="${el}-favourite" class="item item-separator"></span>
                      </#if>
@@ -94,7 +100,7 @@
                      </#if>
                      <#if showComments == "true">
                      <span class="item item-separator item-social">
-                        <a href="#" name="@commentNode" rel="${nodeRef?js_string}" class="theme-color-1 comment ${el}" title="${msg("comment.document.tip")}" tabindex="0">${msg("comment.document.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
+                        <a href="#" name="@commentNode" rel="${item.nodeRef?html}" class="theme-color-1 comment<#if commentCount??> hasComments</#if> ${el}" title="${msg("comment.document.tip")}" tabindex="0">${msg("comment.document.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
                      </span>
                      </#if>
                      <#if showQuickShare == "true">
@@ -103,7 +109,7 @@
                   </div>
                   </#if>
                </div>
-               <#if pathMode == "false">
+               <#if showOnlyLocation == "false">
                <div class="node-action">
               
                	<#if reports?? && reports?size &gt; 0 >

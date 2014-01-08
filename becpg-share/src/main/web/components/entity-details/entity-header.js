@@ -36,11 +36,52 @@
                    */
                   onReady : function NodeHeader_onReady() {
                      var me = this;
+                     
+                     // MNT-9081 fix, redirect user to the correct location, if requested site is not the actual site
+                     // where document is located
+                     if (this.options.siteId != this.options.actualSiteId) {
+                        // Moved to a site...
+                        if (this.options.actualSiteId != null) {
+                           var correctUrl = window.location.href
+                                 .replace(this.options.siteId, this.options.actualSiteId);
+                           Alfresco.util.PopupManager.displayPrompt({
+                              text : this.msg("message.document.moved", this.options.actualSiteId),
+                              buttons : [ {
+                                 text : this.msg("button.ok"),
+                                 handler : function() {
+                                    window.location = correctUrl;
+                                 },
+                                 isDefault : true
+                              } ]
+                           });
+                           YAHOO.lang.later(10000, this, function() {
+                              window.location = correctUrl;
+                           });
+                        } else {
+                           // Moved elsewhere in repository...
+                           var correctUrl = "/share/page/entity-details?nodeRef=" + this.options.nodeRef;
+                           Alfresco.util.PopupManager.displayPrompt({
+                              text : this.msg("message.document.movedToRepo"),
+                              buttons : [ {
+                                 text : this.msg("button.ok"),
+                                 handler : function() {
+                                    window.location = correctUrl;
+                                 },
+                                 isDefault : true
+                              } ]
+                           });
+                           YAHOO.lang.later(10000, this, function() {
+                              window.location = correctUrl;
+                           });
+                           
+                        }
+                        return;
+                     }
 
                      this.nodeType = "entity";
 
                      // Custom button
-                     if (!this.options.pathMode) {
+                     if (!this.options.showOnlyLocation) {
 
                         if (this.options.showLikes) {
                            // Create like widget
@@ -112,7 +153,7 @@
 
                            if (this.options.report.isSelected) {
                               var menuItems = me.widgets.entityReportPicker.getMenu().getItems();
-                              for (var index in menuItems) {
+                              for ( var index in menuItems) {
                                  if (menuItems.hasOwnProperty(index)) {
                                     if (menuItems[index].value === this.options.report.nodeRef) {
                                        me.widgets.entityReportPicker.set("label", menuItems[index].cfg
@@ -150,7 +191,8 @@
                   doRefresh : function NodeHeader_doRefresh() {
                      YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
 
-                     var url = 'components/entity-details/entity-header?nodeRef={nodeRef}&rootPage={rootPage}' + '&rootLabelId={rootLabelId}&showFavourite={showFavourite}&showLikes={showLikes}' + '&showComments={showComments}&showQuickShare={showQuickShare}&showDownload={showDownload}&showPath={showPath}' + (this.options.siteId ? '&site={siteId}'
+                     var url = 'components/entity-details/entity-header?nodeRef={nodeRef}&rootPage={rootPage}' + '&rootLabelId={rootLabelId}&showFavourite={showFavourite}&showLikes={showLikes}' + '&showComments={showComments}&showQuickShare={showQuickShare}&showDownload={showDownload}&showPath={showPath}' + (this.options.pagecontext ? '&pagecontext={pagecontext}'
+                           : '') + (this.options.libraryRoot ? '&libraryRoot={libraryRoot}' : '') + (this.options.siteId ? '&site={siteId}'
                            : '');
 
                      this.refresh(url);

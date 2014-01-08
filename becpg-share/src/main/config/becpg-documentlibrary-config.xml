@@ -4,21 +4,22 @@
 		<aspects>
 			<visible>
 				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:complianceable" />
-				<aspect name="cm:dublincore" />
-				<aspect name="cm:effectivity" />
-				<aspect name="cm:summarizable" />
-				<aspect name="cm:versionable" />
-				<aspect name="cm:templatable" />
-				<aspect name="cm:emailed" />
-				<aspect name="emailserver:aliasable" />
-				<aspect name="cm:taggable" />
-				<aspect name="app:inlineeditable" />
-				<aspect name="gd:googleEditable" />
-				<aspect name="cm:geographic" />
-				<aspect name="exif:exif" />
-				<aspect name="audio:audio" />
-				<aspect name="cm:indexControl" />
+            <aspect name="cm:complianceable" />
+            <aspect name="cm:dublincore" />
+            <aspect name="cm:effectivity" />
+            <aspect name="cm:summarizable" />
+            <aspect name="cm:versionable" />
+            <aspect name="cm:templatable" />
+            <aspect name="cm:emailed" />
+            <aspect name="emailserver:aliasable" />
+            <aspect name="cm:taggable" />
+            <aspect name="app:inlineeditable" />
+            <aspect name="gd:googleEditable" />
+            <aspect name="cm:geographic" />
+            <aspect name="exif:exif" />
+            <aspect name="audio:audio" />
+            <aspect name="cm:indexControl" />
+            <aspect name="dp:restrictable" />
 
 				<!-- beCPG -->
 				<aspect name="bcpg:permissionsTpl" />
@@ -174,16 +175,6 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain
 				</param>
 			</content>
-			<!-- <content id="html" icon="html-file" label="create-content.html"
-				type="pagelink" index="20">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/html
-				</param>
-			</content>
-			<content id="xml" icon="xml-file" label="create-content.xml"
-				type="pagelink" index="30">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/xml
-				</param>
-			</content> -->			
 			<content id="finishedProduct" label="menu.create-content.finishedProduct"
 				type="pagelink" index="40" icon="generic-finishedProduct">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:finishedProduct&amp;formId=create&amp;isEntity=true
@@ -478,6 +469,8 @@
             <action index="380" id="document-view-in-cloud" />
             <action index="390" id="document-request-sync"/>
          </actionGroup>
+    
+         
 
          <actionGroup id="entity-details">
             <action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />

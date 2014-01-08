@@ -6,6 +6,10 @@
 			<auto-deploy>true</auto-deploy>
 			<customizations>
 				<customization>
+		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
+		      </customization>
+				<customization>
 					<targetPackageRoot>org.alfresco.components.footer</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-footer</sourcePackageRoot>
 				</customization>
@@ -13,10 +17,10 @@
 					<targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-documentlibrary</sourcePackageRoot>
 				</customization>
-				<customization>
+				<!-- <customization>
 					<targetPackageRoot>org.alfresco.components.document-details</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-document-details</sourcePackageRoot>
-				</customization>
+				</customization> -->
 				<customization>
 					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>
@@ -33,17 +37,17 @@
 					<targetPackageRoot>org.alfresco.components.dashlets</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-dashlets</sourcePackageRoot>
 				</customization>
-				<customization>
+			<!-- 	<customization>
 					<targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot>
-				</customization>
+				</customization> -->
 				<customization>
 					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.custom-modules</sourcePackageRoot>
 				</customization>
 			</customizations>
 		</module>
-		<module>
+		<!-- <module>
 			<id>dockbar-extension</id>
 			<auto-deploy>true</auto-deploy>
 			<components>
@@ -58,6 +62,6 @@
 					</sub-components>
 				</component>
 			</components>
-		</module>
+		</module> -->
 	</modules>
 </extension>  
