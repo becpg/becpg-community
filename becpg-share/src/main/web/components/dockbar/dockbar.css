@@ -1,6 +1,4 @@
-/* ------------------------------------------------------------------------------------------------ 
-                                            TOLLS
------------------------------------------------------------------------------------------------- */
+
 #onglet_outils {
 	width: 45px; /* augmente de 10; 45 au debut 210 fin */
 	position: absolute;
@@ -124,15 +122,13 @@ div.dockbar {
 }
 
 .dockbar .view-characts {
-	background-image:
-		url("../documentlibrary/actions/entity-view-datalists-16.png");
+	background-image: url("../documentlibrary/actions/entity-view-datalists-16.png");
 	background-repeat: no-repeat;
 	padding: 2px 0 2px 25px;
 }
 
 .dockbar .view-documents {
-	background-image:
-		url("../documentlibrary/actions/entity-view-documents-16.png");
+	background-image: url("../documentlibrary/actions/entity-view-documents-16.png");
 	background-repeat: no-repeat;
 	padding: 2px 0 2px 24px;
 }
@@ -163,5 +159,4 @@ div.dockbar {
 
 .page-title {
 	 padding-right: 45px;
-}
 }

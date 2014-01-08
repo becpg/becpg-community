@@ -105,7 +105,7 @@ if (!beCPG.util.getFileIcon) {
 
 		var node = p_record.jsNode, type = node.type;
 
-		var iconSize = p_isSimpleView ? 32 : 48;
+		var iconSize = p_isSimpleView ? 32 : 64;
 
 		if (p_isContainer  && (!Alfresco.util.getFileIcon.types[type] 
 				|| Alfresco.util.getFileIcon.folders[type]) ) {

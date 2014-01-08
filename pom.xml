@@ -80,7 +80,7 @@
 		<alfresco.version>4.2.e</alfresco.version>
 		
 		<birt.version>4.3.1</birt.version>
-		<becpg.contribs.version>1.5.4</becpg.contribs.version>
+		<becpg.contribs.version>1.6.0</becpg.contribs.version>
 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 

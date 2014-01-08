@@ -6,15 +6,19 @@
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
-	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="dockbar"></@script>
+	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="documentlibrary"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/dockbar/dockbar.js"  group="dockbar"></@script>
+</@>
+
+
+<@markup id="widgets">
+  	<@createWidgets group="dockbar"/>
 </@>
 
 
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
-		<#assign jsid = "dockbar_"+el?replace("-", "_")>
 		<div class="dockbar">
 			<div id="floatLayer">
 				<div style="position: static">
@@ -22,11 +26,10 @@
 						<div id="onglet_outils_int">
 							<div id="onglet_tete">
 								<div id="onglet_open_btn">
-									<a href="#" onclick="${jsid}.slide_start(); return false;" class="clear" >&nbsp;</a>
+									<a href="#"  id="${el}-onglet_open_btn_a"  class="clear" >&nbsp;</a>
 								</div>
 								<div id="onglet_lock_btn">
-									<a href="#" onclick="${jsid}.lock_unlock_float(); return false;"
-										id="lock_outils" class="lock clear">&nbsp;</a>
+									<a href="#" id="${el}-onglet_lock_btn_a" class="lock clear">&nbsp;</a>
 								</div>
 							</div>
 							<table id="onglet_contenu" cellpadding="0" cellspacing="0">
@@ -46,11 +49,5 @@
 				</div>
 			</div>
 		</div>
-		
-		<script type="text/javascript">//<![CDATA[
-		  var ${jsid} =  new beCPG.component.DockBar("${el}", "${jsid}")
-		  					 .setMessages(${messages});
-		//]]></script>
-		
 	</@>
 </@>

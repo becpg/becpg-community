@@ -244,7 +244,7 @@
          var id = scope.id + '-preview-' + oRecord.getId();
          elCell.innerHTML = '<span id="' + id + '" class="icon32">' + (isLink ? '<span class="link"></span>' : '') + Alfresco.DocumentList
                .generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + beCPG.util.getFileIcon(
-                     thumbName, record, isContainer, true) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
+               thumbName, record, isContainer, true) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
 
          // Preview tooltip
          scope.previewTooltips.push(id);
@@ -287,7 +287,7 @@
                .generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.DocumentList
                .generateThumbnailUrl(record) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
       }
-     new Alfresco.DnD(imgId, scope);
+      new Alfresco.DnD(imgId, scope);
    };
 
    /**
@@ -336,10 +336,13 @@
       if (beCPG.util.isEntity(record)) {
          url = url.replace("folder-details", "entity-details");
       }
+		
+	var hasComments = (node.properties["fm:commentCount"] !== undefined);
 
-      var html = '<a href="' + url + '" class="comment" title="' + scope.msg(i18n + "tip") + '" tabindex="0">' + scope
-            .msg(i18n + "label") + '</a>';
-      if (node.properties["fm:commentCount"] !== undefined) {
+
+      var html = '<a href="' + url + '" class="comment' + (hasComments ? " hasComments" : "") + '" title="' + scope
+            .msg(i18n + "tip") + '" tabindex="0">' + scope.msg(i18n + "label") + '</a>';
+      if (hasComments) {
          html += '<span class="comment-count">' + $html(node.properties["fm:commentCount"]) + '</span>';
       }
       return html;
