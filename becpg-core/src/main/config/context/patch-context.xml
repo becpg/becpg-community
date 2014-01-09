@@ -11,7 +11,7 @@
 		<property name="entitySystemService" ref="entitySystemService"/>
 		<property name="repoService" ref="repoService"/>	
 	</bean>
-<!-- 
+
 	<bean id="patch.bcpg.emailTemplatesPatch" class="fr.becpg.repo.admin.patch.EmailTemplatesPatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.emailTemplatesPatch</value></property>
         <property name="description"><value>patch.bcpg.emailTemplatesPatch.description</value></property>
@@ -71,7 +71,6 @@
         <property name="fixesFromSchema"><value>0</value></property>
         <property name="fixesToSchema"><value>${version.schema}</value></property>
         <property name="targetSchema"><value>10003</value></property>
-        <property name="initRepoVisitor" ref="initRepoVisitor"/>
         <property name="beCPGSearchService" ref="beCPGSearchService"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
@@ -299,7 +298,7 @@
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
     
-      <bean id="patch.bcpg.nutParentLevelPatch" class="fr.becpg.repo.admin.patch.NutParentLevelPatch" parent="basePatch" >
+    <bean id="patch.bcpg.nutParentLevelPatch" class="fr.becpg.repo.admin.patch.NutParentLevelPatch" parent="basePatch" >
         <property name="id"><value>patch.bcpg.nutParentLevelPatch</value></property>
         <property name="description"><value>patch.bcpg.nutParentLevelPatch.description</value></property>
         <property name="fixesFromSchema"><value>0</value></property>
@@ -311,7 +310,7 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
- -->
+
 	<bean id="patch.bcpg.entityFormulatedPatch" class="fr.becpg.repo.admin.patch.EntityFormulatedPatch" parent="basePatch" >
         <property name="id"><value>patch.bcpg.entityFormulatedPatch</value></property>
         <property name="description"><value>patch.bcpg.entityFormulatedPatch.description</value></property>
@@ -333,6 +332,28 @@
         <property name="beCPGSearchService" ref="beCPGSearchService"/>
         <property name="associationService" ref="associationService"/>
         <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+	
+	 <bean id="patch.bcpg.removeGoogleDocsPatch" class="fr.becpg.repo.admin.patch.RemoveGoogleDocsPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.removeGoogleDocsPatch</value></property>
+        <property name="description"><value>patch.bcpg.removeGoogleDocsPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10024</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
+	
+	<bean id="patch.bcpg.renameDynCharachPatch" class="fr.becpg.repo.admin.patch.RenameDynCharachPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.renameDynCharachPatch</value></property>
+        <property name="description"><value>patch.bcpg.renameDynCharachPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10025</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>

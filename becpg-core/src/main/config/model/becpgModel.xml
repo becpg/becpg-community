@@ -1669,6 +1669,14 @@
 				</property>
 			</properties>
 		</type>
+		
+		<!-- deprecated -->
+		<!-- TODO remove with a patch -->
+		<type name="bcpg:dynamicCharachList">
+			<parent>bcpg:productListItem</parent>
+		</type>	
+			
+		
 		<!-- ________________________________________________________________ AUTO COMP ________________________________________________________________ -->
 
 		<type name="bcpg:listValue">

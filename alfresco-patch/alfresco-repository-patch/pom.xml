@@ -20,7 +20,6 @@
 		 <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-repository</artifactId>
-            <version>${alfresco.version}</version>
             <exclusions>
 			        <exclusion>
 			            <groupId>*</groupId>
@@ -55,6 +54,7 @@
 									<artifact>org.alfresco:alfresco-repository</artifact>
 									<excludes>																	
 										<exclude>org/alfresco/repo/forms/processor/node/TypeFormProcessor**</exclude>
+										<exclude>org/alfresco/repo/domain/node/NodeEntity**</exclude>
 									</excludes>
 								</filter>
 							</filters>

@@ -17,6 +17,10 @@
 				<value>alfresco/module/${artifactId}/model/publicationModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/packModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/projectModel.xml</value>
+				
+				<!--TODO Migration Only to remove -->
+		      <value>alfresco/subsystems/googledocs/default/googledocs-model.xml</value>
+				
 			</list>
 		</property>
 

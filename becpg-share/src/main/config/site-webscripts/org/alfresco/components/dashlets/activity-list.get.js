@@ -118,7 +118,7 @@ function specialize(item, activity, summary)
          if(activity.siteNetwork== null || activity.siteNetwork.length==0){
             item.suppressSite = true;
          }
-         item.itemPage = baseUrl+"entity-details?nodeRef="+summary.nodeRef;
+         item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-details?nodeRef="+summary.nodeRef;
          item.custom0 = msg.get("state." + summary.beforeState);
          item.custom1 = msg.get("state." + summary.afterState);
          break;
@@ -127,7 +127,7 @@ function specialize(item, activity, summary)
             item.suppressSite = true;
          }
          item.title = summary.title + " [" + summary.entityTitle + "]";
-         item.itemPage = baseUrl+"entity-data-lists?list=taskList&nodeRef="+summary.entityNodeRef;
+         item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-data-lists?list=taskList&nodeRef="+summary.entityNodeRef;
          item.custom0 = msg.get("state." + summary.beforeState);
          item.custom1 = msg.get("state." + summary.afterState);
          break;
@@ -136,7 +136,7 @@ function specialize(item, activity, summary)
             item.suppressSite = true;
          }
          item.title = summary.title + "[" + summary.entityTitle + "]";
-         item.itemPage = baseUrl+"entity-data-lists?list=deliverableList&nodeRef="+summary.entityNodeRef;
+         item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-data-lists?list=deliverableList&nodeRef="+summary.entityNodeRef;
          item.custom0 = msg.get("state." + summary.beforeState);
          item.custom1 = msg.get("state." + summary.afterState);
          break;
