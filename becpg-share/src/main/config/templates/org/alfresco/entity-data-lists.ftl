@@ -68,6 +68,7 @@
    <@markup id="alf-hd">
    <div id="alf-hd">
       <@region scope="global" id="share-header" chromeless="true"/>
+      <@region id="node-header" scope="template"/>
    </div>
    </@>
    <@markup id="bd">

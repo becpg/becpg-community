@@ -2,12 +2,16 @@
 <template-instance>
    <template-type>org/alfresco/bulk-edit</template-type>
    <components>
-      <component>
+   	 <!-- Title -->
+       <component>
          <region-id>title</region-id>
-         <url>/components/title/simple-title</url>
-         <properties>
-            <title>title.bulk-edit</title>
-         </properties>
+         <url>/components/title/collaboration-title</url>
+      </component>
+
+      <!-- Navigation -->
+      <component>
+         <region-id>navigation</region-id>
+         <url>/components/navigation/collaboration-navigation</url>
       </component>
       <component>
          <region-id>bulk-edit</region-id>

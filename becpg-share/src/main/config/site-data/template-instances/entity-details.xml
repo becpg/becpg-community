@@ -104,7 +104,7 @@
                            </params>
                         </evaluator>
                      </evaluators>
-                     <url>/components/node-details/node-header</url>
+                     <url>/components/entity-details/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <libraryRoot>alfresco://user/home</libraryRoot>
@@ -120,7 +120,7 @@
                            </params>
                         </evaluator>
                      </evaluators>
-                     <url>/components/node-details/node-header</url>
+                     <url>/components/entity-details/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <libraryRoot>alfresco://shared</libraryRoot>
