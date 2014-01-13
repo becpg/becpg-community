@@ -83,17 +83,17 @@
 
 .project-list span.delivrable-status-Completed,.project-list span.delivrable-status-Closed
 	{
-	background: url("../images/complete-16.png") no-repeat;
+	background: url("../documentlibrary/indicators/project-completed-16.png") no-repeat;
 	display: inline-table;
 }
 
 .project-list span.delivrable-status-Planned {
-	background: url("../images/workflow-16.png") no-repeat;
+	background: url("../documentlibrary/indicators/project-planned-16.png") no-repeat;
 	display: inline-table;
 }
 
 .project-list span.delivrable-status-InProgress {
-	background: url("../images/job-running-16.png") no-repeat;
+	background: url("../documentlibrary/indicators/project-inprogress-16.png") no-repeat;
 	display: inline-table;
 }
 
@@ -111,53 +111,35 @@
 	cursor: pointer;
 }
 
-.project-list span.advancement-done {
-	 background: url("./images/advancement-done-16.png") no-repeat scroll 0px 0px transparent;
-    display: inline-table;
-    height: 16px;
-    padding-left: 20px;
-}
-
-.project-list span.overdue-negative {
-	background: url("./images/overdue-negative-16.png") no-repeat;
-	display: inline-table;
+.project-list span.task-status {
+	background-repeat: no-repeat;
 	padding-left: 20px;
-	height: 16px;
 }
 
-.project-list span.advancement-done-32 {
-	background: url("./images/advancement-done-32.png") no-repeat scroll 0px 0px transparent;
+.project-list span.task-status-Planned {
+	background: url("../documentlibrary/indicators/project-planned-16.png") no-repeat;
 	display: inline-table;
-	height: 32px;
-	padding-left: 35px;
 }
 
-.project-list span.overdue-0to14 {
-	background: url("./images/overdue-0to14-16.png") no-repeat;
+.project-list span.task-status-InProgress {
+	background: url("../documentlibrary/indicators/project-inprogress-16.png") no-repeat;
 	display: inline-table;
-	padding-left: 20px;
-	height: 16px;
 }
 
-.project-list span.overdue-15to29 {
-	background: url("./images/overdue-15to29-16.png") no-repeat;
+.project-list span.task-status-onHold {
+	background: url("../documentlibrary/indicators/project-onhold-16.png") no-repeat;
 	display: inline-table;
-	padding-left: 20px;
-	height: 16px;
 }
 
-.project-list span.overdue-30to45 {
-	background: url("./images/overdue-30to45-16.png") no-repeat;
+.project-list span.task-status-Cancelled {
+	background: url("../documentlibrary/indicators/project-cancelled-16.png") no-repeat;
 	display: inline-table;
-	padding-left: 20px;
-	height: 16px;
 }
 
-.project-list span.overdue-45plus {
-	background: url("./images/overdue-45plus-16.png") no-repeat;
+.project-list span.task-status-Completed
+	{
+	background: url("../documentlibrary/indicators/project-completed-16.png") no-repeat;
 	display: inline-table;
-	padding-left: 20px;
-	height: 16px;
 }
 
 .project-list span.overdue-negative-32 {
