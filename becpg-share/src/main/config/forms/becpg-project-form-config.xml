@@ -707,6 +707,7 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
+					<show id="cm:description" force="true" />
 					<show force="true" id="pjt:tlPrevTasks" />
 					<show force="true" id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />
@@ -725,10 +726,8 @@
 				
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
-					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
-						
 					<field id="pjt:tlTaskName" set="mainInfo"/>
+					<field id="cm:description" set="mainInfo"/>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -738,12 +737,23 @@
 						</control>
 					</field>		
 					<field id="pjt:tlResources" set="mainInfo"/>
-					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
-					<field id="pjt:tlWorkflowName" set="mainInfo">
+					
+					<set id="mainInfo2" parent="mainInfo"
+					template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pjt:tlTaskLegend" set="mainInfo2">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="style">width:180px</control-param>
+						</control>
+					</field>						
+					<field id="pjt:tlWorkflowName" set="mainInfo2" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct</control-param>
 						</control>
 					</field>
+					
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />	
 					<field id="pjt:tlStart" set="planning"/>
 					<field id="pjt:tlEnd" set="planning"/>
 					<field id="pjt:tlIsMilestone" set="planning"/>
@@ -770,6 +780,7 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
+					<show id="cm:description" force="true" />
 					<show force="true" id="pjt:tlPrevTasks" />
 					<show force="true" id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />
@@ -787,11 +798,9 @@
 				<appearance>
 					
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" />
-					<set id="planning" appearance="bordered-panel"
-						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
-						
+						label-id="becpg.forms.set.designation.label" />													
 					<field id="pjt:tlTaskName" set="mainInfo"/>
+					<field id="cm:description" set="mainInfo"/>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -800,12 +809,23 @@
 						</control>
 					</field>		
 					<field id="pjt:tlResources" set="mainInfo"/>
-					<field id="pjt:tlTaskLegend" set="mainInfo"/>	
-					<field id="pjt:tlWorkflowName" set="mainInfo">
+					
+					<set id="mainInfo2" parent="mainInfo"
+					template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="pjt:tlTaskLegend" set="mainInfo2">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="style">width:180px</control-param>
+						</control>
+					</field>						
+					<field id="pjt:tlWorkflowName" set="mainInfo2" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|Adhoc,activiti$projectNewProduct|New product</control-param>
+							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct</control-param>
 						</control>
 					</field>
+					
+					<set id="planning" appearance="bordered-panel"
+						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />		
 					<field id="pjt:tlStart" set="planning"/>
 					<field id="pjt:tlEnd" set="planning"/>
 					<field id="pjt:tlIsMilestone" set="planning"/>
@@ -842,6 +862,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
+					<field id="pjt:tlIsMilestone" label="hidden" ></field>
 				</appearance>
 			</form>
 			<form id="sub-datagrid">

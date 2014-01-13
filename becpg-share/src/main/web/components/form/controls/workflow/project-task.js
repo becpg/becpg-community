@@ -83,7 +83,10 @@
                         var task = response.json.task, deliverables = task.deliverables, me = this;
 
                         Dom.get(this.id + "-currentTask").innerHTML = this.getTaskTitle(task, task.entityNodeRef);
+                        Dom.get(this.id + "-currentTask-description").innerHTML = '<span>' + task.description + '</span>';
                         Dom.get(this.id + "-currentDeliverableList").innerHTML = this.getDeliverableList(deliverables,
+                              task.entityNodeRef);
+                        Dom.get(this.id + "-prevDeliverableList").innerHTML = this.getDeliverableList(task.prevDeliverables,
                               task.entityNodeRef);
                         
                         if (!this.options.readOnly) {
@@ -140,7 +143,7 @@
                      
                      return ret;
                      
-                  },
+                  },                  
                   getDeliverableTitle : function PT_getDeliverableTitle(deliverable, entityNodeRef) {
 
                      var ret = '<span class="delivrable-status delivrable-status-' + deliverable.state + '">';
