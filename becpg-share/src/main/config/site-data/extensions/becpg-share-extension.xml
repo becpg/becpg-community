@@ -4,11 +4,22 @@
 		<module>
 			<id>becpg-share-extension</id>
 			<auto-deploy>true</auto-deploy>
+			<configurations>
+				<config evaluator="string-compare" condition="WebFramework" replace="false">
+					<web-framework>
+						<dojo-pages>
+							<packages>
+								<package name="becpg" location="js/lib/becpg" />
+							</packages>
+						</dojo-pages>
+					</web-framework>
+				</config>
+			</configurations>
 			<customizations>
 				<customization>
-		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
-		          <sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
-		      </customization>
+					<targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
+				</customization>
 				<customization>
 					<targetPackageRoot>org.alfresco.components.footer</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-footer</sourcePackageRoot>
@@ -17,7 +28,7 @@
 					<targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-documentlibrary</sourcePackageRoot>
 				</customization>
-			   <customization>
+				<customization>
 					<targetPackageRoot>org.alfresco.components.document-details</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-document-details</sourcePackageRoot>
 				</customization>
@@ -37,31 +48,14 @@
 					<targetPackageRoot>org.alfresco.components.dashlets</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-dashlets</sourcePackageRoot>
 				</customization>
-			<!-- 	<customization>
-					<targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot>
-				</customization> -->
+				<!-- <customization> <targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot> <sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot> </customization> -->
 				<customization>
 					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.custom-modules</sourcePackageRoot>
 				</customization>
 			</customizations>
 		</module>
-		<!-- <module>
-			<id>dockbar-extension</id>
-			<auto-deploy>true</auto-deploy>
-			<components>
-				<component>
-					<scope>global</scope>
-					<region-id>share-header</region-id>
-					<source-id>global</source-id>
-					<sub-components>
-						<sub-component id="dockbar-extension" index="75">
-							<url>/components/dockbar/dockbar</url>
-						</sub-component>
-					</sub-components>
-				</component>
-			</components>
-		</module> -->
+		<!-- <module> <id>dockbar-extension</id> <auto-deploy>true</auto-deploy> <components> <component> <scope>global</scope> <region-id>share-header</region-id> <source-id>global</source-id> <sub-components> 
+			<sub-component id="dockbar-extension" index="75"> <url>/components/dockbar/dockbar</url> </sub-component> </sub-components> </component> </components> </module> -->
 	</modules>
 </extension>  
