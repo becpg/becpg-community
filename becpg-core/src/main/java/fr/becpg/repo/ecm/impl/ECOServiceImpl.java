@@ -174,7 +174,7 @@ public class ECOServiceImpl implements ECOService {
 					// TODO ici stocker le lien vers le replacementListDataItem
 					// dans parent pour usage après
 					//
-					WUsedListDataItem parent = new WUsedListDataItem(null, null, null, true, null, sourceList);
+					WUsedListDataItem parent = new WUsedListDataItem(null, null, null, false, null, sourceList);
 
 					ecoData.getWUsedList().add(parent);
 
@@ -246,12 +246,12 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 			// TODO
-			// Ici les liens doivent être multiple cas 2 vers 1
+			// Ici les liens doivent être multiple cas 2 vers 1false
 			// Les liens doivent être mis à jour ou supprimer lors de la
 			// création d'une version
 			// sinon impossible de sauvegarder l'ECM
 
-			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem(null, parent, dataListQName, true, /*
+			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem(null, parent, dataListQName, false, /*
 																											 * kv
 																											 * .
 																											 * getKey
