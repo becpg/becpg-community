@@ -81,6 +81,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							 <control-param name="options">,ToValidate|state.product.tovalidate,Valid|state.product.valid,Refused|state.product.refused,Archived|state.product.archived</control-param>
+							 <control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" set="product-criteria" />
@@ -1669,7 +1670,8 @@
 			 <form id="search">
 				<field-visibility>
 					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />				
+					<show id="bcpg:productHierarchy2" />		
+					<show id="bcpg:productState" />	
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
@@ -1700,7 +1702,13 @@
 							</control-param>
 						</control>
 					</field>
-					
+					<field id="bcpg:productState" set="product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							 <control-param name="options">,ToValidate|state.product.tovalidate,Valid|state.product.valid,Refused|state.product.refused,Archived|state.product.archived</control-param>
+							 <control-param name="isSearch">true</control-param>
+						</control>
+					</field>		
 					<field id="bcpg:code" set="product-criteria"/>
 					<field id="bcpg:erpCode" set="product-criteria"/>
 					<field id="bcpg:eanCode" set="product-criteria"/>
@@ -1715,6 +1723,7 @@
 					<field id="pack:llPosition" set="labeling-criteria">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>
