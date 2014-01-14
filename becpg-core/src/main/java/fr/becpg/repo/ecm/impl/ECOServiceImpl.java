@@ -174,7 +174,7 @@ public class ECOServiceImpl implements ECOService {
 					// TODO ici stocker le lien vers le replacementListDataItem
 					// dans parent pour usage après
 					//
-					WUsedListDataItem parent = new WUsedListDataItem(null, null, null, false, null, sourceList);
+					WUsedListDataItem parent = new WUsedListDataItem(null, null, null, true, null, sourceList);
 
 					ecoData.getWUsedList().add(parent);
 
@@ -289,7 +289,7 @@ public class ECOServiceImpl implements ECOService {
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
 			// Not First level
-			if (component.getData() != null && component.getData().getDepthLevel() > 1) {
+			if (component.getData() != null && component.getData().getDepthLevel() > 1 && component.getData().getIsWUsedImpacted()) {
 
 				final ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(component.getData().getSourceItems().get(0));
 
