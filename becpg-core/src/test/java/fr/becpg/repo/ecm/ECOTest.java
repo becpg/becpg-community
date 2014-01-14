@@ -389,6 +389,9 @@ public class ECOTest extends RepoBaseTestCase {
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
 
+					wul.setIsWUsedImpacted(true);
+					alfrescoRepository.save(wul);
+					
 					assertNotNull(wul.getSourceItems().get(0));
 					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItems().get(0));
 					logger.info("Source item " + wul.getSourceItems().get(0));
@@ -603,6 +606,9 @@ public class ECOTest extends RepoBaseTestCase {
 			     assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+					
+					wul.setIsWUsedImpacted(true);
+					alfrescoRepository.save(wul);
 
 					assertNotNull(wul.getSourceItems().get(0));
 					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItems().get(0));
