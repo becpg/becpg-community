@@ -246,12 +246,12 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 			// TODO
-			// Ici les liens doivent être multiple cas 2 vers 1
+			// Ici les liens doivent être multiple cas 2 vers 1false
 			// Les liens doivent être mis à jour ou supprimer lors de la
 			// création d'une version
 			// sinon impossible de sauvegarder l'ECM
 
-			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem(null, parent, dataListQName, true, /*
+			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem(null, parent, dataListQName, false, /*
 																											 * kv
 																											 * .
 																											 * getKey
@@ -289,7 +289,7 @@ public class ECOServiceImpl implements ECOService {
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
 			// Not First level
-			if (component.getData() != null && component.getData().getDepthLevel() > 1) {
+			if (component.getData() != null && component.getData().getDepthLevel() > 1 && component.getData().getIsWUsedImpacted()) {
 
 				final ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(component.getData().getSourceItems().get(0));
 
