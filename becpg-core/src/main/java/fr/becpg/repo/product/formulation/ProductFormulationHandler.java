@@ -107,6 +107,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}		
 		
 		if(!checkedProducts.contains(productData.getNodeRef())){
+			checkedProducts.add(productData.getNodeRef());
 			
 			Set<CompositionDataItem> compositionDataItems = new HashSet<>();
 			compositionDataItems.addAll(productData.getCompoList());
@@ -139,7 +140,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					isFormulated = true;
 				}
 			}		
-			checkedProducts.add(productData.getNodeRef());
+			
 		}
 				
 		return isFormulated;

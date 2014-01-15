@@ -177,7 +177,7 @@
 				</property>
 				<property name="ecm:isWUsedImpacted">
 					<type>d:boolean</type>
-					<default>true</default>			
+					<default>false</default>			
 					<index enabled="false"/>		
 				</property>			
 			</properties>
