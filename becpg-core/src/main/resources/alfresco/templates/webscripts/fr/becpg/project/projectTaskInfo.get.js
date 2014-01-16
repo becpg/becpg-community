@@ -1,4 +1,18 @@
 
+function calculatePrevDeliverables(task, prevDeliverables){
+  
+  	var prevTasks = task.assocs["pjt:tlPrevTasks"];
+	for(var i in prevTasks){
+      
+      var prevTask = prevTasks[i];
+      var deliverables = prevTask.sourceAssocs["pjt:dlTask"];
+      for(var j in deliverables){
+        prevDeliverables.unshift(deliverables[i]);
+      }
+		calculatePrevDeliverables(prevTask, prevDeliverables);
+	}
+}
+
 function main()
 {
    
@@ -10,9 +24,17 @@ function main()
        return;
    }
    
-   model.task  = search.findNode(nodeRef);
-   model.deliverables = model.task.sourceAssocs["pjt:dlTask"];      
-
+   var task = search.findNode(nodeRef), 
+   	prevDeliverables = new Array();
+   
+   model.task = task;
+   
+   if(task != null){
+   	calculatePrevDeliverables(task, prevDeliverables);         
+      model.deliverables = model.task.sourceAssocs["pjt:dlTask"];   
+      model.prevDeliverables = prevDeliverables;
+   }
+   
 }
 
 main();

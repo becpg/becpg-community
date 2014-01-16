@@ -19,17 +19,40 @@
 </@>
 
 <div class="form-field project-list project-task">
-      <div id="${controlId}" class="viewmode-field">
-         <#if (field.endpointMandatory!false || field.mandatory!false) && field.value == "">
-            <span class="incomplete-warning"><img src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
-         </#if>
-         <span class="viewmode-label">${field.label?html}:</span>
-         <span id="${controlId}-currentTask" class="viewmode-value current-values"></span>
-      </div>
-      <#if field.value?? && field.value != "">
-      	<div  class="viewmode-field">
-      		<span class="viewmode-label">${msg("form.control.project-task.deliverables")}:</span>
-        		<div id="${controlId}-currentDeliverableList" class="viewmode-value current-values"></div>
-      	</div>
-      </#if>
+	<div class="set">
+		<div class="2-col-set">	
+			<div class="yui-g">				
+				<div id="${controlId}" class="viewmode-field">
+		         <#if (field.endpointMandatory!false || field.mandatory!false) && field.value == "">
+		            <span class="incomplete-warning"><img src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
+		         </#if>
+		         <span class="viewmode-label">${field.label?html}:</span>
+		         <span id="${controlId}-currentTask" class="viewmode-value current-values"></span>
+		      </div>
+
+				<div class="viewmode-field">
+		      	<span class="viewmode-label">${msg("label.description")}:</span>
+		     		<span id="${controlId}-currentTask-description" class="viewmode-value current-values"></span>
+		   	</div>	
+			</div>
+		
+			<#if field.value?? && field.value != "">
+				<div class="yui-g">
+					<div class="yui-u first">
+						<div class="viewmode-field">
+			      		<span class="viewmode-label">${msg("form.control.project-task.deliverables")}:</span>
+			        		<div id="${controlId}-currentDeliverableList" class="viewmode-value current-values"></div>
+			      	</div>
+					</div>
+					<div class="yui-u">
+						<div class="viewmode-field">
+			      		<span class="viewmode-label">${msg("form.control.project-task.prev-deliverables")}:</span>
+			        		<div id="${controlId}-prevDeliverableList" class="viewmode-value current-values"></div>
+			      	</div>
+					</div>
+				</div>	     	
+ 			</#if>	
+ 			
+ 		</div> 
+	</div>         
 </div>
