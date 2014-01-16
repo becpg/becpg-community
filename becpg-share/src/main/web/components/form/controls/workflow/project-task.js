@@ -152,8 +152,9 @@
 
                      if (contents.length > 0) {
                         ret += '<span class="doc-file"><a title="' + this
-                              .msg("form.control.project-task.link.title.open-document") + '" href="' + this
-                              ._buildCellUrl(contents[0]) + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+                              .msg("form.control.project-task.link.title.open-document") + '" href="' + 
+                              beCPG.util.entityDetailsURL(contents[0].siteId,contents[0].nodeRef, "document") 
+                              + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
                               .getFileIcon(contents[0].name, "cm:content", 16) + '" /></a></span>';
                      }
 
