@@ -1,5 +1,0 @@
-<webscript>
-  <shortname>multilingual-form</shortname>
-  <description>Edit MlText field</description>
-  <url>/modules/multilingual-form/multilingual-form?nodeRef={nodeRef}&amp;field={field}</url>
-</webscript>

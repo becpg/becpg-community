@@ -16,6 +16,10 @@
 				</config>
 			</configurations>
 			<customizations>
+			    <customization>
+					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-head</sourcePackageRoot>
+				</customization>
 				<customization>
 					<targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
