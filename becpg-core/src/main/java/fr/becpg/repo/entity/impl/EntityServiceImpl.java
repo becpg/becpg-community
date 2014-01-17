@@ -232,10 +232,6 @@ public class EntityServiceImpl implements EntityService {
 			logger.debug("No image found for cm:name");
 		}
 		
-		imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE+"."+nodeService.getType(entityNodeRef).getLocalName()).toLowerCase();
-		if(imgName==null || imgName.isEmpty()) {
-			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
-		}
 
 		return getImage(entityNodeRef, getDefaultImageName(nodeService.getType(entityNodeRef)));
 	}
@@ -243,10 +239,14 @@ public class EntityServiceImpl implements EntityService {
 	
 	@Override 
 	public String getDefaultImageName(QName entityTypeQName) {
-		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE+"."+entityTypeQName.getLocalName()).toLowerCase();
+		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE+"."+entityTypeQName.getLocalName());
 		if(imgName==null || imgName.isEmpty()) {
-			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
+			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE);
 		}
+		if(imgName!=null) {
+			imgName = imgName.toLowerCase();
+		}
+		
 		return imgName;
 	}
 

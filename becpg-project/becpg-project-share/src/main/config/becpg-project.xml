@@ -1,0 +1,48 @@
+<alfresco-config>
+
+	<config evaluator="string-compare" condition="DocumentLibrary">
+		<aspects>
+			<visible>
+
+				<aspect name="pjt:projectAspect" />
+
+			</visible>
+
+			<!-- Aspects that a user can add. Same as "visible" if left empty -->
+			<addable>
+			</addable>
+
+			<!-- Aspects that a user can remove. Same as "visible" if left empty -->
+			<removeable>
+			</removeable>
+		</aspects>
+
+		<types>
+			<type name="cm:content">
+
+				<subtype name="pjt:project" />
+			</type>
+
+		</types>
+
+		<indicators>
+			<indicator id="project-planned" index="10">
+				<evaluator>evaluator.becpg.doclib.indicator.project.planned</evaluator>
+			</indicator>
+			<indicator id="project-inprogress" index="10">
+				<evaluator>evaluator.becpg.doclib.indicator.project.inprogress</evaluator>
+			</indicator>
+			<indicator id="project-onhold" index="10">
+				<evaluator>evaluator.becpg.doclib.indicator.project.onhold</evaluator>
+			</indicator>
+			<indicator id="project-cancelled" index="10">
+				<evaluator>evaluator.becpg.doclib.indicator.project.cancelled</evaluator>
+			</indicator>
+			<indicator id="project-completed" index="10">
+				<evaluator>evaluator.becpg.doclib.indicator.project.completed</evaluator>
+			</indicator>
+		</indicators>
+
+	</config>
+
+</alfresco-config>
