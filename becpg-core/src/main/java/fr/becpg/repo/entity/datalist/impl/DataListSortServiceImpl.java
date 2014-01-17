@@ -405,16 +405,18 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 * Debug function used to get the name of the product stored in the
 	 * compoList
 	 */
+	@Deprecated
 	private String tryGetName(NodeRef nodeRef) {
 		
 		if(nodeRef == null){
 			return null;
 		}
 		
-		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-		NodeRef part = compoAssocRefs!=null &&  !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
-
-		return part != null ? (String) nodeService.getProperty(part, ContentModel.PROP_NAME) : (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+//		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(nodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+//		NodeRef part = compoAssocRefs!=null &&  !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
+//
+//		return part != null ? (String) nodeService.getProperty(part, ContentModel.PROP_NAME) : (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
 	
 	@Override

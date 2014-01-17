@@ -54,11 +54,11 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		QName associationName = null;
 
-		if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf("|") > 0) {
+		//if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf("|") > 0) {
 			associationName = QName.createQName(dataListFilter.getDataListName().split("\\|")[1], namespaceService);
-		} else {
-			associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
-		}
+//		} else {
+//			associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
+//		}
 
 		if (associationName == null) {
 			logger.warn("No wUsed association name found for :" + dataListFilter.getDataType());

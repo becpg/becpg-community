@@ -20,8 +20,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -37,18 +35,16 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ProjectModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.hierarchy.HierarchyHelper;
 
 /**
  * Entity Service implementation
@@ -56,58 +52,31 @@ import fr.becpg.repo.hierarchy.HierarchyHelper;
  * @author querephi
  * 
  */
-@Service
+@Service("entityService")
 public class EntityServiceImpl implements EntityService {
 
 	private static Log logger = LogFactory.getLog(EntityServiceImpl.class);
 
+	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
 	private MimetypeService mimetypeService;
 
+	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
 	private FileFolderService fileFolderService;
 
+	@Autowired
 	private CopyService copyService;
 
+	@Autowired
 	private ContentService contentService;
 
+	@Autowired
 	private DictionaryService dictionaryService;
-
-	private RepoService repoService;
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setMimetypeService(MimetypeService mimetypeService) {
-		this.mimetypeService = mimetypeService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
-	public void setCopyService(CopyService copyService) {
-		this.copyService = copyService;
-	}
-
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
 
 	/**
 	 * Load an image in the folder Images.
@@ -161,7 +130,8 @@ public class EntityServiceImpl implements EntityService {
 		return ret;
 	}
 
-	private NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
+	@Override
+	public NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
 
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef == null) {
@@ -204,30 +174,6 @@ public class EntityServiceImpl implements EntityService {
 		return imageBytes;
 	}
 
-	@Override
-	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
-		NodeRef ret = null;
-		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
-		props.put(ContentModel.PROP_NAME, entityName);
-
-		if (sourceNodeRef != null && nodeService.exists(sourceNodeRef)) {
-			logger.debug("Copy existing entity");
-
-			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
-				@Override
-				public NodeRef doWork() throws Exception {
-					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-					return ret;
-				}
-			}, AuthenticationUtil.getSystemUserName());
-
-		} else {
-			logger.debug("Create new entity");
-			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
-		}
-		return ret;
-	}
 
 	@Override
 	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException {
@@ -285,17 +231,34 @@ public class EntityServiceImpl implements EntityService {
 		} catch (BeCPGException e) {
 			logger.debug("No image found for cm:name");
 		}
-
-		imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
-
-		if (dictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_PRODUCT)) {
-			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_IMAGE).toLowerCase();
-
+		
+		imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE+"."+nodeService.getType(entityNodeRef).getLocalName()).toLowerCase();
+		if(imgName==null || imgName.isEmpty()) {
+			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
 		}
 
-		return getImage(entityNodeRef, imgName);
+		return getImage(entityNodeRef, getDefaultImageName(nodeService.getType(entityNodeRef)));
+	}
+	
+	
+	@Override 
+	public String getDefaultImageName(QName entityTypeQName) {
+		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE+"."+entityTypeQName.getLocalName()).toLowerCase();
+		if(imgName==null || imgName.isEmpty()) {
+			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE).toLowerCase();
+		}
+		return imgName;
 	}
 
+
+	
+	//TODO Supprimer
+	@Override
+	public boolean hasAssociatedImages(QName type) {
+		return dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2);
+	}
+
+	
 	@Override
 	public NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef) {
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
@@ -308,14 +271,31 @@ public class EntityServiceImpl implements EntityService {
 		return documentsFolderNodeRef;
 	}
 	
-	
 	@Override
-	public boolean hasAssociatedImages(QName type) {
+	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
+		NodeRef ret = null;
+		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+		props.put(ContentModel.PROP_NAME, entityName);
 
-		return BeCPGModel.TYPE_CLIENT.isMatch(type) || BeCPGModel.TYPE_SUPPLIER.isMatch(type) || dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)
-				|| ProjectModel.TYPE_PROJECT.isMatch(type);
+		if (sourceNodeRef != null && nodeService.exists(sourceNodeRef)) {
+			logger.debug("Copy existing entity");
+
+			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+				@Override
+				public NodeRef doWork() throws Exception {
+					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					return ret;
+				}
+			}, AuthenticationUtil.getSystemUserName());
+
+		} else {
+			logger.debug("Create new entity");
+			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
+		}
+		return ret;
 	}
-
+	
 	/**
 	 * Get original name from the working copy name and the cm:workingCopyLabel
 	 * that was used to create it.
@@ -422,77 +402,6 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
-	/**
-	 * Classify according to the hierarchy.
-	 * 
-	 * @param containerNodeRef
-	 *            : documentLibrary of site
-	 * @param entityNodeRef
-	 *            : entity
-	 */
-	@Override
-	public void classifyByHierarchy(final NodeRef containerNodeRef, final NodeRef entityNodeRef) {
-
-		AuthenticationUtil.runAsSystem(new RunAsWork<Void>() {
-
-			@Override
-			public Void doWork() throws Exception {
-				NodeRef destinationNodeRef = null;
-				QName type = nodeService.getType(entityNodeRef);
-				ClassDefinition classDef = dictionaryService.getClass(type);
-
-				// TODO : generic
-				NodeRef hierarchyNodeRef = null;
-				if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
-					hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-					if (hierarchyNodeRef == null) {
-						hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-					}
-				} else if (type.isMatch(ProjectModel.TYPE_PROJECT)) {
-					hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2);
-					if (hierarchyNodeRef == null) {
-						hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY1);
-					}
-				} else if (type.isMatch(BeCPGModel.TYPE_CLIENT)) {
-				} else if (type.isMatch(BeCPGModel.TYPE_SUPPLIER)) {
-				}
-
-				if (hierarchyNodeRef != null) {
-					NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle(dictionaryService));
-					destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, classFolder);
-					if (destinationNodeRef != null) {
-						// classify
-						repoService.moveNode(entityNodeRef, destinationNodeRef);
-					} else {
-						logger.debug("Failed to classify entity. entityNodeRef: " + entityNodeRef);
-					}
-				} else {
-					logger.debug("Cannot classify entity since it doesn't have a hierarchy.");
-				}
-				return null;
-			}
-
-		});
-
-	}
-
-	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
-		NodeRef destinationNodeRef = null;
-
-		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
-		if (parent != null) {
-			parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);
-		}
-		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
-		if (name != null) {
-			destinationNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, name, name);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Cannot create folder for productHierarchy since hierarchyName is null. productHierarchy: " + hierarchyNodeRef);
-			}
-		}
-
-		return destinationNodeRef;
-	}
+	
 
 }

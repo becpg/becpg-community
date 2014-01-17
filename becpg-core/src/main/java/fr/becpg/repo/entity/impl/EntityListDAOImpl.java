@@ -126,8 +126,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
-		properties.put(ContentModel.PROP_TITLE, classDef.getTitle());
-		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription());
+		properties.put(ContentModel.PROP_TITLE, classDef.getTitle(dictionaryService));
+		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription(dictionaryService));
 		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
 
 		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties).getChildRef();

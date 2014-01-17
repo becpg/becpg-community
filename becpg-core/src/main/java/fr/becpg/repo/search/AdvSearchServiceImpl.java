@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -19,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
@@ -44,21 +40,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
 
-	private static final String CRITERIA_PACK_LABEL_POSITION = "prop_pack_llPosition";
 
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	private NodeService nodeService;
 
-	private DictionaryService dictionaryService;
 
 	private NamespaceService namespaceService;
 
 	private BeCPGSearchService beCPGSearchService;
 
 	private PermissionService permissionService;
-
-	private EntityListDAO entityListDAO;
 
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
@@ -68,20 +60,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		this.nodeService = nodeService;
 	}
 
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
 	}
 
 	@Override
@@ -100,10 +84,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (isAssocSearch) {
 			nodes = filterByAssociations(nodes, criteria);
 
-			if (datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)) {
-				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
-				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
-			}
+//		TODO search plugin	if (datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)) {
+//				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
+//				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
+//			}
 		}
 
 		nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
@@ -391,229 +375,5 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return nodes;
 	}
 
-	/**
-	 * Take in account criteria on ing list criteria
-	 * 
-	 * @return
-	 */
-	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
-		List<NodeRef> ingListItems = null;
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		for (Map.Entry<String, String> criterion : criteria.entrySet()) {
-
-			String key = criterion.getKey();
-			String propValue = criterion.getValue();
-
-			// criteria on ing
-			if (key.equals(CRITERIA_ING) && !propValue.isEmpty()) {
-
-				NodeRef nodeRef = new NodeRef(propValue);
-
-				if (nodeService.exists(nodeRef)) {
-
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, BeCPGModel.ASSOC_INGLIST_ING);
-					ingListItems = new ArrayList<NodeRef>(assocRefs.size());
-
-					for (AssociationRef assocRef : assocRefs) {
-
-						NodeRef n = assocRef.getSourceRef();
-						if (isWorkSpaceProtocol(n)) {
-							ingListItems.add(n);
-						}
-					}
-				}
-			}
-
-			// criteria on geo origin, we query as an OR operator
-			if (key.equals(CRITERIA_GEO_ORIGIN) && !propValue.isEmpty()) {
-
-				List<NodeRef> ingListGeoOrigins = new ArrayList<NodeRef>();
-
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-				for (String strNodeRef : arrValues) {
-
-					NodeRef nodeRef = new NodeRef(strNodeRef);
-
-					if (nodeService.exists(nodeRef)) {
-
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, BeCPGModel.ASSOC_INGLIST_GEO_ORIGIN);
-
-						for (AssociationRef assocRef : assocRefs) {
-
-							NodeRef n = assocRef.getSourceRef();
-							if (isWorkSpaceProtocol(n)) {
-								ingListGeoOrigins.add(n);
-							}
-						}
-					}
-				}
-
-				if (ingListItems == null) {
-					ingListItems = ingListGeoOrigins;
-				} else {
-					ingListItems.retainAll(ingListGeoOrigins);
-				}
-			}
-
-			// criteria on bio origin, we query as an OR operator
-			if (key.equals(CRITERIA_BIO_ORIGIN) && !propValue.isEmpty()) {
-
-				List<NodeRef> ingListBioOrigins = new ArrayList<NodeRef>();
-
-				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-				for (String strNodeRef : arrValues) {
-
-					NodeRef nodeRef = new NodeRef(strNodeRef);
-
-					if (nodeService.exists(nodeRef)) {
-
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, BeCPGModel.ASSOC_INGLIST_BIO_ORIGIN);
-
-						for (AssociationRef assocRef : assocRefs) {
-
-							NodeRef n = assocRef.getSourceRef();
-							if (isWorkSpaceProtocol(n)) {
-								ingListBioOrigins.add(n);
-							}
-						}
-					}
-				}
-
-				if (ingListItems == null) {
-					ingListItems = ingListBioOrigins;
-				} else {
-					ingListItems.retainAll(ingListBioOrigins);
-				}
-			}
-		}
-
-		// determine the product WUsed of the ing list items
-		if (ingListItems != null) {
-
-			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
-			for (NodeRef ingListItem : ingListItems) {
-
-				if (isWorkSpaceProtocol(ingListItem)) {
-
-					NodeRef rootNodeRef = entityListDAO.getEntity(ingListItem);
-
-					// we don't display history version
-					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-						productNodeRefs.add(rootNodeRef);
-					}
-				}
-			}
-
-			if (productNodeRefs != null) {
-				nodes.retainAll(productNodeRefs);
-			}
-		}
-
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("getSearchNodesByIngListCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
-	}
-
-	/**
-	 * Take in account criteria on ing list criteria
-	 * 
-	 * @return
-	 */
-	private List<NodeRef> getSearchNodesByLabelingCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
-
-		List<NodeRef> labelingListItems = null;
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		if(criteria.containsKey(CRITERIA_PACK_LABEL)) {
-
-			String propValue = criteria.get(CRITERIA_PACK_LABEL);
-
-			// criteria on label
-			if (!propValue.isEmpty()) {
-
-				NodeRef nodeRef = new NodeRef(propValue);
-
-				if (nodeService.exists(nodeRef)) {
-
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PackModel.ASSOC_LL_LABEL);
-					labelingListItems = new ArrayList<NodeRef>(assocRefs.size());
-
-					
-					for (AssociationRef assocRef : assocRefs) {
-
-						NodeRef n = assocRef.getSourceRef();
-						if (isWorkSpaceProtocol(n)) {
-
-							if(criteria.containsKey(CRITERIA_PACK_LABEL_POSITION)
-									&& !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
-
-								
-								if(criteria.get(CRITERIA_PACK_LABEL_POSITION).equals("\""+nodeService.getProperty(n, PackModel.PROP_LL_POSITION)+"\"")) {	
-									labelingListItems.add(n);
-								}
-							} else {
-							
-								labelingListItems.add(n);
-							}
-						}
-					}
-				}
-			}
-
-		}
-
-		// determine the product WUsed of the ing list items
-		if (labelingListItems != null) {
-
-			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
-			for (NodeRef labelingListItem : labelingListItems) {
-
-				if (isWorkSpaceProtocol(labelingListItem)) {
-
-					NodeRef rootNodeRef = entityListDAO.getEntity(labelingListItem);
-
-					// we don't display history version
-					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-						productNodeRefs.add(rootNodeRef);
-					}
-
-				}
-			}
-
-			if (productNodeRefs != null) {
-				nodes.retainAll(productNodeRefs);
-			}
-		}
-
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("getSearchNodesByLabelingCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
-	}
-
-	private boolean isWorkSpaceProtocol(NodeRef nodeRef) {
-
-		if (nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 }

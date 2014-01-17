@@ -1,0 +1,500 @@
+<alfresco-config>
+
+
+	<config evaluator="node-type" condition="m2:namespace">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:uri" />
+					<show id="m2:prefix" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo" />
+					<field id="m2:uri" set="mainInfo" />
+					<field id="m2:prefix" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:namespace">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:prefix" />
+					<show id="m2:uri" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+    
+	<config evaluator="node-type" condition="m2:namedValue">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:simpleValue" />
+					<show id="m2:listValue" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:simpleValue" set="mainInfo" />
+					<field id="m2:listValue" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:namedValue">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:simpleValue" />
+					<show id="m2:listValue" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="m2:model">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:author" />
+					<show id="m2:version" />
+					<show id="m2:published" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:author" set="mainInfo" />
+					<field id="m2:version" set="mainInfo" />
+					<field id="m2:published" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="m2:type">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:parentName" />
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<!-- <show id="m2:includedInSuperTypeQuery" />
+					<show id="m2:archive" /> -->
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<field id="m2:parentName" set="mainInfo" />
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+				<!-- 	<field id="m2:includedInSuperTypeQuery" set="mainInfo" />
+					<field id="m2:archive" set="mainInfo" /> -->
+					<field id="m2:mandatoryAspects" set="mainInfo" />
+					<field id="m2:parentName" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/parentName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:mandatoryAspects" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/mandatoryAspects
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:type">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+					<show id="m2:name" />
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="m2:aspect">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:parentName" />
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+				<!-- 	<show id="m2:includedInSuperTypeQuery" />
+					<show id="m2:archive" /> -->
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<field id="m2:parentName" set="mainInfo" />
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<!-- <field id="m2:includedInSuperTypeQuery" set="mainInfo" />
+					<field id="m2:archive" set="mainInfo" /> -->
+					<field id="m2:mandatoryAspects" set="mainInfo" />
+					<field id="m2:parentName" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/parentName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:mandatoryAspects" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/mandatoryAspects
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:aspect">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+					<show id="m2:name" />
+					<show id="m2:mandatoryAspects" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="m2:property">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:propertyType" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+					<!-- <show id="m2:isMandatoryEnforced" />
+					<show id="m2:isOverride" /> -->
+					<show id="m2:isMultiValued" />
+					<show id="m2:isIndexedAtomically" />
+					<show id="m2:isIndexed" />
+					<show id="m2:isStoredInIndex" />
+					<show id="m2:indexTokenisationMode" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<set id="indexInfo" appearance="panel" label="Indexation" label-id="designer.sets.indexInfo"/>
+					<field id="m2:propertyType" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/propertyType
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:defaultValue" set="mainInfo" />
+					<field id="m2:isMandatory" set="mainInfo" />
+					<!-- <field id="m2:isMandatoryEnforced" set="mainInfo" />
+					<field id="m2:isOverride" set="mainInfo" /> -->
+					<field id="m2:isMultiValued" set="mainInfo" />
+					<field id="m2:isIndexedAtomically" set="indexInfo" />
+					<field id="m2:isIndexed" set="indexInfo" />
+					<field id="m2:isStoredInIndex" set="indexInfo" />
+					<field id="m2:indexTokenisationMode" set="indexInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:property">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+				    <show id="m2:name" />
+					<show id="m2:propertyType" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+					<show id="m2:isMultiValued" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="m2:propertyOverride">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+					<!-- <show id="m2:isMandatoryEnforced" /> -->
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>	
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:defaultValue" set="mainInfo" />
+					<field id="m2:isMandatory" set="mainInfo" />
+					<!-- <field id="m2:isMandatoryEnforced" set="mainInfo" /> -->
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:propertyOverride">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+				    <show id="m2:name" />
+					<show id="m2:defaultValue" />
+					<show id="m2:isMandatory" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="m2:association">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<!-- <show id="m2:sourceRoleName" /> -->
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+				<!-- 	<show id="m2:targetRoleName" /> -->
+					<show id="m2:isTargetMandatory" />
+					<!-- <show id="m2:isTargetMandatoryEnforced" /> -->
+					<show id="m2:isTargetMany" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<set id="sourceInfo" appearance="panel" label="Source" label-id="designer.sets.sourceInfo"/>
+					<set id="targetInfo" appearance="panel" label="Cible" label-id="designer.sets.targetInfo"/>
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+				<!-- 	<field id="m2:sourceRoleName" set="sourceInfo" /> -->
+					<field id="m2:isSourceMandatory" set="sourceInfo" />
+					<field id="m2:isSourceMany" set="sourceInfo" />
+					<field id="m2:targetClassName" set="targetInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetClassName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<!-- <field id="m2:targetRoleName" set="targetInfo" /> -->
+					<field id="m2:isTargetMandatory" set="targetInfo" />
+					<!-- <field id="m2:isTargetMandatoryEnforced" set="targetInfo" /> -->
+					<field id="m2:isTargetMany" set="targetInfo" />
+
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:association">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+				    <show id="m2:name" />
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+					<show id="m2:isTargetMandatory" />
+					<show id="m2:isTargetMany" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="m2:childAssociation">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+				<!-- 	<show id="m2:sourceRoleName" /> -->
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+					<!-- <show id="m2:targetRoleName" /> -->
+					<show id="m2:isTargetMandatory" />
+				<!-- 	<show id="m2:isTargetMandatoryEnforced" /> -->
+					<show id="m2:isTargetMany" />
+					<show id="m2:requiredChildName" />
+					<show id="m2:allowDuplicateChildName" />
+					<show id="m2:propagateTimestamps" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<set id="sourceInfo" appearance="panel" label="Source de l'association" label-id="designer.sets.sourceInfo"/>
+					<set id="targetInfo" appearance="panel" label="Cible de l'association" label-id="designer.sets.targetInfo"/>
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<!-- <field id="m2:sourceRoleName" set="sourceInfo" /> -->
+					<field id="m2:isSourceMandatory" set="sourceInfo" />
+					<field id="m2:isSourceMany" set="sourceInfo" />
+					<field id="m2:targetClassName" set="targetInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetClassName
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<!-- <field id="m2:targetRoleName" set="targetInfo" /> -->
+					<field id="m2:isTargetMandatory" set="targetInfo" />
+					<!-- <field id="m2:isTargetMandatoryEnforced" set="targetInfo" /> -->
+					<field id="m2:isTargetMany" set="targetInfo" />
+					<field id="m2:requiredChildName" set="mainInfo" />
+					<field id="m2:allowDuplicateChildName" set="mainInfo" />
+					<field id="m2:propagateTimestamps" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:childAssociation">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+				    <show id="m2:name" />
+					<show id="m2:isSourceMandatory" />
+					<show id="m2:isSourceMany" />
+					<show id="m2:targetClassName" />
+					<show id="m2:isTargetMandatory" />
+					<show id="m2:isTargetMany" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+
+	<config evaluator="node-type" condition="m2:constraint">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:name" />
+					<show id="m2:title" />
+					<show id="m2:description" />
+					<show id="m2:type" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<field id="m2:name" set="mainInfo" />
+					<field id="m2:title" set="mainInfo" />
+					<field id="m2:description" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="m2:type" set="mainInfo" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:constraint">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="m2:title" />
+					<show id="m2:name" />
+					<show id="m2:description" />
+					<show id="m2:type" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="m2:constraintRef">
+		<forms>
+			<form >
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="m2:ref" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo"/>
+					<field id="m2:ref" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/constraintRef
+							</control-param>
+							<control-param name="fieldTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="m2:constraintRef">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+				    <show id="m2:ref" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+
+
+</alfresco-config>

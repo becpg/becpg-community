@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="templateModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Template Model</description>
+	<author>Laborie Matthieu</author>
+	<version>1.0</version>
+
+	<imports>
+	</imports>
+
+	<namespaces>
+
+	</namespaces>
+
+	<constraints>
+		<!-- Length Model Template -->
+		<constraint name="LENGTH" type="LENGTH">
+			<parameter name="minLength">
+				<value>0</value>
+			</parameter>
+			<parameter name="maxLength">
+				<value>128</value>
+			</parameter>
+		</constraint>
+		<!-- LIST Model Template -->
+		<constraint name="LIST" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>ABC</value>
+					<value>DEF</value>
+				</list>
+			</parameter>
+			<parameter name="caseSensitive">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		<!-- MINMAX Model Template -->
+		<constraint name="MINMAX" type="MINMAX">
+			<parameter name="minValue">
+				<value>0</value>
+			</parameter>
+			<parameter name="maxValue">
+				<value>256</value>
+			</parameter>
+		</constraint>
+
+		<!-- REGEX Model Template -->
+		<constraint name="REGEX" type="REGEX">
+			<parameter name="expression">
+				<value>[A-Z]*</value>
+			</parameter>
+			<parameter name="requiresMatch">
+				<value>false</value>
+			</parameter>
+		</constraint>
+	</constraints>
+
+	<types>
+		<!-- CONTENT Model Template -->
+		<type name="CONTENT">
+			<parent>cm:content</parent>
+		</type>
+		<!-- STARTTASK Model Template -->
+		<type name="STARTTASK">
+			<parent>bpm:startTask</parent>
+			<overrides>
+				<property name="bpm:packageActionGroup">
+					<default>add_package_item_actions</default>
+				</property>
+				<property name="bpm:packageItemActionGroup">
+					<default>edit_package_item_actions</default>
+				</property>
+			</overrides>
+			<mandatory-aspects>
+            <aspect>bpm:assignee</aspect>
+         </mandatory-aspects>
+		</type>
+		<!-- TASKNODE Model Template -->
+		<type name="TASKNODE">
+			<parent>bpm:workflowTask</parent>
+			<overrides>
+				<property name="bpm:packageItemActionGroup">
+					<default>read_package_item_actions</default>
+				</property>
+			</overrides>
+		</type>
+
+
+	</types>
+
+
+</model>

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<template-instance>
+   <template-type>org/alfresco/model-designer</template-type>
+   <components>   
+	  <!-- model-designers -->
+      <component>
+         <region-id>toolbar</region-id>
+         <url>/components/model-designer/toolbar</url>
+      </component>
+      <component>
+         <region-id>modelForm</region-id>
+         <url>/components/model-designer/form</url>
+      </component>
+      <component>
+         <region-id>modelFormDataGrid</region-id>
+         <url>/modules/entity-data-grid/entity-datagrid</url>
+         <properties>
+				<pagination>false</pagination>
+				<filter>false</filter>
+			 </properties>
+      </component>
+      <component>
+         <region-id>modelTree</region-id>
+         <url>/components/model-designer/tree</url>
+      </component>
+      <component>
+         <region-id>modelPalettes</region-id>
+         <url>/components/model-designer/palettes</url>
+      </component>
+   </components>
+</template-instance>

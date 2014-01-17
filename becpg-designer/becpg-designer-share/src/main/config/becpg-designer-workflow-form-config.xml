@@ -1,0 +1,38 @@
+<alfresco-config>
+	<config condition="bpm:workflowDefinition" evaluator="node-type"
+		replace="true">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:definitionName" />
+					<show force="false" id="bpm:engineId" />
+					<show force="false" id="bpm:definitionDeployed" />
+				</field-visibility>
+				<appearance>
+					<field id="bpm:definitionName" mandatory="false" read-only="false" />
+					<field id="bpm:engineId" mandatory="false" read-only="false" />
+					<field id="bpm:definitionDeployed" mandatory="false"
+						read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="bpm:workflowDefinition" evaluator="model-type"
+		replace="true">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show force="false" id="bpm:definitionName" />
+					<show force="false" id="bpm:engineId" />
+					<show force="false" id="bpm:definitionDeployed" />
+				</field-visibility>
+				<appearance>
+					<field id="bpm:definitionName" mandatory="false" read-only="false" />
+					<field id="bpm:engineId" mandatory="false" read-only="false" />
+					<field id="bpm:definitionDeployed" mandatory="false"
+						read-only="false" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+</alfresco-config>

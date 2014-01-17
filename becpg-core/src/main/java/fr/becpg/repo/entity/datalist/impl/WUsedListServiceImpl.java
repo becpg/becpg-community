@@ -18,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.MPMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
@@ -130,6 +129,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 	}
 
 	@Override
+	@Deprecated
 	public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
 		List<QName> wUsedAssociations = new ArrayList<QName>();
 
@@ -140,15 +140,16 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 			wUsedAssociations.add(BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
 		} else if (nodeType.isMatch(BeCPGModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(BeCPGModel.TYPE_PACKAGINGKIT)) {
-			wUsedAssociations.add(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
-		} else if (nodeType.isMatch(BeCPGModel.TYPE_RESOURCEPRODUCT)) {
-			wUsedAssociations.add(MPMModel.ASSOC_PL_RESOURCE);
-		}
+			wUsedAssociations.add(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT); }
+//		} else if (nodeType.isMatch(BeCPGModel.TYPE_RESOURCEPRODUCT)) {
+//			wUsedAssociations.add(MPMModel.ASSOC_PL_RESOURCE);
+//		}
 
 		return wUsedAssociations;
 	}
 
 	@Override
+	@Deprecated
 	public QName evaluateListFromAssociation(QName associationName) {
 
 		QName listQName = null;
@@ -156,10 +157,10 @@ public class WUsedListServiceImpl implements WUsedListService {
 		if (associationName.equals(BeCPGModel.ASSOC_COMPOLIST_PRODUCT)) {
 			listQName = BeCPGModel.TYPE_COMPOLIST;
 		} else if (associationName.equals(BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT)) {
-			listQName = BeCPGModel.TYPE_PACKAGINGLIST;
-		} else if (associationName.equals(MPMModel.ASSOC_PL_RESOURCE)) {
-			listQName = MPMModel.TYPE_PROCESSLIST;
-		}
+			listQName = BeCPGModel.TYPE_PACKAGINGLIST; }
+//		} else if (associationName.equals(MPMModel.ASSOC_PL_RESOURCE)) {
+//			listQName = MPMModel.TYPE_PROCESSLIST;
+//		}
 
 		return listQName;
 	}

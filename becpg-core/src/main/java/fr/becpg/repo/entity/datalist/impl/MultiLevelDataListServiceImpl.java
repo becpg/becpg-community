@@ -10,11 +10,13 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -26,35 +28,27 @@ import fr.becpg.repo.search.AdvSearchService;
  * 
  * @author matthieu
  */
-@Service
+@Service("multiLevelDataListService")
 public class MultiLevelDataListServiceImpl implements MultiLevelDataListService {
 
 	private static Log logger = LogFactory.getLog(MultiLevelDataListServiceImpl.class);
 
+	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
 	private AdvSearchService advSearchService;
 	
+	@Autowired
 	private PermissionService permissionService;
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setAdvSearchService(AdvSearchService advSearchService) {
-		this.advSearchService = advSearchService;
-	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+	
+	
 	@Override
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter) {
 		StopWatch watch = null;
@@ -110,7 +104,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	// TODO more generic
 	// Use alfresco repository to make it more generic 
 	private NodeRef getEntityNodeRef(NodeRef listItemNodeRef) {
-		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef)));
 		NodeRef part = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
 		if( part!=null && permissionService.hasPermission( part,PermissionService.READ) == AccessStatus.ALLOWED){
 			return part;

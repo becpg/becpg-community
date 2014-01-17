@@ -11,10 +11,22 @@
 			</props>
 		</property>
 	</bean>
+	
+		<!-- Webscripts -->
+	<bean id="webscript.fr.becpg.autoComplete.get" class="fr.becpg.repo.listvalue.web.scripts.AutoCompleteWebScript" parent="webscript">
+		<property name="listValueService" ref="listValueService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.form.multilingualField.get" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.form.multilingualField.post" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+	</bean>
 
 	<!-- Admin -->
 	<bean id="webscript.fr.becpg.admin.adminModule.get" class="fr.becpg.repo.web.scripts.admin.AdminModuleWebScript" parent="webscript">
-		<property name="initRepoVisitor" ref="initRepoVisitor" />
 		<property name="repository" ref="repositoryHelper" />
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="securityService" ref="securityService" />
@@ -22,6 +34,7 @@
 		<property name="entitySystemService" ref="entitySystemService" />
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="tenantAdminService" ref="tenantAdminService" />
+		<property name="initVisitorService" ref="initVisitorService"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript" parent="webscript">
@@ -70,26 +83,6 @@
 		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>
 
-	<!-- Product formulate -->
-	<bean id="webscript.fr.becpg.product.productFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateWebScript" parent="webscript">
-		<property name="productService" ref="productService" />
-	</bean>
-
-	<bean id="webscript.fr.becpg.product.charactDetailsFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateCharactDetailsWebScript" parent="webscript">
-		<property name="productService" ref="productService" />
-		<property name="nodeService" ref="NodeService" />
-		<property name="namespaceService" ref="NamespaceService" />
-	</bean>
-
-
-	<!-- Simulation webscript -->
-
-	<bean id="webscript.fr.becpg.simulation.simulation-create.post" class="fr.becpg.repo.web.scripts.simulation.SimulationWebScript" parent="webscript">
-		<property name="associationService" ref="associationService" />
-		<property name="nodeService" ref="NodeService" />
-		<property name="copyService" ref="CopyService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
 
 	<!-- Entity report -->
 	<bean id="webscript.fr.becpg.entity.entityReport.get" class="fr.becpg.repo.web.scripts.entity.ReportWebScript" parent="webscript">
@@ -121,35 +114,6 @@
 		<property name="personService" ref="personService" />
 	</bean>
 
-	<!-- Export search -->
-	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
-		<property name="exportSearchService" ref="exportSearchService" />
-		<property name="mimetypeService" ref="MimetypeService" />
-		<property name="advSearchService" ref="AdvSearchService" />
-		<property name="namespaceService" ref="NamespaceService" />
-		<property name="reportTplService" ref="reportTplService" />
-	</bean>
-
-	<!-- Search -->
-	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript" parent="webscript">
-		<property name="advSearchService" ref="AdvSearchService" />
-		<property name="namespaceService" ref="NamespaceService" />
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-	</bean>
-
-	<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
-		<property name="namespaceService" ref="NamespaceService" />
-		<property name="reportTplService" ref="reportTplService" />
-	</bean>
-
-	<!-- dockbar -->
-	<bean id="webscript.fr.becpg.dockbar.dockbar.get" class="fr.becpg.repo.web.scripts.dockbar.DockBarWebScript" parent="webscript">
-		<property name="preferenceService" ref="PreferenceService" />
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-	</bean>
-
 	<!-- Report -->
 	<bean id="webscript.fr.becpg.report.reportDataSource.get" class="fr.becpg.repo.web.scripts.report.ReportDataSourceWebscript" parent="webscript">
 		<property name="entityReportService" ref="entityReportService" />
@@ -179,27 +143,6 @@
 		<property name="CMISRenditionService" ref="CMISRenditionService" />
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="delegate" ref="webscript.content.streamer" />
-	</bean>
-
-	<!-- Migration -->
-	<bean id="webscript.fr.becpg.migration.migrateRepository.get" class="fr.becpg.repo.web.scripts.migration.MigrateRepositoryWebScript" parent="webscript">
-		<property name="beCPGSearchService" ref="BeCPGSearchService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-		<property name="mlNodeService" ref="mlAwareNodeService" />
-		<property name="beCPGVersionMigrator" ref="beCPGVersionMigrator" />
-		<property name="beCPGSystemFolderMigrator" ref="beCPGSystemFolderMigrator" />
-		<property name="personService" ref="PersonService" />
-		<property name="nodeService" ref="NodeService" />
-		<property name="entityFolderMigrator" ref="entityFolderMigrator" />
-		<property name="productService" ref="productService" />
-		<property name="repository" ref="repositoryHelper" />
-		<property name="tenantAdminService" ref="tenantAdminService" />
-		<property name="namespaceService" ref="NamespaceService" />
-		<property name="migrationService" ref="migrationService" />
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="transactionService" ref="TransactionService" />
-		<property name="associationService" ref="associationService" />
-		<property name="repoService" ref="repoService" />
 	</bean>
 
 
@@ -247,12 +190,6 @@
 	</bean>
 
 	<bean id="webscript.fr.becpg.remote.formulate.get" class="fr.becpg.repo.web.scripts.remote.FormulateWebScript" parent="abstractEntityWebScript">
-	</bean>
-
-	<!-- Project -->
-	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript" parent="webscript">
-		<property name="nodeService" ref="NodeService" />
-		<property name="projectService" ref="projectService" />
 	</bean>
 
 

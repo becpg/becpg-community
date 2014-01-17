@@ -261,10 +261,10 @@ public class SecurityServiceImpl implements SecurityService {
 
 	private void appendPropName(TypeDefinition typeDefinition, Entry<QName, PropertyDefinition> properties, List<String> ret) {
 		String key = properties.getKey().toPrefixString(namespacePrefixResolver);
-		String label = properties.getValue().getTitle();
+		String label = properties.getValue().getTitle(dictionaryService);
 
-		if (!ret.contains(key + "|" + typeDefinition.getTitle() + " - " + label) && label != null) {
-			ret.add(key + "|" + typeDefinition.getTitle() + " - " + label);
+		if (!ret.contains(key + "|" + typeDefinition.getTitle(dictionaryService) + " - " + label) && label != null) {
+			ret.add(key + "|" + typeDefinition.getTitle(dictionaryService) + " - " + label);
 		}
 
 	}
@@ -276,7 +276,6 @@ public class SecurityServiceImpl implements SecurityService {
 	 *            the q name
 	 * @return true, if is viewable property
 	 */
-	@SuppressWarnings("deprecation")
 	private boolean isViewableProperty(QName qName) {
 
 		if (qName.equals(ContentModel.PROP_NODE_REF) || qName.equals(ContentModel.PROP_NODE_DBID) || qName.equals(ContentModel.PROP_NODE_UUID)
@@ -287,10 +286,7 @@ public class SecurityServiceImpl implements SecurityService {
 				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS)
 				||
 				// do not compare frozen properties and version properties
-				qName.equals(BeCPGModel.PROP_VERSION_DESCRIPTION) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_FROZEN_NODE_DBID)
-				|| qName.equals(BeCPGModel.PROP_FROZEN_NODE_REF) || qName.equals(BeCPGModel.PROP_FROZEN_ACCESSED) || qName.equals(BeCPGModel.PROP_FROZEN_CREATOR)
-				|| qName.equals(BeCPGModel.PROP_FROZEN_CREATED) || qName.equals(BeCPGModel.PROP_FROZEN_MODIFIER)
-				|| qName.equals(BeCPGModel.PROP_FROZEN_MODIFIED)
+				qName.equals(BeCPGModel.PROP_VERSION_LABEL)
 				||
 				// system properties
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(ContentModel.PROP_NAME) || qName.equals(ContentModel.PROP_CREATOR)

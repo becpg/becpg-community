@@ -18,11 +18,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.extensions.webscripts.TestWebScriptServer.PostRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.PutRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
+
+import fr.becpg.repo.entity.EntityService;
 
 /**
  * The Class RemoteEntityWebScriptTest.
@@ -32,6 +35,9 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 public class RemoteEntityWebScriptTest extends fr.becpg.test.BaseWebScriptTest {
 
 	private static Log logger = LogFactory.getLog(RemoteEntityWebScriptTest.class);
+	
+	@Autowired
+	private EntityService entityService;
 
 	@Test
 	public void testCRUDEntity() throws Exception {
@@ -52,8 +58,9 @@ public class RemoteEntityWebScriptTest extends fr.becpg.test.BaseWebScriptTest {
 		
 		Assert.assertTrue(nodeService.exists(nodeRef));
 
-		NodeRef imageNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, "Images");
+		NodeRef imageNodeRef = entityService.getImageFolder(nodeRef);
 		
+		Assert.assertNotNull(imageNodeRef);
 		Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
 		
 		response = sendRequest(new PostRequest(url + "/data?nodeRef=" + nodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200, "admin");

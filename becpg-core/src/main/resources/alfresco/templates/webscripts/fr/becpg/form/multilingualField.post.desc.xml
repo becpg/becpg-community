@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Multilingual field</shortname>
+	<description>Save all values for an mlText field</description>
+	<url>/becpg/form/multilingual/field/{field}?nodeRef={nodeRef}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction allow="readwrite" buffersize="0">required</transaction>
+</webscript>

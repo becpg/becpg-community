@@ -23,27 +23,39 @@
 		</dependency>
 	   <dependency>
 			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-controls-core</artifactId>
+			<artifactId>becpg-plm-core</artifactId>
 			<type>amp</type>
-			<version>${becpg.contribs.version}</version>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-controls-share</artifactId>
+			<artifactId>becpg-plm-share</artifactId>
 			<type>amp</type>
-			<version>${becpg.contribs.version}</version>
+			<version>1.6.0</version>
+		</dependency>
+		 <dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-project-core</artifactId>
+			<type>amp</type>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-project-share</artifactId>
+			<type>amp</type>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-core</artifactId>
 			<type>amp</type>
-			<version>${becpg.contribs.version}</version>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-designer-share</artifactId>
 			<type>amp</type>
-			<version>${becpg.contribs.version}</version>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.becpg</groupId>

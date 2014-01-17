@@ -42,7 +42,7 @@
 			<name>Matthieu Laborie</name>
 			<email>matthieu.laborie@becpg.fr</email>
 			<timezone>1</timezone>
-			<organization>becPG</organization>
+			<organization>beCPG</organization>
 			<organizationUrl>http://www.becpg.fr</organizationUrl>
 		</developer>
 		<developer>
@@ -50,7 +50,7 @@
 			<name>Philippe Quéré</name>
 			<email>philippe.quere@becpg.fr</email>
 			<timezone>1</timezone>
-			<organization>becPG</organization>
+			<organization>beCPG</organization>
 			<organizationUrl>http://www.becpg.fr</organizationUrl>
 		</developer>
 	</developers>
@@ -58,30 +58,25 @@
 	<properties>
 		<!-- Test -->
 		<alfresco.data.location>/srv/becpg-data/test/becpg</alfresco.data.location>
-		
-		<!-- By default the H2 embedded database datafile is created under the 
-			alfresco.data.location folder -->
+
+		<!-- By default the H2 embedded database datafile is created under the alfresco.data.location folder -->
 		<alfresco.db.params>MODE=PostgreSQL;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000;MVCC=TRUE</alfresco.db.params>
-		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url> 
-	<!--   <alfresco.db.url>jdbc:h2:mem:alfrescoTest;${alfresco.db.params}</alfresco.db.url> -->
+		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url>
+		<!-- <alfresco.db.url>jdbc:h2:mem:alfrescoTest;${alfresco.db.params}</alfresco.db.url> -->
 		<alfresco.db.datasource.class>org.h2.jdbcx.JdbcDataSource</alfresco.db.datasource.class>
 		<alfresco.db.name>becpg_test_contribs</alfresco.db.name>
-		<!-- 
-		<alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url>
-		<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class>
-		<alfresco.db.host>localhost</alfresco.db.host>
-		<alfresco.db.username>becpg</alfresco.db.username>
-		<alfresco.db.password>becpg</alfresco.db.password> -->
+		<!-- <alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url> <alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class> <alfresco.db.host>localhost</alfresco.db.host> 
+			<alfresco.db.username>becpg</alfresco.db.username> <alfresco.db.password>becpg</alfresco.db.password> -->
 
 		<!-- AMP config dir -->
 		<alfresco.amp.config.dir>alfresco/module/${project.artifactId}</alfresco.amp.config.dir>
 		<!-- build -->
 		<alfresco.groupId>org.alfresco</alfresco.groupId>
 		<alfresco.version>4.2.e</alfresco.version>
-		
+
 		<birt.version>4.3.1</birt.version>
 		<becpg.contribs.version>1.6.0</becpg.contribs.version>
-		
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<app.log.dir>${project.build.directory}/</app.log.dir>
@@ -89,9 +84,9 @@
 
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -XX:MaxPermSize=256m
 			-Duser.language=fr</app.testing.jvm.args>
-			
-		 <!-- <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis> -->
-		 <sonar.jacoco.excludes>org/alfresco/**</sonar.jacoco.excludes>
+
+		<!-- <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis> -->
+		<sonar.jacoco.excludes>org/alfresco/**</sonar.jacoco.excludes>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -108,18 +103,15 @@
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>
-      <repository>
-          <id>becpg-repo</id>
-          <name>becpg repository</name>
-          <url>scp://becpg.fr/srv/becpg-data/maven</url>
-	    </repository>
+		<repository>
+			<id>becpg-repo</id>
+			<name>becpg repository</name>
+			<url>scp://becpg.fr/srv/becpg-data/maven</url>
+		</repository>
 	</distributionManagement>
 
-	 <repositories>
-	 	<!-- <repository>
-           <id>becpg-repo</id>
-           <url>https://becpg.fr/maven</url>
-      </repository> -->
+	<repositories>
+		<!-- <repository> <id>becpg-repo</id> <url>https://becpg.fr/maven</url> </repository> -->
 
 		<repository>
 			<id>alfresco-public</id>
@@ -135,10 +127,7 @@
 		</repository>
 	</repositories>
 	<pluginRepositories>
-	<!-- 	<pluginRepository>
-           <id>becpg-repo</id>
-           <url>https://becpg.fr/maven</url>
-      </pluginRepository> -->
+		<!-- <pluginRepository> <id>becpg-repo</id> <url>https://becpg.fr/maven</url> </pluginRepository> -->
 		<pluginRepository>
 			<id>alfresco-plugin-public</id>
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
@@ -181,19 +170,17 @@
 						<addMavenDescriptor>false</addMavenDescriptor>
 					</archive>
 					<overlays>
-						<!-- This sample adds records management module in the finally built 
-							AMP <overlay> <groupId>org.org.alfresco</groupId> <artifactId>recordsmanagement</artifactId> 
-							<version>2.1.0</version> <type>amp</type> </overlay> -->
-						<!-- The current AMP is always last in order to overwrite other modules' 
-							modules.properties <overlay></overlay> -->
+						<!-- This sample adds records management module in the finally built AMP <overlay> <groupId>org.org.alfresco</groupId> <artifactId>recordsmanagement</artifactId> <version>2.1.0</version> <type>amp</type> 
+							</overlay> -->
+						<!-- The current AMP is always last in order to overwrite other modules' modules.properties <overlay></overlay> -->
 					</overlays>
 				</configuration>
 			</plugin>
 			<plugin>
-	          <groupId>org.codehaus.mojo</groupId>
-	          <artifactId>sonar-maven-plugin</artifactId>
-	          <version>2.1</version>
-        </plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
@@ -211,15 +198,13 @@
 					<include>**/*.csv</include>
 				</includes>
 			</resource>
-			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' 
-				so to enforce full module naming single sourcing from POM properties -->
+			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' so to enforce full module naming single sourcing from POM properties -->
 			<resource>
 				<filtering>true</filtering>
 				<directory>src/main/config</directory>
 				<targetPath>${alfresco.amp.config.dir}</targetPath>
 				<excludes>
 					<exclude>**README-*</exclude>
-					<exclude>**/*.properties</exclude>
 				</excludes>
 			</resource>
 			<!-- Copies web files -->
@@ -231,17 +216,16 @@
 					<exclude>**README-*</exclude>
 				</excludes>
 			</resource>
-			<!-- The file-mapping.properties is simply ignored by the plugin when 
-				assembling the AMP file -->
-			 <resource>
+			<!-- The file-mapping.properties is simply ignored by the plugin when assembling the AMP file -->
+			<resource>
 				<filtering>true</filtering>
 				<directory>${basedir}</directory>
 				<includes>
 					<include>file-mapping.properties</include>
 				</includes>
 				<targetPath>../${project.artifactId}-${project.version}/</targetPath>
-				<!-- 	hack TODO bug here make amp include all target -->
-			</resource>	
+				<!-- hack TODO bug here make amp include all target -->
+			</resource>
 		</resources>
 		<testResources>
 			<testResource>
@@ -249,26 +233,63 @@
 				<directory>src/test/resources</directory>
 			</testResource>
 		</testResources>
-		
+
 	</build>
 	<dependencies>
+
+		<!-- Test -->
 
 		<dependency>
 			<groupId>${alfresco.groupId}</groupId>
 			<artifactId>alfresco-repository</artifactId>
 			<version>${alfresco.version}</version>
 			<classifier>config</classifier>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${alfresco.groupId}</groupId>
 			<artifactId>alfresco-data-model</artifactId>
 			<version>${alfresco.version}</version>
 			<classifier>config</classifier>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 
-		<!-- test -->
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-remote-api</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>test</scope>
+			<classifier>config</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-remote-api</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.chemistry</groupId>
+			<artifactId>chemistry-tck-atompub</artifactId>
+			<version>0.1-incubating-unreleased</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.extensions.surf</groupId>
+			<artifactId>spring-webscripts</artifactId>
+			<version>1.2.0-SNAPSHOT</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-surf-core-configservice</artifactId>
+					<groupId>org.springframework.extensions.surf</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -309,34 +330,35 @@
 	</dependencies>
 	<modules>
 		<module>becpg-report</module>
-		<module>becpg-core</module>
-		<module>becpg-share</module>
 		<module>becpg-olap</module>
+		<module>becpg-core</module>
+		<module>becpg-project/becpg-project-core</module>
+		<module>becpg-designer/becpg-designer-core</module>
+		<module>becpg-plm/becpg-plm-core</module>
+		<module>becpg-share</module>
+		<module>becpg-project/becpg-project-share</module>
+		<module>becpg-designer/becpg-designer-share</module>
+		<module>becpg-plm/becpg-plm-share</module>
 		<module>distribution</module>
-  </modules>
+	</modules>
 
 	<profiles>
 		<profile>
 			<id>dev-tours</id>
 			<properties>
-			    <!-- Test -->
-			   <alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
+				<!-- Test -->
+				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
 				<!-- <alfresco.data.location>/opt/becpg/workspace/becpg/alf_data</alfresco.data.location> -->
-				<!-- Test used by default h2 
-				<alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url>
-				<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class>
-				<alfresco.db.host>localhost</alfresco.db.host>
-				<alfresco.db.name>becpg_test</alfresco.db.name>
-				<alfresco.db.username>becpg</alfresco.db.username>
-				<alfresco.db.password>becpg</alfresco.db.password> -->
+				<!-- Test used by default h2 <alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url> <alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class> <alfresco.db.host>localhost</alfresco.db.host> 
+					<alfresco.db.name>becpg_test</alfresco.db.name> <alfresco.db.username>becpg</alfresco.db.username> <alfresco.db.password>becpg</alfresco.db.password> -->
 			</properties>
 		</profile>
 		<profile>
 			<id>dev-montrouge</id>
 			<properties>
-			    <!-- Test -->
+				<!-- Test -->
 				<alfresco.data.location>/opt/becpg/workspace/becpg/alf_data</alfresco.data.location>
-				 <alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
+				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
 			</properties>
 		</profile>
 		<profile>
@@ -365,47 +387,5 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- TODO deprecated -->
-		 <profile>
-			<id>enable-native2ascii</id>
-			<activation>
-				<file>
-					<exists>src/main/config</exists>
-				</file>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>native2ascii-maven-plugin</artifactId>
-						<version>1.0-alpha-1</version>
-						<inherited>true</inherited>
-						<executions>
-							<execution>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>native2ascii</goal>
-								</goals>
-								<configuration>
-									<encoding>8859_1</encoding>
-									<dest>target/classes/${alfresco.amp.config.dir}</dest>
-									<src>src/main/config</src>
-									<includes>**/*.properties</includes>
-								</configuration>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>com.sun</groupId>
-								<artifactId>tools</artifactId>
-								<version>1.7.0</version>
-								<scope>system</scope>
-								<systemPath>${java.home}/../lib/tools.jar</systemPath>
-							</dependency>
-						</dependencies>
-					</plugin>
-				</plugins>
-			</build>
-		</profile> 
 	</profiles>
 </project>

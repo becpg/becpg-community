@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+
+   <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/service-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/product-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/action-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/formulation-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/ecm-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/publication-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/quality-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/report-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/workflow-context.xml" />
+	<import resource="classpath:alfresco/module/${artifactId}/context/patch-context.xml" />
+	
+</beans>

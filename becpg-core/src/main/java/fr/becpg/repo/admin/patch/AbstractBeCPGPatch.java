@@ -17,7 +17,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 
 public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
-	private static Log logger = LogFactory.getLog(EmailTemplatesPatch.class);
+	private static Log logger = LogFactory.getLog(AbstractBeCPGPatch.class);
 
 	protected Repository repository;
 	

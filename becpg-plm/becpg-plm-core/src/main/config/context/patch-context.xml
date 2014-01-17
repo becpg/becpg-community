@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"   >
+
+	<!-- Abstract bean -->
+	<bean id="beCPGBasePatch" abstract="true" class="fr.becpg.repo.admin.patch.AbstractBeCPGPatch" parent="basePatch">
+		<property name="repository" ref="repositoryHelper"/>
+		<property name="contentHelper" ref="contentHelper"/>	
+		<property name="entitySystemService" ref="entitySystemService"/>
+		<property name="repoService" ref="repoService"/>	
+	</bean>
+
+    
+</beans>

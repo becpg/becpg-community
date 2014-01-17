@@ -109,10 +109,10 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
 			nodeService.removeProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 		}
-
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)) {
-			nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
-		}
+//A refaire
+//		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)) {
+//			nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
+//		}
 		queueNode(nodeRef);
 		
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.9.2.201205070117-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[3.4.0.201310051539-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -9,17 +9,15 @@
 	<configs>
 		<config>src/main/config/module-context.xml</config>
 		<config>src/main/config/context/action-context.xml</config>
-		<config>src/main/config/context/ecm-context.xml</config>
-		<config>src/main/config/context/gs1-context.xml</config>
 		<config>src/main/config/context/model-context.xml</config>
 		<config>src/main/config/context/olap-context.xml</config>
-		<config>src/main/config/context/quality-context.xml</config>
 		<config>src/main/config/context/report-context.xml</config>
 		<config>src/main/config/context/script-services-context.xml</config>
-		<config>src/main/config/context/security-context.xml</config>
-		<config>src/main/config/context/service-context.xml</config>
 		<config>src/main/config/context/webscripts-context.xml</config>
-		<config>src/main/config/context/workflow-context.xml</config>
+		<config>src/main/config/context/security-context.xml</config>
+		<config>src/main/config/context/core-context.xml</config>
+		<config>src/main/config/context/formulation-context.xml</config>
+		<config>src/main/config/context/policy-context.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

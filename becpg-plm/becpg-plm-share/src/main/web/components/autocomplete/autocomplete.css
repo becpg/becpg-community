@@ -1,0 +1,180 @@
+/* custom styles for inline instances */
+
+
+.yui-skin-default .yui-ac-content li span
+, .yui-skin-lightTheme .yui-ac-content li span{
+	white-space : normal;
+	display: block;
+}
+
+.yui-skin-lightTheme .yui-ac .ac-body {
+ 	box-shadow: 0.33px 2px 8px rgba(0, 0, 0, 0.15);
+ 	border: 1px solid #CCCCCC;
+   font-weight: normal;
+}
+ 
+
+.yui-ac .ac-body {
+	min-height: 20px;
+	line-height:20px;
+	vertical-align: middle;
+	padding:0px;
+	margin-right: 0px;
+	border: 1px solid #C5D6E2;
+	background-color: white;
+	width:30em;
+	max-width:30em;
+	display:block;
+}
+
+
+
+
+.yui-skin-default .yui-tt .bd {
+	background-color: white;
+}
+
+.yui-skin-default .yui-ac-container {
+	width: 100%;
+	left: 0px;
+}
+
+.yui-ac .ac-body .yui-ac-input{
+	border:0px;
+	background-color: white;
+	width:90%;
+	vertical-align: middle;
+	position: relative;
+	float:left;
+	display: block;
+	clear:none;
+	box-shadow: none;
+}
+
+.yui-ac .ac-body .yui-ac-input.multi-assoc{
+	width:auto;
+}
+
+
+
+/* buttons */
+
+
+.ac-toogle {
+	padding: 0px;
+	height: 20px;
+	width:20px;
+	background: url(../images/collapsed.png) center center no-repeat;
+	vertical-align: middle;
+	background-color: white;
+	border:0px	;
+	cursor: pointer;
+	display: block;
+	float:left;
+}
+
+.ac-toogle.openToggle {
+	background: url(../images/expanded.png) center center no-repeat;
+}
+
+
+/**
+stickers
+*/
+
+ .yui-ac span.ac-m-selected{
+    padding-right: 16px;
+    border: 1px solid #C5D6E2;
+    border-radius: 3px;
+    background-color:#D2E5F2;
+    vertical-align: middle;
+    position: relative;
+    float:left;
+    line-height: 17px;
+    margin: 2px 2px 2px 2px;
+ }
+
+ .yui-ac span.ac-m-selected-body{
+ 	 padding: 0px 5px 2px;
+	 white-space: nowrap;
+ }
+
+.yui-ac span.ac-closebutton{
+	background: url(../images/remove-icon-16.png) center center no-repeat;
+	display: block;
+    font-size: 1px;
+    height: 16px;
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    top: 1px;
+    width: 16px;
+}
+
+/**
+ header
+**/
+.yui-ac  .ac-header {
+	margin: 5px; padding-bottom : 5px;
+	border-bottom: 1px solid grey;
+	padding-bottom: 5px;
+}
+
+.yui-ac  .ac-header span {
+	margin: 5px; font-weight : bold;
+	color: grey;
+	font-weight: bold;
+}
+
+/**
+ footer
+**/
+
+.yui-ac  .ac-footer {
+	margin: 5px;
+	padding-top: 5px;
+	border-top: 1px solid grey;
+}
+
+
+.yui-ac  .ac-footer  .yui-pg-container span {
+	margin: 0px;
+	font-weight: bold;
+	color: grey;
+}
+
+.yui-ac  .ac-footer div {
+	font-weight: bold;
+	color: grey;
+	margin: 5px;
+}
+
+/**
+ Pagination
+**/
+
+.yui-skin-default  .yui-ac  .ac-footer  .yui-pg-first, .yui-skin-default .yui-pg-previous, .yui-skin-default .yui-pg-next, .yui-skin-default .yui-pg-last, .yui-skin-default .yui-pg-current, .yui-skin-default .yui-pg-pages, .yui-skin-default .yui-pg-page {
+    display: inline-block;
+    font-family: arial,helvetica,clean,sans-serif;
+    padding: 0px 3px;
+}
+
+.yui-skin-default .yui-ac  .ac-footer  .yui-pg-container a.yui-pg-first,.yui-skin-default .yui-pg-container a.yui-pg-previous,.yui-skin-default .yui-pg-container a.yui-pg-page,.yui-skin-default .yui-pg-container a.yui-pg-next,.yui-skin-default .yui-pg-container a.yui-pg-last
+	{
+	border-color: #CBCBCB;
+	color: grey;
+	text-decoration: none;
+}
+
+.yui-skin-default .yui-ac  .ac-footer  a.yui-pg-first:link,.yui-skin-default a.yui-pg-first:visited,.yui-skin-default a.yui-pg-first:active,.yui-skin-default a.yui-pg-first:hover,.yui-skin-default a.yui-pg-previous:link,.yui-skin-default a.yui-pg-previous:visited,.yui-skin-default a.yui-pg-previous:active,.yui-skin-default a.yui-pg-previous:hover,.yui-skin-default a.yui-pg-next:link,.yui-skin-default a.yui-pg-next:visited,.yui-skin-default a.yui-pg-next:active,.yui-skin-default a.yui-pg-next:hover,.yui-skin-default a.yui-pg-last:link,.yui-skin-default a.yui-pg-last:visited,.yui-skin-default a.yui-pg-last:active,.yui-skin-default a.yui-pg-last:hover,.yui-skin-default a.yui-pg-page:link,.yui-skin-default a.yui-pg-page:visited,.yui-skin-default a.yui-pg-page:active,.yui-skin-default a.yui-pg-page:hover
+	{
+	color: #grey;
+	outline: 0 none;
+	text-decoration: none;
+}
+
+.yui-skin-default  .yui-ac  .ac-footer  a.yui-pg-first:link, .yui-skin-default a.yui-pg-first:visited, .yui-skin-default a.yui-pg-first:active, .yui-skin-default a.yui-pg-first:hover, .yui-skin-default a.yui-pg-previous:link, .yui-skin-default a.yui-pg-previous:visited, .yui-skin-default a.yui-pg-previous:active, .yui-skin-default a.yui-pg-previous:hover, .yui-skin-default a.yui-pg-next:link, .yui-skin-default a.yui-pg-next:visited, .yui-skin-default a.yui-pg-next:active, .yui-skin-default a.yui-pg-next:hover, .yui-skin-default a.yui-pg-last:link, .yui-skin-default a.yui-pg-last:visited, .yui-skin-default a.yui-pg-last:active, .yui-skin-default a.yui-pg-last:hover, .yui-skin-default a.yui-pg-page:link, .yui-skin-default a.yui-pg-page:visited, .yui-skin-default a.yui-pg-page:active, .yui-skin-default a.yui-pg-page:hover {
+    color: #grey;
+    outline: 0 none;
+    text-decoration: none;
+}

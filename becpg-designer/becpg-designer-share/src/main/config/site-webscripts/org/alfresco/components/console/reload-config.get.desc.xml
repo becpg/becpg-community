@@ -1,0 +1,6 @@
+<webscript>
+  <shortname>beCPG config reload</shortname>
+  <description>beCPG config reload</description>
+  <url>/components/console/config/reload</url>
+  <format default="json"></format>
+</webscript>
