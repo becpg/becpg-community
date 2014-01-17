@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+
+	<bean id="bcpg.plm.workflowDeployer" parent="workflowDeployer" depends-on="bcpg.project.workflowDeployer">
+		<property name="workflowDefinitions">
+			<list>
+				<props>
+					<prop key="engineId">jbpm</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/adhoc_processdefinition.xml</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">false</prop>
+				</props>
+				<props>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">false</prop>
+				</props>
+				<props>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-adhoc.bpmn</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">false</prop>
+				</props>
+				<props>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-process.bpmn</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">false</prop>
+				</props>	
+				<props>
+					<prop key="engineId">activiti</prop>
+					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
+					<prop key="mimetype">text/xml</prop>
+					<prop key="redeploy">false</prop>
+				</props>
+			</list>
+		</property>
+		<property name="labels">
+			<list>
+				<value>alfresco/module/${pom.artifactId}/workflow/workflow-messages</value>
+				<value>alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-messages</value>			
+			</list>
+		</property>
+		<property name="models">
+			<list>
+				<value>alfresco/module/${pom.artifactId}/workflow/workflowModel.xml</value>
+				<value>alfresco/module/${pom.artifactId}/workflow/quality/nonConformityModel.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+		<!-- Workflow -->
+	<bean id="CreateProduct" parent="baseJavaDelegate"
+		class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
+		<property name="nodeService" ref="nodeService" />
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="entityService" ref="entityService" />
+		<property name="productService" ref="productService" />
+		<property name="repoService" ref="repoService" />
+	</bean>
+	
+	<bean id="ValidateProduct" parent="baseJavaDelegate"
+		class="fr.becpg.repo.workflow.activiti.product.ValidateProduct">
+		<property name="nodeService" ref="nodeService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="ownableService" ref="ownableService" />		
+	</bean>
+
+</beans>

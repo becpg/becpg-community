@@ -3,18 +3,6 @@
 
 <beans>
 
-	<!-- Todo merge that with  beCPGScriptHelper-->
-	<bean id="bSearchScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Search">
-        <property name="extensionName">
-            <value>bSearch</value>
-        </property> 
-        <property name="serviceRegistry">
-            <ref bean="ServiceRegistry"/>
-        </property>
-        <property name="advSearchService">
-            <ref bean="AdvSearchService"/>
-        </property>
-    </bean>
     
     <bean id="thumbnailScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Thumbnail">
         <property name="extensionName">

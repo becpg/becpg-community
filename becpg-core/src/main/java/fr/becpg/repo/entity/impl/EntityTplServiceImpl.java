@@ -29,15 +29,12 @@ import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
@@ -49,7 +46,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"%s\" +@bcpg\\:entityTplEnabled:true +@bcpg\\:entityTplIsDefault:true -ASPECT:\"bcpg:compositeVersion\"";
-	private static final String QUERY_LOAD_CHARACTS = " +TYPE:\"%s\"";
+//	private static final String QUERY_LOAD_CHARACTS = " +TYPE:\"%s\"";
 
 	private static Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
@@ -117,7 +114,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders) {
 
 		TypeDefinition typeDef = dictionaryService.getType(entityType);
-		String entityTplName = typeDef.getTitle();
+		String entityTplName = typeDef.getTitle(dictionaryService);
 
 		// entityTpl
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -143,7 +140,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
 				if (listNodeRef == null) {
 					listNodeRef = entityListDAO.createList(listContainerNodeRef, entityList);
-					initializeList(listNodeRef, entityList);
+					//initializeList(listNodeRef, entityList);
 				}
 			}
 		}
@@ -179,46 +176,48 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return tplsNodeRef != null && !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;
 	}
 
-	private void initializeList(NodeRef listNodeRef, QName listType) {
-
-		String query = null;
-		QName associationQName = null;
-
-		// TODO : to do more generic
-		if (listType.equals(BeCPGModel.TYPE_ALLERGENLIST)) {
-			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_ALLERGEN);
-			query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_ALLERGEN_TYPE, AllergenType.Major.toString(), LuceneHelper.Operator.AND);
-			associationQName = BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN;
-		} else if (listType.equals(BeCPGModel.TYPE_COSTLIST)) {
-			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_COST);
-			associationQName = BeCPGModel.ASSOC_COSTLIST_COST;
-		} else if (listType.equals(BeCPGModel.TYPE_NUTLIST)) {
-			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_NUT);
-			associationQName = BeCPGModel.ASSOC_NUTLIST_NUT;
-		} else if (listType.equals(BeCPGModel.TYPE_ORGANOLIST)) {
-			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_ORGANO);
-			associationQName = BeCPGModel.ASSOC_ORGANOLIST_ORGANO;
-		} /*
-		 * else if (listType.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)) { query =
-		 * String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_PHYSICO_CHEM);
-		 * associationQName = BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM; }
-		 */
-
-		if (query != null) {
-
-			List<NodeRef> characts = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(ContentModel.PROP_NAME), RepoConsts.MAX_RESULTS_256);
-
-			for (NodeRef charact : characts) {
-
-				Map<QName, List<NodeRef>> associations = new HashMap<QName, List<NodeRef>>();
-				List<NodeRef> targetNodes = new ArrayList<NodeRef>();
-				targetNodes.add(charact);
-				associations.put(associationQName, targetNodes);
-
-				entityListDAO.createListItem(listNodeRef, listType, new HashMap<QName, Serializable>(), associations);
-			}
-		}
-	}
+//	
+//	//Deplacer dans l'init-repo
+//	private void initializeList(NodeRef listNodeRef, QName listType) {
+//
+//		String query = null;
+//		QName associationQName = null;
+//
+//		// TODO : to do more generic
+//		if (listType.equals(BeCPGModel.TYPE_ALLERGENLIST)) {
+//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_ALLERGEN);
+//			query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_ALLERGEN_TYPE, AllergenType.Major.toString(), LuceneHelper.Operator.AND);
+//			associationQName = BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN;
+//		} else if (listType.equals(BeCPGModel.TYPE_COSTLIST)) {
+//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_COST);
+//			associationQName = BeCPGModel.ASSOC_COSTLIST_COST;
+//		} else if (listType.equals(BeCPGModel.TYPE_NUTLIST)) {
+//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_NUT);
+//			associationQName = BeCPGModel.ASSOC_NUTLIST_NUT;
+//		} else if (listType.equals(BeCPGModel.TYPE_ORGANOLIST)) {
+//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_ORGANO);
+//			associationQName = BeCPGModel.ASSOC_ORGANOLIST_ORGANO;
+//		} /*
+//		 * else if (listType.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)) { query =
+//		 * String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_PHYSICO_CHEM);
+//		 * associationQName = BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM; }
+//		 */
+//
+//		if (query != null) {
+//
+//			List<NodeRef> characts = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(ContentModel.PROP_NAME), RepoConsts.MAX_RESULTS_256);
+//
+//			for (NodeRef charact : characts) {
+//
+//				Map<QName, List<NodeRef>> associations = new HashMap<QName, List<NodeRef>>();
+//				List<NodeRef> targetNodes = new ArrayList<NodeRef>();
+//				targetNodes.add(charact);
+//				associations.put(associationQName, targetNodes);
+//
+//				entityListDAO.createListItem(listNodeRef, listType, new HashMap<QName, Serializable>(), associations);
+//			}
+//		}
+//	}
 
 	@Override
 	public void synchronizeEntities(NodeRef tplNodeRef) {

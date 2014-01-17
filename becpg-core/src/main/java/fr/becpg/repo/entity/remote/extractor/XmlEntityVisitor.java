@@ -132,9 +132,9 @@ public class XmlEntityVisitor {
 				
 				NodeRef parentRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
 				
-				if(nodeService.getType(parentRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
-					 parentRef = nodeService.getPrimaryParent(parentRef).getParentRef();
-				}
+//				if(nodeService.getType(parentRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
+//					 parentRef = nodeService.getPrimaryParent(parentRef).getParentRef();
+//				}
 				
 				Path path = nodeService.getPath(parentRef);
 
@@ -176,9 +176,9 @@ public class XmlEntityVisitor {
 
 		NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
 		
-		if(nodeService.getType(parentRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
-			 parentRef = nodeService.getPrimaryParent(parentRef).getParentRef();
-		}
+//		if(nodeService.getType(parentRef).equals(BeCPGModel.TYPE_ENTITY_FOLDER)){
+//			 parentRef = nodeService.getPrimaryParent(parentRef).getParentRef();
+//		}
 		
 		Path path = nodeService.getPath(parentRef);
 

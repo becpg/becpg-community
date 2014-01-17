@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>becpg-contribs-parent</artifactId>
+		<groupId>fr.becpg</groupId>
+		<version>1.6.0</version>
+		<relativePath>../../</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>becpg-plm-share</artifactId>
+	<packaging>amp</packaging>
+	<name>beCPG share plm</name>
+	<description>beCPG Share plm ui</description>
+	<properties>
+        <alfresco.amp.config.dir>alfresco/module/${project.artifactId}/config</alfresco.amp.config.dir>
+    </properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>			
+					<jswarn>false</jswarn>	
+					<excludes>
+						<exclude>**/entity-data-lists.js</exclude>
+						<exclude>**/*.get.js</exclude>
+						<exclude>**/*.lib.js</exclude>
+					</excludes>
+				</configuration>
+			</plugin>	
+		</plugins>
+	</build>
+</project>

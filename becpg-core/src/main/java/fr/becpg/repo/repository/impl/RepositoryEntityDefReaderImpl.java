@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -31,11 +32,12 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.model.BaseObject;
 
-@Repository
+@Repository("repositoryEntityDefReader")
 public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> {
 
 	private static Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
 
+	@Autowired
 	private NamespaceService namespaceService;
 
 	public void setNamespaceService(NamespaceService namespaceService) {

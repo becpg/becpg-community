@@ -1,7 +1,0 @@
-"PATH";"/System/Characts/Costs";
-"TYPE";"bcpg:cost";
-"COLUMNS";"cm:name";"bcpg:costCurrency"
-"VALUES";"Coût MP";"€"
-"VALUES";"Coût prév MP";"€"
-"VALUES";"Coût Emb";"€"
-"VALUES";"Coût prév Emb";"€"

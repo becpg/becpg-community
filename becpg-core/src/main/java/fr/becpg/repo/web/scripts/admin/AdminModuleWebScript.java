@@ -25,7 +25,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import fr.becpg.repo.admin.InitVisitor;
+import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.security.SecurityService;
@@ -47,7 +47,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
 	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
 
-	private InitVisitor initRepoVisitor;
+	private InitVisitorService initVisitorService;
 
 	private Repository repository;
 
@@ -83,8 +83,9 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
-	public void setInitRepoVisitor(InitVisitor initRepoVisitor) {
-		this.initRepoVisitor = initRepoVisitor;
+
+	public void setInitVisitorService(InitVisitorService initVisitorService) {
+		this.initVisitorService = initVisitorService;
 	}
 
 	public void setRepository(Repository repository) {
@@ -125,7 +126,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		if (action.equals(ACTION_INIT_REPO)) {
 			logger.debug("Init repository");
-			initRepoVisitor.visitContainer(repository.getCompanyHome());
+			initVisitorService.run(repository.getCompanyHome());
 		} else if (action.equals(ACTION_RELOAD_CACHE)) {
 			beCPGCacheService.printCacheInfos();
 			logger.debug("Delete all cache");

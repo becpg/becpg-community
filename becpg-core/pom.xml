@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
 		<version>1.6.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-core</artifactId>
 	<packaging>amp</packaging>
@@ -16,35 +15,13 @@
 
 	<dependencies>
 
-		<!-- beCPG -->
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-controls-core</artifactId>
-			<version>${becpg.contribs.version}</version>
-			<type>jar</type>
-			<classifier>api</classifier>
-			<scope>provided</scope>
-		</dependency>
 
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-designer-core</artifactId>
-			<version>${becpg.contribs.version}</version>
-			<type>jar</type>
-			<classifier>api</classifier>
-			<scope>provided</scope>
-		</dependency>
-		
-	<!--   <dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>10.0.1</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>com.google.guava</groupId> <artifactId>guava</artifactId> <version>10.0.1</version> </dependency> -->
 
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
-			<version>1.6.0</version>
+			<version>${project.version}</version>
 			<classifier>client</classifier>
 			<type>jar</type>
 			<exclusions>
@@ -62,61 +39,19 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		
-		<!-- alfresco -->
-		 <dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-repository</artifactId>
-            <version>${alfresco.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
-			<dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-remote-api</artifactId>
-            <version>${alfresco.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
-        
-        <!-- Test -->
-        <dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-remote-api</artifactId>
-            <version>${alfresco.version}</version>
-            <scope>test</scope>
-            <classifier>config</classifier>
-        </dependency>
-        
-         <dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-remote-api</artifactId>
-            <version>${alfresco.version}</version>
-            <scope>test</scope>
-            <classifier>tests</classifier>
-        </dependency>
-        
-         <dependency>
-		    <groupId>org.apache.chemistry</groupId>
-		    <artifactId>chemistry-tck-atompub</artifactId>
-		    <version>0.1-incubating-unreleased</version>
-		    <scope>test</scope>
-		 </dependency>
-		
+
+		<!-- alfresco -->
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.extensions.surf</groupId>
-			<artifactId>spring-webscripts</artifactId>
-			<version>1.2.0-SNAPSHOT</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-surf-core-configservice</artifactId>
-					<groupId>org.springframework.extensions.surf</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-remote-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 
@@ -130,8 +65,7 @@
 				<configuration>
 					<argLine>${app.testing.jvm.args}</argLine>
 					<excludes>
-					   <exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
-						<exclude>fr/becpg/repo/importer/UserImportServiceTest.java</exclude>
+						<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -141,19 +75,56 @@
 				<version>2.4</version>
 				<executions>
 					<execution>
+						<id>api-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>jar</goal>
+							<goal>test-jar</goal>
 						</goals>
 						<configuration>
 							<classifier>api</classifier>
 						</configuration>
 					</execution>
+					<execution>
+						<id>test-jar</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
-			
-			
+
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-jar-plugin</artifactId>
+										<versionRange>[2.4,)</versionRange>
+										<goals>
+											<goal>test-jar</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>

@@ -9,9 +9,9 @@ import org.alfresco.service.namespace.QName;
 
 public interface EntityDictionaryService {
 
-	QName getWUsedList(QName entityType);
-	
 	QName getDefaultPivotAssoc(QName dataListItemType);
+	
+	boolean isMultiLevelDataList(QName dataListItemType);
 
 	List<AssociationDefinition> getPivotAssocDefs(QName sourceType);
 
@@ -22,4 +22,6 @@ public interface EntityDictionaryService {
 	ClassAttributeDefinition getPropDef(QName fieldQname);
 
 	boolean isSubClass(QName fieldQname, QName typeEntitylistItem);
+
+	
 }

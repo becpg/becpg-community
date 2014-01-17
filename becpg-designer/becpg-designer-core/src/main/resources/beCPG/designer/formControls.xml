@@ -1,0 +1,196 @@
+<controls>
+	<control id="association"
+		template="/org/alfresco/components/form/controls/association.ftl">
+		
+		<control-param name="compactMode" optional="true" type="boolean"/>
+		<control-param name="displayMode" optional="true" type="string" default="items"/>
+		<control-param name="showTargetLink" optional="true"/>
+		<control-param name="selectedValueContextProperty"/>
+		<control-param name="selectActionLabel" optional="true" default="select"/>
+		<control-param name="selectActionLabelId" optional="true"/>
+		<control-param name="forceEditable" optional="true" default="false"/>
+		<control-param name="startLocation" optional="true" default="{company home}"/>
+		<control-param name="startLocationParams" optional="true"/>
+		<control-param name="allowNavigationToContentChildren"/>
+		<control-param name="editorAppearance"/>
+	</control>
+
+	<control id="authority"
+		template="/org/alfresco/components/form/controls/authority.ftl">
+		<control-param name="compactMode" optional="true" type="boolean"/>
+		<control-param name="forceEditable" optional="true" default="false"/>
+	</control>
+
+
+	<control id="category"
+		template="/org/alfresco/components/form/controls/category.ftl">
+		<control-param name="compactMode" optional="true" type="boolean"/>
+		<control-param name="forceEditable" optional="true" default="false"/>
+		<control-param name="parentNodeRef" optional="true" />
+		<control-param name="showSubCategoriesOption" optional="true"/>
+	</control>
+
+	<control id="checkbox"
+		template="/org/alfresco/components/form/controls/checkbox.ftl">
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="forceEditable" optional="true" default="false"/>
+
+	</control>
+
+
+	<control id="content"
+		template="/org/alfresco/components/form/controls/content.ftl">
+
+		<control-param name="rows" optional="true" type="int"/>
+		<control-param name="columns" optional="true" type="int"/>
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="editorAppearance" optional="true"/>
+		<control-param name="editorParameters" optional="true"/>
+		<control-param name="editorHeight" optional="true" type="int"/>
+		<control-param name="editorWidth" optional="true" type="int"/>
+		<control-param name="plainMimeTypes" optional="true"/>
+		<control-param name="richMimeTypes" optional="true"/>
+		<control-param name="forceEditor" optional="true" type="boolean"/>
+		<control-param name="forceEditable" optional="true"/>
+	</control>
+
+	<control id="date" template="/org/alfresco/components/form/controls/date.ftl">
+
+		<control-param name="showTime" optional="true" type="boolean"/>
+		<control-param name="forceEditable" optional="true" default="false"/>
+
+	</control>
+
+
+	<control id="encoding"
+		template="/org/alfresco/components/form/controls/encoding.ftl">
+	
+		<control-param name="property" optional="true" type="string"/>
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+	</control>
+
+	<control id="hidden" template="/org/alfresco/components/form/controls/hidden.ftl">
+
+		<control-param name="contextProperty" optional="true"
+			type="string"/>
+	</control>
+
+	<control id="info" template="/org/alfresco/components/form/controls/info.ftl"/>
+
+
+	<control id="invisible"
+		template="/org/alfresco/components/form/controls/invisible.ftl">
+	</control>
+
+	<control id="mimetype"
+		template="/org/alfresco/components/form/controls/mimetype.ftl">
+		
+		<control-param name="property" optional="true" type="string"/>
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+	</control>
+
+	<control id="number" template="/org/alfresco/components/form/controls/number.ftl">
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="maxLength" optional="true" type="int"/>
+		<control-param name="size" optional="true" type="int"/>
+		<control-param name="forceEditable" optional="true"/>
+	</control>
+
+	<control id="period" template="/org/alfresco/components/form/controls/period.ftl">
+		<control-param name="forceEditable" optional="true"
+			type="boolean"/>
+	</control>
+
+	<control id="richtext"
+		template="/org/alfresco/components/form/controls/richtext.ftl">
+		<control-param name="editorAppearance" optional="true"
+			type="string"/>
+		<control-param name="editorParameters" optional="true"
+			type="string"/>
+		<control-param name="editorHeight" optional="true" type="int"/>
+		<control-param name="editorWidth" optional="true" type="int"/>
+		<control-param name="forceEditable" optional="true"
+			type="boolean"/>
+	</control>
+
+	<control id="selectone"
+		template="/org/alfresco/components/form/controls/selectone.ftl">
+		<control-param name="options" mandatory="true"
+			type="comma separated string"/>
+		<control-param name="size" optional="true" type="int"/>
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="forceEditable" optional="true"
+			type="boolean"/>
+
+	</control>
+
+	<control id="selectmany"
+		template="/org/alfresco/components/form/controls/selectmany.ftl">
+	
+		<control-param name="options" mandatory="true"
+			type="comma separated string"/>
+		<control-param name="size" optional="true" type="int"/>
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="forceEditable" optional="true"
+			type="boolean"/>
+	</control>
+
+	<control id="size" template="/org/alfresco/components/form/controls/size.ftl">
+			<control-param name="property" optional="true" type="string"/>
+
+	</control>
+
+	<control id="textarea"
+		template="/org/alfresco/components/form/controls/textarea.ftl">
+
+		<control-param name="rows" optional="true" type="int"/>
+		<control-param name="columns" optional="true" type="int"/>
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="activateLinks" optional="true"
+			type="boolean"/>
+		<control-param name="forceEditable" optional="true"
+			type="boolean"/>
+	</control>
+
+	<control id="textfield"
+		template="/org/alfresco/components/form/controls/textfield.ftl">
+	
+		<control-param name="styleClass" optional="true" type="string"/>
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="maxLength" optional="true" type="int"/>
+		<control-param name="size" optional="true" type="int"/>
+		<control-param name="activateLinks" optional="true"
+			type="boolean"/>
+		<control-param name="forceEditable" optional="true"
+			type="boolean"/>
+	</control>
+	
+	<control id="autocomplete" template="/org/alfresco/components/form/controls/autocomplete.ftl">
+		<control-param name="ds" optional="false" type="string" default="becpg/autocomplete/..."/>
+		<control-param name="parent" optional="true" type="string" />
+		<control-param name="local" optional="true" type="boolean" />
+		<control-param name="style" optional="true" type="string"/>
+		<control-param name="maxLength" optional="true" type="int"/>
+		<control-param name="size" optional="true" type="int"/>
+		<control-param name="showTooltip" optional="true" type="boolean" />
+		<control-param name="showPage" optional="true" type="boolean" />
+		<control-param name="saveTitle" optional="true" type="boolean" />
+	</control>
+	<control id="autocomplete-association" template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+		<control-param name="ds" optional="true" type="string" />
+    	<control-param name="style" optional="true" type="string"/>
+		<control-param name="maxLength" optional="true" type="int"/>
+		<control-param name="size" optional="true" type="int"/>
+		<control-param name="parent" optional="true" type="string"/>
+	</control>
+
+
+</controls>

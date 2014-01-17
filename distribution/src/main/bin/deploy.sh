@@ -33,13 +33,15 @@ if [[ $2 = *core* ]]; then
 	cp $SERVER/webapps/share.war.setup $SERVER/webapps/share.war
 	
 	 install_core_amp alfresco-core-patch-*.amp
-	 install_core_amp becpg-controls-core-*.amp 
-	 install_core_amp becpg-designer-core-*.amp
 	 install_core_amp becpg-core-*.amp
+	 install_core_amp becpg-project-core-*.amp 
+	 install_core_amp becpg-designer-core-*.amp
+	 install_core_amp becpg-plm-core-*.amp 
 	 
-	 install_share_amp becpg-controls-share-*.amp
-	 install_share_amp becpg-designer-share-*.amp
 	 install_share_amp becpg-share-*.amp
+	 install_share_amp becpg-project-share-*.amp 
+	 install_share_amp becpg-designer-share-*.amp
+	 install_share_amp becpg-plm-share-*.amp 
 
 fi
 

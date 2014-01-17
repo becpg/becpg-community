@@ -293,7 +293,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	@Override
 	public String getAutoNumMatchPattern(QName type, QName propertyName) {
 		String prefix = DEFAULT_PREFIX;
-		if(BeCPGModel.TYPE_PRODUCT.equals(type)){
+		if(dictionaryService.getSubTypes(type, true).size()>0){
 			for(QName subType : dictionaryService.getSubTypes(type, true)){
 				if(prefix.length()!=0){
 					prefix+="|";

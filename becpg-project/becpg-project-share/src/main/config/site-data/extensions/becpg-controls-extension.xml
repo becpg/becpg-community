@@ -1,0 +1,15 @@
+<!-- http://blogs.alfresco.com/wp/ddraper/category/alfresco-share-customization/ -->
+<extension>
+	<modules>
+		<module>
+			<id>becpg-controls-extension</id>
+			<auto-deploy>true</auto-deploy>
+			<customizations>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-head</sourcePackageRoot>
+				</customization>
+			</customizations>
+		</module>
+	</modules>
+</extension>  

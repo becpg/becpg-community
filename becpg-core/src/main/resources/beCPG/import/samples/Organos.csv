@@ -1,6 +1,0 @@
-"PATH";"/System/Characts/Organos";
-"TYPE";"bcpg:organo";
-"COLUMNS";"cm:name";"cm:description"
-"VALUES";"Couleur";
-"VALUES";"Texture";
-"VALUES";"Saveur";

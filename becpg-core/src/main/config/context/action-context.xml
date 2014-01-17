@@ -2,26 +2,15 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 <beans>
 
-	<bean id="import-content" class="fr.becpg.repo.action.executer.ImporterActionExecuter" parent="action-executer">
-      <property name="importService" ref="importService" />           
-      <property name="threadExecuter" ref="defaultAsyncThreadPool" />
-    </bean>  	
-    
-    <bean id="import-user" class="fr.becpg.repo.action.executer.UserImporterActionExecuter" parent="action-executer">
-     	<property name="userImporterService" ref="userImporterService"/>
-     	<property name="importService" ref="importService" />
-     	<property name="nodeService" ref="nodeService" />
-    </bean>  
-    
-	<bean id="compress-image" class="fr.becpg.repo.action.executer.ImageCompressorActionExecuter" parent="action-executer">
+	<bean id="compress-image" class="fr.becpg.repo.action.ImageCompressorActionExecuter" parent="action-executer">
       <property name="contentService" ref="contentService" />
       <property name="imageMagickContentTransformer">
           <ref bean="transformer.ImageMagick" />
       </property>   
     </bean> 
     
-    <bean id="classify-by-hierarchy" class="fr.becpg.repo.action.executer.ClassifyByHierarchyActionExecuter" parent="action-executer">
-      <property name="entityService" ref="entityService" />      
+    <bean id="classify-by-hierarchy" class="fr.becpg.repo.hierarchy.action.ClassifyByHierarchyActionExecuter" parent="action-executer">
+      <property name="hierarchyService" ref="hierarchyService" />      
     </bean>
     
     <!-- I18N -->

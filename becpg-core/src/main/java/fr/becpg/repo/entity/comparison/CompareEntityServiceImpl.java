@@ -28,6 +28,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
@@ -53,6 +54,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	
 	private AttributeExtractorService attributeExtractorService;
 	
+	private EntityDictionaryService entityDictionaryService;
+	
 	private EntityListDAO entityListDAO;
 			
 	/**
@@ -73,6 +76,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		this.dictionaryService = dictionaryService;
 	}
 	
+	
+	
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+
 	/**
 	 * Sets the namespace service.
 	 *
@@ -237,50 +247,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	 */
 	private void compareDataLists(QName entityList, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap){
 		
-		QName pivotProperty = null;
+		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(entityList);
 		boolean isCompositeDL = false;
-		
-		//look for pivot
-		if(entityList.getLocalName().equals(BeCPGModel.TYPE_ALLERGENLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_COMPOLIST.getLocalName())){
-			isCompositeDL = true;
-			pivotProperty = BeCPGModel.ASSOC_COMPOLIST_PRODUCT;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_COSTLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_COSTLIST_COST;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_INGLABELINGLIST.getLocalName())){
-			//TODO
-			return;
-			//pivotProperty = BeCPGModel.PROP_ILL_GRP;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_INGLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_INGLIST_ING;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_MICROBIOLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_NUTLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_NUTLIST_NUT;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_ORGANOLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_ORGANOLIST_ORGANO;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PHYSICOCHEMLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PRICELIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_PRICELIST_COST;
-		}
-		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_LABELCLAIMLIST.getLocalName())){
-			pivotProperty = BeCPGModel.ASSOC_LCL_LABELCLAIM;
-		}
-		else{
-			//TODO : specific entityLists ? Not implemented
-			return;
-		}
 		
 		logger.debug("pivotProperty: " + pivotProperty);					
 		

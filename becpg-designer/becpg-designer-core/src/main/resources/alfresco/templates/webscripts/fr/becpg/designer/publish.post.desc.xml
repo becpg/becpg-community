@@ -1,0 +1,10 @@
+<webscript>
+  <shortname>Publish model element</shortname>
+  <description>Publish new model element</description>
+  <url>/becpg/designer/model/publish?nodeRef={nodeRef}</url>
+  <url>/becpg/designer/form/publish?nodeRef={nodeRef}</url>
+  <format default="html" />
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <lifecycle>internal</lifecycle>
+</webscript>

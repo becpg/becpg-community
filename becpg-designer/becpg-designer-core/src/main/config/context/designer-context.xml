@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+
+
+	<bean id="becpgDesignerBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+		<property name="resourceBundles">
+			<list>
+				<value>alfresco/module/${pom.artifactId}/messages/controls</value>
+				<value>alfresco/module/${pom.artifactId}/messages/path</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="metaModelVisitor" class="fr.becpg.repo.designer.impl.MetaModelVisitor">
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
+	<bean id="designerTreeVisitor" class="fr.becpg.repo.designer.impl.DesignerTreeVisitor">
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
+
+	<bean id="formModelVisitor" class="fr.becpg.repo.designer.impl.FormModelVisitor">
+		<property name="nodeService" ref="nodeService" />
+	</bean>
+
+	<bean id="designerService" class="fr.becpg.repo.designer.impl.DesignerServiceImpl"
+		init-method="init">
+		<property name="metaModelVisitor" ref="metaModelVisitor" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />
+		<property name="formModelVisitor" ref="formModelVisitor" />
+		<property name="designerTreeVisitor" ref="designerTreeVisitor" />
+		<property name="configPath" value="${beCPG.designer.configPath}"/>
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="designerInitService" ref="designerInitService"/>
+		<property name="mimetypeService" ref="mimetypeService"/>
+	</bean>
+
+
+	<bean id="designerInitService" class="fr.becpg.repo.designer.impl.DesignerInitServiceImpl">
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />
+		<property name="actionService" ref="actionService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="searchService" ref="searchService" />
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="repository" ref="repositoryHelper"/>
+	</bean>
+	
+	<bean id="designerWorkflowDeployer" class="fr.becpg.repo.designer.workflow.DesignerWorkflowDeployer">
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />
+		<property name="namespaceService" ref="namespaceService" />
+	 	<property name="dictionaryService" ref="dictionaryService" />
+	 	<property name="designerService" ref="designerService" />
+	</bean>
+
+	<bean id="designerWorkflowDefinition" class="fr.becpg.repo.designer.workflow.WorkflowDefinitionType"
+		init-method="init">
+		<property name="nodeService" ref="nodeService" />
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="designerWorkflowDeployer" ref="designerWorkflowDeployer" />
+	</bean>
+
+
+	<!-- Webscripts -->
+
+
+	<bean id="webscript.fr.becpg.designer.formControls.get"
+		class="fr.becpg.repo.designer.web.scripts.FormControlsWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.designer.modelTree.get" class="fr.becpg.repo.designer.web.scripts.ModelTreeWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.designer.createElement.post"
+		class="fr.becpg.repo.designer.web.scripts.CreateModelElementWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.designer.publish.post" class="fr.becpg.repo.designer.web.scripts.PublishWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+
+	<!-- List Values -->
+
+	<bean id="designerListValuePlugin" parent="baseListValuePlugin"
+		init-method="init" class="fr.becpg.repo.designer.listvalue.DesignerListValuePlugin">
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="designerService" ref="designerService" />
+	</bean>
+
+
+
+</beans>

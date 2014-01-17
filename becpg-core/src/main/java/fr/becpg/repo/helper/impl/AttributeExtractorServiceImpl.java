@@ -38,7 +38,6 @@ import org.springframework.util.StopWatch;
 import fr.becpg.config.format.CSVPropertyFormats;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -333,14 +332,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
 			
-			if (v.equals(BeCPGModel.TYPE_COMPOLIST)) {
-				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_compoList.title");
-			} else if (v.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
-				value = I18NUtil.getMessage("bcpg_bcpgmodel.type.bcpg_packagingList.title");
-			} else {
-				value = v.toString();
-			}
-			
+			if (v!=null) {
+				value = I18NUtil.getMessage("bcpg_bcpgmodel.type."+((QName)v).toPrefixString(namespaceService).replace(":", "_")+".title");
+				if(value==null) {
+					value = v.toString();
+				}
+				
+			} 
 		}
 
 		else {
@@ -606,9 +604,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return ContentModel.PROP_AUTHORITY_DISPLAY_NAME;
 		} else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
 			return BeCPGModel.PROP_LKV_VALUE;
-		} else if (type.equals(ProjectModel.TYPE_TASK_LIST)) {
-			return ProjectModel.PROP_TL_TASK_NAME;
 		}
+			//TODO Alfresco repository
+//		} else if (type.equals(ProjectModel.TYPE_TASK_LIST)) {
+//			return ProjectModel.PROP_TL_TASK_NAME;
+//		}
 
 		return ContentModel.PROP_NAME;
 	}
@@ -622,9 +622,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			metadata = "container";
 		} else {
 			metadata = type.toPrefixString(namespaceService).split(":")[1];
-			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
-				metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
-			}
+			//#798
+//			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
+//				metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
+//			}
 		}
 		return metadata;
 	}

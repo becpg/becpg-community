@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -17,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.BeCPGSearchService;
@@ -35,7 +40,10 @@ public class HierarchyServiceImpl implements HierarchyService{
 	private NamespaceService namespaceService;
 	private BeCPGSearchService beCPGSearchService;
 	private NodeService nodeService;
-		
+	private RepoService repoService;
+	private DictionaryService dictionaryService;
+	
+	
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -46,6 +54,14 @@ public class HierarchyServiceImpl implements HierarchyService{
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 
 	@Override
@@ -172,6 +188,83 @@ public class HierarchyServiceImpl implements HierarchyService{
 		return path.toString();
 	}
 
+	
+	/**
+	 * Classify according to the hierarchy.
+	 * 
+	 * @param containerNodeRef
+	 *            : documentLibrary of site
+	 * @param entityNodeRef
+	 *            : entity
+	 */
+	@Override
+	@Deprecated
+	public void classifyByHierarchy(final NodeRef containerNodeRef, final NodeRef entityNodeRef) {
+
+		AuthenticationUtil.runAsSystem(new RunAsWork<Void>() {
+
+			@Override
+			public Void doWork() throws Exception {
+				NodeRef destinationNodeRef = null;
+				QName type = nodeService.getType(entityNodeRef);
+				ClassDefinition classDef = dictionaryService.getClass(type);
+
+				
+				NodeRef hierarchyNodeRef = null;
+				// TODO : generic
+//				if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
+//					hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+//					if (hierarchyNodeRef == null) {
+//						hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+//					}
+//				} else if (type.isMatch(ProjectModel.TYPE_PROJECT)) {
+//					hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2);
+//					if (hierarchyNodeRef == null) {
+//						hierarchyNodeRef = (NodeRef) nodeService.getProperty(entityNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY1);
+//					}
+//				} else if (type.isMatch(BeCPGModel.TYPE_CLIENT)) {
+//				} else if (type.isMatch(BeCPGModel.TYPE_SUPPLIER)) {
+//				}
+
+				if (hierarchyNodeRef != null) {
+					NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle(dictionaryService));
+					destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, classFolder);
+					if (destinationNodeRef != null) {
+						// classify
+						repoService.moveNode(entityNodeRef, destinationNodeRef);
+					} else {
+						logger.debug("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+					}
+				} else {
+					logger.debug("Cannot classify entity since it doesn't have a hierarchy.");
+				}
+				return null;
+			}
+
+		});
+
+	}
+
+	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
+		NodeRef destinationNodeRef = null;
+
+		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
+		if (parent != null) {
+			parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);
+		}
+		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
+		if (name != null) {
+			destinationNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, name, name);
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cannot create folder for productHierarchy since hierarchyName is null. productHierarchy: " + hierarchyNodeRef);
+			}
+		}
+
+		return destinationNodeRef;
+	}
+	
+	
 	private void appendNamePath(StringBuilder path, NodeRef hierarchyNodeRef) {
 		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
 		if(parent!=null){
@@ -185,5 +278,7 @@ public class HierarchyServiceImpl implements HierarchyService{
 		return query != null && query.trim().equals(SUFFIX_ALL);
 	}
 
+	
+	
 	
 }

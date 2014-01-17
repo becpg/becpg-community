@@ -24,15 +24,19 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Repository;
 
-import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.annotation.AlfMlText;
@@ -45,52 +49,44 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
-@Repository
-public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T> {
+@Repository("alfrescoRepository")
+public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T>, ApplicationListener<ContextRefreshedEvent> {
 
+	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
+	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
 
 	private static Log logger = LogFactory.getLog(AlfrescoRepositoryImpl.class);
 
+	@Autowired
 	private RepositoryEntityDefReader<T> repositoryEntityDefReader;
 
+	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
 	private AssociationService associationService;
-
-	public void setMlNodeService(NodeService mlNodeService) {
-		this.mlNodeService = mlNodeService;
-	}
-
-	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<T> repositoryEntityDefReader) {
-		this.repositoryEntityDefReader = repositoryEntityDefReader;
-	}
 
 	private Map<QName, Class<? extends RepositoryEntity>> domainMapping = new HashMap<QName, Class<? extends RepositoryEntity>>();
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-
+	@Override
 	@SuppressWarnings("unchecked")
-	public void init() throws ClassNotFoundException {
+	public void onApplicationEvent(ContextRefreshedEvent refreshEvent) {
+		domainMapping.clear();
 		logger.debug("Scanning classpath for AlfType annotation");
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
 
 		scanner.addIncludeFilter(new AnnotationTypeFilter(AlfType.class));
 
 		for (BeanDefinition bd : scanner.findCandidateComponents("fr.becpg.*")) {
-			registerEntity((Class<? extends RepositoryEntity>) Class.forName(bd.getBeanClassName()));
+			try {
+				registerEntity((Class<? extends RepositoryEntity>) Class.forName(bd.getBeanClassName()));
+			} catch (ClassNotFoundException e) {
+				logger.error(e, e);
+			}
 		}
 
 	}
@@ -289,14 +285,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
 
-			if (dataListNodeRef == null && (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())
-					&& ! dataList.isEmpty() ) {
+			if (dataListNodeRef == null && (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) && !dataList.isEmpty()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListContainerType);
 				}
-//				if (logger.isInfoEnabled() && dataList.isEmpty()) {
-//					logger.info("Creating empty datalist :" + dataListContainerType);
-//				}
+				// if (logger.isInfoEnabled() && dataList.isEmpty()) {
+				// logger.info("Creating empty datalist :" +
+				// dataListContainerType);
+				// }
 
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
 			}
@@ -407,11 +403,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 						loadAssoc(entity, pd, readMethod, caches, true, readMethod.getAnnotation(AlfMultiAssoc.class).isChildAssoc());
 					} else if (readMethod.isAnnotationPresent(DataListView.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						QName datalistViewQname = repositoryEntityDefReader.readQName(readMethod);
-						PropertyUtils.setProperty(entity,pd.getName(), loadDataListView(entity, datalistViewQname, readMethod.getReturnType(), caches));
+						PropertyUtils.setProperty(entity, pd.getName(), loadDataListView(entity, datalistViewQname, readMethod.getReturnType(), caches));
 					} else if (readMethod.isAnnotationPresent(DataList.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
-		
-						PropertyUtils.setProperty(entity,pd.getName(), createDataList(entity, pd, datalistQname, datalistQname, caches));
+
+						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, datalistQname, caches));
 					}
 
 				}
@@ -450,7 +446,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 					final QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-					PropertyUtils.setProperty(ret ,pd.getName(), createDataList(entity, pd, datalistContainerQname, datalistQname, caches));
+					PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistContainerQname, datalistQname, caches));
 				}
 			}
 		}
@@ -497,9 +493,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				for (NodeRef nodeRef : assocRefs) {
 					entities.add(findOne(nodeRef, caches));
 				}
-				PropertyUtils.setProperty(entity,pd.getName(), entities);
+				PropertyUtils.setProperty(entity, pd.getName(), entities);
 			} else {
-				PropertyUtils.setProperty(entity,pd.getName(), assocRefs);
+				PropertyUtils.setProperty(entity, pd.getName(), assocRefs);
 			}
 		} else {
 
@@ -515,9 +511,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 
 			if (assocRef != null && (pd.getPropertyType().isAnnotationPresent(AlfType.class) || readMethod.getAnnotation(AlfSingleAssoc.class).isEntity())) {
-				PropertyUtils.setProperty(entity,pd.getName(), findOne(assocRef, caches));
+				PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef, caches));
 			} else {
-				PropertyUtils.setProperty(entity,pd.getName(), assocRef);
+				PropertyUtils.setProperty(entity, pd.getName(), assocRef);
 			}
 		}
 	}
@@ -533,16 +529,16 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		if (prop != null && Enum.class.isAssignableFrom(pd.getPropertyType())) {
 			if (((String) prop).isEmpty()) {
-				PropertyUtils.setProperty(entity,pd.getName(), null);
+				PropertyUtils.setProperty(entity, pd.getName(), null);
 			} else {
-				PropertyUtils.setProperty(entity,pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
+				PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
 			}
 		} else if (prop != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
-			PropertyUtils.setProperty(entity,pd.getName(), findOne((NodeRef) prop, caches));
+			PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
 		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
-			PropertyUtils.setProperty(entity,pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
+			PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
 		} else {
-			PropertyUtils.setProperty(entity,pd.getName(), prop);
+			PropertyUtils.setProperty(entity, pd.getName(), prop);
 		}
 
 	}

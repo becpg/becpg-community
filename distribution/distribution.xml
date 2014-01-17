@@ -12,8 +12,10 @@
 			<scope>runtime</scope>
 			<includes>
 				<include>fr.becpg:alfresco-core-patch</include>
-				<include>fr.becpg:becpg-controls-core</include>
-				<include>fr.becpg:becpg-controls-share</include>
+				<include>fr.becpg:becpg-plm-core</include>
+				<include>fr.becpg:becpg-plm-share</include>
+			   <include>fr.becpg:becpg-project-core</include>
+				<include>fr.becpg:becpg-project-share</include>
 				<include>fr.becpg:becpg-designer-core</include>
 				<include>fr.becpg:becpg-designer-share</include>
 				<include>fr.becpg:becpg-core</include>
