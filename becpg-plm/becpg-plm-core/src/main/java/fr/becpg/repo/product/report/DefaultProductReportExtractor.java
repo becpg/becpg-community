@@ -44,7 +44,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
@@ -87,8 +86,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_1 = "grossWeightPkgLevel1";
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_2 = "grossWeightPkgLevel2";
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_3 = "grossWeightPkgLevel3";
-	private static final String ATTR_NB_PRODUCTS_LEVEL_3= "nbProductsPkgLevel3";
-	private static final String ATTR_NB_PRODUCTS_LEVEL_2= "nbProductsPkgLevel2";
+	private static final String ATTR_NB_PRODUCTS_LEVEL_3 = "nbProductsPkgLevel3";
+	private static final String ATTR_NB_PRODUCTS_LEVEL_2 = "nbProductsPkgLevel2";	
 	
 	protected ProductDictionaryService productDictionaryService;
 
@@ -146,7 +145,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		// TODO make it more generic!!!!
 		ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
-		NodeRef defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
 				
 		if (datalists != null && !datalists.isEmpty()) {
 			
@@ -170,10 +168,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 							}
 							
 							loadDataListItemAttributes(dataListItem, nodeElt);
-							
-							if(dataListItem instanceof AbstractManualVariantListDataItem){
-								extractVariants(((AbstractManualVariantListDataItem)dataListItem).getVariants(), nodeElt, defaultVariantNodeRef);
-							}
 						}
 					}										
 				}				
@@ -225,8 +219,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 						
 						Element partElt = compoListElt.addElement(BeCPGModel.TYPE_COMPOLIST.getLocalName());
 						loadProductData(dataItem.getProduct(), partElt);
-						loadDataListItemAttributes(dataItem, partElt);																										
-						extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
+						loadDataListItemAttributes(dataItem, partElt);
 					}
 				}
 
@@ -237,8 +230,15 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			extractRawMaterials(productData, dataListsElt, images);			
 			
 			// packList
-			loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
-
+			if(productData.getVariants().isEmpty()){
+				loadPackagingList(productData, dataListsElt, null, images);
+			}
+			else{
+				for (VariantData variant : productData.getVariants()){
+					loadPackagingList(productData, dataListsElt, variant, images);
+				}	
+			}
+									
 			
 			// processList
 			if (productData.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
@@ -248,9 +248,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 					Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 					loadProductData(dataItem.getProduct(), partElt);
-					loadDataListItemAttributes(dataItem, partElt);										
-					
-					extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
+					loadDataListItemAttributes(dataItem, partElt);
 				}
 
 				loadDynamicCharactList(productData.getProcessListView().getDynamicCharactList(), processListElt);
@@ -434,15 +432,16 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		return false;			
 	}
 	
-	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images){			
+	private void loadPackagingList(ProductData productData, Element dataListsElt, VariantData variant, Map<String, byte[]> images){			
 		
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 			
 			PackagingData packagingData = new PackagingData();
 			Element packagingListElt = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName()+"s");
+			loadIsDefaultVariant(packagingListElt, variant);
 
 			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-				loadPackagingItem(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);				
+				loadPackagingItem(dataItem, packagingListElt, packagingData, variant, images);
 			}
 			
 			loadDynamicCharactList(productData.getPackagingListView().getDynamicCharactList(), packagingListElt);
@@ -480,33 +479,31 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	}
 
 	private void loadPackagingItem(PackagingListDataItem dataItem, Element packagingListElt, 
-			PackagingData packagingData, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
+			PackagingData packagingData,  VariantData variant, Map<String, byte[]> images) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(BeCPGModel.TYPE_PACKAGINGKIT)) {					
-			loadPackagingKit(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+			loadPackagingKit(dataItem, packagingListElt, packagingData, variant);
 			Element imgsElt = (Element)packagingListElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 			if(imgsElt != null){
 				extractEntityImages(dataItem.getProduct(), imgsElt, images);
 			}
 		} else {
-			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+			loadPackaging(dataItem, packagingListElt, packagingData, variant);
 		}		
 	}
 
-	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {		
+	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, VariantData variant) {		
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		Element partElt = packagingListElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());		
 		loadProductData(dataItem.getProduct(), partElt);
 		loadDataListItemAttributes(dataItem, partElt);		
 
-		extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
-
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_TARE)) {
 			
 			// Sum tare (don't take in account packagingKit)
 			if(dataItem.getPkgLevel() != null && 
-					(defaultVariantNodeRef == null || dataItem.getVariants() == null || dataItem.getVariants().contains(defaultVariantNodeRef)) &&
+					(variant == null || dataItem.getVariants() == null || dataItem.getVariants().contains(variant.getNodeRef())) &&
 					!BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeType)){
 				
 				Double tare = FormulationHelper.getTareInKg(dataItem, nodeService);	
@@ -524,7 +521,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			logger.debug("load pallet aspect ");
 			
 			// product per box and boxes per pallet
-			if(defaultVariantNodeRef == null || dataItem.getVariants() == null || dataItem.getVariants().contains(defaultVariantNodeRef)){
+			if(variant == null || dataItem.getVariants() == null || dataItem.getVariants().contains(variant.getNodeRef())){
 				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
 				packagingData.setProductPerBoxes(dataItem.getQty().intValue());
 				packagingData.setBoxesPerPallet((Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
@@ -535,20 +532,22 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
         if (nodeService.hasAspect(dataItem.getNodeRef(), PackModel.ASPECT_LABELING)) {        
             extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt);
         }
+        
+        loadIsDefaultVariant(partElt, variant);
 		
 		return partElt;
 	}
 	
 	// manage 2 level depth
-	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
+	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData,  VariantData variant) {
 
-		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, variant);
 		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
-		Element packagingKitListEl = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());	
+		Element packagingKitListEl = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName()+"s");	
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 	
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {			
-			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef);
+			loadPackaging(p, packagingKitListEl, packagingData, variant);
 		}
 	}
 
@@ -591,33 +590,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		public void setBoxesPerPallet(Integer boxesPerPallet) {
 			this.boxesPerPallet = boxesPerPallet;
 		}	
-	}	
-	
-	protected NodeRef loadVariants(ProductData productData, Element entityElt){
-		NodeRef defaultVariantNodeRef = null;
-		if(productData.getVariants() != null){
-			Element variantsElt = entityElt.addElement(BeCPGModel.ASSOC_VARIANTS.getLocalName());
-			for (VariantData variant : productData.getVariants()) {
-				if (variant.getIsDefaultVariant()) {
-					defaultVariantNodeRef = variant.getNodeRef();
-				}
-				
-				Element variantElt = variantsElt.addElement(BeCPGModel.TYPE_VARIANT.getLocalName());
-				variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), variant.getName());
-				variantElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));
-				
-			}
-		}		
-		return defaultVariantNodeRef;
 	}
-	
-	protected void extractVariants(List<NodeRef> variantNodeRefs, Element dataItemElt, NodeRef defaultVariantNodeRef){
-		
-		if(variantNodeRefs != null && !variantNodeRefs.isEmpty()){
-			dataItemElt.addAttribute(BeCPGModel.ASSOC_VARIANTS.getLocalName(), extractNames(variantNodeRefs));
-			dataItemElt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variantNodeRefs.contains(defaultVariantNodeRef)));
-		}			
-	}	
 	
 	protected void loadDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList, Element dataListElt) {
 
@@ -637,5 +610,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(nodeRef).toPrefixString(namespaceService));
 			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(nodeRef));
 		}			
+	}
+	
+	protected void loadIsDefaultVariant(Element elt, VariantData variantData){
+		boolean isDefautVariant = (variantData == null) ? true : variantData.getIsDefaultVariant();
+		elt.addAttribute(BeCPGModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(isDefautVariant));			
 	}
 }

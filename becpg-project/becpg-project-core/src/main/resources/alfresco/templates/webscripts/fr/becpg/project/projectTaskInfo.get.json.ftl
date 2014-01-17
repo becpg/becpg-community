@@ -14,7 +14,8 @@
 	   				{
 						"name": "${content.properties.name!""}",
 						"nodeRef": "${content.nodeRef}",
-						"type": "${content.typeShort}"
+						"type": "${content.typeShort}",
+						"siteId": "${content.getSiteShortName()}"
 						}
 	   				<#if content_has_next>,</#if>
 	   			</#list>
