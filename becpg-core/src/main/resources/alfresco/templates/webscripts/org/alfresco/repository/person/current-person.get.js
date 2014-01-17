@@ -1,4 +1,3 @@
-
 function main()
 {
    // Do we want to return containing groups?

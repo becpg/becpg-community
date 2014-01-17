@@ -1,4 +1,3 @@
-
 var Filters = {
 	/**
 	 * Create filter parameters based on input parameters

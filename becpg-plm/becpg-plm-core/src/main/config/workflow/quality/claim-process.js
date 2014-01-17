@@ -1,4 +1,3 @@
-
 function extractName(nc) {
 
    var tName = nc.properties["cm:name"];
