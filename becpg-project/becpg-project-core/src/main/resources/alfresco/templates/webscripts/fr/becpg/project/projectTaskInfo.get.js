@@ -1,4 +1,3 @@
-
 function calculatePrevDeliverables(task, prevDeliverables){
   
   	var prevTasks = task.assocs["pjt:tlPrevTasks"];

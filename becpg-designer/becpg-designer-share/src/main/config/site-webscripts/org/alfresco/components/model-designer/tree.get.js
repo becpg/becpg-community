@@ -1,5 +1,3 @@
-
-
 function getListModels()
 {
    var models = [],

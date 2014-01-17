@@ -1,4 +1,3 @@
-
 /* beCPG : Get the export search templates */
 //TODO Move that to ASYNC see project-list-toolbar.js
 //Add search widget
