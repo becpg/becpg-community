@@ -18,19 +18,23 @@
 		<property name="associationService" ref="associationService"/>
 	</bean>
 	
-	<!-- Extractor -->
-	<bean id="defaultProductReportExtractor" class="fr.becpg.repo.product.report.DefaultProductReportExtractor">
+	<!-- Abstract bean -->
+	<bean id="abstractEntityReportExtractor" abstract="true" class="fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor">
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="productDictionaryService" ref="productDictionaryService"/>
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="nodeService" ref="nodeService" />
 		<property name="entityService" ref="entityService"/>
-		<property name="mlNodeService" ref="mlAwareNodeService" />
-		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="versionService" ref="versionService"/>
-		<property name="associationService" ref="associationService"/>
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="associationService" ref="associationService"/>		
+	</bean>
+	
+	<!-- Extractor -->
+	<bean id="defaultProductReportExtractor" class="fr.becpg.repo.product.report.DefaultProductReportExtractor" parent="abstractEntityReportExtractor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="productDictionaryService" ref="productDictionaryService"/>		
+		<property name="mlNodeService" ref="mlAwareNodeService" />		
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader"/>
 	</bean>
 
@@ -120,5 +124,5 @@
         <property name="reportTplService" ref="reportTplService"/>
         <property name="entityReportService" ref="entityReportService"/>
     </bean>
-	
+    
 </beans>

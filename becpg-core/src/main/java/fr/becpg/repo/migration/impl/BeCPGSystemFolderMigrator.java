@@ -214,7 +214,7 @@ public class BeCPGSystemFolderMigrator {
 	private void migrateProduct(NodeRef hierarchiesNodeRef, QName type, String hierarchy1, String hierarchy2, NodeRef hierarchy1NodeRef, NodeRef hierarchy2NodeRef) {
 		logger.info("Migrate all products of type: "+type.getLocalName()+" hierarchy1 :"+hierarchy1+" hierarchy2 :"+hierarchy2);
 
-		String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"%s\" +@bcpg\\:productHierarchy1:(%s) +@bcpg\\:productHierarchy2:(%s)";
+		String QUERY_SUGGEST_PRODUCT_BY_NAME = " +TYPE:\"%s\" +@bcpg\\:productHierarchy1:\"%s\" +@bcpg\\:productHierarchy2:\"%s\"";
 		
 		String queryPath = String.format(QUERY_SUGGEST_PRODUCT_BY_NAME,type.toPrefixString(namespaceService), hierarchy1, hierarchy2  );
 

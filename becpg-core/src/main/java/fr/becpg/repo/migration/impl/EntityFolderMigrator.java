@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.tagging.TaggingService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
@@ -67,6 +68,8 @@ public class EntityFolderMigrator {
 	private BehaviourFilter policyBehaviourFilter;
 	
 	private EntityVersionService entityVersionService;
+	
+	private TaggingService taggingService;
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -112,6 +115,9 @@ public class EntityFolderMigrator {
 		this.entityVersionService = entityVersionService;
 	}
 
+	public void setTaggingService(TaggingService taggingService) {
+		this.taggingService = taggingService;
+	}
 
 	public void migrate() {
 
@@ -227,211 +233,211 @@ public class EntityFolderMigrator {
 
 			}
 		}
-
-		// bug fix bcpg:entityListsAspect on bcpg:entityListItem
-		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITYLIST_ITEM))
-				+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS));
-
-		List<NodeRef> entityListItems = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
-
-		logger.info("Found " + entityListItems.size() + " entityListItems to fix");
-
-		if (!entityListItems.isEmpty()) {
-
-			int batchId=1;
-			
-			for (final List<NodeRef> batchList : Lists.partition(entityListItems, BATCH_SIZE)) {
-				
-				logger.info("entityListItems to fix, batch " + batchId);
-				batchId++;
-				
-				transactionService.getRetryingTransactionHelper().doInTransaction(
-						new RetryingTransactionCallback<Boolean>() {
-							public Boolean execute() throws Exception {
-
-								try {
-									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-
-									for (NodeRef n : batchList) {
-										if (nodeService.exists(n)) {
-											nodeService.removeAspect(n, BeCPGModel.ASPECT_ENTITYLISTS);
-										}
-									}
-
-								} finally {
-									policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-								}
-								return true;
-							}
-						}, false, true);
-			}
-		}
-		
-		// fix bcpg:entityVersionable
-		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_VERSIONABLE));
-
-		List<NodeRef> entityVersionableToFix = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
-
-		logger.info("Found " + entityVersionableToFix.size() + " entityVersionable to fix");
-
-		if (!entityVersionableToFix.isEmpty()) {
-
-			int batchId=1;
-			
-			for (final List<NodeRef> batchList : Lists.partition(entityVersionableToFix, BATCH_SIZE)) {
-				
-				logger.info("entityListItems to fix, batch " + batchId);
-				batchId++;
-				
-				transactionService.getRetryingTransactionHelper().doInTransaction(
-						new RetryingTransactionCallback<Boolean>() {
-							public Boolean execute() throws Exception {
-
-								try {
-									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-
-									for (NodeRef n : batchList) {
-										if (nodeService.exists(n)) {
-
-											// delete when there is one version on entity if it is not a composite version
-											// because entityVersion has cm:versionable (due to copy, like alfresco version) and don't have a versionHistory
-											if (!nodeService.hasAspect(n, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-												VersionHistory versionHistory = versionService.getVersionHistory(n);
-												if (versionHistory == null
-														|| (versionHistory != null && versionHistory.getAllVersions()
-																.size() < 2)) {
-													if (nodeService.hasAspect(n, ContentModel.ASPECT_VERSIONABLE)) {
-														logger.debug("remove aspect versionable " + n);
-														nodeService.removeAspect(n, ContentModel.ASPECT_VERSIONABLE);
-													}
-												}
-											}
-
-											if (nodeService.hasAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE)) {
-												logger.debug("remove aspect entity versionable " + n);
-												nodeService.removeAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE);
-											}
-										}
-									}
-
-								} finally {
-									policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-								}
-								return true;
-							}
-						}, false, true);
-			}
-		}
-
-		// migrate cm:versionLabel to bcpg:versionLabel for compositeVersion
-		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS))+
-				LuceneHelper.mandatory(LuceneHelper.getCondAspect(ContentModel.ASPECT_VERSIONABLE))+
-				LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-
-		entityVersionableToFix = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
-		logger.info("migrate cm:versionLabel to bcpg:versionLabel. Found " + entityVersionableToFix.size());
-		
-		if (!entityVersionableToFix.isEmpty()) {
-
-			int batchId=1;
-			
-			for (final List<NodeRef> batchList : Lists.partition(entityVersionableToFix, BATCH_SIZE)) {
-				
-				logger.info("entityListItems to fix, batch " + batchId);
-				batchId++;
-				
-				transactionService.getRetryingTransactionHelper().doInTransaction(
-						new RetryingTransactionCallback<Boolean>() {
-							public Boolean execute() throws Exception {
-
-								try {
-									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-									
-									for (NodeRef n : batchList) {
-										if (nodeService.exists(n)) {
-											
-											VersionHistory versionHistory = versionService.getVersionHistory(n);								
-
-											// if 1 version or null
-											if (versionHistory == null
-													|| versionHistory.getAllVersions().size() == 1) {
-												logger.warn("This node has no version or only one " + n);
-												break;
-											}
-											
-											NodeRef entityVersionHistory = entityVersionService.getVersionHistoryNodeRef(n);
-											if(entityVersionHistory==null){
-												logger.warn("This node has no entityVersionHistory  " + n);
-												break;
-											}
-											
-											List<NodeRef> entityVersionNodeRefs = entityVersionService.buildVersionHistory(entityVersionHistory, n);
-											
-											if(versionHistory.getAllVersions().size() != entityVersionNodeRefs.size()){
-												logger.warn("versionHistory.getAllVersions().size() != entityVersions.size() :  " + n + " - " + 
-														versionHistory.getAllVersions().size() + " - " +
-														entityVersionNodeRefs.size());
-											}
-											else{
-												// migrate
-												int i=versionHistory.getAllVersions().size()-1;
-												
-												for(Version version : versionHistory.getAllVersions()){
-													
-													NodeRef entityVersionNodeRef = entityVersionNodeRefs.get(i);
-													logger.debug("Entity " + n + " entityVersion " + entityVersionNodeRef + " set bcpg:versionLabel " + version.getVersionLabel());													
-													nodeService.setProperty(entityVersionNodeRef, BeCPGModel.PROP_VERSION_LABEL, version.getVersionLabel());
-													i--;
-												}												
-											}
-										}
-									}
-
-								} finally {
-									policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-								}
-								return true;
-							}
-						}, false, true);
-			}
-		}
-		
-		// some entityVersionHistory may exist even entity has been removed -> delete entityVersionHistory
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-			public Boolean execute() throws Exception {
-
-				NodeRef entitiesHistoryNodeRef = entityVersionService.getEntitiesHistoryFolder();
-				if (entitiesHistoryNodeRef == null) {
-					logger.warn("No entitiesHistoryNodeRef exists");
-					return null;
-				}
-
-				List<ChildAssociationRef> entityVersionHistoryChildAssocs = nodeService.getChildAssocs(entitiesHistoryNodeRef,
-						ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
-
-				for (ChildAssociationRef entityVersionHistoryChildAssoc : entityVersionHistoryChildAssocs) {
-					NodeRef entityVersionHistoryNodeRef = entityVersionHistoryChildAssoc.getChildRef();
-					
-					NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, (String) nodeService.getProperty(
-							entityVersionHistoryNodeRef, ContentModel.PROP_NAME));
-
-					if (!nodeService.exists(entityNodeRef)) {
-						// remove folder since node doesn't exist anymore
-						logger.debug("remove folder " + entityVersionHistoryNodeRef + " since node " + entityNodeRef
-								+ " doesn't exist anymore");
-						nodeService.deleteNode(entityVersionHistoryNodeRef);
-					}
-				}
-
-				return true;
-			}
-		}, false, true);
+//
+//		// bug fix bcpg:entityListsAspect on bcpg:entityListItem
+//		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITYLIST_ITEM))
+//				+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS));
+//
+//		List<NodeRef> entityListItems = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+//
+//		logger.info("Found " + entityListItems.size() + " entityListItems to fix");
+//
+//		if (!entityListItems.isEmpty()) {
+//
+//			int batchId=1;
+//			
+//			for (final List<NodeRef> batchList : Lists.partition(entityListItems, BATCH_SIZE)) {
+//				
+//				logger.info("entityListItems to fix, batch " + batchId);
+//				batchId++;
+//				
+//				transactionService.getRetryingTransactionHelper().doInTransaction(
+//						new RetryingTransactionCallback<Boolean>() {
+//							public Boolean execute() throws Exception {
+//
+//								try {
+//									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+//									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+//
+//									for (NodeRef n : batchList) {
+//										if (nodeService.exists(n)) {
+//											nodeService.removeAspect(n, BeCPGModel.ASPECT_ENTITYLISTS);
+//										}
+//									}
+//
+//								} finally {
+//									policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+//									policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+//								}
+//								return true;
+//							}
+//						}, false, true);
+//			}
+//		}
+//		
+//		// fix bcpg:entityVersionable
+//		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_VERSIONABLE));
+//
+//		List<NodeRef> entityVersionableToFix = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+//
+//		logger.info("Found " + entityVersionableToFix.size() + " entityVersionable to fix");
+//
+//		if (!entityVersionableToFix.isEmpty()) {
+//
+//			int batchId=1;
+//			
+//			for (final List<NodeRef> batchList : Lists.partition(entityVersionableToFix, BATCH_SIZE)) {
+//				
+//				logger.info("entityListItems to fix, batch " + batchId);
+//				batchId++;
+//				
+//				transactionService.getRetryingTransactionHelper().doInTransaction(
+//						new RetryingTransactionCallback<Boolean>() {
+//							public Boolean execute() throws Exception {
+//
+//								try {
+//									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+//									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+//
+//									for (NodeRef n : batchList) {
+//										if (nodeService.exists(n)) {
+//
+//											// delete when there is one version on entity if it is not a composite version
+//											// because entityVersion has cm:versionable (due to copy, like alfresco version) and don't have a versionHistory
+//											if (!nodeService.hasAspect(n, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+//												VersionHistory versionHistory = versionService.getVersionHistory(n);
+//												if (versionHistory == null
+//														|| (versionHistory != null && versionHistory.getAllVersions()
+//																.size() < 2)) {
+//													if (nodeService.hasAspect(n, ContentModel.ASPECT_VERSIONABLE)) {
+//														logger.debug("remove aspect versionable " + n);
+//														nodeService.removeAspect(n, ContentModel.ASPECT_VERSIONABLE);
+//													}
+//												}
+//											}
+//
+//											if (nodeService.hasAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE)) {
+//												logger.debug("remove aspect entity versionable " + n);
+//												nodeService.removeAspect(n, BeCPGModel.ASPECT_ENTITY_VERSIONABLE);
+//											}
+//										}
+//									}
+//
+//								} finally {
+//									policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+//									policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+//								}
+//								return true;
+//							}
+//						}, false, true);
+//			}
+//		}
+//
+//		// migrate cm:versionLabel to bcpg:versionLabel for compositeVersion
+//		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS))+
+//				LuceneHelper.mandatory(LuceneHelper.getCondAspect(ContentModel.ASPECT_VERSIONABLE))+
+//				LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
+//
+//		entityVersionableToFix = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+//		logger.info("migrate cm:versionLabel to bcpg:versionLabel. Found " + entityVersionableToFix.size());
+//		
+//		if (!entityVersionableToFix.isEmpty()) {
+//
+//			int batchId=1;
+//			
+//			for (final List<NodeRef> batchList : Lists.partition(entityVersionableToFix, BATCH_SIZE)) {
+//				
+//				logger.info("entityListItems to fix, batch " + batchId);
+//				batchId++;
+//				
+//				transactionService.getRetryingTransactionHelper().doInTransaction(
+//						new RetryingTransactionCallback<Boolean>() {
+//							public Boolean execute() throws Exception {
+//
+//								try {
+//									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+//									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+//									
+//									for (NodeRef n : batchList) {
+//										if (nodeService.exists(n)) {
+//											
+//											VersionHistory versionHistory = versionService.getVersionHistory(n);								
+//
+//											// if 1 version or null
+//											if (versionHistory == null
+//													|| versionHistory.getAllVersions().size() == 1) {
+//												logger.warn("This node has no version or only one " + n);
+//												break;
+//											}
+//											
+//											NodeRef entityVersionHistory = entityVersionService.getVersionHistoryNodeRef(n);
+//											if(entityVersionHistory==null){
+//												logger.warn("This node has no entityVersionHistory  " + n);
+//												break;
+//											}
+//											
+//											List<NodeRef> entityVersionNodeRefs = entityVersionService.buildVersionHistory(entityVersionHistory, n);
+//											
+//											if(versionHistory.getAllVersions().size() != entityVersionNodeRefs.size()){
+//												logger.warn("versionHistory.getAllVersions().size() != entityVersions.size() :  " + n + " - " + 
+//														versionHistory.getAllVersions().size() + " - " +
+//														entityVersionNodeRefs.size());
+//											}
+//											else{
+//												// migrate
+//												int i=versionHistory.getAllVersions().size()-1;
+//												
+//												for(Version version : versionHistory.getAllVersions()){
+//													
+//													NodeRef entityVersionNodeRef = entityVersionNodeRefs.get(i);
+//													logger.debug("Entity " + n + " entityVersion " + entityVersionNodeRef + " set bcpg:versionLabel " + version.getVersionLabel());													
+//													nodeService.setProperty(entityVersionNodeRef, BeCPGModel.PROP_VERSION_LABEL, version.getVersionLabel());
+//													i--;
+//												}												
+//											}
+//										}
+//									}
+//
+//								} finally {
+//									policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+//									policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+//								}
+//								return true;
+//							}
+//						}, false, true);
+//			}
+//		}
+//		
+//		// some entityVersionHistory may exist even entity has been removed -> delete entityVersionHistory
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+//			public Boolean execute() throws Exception {
+//
+//				NodeRef entitiesHistoryNodeRef = entityVersionService.getEntitiesHistoryFolder();
+//				if (entitiesHistoryNodeRef == null) {
+//					logger.warn("No entitiesHistoryNodeRef exists");
+//					return null;
+//				}
+//
+//				List<ChildAssociationRef> entityVersionHistoryChildAssocs = nodeService.getChildAssocs(entitiesHistoryNodeRef,
+//						ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
+//
+//				for (ChildAssociationRef entityVersionHistoryChildAssoc : entityVersionHistoryChildAssocs) {
+//					NodeRef entityVersionHistoryNodeRef = entityVersionHistoryChildAssoc.getChildRef();
+//					
+//					NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, (String) nodeService.getProperty(
+//							entityVersionHistoryNodeRef, ContentModel.PROP_NAME));
+//
+//					if (!nodeService.exists(entityNodeRef)) {
+//						// remove folder since node doesn't exist anymore
+//						logger.debug("remove folder " + entityVersionHistoryNodeRef + " since node " + entityNodeRef
+//								+ " doesn't exist anymore");
+//						nodeService.deleteNode(entityVersionHistoryNodeRef);
+//					}
+//				}
+//
+//				return true;
+//			}
+//		}, false, true);
 		
 
 	}
@@ -479,7 +485,13 @@ public class EntityFolderMigrator {
 						logger.info("migrate entity " + entityName + " - " + entityNodeRef);
 
 						try {
-
+							
+							// copy tags							
+							List<String> tags = taggingService.getTags(entityFolderNodeRef);
+							if(!tags.isEmpty()){
+								taggingService.addTags(entityNodeRef, tags);
+							}
+							
 							// rename entityFolder, move entity as sibling of
 							// entityFolder and delete entityFolder
 							nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, GUID.generate());
