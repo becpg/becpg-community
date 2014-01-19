@@ -264,6 +264,7 @@
 		<property name="versionService" ref="versionService" />		
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="taggingService" ref="taggingService" />
 	</bean>
 	
 	<bean id="migrationService" class="fr.becpg.repo.migration.impl.MigrationServiceImpl">
