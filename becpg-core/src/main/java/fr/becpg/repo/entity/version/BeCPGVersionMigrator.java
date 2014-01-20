@@ -81,29 +81,29 @@ public class BeCPGVersionMigrator {
 		// look for versionHistory of entity
 		List<ChildAssociationRef> folderChilAssocs = nodeService.getChildAssocs(versionHistoryNodeRef);
 		
-		logger.debug("entity to migrate size: " + folderChilAssocs.size());
+		logger.info("entity to migrate size: " + folderChilAssocs.size());
 		
 		VersionNumber prevVersionNumber = new VersionNumber("0.0");
 		for(ChildAssociationRef folderChildAssoc : folderChilAssocs){
 			
 			NodeRef folderNodeRef = folderChildAssoc.getChildRef();
-			logger.debug("folder: " + folderNodeRef);
+			logger.info("folder: " + folderNodeRef);
 			
 			// folders for versions
 			NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, (String)nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME));
 			if(nodeService.exists(entityNodeRef)){
-				logger.debug("entityNodeRef: " + entityNodeRef);
+				logger.info("entityNodeRef: " + entityNodeRef);
 								
 				List<NodeRef> evNodeRefList = buildVersionHistory(folderNodeRef, entityNodeRef);
 							
 				for(NodeRef evNodeRef : evNodeRefList){
 					
-					logger.debug("evNodeRef: " + evNodeRef);				
+					logger.info("evNodeRef: " + evNodeRef);				
 					
 					if(nodeService.hasAspect(evNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
 						
 						String versionLabel = (String)nodeService.getProperty(evNodeRef, BeCPGModel.PROP_VERSION_LABEL);												
-						logger.debug("versionLabel: " + versionLabel);
+						logger.info("versionLabel: " + versionLabel);
 						
 						if(versionLabel != null){
 						
@@ -116,7 +116,7 @@ public class BeCPGVersionMigrator {
 								}								
 							}
 							catch(VersionDoesNotExistException e){								
-								logger.debug("Version doesn't exist, we will create it");
+								logger.info("Version doesn't exist, we will create it");
 							}
 							
 							// create version
@@ -158,8 +158,13 @@ public class BeCPGVersionMigrator {
 			versionProperties.put(VersionModel.PROP_DESCRIPTION, (String)nodeService.getProperty(evNodeRef, BeCPGModel.PROP_VERSION_DESCRIPTION));
 							
 			version = versionService.createVersion(entityNodeRef, versionProperties);
-			logger.debug("create version: " + entityNodeRef + " - versionType: " + versionType 
-					+ " - versionLabel: " + version.getVersionLabel());					    								    						
+			logger.info("create version: " + entityNodeRef + " - versionType: " + versionType 
+					+ " - VersionLabel: " + version.getVersionLabel()
+					+ " - FrozenStateNodeRef: " + version.getFrozenStateNodeRef()
+					+ " - VersionedNodeRef: " + version.getVersionedNodeRef());	
+			
+			logger.debug("nodeService exists " + nodeService.exists(version.getFrozenStateNodeRef()));
+			logger.debug("dbNodeService exists " + dbNodeService.exists(version.getFrozenStateNodeRef()));
 			
 			// add/remove system props on entity version
 			nodeService.setProperty(evNodeRef, ContentModel.PROP_VERSION_LABEL, (String)nodeService.getProperty(evNodeRef, BeCPGModel.PROP_VERSION_LABEL));
