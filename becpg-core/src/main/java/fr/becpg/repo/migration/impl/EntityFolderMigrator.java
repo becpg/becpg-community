@@ -120,7 +120,7 @@ public class EntityFolderMigrator {
 	}
 
 	public void migrate() {
-
+ 
 		// search for entity and entityTplAspect
 		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY))
 				+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL));
@@ -448,6 +448,10 @@ public class EntityFolderMigrator {
 		for (NodeRef entityNodeRef : entitiesNodeRef) {
 			if (nodeService.exists(entityNodeRef)) {
 
+				if(!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)){
+					nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY, null);
+				}
+				
 				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_CHECKED_OUT)) {
 					logger.error("Node is checked out " + entityNodeRef);
 				} else if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
