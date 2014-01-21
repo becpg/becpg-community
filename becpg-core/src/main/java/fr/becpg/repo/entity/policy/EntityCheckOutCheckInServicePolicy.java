@@ -54,7 +54,6 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
  * @author quere
  * 
  */
-@Service
 public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy implements CheckOutCheckInServicePolicies.OnCheckOut, CheckOutCheckInServicePolicies.BeforeCheckIn,
 		CheckOutCheckInServicePolicies.OnCheckIn, CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnAddAspectPolicy,
 		NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy {

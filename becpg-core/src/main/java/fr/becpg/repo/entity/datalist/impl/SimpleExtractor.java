@@ -57,7 +57,6 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
-@Service
 public class SimpleExtractor extends AbstractDataListExtractor {
 
 	private FileFolderService fileFolderService;

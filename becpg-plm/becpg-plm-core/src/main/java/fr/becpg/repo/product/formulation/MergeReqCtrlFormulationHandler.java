@@ -38,7 +38,6 @@ import fr.becpg.repo.product.data.productList.RequirementType;
  * @author quere
  *
  */
-@Service
 public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	protected static Log logger = LogFactory.getLog(MergeReqCtrlFormulationHandler.class);

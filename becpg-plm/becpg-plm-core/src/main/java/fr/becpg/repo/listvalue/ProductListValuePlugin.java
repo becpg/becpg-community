@@ -39,7 +39,6 @@ import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
-@Service
 public class ProductListValuePlugin extends EntityListValuePlugin {
 
 	/** The logger. */

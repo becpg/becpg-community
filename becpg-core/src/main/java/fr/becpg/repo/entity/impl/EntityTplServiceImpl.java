@@ -59,7 +59,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGSearchService;
 
-@Service
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"%s\" +@bcpg\\:entityTplEnabled:true +@bcpg\\:entityTplIsDefault:true -ASPECT:\"bcpg:compositeVersion\"";

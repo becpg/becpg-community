@@ -24,7 +24,6 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
  *
  * @author querephi
  */
-@Service
 public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<NutListDataItem> {
 	
 	/** The Constant UNIT_PER100G. */

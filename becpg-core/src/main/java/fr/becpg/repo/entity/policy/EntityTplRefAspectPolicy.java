@@ -27,7 +27,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * 
  * @author querephi
  */
-@Service
 public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements NodeServicePolicies.OnCreateAssociationPolicy,NodeServicePolicies.OnAddAspectPolicy {
 
 	private static Log logger = LogFactory.getLog(EntityTplRefAspectPolicy.class);

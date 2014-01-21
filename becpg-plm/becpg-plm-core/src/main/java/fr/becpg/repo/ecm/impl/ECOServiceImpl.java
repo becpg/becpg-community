@@ -73,7 +73,6 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author quere
  * 
  */
-@Service
 public class ECOServiceImpl implements ECOService {
 
 	private static final String VERSION_DESCRIPTION = "Applied by ECO %s";

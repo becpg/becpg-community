@@ -37,7 +37,6 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
-@Service
 public class MultiLevelExtractor extends SimpleExtractor {
 
 	public static final String PROP_DEPTH = "depth";

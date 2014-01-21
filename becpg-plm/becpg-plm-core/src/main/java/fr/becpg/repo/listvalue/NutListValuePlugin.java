@@ -32,7 +32,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
-@Service
 public class NutListValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_NUTLIST_PARENT_LEVEL = "nutListParentLevel";

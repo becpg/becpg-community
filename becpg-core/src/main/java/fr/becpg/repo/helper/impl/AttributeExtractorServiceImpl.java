@@ -65,7 +65,6 @@ import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
 
-@Service
 public class AttributeExtractorServiceImpl implements AttributeExtractorService {
 
 	private static Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);

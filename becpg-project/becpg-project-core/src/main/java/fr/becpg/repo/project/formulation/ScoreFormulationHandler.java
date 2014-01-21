@@ -32,7 +32,6 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
  * @author quere
  * 
  */
-@Service
 public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static Log logger = LogFactory.getLog(ScoreFormulationHandler.class);

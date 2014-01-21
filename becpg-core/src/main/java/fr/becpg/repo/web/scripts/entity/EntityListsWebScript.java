@@ -49,7 +49,6 @@ import fr.becpg.repo.security.SecurityService;
  * 
  * @author querephi
  */
-@Service
 public class EntityListsWebScript extends DeclarativeWebScript {
 
 	// request parameter names

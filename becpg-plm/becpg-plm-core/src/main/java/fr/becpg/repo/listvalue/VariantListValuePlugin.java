@@ -34,7 +34,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
-@Service
 @Deprecated //TODO use assocService instead of nodeService.getChildAssocs
 public class VariantListValuePlugin extends EntityListValuePlugin {
 

@@ -93,6 +93,8 @@
 	            <finalName>becpg-${project.version}-${maven.build.timestamp}</finalName>
 	            <descriptors>
 	              <descriptor>distribution.xml</descriptor>
+	              <descriptor>src/main/project/distribution.xml</descriptor>
+	              <descriptor>src/main/designer/distribution.xml</descriptor>
 	            </descriptors>
 	          </configuration>
 	        </execution>

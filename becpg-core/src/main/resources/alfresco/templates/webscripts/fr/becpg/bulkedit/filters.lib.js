@@ -18,7 +18,7 @@ var Filters = {
 		// Common types and aspects to filter from the UI
 		searchQuery += " -TYPE:\"cm:systemfolder\""
 				+ " -@cm\\:lockType:READ_ONLY_LOCK"
-				+ " -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\"";
+				+ " -ASPECT:\"bcpg:compositeVersion\"";
 
 		var nodeRef = parsedArgs.nodeRef;
 		if (nodeRef != null && nodeRef.length > 0) {

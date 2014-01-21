@@ -67,7 +67,6 @@ import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
-@Service
 public class EntityReportServiceImpl implements EntityReportService {
 
 	private static final String DEFAULT_EXTRACTOR = "default";

@@ -45,7 +45,6 @@ import fr.becpg.report.client.ReportParams;
  * @author matthieu
  * 
  */
-@Service
 public class BeCPGReportServerClient extends AbstractBeCPGReportClient
 		implements BeCPGReportEngine {
 

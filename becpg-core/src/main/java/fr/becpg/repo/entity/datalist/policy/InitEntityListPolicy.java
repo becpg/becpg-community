@@ -28,7 +28,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  *
  * @author querephi
  */
-@Service
 public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy  {
 	
 	/** The logger. */

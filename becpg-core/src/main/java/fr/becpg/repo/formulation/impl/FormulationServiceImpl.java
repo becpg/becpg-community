@@ -41,7 +41,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * @since 1.5
  * @param <T>
  */
-@Service
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>{
 
 	private static final String DEFAULT_CHAIN_ID = "default";

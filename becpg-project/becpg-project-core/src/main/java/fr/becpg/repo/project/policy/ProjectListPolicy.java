@@ -46,7 +46,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * 
  * @author querephi
  */
-@Service
 public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy,
 	NodeServicePolicies.OnCreateAssociationPolicy,
 	NodeServicePolicies.OnDeleteAssociationPolicy,

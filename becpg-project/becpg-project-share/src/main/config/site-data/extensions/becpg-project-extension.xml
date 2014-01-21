@@ -1,0 +1,15 @@
+<!-- http://blogs.alfresco.com/wp/ddraper/category/alfresco-share-customization/ -->
+<extension>
+	<modules>
+		<module>
+			<id>becpg-project-extension</id>
+			<auto-deploy>true</auto-deploy>
+			<customizations>
+				 <customization>
+		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-project</sourcePackageRoot>
+		        </customization>
+			</customizations>
+		</module>
+	</modules>
+</extension>  

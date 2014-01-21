@@ -41,7 +41,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 /**
  * @author querephi
  */
-@Service
 public class ProductServiceImpl implements ProductService {
 	
 	private static Log logger = LogFactory.getLog(ProductServiceImpl.class);

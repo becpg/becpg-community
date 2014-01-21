@@ -27,7 +27,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 /**
  * @author matthieu
  */
-@Service
 public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
 
 	private static Log logger = LogFactory.getLog(DocLinkedEntitiesPolicy.class);

@@ -48,7 +48,6 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
-@Service
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final String MESSAGE_MISSING_NET_WEIGHT = "message.formulate.missing.netWeight";

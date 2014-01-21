@@ -30,7 +30,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
 /**
  * @author querephi
  */
-@Service
 public class ReportTplWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(ReportTplWebScript.class);

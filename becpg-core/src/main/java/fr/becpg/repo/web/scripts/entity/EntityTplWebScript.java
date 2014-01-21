@@ -21,7 +21,6 @@ import fr.becpg.repo.formulation.FormulateException;
 /**
  * @author querephi
  */
-@Service
 public class EntityTplWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(EntityTplWebScript.class);

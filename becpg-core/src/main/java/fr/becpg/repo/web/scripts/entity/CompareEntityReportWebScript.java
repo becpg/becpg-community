@@ -29,7 +29,6 @@ import fr.becpg.repo.entity.comparison.CompareEntityReportService;
  * 
  * @author querephi
  */
-@Service
 public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	private static final int MAX_ENTITIES = 10;

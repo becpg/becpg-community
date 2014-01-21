@@ -32,7 +32,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  *
  * @author querephi
  */
-@Service
 public class RepoServiceImpl implements RepoService {
 	
 	/** The Constant XPATH. */

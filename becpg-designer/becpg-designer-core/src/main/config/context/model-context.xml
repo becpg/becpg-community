@@ -18,9 +18,12 @@
 -->
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 <beans>
+
+
+
 	<!-- Registration of new models -->
 	<bean id="bcpg.designer.dictionaryBootstrap" parent="dictionaryModelBootstrap"
-		depends-on="resourceBundles">
+		depends-on="bcpg.dictionaryBootstrap">
 		<property name="models">
 			<list>
 				<value>alfresco/module/${artifactId}/model/m2Model.xml</value>	

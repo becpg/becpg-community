@@ -1,96 +1,97 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
-  Copyright (C) 2010-2014 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
--->
+<!-- 
+
+Copyright (C) 2010-2014 beCPG. 
+ 
+This file is part of beCPG 
+ 
+beCPG is free software: you can redistribute it and/or modify 
+it under the terms of the GNU Lesser General Public License as published by 
+the Free Software Foundation, either version 3 of the License, or 
+(at your option) any later version. 
+ 
+beCPG is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+GNU Lesser General Public License for more details. 
+ 
+You should have received a copy of the GNU Lesser General Public License 
+along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+
+ -->
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
-
 <beans>
-   
-   
 
-   <!-- Provide becpg form config -->
-   <bean id="becpgFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" 
-         init-method="register">
-      <property name="configService" ref="web.config" />
-      <property name="configs">
-         <list>
-         	<value>classpath:alfresco/form-config.xml</value> 
-            <value>classpath:alfresco/forms/becpg-project-form-config.xml</value>
-            <value>classpath:alfresco/forms/becpg-project-workflow-form-config.xml</value>
-         </list>
-      </property>
-   </bean>
-   
-   
-           
-   <bean id="evaluator.becpg.doclib.action.project" parent="evaluator.doclib.action.nodeType">
-      <property name="types">
-         <list>
-            <value>pjt:project</value>
-         </list>
-      </property>
-   </bean>
-   
-   <!--  
- 	  pjt:projectState
-   -->
-   <bean id="evaluator.becpg.doclib.indicator.project.planned" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="node.properties.pjt:projectState" />
-      <property name="comparator">
-         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="Planned" />
-         </bean>
-      </property>
-   </bean>
+
+	<!-- Provide becpg form config -->
+	<bean id="becpgProjectFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">
+		<property name="configService" ref="web.config" />
+		<property name="configs">
+			<list>
+				<value>classpath:alfresco/becpg-project-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-project-form-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-project-workflow-form-config.xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="becpgProjectResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+		<property name="resourceBundles">
+			<list>
+				<value>alfresco.messages.becpg-project</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.action.project" parent="evaluator.doclib.action.nodeType">
+		<property name="types">
+			<list>
+				<value>pjt:project</value>
+			</list>
+		</property>
+	</bean>
+	<!-- pjt:projectState -->
+	<bean id="evaluator.becpg.doclib.indicator.project.planned" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.pjt:projectState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Planned" />
+			</bean>
+		</property>
+	</bean>
 
 	<bean id="evaluator.becpg.doclib.indicator.project.inprogress" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="node.properties.pjt:projectState" />
-      <property name="comparator">
-         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="InProgress" />
-         </bean>
-      </property>
-   </bean>
-   
-   <bean id="evaluator.becpg.doclib.indicator.project.onhold" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="node.properties.pjt:projectState" />
-      <property name="comparator">
-         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="OnHold" />
-         </bean>
-      </property>
-   </bean>
-   
-   <bean id="evaluator.becpg.doclib.indicator.project.cancelled" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="node.properties.pjt:projectState" />
-      <property name="comparator">
-         <bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="Cancelled" />
-         </bean>
-      </property>
-   </bean>
-   
-   <bean id="evaluator.becpg.doclib.indicator.project.completed" parent="evaluator.doclib.action.value">
-      <property name="accessor" value="node.properties.pjt:projectState" />
-      <property name="comparator">
-      	<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-            <property name="value" value="Completed" />
-         </bean>
-      </property>
-   </bean>
-   
+		<property name="accessor" value="node.properties.pjt:projectState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="InProgress" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.project.onhold" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.pjt:projectState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="OnHold" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.project.cancelled" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.pjt:projectState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Cancelled" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.indicator.project.completed" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.pjt:projectState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Completed" />
+			</bean>
+		</property>
+	</bean>
+
 </beans>

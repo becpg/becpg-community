@@ -33,7 +33,6 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
-@Service
 /**
  * 
  * @author matthieu

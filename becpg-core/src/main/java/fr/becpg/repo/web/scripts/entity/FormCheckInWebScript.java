@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
  *
  * @author querephi
  */
-@Service
 public class FormCheckInWebScript extends DeclarativeWebScript {
 
 	// request parameter names

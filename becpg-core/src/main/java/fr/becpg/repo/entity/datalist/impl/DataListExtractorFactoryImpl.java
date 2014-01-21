@@ -26,7 +26,6 @@ import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 
-@Service
 public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 
 

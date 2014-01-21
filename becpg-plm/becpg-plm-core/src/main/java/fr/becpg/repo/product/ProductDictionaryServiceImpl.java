@@ -18,7 +18,6 @@ import fr.becpg.model.SystemState;
  *
  * @author querephi
  */
-@Service
 public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	
 	/** The logger. */

@@ -51,7 +51,6 @@ import fr.becpg.repo.cache.BeCPGCacheService;
  * @author matthieu
  *
  */
-@Service
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
 
 	private static Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);

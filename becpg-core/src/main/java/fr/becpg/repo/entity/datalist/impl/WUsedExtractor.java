@@ -45,7 +45,6 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  * @author matthieu
  * 
  */
-@Service
 public class WUsedExtractor extends MultiLevelExtractor {
 
 	final static String WUSED_PREFIX = "WUsed";

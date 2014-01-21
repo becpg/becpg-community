@@ -34,7 +34,6 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  *
  * @author querephi
  */
-@Service
 public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<CostListDataItem> {
 
 	public static final Double DEFAULT_LOSS_RATIO = 0d;

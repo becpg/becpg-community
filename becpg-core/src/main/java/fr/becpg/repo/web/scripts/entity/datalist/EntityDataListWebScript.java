@@ -54,7 +54,6 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  * 
  * @author matthieu
  */
-@Service
 public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	/** The logger. */

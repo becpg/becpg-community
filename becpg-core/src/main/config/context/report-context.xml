@@ -92,19 +92,40 @@
 	</bean>	
 	
 	
-	<!-- Report Policy 
-	<bean id="entityReportPolicy" class="fr.becpg.repo.entity.policy.EntityReportPolicy"
-		parent="abstractBeCPGPolicy">
-		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator"/>
-	</bean>
-	
-	-->
-	
 	<!-- Report property decorator -->
 	 <bean id="reportAssociationDecorator" parent="baseAssocDecorator" class="fr.becpg.repo.report.jscript.ReportAssociationDecorator">    
         <property name="associationName" value="rep:reports" />    
         <property name="reportTplService" ref="reportTplService"/>
         <property name="entityReportService" ref="entityReportService"/>
     </bean>
+    
+    		<!-- Search report -->	
+	<bean id="exportSearchService" class="fr.becpg.repo.report.search.ExportSearchServiceImpl">
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />
+		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="entityService" ref="entityService" />
+		<property name="attributeExtractorService" ref="attributeExtractorService"/>		
+		<property name="dictionaryService" ref="dictionaryService" />
+	</bean>
+	
+		<!-- Export search -->
+	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
+		<property name="exportSearchService" ref="exportSearchService" />
+		<property name="mimetypeService" ref="MimetypeService" />
+		<property name="advSearchService" ref="AdvSearchService" />
+		<property name="namespaceService" ref="NamespaceService" />
+		<property name="reportTplService" ref="reportTplService" />
+	</bean>
+	
+	
+	<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
+		<property name="namespaceService" ref="NamespaceService" />
+		<property name="reportTplService" ref="reportTplService" />
+	</bean>
+	
 	
 </beans>

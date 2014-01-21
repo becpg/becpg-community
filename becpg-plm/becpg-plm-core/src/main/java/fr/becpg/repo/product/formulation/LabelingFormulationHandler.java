@@ -58,7 +58,6 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 /**
  * @author matthieu
  */
-@Service
 public class LabelingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulationHandler.class);

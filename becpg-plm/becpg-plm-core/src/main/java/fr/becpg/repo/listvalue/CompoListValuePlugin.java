@@ -37,7 +37,6 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
-@Service
 public class CompoListValuePlugin extends EntityListValuePlugin {
 
 	private static Log logger = LogFactory.getLog(CompoListValuePlugin.class);

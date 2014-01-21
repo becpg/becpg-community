@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
  *
  * @author querephi
  */
-@Service
 public interface EntityVersionService {			
 		
 	/** The Constant VERSION_DELIMITER. */
