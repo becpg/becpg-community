@@ -232,6 +232,8 @@
 		<property name="dbNodeService">
 			<ref bean="mtAwareNodeService" />
 		</property>
+		<property name="beCPGSearchService" ref="beCPGSearchService" />
+		<property name="transactionService" ref="transactionService" />
 	</bean>
 
 	<bean id="beCPGSystemFolderMigrator" class="fr.becpg.repo.migration.impl.BeCPGSystemFolderMigrator">
@@ -265,6 +267,7 @@
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="taggingService" ref="taggingService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 	
 	<bean id="migrationService" class="fr.becpg.repo.migration.impl.MigrationServiceImpl">
