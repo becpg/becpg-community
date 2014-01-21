@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -112,7 +111,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy  implements No
 				if(entityTplNodeRef == null){
 					QName entityType = nodeService.getType(entityNodeRef);
 					entityTplNodeRef = entityTplService.getEntityTpl(entityType);
-					if(entityTplNodeRef!=null){
+					if(entityTplNodeRef!=null && nodeService.exists(entityTplNodeRef)){
 						if(logger.isDebugEnabled()){
 							logger.debug("Found default entity template '" + nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + "' to assoc.");
 						}				

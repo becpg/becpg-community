@@ -15,7 +15,7 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.designer;
+package fr.becpg.test.designer;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -23,83 +23,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.M2Model;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.repo.designer.DesignerModel;
+import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.designer.data.DesignerTree;
 import fr.becpg.repo.designer.data.FormControl;
 import fr.becpg.repo.designer.impl.DesignerTreeVisitor;
 import fr.becpg.repo.designer.impl.FormModelVisitor;
 import fr.becpg.repo.designer.impl.MetaModelVisitor;
+import fr.becpg.test.RepoBaseTestCase;
 
-public class DesignerServiceTest extends TestCase {
+public class DesignerServiceTest extends RepoBaseTestCase{ 
 
 	private static Log logger = LogFactory.getLog(DesignerServiceTest.class);
 
-	private FileFolderService fileFolderService;
-
+	@Autowired
 	private MetaModelVisitor metaModelVisitor;
 
+	@Autowired
 	private FormModelVisitor formModelVisitor;
 
+	@Autowired
 	private DesignerTreeVisitor designerTreeVisitor;
 
+	@Autowired
 	private DesignerService designerService;
-
-	private NodeService nodeService;
-
-	private TransactionService transactionService;
-
-	private static ApplicationContext ctx = ApplicationContextHelper.getApplicationContext();
 
 	private static String PATH_TESTFOLDER = "DesignerTestFolder";
 
-	private Repository repositoryHelper;
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.alfresco.util.BaseAlfrescoTestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("DesignerServiceTest:setUp");
-
-		nodeService = (NodeService) ctx.getBean("nodeService");
-		designerService = (DesignerService) ctx.getBean("designerService");
-		fileFolderService = (FileFolderService) ctx.getBean("fileFolderService");
-		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
-
-		metaModelVisitor = (MetaModelVisitor) ctx.getBean("metaModelVisitor");
-
-		formModelVisitor = (FormModelVisitor) ctx.getBean("formModelVisitor");
-		designerTreeVisitor = (DesignerTreeVisitor) ctx.getBean("designerTreeVisitor");
-
-		transactionService = (TransactionService) ctx.getBean("TransactionService");
-
-		AuthenticationUtil.setRunAsUserSystem();
-
-	}
-
-
-
+	@Test
 	public void testMetaModelVisitor() {
 
 		logger.info("testMetaModelVisitor");
@@ -138,6 +102,7 @@ public class DesignerServiceTest extends TestCase {
 
 	}
 
+	@Test
 	public void testFormModelVisitor() {
 
 		logger.info("testFormModelVisitor");
@@ -173,6 +138,7 @@ public class DesignerServiceTest extends TestCase {
 
 	}
 
+	@Test
 	public void testDesignerService() {
 
 		logger.info("testDesignerService");
@@ -217,6 +183,7 @@ public class DesignerServiceTest extends TestCase {
 
 	}
 
+	@Test
 	public void testFindOrCreateModel() {
 
 		logger.info("testFindOrCreateModel");

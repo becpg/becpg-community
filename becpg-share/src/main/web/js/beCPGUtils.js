@@ -134,5 +134,35 @@
 
    };
    
+   
+   
+   beCPG.util.getFileIcon = function(p_fileName, p_record, p_isContainer, p_isSimpleView) {
+
+      var node = p_record.jsNode, type = node.type;
+      
+      var folders = {
+            "{http://www.alfresco.org/model/content/1.0}folder" : "folder",
+            "cm:folder" : "folder",
+            "{http://www.alfresco.org/model/site/1.0}sites" : "site",
+            "st:sites" : "site",
+            "{http://www.alfresco.org/model/site/1.0}site" : "site",
+            "st:site" : "site"
+     };
+
+      var iconSize = p_isSimpleView ? 32 : 64;
+
+      if (p_isContainer  && (!Alfresco.util.getFileIcon.types[type] 
+              || folders[type]) ) {
+          return Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-' + iconSize + '.png';
+      }
+
+      if (p_isSimpleView) {
+          return Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'
+                + Alfresco.util.getFileIcon(p_fileName, type, iconSize);
+      }
+
+      return Alfresco.DocumentList.generateThumbnailUrl(p_record);
+
+  };
 
 })();

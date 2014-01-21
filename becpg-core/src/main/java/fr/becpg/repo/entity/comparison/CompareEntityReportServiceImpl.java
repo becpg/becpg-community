@@ -189,7 +189,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 		// look for template
 		NodeRef templateNodeRef = reportTplService.getSystemReportTemplate(ReportType.System, 
 											null, 
-											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
+											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
 		
 		if(templateNodeRef != null){
 			

@@ -56,4 +56,15 @@
 			<itemType name="ext1:customType" /> -->
 		</itemTypes>
 	</config>
+	
+	
+	<config evaluator="string-compare" condition="DocLibCustom">
+		<dependencies>
+		<!-- 	<css src="/modules/entity-version/new-version-min.css" />
+			<js src="/modules/entity-version/new-version-min.js" /> -->
+			<js src="/components/documentlibrary/becpg/docLibAction-min.js" />
+			<js src="/components/documentlibrary/becpg/fileIcons-min.js" />
+		</dependencies>
+	</config>
+	
 </alfresco-config>

@@ -78,7 +78,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 	public static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
 	public static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
-	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
@@ -765,15 +764,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_NC, e);
 		}
 
-		// compare report
-		try {
-			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS);
-			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
-					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS),
-					COMPARE_ENTITIES_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
-		} catch (IOException e) {
-			logger.error("Failed to create compare product report tpl.", e);
-		}
+
 		
 		// eco report
 		try {
