@@ -425,7 +425,7 @@
                         record.jsNode.type = record.itemType;
 
                         var thumbName = record.itemData["prop_cm_name"].value, recordSiteName = record.site != null ? record.site.shortName
-                              : null, extn = thumbName.substring(thumbName.lastIndexOf(".")), nodeRef = new Alfresco.util.NodeRef(
+                              : null, extn = record.itemType.substring(record.itemType.lastIndexOf(":")+1), nodeRef = new Alfresco.util.NodeRef(
                               record.nodeRef), docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName,
                               record.nodeRef, record.itemType);
 
@@ -434,8 +434,8 @@
                             * Simple View
                             */
                            var id = this.id + '-preview-' + oRecord.getId();
-                           desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + beCPG.util
-                                 .getFileIcon(thumbName, record, false, true) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
+                           desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+                                 .getFileIcon(thumbName, record.itemType) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
 
                            // Preview tooltip
                            this.previewTooltips.push(id);

@@ -4,30 +4,13 @@
 		<module>
 			<id>becpg-share-extension</id>
 			<auto-deploy>true</auto-deploy>
-			<!-- <configurations>
-				<config evaluator="string-compare" condition="WebFramework" replace="false">
-					<web-framework>
-						<dojo-pages>
-							<packages>
-								<package name="becpg" location="js/lib/becpg" />
-							</packages>
-						</dojo-pages>
-					</web-framework>
-				</config>
-			</configurations> -->
+			<!-- <configurations> <config evaluator="string-compare" condition="WebFramework" replace="false"> <web-framework> <dojo-pages> <packages> <package name="becpg" location="js/lib/becpg" /> </packages> 
+				</dojo-pages> </web-framework> </config> </configurations> -->
 			<customizations>
-			    <customization>
+				<customization>
 					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-head</sourcePackageRoot>
 				</customization>
-				<!-- <customization>
-					<targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
-				</customization> -->
-				<!-- <customization>
-					<targetPackageRoot>org.alfresco.components.footer</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-footer</sourcePackageRoot>
-				</customization> -->
 				<customization>
 					<targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-documentlibrary</sourcePackageRoot>
@@ -36,10 +19,7 @@
 					<targetPackageRoot>org.alfresco.components.document-details</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-document-details</sourcePackageRoot>
 				</customization>
-				<!-- <customization>
-					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>
-				</customization> -->
+
 				<customization>
 					<targetPackageRoot>org.alfresco.components.data-lists</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-data-lists</sourcePackageRoot>
@@ -53,10 +33,8 @@
 					<sourcePackageRoot>org.alfresco.components.custom-dashlets</sourcePackageRoot>
 				</customization>
 				<!-- <customization> <targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot> <sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot> </customization> -->
-		
+
 			</customizations>
 		</module>
-		<!-- <module> <id>dockbar-extension</id> <auto-deploy>true</auto-deploy> <components> <component> <scope>global</scope> <region-id>share-header</region-id> <source-id>global</source-id> <sub-components> 
-			<sub-component id="dockbar-extension" index="75"> <url>/components/dockbar/dockbar</url> </sub-component> </sub-components> </component> </components> </module> -->
 	</modules>
 </extension>  

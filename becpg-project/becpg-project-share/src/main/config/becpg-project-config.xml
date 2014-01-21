@@ -44,15 +44,6 @@
    </config>
    
    
-   <alfresco-config>
-   <config evaluator="string-compare" condition="Search">
-      <!-- beCPG -->
-      <metadata>
-			<show id="pjt:project" />
-      </metadata>
-   </config>
-
-   
 	<config evaluator="string-compare" condition="AdvancedSearch">
 		<advanced-search>
 			<!-- Forms for the advanced search type list -->
@@ -62,7 +53,6 @@
 		</advanced-search>
 	</config>
 	
-</alfresco-config>
    
    
    <!-- Define elements that are bulk editable -->
@@ -118,21 +108,14 @@
 		</indicators>
 		
 		<create-content>
-		
 			<content id="project" label="menu.create-content.project" type="pagelink" index="110" icon="project">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			
 		</create-content>
 
 	</config>
 	
-	<config evaluator="string-compare" condition="DocLibCustom">
-		<dependencies>
-			<js src="/components/documentlibrary/project-fileIcons-min.js" />
-		</dependencies>
-	</config>
 	
 
 </alfresco-config>

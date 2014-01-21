@@ -2,16 +2,24 @@
 <extension>
 	<modules>
 		<module>
-			<id>becpg-controls-extension</id>
+			<id>becpg-plm-extension</id>
 			<auto-deploy>true</auto-deploy>
 			<customizations>
-				<customization>
-					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-head</sourcePackageRoot>
+				 <customization>
+		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
+		        </customization>
+		        <customization>
+					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-presets-plm</sourcePackageRoot>
 				</customization>
 				<customization>
-					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.custom-modules</sourcePackageRoot>
+					<targetPackageRoot>org.alfresco.components.footer</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-footer</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>
 				</customization>
 			</customizations>
 		</module>

@@ -1,21 +1,11 @@
-/*******************************************************************************
- *  Copyright (C) 2010-2014 beCPG. 
- *   
- *  This file is part of beCPG 
- *   
- *  beCPG is free software: you can redistribute it and/or modify 
- *  it under the terms of the GNU Lesser General Public License as published by 
- *  the Free Software Foundation, either version 3 of the License, or 
- *  (at your option) any later version. 
- *   
- *  beCPG is distributed in the hope that it will be useful, 
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- *  GNU Lesser General Public License for more details. 
- *   
- *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
- *   If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
+/***********************************************************************************************************************
+ * Copyright (C) 2010-2014 beCPG. This file is part of beCPG beCPG is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. beCPG is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU
+ * Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ **********************************************************************************************************************/
 // Declare namespace...
 (function() {
 
@@ -246,23 +236,27 @@
                                                                                                                oRecord,
                                                                                                                oColumn,
                                                                                                                oData) {
-      var record = oRecord.getData(), node = record.jsNode, thumbName = record.displayName, isContainer = node.isContainer, isLink = node.isLink, extn = thumbName
-            .substring(thumbName.lastIndexOf(".")), imgId = node.nodeRef.nodeRef; // DD added
+
+      var record = oRecord.getData(), node = record.jsNode, name = record.displayName, isContainer = node.isContainer, isLink = node.isLink, extn = name
+            .substring(name.lastIndexOf(".")), isEntity = beCPG.util.isEntity(record), imgId = node.nodeRef.nodeRef;
+
+      if (isEntity) {
+         extn = node.type.substring(node.type.lastIndexOf(":"));
+      }
 
       oColumn.width = 40;
       Dom.setStyle(elCell, "width", oColumn.width + "px");
       Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 
-      if (isContainer) {
+      if (isContainer && !isEntity) {
          elCell.innerHTML = '<span class="folder-small">' + (isLink ? '<span class="link"></span>' : '') + (scope.dragAndDropEnabled ? '<span class="droppable"></span>'
-               : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + beCPG.util
-               .getFileIcon(thumbName, record, isContainer, true) + '" /></a>';
-         containerTarget = new YAHOO.util.DDTarget(imgId); // Make the folder a target
+               : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-32.png" /></a>';
+         new YAHOO.util.DDTarget(imgId); // Make the folder a target
       } else {
          var id = scope.id + '-preview-' + oRecord.getId();
          elCell.innerHTML = '<span id="' + id + '" class="icon32">' + (isLink ? '<span class="link"></span>' : '') + Alfresco.DocumentList
-               .generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + beCPG.util.getFileIcon(
-               thumbName, record, isContainer, true) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
+               .generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+               .getFileIcon(name,node.type) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
 
          // Preview tooltip
          scope.previewTooltips.push(id);
@@ -288,24 +282,26 @@
    Alfresco.DocumentListViewRenderer.prototype.renderCellThumbnail = function DL_VR_renderCellThumbnail(scope, elCell,
                                                                                                         oRecord,
                                                                                                         oColumn, oData) {
-      var record = oRecord.getData(), node = record.jsNode, thumbName = record.displayName, isContainer = node.isContainer, isLink = node.isLink, extn = thumbName
-            .substring(thumbName.lastIndexOf(".")), imgId = node.nodeRef.nodeRef; // DD added
+
+      var record = oRecord.getData(), node = record.jsNode, name = record.displayName, isContainer = node.isContainer, isLink = node.isLink, extn = name
+            .substring(name.lastIndexOf(".")), isEntity = beCPG.util.isEntity(record), imgId = node.nodeRef.nodeRef; // DD
+                                                                                                                     // added
 
       oColumn.width = this.thumbnailColumnWidth;
       Dom.setStyle(elCell, "width", oColumn.width + "px");
       Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 
-      if (isContainer || (isLink && node.linkedNode.isContainer)) {
+      if ((isContainer || (isLink && node.linkedNode.isContainer)) && !isEntity) {
          elCell.innerHTML = '<span class="folder">' + (isLink ? '<span class="link"></span>' : '') + (scope.dragAndDropEnabled ? '<span class="droppable"></span>'
-               : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + beCPG.util
-               .getFileIcon(thumbName, record, isContainer, false) + '" /></a>';
-         containerTarget = new YAHOO.util.DDTarget(imgId); // Make the folder a target
+               : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-64.png" /></a>';
+         new YAHOO.util.DDTarget(imgId); // Make the folder a target
       } else {
          elCell.innerHTML = '<span class="thumbnail">' + (isLink ? '<span class="link"></span>' : '') + Alfresco.DocumentList
                .generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.DocumentList
-               .generateThumbnailUrl(record) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
+               .generateThumbnailUrl(record) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
       }
       new Alfresco.DnD(imgId, scope);
+
    };
 
    /**
@@ -354,9 +350,8 @@
       if (beCPG.util.isEntity(record)) {
          url = url.replace("folder-details", "entity-details");
       }
-		
-	var hasComments = (node.properties["fm:commentCount"] !== undefined);
 
+      var hasComments = (node.properties["fm:commentCount"] !== undefined);
 
       var html = '<a href="' + url + '" class="comment' + (hasComments ? " hasComments" : "") + '" title="' + scope
             .msg(i18n + "tip") + '" tabindex="0">' + scope.msg(i18n + "label") + '</a>';

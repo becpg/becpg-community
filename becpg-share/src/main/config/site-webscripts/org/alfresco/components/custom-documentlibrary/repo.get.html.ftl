@@ -7,7 +7,6 @@
 
 <@markup id="customDocumentlist-js" target="js" action="after">
    <#-- JavaScript Dependencies -->
-   <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="documentlibrary" />
    <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-documentlist.js"  group="documentlibrary" />
    <@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-toolbar.js"  group="documentlibrary" />
 	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/custom-repo-toolbar.js"  group="documentlibrary" />

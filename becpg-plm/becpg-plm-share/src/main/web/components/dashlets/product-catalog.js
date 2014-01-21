@@ -306,17 +306,17 @@
                         desc = '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/help-docs-bw-32.png" />';
                      } else {
                         var thumbName = record.fileName, recordSiteName = $isValueSet(record.location.site) ? record.location.site
-                              : null, extn = thumbName.substring(thumbName.lastIndexOf(".")), nodeRef = new Alfresco.util.NodeRef(
+                              : null, extn = record.nodeType.substring(record.nodeType.lastIndexOf(":")+1), nodeRef = new Alfresco.util.NodeRef(
                               record.nodeRef), docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName,
-                              record.nodeRef, record.itemType);
+                              record.nodeRef, record.nodeType);
 
                         if (this.options.simpleView) {
                            /**
                             * Simple View
                             */
                            var id = this.id + '-preview-' + oRecord.getId();
-                           desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + beCPG.util
-                                 .getFileIcon(thumbName, record, false, true) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
+                           desc = '<span id="' + id + '" class="icon32"><a href="' + docDetailsUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/'  + Alfresco.util
+                                 .getFileIcon(thumbName, record.nodeType) + '" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';
 
                            // Preview tooltip
                            this.previewTooltips.push(id);

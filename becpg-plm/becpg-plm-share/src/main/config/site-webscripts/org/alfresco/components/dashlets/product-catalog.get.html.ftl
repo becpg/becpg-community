@@ -6,7 +6,6 @@
 
 <@markup id="js">
    <#-- JavaScript Dependencies -->
-	<@script type="text/javascript" src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="product-catalog"></@script>
 	<@script type="text/javascript" src="${url.context}/res/components/dashlets/product-catalog.js"  group="product-catalog"></@script>
 </@>
 
