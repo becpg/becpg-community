@@ -37,7 +37,6 @@ import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
-@Service
 public class TaskValuePlugin extends EntityListValuePlugin {
 
 	private static Log logger = LogFactory.getLog(TaskValuePlugin.class);

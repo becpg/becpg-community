@@ -23,7 +23,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 /**
  * @author querephi
  */
-@Service
 public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy,
 		NodeServicePolicies.OnCreateNodePolicy {
 

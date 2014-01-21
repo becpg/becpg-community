@@ -36,7 +36,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
-@Service
 public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, 
 										   NodeServicePolicies.OnAddAspectPolicy, 
 										   NodeServicePolicies.OnDeleteNodePolicy,

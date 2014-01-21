@@ -28,7 +28,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
-@Service
 public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);	

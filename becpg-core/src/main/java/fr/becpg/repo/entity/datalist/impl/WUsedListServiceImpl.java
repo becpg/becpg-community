@@ -39,7 +39,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
-@Service
 public class WUsedListServiceImpl implements WUsedListService {
 
 	private static Log logger = LogFactory.getLog(WUsedListServiceImpl.class);

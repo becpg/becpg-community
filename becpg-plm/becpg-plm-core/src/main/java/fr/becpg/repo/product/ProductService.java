@@ -31,7 +31,6 @@ import fr.becpg.repo.product.data.CharactDetails;
 /**
  * @author querephi
  */
-@Service
 public interface ProductService {
 		   	       
     /**

@@ -33,7 +33,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  *
  * @author querephi
  */
-@Service
 public class AutoNumServiceImpl implements AutoNumService {
 
 	/** The Constant NAME. */

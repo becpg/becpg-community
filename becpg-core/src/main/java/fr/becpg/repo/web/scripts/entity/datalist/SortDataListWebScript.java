@@ -40,7 +40,6 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
  * @author matthieu
  * 
  */
-@Service
 public class SortDataListWebScript extends DeclarativeWebScript {
 
 	private static Log logger = LogFactory.getLog(SortDataListWebScript.class);

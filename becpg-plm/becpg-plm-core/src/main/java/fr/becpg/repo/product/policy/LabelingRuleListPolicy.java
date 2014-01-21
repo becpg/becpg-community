@@ -32,7 +32,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
-@Service
 public class LabelingRuleListPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy {
 
 	private EntityListDAO entityListDAO;

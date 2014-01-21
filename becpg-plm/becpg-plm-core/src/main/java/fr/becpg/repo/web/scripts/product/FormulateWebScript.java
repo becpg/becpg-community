@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
 
-@Service
 public class FormulateWebScript extends AbstractProductWebscript {
 
 	protected static final String PARAM_FAST = "fast";

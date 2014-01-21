@@ -61,7 +61,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
-@Service
 public class ImportServiceImpl implements ImportService {
 
 	/** The Constant PFX_COMMENT. */

@@ -33,7 +33,6 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  *
  * @author querephi
  */
-@Service
 public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 	
 	private static final String PARAM_STORE_TYPE = "store_type";	

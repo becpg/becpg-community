@@ -50,7 +50,6 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
  * @author querephi
  * 
  */
-@Service
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";

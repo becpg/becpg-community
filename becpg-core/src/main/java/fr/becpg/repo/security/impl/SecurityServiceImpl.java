@@ -54,7 +54,6 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
  * 
  * @author "Matthieu Laborie <laborima@gmail.com>"
  */
-@Service
 public class SecurityServiceImpl implements SecurityService {
 
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";

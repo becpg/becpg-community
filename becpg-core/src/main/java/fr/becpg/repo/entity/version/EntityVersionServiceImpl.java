@@ -50,7 +50,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
-@Service
 public class EntityVersionServiceImpl implements EntityVersionService {
 	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
 

@@ -48,7 +48,6 @@ import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
-@Service
 public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	private static final String KEY_PRODUCT_LISTITEMS = "ProductListPolicy.productListItems";

@@ -26,7 +26,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
-@Service
 public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy {
 
 	private static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:\"%s\"  -@sys\\:node-uuid:\"%s\" ";

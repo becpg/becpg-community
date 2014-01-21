@@ -62,7 +62,6 @@ import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
  * @author matthieu
  * 
  */
-@Service
 public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);

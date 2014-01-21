@@ -44,7 +44,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * @author matthieu
  * 
  */
-@Service
 public class EntitySystemServiceImpl implements EntitySystemService {
 
 	private static final String XPATH = "./%s:%s";

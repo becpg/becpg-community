@@ -23,7 +23,6 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  *
  * @author querephi
  */
-@Service
 public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<PhysicoChemListDataItem> {
 
 	private static Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);

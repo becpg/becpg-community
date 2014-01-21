@@ -31,7 +31,6 @@ import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.RepoConsts;
@@ -42,7 +41,6 @@ import fr.becpg.repo.RepoConsts;
  * @author "Matthieu Laborie <laborima@gmail.com>"
  * 
  */
-@Service
 public class BeCPGSearchServiceImpl implements BeCPGSearchService {
 
 	private static final String DEFAULT_FIELD_NAME = "keywords";

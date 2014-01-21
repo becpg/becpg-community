@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 
-@Service
 public interface RemoteEntityService {
 
 	/* Constants */

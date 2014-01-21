@@ -39,7 +39,6 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  * @author quere
  * 
  */
-@Service
 public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);

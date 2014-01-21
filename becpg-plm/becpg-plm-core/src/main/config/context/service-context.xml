@@ -181,11 +181,6 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
 
-	<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
-		<property name="namespaceService" ref="NamespaceService" />
-		<property name="reportTplService" ref="reportTplService" />
-	</bean>
-
 	<!-- dockbar -->
 	<bean id="webscript.fr.becpg.dockbar.dockbar.get" class="fr.becpg.repo.web.scripts.dockbar.DockBarWebScript" parent="webscript">
 		<property name="preferenceService" ref="PreferenceService" />

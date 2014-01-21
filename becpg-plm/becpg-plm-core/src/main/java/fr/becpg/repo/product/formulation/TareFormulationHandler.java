@@ -35,7 +35,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
-@Service
 public class TareFormulationHandler extends FormulationBaseHandler<ProductData> {
 	
 	private static Log logger = LogFactory.getLog(TareFormulationHandler.class);

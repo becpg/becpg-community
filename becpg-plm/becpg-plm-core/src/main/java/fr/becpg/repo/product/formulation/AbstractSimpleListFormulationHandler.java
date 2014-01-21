@@ -44,7 +44,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
-@Service
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
 
 	public static final String UNIT_SEPARATOR = "/";

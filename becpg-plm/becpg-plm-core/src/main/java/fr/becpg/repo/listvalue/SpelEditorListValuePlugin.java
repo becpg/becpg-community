@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
-@Service
 public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 	/** The logger. */

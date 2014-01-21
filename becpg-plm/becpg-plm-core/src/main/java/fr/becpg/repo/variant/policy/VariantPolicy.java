@@ -44,7 +44,6 @@ import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.search.BeCPGSearchService;
 
-@Service
 public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy, CheckOutCheckInServicePolicies.OnCheckOut,
 		CheckOutCheckInServicePolicies.BeforeCheckIn {
 

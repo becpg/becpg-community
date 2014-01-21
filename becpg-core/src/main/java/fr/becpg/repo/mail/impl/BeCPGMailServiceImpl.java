@@ -52,7 +52,6 @@ import fr.becpg.repo.mail.BeCPGMailService;
  * @author matthieu
  * 
  */
-@Service
 public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	private static Log _logger = LogFactory.getLog(BeCPGMailServiceImpl.class);

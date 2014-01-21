@@ -38,7 +38,6 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  * 
  * @author matthieu
  */
-@Service
 public class SearchWebScript extends AbstractSearchWebScript {
 
 	/** The logger. */

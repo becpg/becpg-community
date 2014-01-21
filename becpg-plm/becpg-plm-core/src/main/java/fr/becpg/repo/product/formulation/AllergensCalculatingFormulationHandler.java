@@ -35,7 +35,6 @@ import fr.becpg.repo.variant.model.VariantDataItem;
  * 
  * @author querephi
  */
-@Service
 public class AllergensCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	/** The logger. */

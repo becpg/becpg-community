@@ -37,7 +37,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
 
-@Service
 public class EntityDictionnaryWebScript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(EntityDictionnaryWebScript.class);

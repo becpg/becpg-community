@@ -45,7 +45,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * @author matthieu, philippe
  * 
  */
-@Service
 public class DataListSortServiceImpl implements DataListSortService {
 
 	private static Log logger = LogFactory.getLog(DataListSortServiceImpl.class);

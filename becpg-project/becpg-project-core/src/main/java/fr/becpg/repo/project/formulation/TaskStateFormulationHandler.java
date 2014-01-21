@@ -38,7 +38,6 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
-@Service
 public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
 	private static final int COMPLETED = 100;	

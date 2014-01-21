@@ -57,7 +57,6 @@ import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.search.lucene.analysis.FrenchSnowballAnalyserThatRemovesAccents;
 
-@Service
 public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	/** The logger. */

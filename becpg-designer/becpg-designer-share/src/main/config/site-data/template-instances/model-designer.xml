@@ -34,6 +34,8 @@
          <properties>
 				<pagination>false</pagination>
 				<filter>false</filter>
+				<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+				<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
 			 </properties>
       </component>
       <component>

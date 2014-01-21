@@ -50,7 +50,6 @@ import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.data.projectList.TaskState;
 
-@Service
 public class ProjectListExtractor extends SimpleExtractor {
 
 	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.documents.favourites";

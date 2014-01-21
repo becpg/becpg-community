@@ -43,7 +43,6 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  *
  * @author querephi
  */
-@Service
 public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<ProductData>{
 	
 	/** The Constant NO_GRP. */

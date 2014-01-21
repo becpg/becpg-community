@@ -39,6 +39,9 @@
       <#-- Common i18n msg properties -->
       <@generateMessages type="text/javascript" src="${url.context}/service/messages.js" locale="${locale}"/>
    </@markup>
+   <@markup id="dojoBootstrap">
+      <@region scope="global" id="bootstrap" chromeless="true"/>
+   </@>
    
    <#-- This is where the JavaScript and CSS dependencies will initially be added through the use of the 
         <@script> and <@link> directives. The JavaScript can be moved through the use 
@@ -59,14 +62,6 @@
    <#-- Additional template resources -->
    </@markup>
 
-   <#if (templateStylesheets?? && templateStylesheets?size > 0)>
-      <!-- Template & Component Resources' stylesheets gathered to workaround IEBug KB262161 -->
-      <style type="text/css" media="screen">
-         <#list templateStylesheets as href>
-            @import "${href}";
-         </#list>
-      </style>
-   </#if>
 
    <#-- Component Resources from .get.head.ftl files or from dependency directives processed before the
         <@outputJavaScript> and <@outputCSS> directives. -->
@@ -83,7 +78,7 @@
    <!-- Android & iPad CSS overrides -->
    <link media="only screen and (max-device-width: 1024px)" rel="stylesheet" type="text/css" href="${tabletCSS}"/>
    <script type="text/javascript">
-      if (navigator.userAgent.indexOf(" Android ") !== -1)  document.write("<link rel='stylesheet' type='text/css' href='${tabletCSS}'/>");
+      if (navigator.userAgent.indexOf(" Android ") !== -1 || navigator.userAgent.indexOf("iPad;") !== -1 || navigator.userAgent.indexOf("iPhone;") !== -1 )  document.write("<link rel='stylesheet' type='text/css' href='${tabletCSS}'/>");
    </script>
    </@markup>
 <#if !PORTLET>
@@ -97,7 +92,7 @@
 -->
 <#macro templateBody type="">
 <#if !PORTLET>
-<body id="Share" class="yui-skin-${theme} alfresco-share ${type}">
+<body id="Share" class="yui-skin-${theme} alfresco-share ${type} claro">
 </#if>
    <div class="sticky-wrapper">
       <div id="doc3">
