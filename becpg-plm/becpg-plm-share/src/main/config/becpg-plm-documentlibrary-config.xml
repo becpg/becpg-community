@@ -140,74 +140,74 @@
 	</config>
 	<config evaluator="string-compare" condition="DocumentLibrary" replace="true">
 		<create-content>
-			<content id="plain-text" label="create-content.text" type="pagelink" index="10" icon="text-file">
+			<content id="plain-text" label="create-content.text" type="pagelink" index="10" icon="text">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain
 				</param>
 			</content>
 			<!-- <content id="html" icon="html-file" label="create-content.html" type="pagelink" index="20"> <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/html 
 				</param> </content> <content id="xml" icon="xml-file" label="create-content.xml" type="pagelink" index="30"> <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/xml 
 				</param> </content> -->
-			<content id="finishedProduct" label="menu.create-content.finishedProduct" type="pagelink" index="40" icon="generic-finishedProduct">
+			<content id="finishedProduct" label="menu.create-content.finishedProduct" type="pagelink" index="40" icon="finishedProduct">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:finishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="rawMaterial" label="menu.create-content.rawMaterial" type="pagelink" index="50" icon="generic-rawMaterial">
+			<content id="rawMaterial" label="menu.create-content.rawMaterial" type="pagelink" index="50" icon="rawMaterial">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:rawMaterial&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="localSemiFinishedProduct" label="menu.create-content.localSemiFinishedProduct" type="pagelink" index="60" icon="generic-localSemiFinishedProduct">
+			<content id="localSemiFinishedProduct" label="menu.create-content.localSemiFinishedProduct" type="pagelink" index="60" icon="localSemiFinishedProduct">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:localSemiFinishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="semiFinishedProduct" label="menu.create-content.semiFinishedProduct" type="pagelink" index="70" icon="generic-semiFinishedProduct">
+			<content id="semiFinishedProduct" label="menu.create-content.semiFinishedProduct" type="pagelink" index="70" icon="semiFinishedProduct">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:semiFinishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="packagingMaterial" label="menu.create-content.packagingMaterial" type="pagelink" index="80" icon="generic-packagingMaterial">
+			<content id="packagingMaterial" label="menu.create-content.packagingMaterial" type="pagelink" index="80" icon="packagingMaterial">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingMaterial&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="packagingKit" label="menu.create-content.packagingKit" type="pagelink" index="90" icon="generic-packagingKit">
+			<content id="packagingKit" label="menu.create-content.packagingKit" type="pagelink" index="90" icon="packagingKit">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:packagingKit&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="resourceProduct" label="menu.create-content.resourceProduct" type="pagelink" index="100" icon="generic-resourceProduct">
+			<content id="resourceProduct" label="menu.create-content.resourceProduct" type="pagelink" index="100" icon="resourceProduct">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:resourceProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="project" label="menu.create-content.project" type="pagelink" index="110" icon="generic-project">
+			<!-- <content id="project" label="menu.create-content.project" type="pagelink" index="110" icon="project">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
-			</content>
-			<content id="project-npd" label="menu.create-content.project-npd" type="pagelink" index="111" icon="generic-project">
+			</content> -->
+			<content id="project-npd" label="menu.create-content.project-npd" type="pagelink" index="111" icon="project">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create-npd&amp;isEntity=true
 				</param>
 			</content>
-			<content id="supplier" label="menu.create-content.supplier" type="pagelink" index="120" icon="generic-supplier">
+			<content id="supplier" label="menu.create-content.supplier" type="pagelink" index="120" icon="supplier">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="client" label="menu.create-content.client" type="pagelink" index="130" icon="generic-client">
+			<content id="client" label="menu.create-content.client" type="pagelink" index="130" icon="client">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:client&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="nc" label="menu.create-content.nc" type="pagelink" index="140" icon="generic-nc">
+			<content id="nc" label="menu.create-content.nc" type="pagelink" index="140" icon="nc">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:nc&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="controlPlan" label="menu.create-content.controlPlan" type="pagelink" index="150" icon="generic-controlPlan">
+			<content id="controlPlan" label="menu.create-content.controlPlan" type="pagelink" index="150" icon="controlPlan">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:controlPlan&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="qualityControl" label="menu.create-content.qualityControl" type="pagelink" index="160" icon="generic-qualityControl">
+			<content id="qualityControl" label="menu.create-content.qualityControl" type="pagelink" index="160" icon="qualityControl">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=qa:qualityControl&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="changeOrder" label="menu.create-content.eco" type="pagelink" index="170" icon="generic-changeOrder">
+			<content id="changeOrder" label="menu.create-content.eco" type="pagelink" index="170" icon="changeOrder">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="entity" label="menu.create-content.entity" type="pagelink" index="170" icon="generic-entity">
+			<content id="entity" label="menu.create-content.entity" type="pagelink" index="170" icon="entity">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:folder&amp;formId=create-entity&amp;isEntity=true
 				</param>
 			</content>

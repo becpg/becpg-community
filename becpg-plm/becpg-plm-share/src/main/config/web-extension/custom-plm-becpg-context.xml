@@ -1,481 +1,167 @@
-<!--
-  Copyright (C) 2010-2014 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG.
-  If not, see <http://www.gnu.org/licenses/>.
--->
 <?xml version='1.0' encoding='UTF-8'?>
+<!-- 
+
+Copyright (C) 2010-2014 beCPG. 
+ 
+This file is part of beCPG 
+ 
+beCPG is free software: you can redistribute it and/or modify 
+it under the terms of the GNU Lesser General Public License as published by 
+the Free Software Foundation, either version 3 of the License, or 
+(at your option) any later version. 
+ 
+beCPG is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+GNU Lesser General Public License for more details. 
+ 
+You should have received a copy of the GNU Lesser General Public License 
+along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+
+ -->
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
-<beans>
-
-
-
-
-
-	<!-- Provide becpg form config -->
-
-	<bean id="becpgFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">
-
+<beans>	
+   <!-- Provide becpg form config -->
+	<bean id="becpgPlmFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">
 		<property name="configService" ref="web.config" />
-
 		<property name="configs">
-
 			<list>
-
-				<value>classpath:alfresco/form-config.xml</value>
-
-				<value>classpath:alfresco/becpg-share-config.xml</value>
-
-				<value>classpath:alfresco/becpg-search-config.xml</value>
-
-				<value>classpath:alfresco/becpg-documentlibrary-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-report-form-config.xml</value>
-
+				<value>classpath:alfresco/becpg-plm-share-config.xml</value>
+				<value>classpath:alfresco/becpg-plm-search-config.xml</value>
+				<value>classpath:alfresco/becpg-plm-documentlibrary-config.xml</value>
+				
+				<value>classpath:alfresco/forms/becpg-plm-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-workflow-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-quality-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-security-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-ecm-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-bulkedit-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-m2Model-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-designer-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-mpm-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-var-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-gs1-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-nc-workflow-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-publication-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-project-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-project-workflow-form-config.xml</value>
-
 				<value>classpath:alfresco/forms/becpg-claim-workflow-form-config.xml</value>
-
-				<value>classpath:alfresco/forms/becpg-pack-form-config.xml</value>
-
-
-
-
-
+				<value>classpath:alfresco/forms/becpg-pack-form-config.xml</value>				
+				
 				<!-- Share custom config -->
-
 				<value>classpath:alfresco/web-extension/becpg-config-custom.xml</value>
-
 				<value>jar:*!/META-INF/becpg-config-custom.xml</value>
-
 			</list>
-
 		</property>
-
 	</bean>
-
-
-
-
-
-	<bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
-
+	<bean id="becpgPlmResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
 		<property name="resourceBundles">
-
 			<list>
-
 				<value>alfresco.messages.becpg-model</value>
-
 				<value>alfresco.messages.becpg-pages</value>
-
-				<value>alfresco.messages.becpg-controls</value>
-
 				<value>alfresco.messages.becpg-forms</value>
-
 			</list>
-
 		</property>
-
-	</bean>
-
-
-
+	</bean>	
 	<!-- Extension unsure is loaded last and override current keys -->
-
 	<bean id="becpgCustomResourceBundle" depends-on="becpgResourceBundle" class="fr.becpg.util.ResourceBundleBootstrapComponent">
-
 		<property name="resourceBundles">
-
 			<list>
-
 				<value>alfresco.messages.becpg-custom</value>
-
 			</list>
-
 		</property>
-
-	</bean>
-
-
-
-
-
-	<!-- Action group resolver -->
-
-	<bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.BeCPGDoclistActionGroupResolver" />
-
+	</bean>	
 	<!-- evaluators -->
-
-
-
-
-
-	<bean id="evaluator.component.becpg.params.equal" class="fr.becpg.web.extensibility.UrlParamsEvaluator" />
-
-
-
-
-
-	<bean id="evaluator.becpg.doclib.action.entity" parent="evaluator.doclib.action.hasAspect">
-
-		<property name="aspects">
-
-			<list>
-
-				<value>bcpg:entityListsAspect</value>
-
-			</list>
-
-		</property>
-
-	</bean>
-
-
-
-	<bean id="evaluator.becpg.doclib.action.generateReport" parent="evaluator.doclib.action.hasAspect">
-
-		<property name="aspects">
-
-			<list>
-
-				<value>rep:reportEntityAspect</value>
-
-			</list>
-
-		</property>
-
-	</bean>
-
-
-
+	
 	<bean id="evaluator.becpg.doclib.action.product" parent="evaluator.doclib.action.nodeType">
-
 		<property name="types">
-
 			<list>
-
 				<value>bcpg:product</value>
-
 			</list>
-
 		</property>
-
 	</bean>
+	
 
-
-
-	<bean id="evaluator.becpg.doclib.action.project" parent="evaluator.doclib.action.nodeType">
-
-		<property name="types">
-
-			<list>
-
-				<value>pjt:project</value>
-
-			</list>
-
-		</property>
-
-	</bean>
-
-
-
-	<bean id="evaluator.becpg.doclib.action.entity.isSystemEntity" parent="evaluator.doclib.action.nodeType">
-
-		<property name="types">
-
-			<list>
-
-				<value>bcpg:systemEntity</value>
-
-			</list>
-
-		</property>
-
-	</bean>
-
-	<bean id="evaluator.becpg.doclib.action.entity.isWorkingCopy" parent="evaluator.doclib.action.chainedMatchAll">
-
-		<property name="evaluators">
-
-			<list>
-
-				<ref bean="evaluator.doclib.action.isWorkingCopy" />
-
-				<ref bean="evaluator.becpg.doclib.action.entity" />
-
-			</list>
-
-		</property>
-
-	</bean>
-
-	<!-- bcpg:productState -->
-
-
-
+    <!-- bcpg:productState -->
 	<bean id="evaluator.becpg.doclib.indicator.entity.simulation" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.bcpg:productState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="Simulation" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
-
-
 	<bean id="evaluator.becpg.doclib.indicator.entity.tovalidate" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.bcpg:productState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="ToValidate" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
-
-
 	<bean id="evaluator.becpg.doclib.indicator.entity.valid" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.bcpg:productState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="Valid" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
 	<bean id="evaluator.becpg.doclib.indicator.entity.refused" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.bcpg:productState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="Refused" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
-
-
 	<bean id="evaluator.becpg.doclib.indicator.entity.archived" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.bcpg:productState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="Archived" />
-
 			</bean>
-
 		</property>
-
-	</bean>
-
-
-
-	<!-- pjt:projectState -->
-
+	</bean>	<!-- pjt:projectState -->
 	<bean id="evaluator.becpg.doclib.indicator.project.planned" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.pjt:projectState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="Planned" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
 	<bean id="evaluator.becpg.doclib.indicator.project.inprogress" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.pjt:projectState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="InProgress" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
-
-
 	<bean id="evaluator.becpg.doclib.indicator.project.onhold" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.pjt:projectState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="OnHold" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
-
-
 	<bean id="evaluator.becpg.doclib.indicator.project.cancelled" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.pjt:projectState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="Cancelled" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
-
-
 	<bean id="evaluator.becpg.doclib.indicator.project.completed" parent="evaluator.doclib.action.value">
-
 		<property name="accessor" value="node.properties.pjt:projectState" />
-
 		<property name="comparator">
-
 			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-
 				<property name="value" value="Completed" />
-
 			</bean>
-
 		</property>
-
 	</bean>
-
-
-
-	<bean id="evaluator.becpg.doclib.action.reportTpl" parent="evaluator.doclib.action.nodeType">
-
-		<property name="types">
-
-			<list>
-
-				<value>rep:reportTpl</value>
-
-			</list>
-
-		</property>
-
-	</bean>
-
-
-
-	<bean id="evaluator.becpg.doclib.action.entityTpl" parent="evaluator.doclib.action.hasAspect">
-
-		<property name="aspects">
-
-			<list>
-
-				<value>bcpg:entityTplAspect</value>
-
-			</list>
-
-		</property>
-
-	</bean>
-
-
-
+	
 	<!-- Remove alfresco logo Patch -->
-
 	<bean id="webscript.org.springframework.extensions.messages.get" parent="webscript" class="fr.becpg.web.scripts.MessagesWebScript">
-
 		<property name="webFrameworkConfigElement" ref="webframework.config.element" />
-
 		<property name="dependencyHandler" ref="dependency.handler" />
-
 	</bean>
-
 	<bean id="webscript.org.springframework.extensions.messages.post" parent="webscript" class="fr.becpg.web.scripts.MessagesWebScript" />
-
-
-
 </beans>

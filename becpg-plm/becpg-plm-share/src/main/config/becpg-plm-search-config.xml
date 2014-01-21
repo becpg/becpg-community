@@ -20,18 +20,17 @@
    <config evaluator="string-compare" condition="Search">
       <!-- beCPG -->
       <metadata>
-		<show id="bcpg:legalName" />
-		<show id="bcpg:productHierarchy1" />
-		<show id="bcpg:productHierarchy2" />
-		<show id="bcpg:productState" />
-		<show id="bcpg:code" />
-		<show id="bcpg:erpCode"/>
-		<show id="bcpg:eanCode" />
-		<show id="bcpg:suppliers"  />
-		<show id="bcpg:clients" />
-		<show id="pjt:project" />
+			<show id="bcpg:legalName" />
+			<show id="bcpg:productHierarchy1" />
+			<show id="bcpg:productHierarchy2" />
+			<show id="bcpg:productState" />
+			<show id="bcpg:code" />
+			<show id="bcpg:erpCode"/>
+			<show id="bcpg:eanCode" />
+			<show id="bcpg:suppliers"  />
+			<show id="bcpg:clients" />
+			<show id="pjt:project" />
       </metadata>
-      
    </config>
 
    

@@ -17,7 +17,7 @@
 ;(function()
 {
 	// CommonJS
-	typeof(require) != 'undefined' ? SyntaxHighlighter = require('shCore').SyntaxHighlighter : null;
+//	typeof(require) != 'undefined' ? SyntaxHighlighter = require('shCore').SyntaxHighlighter : null;
 
 	function Brush()
 	{
@@ -48,5 +48,5 @@
 	SyntaxHighlighter.brushes.JScript = Brush;
 
 	// CommonJS
-	typeof(exports) != 'undefined' ? exports.Brush = Brush : null;
+//	typeof(exports) != 'undefined' ? exports.Brush = Brush : null;
 })();
