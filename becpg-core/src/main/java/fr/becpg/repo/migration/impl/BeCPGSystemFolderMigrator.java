@@ -336,63 +336,65 @@ public class BeCPGSystemFolderMigrator {
 			
 			for(NodeRef productNodeRef : productNodeRefs){
 				
-				logger.debug("fix product: " + productNodeRef);
-				
-				//hierarchy1
-				NodeRef hierarchy1NodeRef = null;
-				String hierarchy1 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
-				if(hierarchy1 == null){
-					hierarchy1NodeRef = null;
-				}
-				else if(!hierarchy1.contains("/")){
+				if(nodeService.exists(productNodeRef)){
+					logger.debug("fix product: " + productNodeRef);
 					
-					hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, hierarchy1);					
-				}
-				
-				//hierarchy2
-				NodeRef hierarchy2NodeRef = null;
-				String hierarchy2 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
-				if(hierarchy2 == null){
-					hierarchy2NodeRef = null;
-				}
-				else if(!hierarchy2.contains("/")){
+					//hierarchy1
+					NodeRef hierarchy1NodeRef = null;
+					String hierarchy1 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1);
+					if(hierarchy1 == null){
+						hierarchy1NodeRef = null;
+					}
+					else if(!hierarchy1.contains("/")){
+						
+						hierarchy1NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, null, hierarchy1);					
+					}
 					
-					hierarchy2NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, hierarchy2);
-				}				
-				
-				if(hierarchy1NodeRef == null){
-				
-					logger.error("hierarchy1 is not found: " + hierarchy1);
-					continue;
-				}
-				
-				if(hierarchy2NodeRef == null){
+					//hierarchy2
+					NodeRef hierarchy2NodeRef = null;
+					String hierarchy2 = (String)nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2);
+					if(hierarchy2 == null){
+						hierarchy2NodeRef = null;
+					}
+					else if(!hierarchy2.contains("/")){
+						
+						hierarchy2NodeRef = getOrcreateDeletedHierarchy(hierarchiesNodeRef, productType, hierarchy1NodeRef, hierarchy2);
+					}				
 					
-					logger.error("hierarchy2 is not found: " + hierarchy2);
-					continue;
-				}
-				
-				try{
-					//disable policy to classify on product
-					policyBehaviourFilter.disableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.disableBehaviour(productNodeRef, BeCPGModel.ASPECT_PRODUCT);
-					policyBehaviourFilter.disableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.disableBehaviour(productNodeRef, ContentModel.ASPECT_VERSIONABLE);					
+					if(hierarchy1NodeRef == null){
 					
-					logger.debug("set hierarchy1: " + hierarchy1 + " - " + hierarchy1NodeRef);
-					logger.debug("set hierarchy2: " + hierarchy2 + " - " + hierarchy2NodeRef);
-					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierarchy1NodeRef);				
-					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierarchy2NodeRef);
+						logger.error("hierarchy1 is not found: " + hierarchy1);
+						continue;
+					}
 					
-				}			
-		        finally{
-		        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
-		        	policyBehaviourFilter.enableBehaviour(productNodeRef, BeCPGModel.ASPECT_PRODUCT);
-		        	policyBehaviourFilter.enableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
-		        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_VERSIONABLE);
-		        }	
-				
-				migrateHistory(hierarchiesNodeRef, productType, productNodeRef, hierarchy1, hierarchy1NodeRef, hierarchy2, hierarchy2NodeRef);				
+					if(hierarchy2NodeRef == null){
+						
+						logger.error("hierarchy2 is not found: " + hierarchy2);
+						continue;
+					}
+					
+					try{
+						//disable policy to classify on product
+						policyBehaviourFilter.disableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
+						policyBehaviourFilter.disableBehaviour(productNodeRef, BeCPGModel.ASPECT_PRODUCT);
+						policyBehaviourFilter.disableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+						policyBehaviourFilter.disableBehaviour(productNodeRef, ContentModel.ASPECT_VERSIONABLE);					
+						
+						logger.debug("set hierarchy1: " + hierarchy1 + " - " + hierarchy1NodeRef);
+						logger.debug("set hierarchy2: " + hierarchy2 + " - " + hierarchy2NodeRef);
+						nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY1, hierarchy1NodeRef);				
+						nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_HIERARCHY2, hierarchy2NodeRef);
+						
+					}			
+			        finally{
+			        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_AUDITABLE);
+			        	policyBehaviourFilter.enableBehaviour(productNodeRef, BeCPGModel.ASPECT_PRODUCT);
+			        	policyBehaviourFilter.enableBehaviour(productNodeRef, ReportModel.ASPECT_REPORT_ENTITY);	
+			        	policyBehaviourFilter.enableBehaviour(productNodeRef, ContentModel.ASPECT_VERSIONABLE);
+			        }	
+					
+					migrateHistory(hierarchiesNodeRef, productType, productNodeRef, hierarchy1, hierarchy1NodeRef, hierarchy2, hierarchy2NodeRef);
+				}						
 			}			
 		}
 	}
