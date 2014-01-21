@@ -16,13 +16,10 @@
  *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
- if(model.sitePresets) {
-    model.sitePresets.push({
-        id: "product-site-dashboard",
-        name: msg.get("title.productSite")
-      });
-    model.sitePresets.push({
-        id: "project-site-dashboard",
-        name: msg.get("title.projectSite")
-      });
-}
+
+/**
+ * Override file icon types
+ */
+
+Alfresco.util.getFileIcon.types["{http://www.bcpg.fr/model/project/1.0}project"] =  "project";
+Alfresco.util.getFileIcon.types["pjt:project"] = "project";

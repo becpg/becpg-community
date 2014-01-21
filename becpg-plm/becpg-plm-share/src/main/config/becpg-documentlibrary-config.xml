@@ -435,12 +435,6 @@
 			</actionGroup>
 		</actionGroups>
 	</config>
-	<config evaluator="string-compare" condition="DocLibCustom">
-		<dependencies>
-			<css src="/modules/entity-version/new-version-min.css" />
-			<js src="/modules/entity-version/new-version-min.js" />
-			<js src="/components/documentlibrary/becpg/docLibAction-min.js" />
-		</dependencies>
-	</config>
+	
 
 </alfresco-config>

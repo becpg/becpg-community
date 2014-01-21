@@ -9,6 +9,10 @@
 		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
 		          <sourcePackageRoot>org.alfresco.components.custom-menu-project</sourcePackageRoot>
 		        </customization>
+		        <customization>
+					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-presets-project</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 	</modules>

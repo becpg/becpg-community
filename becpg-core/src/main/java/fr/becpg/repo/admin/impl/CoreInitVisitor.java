@@ -17,12 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.admin.impl;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
@@ -47,9 +45,13 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportFormat;
 
 @Service
 public class CoreInitVisitor extends AbstractInitVisitorImpl {
+	
+	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	
 	@Autowired
 	private ContentHelper contentHelper;
@@ -57,7 +59,10 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private EntityTplService entityTplService;
 	
-
+	@Autowired
+	private ReportTplService reportTplService;
+	
+	
 	@Override
 	public void visitContainer(NodeRef companyHome) {
 		logger.info("Run CoreInitVisitor");
@@ -86,6 +91,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
 
 
+		visitReports(systemNodeRef);
 		
 		// EntityTemplates
 		visitEntityTpls(systemNodeRef);
@@ -107,25 +113,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 	
-	/**
-	 * Create the entity templates
-	 * 
-	 * @param productTplsNodeRef
-	 */
-	private void visitEntityTpls(NodeRef systemNodeRef) {
+	
 
-		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
-
-
-		Set<String> subFolders = new HashSet<String>();		
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
-		subFolders.add(RepoConsts.PATH_IMAGES);
-
-		// TODO remove only for test
-		Set<QName> dataLists = new LinkedHashSet<QName>();
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_RAWMATERIAL, true, dataLists, subFolders);
-
-	}
 
 	
 
@@ -175,6 +164,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			rule.setRuleType(RuleType.INBOUND);
 			rule.setAction(compositeAction);
 			ruleService.saveRule(nodeRef, rule);
+			
+			
+		
 		}  else if (folderName == RepoConsts.PATH_SECURITY) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
 		} 
@@ -207,6 +199,38 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	@Override
 	public boolean shouldInit(NodeRef companyHomeNodeRef) {
 		return 	nodeService.getChildByName(companyHomeNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
+	}
+	
+	private void visitReports(NodeRef systemNodeRef) {
+
+		// reports folder
+		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
+		
+		// compare report
+		try {
+			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_ENTITIES);
+			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES),
+					COMPARE_ENTITIES_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
+		} catch (IOException e) {
+			logger.error("Failed to create compare entity report tpl.", e);
+		}
+		
+	}
+	
+	
+	private void visitEntityTpls(NodeRef systemNodeRef) {
+
+		/*NodeRef entityTplsNodeRef =*/ visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
+
+//
+//		Set<String> subFolders = new HashSet<String>();		
+//		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+//		subFolders.add(RepoConsts.PATH_IMAGES);
+//
+//		Set<QName> dataLists = new LinkedHashSet<QName>();
+//		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_ENTITY_V2, true, dataLists, subFolders);
+
 	}
 	
 }

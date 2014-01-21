@@ -30,6 +30,14 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="becpgProjectBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent" >
+		<property name="resourceBundles">
+			<list>
+				<value>alfresco/module/${pom.artifactId}/messages/project-messages</value>
+			</list>
+		</property>
+	</bean>
 
 	<!-- Models -->
 	<bean id="bcpg.project.dictionaryBootstrap" parent="dictionaryModelBootstrap"

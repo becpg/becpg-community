@@ -116,7 +116,23 @@
 				<evaluator>evaluator.becpg.doclib.indicator.project.completed</evaluator>
 			</indicator>
 		</indicators>
+		
+		<create-content>
+		
+			<content id="project" label="menu.create-content.project" type="pagelink" index="110" icon="project">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
+				</param>
+			</content>
+			
+		</create-content>
 
 	</config>
+	
+	<config evaluator="string-compare" condition="DocLibCustom">
+		<dependencies>
+			<js src="/components/documentlibrary/project-fileIcons-min.js" />
+		</dependencies>
+	</config>
+	
 
 </alfresco-config>

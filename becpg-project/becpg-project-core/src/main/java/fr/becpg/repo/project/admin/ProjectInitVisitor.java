@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.project.admin;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -36,15 +37,28 @@ import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportFormat;
 
 @Service
 public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
+	private static final String PATH_REPORTS_EXPORT_SEARCH_PROJECTS = "ExportProjects";
+
+	private static final String EXPORT_PROJECTS_REPORT_RPTFILE_PATH = "beCPG/birt/project/ProjectsReport.rptdesign";
+
+	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
+	
+
 	@Autowired
-	EntitySystemService entitySystemService;
+	private EntitySystemService entitySystemService;
 
 	@Autowired
 	private EntityTplService entityTplService;
+	
+	@Autowired 
+	private ReportTplService reportTplService;
 
 	@Override
 	public void visitContainer(NodeRef companyHome) {
@@ -65,6 +79,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		// Project Tpl
 		visitFolder(systemNodeRef, RepoConsts.PATH_PROJECT_TEMPLATES);
 
+		visitReports(systemNodeRef);
+		
 	}
 
 	/**
@@ -140,6 +156,34 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		NodeRef systemNodeRef = visitFolder(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
 		
 		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PROJECT_TEMPLATES)) == null;
+		
+	}
+	
+	private void visitReports(NodeRef systemNodeRef) {
+
+		// reports folder
+		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
+		
+		/*
+		 * Export Search reports
+		 */
+		NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);
+
+		// export search products
+		try {
+			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef,
+					PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS),
+					EXPORT_PROJECTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.XLS,
+					ProjectModel.TYPE_PROJECT, false, true, false);
+
+			reportTplService
+					.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
+		} catch (IOException e) {
+			logger.error("Failed to create export search report tpl.", e);
+		}
+
 		
 	}
 	

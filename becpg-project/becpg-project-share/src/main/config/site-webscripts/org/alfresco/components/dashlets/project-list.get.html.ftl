@@ -13,6 +13,7 @@
    <#-- JavaScript Dependencies -->
     <#include "../form/form.js.ftl"/>
   	<@script src="${url.context}/res/components/documentlibrary/becpg/fileIcons.js"  group="project-list"></@script>
+  	<@script src="${url.context}/res/components/documentlibrary/project-fileIcons.js"  group="project-list"></@script>
    <@script src="${url.context}/res/components/project/project-commons.js"  group="project-list"></@script>
 	<@script src="${url.context}/res/components/dashlets/project-dashlet.js"  group="project-list"></@script>
 	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>

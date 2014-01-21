@@ -136,7 +136,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		// extract data type for this search - advanced search query is type
 		// specific
-		ftsQuery += " AND -ASPECT:\"ecm:simulationEntityAspect\"" + " AND -ASPECT:\"bcpg:hiddenFolder\"" + " AND -ASPECT:\"bcpg:compositeVersion\""
+		ftsQuery += " AND -ASPECT:\"bcpg:hiddenFolder\"" + " AND -ASPECT:\"bcpg:compositeVersion\""
 				+ " AND -ASPECT:\"bcpg:entityTplAspect\"";
 
 		if (logger.isDebugEnabled()) {

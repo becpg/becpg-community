@@ -200,11 +200,11 @@ private void initObjects(){
 		
 		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 	   	NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-	   	NodeRef compareReportFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS));
+	   	NodeRef compareReportFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_COMPARE_ENTITIES, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
 	   	
 	   	// compare report
 		reportTplService.createTplRptDesign(compareReportFolder, 
-											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_PRODUCTS), 
+											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES), 
 											COMPARE_ENTITIES_REPORT_PATH, 
 											ReportType.System, 	
 											ReportFormat.PDF,

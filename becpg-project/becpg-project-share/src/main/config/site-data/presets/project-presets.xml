@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Copyright (C) 2010-2014 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+  If not, see <http://www.gnu.org/licenses/>.
+-->
+<presets>
+   
+   <!-- Well known preset used to generate the default User dashboard -->
+   <preset id="user-dashboard">
+      <components>
+         <!-- title -->
+         <component>
+            <scope>page</scope>
+            <region-id>title</region-id>
+            <source-id>user/${userid}/dashboard</source-id>
+            <url>/components/title/user-dashboard-title</url>
+         </component>
+         <!-- dashboard components -->
+         <component>
+            <scope>page</scope>
+            <region-id>full-width-dashlet</region-id>
+            <source-id>user/${userid}/dashboard</source-id>
+            <url>/components/dashlets/dynamic-welcome</url>
+            <properties>
+               <dashboardType>user</dashboardType>
+            </properties>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-1-1</region-id>
+            <source-id>user/${userid}/dashboard</source-id>
+            <url>/components/dashlets/my-tasks</url>
+         </component>
+         <component>
+             <scope>page</scope>
+             <region-id>component-1-2</region-id>
+             <source-id>user/${userid}/dashboard</source-id>
+             <url>/components/dashlets/my-activities</url>
+         </component>
+         <component>
+             <scope>page</scope>
+             <region-id>component-2-1</region-id>
+             <source-id>user/${userid}/dashboard</source-id>
+             <url>/components/dashlets/project-list</url>
+             <properties>
+                <height>240</height>
+             </properties>
+         </component>
+      </components>
+      <pages>
+         <page id="user/${userid}/dashboard">
+            <title>User Dashboard</title>
+            <title-id>page.userDashboard.title</title-id>
+            <description>Users dashboard page</description>
+            <description-id>page.userDashboard.description</description-id>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
+            <authentication>user</authentication>
+         </page>
+      </pages>
+   </preset>
+
+  
+   
+   <!-- Well known preset used to generate the default Project Site dashboard -->
+   <preset id="project-site-dashboard">
+      <components>
+         <!-- title -->
+         <component>
+            <scope>page</scope>
+            <region-id>title</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/title/collaboration-title</url>
+         </component>
+         <!-- navigation -->
+         <component>
+            <scope>page</scope>
+            <region-id>navigation</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/navigation/collaboration-navigation</url>
+         </component>
+         <!-- dashboard components -->
+         <component>
+            <scope>page</scope>
+            <region-id>full-width-dashlet</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/dynamic-welcome</url>
+            <properties>
+               <dashboardType>site</dashboardType>
+            </properties>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-1-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/colleagues</url>
+            <properties>
+               <height>504</height>
+            </properties>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-1</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/project-list</url>
+         </component>
+         <component>
+            <scope>page</scope>
+            <region-id>component-2-2</region-id>
+            <source-id>site/${siteid}/dashboard</source-id>
+            <url>/components/dashlets/activityfeed</url>
+         </component>
+      </components>
+      <pages>
+         <page id="site/${siteid}/dashboard">
+            <title>Project Site Dashboard</title>
+            <title-id>page.projectSiteDashboard.title</title-id>
+            <description>Project site's dashboard page</description>
+            <description-id>page.projectSiteDashboard.description</description-id>
+            <template-instance>dashboard-2-columns-wide-right</template-instance>
+            <authentication>user</authentication>
+            <properties>
+               <sitePages>[{"pageId":"documentlibrary"}, {"pageId":"project-list"}, {"pageId":"data-lists"}]</sitePages>
+               <pageMetadata>
+               					{
+               					"documentlibrary":{"titleId":"page.projectDocumentLibrary.title", "descriptionId":"page.projectDocumentLibrary.description", "type":"projectManagement"},
+               					"project-list":{"titleId":"page.projectProjectList.title", "descriptionId":"page.projectProjectList.description", "type":"projectManagement"}
+               					}
+               </pageMetadata>
+            </properties>
+         </page>
+      </pages>
+   </preset>
+
+
+</presets>

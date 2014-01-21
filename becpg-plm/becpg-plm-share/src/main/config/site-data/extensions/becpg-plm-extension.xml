@@ -9,6 +9,10 @@
 					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-head</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.custom-modules</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 	</modules>

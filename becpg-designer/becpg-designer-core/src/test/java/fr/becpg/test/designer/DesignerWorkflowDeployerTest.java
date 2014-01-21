@@ -15,92 +15,52 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.designer;
+package fr.becpg.test.designer;
 
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiConstants;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ApplicationContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.ApplicationContext;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.designer.impl.FormModelVisitor;
 import fr.becpg.repo.designer.impl.MetaModelVisitor;
 import fr.becpg.repo.designer.workflow.DesignerWorkflowDeployer;
+import fr.becpg.test.RepoBaseTestCase;
 
-public class DesignerWorkflowDeployerTest extends TestCase {
+public class DesignerWorkflowDeployerTest extends RepoBaseTestCase {
 
 	private static Log logger = LogFactory.getLog(DesignerWorkflowDeployerTest.class);
 
-	private FileFolderService fileFolderService;
-
-	private MimetypeService mimetypeService;
-
+	@Autowired
 	private MetaModelVisitor metaModelVisitor;
-
+	
+	@Autowired
 	private FormModelVisitor formModelVisitor;
 
+	@Autowired
 	private DesignerWorkflowDeployer designerWorkflowDeployer;
 
+	@Autowired
 	private DesignerService designerService;
 
-	private NodeService nodeService;
-
-	private ContentService contentService;
-
-	private TransactionService transactionService;
-
-	private static ApplicationContext ctx = ApplicationContextHelper.getApplicationContext();
 
 	private static String PATH_TESTFOLDER = "DesignerTestFolder";
 
-	private Repository repositoryHelper;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		logger.debug("DesignerServiceTest:setUp");
-		designerService = (DesignerService) ctx.getBean("designerService");
-		fileFolderService = (FileFolderService) ctx.getBean("fileFolderService");
-		repositoryHelper = (Repository) ctx.getBean("repositoryHelper");
-
-		metaModelVisitor = (MetaModelVisitor) ctx.getBean("metaModelVisitor");
-
-		formModelVisitor = (FormModelVisitor) ctx.getBean("formModelVisitor");
-		designerWorkflowDeployer = (DesignerWorkflowDeployer) ctx.getBean("designerWorkflowDeployer");
-
-		mimetypeService = (MimetypeService) ctx.getBean("mimetypeService");
-
-		nodeService = (NodeService) ctx.getBean("nodeService");
-		transactionService = (TransactionService) ctx.getBean("TransactionService");
-
-		contentService = (ContentService) ctx.getBean("contentService");
-
-		AuthenticationUtil.setRunAsUserSystem();
-
-	}
-
+	@Test
 	public void testCreateMissingFormsAndType() {
 
 		logger.info("testCreateMissingFormsAndType");

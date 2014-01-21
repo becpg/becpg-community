@@ -20,7 +20,7 @@ public class RepoConsts {
 
 	public static final String QUERY_SUGGEST_TARGET_BY_NAME = " +TYPE:\"%s\"  +@cm\\:name:(%s) AND -ASPECT:\"bcpg:compositeVersion\" ";
 	public static final String QUERY_SUGGEST_TARGET_ALL = " +TYPE:\"%s\" AND -ASPECT:\"bcpg:compositeVersion\" ";
-	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  AND (@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s)  AND -ASPECT:\"bcpg:compositeVersion\" AND -ASPECT:\"ecm:simulationEntityAspect\" ";
+	public static final String QUERY_SUGGEST_TARGET_BY_CODE = "  +TYPE:\"%s\"  AND (@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s)  AND -ASPECT:\"bcpg:compositeVersion\" ";
 	
 	public static final String QUERY_FILTER_PRODUCT_STATE = " -@bcpg\\:productState:%s -@bcpg\\:productState:%s";
 	public static final String PATH_QUERY_LIST_CONSTRAINTS = "+PATH:\"/app:company_home/%s/*\" +TYPE:\"%s\"";
@@ -146,7 +146,7 @@ public class RepoConsts {
 	public static final String PATH_REPORTS	= "Reports";
 	public static final String PATH_PRODUCT_REPORTTEMPLATES = "ProductReportTemplates";
 	public static final String PATH_QUALITY_REPORTTEMPLATES = "QualityReportTemplates";
-	public static final String PATH_REPORTS_COMPARE_PRODUCTS = "CompareProducts";
+	public static final String PATH_REPORTS_COMPARE_ENTITIES = "CompareProducts";
 	public static final String PATH_REPORTS_EXPORT_SEARCH = "ExportSearch";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
@@ -225,10 +225,6 @@ public class RepoConsts {
 	public static final Integer DATA_LISTS_PAGESIZE = 25;
 	
 
-	
-
-
-	
 	// Sort
 	public static int SORT_DEFAULT_STEP = 100;
 	public static int SORT_INSERTING_STEP = 1;

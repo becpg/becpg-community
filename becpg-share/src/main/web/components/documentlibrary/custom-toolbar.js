@@ -97,7 +97,7 @@
                                  }
 
                                  // Create menu item
-                                 html = '<a href="' + url + '" rel="' + content.permission + '"><span style="background-image:url(' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + content.icon + '-16.png)" class="' + content.icon + '-file">' + this
+                                 html = '<a href="' + url + '" rel="' + content.permission + '"><span style="background-image:url(' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + content.icon + '-file-16.png)" class="' + content.icon + '-file">' + this
                                        .msg(content.label) + '</span></a>';
                                  li = document.createElement("li");
                                  li.innerHTML = html;
