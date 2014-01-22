@@ -34,32 +34,64 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.annotation.AlfEnforced;
-import fr.becpg.repo.repository.annotation.AlfIdentAttr;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.DataListView;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.model.BaseObject;
 
 @Repository("repositoryEntityDefReader")
-public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> {
+public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> , ApplicationListener<ContextRefreshedEvent> {
 
 	private static Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
 
 	@Autowired
 	private NamespaceService namespaceService;
 
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
+	
+	private Map<QName, Class<T>> domainMapping = new HashMap<QName, Class<T>>();
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public void onApplicationEvent(ContextRefreshedEvent refreshEvent) {
+		domainMapping.clear();
+		logger.debug("Scanning classpath for AlfType annotation");
+		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+
+		scanner.addIncludeFilter(new AnnotationTypeFilter(AlfType.class));
+
+		for (BeanDefinition bd : scanner.findCandidateComponents("fr.becpg.*")) {
+			try {
+				registerEntity((Class<T>) Class.forName(bd.getBeanClassName()));
+			} catch (ClassNotFoundException e) {
+				logger.error(e, e);
+			}
+		}
+
 	}
+
+	@SuppressWarnings("unchecked")
+	private void registerEntity(Class<T> clazz) {
+		logger.debug("Register entity : " + clazz.getName());
+		domainMapping.put(getType((Class<? extends RepositoryEntity>) clazz), clazz);
+	}
+	
 
 	@Override
 	public Map<QName, T> getEntityProperties(T entity) {
@@ -99,7 +131,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	@Override
 	public Map<QName, Serializable> getIdentifierAttributes(T entity) {
-		return readValueMap(entity, AlfIdentAttr.class, Serializable.class);
+		return readValueMap(entity, DataListIdentifierAttr.class, Serializable.class);
 	}
 
 	@Override
@@ -167,6 +199,44 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 			return o.toString();
 		}
 		return o;
+	}
+
+	@Override
+	public Class<T> getEntityClass(QName type) {
+		return domainMapping.get(type);
+	}
+
+	@Override
+	public QName getDefaultPivoAssocName(QName entityDataListQname) {
+		Class<T> entityClass = (Class<T>) getEntityClass(entityDataListQname);
+		if (entityClass == null) {
+			throw new IllegalArgumentException("Type is not registered : " + entityDataListQname);
+		}
+
+		
+		BeanWrapper beanWrapper = new BeanWrapperImpl(entityClass);
+
+		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+			Method readMethod = pd.getReadMethod();
+			if (readMethod != null) {
+				if (readMethod.isAnnotationPresent(DataListIdentifierAttr.class) && readMethod.isAnnotationPresent(AlfQname.class) 
+						&& readMethod.getAnnotation(DataListIdentifierAttr.class).isDefaultPivotAssoc()
+					 ) {
+					return readQName(readMethod);
+				}
+			}
+		}
+		logger.warn("No default pivot assoc found");
+		return null;
+	}
+
+	@Override
+	public boolean isMultiLevelDataList(QName dataListItemType) {
+		Class<T> entityClass = (Class<T>) getEntityClass(dataListItemType);
+		if (entityClass != null) {
+			return entityClass.isAnnotationPresent(MultiLevelDataList.class);
+		}
+		return false;
 	}
 
 }

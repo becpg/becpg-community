@@ -5,7 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.annotation.AlfIdentAttr;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -34,7 +34,7 @@ public class OrganoListDataItem extends BeCPGDataObject {
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:organoListOrgano")
-	@AlfIdentAttr
+	@DataListIdentifierAttr
 	public NodeRef getOrgano() {
 		return organo;
 	}

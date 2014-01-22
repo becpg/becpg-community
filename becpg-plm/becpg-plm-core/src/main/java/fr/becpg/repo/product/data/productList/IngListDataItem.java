@@ -24,6 +24,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfEnforced;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -148,6 +149,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	
 	@AlfSingleAssoc
+	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:ingListIng")
 	public NodeRef getIng() {
 		return ing;

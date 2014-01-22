@@ -1,6 +1,3 @@
-/*
- * 
- */
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
@@ -33,7 +30,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;

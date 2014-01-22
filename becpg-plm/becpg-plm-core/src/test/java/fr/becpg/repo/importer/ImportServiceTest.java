@@ -33,6 +33,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -154,7 +155,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		logger.debug("Check MLText properties");
 		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 		assertNotNull("system folder should exist", systemFolder);
-		NodeRef ingsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, RepoConsts.PATH_INGS);
+		NodeRef ingsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, PlmRepoConsts.PATH_INGS);
 		assertNotNull("ings folder should exist", ingsFolder);
 
 		// Abricot
@@ -217,7 +218,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 				}
 
 				// remove companies
-				NodeRef companiesFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_COMPANIES);
+				NodeRef companiesFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), PlmRepoConsts.PATH_COMPANIES);
 
 				if (companiesFolder != null) {
 					logger.debug("delete companies folder");
@@ -466,7 +467,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 					/*-- Clean costs --*/
 					NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 							TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-					NodeRef costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+					NodeRef costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
 
 					if (costsFolder != null) {
 						nodeService.deleteNode(costsFolder);
@@ -495,7 +496,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 					/*-- check nothing is imported --*/
 					systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 							TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-					costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+					costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
 					assertNull("costs should not exist", costsFolder);
 
 					return null;
@@ -728,7 +729,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		
 		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 
-		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, RepoConsts.PATH_LABELCLAIMS);
+		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, PlmRepoConsts.PATH_LABELCLAIMS);
 		List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
 
 		Assert.assertTrue(labelClaimsFileInfo.size()==2);

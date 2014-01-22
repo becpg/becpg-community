@@ -44,6 +44,7 @@
 	</bean>
 
 	<bean id="variantListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 
@@ -86,7 +87,7 @@
 	</bean>
 
 	<bean id="importCommentsVisitor" class="fr.becpg.repo.importer.impl.ImportCommentsVisitor" parent="parentImportVisitor">
-		<property name="commentsService" ref="commentsService" />
+		<property name="commentService" ref="commentService" />
 	</bean>
 
 	<bean id="importEntityListAspectVisitor" class="fr.becpg.repo.importer.impl.ImportEntityListAspectVisitor" parent="parentImportVisitor">

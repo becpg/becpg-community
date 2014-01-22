@@ -9,7 +9,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfEnforced;
-import fr.becpg.repo.repository.annotation.AlfIdentAttr;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -80,7 +80,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:allergenListAllergen")
-	@AlfIdentAttr
+	@DataListIdentifierAttr
 	public NodeRef getAllergen() {
 		return allergen;
 	}

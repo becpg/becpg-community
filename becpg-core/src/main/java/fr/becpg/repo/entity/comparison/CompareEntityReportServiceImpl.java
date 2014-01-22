@@ -26,7 +26,6 @@ import org.dom4j.Element;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -268,7 +267,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 				String entityListTitle = "";
 				if(c.getEntityList() != null){
 					TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
-					entityListTitle = typeDef.getTitle();
+					entityListTitle = typeDef.getTitle(dictionaryService);
 				}
 				String charactPath = "";
 				if(c.getCharactPath() != null){
@@ -327,7 +326,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 					String entityListTitle = "";
 					if(c.getEntityList() != null){
 						TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
-						entityListTitle = typeDef.getTitle();
+						entityListTitle = typeDef.getTitle(dictionaryService);
 					}
 					
 					String depthLevel = ((Integer)c.getDepthLevel()).toString();
@@ -397,12 +396,12 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 		
 		PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
 		if(propertyDef != null){
-			title = propertyDef.getTitle();
+			title = propertyDef.getTitle(dictionaryService);
 		}
 		else{
 			AssociationDefinition assocDef = dictionaryService.getAssociation(qName);
 			if(assocDef != null)
-				title = assocDef.getTitle();
+				title = assocDef.getTitle(dictionaryService);
 		}
 		
 		return title;

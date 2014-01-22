@@ -1,11 +1,9 @@
-/*
- * 
- */
 package fr.becpg.repo.workflow.activiti.project;
 
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateTask;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener;
@@ -17,7 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.helper.CommentsService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.util.ApplicationContextHelper;
@@ -30,13 +27,15 @@ import fr.becpg.util.ApplicationContextHelper;
  */
 public class SubmitTask extends ScriptTaskListener {
 
+	private static final long serialVersionUID = 8018666006871621151L;
+
 	private final static Log logger = LogFactory.getLog(SubmitTask.class);
 	
 	private NodeService nodeService;
 	
 	private ProjectActivityService projectActivityService;
 	
-	private CommentsService commentsService;
+	private CommentService commentService;
 	
 	private ProjectService projectService;
 	
@@ -48,8 +47,8 @@ public class SubmitTask extends ScriptTaskListener {
 		this.projectActivityService = projectActivityService;
 	}
 
-	public void setCommentsService(CommentsService commentsService) {
-		this.commentsService = commentsService;
+	public void setCommentService(CommentService commentService) {
+		this.commentService = commentService;
 	}
 
 	public void setProjectService(ProjectService projectService) {
@@ -61,7 +60,7 @@ public class SubmitTask extends ScriptTaskListener {
 
 		nodeService = getServiceRegistry().getNodeService();
 		projectActivityService = (ProjectActivityService)ApplicationContextHelper.getApplicationContext().getBean("projectActivityService");
-		commentsService = (CommentsService)ApplicationContextHelper.getApplicationContext().getBean("commentsService");
+		commentService = (CommentService)ApplicationContextHelper.getApplicationContext().getBean("commentService");
 		projectService = (ProjectService)ApplicationContextHelper.getApplicationContext().getBean("projectService");
 		
 
@@ -90,7 +89,7 @@ public class SubmitTask extends ScriptTaskListener {
 					logger.debug("Add comment '" + comment + "' on project " + projectNodeRef);
 				}
 
-				commentsService.createComment(projectNodeRef, "", comment, false);
+				commentService.createComment(projectNodeRef, "", comment, false);
 				projectActivityService.postProjectCommentCreatedActivity(projectNodeRef, comment);
 			}			
 		}

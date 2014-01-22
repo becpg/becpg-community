@@ -1,6 +1,3 @@
-/*
- * 
- */
 package fr.becpg.repo.entity.comparison;
 
 import java.io.Serializable;
@@ -22,6 +19,8 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
@@ -32,79 +31,37 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
-// TODO: Auto-generated Javadoc
 /**
  * Compare several entities (properties, datalists and composite datalists).
  *
  * @author querephi
  */
+@Service("compareEntityService")
 public class CompareEntityServiceImpl implements CompareEntityService {		
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 	
-	/** The node service. */
+	@Autowired
 	private NodeService nodeService;
 	
-	/** The dictionary service. */
+	@Autowired
 	private DictionaryService dictionaryService;	
 	
-	/** The namespace service. */
+	@Autowired
 	private NamespaceService namespaceService;
 	
+	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 	
+	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 	
+	@Autowired
 	private EntityListDAO entityListDAO;
 			
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the dictionary service.
-	 *
-	 * @param dictionaryService the new dictionary service
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-	
-	
-	
-	
-	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-		this.entityDictionaryService = entityDictionaryService;
-	}
-
-	/**
-	 * Sets the namespace service.
-	 *
-	 * @param namespaceService the new namespace service
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 	
 
-	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
-		this.attributeExtractorService = attributeExtractorService;
-	}
-
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.entity.comparison.CompareEntitieService#compare(org.alfresco.service.cmr.repository.NodeRef, java.util.List)
-	 */
 	@Override
 	public List<CompareResultDataItem> compare(NodeRef entity1,
 			List<NodeRef> entities) {
@@ -125,10 +82,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		return compareResult;
 	}
 	
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.ef, BeCPGModel.PROP_VERSION_LABEL);
-					versionLabel = versionLabel == null ? VERSION_INITIAL : versionLabel;entity.comparison.CompareEntitieService#compareStructDatalist(org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.cmr.repository.NodeRef, org.alfresco.service.namespace.QName, org.alfresco.service.namespace.QName)
-	 */
+	
 	@Override
 	public List<StructCompareResultDataItem> compareStructDatalist(NodeRef entity1NodeRef, NodeRef entity2NodeRef, QName datalistType, QName pivotProperty) {
 		
@@ -169,15 +123,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	}
 	
 	
-	/**
-	 * Compare 2 entities.
-	 *
-	 * @param entity1NodeRef the entity1 node ref
-	 * @param entity2NodeRef the entity2 node ref
-	 * @param nbEntities the nb entities
-	 * @param comparisonPosition the comparison position
-	 * @param comparisonMap the comparison map
-	 */
+	
 	private void compareEntities(NodeRef entity1NodeRef, NodeRef entity2NodeRef, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap){
 		
 		//compare entity properties		
@@ -235,16 +181,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
     	}
 	}
 	
-	/**
-	 * Compare 2 entity data lists.
-	 *
-	 * @param entityList the entity list
-	 * @param dataList1NodeRef the data list1 node ref
-	 * @param dataList2NodeRef the data list2 node ref
-	 * @param nbEntities the nb entities
-	 * @param comparisonPosition the comparison position
-	 * @param comparisonMap the comparison map
-	 */
+	
 	private void compareDataLists(QName entityList, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap){
 		
 		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(entityList);
@@ -340,15 +277,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 	}
 	
-	/**
-	 * Load a composite datalist.
-	 *
-	 * @param dataListItems the data list items
-	 * @param pivotProperty the pivot property
-	 * @param depthLevel the depth level
-	 * @param position the position
-	 * @param compositeItem the composite item
-	 */
+	
 	private void loadCompositeDataList(List<NodeRef> dataListItems, QName pivotProperty, int depthLevel, int position, CompositeComparableItem compositeItem){
 		
 		int cnt = position;
@@ -413,14 +342,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 	}
 	
-	/**
-	 * Compare 2 composite datalists.
-	 *
-	 * @param charactPath the charact path
-	 * @param characteristicsToCmp the characteristics to cmp
-	 * @param compositeItem1 the composite item1
-	 * @param compositeItem2 the composite item2
-	 */
+
 	private void compareCompositeDataLists(List<NodeRef> charactPath, List<CharacteristicToCompare> characteristicsToCmp, CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2){
 		
 		if(compositeItem1 != null){
@@ -473,15 +395,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				
 	}
 	
-	/**
-	 * Do a structural comparison of the 2 composite datalists.
-	 *
-	 * @param entityListType the entity list type
-	 * @param pivotProperty the pivot property
-	 * @param strucComparisonList the struc comparison list
-	 * @param compositeItem1 the composite item1
-	 * @param compositeItem2 the composite item2
-	 */
+	
 	private void structCompareCompositeDataLists(QName entityListType, QName pivotProperty, List<StructCompareResultDataItem> strucComparisonList, CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2){
 		
 		if(compositeItem1 != null){
@@ -571,19 +485,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				
 	}
 	
-	/**
-	 * Compare the properties and the associations of the same characteristic.
-	 *
-	 * @param entityList the entity list
-	 * @param charactPath the charact path
-	 * @param characteristic the characteristic
-	 * @param nodeRef1 the node ref1
-	 * @param nodeRef2 the node ref2
-	 * @param nbEntities the nb entities
-	 * @param comparisonPosition the comparison position
-	 * @param isDataList the is data list
-	 * @param comparisonMap the comparison map
-	 */
+	
 	private void compareNode(QName entityList, List<NodeRef> charactPath, NodeRef characteristic, NodeRef nodeRef1, NodeRef nodeRef2, int nbEntities, int comparisonPosition, boolean isDataList, Map<String, CompareResultDataItem> comparisonMap){
 		
 		
@@ -710,19 +612,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		
 	}
 	
-	/**
-	 * Compare the associations of a node.
-	 *
-	 * @param entityList the entity list
-	 * @param charactPath the charact path
-	 * @param characteristic the characteristic
-	 * @param propertyQName the property q name
-	 * @param nodeRefs1 the node refs1
-	 * @param nodeRefs2 the node refs2
-	 * @param nbEntities the nb entities
-	 * @param comparisonPosition the comparison position
-	 * @param comparisonMap the comparison map
-	 */
+	
 	private void compareAssocs(QName entityList, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, List<NodeRef> nodeRefs1, List<NodeRef> nodeRefs2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap){
 		
 		String strValue1 = null;
@@ -768,19 +658,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		
 	}
 		
-	/**
-	 * Compare 2 values of the same property.
-	 *
-	 * @param entityList the entity list
-	 * @param charactPath the charact path
-	 * @param characteristic the characteristic
-	 * @param propertyQName the property q name
-	 * @param oValue1 the o value1
-	 * @param oValue2 the o value2
-	 * @param nbEntities the nb entities
-	 * @param comparisonPosition the comparison position
-	 * @param comparisonMap the comparison map
-	 */
+
 	private void compareValues(QName entityList, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, Serializable oValue1, Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, PropertyFormats propertyFormats){
 		
 		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
@@ -832,13 +710,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}			
 	}
 	
-	/**
-	 * Test if the property must be compared.
-	 *
-	 * @param qName the q name
-	 * @param isDataList the is data list
-	 * @return true, if is compareable property
-	 */
+
 	private boolean isCompareableProperty(QName qName, boolean isDataList){
 		
 		boolean isCompareable = true;

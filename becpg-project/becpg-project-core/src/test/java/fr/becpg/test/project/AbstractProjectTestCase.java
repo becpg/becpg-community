@@ -37,7 +37,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
@@ -82,10 +82,10 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 	private void initTasks() {
 
-		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PROJECT_LISTS);
+		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
 
 		// taskLegends
-		NodeRef taskLegendsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_TASK_LEGENDS);
+		NodeRef taskLegendsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_TASK_LEGENDS);
 		String[] taskLegendNames = { "TaskLegend1", "TaskLegend2", "TaskLegend3" };
 		for (String taskLegendName : taskLegendNames) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -96,7 +96,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		}
 
 		// score criteria
-		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_SCORE_CRITERIA);
+		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_SCORE_CRITERIA);
 		for (int i = 0; i < 5; i++) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, "Criterion" + i);
@@ -115,7 +115,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				public Boolean execute() throws Throwable {
 					
 					// Project
-					NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PROJECT_LISTS);
+					NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
 					NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef, HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));
 					PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.createRootHierarchy(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
 					PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
@@ -142,8 +142,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				// taskLegends
-				NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PROJECT_LISTS);
-				NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, RepoConsts.PATH_TASK_LEGENDS);
+				NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
+				NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_TASK_LEGENDS);
 				List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);
 				for (FileInfo fileInfo : taskLegendsFileInfo) {
 					taskLegends.add(fileInfo.getNodeRef());

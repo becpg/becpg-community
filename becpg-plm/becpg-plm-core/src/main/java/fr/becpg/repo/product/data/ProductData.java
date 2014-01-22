@@ -14,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -40,7 +41,7 @@ import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.variant.model.VariantData;
 
 
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity,HierarchicalEntity {
 
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;

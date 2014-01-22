@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface AlfIdentAttr  {
-	
+@Target(ElementType.TYPE)
+public @interface MultiLevelDataList {
+
 }

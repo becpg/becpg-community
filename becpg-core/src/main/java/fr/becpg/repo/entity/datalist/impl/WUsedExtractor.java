@@ -30,7 +30,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.WUsedListService;
@@ -70,11 +69,11 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		QName associationName = null;
 
-		//if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf("|") > 0) {
+		if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf("|") > 0) {
 			associationName = QName.createQName(dataListFilter.getDataListName().split("\\|")[1], namespaceService);
-//		} else {
-//			associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
-//		}
+		} else {
+			associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
+		}
 
 		if (associationName == null) {
 			logger.warn("No wUsed association name found for :" + dataListFilter.getDataType());

@@ -65,12 +65,12 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
     			String cssClass = type.getLocalName();
     			Map<String,String> props = new HashMap<String,String>(2);
     			props.put("type", type.toPrefixString(namespaceService));
-    			//#798
-//    			if(nodeService.hasAspect(nodeRef, ProductModel.ASPECT_PRODUCT)){
-//    				String state = (String )nodeService.getProperty(nodeRef, ProductModel.PROP_PRODUCT_STATE);
-//    				cssClass+="-"+state;
-//    				props.put("state", state);
-//    			}
+    			//TODO #798
+    			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)){
+    				String state = (String )nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
+    				cssClass+="-"+state;
+    				props.put("state", state);
+    			}
     			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)){
     				props.put("color", (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR));
     			}

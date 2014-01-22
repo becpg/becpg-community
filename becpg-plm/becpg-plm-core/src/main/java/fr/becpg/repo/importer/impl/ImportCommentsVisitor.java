@@ -28,9 +28,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.helper.CommentsService;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImporterException;
+import org.alfresco.repo.forum.CommentService;
 
 /**
  * 
@@ -46,14 +46,12 @@ public class ImportCommentsVisitor  extends AbstractImportVisitor {
 
 	private static Log logger = LogFactory.getLog(ImportCommentsVisitor.class);
 	
-	private CommentsService commentsService;
+	private CommentService commentService;
 	
-	
-	
-	public void setCommentsService(CommentsService commentsService) {
-		this.commentsService = commentsService;
-	}
 
+	public void setCommentService(CommentService commentService) {
+		this.commentService = commentService;
+	}
 
 
 	@Override
@@ -71,7 +69,7 @@ public class ImportCommentsVisitor  extends AbstractImportVisitor {
 			String comment = (String) properties.get(BeCPGModel.PROP_PRODUCT_COMMENTS);
 			logger.debug("Import comments :"+comment +" for product :"+nodeRef);
 			if(comment!=null){
-				commentsService.createComment(nodeRef, "", comment, false);
+				commentService.createComment(nodeRef, "", comment, false);
 			}
 		} else {
 			logger.info("Cannot add comments to new node");

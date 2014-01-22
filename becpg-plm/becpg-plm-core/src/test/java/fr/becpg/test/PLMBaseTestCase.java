@@ -41,6 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
@@ -175,7 +176,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
 
 		// nutGroups
-		NodeRef nutGroupsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_GROUPS);
+		NodeRef nutGroupsFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_NUT_GROUPS);
 		String[] nutGroups = { "Groupe 1", "Groupe 2", "Autre" };
 		for (String nutGroup : nutGroups) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -184,7 +185,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 		// nutTypes
-		NodeRef nutTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_TYPES);
+		NodeRef nutTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_NUT_TYPES);
 		String[] nutTypes = { "Nutriment", "Vitamine", "Minéraux", "Valeur énergétique" };
 		for (String nutType : nutTypes) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -193,7 +194,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 		// nutFactsMethods
-		NodeRef nutFactsMethodsFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_NUT_FACTS_METHODS);
+		NodeRef nutFactsMethodsFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_NUT_FACTS_METHODS);
 		String[] nutFactsMethods = { "Formulation", "CIQUAL", "USDA" };
 		for (String nutFactsMethod : nutFactsMethods) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -203,7 +204,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		}
 
 		// ingTypes
-		NodeRef ingTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ING_TYPES);
+		NodeRef ingTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_ING_TYPES);
 		String[] ingTypes = { "Epaississant" };
 		for (String ingType : ingTypes) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -213,14 +214,14 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		}
 
 		// allergenTypes
-		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_ALLERGEN_TYPES);
+		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_ALLERGEN_TYPES);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, AllergenType.Major.toString());
 		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
 
 		// labelingPosition
-		NodeRef labelingPositionFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_LABELING_POSITIONS);
+		NodeRef labelingPositionFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELING_POSITIONS);
 		String[] labelingPositions = { "Côté de la boîte", "Dessus de la boite" };
 		for (String labelingPosition : labelingPositions) {
 			properties = new HashMap<QName, Serializable>();
@@ -252,7 +253,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		NodeRef charactsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_CHARACTS);
 
 		// allergens
-		NodeRef allergenFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_ALLERGENS);
+		NodeRef allergenFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_ALLERGENS);
 		List<FileInfo> allergensFileInfo = fileFolderService.listFiles(allergenFolder);
 		if (allergensFileInfo.size() == 0) {
 			for (int i = 0; i < 10; i++) {
@@ -270,7 +271,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		}
 
 		// costs
-		NodeRef costFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_COSTS);
+		NodeRef costFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_COSTS);
 		List<FileInfo> costsFileInfo = fileFolderService.listFiles(costFolder);
 		if (costsFileInfo.size() == 0) {
 
@@ -290,7 +291,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		}
 
 		// ings
-		NodeRef ingFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_INGS);
+		NodeRef ingFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_INGS);
 		List<FileInfo> ingsFileInfo = fileFolderService.listFiles(ingFolder);
 		if (ingsFileInfo.size() == 0) {
 			for (int i = 0; i < 10; i++) {
@@ -307,7 +308,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		}
 
 		// nuts
-		NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_NUTS);
+		NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_NUTS);
 		List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
 		if (nutsFileInfo.size() == 0) {
 			for (int i = 0; i < 10; i++) {
@@ -326,7 +327,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		}
 
 		// organos
-		NodeRef organoFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_ORGANOS);
+		NodeRef organoFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_ORGANOS);
 		List<FileInfo> organosFileInfo = fileFolderService.listFiles(organoFolder);
 		if (organosFileInfo.size() == 0) {
 			for (int i = 0; i < 10; i++) {
@@ -345,7 +346,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		
 
 		// claim labelling
-		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(charactsFolder, RepoConsts.PATH_LABELCLAIMS);
+		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_LABELCLAIMS);
 		List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
 		if (labelClaimsFileInfo.size() == 0) {
 
@@ -422,7 +423,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_CHARACTS);
 
 		// labelingTemplate
-		NodeRef labelingTemplateFolder = entitySystemService.getSystemEntityDataList(listsFolder, RepoConsts.PATH_LABELING_TEMPLATES);
+		NodeRef labelingTemplateFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELING_TEMPLATES);
 		List<FileInfo> labelingTemplatesFileInfo = fileFolderService.listFiles(labelingTemplateFolder);
 		if (labelingTemplatesFileInfo.size() == 0) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();

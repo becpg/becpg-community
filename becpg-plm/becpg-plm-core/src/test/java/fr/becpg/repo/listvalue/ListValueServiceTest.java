@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.test.BeCPGPLMTestHelper;
 
 // TODO: Auto-generated Javadoc
@@ -33,7 +34,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 	private static Log logger = LogFactory.getLog(ListValueServiceTest.class);
 
 	@Resource
-	private ProductListValuePlugin entityListValuePlugin;
+	private EntityListValuePlugin entityListValuePlugin;
 
 
 	/**
