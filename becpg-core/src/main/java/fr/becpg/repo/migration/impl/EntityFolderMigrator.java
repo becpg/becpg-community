@@ -13,15 +13,11 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.tagging.TaggingService;
-import org.alfresco.service.cmr.version.Version;
-import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.GUID;
 import org.apache.commons.logging.Log;
@@ -37,6 +33,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.BeCPGSearchService;
 
@@ -70,6 +67,8 @@ public class EntityFolderMigrator {
 	private EntityVersionService entityVersionService;
 	
 	private TaggingService taggingService;
+	
+	private AssociationService associationService;	
 
 	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
 		this.beCPGSearchService = beCPGSearchService;
@@ -119,8 +118,12 @@ public class EntityFolderMigrator {
 		this.taggingService = taggingService;
 	}
 
-	public void migrate() {
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 
+	public void migrate() {
+ 
 		// search for entity and entityTplAspect
 		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY))
 				+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL));
@@ -136,7 +139,7 @@ public class EntityFolderMigrator {
 						new RetryingTransactionCallback<Boolean>() {
 							public Boolean execute() throws Exception {
 
-								try {
+								try {									
 									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 
@@ -203,8 +206,7 @@ public class EntityFolderMigrator {
 		}, false, true);
 
 		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_V2))
-				+ LuceneHelper.exclude(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_FOLDER))
-				+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(RenditionModel.ASPECT_RENDITIONED));
+				+ LuceneHelper.exclude(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_FOLDER));
 
 		// search for entities to migrate
 		List<NodeRef> entitiesNodeRef = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
@@ -218,7 +220,7 @@ public class EntityFolderMigrator {
 						new RetryingTransactionCallback<Boolean>() {
 							public Boolean execute() throws Exception {
 
-								try {
+								try {									
 									policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 									policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 
@@ -233,7 +235,18 @@ public class EntityFolderMigrator {
 
 			}
 		}
-//
+
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+
+			migrateModel();
+
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+		}				
+		
 //		// bug fix bcpg:entityListsAspect on bcpg:entityListItem
 //		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITYLIST_ITEM))
 //				+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS));
@@ -441,6 +454,82 @@ public class EntityFolderMigrator {
 		
 
 	}
+	
+	private void migrateModel(){
+		
+		// migrate bcpg:declarationTypes
+		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_COMPOLIST));		
+		List<NodeRef> compoLists = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		logger.info("migrate bcpg:declarationTypes: " + compoLists.size());
+		
+		for(NodeRef compoList : compoLists){
+			
+			String declType = (String) nodeService.getProperty(compoList, BeCPGModel.PROP_COMPOLIST_DECL_TYPE);
+			String newDeclType = null;
+			
+			if(declType != null){
+				if(declType.equals("Déclarer")){
+					newDeclType = "Declare";
+				} else if(declType.equals("Détailler")){
+					newDeclType = "Detail";
+				} else if(declType.equals("Omettre")){
+					newDeclType = "Omit";
+				} else if(declType.equals("Ne pas déclarer")){
+					newDeclType = "DoNotDeclare";
+				}
+			}
+			
+			if(newDeclType != null){
+				nodeService.setProperty(compoList, BeCPGModel.PROP_COMPOLIST_DECL_TYPE, newDeclType);				
+			}
+			
+		}
+		
+		// add aspect bcpg:labelClaim
+		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_LABEL_CLAIM));		
+		List<NodeRef> labelClaimNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		logger.info("aspect bcpg:labelClaim: " + labelClaimNodeRefs.size());
+		
+		for(NodeRef labelClaimNodeRef : labelClaimNodeRefs){
+			if (nodeService.exists(labelClaimNodeRef)) {
+				if(!nodeService.hasAspect(labelClaimNodeRef, BeCPGModel.ASPECT_DELETED)){
+					nodeService.addAspect(labelClaimNodeRef, BeCPGModel.ASPECT_DELETED, null);
+				}
+			}
+		}
+		
+		// migrate report from cm:content to rep:report
+		query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY));
+		List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		logger.info("migrate cm:content to rep:report: " + entityNodeRefs.size());
+		
+		for(NodeRef entityNodeRef : entityNodeRefs){
+			
+			if(nodeService.exists(entityNodeRef)){
+				List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);				
+				for(NodeRef report : reports){
+					if(nodeService.getType(report).isMatch(ContentModel.TYPE_CONTENT)){
+						nodeService.deleteNode(report);
+					}
+				}
+			}
+						
+		}
+				
+		// add effectivity aspect
+		query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_FOLDER));
+		List<NodeRef> entityFolderNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		logger.info("add aspects to entityFolders: " + entityFolderNodeRefs.size());
+		for (NodeRef entityFolderNodeRef : entityFolderNodeRefs) {
+			if (nodeService.exists(entityFolderNodeRef)) {
+
+				if(!nodeService.hasAspect(entityFolderNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)){
+					nodeService.addAspect(entityFolderNodeRef, BeCPGModel.ASPECT_EFFECTIVITY, null);
+				}
+			}
+		}
+		
+	}
 
 	private Boolean doMigrate(List<NodeRef> entitiesNodeRef) {
 
@@ -448,6 +537,10 @@ public class EntityFolderMigrator {
 		for (NodeRef entityNodeRef : entitiesNodeRef) {
 			if (nodeService.exists(entityNodeRef)) {
 
+				if(!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)){
+					nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY, null);
+				}
+				
 				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_CHECKED_OUT)) {
 					logger.error("Node is checked out " + entityNodeRef);
 				} else if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
@@ -496,6 +589,12 @@ public class EntityFolderMigrator {
 							// entityFolder and delete entityFolder
 							nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, GUID.generate());
 							NodeRef parentNodeRef = nodeService.getPrimaryParent(entityFolderNodeRef).getParentRef();
+							NodeRef targetNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityName);
+							if(targetNodeRef != null){								
+								entityName += "-" + GUID.generate();
+								logger.warn("Duplicate name -> " + entityName);
+								nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, entityName);
+							}
 							fileFolderService.move(entityNodeRef, parentNodeRef, entityName);
 
 							// move sub-folders of entityFolder under entity
