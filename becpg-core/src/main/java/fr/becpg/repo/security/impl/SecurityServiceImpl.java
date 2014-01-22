@@ -34,7 +34,6 @@ import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;

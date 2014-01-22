@@ -42,7 +42,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;

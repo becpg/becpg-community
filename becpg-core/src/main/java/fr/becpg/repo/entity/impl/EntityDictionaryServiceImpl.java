@@ -25,137 +25,59 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.RepositoryEntityDefReader;
 
 /**
  * 
- * @author matthieu
- * Fast and cached access to dataDictionnary
+ * @author matthieu Fast and cached access to dataDictionnary
  */
+@Service("entityDictionaryService")
 public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
+	@Autowired
 	public DictionaryService dictionaryService;
-	
+
+	@Autowired
 	public BeCPGCacheService beCPGCacheService;
-	
 
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-//	@Override
-//	public QName getWUsedList(QName entityType) {
-//
-//		QName wUsedList = null;
-//
-//		if (entityType != null && entityType.getLocalName().equals(BeCPGModel.TYPE_RAWMATERIAL.getLocalName())
-//				|| entityType.getLocalName().equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT.getLocalName())
-//				|| entityType.getLocalName().equals(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName())
-//				|| entityType.getLocalName().equals(BeCPGModel.TYPE_FINISHEDPRODUCT.getLocalName())) {
-//			wUsedList = BeCPGModel.TYPE_COMPOLIST;
-//		} else if (entityType != null && entityType.getLocalName().equals(BeCPGModel.TYPE_PACKAGINGMATERIAL.getLocalName())
-//				|| entityType.getLocalName().equals(BeCPGModel.TYPE_PACKAGINGKIT.getLocalName())) {
-//			wUsedList = BeCPGModel.TYPE_PACKAGINGLIST;
-//		} else if (entityType != null && entityType.getLocalName().equals(BeCPGModel.TYPE_RESOURCEPRODUCT.getLocalName())) {
-//			wUsedList = MPMModel.TYPE_PROCESSLIST;
-//		}
-//		return wUsedList;
-//	}
+	@Autowired
+	public RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
 	@Override
-	//alfresco reporsitory
 	public QName getDefaultPivotAssoc(QName dataListItemType) {
-
-		if (BeCPGModel.TYPE_COMPOLIST.equals(dataListItemType)) {
-			return fr.becpg.model.BeCPGModel.ASSOC_COMPOLIST_PRODUCT;
-		} else if (BeCPGModel.TYPE_PACKAGINGLIST.equals(dataListItemType)) {
-			return BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT;}
-//		} else if (MPMModel.TYPE_PROCESSLIST.equals(dataListItemType)) {
-//			return MPMModel.ASSOC_PL_RESOURCE;
-//		}
-		
-//		//look for pivot
-//		if(entityList.getLocalName().equals(BeCPGModel.TYPE_ALLERGENLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_COMPOLIST.getLocalName())){
-//			isCompositeDL = true;
-//			pivotProperty = BeCPGModel.ASSOC_COMPOLIST_PRODUCT;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_COSTLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_COSTLIST_COST;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_INGLABELINGLIST.getLocalName())){
-//			//TODO
-//			return;
-//			//pivotProperty = BeCPGModel.PROP_ILL_GRP;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_INGLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_INGLIST_ING;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_MICROBIOLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_MICROBIOLIST_MICROBIO;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_NUTLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_NUTLIST_NUT;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_ORGANOLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_ORGANOLIST_ORGANO;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PHYSICOCHEMLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_PRICELIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_PRICELIST_COST;
-//		}
-//		else if(entityList.getLocalName().equals(BeCPGModel.TYPE_LABELCLAIMLIST.getLocalName())){
-//			pivotProperty = BeCPGModel.ASSOC_LCL_LABELCLAIM;
-//		}
-//		else{
-			//TODO : specific entityLists ? Not implemented
-		//	return;
-	//	}
-
-		return null;
+		return repositoryEntityDefReader.getDefaultPivoAssocName(dataListItemType);
 	}
-	
 
 	@Override
-	//TODO
 	public boolean isMultiLevelDataList(QName dataListItemType) {
-		// TODO Auto-generated method stub
-		return false;
+		return repositoryEntityDefReader.isMultiLevelDataList(dataListItemType);
 	}
-	
-	
+
 	@Override
-	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType){
+	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
 		List<AssociationDefinition> ret = new ArrayList<>();
-		for(QName assocQName :  dictionaryService.getAllAssociations()){
+		for (QName assocQName : dictionaryService.getAllAssociations()) {
 			AssociationDefinition assocDef = dictionaryService.getAssociation(assocQName);
-			if(isSubClass(assocDef.getTargetClass().getName(),sourceType)){
+			if (isSubClass(assocDef.getTargetClass().getName(), sourceType)) {
 				ret.add(assocDef);
 			}
 		}
 		return ret;
-		
 	}
 
 	@Override
 	public QName getTargetType(QName assocName) {
 		return dictionaryService.getAssociation(assocName).getTargetClass().getName();
 	}
-	
-	
+
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
 
@@ -170,7 +92,6 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 						return propDef;
 					}
 				});
-
 	}
 
 	@Override
@@ -192,6 +113,5 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 					}
 				});
 	}
-
 
 }

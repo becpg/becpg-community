@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -110,7 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
 		if(siteId!=null && siteId.length()>0){
 			return siteService.getContainer(siteId,SiteService.DOCUMENT_LIBRARY);
 		}
-		return repoService.getFolderByPath(RepoConsts.PATH_PROJECTS);
+		return repoService.getFolderByPath(ProjectRepoConsts.PATH_PROJECTS);
 	}
 
 	@Override

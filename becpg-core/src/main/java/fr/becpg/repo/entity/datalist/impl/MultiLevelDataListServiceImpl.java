@@ -19,12 +19,12 @@ package fr.becpg.repo.entity.datalist.impl;
 
 import java.util.List;
 
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +38,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.AdvSearchService;
 
 /**
@@ -64,6 +65,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	private AssociationService associationService;
 	
 	
 	@Override
@@ -118,14 +122,15 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		return ret;
 	}
 
-	// TODO more generic
-	// Use alfresco repository to make it more generic 
 	private NodeRef getEntityNodeRef(NodeRef listItemNodeRef) {
-		List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(listItemNodeRef, entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef)));
-		NodeRef part = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ? (compoAssocRefs.get(0)).getTargetRef() : null;
-		if( part!=null && permissionService.hasPermission( part,PermissionService.READ) == AccessStatus.ALLOWED){
-			return part;
+		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
+		if(pivotAssoc!=null) {
+			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
+			if( part!=null && permissionService.hasPermission( part,PermissionService.READ) == AccessStatus.ALLOWED){
+				return part;
+			}
 		}
+		
 		return null;
 	}
 

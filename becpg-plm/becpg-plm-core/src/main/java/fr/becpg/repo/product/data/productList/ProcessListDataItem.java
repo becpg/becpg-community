@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -64,6 +65,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setYield(Double yield) {
 		this.yield = yield;
 	}
+	
 	@AlfProp
 	@AlfQname(qname="mpm:plRateProcess")
 	public Double getRateProcess() {
@@ -73,6 +75,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setRateProcess(Double rateProcess) {
 		this.rateProcess = rateProcess;
 	}
+	
 	@AlfProp
 	@AlfQname(qname="mpm:plRateProduct")
 	public Double getRateProduct() {
@@ -82,6 +85,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setRateProduct(Double rateProduct) {
 		this.rateProduct = rateProduct;
 	}
+	
 	@AlfSingleAssoc
 	@AlfQname(qname="mpm:plStep")
 	public NodeRef getStep() {
@@ -91,6 +95,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setStep(NodeRef step) {
 		this.step = step;
 	}
+	
 	@AlfSingleAssoc
 	@AlfQname(qname="mpm:plProduct")
 	public NodeRef getProduct() {
@@ -100,7 +105,9 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setProduct(NodeRef product) {
 		this.product = product;
 	}
+	
 	@AlfSingleAssoc
+	@DataListIdentifierAttr
 	@AlfQname(qname="mpm:plResource")
 	public NodeRef getResource() {
 		return resource;

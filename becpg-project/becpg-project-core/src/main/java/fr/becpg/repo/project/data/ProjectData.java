@@ -24,6 +24,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -44,7 +45,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "pjt:project")
-public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity {
+public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity {
 
 	
 	private NodeRef hierarchy1;

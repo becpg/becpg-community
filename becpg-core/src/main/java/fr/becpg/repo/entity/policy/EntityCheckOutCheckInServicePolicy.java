@@ -41,10 +41,8 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;

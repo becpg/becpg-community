@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -57,15 +57,15 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  			@Override
 			public NodeRef execute() throws Throwable {
  				
- 				NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_EXCHANGE));    	
+ 				NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));    	
  		    	if(exchangeFolder == null){
  		    		throw new Exception("Missing exchange folder.");    		
  		    	}
- 		    	NodeRef importFolder = nodeService.getChildByName(exchangeFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMPORT));    	
+ 		    	NodeRef importFolder = nodeService.getChildByName(exchangeFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_IMPORT));    	
  		    	if(importFolder == null){
  		    		throw new Exception("Missing import folder.");    		
  		    	}
- 		    	NodeRef importToTreatFolder = nodeService.getChildByName(importFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMPORT_TO_TREAT));    	
+ 		    	NodeRef importToTreatFolder = nodeService.getChildByName(importFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_IMPORT_TO_TREAT));    	
  		    	if(importToTreatFolder == null){
  		    		throw new Exception("Missing import folder.");    		
  		    	}
@@ -109,15 +109,15 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  			@Override
 			public NodeRef execute() throws Throwable {
  				
- 				NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_EXCHANGE));    	
+ 				NodeRef exchangeFolder = nodeService.getChildByName(repository.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE));    	
  		    	if(exchangeFolder == null){
  		    		throw new Exception("Missing exchange folder.");    		
  		    	}
- 		    	NodeRef importFolder = nodeService.getChildByName(exchangeFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMPORT));    	
+ 		    	NodeRef importFolder = nodeService.getChildByName(exchangeFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_IMPORT));    	
  		    	if(importFolder == null){
  		    		throw new Exception("Missing import folder.");    		
  		    	}
- 		    	NodeRef importToTreatFolder = nodeService.getChildByName(importFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMPORT_TO_TREAT));    	
+ 		    	NodeRef importToTreatFolder = nodeService.getChildByName(importFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_IMPORT_TO_TREAT));    	
  		    	if(importToTreatFolder == null){
  		    		throw new Exception("Missing import folder.");    		
  		    	}

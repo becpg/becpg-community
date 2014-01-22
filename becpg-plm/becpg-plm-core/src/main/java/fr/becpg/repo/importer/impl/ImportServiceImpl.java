@@ -42,10 +42,10 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -641,7 +641,7 @@ public class ImportServiceImpl implements ImportService {
 		Element mappingElt = null;
 		NodeRef mappingNodeRef = null;
 
-		String queryPath = String.format(RepoConsts.PATH_QUERY_IMPORT_MAPPING, name);
+		String queryPath = String.format(PlmRepoConsts.PATH_QUERY_IMPORT_MAPPING, name);
 
 		logger.debug(queryPath);
 

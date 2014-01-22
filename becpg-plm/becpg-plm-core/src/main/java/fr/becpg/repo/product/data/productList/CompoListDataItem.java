@@ -6,13 +6,16 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
+@MultiLevelDataList
 public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem<CompoListDataItem>, CompositionDataItem {
 
 	
@@ -124,6 +127,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	}
 	
 	@AlfSingleAssoc
+	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:compoListProduct")
 	public NodeRef getProduct() {
 		return product;

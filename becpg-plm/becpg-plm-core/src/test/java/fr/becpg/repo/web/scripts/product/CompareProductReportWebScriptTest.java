@@ -29,6 +29,7 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -100,9 +101,9 @@ private void initObjects(){
 		
 				//costs
 				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));
+				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
 				if(costFolder == null){
-					costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS), ContentModel.TYPE_FOLDER).getNodeRef();
+					costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS), ContentModel.TYPE_FOLDER).getNodeRef();
 				}
 				List<FileInfo> costsFileInfo = fileFolderService.listFiles(costFolder);
 				if(costsFileInfo.size() == 0){
@@ -122,9 +123,9 @@ private void initObjects(){
 				}
 				
 				//allergens
-				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
+				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS));
 				if(allergensFolder == null){
-					allergensFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS), ContentModel.TYPE_FOLDER).getNodeRef();
+					allergensFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS), ContentModel.TYPE_FOLDER).getNodeRef();
 				}
 				List<FileInfo> allergensFileInfo = fileFolderService.listFiles(allergensFolder);
 				if(allergensFileInfo.size() == 0){

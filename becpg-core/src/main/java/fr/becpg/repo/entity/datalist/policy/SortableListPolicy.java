@@ -22,7 +22,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -42,8 +41,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 										   CopyServicePolicies.OnCopyNodePolicy,
 										   CopyServicePolicies.OnCopyCompletePolicy{
 
-	private static String KEY_CALCULATE_DEPTH_SORT = "KeyCalculateDepthSort";
-	private static String KEY_DELETE = "KeyDelete";
 	
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
 

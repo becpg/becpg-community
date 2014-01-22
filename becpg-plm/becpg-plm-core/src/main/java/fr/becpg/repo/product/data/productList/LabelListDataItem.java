@@ -20,7 +20,7 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
-import fr.becpg.repo.repository.annotation.AlfIdentAttr;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -36,7 +36,7 @@ public class LabelListDataItem extends AbstractManualDataItem {
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="pack:llLabel")
-	@AlfIdentAttr
+	@DataListIdentifierAttr
 	public NodeRef getLabel() {
 		return label;
 	}

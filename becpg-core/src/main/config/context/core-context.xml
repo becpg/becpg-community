@@ -85,11 +85,6 @@
 		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 
-	<bean id="commentsService" class="fr.becpg.repo.helper.CommentsService">
-		<property name="contentService" ref="contentService"/>
-		<property name="nodeService" ref="nodeService"/>
-	</bean>
-
 	<!-- ListValue -->
 
 	<!-- Plugin registry -->
@@ -152,15 +147,6 @@
 	</bean>
 
 
-	<!-- CompareEntityService -->
-	<bean id="compareEntityService"
-		class="fr.becpg.repo.entity.comparison.CompareEntityServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
 
 	<!-- Entity -->
 	<bean id="entityListDAO" class="fr.becpg.repo.entity.impl.EntityListDAOImpl">
@@ -256,10 +242,6 @@
 		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>
 	</bean>
 
-	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl">
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="beCPGCacheService" ref="beCPGCacheService"/>
-	</bean>
 	
   <bean id="autoNumService" class="fr.becpg.repo.entity.impl.AutoNumServiceImpl">
 		<property name="beCPGSearchService" ref="beCPGSearchService" />
@@ -327,12 +309,4 @@
 	
 	<bean id="applicationContextHelper" class="fr.becpg.util.ApplicationContextHelper"/>
 
-	<bean id="hierarchyService"
-		class="fr.becpg.repo.hierarchy.impl.HierarchyServiceImpl">
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="repoService" ref="repoService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-	</bean>
 </beans>

@@ -46,6 +46,7 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -119,11 +120,11 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 		
 				//costs
 				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS));				
+				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));				
 				if(costFolder != null){
 					fileFolderService.delete(costFolder);
 				}				
-				costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_COSTS), ContentModel.TYPE_FOLDER).getNodeRef();
+				costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS), ContentModel.TYPE_FOLDER).getNodeRef();
 				List<FileInfo> costsFileInfo = fileFolderService.listFiles(costFolder);
 				if(costsFileInfo.size() == 0){
 					
@@ -139,11 +140,11 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 				}
 				
 				//nuts
-				NodeRef nutFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS));				
+				NodeRef nutFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_NUTS));				
 				if(nutFolder != null){
 					fileFolderService.delete(nutFolder);
 				}				
-				nutFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NUTS), ContentModel.TYPE_FOLDER).getNodeRef();
+				nutFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_NUTS), ContentModel.TYPE_FOLDER).getNodeRef();
 				List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
 				if(nutsFileInfo.size() == 0){
 					
@@ -160,9 +161,9 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 				}				
 				
 				//allergens
-				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS));
+				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS));
 				if(allergensFolder == null){
-					allergensFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_ALLERGENS), ContentModel.TYPE_FOLDER).getNodeRef();
+					allergensFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS), ContentModel.TYPE_FOLDER).getNodeRef();
 				}
 				List<FileInfo> allergensFileInfo = fileFolderService.listFiles(allergensFolder);
 				if(allergensFileInfo.size() == 0){
@@ -246,10 +247,10 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 	   	
 	   	// export search report
 		NodeRef exportSearchNodeRef = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_EXPORT_SEARCH, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH));
-		NodeRef exportSearchProductsNodeRef = repoService.getOrCreateFolderByPath(exportSearchNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS));
+		NodeRef exportSearchProductsNodeRef = repoService.getOrCreateFolderByPath(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS));
 		
 		exportProductReportTpl = reportTplService.createTplRptDesign(exportSearchProductsNodeRef, 
-											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), 
+											TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), 
 											EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, 
 											ReportType.ExportSearch, 	
 											ReportFormat.XLS,

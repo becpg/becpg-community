@@ -18,7 +18,6 @@
 package fr.becpg.repo.quality.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.alfresco.repo.model.Repository;
@@ -28,7 +27,7 @@ import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.quality.NonConformityService;
@@ -61,15 +60,15 @@ public class NonConformityServiceImpl implements NonConformityService {
 		// calculate dest node
 		if (productNodeRef != null) {
 
-			destFolderNodeRef = repoService.getOrCreateFolderByPath(productNodeRef, RepoConsts.PATH_NC, TranslateHelper.getTranslatedPath(RepoConsts.PATH_NC));
+			destFolderNodeRef = repoService.getOrCreateFolderByPath(productNodeRef, PlmRepoConsts.PATH_NC, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_NC));
 		}
 
 		// default folder
 		if (destFolderNodeRef == null) {
 
 			List<String> paths = new ArrayList<String>(2);
-			paths.add(RepoConsts.PATH_QUALITY);
-			paths.add(RepoConsts.PATH_NC);
+			paths.add(PlmRepoConsts.PATH_QUALITY);
+			paths.add(PlmRepoConsts.PATH_NC);
 
 			destFolderNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), paths);
 		}

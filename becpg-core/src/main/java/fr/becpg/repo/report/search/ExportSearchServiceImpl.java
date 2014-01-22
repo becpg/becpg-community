@@ -35,7 +35,6 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;

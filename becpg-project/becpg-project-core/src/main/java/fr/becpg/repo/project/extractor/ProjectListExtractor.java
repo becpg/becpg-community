@@ -35,7 +35,6 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;

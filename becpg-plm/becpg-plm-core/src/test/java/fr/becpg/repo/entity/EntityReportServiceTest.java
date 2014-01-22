@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -71,8 +72,8 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 				NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
 				reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
 						ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, false, true);
@@ -291,8 +292,8 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 				NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
 				// create PF
 				FinishedProductData pfData = new FinishedProductData();

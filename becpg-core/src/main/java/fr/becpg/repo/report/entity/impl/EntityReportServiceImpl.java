@@ -50,7 +50,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ReportModel;

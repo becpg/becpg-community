@@ -38,7 +38,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;

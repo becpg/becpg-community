@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntitySystemService;
@@ -68,16 +69,16 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
 
 		// Lists of characteristics for Project
-		visitSystemProjectListValuesEntity(systemNodeRef, RepoConsts.PATH_PROJECT_LISTS);
+		visitSystemProjectListValuesEntity(systemNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
 
 		// Projects
-		visitFolder(companyHome, RepoConsts.PATH_PROJECTS);
+		visitFolder(companyHome, ProjectRepoConsts.PATH_PROJECTS);
 
 		// EntityTemplates
 		visitEntityTpls(systemNodeRef);
 
 		// Project Tpl
-		visitFolder(systemNodeRef, RepoConsts.PATH_PROJECT_TEMPLATES);
+		visitFolder(systemNodeRef, ProjectRepoConsts.PATH_PROJECT_TEMPLATES);
 
 		visitReports(systemNodeRef);
 		
@@ -89,7 +90,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitRules(NodeRef nodeRef, String folderName) {
 
-		if (folderName == RepoConsts.PATH_PROJECT_TEMPLATES) {
+		if (folderName == ProjectRepoConsts.PATH_PROJECT_TEMPLATES) {
 			createRuleAspect(nodeRef, true, ProjectModel.TYPE_PROJECT, BeCPGModel.ASPECT_ENTITY_TPL);
 		}
 
@@ -127,12 +128,12 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		Map<String, QName> entityLists = new LinkedHashMap<String, QName>();
 
-		entityLists.put(RepoConsts.PATH_TASK_LEGENDS, ProjectModel.TYPE_TASK_LEGEND);
-		entityLists.put(RepoConsts.PATH_PROJECT_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
-		entityLists.put(RepoConsts.PATH_REQUEST_STATES, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(RepoConsts.PATH_REQUEST_ORIGINS, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(RepoConsts.PATH_SCORE_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(RepoConsts.PATH_SPONSORS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(ProjectRepoConsts.PATH_TASK_LEGENDS, ProjectModel.TYPE_TASK_LEGEND);
+		entityLists.put(ProjectRepoConsts.PATH_PROJECT_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(ProjectRepoConsts.PATH_REQUEST_STATES, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(ProjectRepoConsts.PATH_REQUEST_ORIGINS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(ProjectRepoConsts.PATH_SCORE_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(ProjectRepoConsts.PATH_SPONSORS, BeCPGModel.TYPE_LIST_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -140,7 +141,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
 		switch (folderName) {
-		case RepoConsts.PATH_PROJECT_TEMPLATES:
+		case ProjectRepoConsts.PATH_PROJECT_TEMPLATES:
 			if (!nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
 				nodeService.addAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
 			}
@@ -155,7 +156,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	public boolean shouldInit(NodeRef companyHomeNodeRef) {
 		NodeRef systemNodeRef = visitFolder(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
 		
-		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PROJECT_TEMPLATES)) == null;
+		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(ProjectRepoConsts.PATH_PROJECT_TEMPLATES)) == null;
 		
 	}
 	

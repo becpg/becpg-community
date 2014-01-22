@@ -43,11 +43,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.entity.EntityListDAO;
@@ -67,7 +62,7 @@ import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
 @Repository("alfrescoRepository")
-public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T>, ApplicationListener<ContextRefreshedEvent> {
+public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T> {
 
 	@Autowired
 	private NodeService nodeService;
@@ -87,31 +82,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Autowired
 	private AssociationService associationService;
 
-	private Map<QName, Class<? extends RepositoryEntity>> domainMapping = new HashMap<QName, Class<? extends RepositoryEntity>>();
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public void onApplicationEvent(ContextRefreshedEvent refreshEvent) {
-		domainMapping.clear();
-		logger.debug("Scanning classpath for AlfType annotation");
-		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-
-		scanner.addIncludeFilter(new AnnotationTypeFilter(AlfType.class));
-
-		for (BeanDefinition bd : scanner.findCandidateComponents("fr.becpg.*")) {
-			try {
-				registerEntity((Class<? extends RepositoryEntity>) Class.forName(bd.getBeanClassName()));
-			} catch (ClassNotFoundException e) {
-				logger.error(e, e);
-			}
-		}
-
-	}
-
-	private void registerEntity(Class<? extends RepositoryEntity> clazz) {
-		logger.debug("Register entity : " + clazz.getName());
-		domainMapping.put(repositoryEntityDefReader.getType(clazz), clazz);
-	}
+	
 
 	@Override
 	public T create(NodeRef parentNodeRef, T entity) {
@@ -386,7 +357,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		QName type = nodeService.getType(id);
 
-		Class<T> entityClass = (Class<T>) domainMapping.get(type);
+		Class<T> entityClass = (Class<T>) repositoryEntityDefReader.getEntityClass(type);
 		if (entityClass == null) {
 			throw new IllegalArgumentException("Type is not registered : " + type);
 		}
