@@ -288,6 +288,15 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:microbioControlSteps" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>à J0</value>
+					<value>à DLC</value>							
+				</list>
+			</parameter>
+		</constraint>
 
 		<!-- <constraint name="bcpg:plant" type="fr.becpg.repo.dictionary.constraint.DynListConstraint"> <parameter name="path"> <list> <value>System/Plants</value> </list> </parameter> <parameter name="constraintType"> 
 			<value>bcpg:plant</value> </parameter> <parameter name="constraintProp"> <value>cm:name</value> </parameter> </constraint> -->
@@ -631,7 +640,6 @@
 			<properties>
 				<property name="bcpg:geoOriginISOCode">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 				</property>
 			</properties>
 		</type>
@@ -1264,6 +1272,12 @@
 				<property name="bcpg:mblTextCriteria">
 					<type>d:text</type>
 					<index enabled="false" />
+				</property>
+				<property name="bcpg:mblControlStep">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:microbioControlSteps" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>

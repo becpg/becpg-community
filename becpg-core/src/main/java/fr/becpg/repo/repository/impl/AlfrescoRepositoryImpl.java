@@ -423,7 +423,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			return entity;
 
 		} catch (Exception e) {
-			logger.error("Cannot load entity", e);
+			logger.error("Cannot load entity: " + id, e);
 
 			throw new UnsupportedOperationException(e);
 		}
