@@ -22,32 +22,37 @@ function extractName(nc) {
 }
 
 function sendMail(user, from, subject, message, isAction) {
-   var mail = actions.create("mail");
-   
-   
-   mail.parameters.template_model = templateModel;
-   mail.parameters.to = user.properties.email;
-   mail.parameters.subject = subject;
-   mail.parameters.from = from.properties.email;
-   mail.parameters.ignore_send_failure = true;
+	try {
+		var mail = actions.create("mail");
+		mail.parameters.template_model = templateModel;
+		mail.parameters.to = user.properties.email;
+		mail.parameters.subject = subject;
+		mail.parameters.from = from.properties.email;
+		mail.parameters.ignore_send_failure = true;
 
-   // for Local person.properties["{http://www.alfresco.org/model/system/1.0}locale"]
+		// for Local person.properties["{http://www.alfresco.org/model/system/1.0}locale"]
 
-   mail.parameters.template = search
-         .xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-" + (isAction ? "action"
-               : "notify") + "-task-email.ftl")[0];
-   var templateArgs = new Array();
-   templateArgs['workflowTitle'] = message;
-   templateArgs['workflowPooled'] = false;
-   templateArgs['workflowDescription'] = bpm_workflowDescription ;
-   templateArgs['workflowDueDate'] = task.dueDate;
-   templateArgs['workflowPriority'] = task.priority;
-   //templateArgs['workflowDocuments'] = [];
-   templateArgs['workflowId'] = "activiti$"+task.id;
+		mail.parameters.template = search
+				.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-"
+						+ (isAction ? "action" : "notify") + "-task-email.ftl")[0];
+		var templateArgs = new Array();
+		templateArgs['workflowTitle'] = message;
+		templateArgs['workflowPooled'] = false;
+		templateArgs['workflowDescription'] = bpm_workflowDescription;
+		templateArgs['workflowDueDate'] = task.dueDate;
+		templateArgs['workflowPriority'] = task.priority;
+		//templateArgs['workflowDocuments'] = [];
+		templateArgs['workflowId'] = "activiti$" + task.id;
 
-   var templateModel = new Array();
-   templateModel['args'] = templateArgs;
-   mail.parameters.template_model=templateModel;
+		var templateModel = new Array();
+		templateModel['args'] = templateArgs;
+		mail.parameters.template_model = templateModel;
 
-   mail.execute(bpm_package);
+		mail.execute(bpm_package);
+	} catch (e) {
+		logger.error("Cannot send mail to :");
+		//logger.error(" - user: "+user);		
+		logger.error(" - subject: " + subject);
+		logger.error(" - e: " + e);
+	}
 }
