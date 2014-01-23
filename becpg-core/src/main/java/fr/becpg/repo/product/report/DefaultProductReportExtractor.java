@@ -575,22 +575,23 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			}
 			List<VariantPackagingData> selectedVariants = new ArrayList<>();
 			for(NodeRef variantNodeRef : variantNodeRefs){
-				if(!variants.containsKey(variantNodeRef)){
-					variants.put(variantNodeRef, new VariantPackagingData());
-				}
 				selectedVariants.add(variants.get(variantNodeRef));
 			}			
 			return selectedVariants;
 		}
 		
 		public PackagingData(List<VariantData> variantDataList){
-			if(variantDataList.isEmpty()){
-				variants.put(null, new VariantPackagingData());
-			}
-			else{
-				for(VariantData variantData : variantDataList){
-					variants.put(variantData.getNodeRef(), new VariantPackagingData());
+			boolean hasDefaultVariant = false;
+			
+			for(VariantData variantData : variantDataList){
+				variants.put(variantData.getNodeRef(), new VariantPackagingData());
+				if(variantData.getIsDefaultVariant()){
+					hasDefaultVariant = true;
 				}
+			}
+			
+			if(!hasDefaultVariant){
+				variants.put(null, new VariantPackagingData());
 			}
 		}
 		
