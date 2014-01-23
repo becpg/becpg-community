@@ -108,13 +108,14 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private Analyzer luceneAnaLyzer = null;
 	
 	private HierarchyService hierarchyService;
+	
+	private TargetAssocValueExtractor targetAssocValueExtractor;
 
-	/**
-	 * Sets the namespace service.
-	 * 
-	 * @param namespaceService
-	 *            the new namespace service
-	 */
+	
+	public void setTargetAssocValueExtractor(TargetAssocValueExtractor targetAssocValueExtractor) {
+		this.targetAssocValueExtractor = targetAssocValueExtractor;
+	}
+
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -127,12 +128,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		this.dictionaryService = dictionaryService;
 	}
 
-	/**
-	 * Sets the node service.
-	 * 
-	 * @param nodeService
-	 *            the new node service
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -259,8 +254,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 		}
 
-		return new ListValuePage(ret, pageNum, pageSize, new TargetAssocValueExtractor(ContentModel.PROP_NAME,
-				nodeService, namespaceService));
+		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);
 
 	}
 

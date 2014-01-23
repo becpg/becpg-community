@@ -40,7 +40,7 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
@@ -89,7 +89,7 @@ public class NCWorkflowUtils {
 		}
 
 		for (QName aspectQname : new QName[] { QualityModel.ASPECT_BATCH, QualityModel.ASPECT_CLAIM_RESPONSE, QualityModel.ASPECT_CLAIM_TREATEMENT,
-				QualityModel.ASPECT_CLAIM_CLOSING, QualityModel.ASPECT_CLAIM, BeCPGModel.ASPECT_CLIENTS, BeCPGModel.ASPECT_SUPPLIERS , BeCPGModel.ASPECT_MANUFACTURING}) {
+				QualityModel.ASPECT_CLAIM_CLOSING, QualityModel.ASPECT_CLAIM, PLMModel.ASPECT_CLIENTS, PLMModel.ASPECT_SUPPLIERS , PLMModel.ASPECT_MANUFACTURING}) {
 
 			AspectDefinition aspectDef = serviceRegistry.getDictionaryService().getAspect(aspectQname);
 			for (QName propQname : aspectDef.getProperties().keySet()) {

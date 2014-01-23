@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sun.star.lang.NullPointerException;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.RepoService;
@@ -134,11 +134,11 @@ public class CreateProduct extends BaseJavaDelegate {
 					}
 										
 					String productName = repoService.getAvailableName(projectNodeRef, entityName);
-					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, BeCPGModel.TYPE_FINISHEDPRODUCT,
+					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, PLMModel.TYPE_FINISHEDPRODUCT,
 							productName);
 					
 					// change state: ToValidate
-					nodeService.setProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE, "ToValidate");
+					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, "ToValidate");
 					
 					String localName = QName.createValidLocalName(productName);
 					QName qName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, localName);
@@ -147,14 +147,14 @@ public class CreateProduct extends BaseJavaDelegate {
 					// Copy datalist
 					if (recipeNodeRef != null && nodeService.exists(recipeNodeRef)) {
 						logger.debug("Copy composition dataList");
-						copyDataList(productNodeRef, recipeNodeRef, BeCPGModel.TYPE_COMPOLIST);
+						copyDataList(productNodeRef, recipeNodeRef, PLMModel.TYPE_COMPOLIST);
 					} else {
 						logger.debug("No recipe node found");
 					}
 
 					if (packagingNodeRef != null && nodeService.exists(packagingNodeRef)) {
 						logger.debug("Copy packaging dataList");
-						copyDataList(productNodeRef, packagingNodeRef, BeCPGModel.TYPE_PACKAGINGLIST);
+						copyDataList(productNodeRef, packagingNodeRef, PLMModel.TYPE_PACKAGINGLIST);
 					} else {
 						logger.debug("No packaging node found");
 					}
@@ -191,10 +191,10 @@ public class CreateProduct extends BaseJavaDelegate {
 	
 		 ProductData productData  = alfrescoRepository.findOne(productNodeRef);
 		 ProductData sourceData = alfrescoRepository.findOne(sourceNodeRef);
-		 if (typeCompolist.equals(BeCPGModel.TYPE_PACKAGINGLIST)) {
+		 if (typeCompolist.equals(PLMModel.TYPE_PACKAGINGLIST)) {
  			productData.getPackagingListView().setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
  		 }
-		 else if (typeCompolist.equals(BeCPGModel.TYPE_COMPOLIST)) {
+		 else if (typeCompolist.equals(PLMModel.TYPE_COMPOLIST)) {
  			productData.getCompoListView().setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
  		 }
 		 alfrescoRepository.save(productData);

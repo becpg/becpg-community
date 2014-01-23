@@ -17,7 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -64,7 +64,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				for(NodeRef n : reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "*")){
+				for(NodeRef n : reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "*")){
 					nodeService.deleteNode(n);
 				}
 
@@ -76,7 +76,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
 				reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, true, false, true);
+						ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, true, false, true);
 				
 				return null;
 
@@ -97,7 +97,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 		
 		initReports();
 
-		assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT).size());
+		assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
 
 		// create product
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -138,7 +138,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 				
 				// check report Tpl
-				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT);
+				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
 				assertEquals("check system templates", 3, reportTplNodeRefs.size());
 				
 				
@@ -186,7 +186,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
 				
 				// change nothing
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);				
+				nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);				
 				
 				
 				return null;
@@ -202,7 +202,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				FinishedProductData pfData = (FinishedProductData) alfrescoRepository.findOne(pfNodeRef);
 				NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
 				// change something
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);				
+				nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);				
 				
 				return null;
 
@@ -222,7 +222,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				entityReportService.generateReport(pfNodeRef);
 				
 				// check report Tpl
-				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT);
+				List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
 				assertEquals("check system templates", 2, reportTplNodeRefs.size());
 				
 				// check other report is deleted
@@ -310,25 +310,25 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				QName typeQName = nodeService.getType(pfNodeRef);
 				assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
-				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user").size());
+				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
 
 				// add a user template
 				reportTplService.createTplRptDesign(productReportTplFolder, "user tpl", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
-						ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, false, true, true);
+						ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, false, true, true);
 
-				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user").size());
+				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
 
 				// add a user template
 				NodeRef userTpl2NodeRef = reportTplService.createTplRptDesign(productReportTplFolder, "user tpl 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
-						ReportType.Document, ReportFormat.PDF, BeCPGModel.TYPE_FINISHEDPRODUCT, false, false, true);
+						ReportType.Document, ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, false, false, true);
 
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "u*").size());
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user*").size());
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
-				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "\"user tpl 2\"")
+				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
+				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*").size());
+				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
+				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "\"user tpl 2\"")
 						.size());
 				assertEquals("check user templates", userTpl2NodeRef,
-						reportTplService.getUserReportTemplate(ReportType.Document, BeCPGModel.TYPE_FINISHEDPRODUCT, "user tpl 2"));
+						reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2"));
 
 				return null;
 

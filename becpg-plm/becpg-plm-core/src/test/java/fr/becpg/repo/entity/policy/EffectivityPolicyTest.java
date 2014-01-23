@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
@@ -65,9 +65,9 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				// Costs
 				properties.put(ContentModel.PROP_NAME, "cost1");
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef cost = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 
 				PriceListDataItem priceListDataItem = new PriceListDataItem();
 				priceListDataItem.setStartEffectivity(start);

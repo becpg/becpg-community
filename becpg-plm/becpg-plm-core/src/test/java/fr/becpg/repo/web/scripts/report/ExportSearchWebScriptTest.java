@@ -45,7 +45,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
@@ -133,8 +133,8 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 			    	{    		
 			    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			    		properties.put(ContentModel.PROP_NAME, costName);
-			    		properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			    		ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties);
+			    		properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+			    		ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties);
 			    		costs.add(childAssocRef.getChildRef());
 			    	}
 				}
@@ -153,9 +153,9 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 			    	{    		
 			    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			    		properties.put(ContentModel.PROP_NAME, nutName);
-			    		properties.put(BeCPGModel.PROP_NUTGROUP, "Groupe 1");
-			    		properties.put(BeCPGModel.PROP_NUTUNIT, "g");
-			    		ChildAssociationRef childAssocRef = nodeService.createNode(nutFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties);
+			    		properties.put(PLMModel.PROP_NUTGROUP, "Groupe 1");
+			    		properties.put(PLMModel.PROP_NUTUNIT, "g");
+			    		ChildAssociationRef childAssocRef = nodeService.createNode(nutFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties);
 			    		nuts.add(childAssocRef.getChildRef());
 			    	}
 				}				
@@ -171,7 +171,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 			    	{    		
 			    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			    		properties.put(ContentModel.PROP_NAME, "Allergen " + i);
-			    		ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties);
+			    		ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties);
 			    		allergens.add(childAssocRef.getChildRef());
 			    	}
 				}
@@ -254,7 +254,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 											EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, 
 											ReportType.ExportSearch, 	
 											ReportFormat.XLS,
-											BeCPGModel.TYPE_PRODUCT, 
+											PLMModel.TYPE_PRODUCT, 
 											false, 
 											true, 
 											true);
@@ -455,7 +455,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 				initTests();
 							
 				//List<NodeRef> reportTpls = exportSearchService.getReportTpls();
-				List<NodeRef> reportTpls = reportTplService.suggestUserReportTemplates(ReportType.ExportSearch, BeCPGModel.TYPE_PRODUCT, "*");
+				List<NodeRef> reportTpls = reportTplService.suggestUserReportTemplates(ReportType.ExportSearch, PLMModel.TYPE_PRODUCT, "*");
 				
 				for(NodeRef n : reportTpls){
 					logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));

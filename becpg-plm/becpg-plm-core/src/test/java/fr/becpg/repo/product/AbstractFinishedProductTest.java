@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductUnit;
@@ -211,56 +212,56 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					//Costs
 					properties.put(ContentModel.PROP_NAME, "cost1");			 					 				
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-					cost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					cost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "cost2");			 					 				
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-					cost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					cost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "pkgCost1");			 					 				
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-					pkgCost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					pkgCost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "pkgCost2");			 					 				
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-					pkgCost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();						
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					pkgCost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();						
 					properties.clear();				
 					properties.put(ContentModel.PROP_NAME, "fixedCost");			 					 				
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-					properties.put(BeCPGModel.PROP_COSTFIXED, true);
-					fixedCost = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					properties.put(PLMModel.PROP_COSTFIXED, true);
+					fixedCost = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					
 					//Nuts
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut1");
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-					nut1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+					properties.put(PLMModel.PROP_NUTUNIT, "kJ");
+					properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
+					nut1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut2");
-					properties.put(BeCPGModel.PROP_NUTUNIT, "kcal");
-					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-					properties.put(BeCPGModel.PROP_NUTGDA, 2000d);
-					nut2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();			
+					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
+					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
+					properties.put(PLMModel.PROP_NUTGDA, 2000d);
+					nut2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					//Allergens
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen1");	
-					properties.put(BeCPGModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
+					allergen1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen2");			 					 				
-					properties.put(BeCPGModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
+					allergen2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen3");	
-					properties.put(BeCPGModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
+					allergen3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen4");	
-					properties.put(BeCPGModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties).getChildRef();
+					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
+					allergen4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					//Ings
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "Epaississant");
@@ -269,7 +270,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Epaississant english");
 					mlName.addValue(Locale.FRENCH, "Epaississant french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ingType1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
+					ingType1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing1");
 					mlName = new MLText();
@@ -277,7 +278,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing1 english");
 					mlName.addValue(Locale.FRENCH, "ing1 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+					ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing2");
 					mlName = new MLText();
@@ -286,7 +287,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.FRENCH, "ing2 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 					
-					ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+					ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing3");
 					mlName = new MLText();
@@ -294,7 +295,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing3 english");
 					mlName.addValue(Locale.FRENCH, "ing3 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+					ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing4");
 					mlName = new MLText();
@@ -302,52 +303,52 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing4 english");
 					mlName.addValue(Locale.FRENCH, "ing4 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+					ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing5");
-					properties.put(BeCPGModel.PROP_ING_TYPE_V2, ingType1);
+					properties.put(PLMModel.PROP_ING_TYPE_V2, ingType1);
 					mlName = new MLText();
 					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing5 default");
 					mlName.addValue(Locale.ENGLISH, "ing5 english");
 					mlName.addValue(Locale.FRENCH, "ing5 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing5 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties).getChildRef();
+					ing5 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					//Geo origins
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "geoOrigin1");
-					geoOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+					geoOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "geoOrigin2");
-					geoOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+					geoOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 					//Bio origins
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "bioOrigin1");
-					bioOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
+					bioOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "bioOrigin2");
-					bioOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_BIO_ORIGIN, properties).getChildRef();
+					bioOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 					//physicoChem
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem1");			 					 				
-					physicoChem1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+					physicoChem1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem2");			 					 				
-					physicoChem2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+					physicoChem2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem3");
-					properties.put(BeCPGModel.PROP_PHYSICO_CHEM_FORMULATED, true);
-					physicoChem3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+					properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
+					physicoChem3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem4");			 					 				
-					properties.put(BeCPGModel.PROP_PHYSICO_CHEM_FORMULATED, true);
-					physicoChem4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_PHYSICO_CHEM, properties).getChildRef();			
+					properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
+					physicoChem4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();			
 					
 					//Suppliers
 					properties.put(ContentModel.PROP_NAME, "supplier1");			 					 				
-					supplier1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+					supplier1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "supplier2");			 					 				
-					supplier2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+					supplier2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					
 					/*-- Create raw materials --*/
 					logger.debug("/*-- Create raw materials --*/");

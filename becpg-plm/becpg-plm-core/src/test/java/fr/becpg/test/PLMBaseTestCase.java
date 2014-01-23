@@ -40,6 +40,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -147,7 +148,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 			public Boolean execute() throws Throwable {
 
 				// products
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_PRODUCT))
+				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_PRODUCT))
 						+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL))
 						+ LuceneHelper.exclude(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, "Eau"));
 				List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(query);
@@ -259,9 +260,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 			for (int i = 0; i < 10; i++) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Allergen " + i);
-				properties.put(BeCPGModel.PROP_ALLERGEN_TYPE, AllergenType.Major.toString());
+				properties.put(PLMModel.PROP_ALLERGEN_TYPE, AllergenType.Major.toString());
 				ChildAssociationRef childAssocRef = nodeService.createNode(allergenFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties);
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties);
 				allergens.add(childAssocRef.getChildRef());
 			}
 		} else {
@@ -279,9 +280,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 			for (String costName : costNames) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, costName);
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, VALUE_COST_CURRENCY);
+				properties.put(PLMModel.PROP_COSTCURRENCY, VALUE_COST_CURRENCY);
 				ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties);
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties);
 				costs.add(childAssocRef.getChildRef());
 			}
 		} else {
@@ -298,7 +299,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Ing " + i);
 				ChildAssociationRef childAssocRef = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ING, properties);
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties);
 				ings.add(childAssocRef.getChildRef());
 			}
 		} else {
@@ -314,10 +315,10 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 			for (int i = 0; i < 10; i++) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Nut " + i);
-				properties.put(BeCPGModel.PROP_NUTUNIT, "kcal");
-				properties.put(BeCPGModel.PROP_NUTGROUP, "Groupe 1");
+				properties.put(PLMModel.PROP_NUTUNIT, "kcal");
+				properties.put(PLMModel.PROP_NUTGROUP, "Groupe 1");
 				ChildAssociationRef childAssocRef = nodeService.createNode(nutFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties);
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties);
 				nuts.add(childAssocRef.getChildRef());
 			}
 		} else {
@@ -334,7 +335,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Organo " + i);
 				ChildAssociationRef childAssocRef = nodeService.createNode(organoFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ORGANO, properties);
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ORGANO, properties);
 				organos.add(childAssocRef.getChildRef());
 			}
 		} else {
@@ -354,9 +355,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 			for (String labelClaim : labelClaimNames) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, labelClaim);
-				properties.put(BeCPGModel.PROP_LABEL_CLAIM_TYPE, "Nutritionnelle");
+				properties.put(PLMModel.PROP_LABEL_CLAIM_TYPE, "Nutritionnelle");
 				ChildAssociationRef childAssocRef = nodeService.createNode(labelClaimListsFolder, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LABEL_CLAIM, properties);
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_LABEL_CLAIM, properties);
 				labelClaims.add(childAssocRef.getChildRef());
 			}
 		} else {
@@ -369,7 +370,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 
 	private void initEntityTemplates() {
 
-		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_RAWMATERIAL);
+		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_RAWMATERIAL);
 		ProductData rawMaterialData = (ProductData) alfrescoRepository.findOne(rawMaterialTplNodeRef);
 		rawMaterialData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(0), null));
 		rawMaterialData.getNutList().add(new NutListDataItem(null, null, null, null, null, null, nuts.get(0), null));
@@ -377,7 +378,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 
 		alfrescoRepository.save(rawMaterialData);
 
-		NodeRef packMaterialTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_PACKAGINGMATERIAL);
+		NodeRef packMaterialTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_PACKAGINGMATERIAL);
 		ProductData packMaterialTplData = (ProductData) alfrescoRepository.findOne(packMaterialTplNodeRef);
 		packMaterialTplData.getCostList().add(new CostListDataItem(null, null, null, null, costs.get(3), null));
 		alfrescoRepository.save(packMaterialTplData);
@@ -396,11 +397,11 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		Assert.assertNotNull("Product hierarchy system entity not found", productHierarchyNodeRef);
 
 		NodeRef rawMaterialHierarchyNodeRef = entitySystemService.getSystemEntityDataList(productHierarchyNodeRef,
-				HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RAWMATERIAL));
+				HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL));
 		Assert.assertNotNull("raw material hierarchy dataList not found", rawMaterialHierarchyNodeRef);
 
 		NodeRef finishedProductHierarchyNodeRef = entitySystemService.getSystemEntityDataList(productHierarchyNodeRef,
-				HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_FINISHEDPRODUCT));
+				HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_FINISHEDPRODUCT));
 		Assert.assertNotNull("Finished product hierarchy dataList not found", finishedProductHierarchyNodeRef);
 
 		/*-- create hierarchy --*/

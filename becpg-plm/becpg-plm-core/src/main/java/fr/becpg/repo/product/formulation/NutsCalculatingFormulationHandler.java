@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
@@ -52,13 +52,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		
 			for(NutListDataItem n : formulatedProduct.getNutList()){
 				
-				n.setGroup((String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTGROUP));				
-				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTUNIT)));
+				n.setGroup((String)nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));				
+				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
 				
 				if(formulatedProduct.getServingSize() != null && n.getValue() != null){
 					double valuePerserving = n.getValue() * formulatedProduct.getServingSize() / 100;
 					n.setValuePerServing(valuePerserving);
-					Double gda = (Double)nodeService.getProperty(n.getNut(), BeCPGModel.PROP_NUTGDA);
+					Double gda = (Double)nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
 					if(gda != null && gda != 0d){
 						n.setGdaPerc(100 * n.getValuePerServing()/gda);
 					}
@@ -107,7 +107,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	@Override
 	protected QName getDataListVisited(){
 		
-		return BeCPGModel.TYPE_NUTLIST;
+		return PLMModel.TYPE_NUTLIST;
 	}
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType){		

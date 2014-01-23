@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -1308,7 +1309,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							NodeRef productSpecificationNodeRef1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 											(String)properties.get(ContentModel.PROP_NAME)), 
-											BeCPGModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+											PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 							
 							ProductSpecificationData productSpecification1 = (ProductSpecificationData)alfrescoRepository.findOne(productSpecificationNodeRef1);
 							
@@ -1347,7 +1348,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							NodeRef productSpecificationNodeRef2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 											(String)properties.get(ContentModel.PROP_NAME)), 
-											BeCPGModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+											PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 							
 							ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 														
@@ -1364,8 +1365,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							
 							
 				// create association
-				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
-				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef2, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 				
 				/*-- Formulate product --*/
 				logger.info("/*-- Formulate product --*/");
@@ -1432,8 +1433,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				/*
 				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)
 				 */				
-				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
-				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2, BeCPGModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+				nodeService.removeAssociation(finishedProductNodeRef, productSpecificationNodeRef2, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 				
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -1851,7 +1852,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						
-						nodeService.setProperty(costListDataItem.getNodeRef(), BeCPGModel.PROP_COSTLIST_VALUE, 5.0d);
+						nodeService.setProperty(costListDataItem.getNodeRef(), PLMModel.PROP_COSTLIST_VALUE, 5.0d);
 						nodeService.setProperty(costListDataItem.getNodeRef(), BeCPGModel.PROP_IS_MANUAL_LISTITEM, true);
 					}					
 				}
@@ -1900,44 +1901,44 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			public NodeRef execute() throws Throwable {					   							
 				
 				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
 				
 				/*-- Create process steps, resources --*/
 				logger.debug("/*-- Create process steps, resources --*/");
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				//Costs
 				properties.put(ContentModel.PROP_NAME, "costTransfo");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef costTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef costTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "costMOTransfo");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef costMOTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "costMOMaintenance");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties).getChildRef();
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				//Steps
 				logger.debug("Steps");
 				properties.put(ContentModel.PROP_NAME, "Découpe");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef decoupeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Hachage");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef hachageNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Cuisson");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef cuissonNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Mélange");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef melangeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Etape Ligne");			 					 				
-				properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef ligneStepNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				// resources
@@ -2331,8 +2332,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
 			
 			// add overrun
-			compoList.get(6).getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC, 80d);
-			compoList.get(7).getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC, 70d);
+			compoList.get(6).getExtraProperties().put(PLMModel.PROP_COMPOLIST_OVERRUN_PERC, 80d);
+			compoList.get(7).getExtraProperties().put(PLMModel.PROP_COMPOLIST_OVERRUN_PERC, 70d);
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
@@ -2350,9 +2351,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			for(CompoListDataItem compoListDataItem : formulatedProduct1.getCompoList()){				
 				
 				
-				Double volume = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_COMPOLIST_VOLUME);
+				Double volume = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), PLMModel.PROP_COMPOLIST_VOLUME);
 				
-				Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC);
+				Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), PLMModel.PROP_COMPOLIST_OVERRUN_PERC);
 				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);				
 				logger.info("Product: " + nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
 				logger.info("overrun: " + overrun);

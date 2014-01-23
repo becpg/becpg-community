@@ -1,14 +1,11 @@
-/*
- * 
- */
 package fr.becpg.repo.entity.comparison;
 
 import java.io.OutputStream;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface CompareEntityReportService.
  *
@@ -23,5 +20,5 @@ public interface CompareEntityReportService {
 	 * @param entitys the entitys
 	 * @param out the output stream
 	 */
-	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream out);
+	public void getComparisonReport(NodeRef entity1, QName dataListTypeQName, List<NodeRef> entities, OutputStream out);
 }

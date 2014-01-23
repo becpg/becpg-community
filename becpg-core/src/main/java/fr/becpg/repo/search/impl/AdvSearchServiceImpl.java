@@ -15,13 +15,11 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.search;
+package fr.becpg.repo.search.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.SearchService;
@@ -30,11 +28,17 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
+import fr.becpg.repo.search.AdvSearchPlugin;
+import fr.becpg.repo.search.AdvSearchService;
+import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
@@ -45,44 +49,31 @@ import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
  * @author querephi
  * 
  */
+
+@Service("advSearchService")
 public class AdvSearchServiceImpl implements AdvSearchService {
-
-	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
-
-	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
-
-	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
-
-	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
-
 
 	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
+	@Autowired
 	private NodeService nodeService;
 
-
+	@Autowired
 	private NamespaceService namespaceService;
 
+	@Autowired
 	private BeCPGSearchService beCPGSearchService;
 
+	@Autowired
 	private PermissionService permissionService;
 
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
+	@Autowired(required=false)
+	private AdvSearchPlugin[] advSearchPlugins;
+	
+	@Autowired
+	private HierarchyService hierarchyService;
+	
+	
 	@Override
 	public List<NodeRef> queryAdvSearch(String searchQuery, String language, QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxResults) {
 
@@ -92,19 +83,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		searchQuery = appendCriteria(searchQuery, language, criteria);
 
-		boolean isAssocSearch = isAssocSearch(criteria);
 
-		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, isAssocSearch ? RepoConsts.MAX_RESULTS_UNLIMITED : maxResults, language);
+		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, RepoConsts.MAX_RESULTS_UNLIMITED , language);
 
-		if (isAssocSearch) {
-			nodes = filterByAssociations(nodes, criteria);
-
-//		TODO search plugin	if (datatype != null && dictionaryService.isSubClass(datatype, BeCPGModel.TYPE_PRODUCT)) {
-//				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
-//				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
-//			}
+		if(advSearchPlugins!=null) {
+			for(AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+				nodes = advSearchPlugin.filter(nodes, datatype, criteria);	
+			}
 		}
-
+		
 		nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
 
 		return nodes;
@@ -145,18 +132,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return ftsQuery;
 	}
 
-	private boolean isAssocSearch(Map<String, String> criteria) {
-		if (criteria != null) {
-			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
-				String key = criterion.getKey();
-				// association
-				if (key.startsWith("assoc_")) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+
 
 	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes, BeCPGPermissionFilter filter, int maxResults) {
 
@@ -322,72 +298,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 
 		return ret;
-	}
-
-	/**
-	 * Take in account criteria on associations (ie :
-	 * assoc_bcpg_supplierAssoc_added)
-	 * 
-	 * @return filtered list of nodes by associations
-	 */
-	private List<NodeRef> filterByAssociations(List<NodeRef> nodes, Map<String, String> criteria) {
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		for (Map.Entry<String, String> criterion : criteria.entrySet()) {
-
-			String key = criterion.getKey();
-			String propValue = criterion.getValue();
-
-			// association
-			if (key.startsWith("assoc_") && !propValue.isEmpty()) {
-
-				String assocName = key.substring(6);
-				if (assocName.endsWith("_added")) {
-					// TODO : should be generic
-					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN) && !key.equals(CRITERIA_PACK_LABEL)) {
-
-						assocName = assocName.substring(0, assocName.length() - 6);
-						assocName = assocName.replace("_", ":");
-						QName assocQName = QName.createQName(assocName, namespaceService);
-
-						String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
-						for (String strNodeRef : arrValues) {
-
-							NodeRef nodeRef = new NodeRef(strNodeRef);
-
-							if (nodeService.exists(nodeRef)) {
-
-								List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
-
-								// remove nodes that don't respect the
-								// assoc_ criteria
-								List<NodeRef> nodesToKeep = new ArrayList<NodeRef>();
-
-								for (AssociationRef assocRef : assocRefs) {
-
-									nodesToKeep.add(assocRef.getSourceRef());
-								}
-
-								nodes.retainAll(nodesToKeep);
-							}
-
-						}
-					}
-				}
-			}
-		}
-
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("filterByAssociations executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
 	}
 
 

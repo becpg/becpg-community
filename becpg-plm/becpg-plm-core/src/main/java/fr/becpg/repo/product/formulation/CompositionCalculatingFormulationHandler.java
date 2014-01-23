@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -139,7 +139,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			
 			// calculate volume ?			
 			Double volume = FormulationHelper.getNetVolume(component.getData(), nodeService); 
-			component.getData().getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_VOLUME, volume);
+			component.getData().getExtraProperties().put(PLMModel.PROP_COMPOLIST_VOLUME, volume);
 			
 			// calculate children
 			if(!component.isLeaf()){
@@ -255,10 +255,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if(!component.isLeaf()){
 				// calculate children
 				value = calculateVolumeFromChildren(component);
-				component.getData().getExtraProperties().put(BeCPGModel.PROP_COMPOLIST_VOLUME, value);				
+				component.getData().getExtraProperties().put(PLMModel.PROP_COMPOLIST_VOLUME, value);				
 				
 			}else{
-				value = (Double)component.getData().getExtraProperties().get(BeCPGModel.PROP_COMPOLIST_VOLUME);
+				value = (Double)component.getData().getExtraProperties().get(PLMModel.PROP_COMPOLIST_VOLUME);
 				value = value != null ? value : 0d;
 			}			
 			volume += value;

@@ -41,7 +41,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.product.data.spel.SpelHelper;
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
@@ -113,7 +113,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				labelClaimListDataItem.setErrorLog(null);
 				if ((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual()) && labelClaimListDataItem.getLabelClaim() != null) {
 
-					String formula = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_LABEL_CLAIM_FORMULA);
+					String formula = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_FORMULA);
 					if (formula != null && formula.length() > 0) {
 						try {
 							labelClaimListDataItem.setIsFormulated(true);

@@ -27,7 +27,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImporterException;
 import org.alfresco.repo.forum.CommentService;
@@ -66,7 +66,7 @@ public class ImportCommentsVisitor  extends AbstractImportVisitor {
 		NodeRef nodeRef = findNode(importContext, importContext.getType(), properties);
 		
 		if(nodeRef !=null){
-			String comment = (String) properties.get(BeCPGModel.PROP_PRODUCT_COMMENTS);
+			String comment = (String) properties.get(PLMModel.PROP_PRODUCT_COMMENTS);
 			logger.debug("Import comments :"+comment +" for product :"+nodeRef);
 			if(comment!=null){
 				commentService.createComment(nodeRef, "", comment, false);

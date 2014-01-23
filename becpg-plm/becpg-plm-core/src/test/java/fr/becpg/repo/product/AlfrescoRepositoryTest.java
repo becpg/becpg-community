@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -150,8 +151,8 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 				}
 
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-				NodeRef nodeRef = entityListDAO.getListItem(listNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
+				NodeRef nodeRef = entityListDAO.getListItem(listNodeRef, PLMModel.ASSOC_COSTLIST_COST, costNodeRef);
 
 				assertEquals("Cost list data item should be the same", costListDataItemNodeRef, nodeRef);
 
@@ -178,19 +179,19 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 				mlTextILL.addValue(Locale.FRENCH, "French value");
 
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(BeCPGModel.PROP_ILL_VALUE, mlTextILL);
+				properties.put(PLMModel.PROP_ILL_VALUE, mlTextILL);
 
-				NodeRef illNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_INGLABELINGLIST,
+				NodeRef illNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, PLMModel.TYPE_INGLABELINGLIST,
 						properties).getChildRef();
 
-				nodeService.setProperty(illNodeRef, BeCPGModel.PROP_ILL_VALUE, mlTextILL);
+				nodeService.setProperty(illNodeRef, PLMModel.PROP_ILL_VALUE, mlTextILL);
 
 				// check node saved
-				logger.debug("get property : " + mlNodeServiceImpl.getProperty(illNodeRef, BeCPGModel.PROP_ILL_VALUE));
+				logger.debug("get property : " + mlNodeServiceImpl.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE));
 				logger.debug("get property fr : " + mlNodeServiceImpl.getProperty(illNodeRef, QName.createQName(BeCPGModel.BECPG_PREFIX, "illValue_fr")));
 				logger.debug("get properties : " + mlNodeServiceImpl.getProperties(illNodeRef));
-				logger.debug("get property 2 : " + mlNodeServiceImpl.getProperties(illNodeRef).get(BeCPGModel.PROP_ILL_VALUE));
-				MLText mlTextILLSaved = (MLText) mlNodeServiceImpl.getProperty(illNodeRef, BeCPGModel.PROP_ILL_VALUE);
+				logger.debug("get property 2 : " + mlNodeServiceImpl.getProperties(illNodeRef).get(PLMModel.PROP_ILL_VALUE));
+				MLText mlTextILLSaved = (MLText) mlNodeServiceImpl.getProperty(illNodeRef, PLMModel.PROP_ILL_VALUE);
 
 				assertNotNull("MLText exist", mlTextILLSaved);
 				assertEquals("MLText exist has 2 Locales", 2, mlTextILL.getLocales().size());

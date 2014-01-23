@@ -1,6 +1,3 @@
-/*
- * 
- */
 package fr.becpg.repo.entity.comparison;
 
 import java.io.OutputStream;
@@ -23,9 +20,11 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -33,157 +32,84 @@ import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CompareEntityReportServiceImpl.
  *
  * @author querephi
  */
+@Service("compareEntityReportService")
 public class CompareEntityReportServiceImpl  implements CompareEntityReportService{
 	
-	//comparisonRows
-	/** The Constant TAG_ENTITIES_COMPARISON. */
 	private static final String TAG_ENTITIES_COMPARISON = "entitiesComparison";
-	
-	/** The Constant TAG_COMPARISON_ROWS. */
 	private static final String TAG_COMPARISON_ROWS = "comparisonRows";
-	
-	/** The Constant TAG_COMPARISON_ROW. */
 	private static final String TAG_COMPARISON_ROW = "comparisonRow";	
 	
-	/** The Constant ATTR_ENTITY_1. */
 	private static final String ATTR_ENTITY = "entity";
 	
-	/** The Constant ATTR_ENTITYLIST. */
 	private static final String ATTR_ENTITYLIST = "entityList";
 	
-	/** The Constant ATTR_CHARACTERISTIC. */
 	private static final String ATTR_CHARACTERISTIC = "characteristic";
 	
-	/** The Constant ATTR_PROPERTY. */
 	private static final String ATTR_PROPERTY = "property";
 	
 	private static final String ATTR_PROPERTY_QNAME = "propertyQName";
 	
-	/** The Constant ATTR_VALUE_1. */
 	private static final String ATTR_VALUE = "value";
 	
-	//structComparisonRows
-	/** The Constant TAG_STRUCT_COMPARISON_ROWS. */
 	private static final String TAG_STRUCT_COMPARISON_ROWS = "structComparisonRows";
 	
-	/** The Constant TAG_STRUCT_COMPARISON_ROW. */
 	private static final String TAG_STRUCT_COMPARISON_ROW = "structComparisonRow";
 	
-	/** The Constant ATTR_COMPARISON. */
 	private static final String ATTR_COMPARISON = "comparison";
 	
-	/** The Constant ATTR_DEPTH_LEVEL. */
 	private static final String ATTR_DEPTH_LEVEL = "depthLevel";
 	
-	/** The Constant ATTR_OPERATOR. */
 	private static final String ATTR_OPERATOR = "operator";
 	
-	/** The Constant ATTR_ITEM1. */
 	private static final String ATTR_ITEM1 = "item1";
 	
-	/** The Constant ATTR_ITEM2. */
 	private static final String ATTR_ITEM2 = "item2";
 	
-	/** The Constant ATTR_PROPERTIES1. */
 	private static final String ATTR_PROPERTIES1 = "properties1";
 	
-	/** The Constant ATTR_PROPERTIES2. */
 	private static final String ATTR_PROPERTIES2 = "properties2";
 	
-	/** The Constant CHARACT_PATH_SEPARATOR. */
 	private static final String CHARACT_PATH_SEPARATOR = " / ";
 	
-	/** The Constant COMPARISON_SEPARATOR. */
 	private static final String COMPARISON_SEPARATOR = " - ";
 	
-	/** The Constant PROPERTY_SEPARATOR. */
 	private static final String PROPERTY_SEPARATOR = " / ";
 	
-	/** The Constant PROPERTY_VALUE_SEPARATOR. */
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
 	
 	private static final String PARAM_VALUE_HIDE_STRUC_COMP = "StructComparisonHide";
 	
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 	
-	/** The compare entity service. */
+	@Autowired
 	private CompareEntityService compareEntityService;
 	
-	
-	/** The report engine. */
+	@Autowired
 	private BeCPGReportEngine beCPGReportEngine;		
 	
+	@Autowired
 	private ReportTplService reportTplService;
 	
-	/** The node service. */
+	@Autowired
 	private NodeService nodeService;
 	
-	/** The dictionary service. */
+	@Autowired
 	private DictionaryService dictionaryService;
 	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
 	private NamespaceService namespaceService;
 	
-		
-	/**
-	 * Sets the compare entity service.
-	 *
-	 * @param compareEntityService the new compare entity service
-	 */
-	public void setCompareEntityService(CompareEntityService compareEntityService) {
-		this.compareEntityService = compareEntityService;
-	}
-	
-	/**
-	 * Sets the report engine.
-	 *
-	 * @param reportEngine the new report engine
-	 */
 
-	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
-		this.beCPGReportEngine = beCPGReportEngine;
-	}
-	
-	
-	
-	public void setReportTplService(ReportTplService reportTplService) {
-		this.reportTplService = reportTplService;
-	}
-
-
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the dictionary service.
-	 *
-	 * @param dictionaryService the new dictionary service
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-	
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.becpg.repo.entity.comparison.CompareEntityReportService#getComparisonReport(org.alfresco.service.cmr.repository.NodeRef, java.util.List, java.io.OutputStream)
-	 */
 	@Override
-	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream out){				
+	public void getComparisonReport(NodeRef entity1, QName dataListTypeQName, List<NodeRef> entities, OutputStream out){				
 		
 		// look for template
 		NodeRef templateNodeRef = reportTplService.getSystemReportTemplate(ReportType.System, 
@@ -191,6 +117,8 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 											TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
 		
 		if(templateNodeRef != null){
+			
+			QName pivoAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListTypeQName);
 			
 			// do comparison
 			List<CompareResultDataItem> compareResult = compareEntityService.compare(entity1, entities);
@@ -200,7 +128,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<String, List<StructCompareResultDataItem>>();
 			for(NodeRef entityNodeRef : entities){
 				String comparison = (String)nodeService.getProperty(entity1, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR + (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-				List<StructCompareResultDataItem> scr = compareEntityService.compareStructDatalist(entity1, entityNodeRef, BeCPGModel.TYPE_COMPOLIST, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);				
+				List<StructCompareResultDataItem> scr = compareEntityService.compareStructDatalist(entity1, entityNodeRef, dataListTypeQName, pivoAssoc);				
 				structCompareResults.put(comparison, scr);
 				
 				// display struct comparison if there is smth to show
@@ -213,7 +141,7 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			Document document = DocumentHelper.createDocument();
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
-			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, BeCPGModel.ASSOC_COMPOLIST_PRODUCT));		
+			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, pivoAssoc));		
 			
 			if(logger.isDebugEnabled()){
 				logger.debug("comparison XML " + entitiesCmpElt);

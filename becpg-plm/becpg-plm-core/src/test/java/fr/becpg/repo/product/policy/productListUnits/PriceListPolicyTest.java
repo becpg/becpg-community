@@ -15,7 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -42,8 +42,8 @@ public class PriceListPolicyTest extends PLMBaseTestCase {
 	public void testCreateProductLists() {
 
 		final Set<QName> dataLists = new HashSet<QName>();
-		dataLists.add(BeCPGModel.TYPE_COSTLIST);
-		dataLists.add(BeCPGModel.TYPE_PRICELIST);
+		dataLists.add(PLMModel.TYPE_COSTLIST);
+		dataLists.add(PLMModel.TYPE_PRICELIST);
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -58,9 +58,9 @@ public class PriceListPolicyTest extends PLMBaseTestCase {
 				rawMaterialData.setName("RM");
 
 				cost1 = costs.get(0);
-				nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost1, PLMModel.PROP_COSTCURRENCY, "€");
 				cost2 = costs.get(1);
-				nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
+				nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "$");
 
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 12d, "", null, cost1, false));
@@ -184,7 +184,7 @@ public class PriceListPolicyTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-				nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "€");
 				return null;
 
 			}

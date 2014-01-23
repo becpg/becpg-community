@@ -30,7 +30,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -86,7 +86,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 			productData = (ProductData) alfrescoRepository.findOne(qualityControlData.getProduct());
 			
 			// load microbio
-			List<AssociationRef> controlPointAssocRefs = nodeService.getTargetAssocs(qualityControlData.getProduct(), BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+			List<AssociationRef> controlPointAssocRefs = nodeService.getTargetAssocs(qualityControlData.getProduct(), PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
 			
 			if(!controlPointAssocRefs.isEmpty()){
 				NodeRef productMicrobioCriteriaNodeRef = (controlPointAssocRefs.get(0)).getTargetRef();

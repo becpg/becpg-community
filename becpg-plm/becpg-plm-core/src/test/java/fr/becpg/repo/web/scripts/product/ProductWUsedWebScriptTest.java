@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.springframework.extensions.webscripts.TestWebScriptServer.PostRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -69,7 +69,7 @@ public class ProductWUsedWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 	 				compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 					finishedProduct.getCompoListView().setCompoList(compoList); 				
 					Collection<QName> dataLists = new ArrayList<QName>();		
-					dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+					dataLists.add(PLMModel.TYPE_COMPOLIST);
 	 				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 	 				
 	 				logger.debug("local semi finished: " + lSFNodeRef);

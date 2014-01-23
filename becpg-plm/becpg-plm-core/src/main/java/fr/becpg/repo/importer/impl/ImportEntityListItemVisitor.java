@@ -38,6 +38,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
@@ -96,7 +97,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			entityProperties.put(qName, propValues.get(qName));
 		}
 
-		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : BeCPGModel.TYPE_PRODUCT;
+		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : PLMModel.TYPE_PRODUCT;
 		QName entityCode = BeCPGModel.PROP_CODE;
 		if (!classMapping.getNodeColumnKeys().isEmpty()) {
 			entityCode = classMapping.getNodeColumnKeys().get(0);
@@ -289,10 +290,10 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, AbstractAttributeMapping attributeMapping, String value,
 			Map<QName, Serializable> properties) throws ImporterException {
 		
-		if (BeCPGModel.PROP_VARIANTIDS.equals(propDef.getName())) {
+		if (PLMModel.PROP_VARIANTIDS.equals(propDef.getName())) {
 			NodeRef entityNodeRef = importContext.getEntityNodeRef();
 			if (entityNodeRef != null && value!=null && !value.isEmpty()) {
-				List<NodeRef> variants = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
+				List<NodeRef> variants = associationService.getChildAssocs(entityNodeRef, PLMModel.ASSOC_VARIANTS);
 				boolean isDefault = false;
 				String name = value;
 				if(value.contains("|")){
@@ -313,9 +314,9 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 				
 				Map<QName,Serializable> props = new HashMap<>();
 				props.put(ContentModel.PROP_NAME, name);
-				props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, isDefault);
+				props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, isDefault);
 				
-				return nodeService.createNode(entityNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT,
+				return nodeService.createNode(entityNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT,
 						props).getChildRef();
 				
 			} else {

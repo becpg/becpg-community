@@ -21,7 +21,7 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 
 /**
@@ -68,8 +68,8 @@ public class ValidateProduct extends BaseJavaDelegate {
 						NodeRef nodeRef = childAssoc.getChildRef();
 						QName nodeType = nodeService.getType(nodeRef);
 
-						if (dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_PRODUCT)) {
-							nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);
+						if (dictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT)) {
+							nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 
 							// productNodeRef : remove all owner related rights
 							ownableService.setOwner(nodeRef, OwnableService.NO_OWNER);

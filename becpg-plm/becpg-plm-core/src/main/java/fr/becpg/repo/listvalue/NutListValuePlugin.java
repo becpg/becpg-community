@@ -26,7 +26,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
@@ -61,7 +61,7 @@ public class NutListValuePlugin extends EntityListValuePlugin {
 		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listsContainerNodeRef != null) {
 
-			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, BeCPGModel.TYPE_NUTLIST);
+			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, PLMModel.TYPE_NUTLIST);
 
 			NodeRef itemId = null;
 			@SuppressWarnings("unchecked")
@@ -72,12 +72,12 @@ public class NutListValuePlugin extends EntityListValuePlugin {
 				}
 			}
 
-			for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, BeCPGModel.TYPE_NUTLIST)) {
+			for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, PLMModel.TYPE_NUTLIST)) {
 				if (!dataListItemNodeRef.equals(itemId)) {
-					NodeRef nut = associationService.getTargetAssoc(dataListItemNodeRef, BeCPGModel.ASSOC_NUTLIST_NUT);
+					NodeRef nut = associationService.getTargetAssoc(dataListItemNodeRef, PLMModel.ASSOC_NUTLIST_NUT);
 					if (nut != null) {
 						String name = (String) nodeService.getProperty(nut, ContentModel.PROP_NAME);
-						result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, BeCPGModel.TYPE_NUT.getLocalName()));
+						result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, PLMModel.TYPE_NUT.getLocalName()));
 					}
 				}
 

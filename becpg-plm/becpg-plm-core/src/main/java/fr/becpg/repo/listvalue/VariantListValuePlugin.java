@@ -26,7 +26,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -56,7 +56,7 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
 		logger.debug("VariantListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 
-		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS);
+		List<NodeRef> ret = associationService.getChildAssocs(entityNodeRef, PLMModel.ASSOC_VARIANTS);
 		
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
 

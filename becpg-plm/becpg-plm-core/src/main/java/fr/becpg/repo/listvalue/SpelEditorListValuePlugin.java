@@ -28,7 +28,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
 public class SpelEditorListValuePlugin extends EntityListValuePlugin {
@@ -50,7 +50,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		if (className != null && className.length() > 0 && className.contains(PARAM_VALUES_SEPARATOR)) {
 			String[] arrClassNames = className != null ? className.split(PARAM_VALUES_SEPARATOR) : null;
-			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
+			return suggestTargetAssoc(PLMModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		}
 		// Class is a Java class
 		try {
@@ -69,10 +69,10 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		QName type = QName.createQName(className, namespaceService);
 
-		if (type.equals(BeCPGModel.TYPE_DYNAMICCHARACTLIST)) {
+		if (type.equals(PLMModel.TYPE_DYNAMICCHARACTLIST)) {
 
 			return suggestDatalistItem(new NodeRef((String) props.get(ListValueService.PROP_NODEREF)), type,
-					BeCPGModel.PROP_DYNAMICCHARACT_TITLE, query, pageNum, pageSize);
+					PLMModel.PROP_DYNAMICCHARACT_TITLE, query, pageNum, pageSize);
 		}
 
 		return suggestTargetAssoc(type, query, pageNum, pageSize, null, props);

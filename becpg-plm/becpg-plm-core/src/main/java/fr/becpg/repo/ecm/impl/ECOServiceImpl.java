@@ -38,9 +38,10 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.MPMModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
@@ -195,13 +196,13 @@ public class ECOServiceImpl implements ECOService {
 					ecoData.getWUsedList().add(parent);
 
 					// Keep only the first assocs
-					List<QName> associationQNames = wUsedListService.evaluateWUsedAssociations(sourceList.get(0));
+					List<QName> associationQNames = evaluateWUsedAssociations(sourceList.get(0));
 
 					for (QName associationQName : associationQNames) {
 
 						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList, associationQName, RepoConsts.MAX_DEPTH_LEVEL);
 
-						QName datalistQName = wUsedListService.evaluateListFromAssociation(associationQName);
+						QName datalistQName = evaluateListFromAssociation(associationQName);
 						calculateWUsedList(ecoData, replacementListDataItem.getRevision(), wUsedData, datalistQName, parent);
 					}
 				}
@@ -653,6 +654,42 @@ public class ECOServiceImpl implements ECOService {
 
 		changeUnitDataItem.setReqType(reqType);
 		changeUnitDataItem.setReqDetails(reqDetails);
+	}
+	
+	@Deprecated
+	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
+		List<QName> wUsedAssociations = new ArrayList<QName>();
+
+		QName nodeType = nodeService.getType(targetAssocNodeRef);
+
+		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+				|| nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
+
+			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
+		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
+			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT); 
+		} else if (nodeType.isMatch(PLMModel.TYPE_RESOURCEPRODUCT)) {
+			wUsedAssociations.add(MPMModel.ASSOC_PL_RESOURCE);
+		}
+
+		return wUsedAssociations;
+	}
+
+	
+	@Deprecated
+	private QName evaluateListFromAssociation(QName associationName) {
+
+		QName listQName = null;
+
+		if (associationName.equals(PLMModel.ASSOC_COMPOLIST_PRODUCT)) {
+			listQName = PLMModel.TYPE_COMPOLIST;
+		} else if (associationName.equals(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT)) {
+			listQName = PLMModel.TYPE_PACKAGINGLIST; 
+		} else if (associationName.equals(MPMModel.ASSOC_PL_RESOURCE)) {
+			listQName = MPMModel.TYPE_PROCESSLIST;
+		}
+
+		return listQName;
 	}
 
 }

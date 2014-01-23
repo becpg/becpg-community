@@ -44,7 +44,7 @@ import org.dom4j.io.SAXReader;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.csv.CSVReader;
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
@@ -580,7 +580,7 @@ public class ImportServiceImpl implements ImportService {
 					//TODO Use factory or @annotation instead of if
 					if (ImportType.Comments.equals(importContext.getImportType())) { 
 					    importCommentsVisitor.importNode(importContext, values);
-					} else	if (dictionaryService.isSubClass(importContext.getType(), BeCPGModel.TYPE_PRODUCT)) {
+					} else	if (dictionaryService.isSubClass(importContext.getType(), PLMModel.TYPE_PRODUCT)) {
 						importProductVisitor.importNode(importContext, values);
 					} else if (ImportType.EntityListAspect.equals(importContext.getImportType())) {
 						importEntityListAspectVisitor.importNode(importContext, values);

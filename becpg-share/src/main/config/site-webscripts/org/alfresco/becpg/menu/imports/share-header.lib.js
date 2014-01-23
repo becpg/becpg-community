@@ -30,15 +30,94 @@ function getOrCreateBeCPGMenu() {
             label : "header.menu.becpg.label",
             widgets : []
          }
-      }
+      };
 
+      createDockBar(beCPGMenu);
+      
+      beCPGMenu.config.widgets.push( {
+         id : "HEADER_TOOLS_BECPG",
+         name : "alfresco/menus/AlfMenuGroup",
+         config : {
+            label : "header.becpg.tools",
+            widgets : []
+         }
+      });
+   
+      if (user.isAdmin)
+      {
+      
+         beCPGMenu.config.widgets.push( {
+            id : "HEADER_ADMIN_BECPG",
+            name : "alfresco/menus/AlfMenuGroup",
+            config : {
+               label : "header.becpg.admin",
+               widgets : [
+                  {
+                     name : "alfresco/header/AlfMenuItem",
+                     config : {
+                        label : "header.becpg-admin.label",
+                        iconClass : "becpg-admin-header",
+                        targetUrl : "console/admin-console/becpg-admin"
+                     }
+                  }
+                ]
+            }
+         } );   
+         
+      }
+      
+      
       var menuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_APP_MENU_BAR");
       if (menuBar != null) {
-
          menuBar.config.widgets.push(beCPGMenu);
       }
 
    }
 
    return beCPGMenu;
+}
+
+
+function createDockBar(beCPGMenu){
+   
+   var  nodeRef = page.url.args.nodeRef, dockbarUrl = "/becpg/dockbar";
+   if (nodeRef !== null && nodeRef.length > 0) {
+      dockbarUrl += "?entityNodeRef=" + nodeRef;
+   }
+   
+   var result = remote.call(dockbarUrl);
+   if (result.status.code == status.STATUS_OK)
+   {
+      results = eval('(' + result + ')');
+
+     var recentsMenu =  beCPGMenu.config.widgets.push( {
+         name : "alfresco/menus/AlfMenuGroup",
+         config : {
+            label : "header.becpg.recents",
+            widgets : []
+         }
+      } );
+      
+      for (var i=0; i < results.items.length; i++){
+         var item = results.items[i];
+         
+         var targetUrl = "entity-details?nodeRef=" +item.nodeRef ;
+         
+         if(item.site){
+            targetUrl = "site/" + item.site.shortName+"/"+targetUrl ;
+         }
+         
+         recentsMenu.config.widgets.push( {
+            name : "alfresco/header/AlfMenuItem",
+            config : {
+               label : item.displayName,
+               iconClass : item.itemType.split(":")[1],
+               targetUrl : targetUrl
+            }
+         });
+         
+      }
+               
+   }
+   
 }

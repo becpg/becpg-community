@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -61,11 +61,11 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 
 	public void doInit() {
 		logger.debug("Init productListUnits.PriceListPolicy...");
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_PRICELIST, new JavaBehaviour(this, "onCreateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, PLMModel.TYPE_PRICELIST, new JavaBehaviour(this, "onCreateNode"));
 
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_PRICELIST, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRICELIST, new JavaBehaviour(this, "onUpdateProperties"));
 
-		super.disableOnCopyBehaviour(BeCPGModel.TYPE_PRICELIST);
+		super.disableOnCopyBehaviour(PLMModel.TYPE_PRICELIST);
 	}
 
 	@Override
@@ -79,10 +79,10 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 	@Override
 	public void onUpdateProperties(NodeRef priceListItemNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		Integer beforePrefRank = (Integer) before.get(BeCPGModel.PROP_PRICELIST_PREF_RANK);
-		Integer afterPrefRank = (Integer) after.get(BeCPGModel.PROP_PRICELIST_PREF_RANK);
-		Double beforeValue = (Double) before.get(BeCPGModel.PROP_PRICELIST_VALUE);
-		Double afterValue = (Double) after.get(BeCPGModel.PROP_PRICELIST_VALUE);
+		Integer beforePrefRank = (Integer) before.get(PLMModel.PROP_PRICELIST_PREF_RANK);
+		Integer afterPrefRank = (Integer) after.get(PLMModel.PROP_PRICELIST_PREF_RANK);
+		Double beforeValue = (Double) before.get(PLMModel.PROP_PRICELIST_VALUE);
+		Double afterValue = (Double) after.get(PLMModel.PROP_PRICELIST_VALUE);
 		boolean doUpdate = false;
 
 		logger.debug("onUpdateProperties, prefRank before: " + beforePrefRank + "after: " + afterPrefRank);
@@ -105,7 +105,7 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {
 			if (nodeService.exists(nodeRef)) {
-				Integer prefRank = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRICELIST_PREF_RANK);
+				Integer prefRank = (Integer) nodeService.getProperty(nodeRef, PLMModel.PROP_PRICELIST_PREF_RANK);
 
 				logger.debug("onCreateNode, prefRank: " + prefRank);
 
@@ -122,24 +122,24 @@ public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServiceP
 
 		NodeRef priceListNodeRef = nodeService.getPrimaryParent(priceListItemNodeRef).getParentRef();
 		NodeRef listContainerNodeRef = nodeService.getPrimaryParent(priceListNodeRef).getParentRef();
-		NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
-		Double value = (Double) nodeService.getProperty(priceListItemNodeRef, BeCPGModel.PROP_PRICELIST_VALUE);
+		NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
+		Double value = (Double) nodeService.getProperty(priceListItemNodeRef, PLMModel.PROP_PRICELIST_VALUE);
 
 		NodeRef costNodeRef = null;
-		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(priceListItemNodeRef, BeCPGModel.ASSOC_PRICELIST_COST);
+		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(priceListItemNodeRef, PLMModel.ASSOC_PRICELIST_COST);
 		if (!assocRefs.isEmpty()) {
 			costNodeRef = assocRefs.get(0).getTargetRef();
 		}
 
 		if (costListNodeRef != null) {
-			NodeRef linkNodeRef = entityListDAO.getListItem(costListNodeRef, BeCPGModel.ASSOC_COSTLIST_COST, costNodeRef);
+			NodeRef linkNodeRef = entityListDAO.getListItem(costListNodeRef, PLMModel.ASSOC_COSTLIST_COST, costNodeRef);
 
 			if (linkNodeRef != null) {
-				nodeService.setProperty(linkNodeRef, BeCPGModel.PROP_COSTLIST_VALUE, value);
+				nodeService.setProperty(linkNodeRef, PLMModel.PROP_COSTLIST_VALUE, value);
 			}
 		} else {
 
-			costListNodeRef = entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
+			costListNodeRef = entityListDAO.createList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
 			
 			CostListDataItem costListDataItem  = new CostListDataItem(null, value, null, null, costNodeRef, false);
 			costListDataItem.setParentNodeRef(costListNodeRef);

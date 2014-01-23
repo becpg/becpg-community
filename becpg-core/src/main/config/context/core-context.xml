@@ -67,18 +67,6 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="repository" ref="repositoryHelper"/>
 	</bean>
-	<bean id="attributeExtractorService" class="fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="permissionService" ref="permissionService" />
-		<property name="personService" ref="personService" />
-		<property name="taggingService" ref="taggingService" />
-		<property name="securityService" ref="securityService" />
-		<property name="associationService" ref="associationService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-	</bean>
 	
 
 	<bean id="associationService"  parent="abstractBeCPGPolicy" class="fr.becpg.repo.helper.impl.AssociationServiceImpl">
@@ -108,6 +96,7 @@
 		init-method="init" class="fr.becpg.repo.listvalue.impl.EntityListValuePlugin">
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="targetAssocValueExtractor" ref="targetAssocValueExtractor"/>
 		<!-- Todo better handle custom perm filter with BecpgPermFilter than maj here -->
 		<property name="beCPGSearchService" ref="BeCPGSearchService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
@@ -251,26 +240,11 @@
 		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>
 	
-	
-	<!-- WUsedList -->
-	<bean id="wUsedListService" class="fr.becpg.repo.entity.datalist.impl.WUsedListServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="permissionService" ref="permissionService"/>
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-	</bean>
-
 
 
 	<!-- Search -->
-	<bean id="advSearchService" class="fr.becpg.repo.search.AdvSearchServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="permissionService" ref="permissionService" />
-	</bean>
 	
-	<bean id="beCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
+	<bean id="beCPGSearchService" class="fr.becpg.repo.search.impl.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="searchService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="defaultSearchTemplate" value="${beCPG.defaultSearchTemplate}"/>
@@ -280,7 +254,7 @@
 	
 	<alias name="advSearchService" alias="AdvSearchService"/>
 	
-	<bean id="BeCPGSearchService" class="fr.becpg.repo.search.BeCPGSearchServiceImpl">
+	<bean id="BeCPGSearchService" class="fr.becpg.repo.search.impl.BeCPGSearchServiceImpl">
 		<property name="searchService" ref="SearchService" />
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="defaultSearchTemplate" value="${beCPG.defaultSearchTemplate}"/>

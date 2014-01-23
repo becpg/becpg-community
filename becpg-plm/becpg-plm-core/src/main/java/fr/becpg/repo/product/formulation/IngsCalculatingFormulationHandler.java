@@ -18,9 +18,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -127,9 +127,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				visitILOfPart(formulatedProduct.getProductSpecifications(), compoItem, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, reqCtrlMap);
 				
 				QName type = nodeService.getType(compoItem.getProduct());
-				if(type != null && (type.isMatch(BeCPGModel.TYPE_RAWMATERIAL) ||
-								type.isMatch(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT) ||
-								type.isMatch(BeCPGModel.TYPE_FINISHEDPRODUCT)) &&
+				if(type != null && (type.isMatch(PLMModel.TYPE_RAWMATERIAL) ||
+								type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) ||
+								type.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) &&
 								compoItem.getDeclType() != DeclarationType.Omit){
 					Double qty = FormulationHelper.getQtyInKg(compoItem);
 					if(qty != null){						
@@ -179,7 +179,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
 		@SuppressWarnings("unchecked")
-		List<IngListDataItem> componentIngList = (List)alfrescoRepository.loadDataList(compoListDataItem.getProduct(), BeCPGModel.TYPE_INGLIST, BeCPGModel.TYPE_INGLIST);
+		List<IngListDataItem> componentIngList = (List)alfrescoRepository.loadDataList(compoListDataItem.getProduct(), PLMModel.TYPE_INGLIST, PLMModel.TYPE_INGLIST);
 		
 		// check product respect specification
 		checkILOfPart(compoListDataItem.getProduct(), componentIngList, productSpecicationDataList, reqCtrlMap);
@@ -308,10 +308,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	private void checkILOfPart(NodeRef productNodeRef, List<IngListDataItem> ingList, List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap){
 		
 		
-		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))){
+		if(!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))){
 			
 			// datalist ingList is null or empty
-			if((!alfrescoRepository.hasDataList(productNodeRef, BeCPGModel.TYPE_INGLIST) || 
+			if((!alfrescoRepository.hasDataList(productNodeRef, PLMModel.TYPE_INGLIST) || 
 				ingList.isEmpty())){
 			
 				// req not respected

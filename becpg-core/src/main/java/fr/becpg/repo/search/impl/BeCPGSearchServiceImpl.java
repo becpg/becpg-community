@@ -15,7 +15,7 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.search;
+package fr.becpg.repo.search.impl;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * BeCPG Search Service

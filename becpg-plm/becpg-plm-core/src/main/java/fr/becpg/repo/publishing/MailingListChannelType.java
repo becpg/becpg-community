@@ -36,7 +36,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -112,7 +112,7 @@ public class MailingListChannelType extends AbstractChannelType {
 	@Override
 	public Set<QName> getSupportedContentTypes() {
 		Set<QName> types = new HashSet<QName>();
-		types.add(BeCPGModel.TYPE_FINISHEDPRODUCT);
+		types.add(PLMModel.TYPE_FINISHEDPRODUCT);
 		return types;
 	}
 

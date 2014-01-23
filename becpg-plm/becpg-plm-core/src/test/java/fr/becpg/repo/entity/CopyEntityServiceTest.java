@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.test.BeCPGPLMTestHelper;
@@ -66,7 +67,7 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return entityService.createOrCopyFrom(sourceNodeRef, testFolderNodeRef, BeCPGModel.TYPE_FINISHEDPRODUCT, givenName);
+				return entityService.createOrCopyFrom(sourceNodeRef, testFolderNodeRef, PLMModel.TYPE_FINISHEDPRODUCT, givenName);
 			}
 		}, false, true);
 		
@@ -87,8 +88,8 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 			NodeRef sourceMP1NodeRef = sourceProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
 			NodeRef copyMP1NodeRef = copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
 			
-			assertEquals(BeCPGModel.TYPE_RAWMATERIAL, nodeService.getType(sourceMP1NodeRef));
-			assertEquals(BeCPGModel.TYPE_RAWMATERIAL, nodeService.getType(copyMP1NodeRef));
+			assertEquals(PLMModel.TYPE_RAWMATERIAL, nodeService.getType(sourceMP1NodeRef));
+			assertEquals(PLMModel.TYPE_RAWMATERIAL, nodeService.getType(copyMP1NodeRef));
 			assertEquals(sourceMP1NodeRef, copyMP1NodeRef);
 			
 			// source and copy have different parents

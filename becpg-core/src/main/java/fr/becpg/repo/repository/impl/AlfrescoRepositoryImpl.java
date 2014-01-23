@@ -615,4 +615,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return false;
 	}
 
+	@Override
+	public boolean isRegisteredType(QName type) {
+		return repositoryEntityDefReader.getEntityClass(type)!=null;
+	}
+
 }

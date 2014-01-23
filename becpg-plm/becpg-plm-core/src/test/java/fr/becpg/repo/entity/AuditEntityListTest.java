@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
@@ -89,7 +89,7 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				NodeRef nodeRef = sfData.getAllergenList().get(0).getAllergen();
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, true);
+				nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
 				return null;
 
 			}
@@ -105,8 +105,8 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				NodeRef nodeRef = sfData.getAllergenList().get(0).getNodeRef();
-				logger.info("allergen prev value " + nodeService.getProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY));
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);
+				logger.info("allergen prev value " + nodeService.getProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY));
+				nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 
 				return null;
 
@@ -128,15 +128,15 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ALLERGENLIST);
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_ALLERGENLIST);
 				NodeRef allergen = allergens.get(5);
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(BeCPGModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
-				properties.put(BeCPGModel.PROP_ALLERGENLIST_VOLUNTARY, false);
+				properties.put(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
+				properties.put(PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 				ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), BeCPGModel.TYPE_ALLERGENLIST, properties);
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, allergen.getId()), PLMModel.TYPE_ALLERGENLIST, properties);
 				NodeRef linkNodeRef = childAssocRef.getChildRef();
-				nodeService.createAssociation(linkNodeRef, allergen, BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN);
+				nodeService.createAssociation(linkNodeRef, allergen, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN);
 
 				logger.debug("listNodeRef: " + listNodeRef);
 				logger.debug("added allergen modified: " + nodeService.getProperty(linkNodeRef, ContentModel.PROP_MODIFIED));

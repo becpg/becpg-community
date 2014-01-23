@@ -32,7 +32,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
@@ -96,8 +96,8 @@ public class SimulationWebScript extends AbstractWebScript {
 		if (!dataListItemsNodeRefs.isEmpty()) {
 			for (NodeRef dataListItem : dataListItemsNodeRefs) {
 				
-				simulationNodeRef = createSimulationNodeRef(associationService.getTargetAssoc(dataListItem, BeCPGModel.ASSOC_COMPOLIST_PRODUCT), nodeService.getPrimaryParent(entityListDAO.getEntity(dataListItem)).getParentRef());
-				associationService.update(dataListItem, BeCPGModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
+				simulationNodeRef = createSimulationNodeRef(associationService.getTargetAssoc(dataListItem, PLMModel.ASSOC_COMPOLIST_PRODUCT), nodeService.getPrimaryParent(entityListDAO.getEntity(dataListItem)).getParentRef());
+				associationService.update(dataListItem, PLMModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
 
 			}
 		} else if (entityNodeRef != null) {
@@ -122,7 +122,7 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
 		NodeRef simulationNodeRef = copyService.copyAndRename(entityNodeRef, parentRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-		nodeService.setProperty(simulationNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 		return simulationNodeRef;
 	}
 
