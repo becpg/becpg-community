@@ -217,7 +217,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 				watch.stop();
 				logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 			}
-			logger.info("Xml data : " + reportData.getXmlDataSource().asXML());
 		} else {
 			logger.debug("No report tpls found, delete existing ones");
 			updateReportsAssoc(entityNodeRef, new ArrayList<NodeRef>());
