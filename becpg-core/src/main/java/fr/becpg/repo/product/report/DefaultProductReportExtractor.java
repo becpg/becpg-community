@@ -525,9 +525,14 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			logger.debug("load pallet aspect ");
 			
 			// product per box and boxes per pallet
-			logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
-			packagingData.setProductPerBoxes(dataItem.getVariants(), dataItem.getQty().intValue());
-			packagingData.setBoxesPerPallet(dataItem.getVariants(), (Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
+			if(dataItem.getQty()!=null) {
+				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
+				packagingData.setProductPerBoxes(dataItem.getVariants(), dataItem.getQty().intValue());
+			}
+			Integer palletBoxesPerPallet = (Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
+			if(palletBoxesPerPallet!=null) {
+				packagingData.setBoxesPerPallet(dataItem.getVariants(), palletBoxesPerPallet);
+			}
 		}
 		
 		// we want labeling template <labelingTemplate>...</labelingTemplate>
@@ -539,6 +544,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	}
 	
 	// manage 2 level depth
+	@SuppressWarnings("unchecked")
 	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
 
 		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
@@ -592,25 +598,25 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			return variants;
 		}
 
-		public void addTareSecondary(List<NodeRef> variantNodeRefs, double value){
+		public void addTareSecondary(List<NodeRef> variantNodeRefs, Double value){
 			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
 				variantPackagingData.setTareSecondary(variantPackagingData.getTareSecondary() + value);
 			}			
 		}
 		
-		public void addTareTertiary(List<NodeRef> variantNodeRefs, double value){
+		public void addTareTertiary(List<NodeRef> variantNodeRefs, Double value){
 			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
 				variantPackagingData.setTareTertiary(variantPackagingData.getTareTertiary() + value);
 			}			
 		}
 		
-		public void setProductPerBoxes(List<NodeRef> variantNodeRefs, int value){
+		public void setProductPerBoxes(List<NodeRef> variantNodeRefs, Integer value){
 			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
 				variantPackagingData.setProductPerBoxes(value);
 			}			
 		}
 		
-		public void setBoxesPerPallet(List<NodeRef> variantNodeRefs, int value){
+		public void setBoxesPerPallet(List<NodeRef> variantNodeRefs, Integer value){
 			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
 				variantPackagingData.setBoxesPerPallet(value);
 			}			
