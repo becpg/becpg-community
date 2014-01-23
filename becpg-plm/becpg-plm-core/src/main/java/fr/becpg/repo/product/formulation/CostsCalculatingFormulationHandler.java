@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
@@ -63,7 +63,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		
 			for(CostListDataItem c : formulatedProduct.getCostList()){			
 				if(isCharactFormulated(c)){
-					String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTCURRENCY));
+					String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY));
 					c.setUnit(unit);
 				}							
 			}			
@@ -89,7 +89,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		/*
 		 * Composition
 		 */
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, BeCPGModel.TYPE_RAWMATERIAL);
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){									
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT));
@@ -101,7 +101,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		/*
 		 * PackagingList
 		 */
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, BeCPGModel.TYPE_PACKAGINGMATERIAL);
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
 
 		if(formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
@@ -115,7 +115,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		/*
 		 * ProcessList 
 		 */
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, BeCPGModel.TYPE_RESOURCEPRODUCT);
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
 		
 		if(formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){			
 			for(ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
@@ -163,7 +163,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected QName getDataListVisited(){
 		
-		return BeCPGModel.TYPE_COSTLIST;
+		return PLMModel.TYPE_COSTLIST;
 	}
 	
 	/**
@@ -202,7 +202,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		
 		for(CostListDataItem c : formulatedProduct.getCostList()){
 			
-			Boolean isFixed = (Boolean)nodeService.getProperty(c.getCost(), BeCPGModel.PROP_COSTFIXED);
+			Boolean isFixed = (Boolean)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
 			
 			if(c.getValue() != null){
 				if(isFixed != null && isFixed == Boolean.TRUE){
@@ -250,7 +250,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		
 		if(entityTplNodeRef != null){			
 			
-			List<CostListDataItem> costList = alfrescoRepository.loadDataList(entityTplNodeRef, BeCPGModel.TYPE_COSTLIST, BeCPGModel.TYPE_COSTLIST);
+			List<CostListDataItem> costList = alfrescoRepository.loadDataList(entityTplNodeRef, PLMModel.TYPE_COSTLIST, PLMModel.TYPE_COSTLIST);
 			
 			for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 				for(CostListDataItem c : costList){

@@ -3,7 +3,7 @@
  var beCPGMenu = getOrCreateBeCPGMenu();
 
    if (beCPGMenu != null) {
-      beCPGMenu.config.widgets.push( {
+      widgetUtils.findObject(model.jsonModel, "id", "HEADER_TOOLS_BECPG").config.widgets.push( {
          name : "alfresco/header/AlfMenuItem",
          config : {
             label : "header.project-list.label",

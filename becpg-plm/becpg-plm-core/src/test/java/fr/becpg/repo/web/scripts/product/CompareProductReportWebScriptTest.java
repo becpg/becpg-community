@@ -29,6 +29,7 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -111,8 +112,8 @@ private void initObjects(){
 			    	{    		
 			    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			    		properties.put(ContentModel.PROP_NAME, "Cost " + i);
-			    		properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
-			    		ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties);
+			    		properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+			    		ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties);
 			    		costs.add(childAssocRef.getChildRef());
 			    	}
 				}
@@ -133,7 +134,7 @@ private void initObjects(){
 			    	{    		
 			    		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			    		properties.put(ContentModel.PROP_NAME, "Allergen " + i);
-			    		ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties);
+			    		ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties);
 			    		allergens.add(childAssocRef.getChildRef());
 			    	}
 				}

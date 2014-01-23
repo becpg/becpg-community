@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
@@ -250,7 +251,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				// Check cost Unit has changed after transaction
 				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
 					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
-					Boolean fixedCost = (Boolean)nodeService.getProperty(vCostListDataItem.getCost(), BeCPGModel.PROP_COSTFIXED);
+					Boolean fixedCost = (Boolean)nodeService.getProperty(vCostListDataItem.getCost(), PLMModel.PROP_COSTFIXED);
 					if(fixedCost==null || fixedCost.equals(Boolean.FALSE)){
 						assertTrue("Check cost unit", vCostListDataItem.getUnit().endsWith("/L"));
 					}					
@@ -381,7 +382,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 
 				// Valid it
-				nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.Valid);
+				nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 				// products
     			NodeRef productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
     			hierarchyService.classifyByHierarchy(productsFolder, rawMaterialNodeRef);
@@ -403,7 +404,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				assertEquals("Check state new version", SystemState.ToValidate.toString(), nodeService.getProperty(newRawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_STATE));
+				assertEquals("Check state new version", SystemState.ToValidate.toString(), nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				expected = "/app:company_home/cm:Products/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
@@ -432,8 +433,8 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				// create variant
 				Map<QName,Serializable> props = new HashMap<>();
 				props.put(ContentModel.PROP_NAME, "variant");
-				props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);				
-				NodeRef variantNodeRef = nodeService.createNode(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT,
+				props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, true);				
+				NodeRef variantNodeRef = nodeService.createNode(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT,
 						props).getChildRef();
 
 				ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -487,11 +488,11 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				assertNotNull("Check new version exists", finishedProductNodeRef);
 				
 				ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef);
-				assertEquals(1, nodeService.getChildAssocs(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
+				assertEquals(1, nodeService.getChildAssocs(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
 				logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef());
 				logger.info("finishedProductNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());				
 				assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
-				assertEquals(nodeService.getChildAssocs(finishedProductNodeRef, BeCPGModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0).getChildRef(), 
+				assertEquals(nodeService.getChildAssocs(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0).getChildRef(), 
 						productData.getCompoListView().getCompoList().get(2).getVariants().get(0));
 				
 				return null;
@@ -597,24 +598,24 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					if(supplierNodeRef == null){
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						properties.put(ContentModel.PROP_NAME, supplierName);
-						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					}
 					
 					supplierNodeRefs.add(supplierNodeRef);
 				}
 				
 				
-				associationService.update(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
+				associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
 				
 				// check
-				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				assertEquals("", 1, targetNodeRefs.size());
 				
 				//Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
 				
 				// add new Supplier
-				associationService.update(workingCopyNodeRef, BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs);
+				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
 				
 				// check-in
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
@@ -624,7 +625,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				
 				
 				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				
 				assertEquals("Assert 3", 3, targetNodeRefs.size());
 				
@@ -632,13 +633,13 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
 				
 				// remove Suppliers
-				associationService.update(workingCopyNodeRef, BeCPGModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
+				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
 				
 				// check-in
 				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				
 				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				assertEquals(0, targetNodeRefs.size());
 				
 			return null;

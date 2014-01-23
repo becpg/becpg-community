@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.test.BeCPGPLMTestHelper;
 
@@ -53,7 +53,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "Supplier 1");
 				return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 			}
 		}, false, true);	
 		
@@ -62,7 +62,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				
 				// suggest supplier 1
 				String[] arrClassNames = { "bcpg:supplier" };
-				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames, null).getResults();
+				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames, null).getResults();
 
 				boolean containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
@@ -76,7 +76,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				assertTrue("check supplier key", containsSupplier);
 
 				// suggest supplier (return supplier 1 and template				
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "*", 0, 10,arrClassNames,null).getResults();
+				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, "*", 0, 10,arrClassNames,null).getResults();
 
 				containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
@@ -92,7 +92,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				// suggest supplier and exclude entityTplAspect (return supplier 1 and template				
 				Map<String, Serializable> props = new HashMap<String, Serializable>();
 				props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, "bcpg:entityTplAspect");
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "*", 0, 10,arrClassNames,props).getResults();
+				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, "*", 0, 10,arrClassNames,props).getResults();
 
 				containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
@@ -107,17 +107,17 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 
 				// filter by client : no results
 				String[] arrClassNames2 = { "bcpg:client" };
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames2,null).getResults();
+				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames2,null).getResults();
 
 				assertEquals("0 suggestion", 0, suggestions.size());
 				
 				//test permissions
 				authenticationComponent.setSystemUserAsCurrentUser();				
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();				
+				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();				
 				assertEquals("2 suggestion", 2, suggestions.size());
 				
 				authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);				
-				suggestions = entityListValuePlugin.suggestTargetAssoc(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
+				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT, "*", 0, 10, null, null).getResults();
 				assertEquals("1 suggestion", 1, suggestions.size());
 				
 				return null;

@@ -17,7 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -132,7 +132,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	private void visitPart(VariantDataItem variantDataItem, NodeRef part, List<AllergenListDataItem> allergenList, List<AllergenListDataItem> retainNodes) {
 
 	
-		List<AllergenListDataItem> allergenListDataItems = alfrescoRepository.loadDataList(part, BeCPGModel.TYPE_ALLERGENLIST, BeCPGModel.TYPE_ALLERGENLIST);
+		List<AllergenListDataItem> allergenListDataItems = alfrescoRepository.loadDataList(part, PLMModel.TYPE_ALLERGENLIST, PLMModel.TYPE_ALLERGENLIST);
 
 		
 		for (AllergenListDataItem allergenListDataItem : allergenListDataItems) {
@@ -246,8 +246,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			public int compare(AllergenListDataItem a1, AllergenListDataItem a2){
             	
             	int comp = EQUAL;
-            	String type1 = (String)nodeService.getProperty(a1.getAllergen(), BeCPGModel.PROP_ALLERGEN_TYPE);
-            	String type2 = (String)nodeService.getProperty(a2.getAllergen(), BeCPGModel.PROP_ALLERGEN_TYPE);
+            	String type1 = (String)nodeService.getProperty(a1.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+            	String type2 = (String)nodeService.getProperty(a2.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
             	
             	if(type1 == null){
             		logger.warn("AllergenType is null for " + a1.getAllergen());            		

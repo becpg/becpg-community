@@ -26,9 +26,9 @@ import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.namespace.QName;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -41,7 +41,7 @@ public class LabelingRuleListPolicy extends AbstractBeCPGPolicy implements CopyS
 	}
 
 	public void doInit() {
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, BeCPGModel.TYPE_LABELING_RULE_LIST, new JavaBehaviour(this, "getCopyCallback"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_LABELING_RULE_LIST, new JavaBehaviour(this, "getCopyCallback"));
 	}
 
 

@@ -70,8 +70,7 @@ public class DockBarWebScript extends AbstractWebScript {
 	private ServiceRegistry serviceRegistry;
 
 	private static int DOCKBAR_SIZE = 6;
-	
-	
+
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -118,24 +117,20 @@ public class DockBarWebScript extends AbstractWebScript {
 
 			LinkedList<NodeRef> elements = new LinkedList<NodeRef>();
 
-
 			if (nodeRefs != null && nodeRefs.length() > 0) {
 				String[] splitted = nodeRefs.split(",");
 				for (String field : splitted) {
 					NodeRef el = new NodeRef(field);
-					if(!el.equals(productNodeRef)){
+					if (!el.equals(productNodeRef)) {
 						elements.add(el);
 					}
-					
+
 				}
 			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Entity NodeRef empty : " + productNodeRef != null);
-				if(productNodeRef!=null) {
-					logger.debug("Subclass of product :"
-								+ serviceRegistry.getDictionaryService().isSubClass(serviceRegistry.getNodeService().getType(productNodeRef), BeCPGModel.TYPE_PRODUCT));
-				}
+
 				logger.debug("Element.size(): " + elements.size());
 			}
 
@@ -143,10 +138,10 @@ public class DockBarWebScript extends AbstractWebScript {
 
 				QName type = serviceRegistry.getNodeService().getType(productNodeRef);
 
-				if ( (serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_PRODUCT) || (serviceRegistry.getDictionaryService().isSubClass(type,
-								BeCPGModel.TYPE_ENTITY_V2) && !serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_SYSTEM_ENTITY)))) {
+				if (serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
+						&& !serviceRegistry.getDictionaryService().isSubClass(type, BeCPGModel.TYPE_SYSTEM_ENTITY)) {
 					if (elements.size() > DOCKBAR_SIZE - 1) {
-						elements.remove(DOCKBAR_SIZE - 1 );
+						elements.remove(DOCKBAR_SIZE - 1);
 					}
 					elements.add(0, productNodeRef);
 

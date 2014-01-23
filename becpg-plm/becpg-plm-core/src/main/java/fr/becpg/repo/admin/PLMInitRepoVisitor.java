@@ -36,6 +36,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.SecurityModel;
@@ -342,7 +343,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 		// quality
 		else if (folderName == PlmRepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA) {
-			specialiseType = BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
+			specialiseType = PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
 		} else if (folderName == PlmRepoConsts.PATH_CONTROL_PLANS) {
 			specialiseType = QualityModel.TYPE_CONTROL_PLAN;
 		} else if (folderName == PlmRepoConsts.PATH_CONTROL_POINTS) {
@@ -352,7 +353,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		} else if (folderName == PlmRepoConsts.PATH_NC) {
 			specialiseType = QualityModel.TYPE_NC;
 		} else if (folderName == PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS) {
-			specialiseType = BeCPGModel.TYPE_PRODUCT_SPECIFICATION;
+			specialiseType = PLMModel.TYPE_PRODUCT_SPECIFICATION;
 		}
 
 		// specialise type
@@ -429,14 +430,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 		// visit supplier
 		Set<QName> dataLists = new LinkedHashSet<QName>();
-		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
-		dataLists.add(BeCPGModel.TYPE_PLANT);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_SUPPLIER, true, dataLists, subFolders);
+		dataLists.add(PLMModel.TYPE_CONTACTLIST);
+		dataLists.add(PLMModel.TYPE_PLANT);
+		entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, true, dataLists, subFolders);
 
 		// visit client
 		dataLists = new LinkedHashSet<QName>();
-		dataLists.add(BeCPGModel.TYPE_CONTACTLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_CLIENT, true, dataLists, subFolders);
+		dataLists.add(PLMModel.TYPE_CONTACTLIST);
+		entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_CLIENT, true, dataLists, subFolders);
 
 		// visit acls
 		dataLists = new LinkedHashSet<QName>();
@@ -468,25 +469,25 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		
 		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
-		entityLists.put(PlmRepoConsts.PATH_NUTS, BeCPGModel.TYPE_NUT);
-		entityLists.put(PlmRepoConsts.PATH_INGS, BeCPGModel.TYPE_ING);
-		entityLists.put(PlmRepoConsts.PATH_ORGANOS,BeCPGModel.TYPE_ORGANO);
-		entityLists.put(PlmRepoConsts.PATH_ALLERGENS,BeCPGModel.TYPE_ALLERGEN);
-		entityLists.put(PlmRepoConsts.PATH_COSTS,BeCPGModel.TYPE_COST);
-		entityLists.put(PlmRepoConsts.PATH_PHYSICO_CHEM,BeCPGModel.TYPE_PHYSICO_CHEM);
-		entityLists.put(PlmRepoConsts.PATH_MICROBIOS,BeCPGModel.TYPE_MICROBIO);
-		entityLists.put(PlmRepoConsts.PATH_GEO_ORIGINS,BeCPGModel.TYPE_GEO_ORIGIN);
-		entityLists.put(PlmRepoConsts.PATH_BIO_ORIGINS,BeCPGModel.TYPE_BIO_ORIGIN);
-		entityLists.put(PlmRepoConsts.PATH_SUBSIDIARIES,BeCPGModel.TYPE_SUBSIDIARY);
-		entityLists.put(PlmRepoConsts.PATH_TRADEMARKS,BeCPGModel.TYPE_TRADEMARK);
-		entityLists.put(PlmRepoConsts.PATH_PLANTS,BeCPGModel.TYPE_PLANT);
-		entityLists.put(PlmRepoConsts.PATH_CERTIFICATIONS,BeCPGModel.TYPE_CERTIFICATION);
-		entityLists.put(PlmRepoConsts.PATH_APPROVALNUMBERS,BeCPGModel.TYPE_APPROVAL_NUMBER);
-		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS,BeCPGModel.TYPE_LABEL_CLAIM);
+		entityLists.put(PlmRepoConsts.PATH_NUTS, PLMModel.TYPE_NUT);
+		entityLists.put(PlmRepoConsts.PATH_INGS, PLMModel.TYPE_ING);
+		entityLists.put(PlmRepoConsts.PATH_ORGANOS,PLMModel.TYPE_ORGANO);
+		entityLists.put(PlmRepoConsts.PATH_ALLERGENS,PLMModel.TYPE_ALLERGEN);
+		entityLists.put(PlmRepoConsts.PATH_COSTS,PLMModel.TYPE_COST);
+		entityLists.put(PlmRepoConsts.PATH_PHYSICO_CHEM,PLMModel.TYPE_PHYSICO_CHEM);
+		entityLists.put(PlmRepoConsts.PATH_MICROBIOS,PLMModel.TYPE_MICROBIO);
+		entityLists.put(PlmRepoConsts.PATH_GEO_ORIGINS,PLMModel.TYPE_GEO_ORIGIN);
+		entityLists.put(PlmRepoConsts.PATH_BIO_ORIGINS,PLMModel.TYPE_BIO_ORIGIN);
+		entityLists.put(PlmRepoConsts.PATH_SUBSIDIARIES,PLMModel.TYPE_SUBSIDIARY);
+		entityLists.put(PlmRepoConsts.PATH_TRADEMARKS,PLMModel.TYPE_TRADEMARK);
+		entityLists.put(PlmRepoConsts.PATH_PLANTS,PLMModel.TYPE_PLANT);
+		entityLists.put(PlmRepoConsts.PATH_CERTIFICATIONS,PLMModel.TYPE_CERTIFICATION);
+		entityLists.put(PlmRepoConsts.PATH_APPROVALNUMBERS,PLMModel.TYPE_APPROVAL_NUMBER);
+		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS,PLMModel.TYPE_LABEL_CLAIM);
 		entityLists.put(PlmRepoConsts.PATH_PROCESSSTEPS,MPMModel.TYPE_PROCESSSTEP);
 		entityLists.put(PlmRepoConsts.PATH_VARIANT_CHARACTS,VariantModel.TYPE_CHARACT);		
-		entityLists.put(PlmRepoConsts.PATH_STORAGE_CONDITIONS,BeCPGModel.TYPE_STORAGE_CONDITIONS);
-		entityLists.put(PlmRepoConsts.PATH_PRECAUTION_OF_USE,BeCPGModel.TYPE_PRECAUTION_OF_USE);
+		entityLists.put(PlmRepoConsts.PATH_STORAGE_CONDITIONS,PLMModel.TYPE_STORAGE_CONDITIONS);
+		entityLists.put(PlmRepoConsts.PATH_PRECAUTION_OF_USE,PLMModel.TYPE_PRECAUTION_OF_USE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TEMPLATES,PackModel.TYPE_LABELING_TEMPLATE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL,PackModel.TYPE_LABEL);
 		
@@ -499,13 +500,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		
        Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
-		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RAWMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
-		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_PACKAGINGMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
-		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
-		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_FINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
-		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
-		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_PACKAGINGKIT), BeCPGModel.TYPE_LINKED_VALUE);
-		entityLists.put(HierarchyHelper.getHierarchyPathName(BeCPGModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_PACKAGINGMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_SEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_FINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_PACKAGINGKIT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);		
 	}
@@ -522,7 +523,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		
 		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
-		entityLists.put(PlmRepoConsts.PATH_ING_TYPES,BeCPGModel.TYPE_ING_TYPE_ITEM);
+		entityLists.put(PlmRepoConsts.PATH_ING_TYPES,PLMModel.TYPE_ING_TYPE_ITEM);
 		entityLists.put(PlmRepoConsts.PATH_ALLERGEN_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_GROUPS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_TYPES,BeCPGModel.TYPE_LIST_VALUE);
@@ -566,12 +567,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		NodeRef productTplsNodeRef = visitFolder(entityTplsNodeRef, PlmRepoConsts.PATH_PRODUCT_TEMPLATES);
 
 		Set<QName> productTypes = new HashSet<QName>();
-		productTypes.add(BeCPGModel.TYPE_RAWMATERIAL);
-		productTypes.add(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT);
-		productTypes.add(BeCPGModel.TYPE_FINISHEDPRODUCT);
-		productTypes.add(BeCPGModel.TYPE_PACKAGINGMATERIAL);
-		productTypes.add(BeCPGModel.TYPE_PACKAGINGKIT);
-		productTypes.add(BeCPGModel.TYPE_RESOURCEPRODUCT);
+		productTypes.add(PLMModel.TYPE_RAWMATERIAL);
+		productTypes.add(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+		productTypes.add(PLMModel.TYPE_FINISHEDPRODUCT);
+		productTypes.add(PLMModel.TYPE_PACKAGINGMATERIAL);
+		productTypes.add(PLMModel.TYPE_PACKAGINGKIT);
+		productTypes.add(PLMModel.TYPE_RESOURCEPRODUCT);
 
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
@@ -583,61 +584,61 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<QName>();
 
-			if (productType.equals(BeCPGModel.TYPE_RAWMATERIAL)) {
+			if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
 
-				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_PRICELIST);
-				dataLists.add(BeCPGModel.TYPE_NUTLIST);
-				dataLists.add(BeCPGModel.TYPE_INGLIST);
-				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
-				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_PRICELIST);
+				dataLists.add(PLMModel.TYPE_NUTLIST);
+				dataLists.add(PLMModel.TYPE_INGLIST);
+				dataLists.add(PLMModel.TYPE_ORGANOLIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 
-			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL)) {
+			} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
 
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_PRICELIST);
-				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_PRICELIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PackModel.TYPE_LABELING_LIST);
 
-			} else if (productType.equals(BeCPGModel.TYPE_RESOURCEPRODUCT)) {
+			} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
 
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_PRICELIST);
-				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_PRICELIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 
-			} else if (productType.equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT)) {
+			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
-				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				dataLists.add(PLMModel.TYPE_COMPOLIST);
 				dataLists.add(MPMModel.TYPE_PROCESSLIST);
-				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_NUTLIST);
-				dataLists.add(BeCPGModel.TYPE_INGLIST);
-				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
-				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_NUTLIST);
+				dataLists.add(PLMModel.TYPE_INGLIST);
+				dataLists.add(PLMModel.TYPE_ORGANOLIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 
-			} else if (productType.equals(BeCPGModel.TYPE_FINISHEDPRODUCT)) {
+			} else if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
 
-				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
-				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+				dataLists.add(PLMModel.TYPE_COMPOLIST);
+				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(MPMModel.TYPE_PROCESSLIST);
-				dataLists.add(BeCPGModel.TYPE_ALLERGENLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_NUTLIST);
-				dataLists.add(BeCPGModel.TYPE_INGLIST);
-				dataLists.add(BeCPGModel.TYPE_INGLABELINGLIST);
-				dataLists.add(BeCPGModel.TYPE_ORGANOLIST);
-				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
-				dataLists.add(BeCPGModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_NUTLIST);
+				dataLists.add(PLMModel.TYPE_INGLIST);
+				dataLists.add(PLMModel.TYPE_INGLABELINGLIST);
+				dataLists.add(PLMModel.TYPE_ORGANOLIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 
-			} else if (productType.equals(BeCPGModel.TYPE_PACKAGINGKIT)) {
+			} else if (productType.equals(PLMModel.TYPE_PACKAGINGKIT)) {
 
-				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
-				dataLists.add(BeCPGModel.TYPE_COSTLIST);
-				dataLists.add(BeCPGModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
+				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 
 			} else if (productType.equals(SecurityModel.TYPE_ACL_GROUP)) {
 
@@ -656,15 +657,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 		// visit productMicrobioCriteria
 		Set<QName> dataLists = new LinkedHashSet<QName>();
-		dataLists.add(BeCPGModel.TYPE_MICROBIOLIST);
+		dataLists.add(PLMModel.TYPE_MICROBIOLIST);
 		entityTplService
-				.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists, null);
+				.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA, true, dataLists, null);
 
 		// visit productSpecification
 		dataLists.clear();
-		dataLists.add(BeCPGModel.TYPE_FORBIDDENINGLIST);
-		dataLists.add(BeCPGModel.TYPE_LABELING_RULE_LIST);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, BeCPGModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists, null);
+		dataLists.add(PLMModel.TYPE_FORBIDDENINGLIST);
+		dataLists.add(PLMModel.TYPE_LABELING_RULE_LIST);
+		entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, true, dataLists, null);
 
 		// visit controlPlan
 		Set<String> subFolders = new HashSet<String>();
@@ -713,7 +714,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		
 		try {
 
-			QName [] productTypes = {BeCPGModel.TYPE_FINISHEDPRODUCT, BeCPGModel.TYPE_RAWMATERIAL, BeCPGModel.TYPE_SEMIFINISHEDPRODUCT, BeCPGModel.TYPE_PACKAGINGMATERIAL};
+			QName [] productTypes = {PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT, PLMModel.TYPE_PACKAGINGMATERIAL};
 			String [] defaultReport = {PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_CLIENT_PATH};
 			String [] defaultReportName = {productReportClientName, productReportClientName, productReportProductionName, productReportClientName};
 			String [] otherReport = {PRODUCT_REPORT_PRODUCTION_PATH, null, null, null};
@@ -789,7 +790,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS),
 					EXPORT_PRODUCTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.XLS,
-					BeCPGModel.TYPE_PRODUCT, false, true, false);
+					PLMModel.TYPE_PRODUCT, false, true, false);
 
 			reportTplService
 					.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);

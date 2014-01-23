@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.ListValueServiceImpl;
@@ -77,7 +78,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		String productType = (String) props.get(ListValueService.PROP_PRODUCT_TYPE);
 
 		if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
-			return suggestTargetAssoc(BeCPGModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
+			return suggestTargetAssoc(PLMModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
 			QName productTypeQName = QName.createQName(productType, namespaceService);
 			return suggestProductReportTemplates(productTypeQName, query, pageNum, pageSize);
@@ -110,7 +111,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 				StringBuffer ret = new StringBuffer();
 				for (QName typeTmp : types) {
-					if (BeCPGModel.TYPE_PRODUCT.equals(typeTmp)) {
+					if (PLMModel.TYPE_PRODUCT.equals(typeTmp)) {
 						for (QName subType : dictionaryService.getSubTypes(typeTmp, true)) {
 							if (ret.length() > 0) {
 								ret.append(" OR ");

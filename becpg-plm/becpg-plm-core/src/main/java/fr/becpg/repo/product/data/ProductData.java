@@ -38,10 +38,11 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 
 
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity,HierarchicalEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity,HierarchicalEntity, StateableEntity {
 
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
@@ -573,6 +574,12 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 	
 	
+	@Override
+	public String getEntityState() {
+		return state.toString();
+	}
+
+	
 	/**
 	 * Instantiates a new product data.
 	 */
@@ -735,6 +742,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			return false;
 		return true;
 	}
+
 
 
 }

@@ -41,6 +41,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
@@ -145,7 +146,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				/*-- Create images folder --*/
 				NodeRef imagesNodeRef = fileFolderService.create(testFolderNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES), ContentModel.TYPE_FOLDER).getNodeRef();
 
-				addProductImage(imagesNodeRef,BeCPGModel.TYPE_FINISHEDPRODUCT);
+				addProductImage(imagesNodeRef,PLMModel.TYPE_FINISHEDPRODUCT);
 
 				/*-- Create product --*/
 				logger.debug("Create product");
@@ -210,11 +211,11 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				NodeRef entityTplNodeRef = entityTplService.getEntityTpl(BeCPGModel.TYPE_FINISHEDPRODUCT);
+				NodeRef entityTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_FINISHEDPRODUCT);
 				NodeRef imagesFolder = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 				assertNotNull(imagesFolder);
-				addProductImage(imagesFolder,BeCPGModel.TYPE_FINISHEDPRODUCT);
+				addProductImage(imagesFolder,PLMModel.TYPE_FINISHEDPRODUCT);
 
 				// add permissions on image folder Tpl
 				if(nodeService.hasAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL)){
@@ -506,7 +507,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+				dataLists.add(PLMModel.TYPE_COMPOLIST);
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 				
 			}
@@ -547,20 +548,20 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		logger.debug("getWUsedProduct");
 		
 		List<CompoListDataItem> wUsedList = new ArrayList<CompoListDataItem>();		
-		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, BeCPGModel.ASSOC_COMPOLIST_PRODUCT, WUSED_LEVEL);
+		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT, WUSED_LEVEL);
 		
 		for(Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()){
 			
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());
 
-			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_UNIT));
-			DeclarationType declType = DeclarationType.valueOf((String)properties.get(BeCPGModel.PROP_COMPOLIST_DECL_TYPE));
+			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(PLMModel.PROP_COMPOLIST_UNIT));
+			DeclarationType declType = DeclarationType.valueOf((String)properties.get(PLMModel.PROP_COMPOLIST_DECL_TYPE));
 			
 			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), (CompoListDataItem)null, 
-										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY), 
-										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
+										(Double)properties.get(PLMModel.PROP_COMPOLIST_QTY), 
+										(Double)properties.get(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
 										compoListUnit, 
-										(Double)properties.get(BeCPGModel.PROP_COMPOLIST_LOSS_PERC), 
+										(Double)properties.get(PLMModel.PROP_COMPOLIST_LOSS_PERC), 
 										declType, 
 										kv.getValue().getEntityNodeRef());
 			
@@ -593,7 +594,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
 				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(BeCPGModel.TYPE_PACKAGINGLIST);
+				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished Product 1");
@@ -638,16 +639,16 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		logger.debug("getWUsedProduct");
 		
 		List<PackagingListDataItem> wUsedList = new ArrayList<PackagingListDataItem>();
-		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT, WUSED_LEVEL);
+		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, WUSED_LEVEL);
 		
 		for(Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()){
 			
 			Map<QName, Serializable> properties = nodeService.getProperties(kv.getKey());			
-			PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_UNIT));							
-			PackagingLevel packagingLevel = PackagingLevel.valueOf((String)properties.get(BeCPGModel.PROP_PACKAGINGLIST_PKG_LEVEL));
+			PackagingListUnit packagingListUnit = PackagingListUnit.valueOf((String)properties.get(PLMModel.PROP_PACKAGINGLIST_UNIT));							
+			PackagingLevel packagingLevel = PackagingLevel.valueOf((String)properties.get(PLMModel.PROP_PACKAGINGLIST_PKG_LEVEL));
 			
 			PackagingListDataItem packagingListDataItem = new PackagingListDataItem(kv.getKey(), 									
-						(Double)properties.get(BeCPGModel.PROP_PACKAGINGLIST_QTY), 
+						(Double)properties.get(PLMModel.PROP_PACKAGINGLIST_QTY), 
 						packagingListUnit, 
 						packagingLevel, true, 
 						kv.getValue().getEntityNodeRef());

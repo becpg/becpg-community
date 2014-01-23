@@ -42,21 +42,21 @@ public interface WUsedListService {
      */
     public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, QName associationQName, int maxDepthLevel);
     
-    /**
-     * Evaluate the WUsed associations
-     * @param targetNodeRef
-     * @return
-     */
-    @Deprecated
-    public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef);
-    
-    /**
-     * Evaluate the list of the association
-     * @param associationName
-     * @return
-     */
-    @Deprecated
-    public QName evaluateListFromAssociation(QName associationName);
+//    /**
+//     * Evaluate the WUsed associations
+//     * @param targetNodeRef
+//     * @return
+//     */
+//    @Deprecated
+//    public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef);
+//    
+//    /**
+//     * Evaluate the list of the association
+//     * @param associationName
+//     * @return
+//     */
+//    @Deprecated
+//    public QName evaluateListFromAssociation(QName associationName);
 
 	
     

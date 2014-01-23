@@ -15,7 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -114,7 +114,7 @@ public class MultiLevelDataServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 				
 				DataListFilter dataListFilter = new DataListFilter();
-				dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
+				dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
 				dataListFilter.setEntityNodeRefs(Arrays.asList(finishedProductNodeRef));
 				
 				MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);

@@ -18,6 +18,7 @@ import org.junit.Test;
 import com.ibm.icu.text.DecimalFormat;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -92,7 +93,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate details --*/");
-				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, BeCPGModel.TYPE_NUTLIST,
+				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_NUTLIST,
 						"nutList", null);
 
 				Assert.assertNotNull(ret);
@@ -171,7 +172,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 				//formulate Details
 				List<NodeRef> costNodeRefs = new ArrayList<NodeRef>();			
-				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, BeCPGModel.TYPE_COSTLIST,
+				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST,
 						"costList", costNodeRefs);
 				
 				Assert.assertNotNull(ret);

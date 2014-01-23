@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
@@ -45,7 +45,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	@Override
 	protected QName getDataListVisited(){
 		
-		return BeCPGModel.TYPE_PHYSICOCHEMLIST;
+		return PLMModel.TYPE_PHYSICOCHEMLIST;
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		if(!super.isCharactFormulated(sl)){
 			return false;
 		}
-		Boolean isFormulated = (Boolean)nodeService.getProperty(sl.getCharactNodeRef(), BeCPGModel.PROP_PHYSICO_CHEM_FORMULATED); 
+		Boolean isFormulated = (Boolean)nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED); 
 		return isFormulated != null ? isFormulated.booleanValue() : false;
 	}
 	

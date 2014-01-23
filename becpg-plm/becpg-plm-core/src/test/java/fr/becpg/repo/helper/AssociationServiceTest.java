@@ -22,7 +22,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.report.entity.EntityReportService;
@@ -85,24 +85,24 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 					if(supplierNodeRef == null){
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						properties.put(ContentModel.PROP_NAME, supplierName);
-						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					}
 					
 					supplierNodeRefs.add(supplierNodeRef);
 				}
 				
 				
-				associationService.update(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
+				associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
 				
 				// check
-				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				assertEquals("", 1, targetNodeRefs.size());
 				
 				//Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
 				
 				// add new Supplier
-				associationService.update(workingCopyNodeRef, BeCPGModel.ASSOC_SUPPLIERS, supplierNodeRefs);
+				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
 				
 				// check-in
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
@@ -112,7 +112,7 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 				
 				
 				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				
 				assertEquals("Assert 3", 3, targetNodeRefs.size());
 				
@@ -120,7 +120,7 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 				nodeService.deleteNode(supplierNodeRefs.get(0));
 				
 				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				assertEquals("Assert 2", 2, targetNodeRefs.size());
 				
 				
@@ -128,13 +128,13 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
 				
 				// remove Suppliers
-				associationService.update(workingCopyNodeRef, BeCPGModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
+				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
 				
 				// check-in
 				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				
 				// check
-				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				assertEquals(0, targetNodeRefs.size());
 				
 			return null;

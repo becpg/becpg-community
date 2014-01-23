@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -54,14 +55,14 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 					public NodeRef execute() throws Throwable {
 
 						// delete autonum value
-						autoNumService.deleteAutoNumValue(BeCPGModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE);
+						autoNumService.deleteAutoNumValue(PLMModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE);
 
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						String name = "Supplier 1";
 						properties.put(ContentModel.PROP_NAME, name);
 						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
-								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
 					}
 				}, false, true);
@@ -80,7 +81,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						properties.put(ContentModel.PROP_NAME, name);
 						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
-								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
 					}
 				}, false, true);
@@ -101,7 +102,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						properties.put(BeCPGModel.PROP_CODE, "F3");
 						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
-								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
 					}
 				}, false, true);
@@ -122,7 +123,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						properties.put(BeCPGModel.PROP_CODE, "F3");
 						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
-								BeCPGModel.TYPE_SUPPLIER, properties).getChildRef();
+								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
 					}
 				}, false, true);
@@ -134,7 +135,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 				// check
 				assertNotNull("Check supplier created", supplier4NodeRef);
 				code4 = (String) nodeService.getProperty(supplier4NodeRef, BeCPGModel.PROP_CODE);
-				Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern(BeCPGModel.TYPE_SUPPLIER,
+				Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern(PLMModel.TYPE_SUPPLIER,
 						BeCPGModel.PROP_CODE));
 				Matcher m1 = p.matcher(code1);
 				System.out.println(code1 + " " + p.toString() + " " + m1.matches());

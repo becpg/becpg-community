@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.common.collect.Lists;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.migration.MigrationService;
@@ -218,10 +218,10 @@ public class MigrationServiceImpl implements MigrationService {
 		ClassDefinition classDef = dictionaryService.getClass(classQName);
 		
 		if(classDef.isAspect()){
-			return LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_TRANSFORMATION));
+			return LuceneHelper.mandatory(LuceneHelper.getCondAspect(PLMModel.ASPECT_TRANSFORMATION));
 		}
 		else{
-			return LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.ASPECT_TRANSFORMATION));
+			return LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.ASPECT_TRANSFORMATION));
 		}
 	}
 	

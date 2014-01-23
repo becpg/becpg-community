@@ -12,7 +12,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.person.PersonServiceImpl;
-import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -33,12 +32,12 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.migration.MigrationService;
-import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -244,14 +243,14 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			String [] nutFactsMethods = {"CIQUAL 2012", "USDA"};
 			
 			for(int i=0 ; i<supplierNames.length ; i++){
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_SUPPLIER)) +
+				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_SUPPLIER)) +
 						LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, supplierNames[i]));
 				
 				final String nutFactsMethod = nutFactsMethods[i];
 				List<NodeRef> results = beCPGSearchService.luceneSearch(query);
 				if(!results.isEmpty()){					
 					NodeRef supplierNodeRef = results.get(0);
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(supplierNodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIERS);
 					logger.info("Migrate table " + supplierNames[i] + " size: " + assocRefs.size());
 					
 					for (final List<AssociationRef> batchList : Lists.partition(assocRefs, 50)) {
@@ -281,16 +280,16 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}
 		else if(ACTION_CREATE_GEN_RAWMATERIAL.equals(action)){
 			
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_RAWMATERIAL)) +
-						LuceneHelper.exclude(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_ERP_CODE)) +
+			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_RAWMATERIAL)) +
+						LuceneHelper.exclude(LuceneHelper.getCondIsNullValue(PLMModel.PROP_ERP_CODE)) +
 						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)) + 
 						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-			List<NodeRef> rawMaterialNodeRefs = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(BeCPGModel.PROP_ERP_CODE));
+			List<NodeRef> rawMaterialNodeRefs = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(PLMModel.PROP_ERP_CODE));
 			Map<String, List<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<String, List<NodeRef>>();
 			
 			for(NodeRef rawMaterialNodeRef : rawMaterialNodeRefs){	
 				
-				String erpCode = (String)nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_ERP_CODE);
+				String erpCode = (String)nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_ERP_CODE);
 				
 				List<NodeRef> subList = rawMaterialsGroupByERPCode.get(erpCode);
 				if(subList == null){
@@ -324,12 +323,12 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 							
 							// generate a new ERP code
 							String newERPCode = kv.getKey();	
-							List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(n, BeCPGModel.ASSOC_SUPPLIERS);
+							List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(n, PLMModel.ASSOC_SUPPLIERS);
 							for(NodeRef rawMaterialSupplierNodeRef : rawMaterialSupplierNodeRefs){
-								newERPCode += "-" + (String)nodeService.getProperty(rawMaterialSupplierNodeRef, BeCPGModel.PROP_ERP_CODE);
+								newERPCode += "-" + (String)nodeService.getProperty(rawMaterialSupplierNodeRef, PLMModel.PROP_ERP_CODE);
 							}
 							logger.info("Set ERP code for " + n + " code " + newERPCode);
-							nodeService.setProperty(n, BeCPGModel.PROP_ERP_CODE, newERPCode);
+							nodeService.setProperty(n, PLMModel.PROP_ERP_CODE, newERPCode);
 						}
 					}
 										
@@ -358,14 +357,14 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}
 		else if(ACTION_DELETE_UNUSED_INGS.equals(action)){
 			
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ING));
+			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_ING));
 			List<NodeRef> ingNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
 			
 			for(NodeRef ingNodeRef : ingNodeRefs){	
 				
-				List<AssociationRef> ingAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_INGLIST_ING);
-				List<AssociationRef> inVolAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES);
-				List<AssociationRef> volAssocRefs = nodeService.getSourceAssocs(ingNodeRef, BeCPGModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES);
+				List<AssociationRef> ingAssocRefs = nodeService.getSourceAssocs(ingNodeRef, PLMModel.ASSOC_INGLIST_ING);
+				List<AssociationRef> inVolAssocRefs = nodeService.getSourceAssocs(ingNodeRef, PLMModel.ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES);
+				List<AssociationRef> volAssocRefs = nodeService.getSourceAssocs(ingNodeRef, PLMModel.ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES);
 				
 				if(ingAssocRefs.isEmpty() && inVolAssocRefs.isEmpty() && volAssocRefs.isEmpty() && nodeService.exists(ingNodeRef)){
 					logger.info("Delete ing : " + nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME));

@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -163,12 +163,12 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 				List<LabelClaimListDataItem> labelClaimListDataItems = new ArrayList<LabelClaimListDataItem>();
 
-				nodeService.setProperty(labelClaims.get(0), BeCPGModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + nut1
+				nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + nut1
 						+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.ProductUnit).L and unit != T(fr.becpg.repo.product.data.ProductUnit).mL )"
 						+ " or (nutList.?[nut.toString() == '" + nut1
 						+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.ProductUnit).L or unit== T(fr.becpg.repo.product.data.ProductUnit).mL )))"
 						+ " and (nutList.?[nut.toString() == '" + nut1 + "'][0].value > 4 )");
-				nodeService.setProperty(labelClaims.get(1), BeCPGModel.PROP_LABEL_CLAIM_FORMULA, "nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
+				nodeService.setProperty(labelClaims.get(1), PLMModel.PROP_LABEL_CLAIM_FORMULA, "nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
 
 				labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(0), "Nutritionnelle", false));
 				labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(1), "Nutritionnelle", false));

@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -75,18 +76,18 @@ public class SortableListPolicyTest extends PLMBaseTestCase {
 
 				// simulate the UI
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_COSTLIST);
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
 
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()),
-						BeCPGModel.TYPE_COSTLIST, properties);
-				nodeService.createAssociation(childAssocRef.getChildRef(), costs.get(3), BeCPGModel.ASSOC_COSTLIST_COST);
+						PLMModel.TYPE_COSTLIST, properties);
+				nodeService.createAssociation(childAssocRef.getChildRef(), costs.get(3), PLMModel.ASSOC_COSTLIST_COST);
 
 				childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()),
-						BeCPGModel.TYPE_COSTLIST, properties);
-				nodeService.createAssociation(childAssocRef.getChildRef(), costs.get(3), BeCPGModel.ASSOC_COSTLIST_COST);
+						PLMModel.TYPE_COSTLIST, properties);
+				nodeService.createAssociation(childAssocRef.getChildRef(), costs.get(3), PLMModel.ASSOC_COSTLIST_COST);
 
 				return null;
 

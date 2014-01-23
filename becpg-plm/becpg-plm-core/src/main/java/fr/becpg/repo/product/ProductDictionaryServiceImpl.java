@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 
 /**
@@ -52,17 +52,17 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 		QName wusedList = null;
 		QName type = nodeService.getType(childNodeRef);
 		
-		if(type.equals(BeCPGModel.TYPE_RAWMATERIAL) ||
-				type.equals(BeCPGModel.TYPE_SEMIFINISHEDPRODUCT) ||
-				type.equals(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT) ||
-				type.equals(BeCPGModel.TYPE_FINISHEDPRODUCT)){
+		if(type.equals(PLMModel.TYPE_RAWMATERIAL) ||
+				type.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) ||
+				type.equals(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) ||
+				type.equals(PLMModel.TYPE_FINISHEDPRODUCT)){
 			
-			wusedList = BeCPGModel.TYPE_COMPOLIST;
+			wusedList = PLMModel.TYPE_COMPOLIST;
 		}
-		else if(type.equals(BeCPGModel.TYPE_PACKAGINGMATERIAL) ||
-				type.equals(BeCPGModel.TYPE_PACKAGINGKIT)){
+		else if(type.equals(PLMModel.TYPE_PACKAGINGMATERIAL) ||
+				type.equals(PLMModel.TYPE_PACKAGINGKIT)){
 			
-			wusedList = BeCPGModel.TYPE_PACKAGINGLIST;
+			wusedList = PLMModel.TYPE_PACKAGINGLIST;
 		}
 		else{
 			logger.error("Unknown productType: " + type);

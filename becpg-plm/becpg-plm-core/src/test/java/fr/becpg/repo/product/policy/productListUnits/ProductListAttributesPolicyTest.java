@@ -15,7 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -50,25 +50,25 @@ public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 	@Test
 	public void testCreateProductLists() {
 
-		dataLists.add(BeCPGModel.TYPE_COSTLIST);
-		dataLists.add(BeCPGModel.TYPE_NUTLIST);
+		dataLists.add(PLMModel.TYPE_COSTLIST);
+		dataLists.add(PLMModel.TYPE_NUTLIST);
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
 				cost1 = costs.get(0);
-				nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost1, PLMModel.PROP_COSTCURRENCY, "€");
 				cost2 = costs.get(1);
-				nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "$");
+				nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "$");
 				cost3 = costs.get(2);
-				nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
-				nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, true);
+				nodeService.setProperty(cost3, PLMModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost3, PLMModel.PROP_COSTFIXED, true);
 
 				nut1 = nuts.get(0);
-				nodeService.setProperty(nut1, BeCPGModel.PROP_NUTUNIT, "kcal");
+				nodeService.setProperty(nut1, PLMModel.PROP_NUTUNIT, "kcal");
 				nut2 = nuts.get(1);
-				nodeService.setProperty(nut2, BeCPGModel.PROP_NUTUNIT, "kJ");
+				nodeService.setProperty(nut2, PLMModel.PROP_NUTUNIT, "kJ");
 
 				/*
 				 * Create raw material
@@ -129,7 +129,7 @@ public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 				/*
 				 * Change product unit
 				 */
-				nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_PRODUCT_UNIT, ProductUnit.L);
+				nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.L);
 
 				return null;
 			}
@@ -200,12 +200,12 @@ public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 				}
 				assertEquals(3, checks);
 
-				nodeService.removeAssociation(costListItem1NodeRef, cost1, BeCPGModel.ASSOC_COSTLIST_COST);
-				nodeService.removeAssociation(costListItem2NodeRef, cost2, BeCPGModel.ASSOC_COSTLIST_COST);
-				nodeService.removeAssociation(costListItem3NodeRef, cost3, BeCPGModel.ASSOC_COSTLIST_COST);
-				nodeService.createAssociation(costListItem1NodeRef, cost2, BeCPGModel.ASSOC_COSTLIST_COST);
-				nodeService.createAssociation(costListItem2NodeRef, cost3, BeCPGModel.ASSOC_COSTLIST_COST);
-				nodeService.createAssociation(costListItem3NodeRef, cost1, BeCPGModel.ASSOC_COSTLIST_COST);
+				nodeService.removeAssociation(costListItem1NodeRef, cost1, PLMModel.ASSOC_COSTLIST_COST);
+				nodeService.removeAssociation(costListItem2NodeRef, cost2, PLMModel.ASSOC_COSTLIST_COST);
+				nodeService.removeAssociation(costListItem3NodeRef, cost3, PLMModel.ASSOC_COSTLIST_COST);
+				nodeService.createAssociation(costListItem1NodeRef, cost2, PLMModel.ASSOC_COSTLIST_COST);
+				nodeService.createAssociation(costListItem2NodeRef, cost3, PLMModel.ASSOC_COSTLIST_COST);
+				nodeService.createAssociation(costListItem3NodeRef, cost1, PLMModel.ASSOC_COSTLIST_COST);
 
 				checks = 0;
 				for (NutListDataItem n : rawMaterialDBData.getNutList()) {
@@ -220,10 +220,10 @@ public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 				}
 				assertEquals(2, checks);
 
-				nodeService.removeAssociation(nutListItem1NodeRef, nut1, BeCPGModel.ASSOC_NUTLIST_NUT);
-				nodeService.removeAssociation(nutListItem2NodeRef, nut2, BeCPGModel.ASSOC_NUTLIST_NUT);
-				nodeService.createAssociation(nutListItem1NodeRef, nut2, BeCPGModel.ASSOC_NUTLIST_NUT);
-				nodeService.createAssociation(nutListItem2NodeRef, nut1, BeCPGModel.ASSOC_NUTLIST_NUT);
+				nodeService.removeAssociation(nutListItem1NodeRef, nut1, PLMModel.ASSOC_NUTLIST_NUT);
+				nodeService.removeAssociation(nutListItem2NodeRef, nut2, PLMModel.ASSOC_NUTLIST_NUT);
+				nodeService.createAssociation(nutListItem1NodeRef, nut2, PLMModel.ASSOC_NUTLIST_NUT);
+				nodeService.createAssociation(nutListItem2NodeRef, nut1, PLMModel.ASSOC_NUTLIST_NUT);
 
 				return null;
 			}
@@ -275,12 +275,12 @@ public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 
 				
 				cost1 = costs.get(0);
-				nodeService.setProperty(cost1, BeCPGModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost1, PLMModel.PROP_COSTCURRENCY, "€");
 				cost2 = costs.get(1);
-				nodeService.setProperty(cost2, BeCPGModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "€");
 				cost3 = costs.get(2);
-				nodeService.setProperty(cost3, BeCPGModel.PROP_COSTCURRENCY, "€");
-				nodeService.setProperty(cost3, BeCPGModel.PROP_COSTFIXED, false);
+				nodeService.setProperty(cost3, PLMModel.PROP_COSTCURRENCY, "€");
+				nodeService.setProperty(cost3, PLMModel.PROP_COSTFIXED, false);
 				
 				return null;
 

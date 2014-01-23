@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -307,10 +308,10 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		assertEquals("Fish", HierarchyHelper.getHierachyName(productData.getHierarchy2(), nodeService));
 
 		/*-- check associations --*/
-		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(product1NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+		List<AssociationRef> supplierAssocRefs = nodeService.getTargetAssocs(product1NodeRef, PLMModel.ASSOC_SUPPLIERS);
 		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		String supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-		String supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+		String supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), PLMModel.PROP_ERP_CODE);
+		String supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), PLMModel.PROP_ERP_CODE);
 		assertEquals("check supplier name", "1000012", supplier1Code);
 		assertEquals("check supplier name", "1000013", supplier2Code);
 		// does space between association values work ?
@@ -323,10 +324,10 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		// productFolder => look for product
 
 		assertNotNull("product 2 should exist", product2NodeRef);
-		supplierAssocRefs = nodeService.getTargetAssocs(product2NodeRef, BeCPGModel.ASSOC_SUPPLIERS);
+		supplierAssocRefs = nodeService.getTargetAssocs(product2NodeRef, PLMModel.ASSOC_SUPPLIERS);
 		assertEquals("check product has 2 suppliers defined", 2, supplierAssocRefs.size());
-		supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
-		supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), BeCPGModel.PROP_ERP_CODE);
+		supplier1Code = (String) nodeService.getProperty(supplierAssocRefs.get(0).getTargetRef(), PLMModel.PROP_ERP_CODE);
+		supplier2Code = (String) nodeService.getProperty(supplierAssocRefs.get(1).getTargetRef(), PLMModel.PROP_ERP_CODE);
 		assertEquals("check supplier name", "1000012", supplier1Code);
 		assertEquals("check supplier name", "1000014", supplier2Code);
 
@@ -346,7 +347,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 			for (String s : costNames) {
 				if (s.equals(costName)) {
-					assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_COSTLIST_VALUE));
+					assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COSTLIST_VALUE));
 					costChecked++;
 					break;
 				}
@@ -363,7 +364,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 			for (String s : nutNames) {
 				if (s.equals(nutName)) {
-					assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), BeCPGModel.PROP_NUTLIST_VALUE));
+					assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), PLMModel.PROP_NUTLIST_VALUE));
 					nutChecked++;
 					break;
 				}
@@ -408,7 +409,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 			for (String s : costNames) {
 				if (s.equals(costName)) {
-					assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_COSTLIST_VALUE));
+					assertEquals("Check cost value", costValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COSTLIST_VALUE));
 					costChecked++;
 					break;
 				}
@@ -425,7 +426,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 			for (String s : nutNames) {
 				if (s.equals(nutName)) {
-					assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), BeCPGModel.PROP_NUTLIST_VALUE));
+					assertEquals("Check nut value", nutValues[z_idx], nodeService.getProperty(n.getNodeRef(), PLMModel.PROP_NUTLIST_VALUE));
 					nutChecked++;
 					break;
 				}
@@ -595,8 +596,8 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 					for (String s : rmNames) {
 						if (s.equals(rmName)) {
-							assertEquals("Check rm value", qtyValues[z_idx], nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_COMPOLIST_QTY));
-							assertEquals("Check rm unit", unitValues[z_idx], nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_COMPOLIST_UNIT));
+							assertEquals("Check rm value", qtyValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_QTY));
+							assertEquals("Check rm unit", unitValues[z_idx], nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_UNIT));
 							rmChecked++;
 							break;
 						}
@@ -628,20 +629,20 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		importHierarchies();
 
 		// search by name
-		List<NodeRef> ret = hierarchyService.getRootHierarchies(BeCPGModel.TYPE_RAWMATERIAL, "USDA");
+		List<NodeRef> ret = hierarchyService.getRootHierarchies(PLMModel.TYPE_RAWMATERIAL, "USDA");
 		assertEquals(1, ret.size());
 
 		// search by code
-		assertNotNull(hierarchyService.getRootHierarchy(BeCPGModel.TYPE_RAWMATERIAL, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		assertNotNull(hierarchyService.getRootHierarchy(PLMModel.TYPE_RAWMATERIAL, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 
 		NodeRef parentNodeRef = ret.get(0);
 
 		// search by name
-		ret = hierarchyService.getHierarchies(BeCPGModel.TYPE_RAWMATERIAL, parentNodeRef, "Dairy and Egg Products");
+		ret = hierarchyService.getHierarchies(PLMModel.TYPE_RAWMATERIAL, parentNodeRef, "Dairy and Egg Products");
 		assertEquals(1, ret.size());
 
 		// search by code
-		assertNotNull(hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, parentNodeRef, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		assertNotNull(hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, parentNodeRef, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 	}
 
 	private void importHierarchies() {
@@ -679,11 +680,11 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 		/*-- Check hierarchies --*/
 		logger.debug("Check hierarchies");
-		NodeRef hierarchy1USDA = hierarchyService.getRootHierarchy(BeCPGModel.TYPE_RAWMATERIAL, "USDA");
+		NodeRef hierarchy1USDA = hierarchyService.getRootHierarchy(PLMModel.TYPE_RAWMATERIAL, "USDA");
 		assertNotNull(hierarchy1USDA);
-		NodeRef hierarchy2Dairy = hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Dairy and Egg Products");
+		NodeRef hierarchy2Dairy = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Dairy and Egg Products");
 		assertNotNull(hierarchy2Dairy);
-		NodeRef hierarchy2Spices = hierarchyService.getHierarchy(BeCPGModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Spices and Herbs");
+		NodeRef hierarchy2Spices = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Spices and Herbs");
 		assertNotNull(hierarchy2Spices);
 
 		// check unicity
@@ -737,7 +738,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		
 		
 		for (FileInfo fileInfo : labelClaimsFileInfo) {
-			String formula = (String)nodeService.getProperty( fileInfo.getNodeRef(),BeCPGModel.PROP_LABEL_CLAIM_FORMULA);
+			String formula = (String)nodeService.getProperty( fileInfo.getNodeRef(),PLMModel.PROP_LABEL_CLAIM_FORMULA);
 			
 			Assert.assertNotNull(formula);
 			logger.info(formula);

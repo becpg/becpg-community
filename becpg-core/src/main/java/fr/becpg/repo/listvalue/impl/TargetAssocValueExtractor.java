@@ -22,66 +22,75 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.StateableEntity;
 
 /**
  * Used to extract properties from product
+ * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- *
+ * 
  */
+@Service("targetAssocValueExtractor")
 public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 
-	private QName propName;
-	
+	@Autowired
 	private NodeService nodeService;
-	
+
+	@Autowired
 	private NamespaceService namespaceService;
-	
 
-	public TargetAssocValueExtractor(QName propName,NodeService nodeService,NamespaceService namespaceService) {
-		super();
-		this.propName = propName;
-		this.nodeService = nodeService;
-		this.namespaceService = namespaceService;
-	}
-
+	@Autowired
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
-		
+
 		List<ListValueEntry> suggestions = new ArrayList<ListValueEntry>();
-    	if(nodeRefs!=null){
-    		for(NodeRef nodeRef : nodeRefs){
-    			
-    			String name = (String)nodeService.getProperty(nodeRef, propName);
-    			QName type =  nodeService.getType(nodeRef);
-    			String cssClass = type.getLocalName();
-    			Map<String,String> props = new HashMap<String,String>(2);
-    			props.put("type", type.toPrefixString(namespaceService));
-    			//TODO #798
-    			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)){
-    				String state = (String )nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
-    				cssClass+="-"+state;
-    				props.put("state", state);
-    			}
-    			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)){
-    				props.put("color", (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR));
-    			}
-    			
-    			ListValueEntry entry = new ListValueEntry(nodeRef.toString(),name, cssClass, props);
-   
-    			suggestions.add(entry);
-    			
-    		}
-    	}
+		if (nodeRefs != null) {
+			for (NodeRef nodeRef : nodeRefs) {
+
+				String name = null;
+				QName type = nodeService.getType(nodeRef);
+				String cssClass = type.getLocalName();
+				Map<String, String> props = new HashMap<String, String>(2);
+				props.put("type", type.toPrefixString(namespaceService));
+
+				if (alfrescoRepository.isRegisteredType(type)) {
+					RepositoryEntity entity = alfrescoRepository.findOne(nodeRef);
+					name = entity.getName();
+					if (entity instanceof StateableEntity) {
+						cssClass += "-" + ((StateableEntity) entity).getEntityState();
+						props.put("state", ((StateableEntity) entity).getEntityState());
+					}
+
+				} else {
+					name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+				}
+
+				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)) {
+					props.put("color", (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR));
+				}
+
+				ListValueEntry entry = new ListValueEntry(nodeRef.toString(), name, cssClass, props);
+
+				suggestions.add(entry);
+
+			}
+		}
 		return suggestions;
 	}
-	
+
 }

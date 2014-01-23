@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -209,7 +210,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		}, false, true);		
 		
 		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+		dataLists.add(PLMModel.TYPE_COMPOLIST);
 		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);						
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());
@@ -259,7 +260,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		}, false, true);		
 		
 		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+		dataLists.add(PLMModel.TYPE_COMPOLIST);
 		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);						
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());
@@ -409,7 +410,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		}, false, true);		
 		
 		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(BeCPGModel.TYPE_COMPOLIST);
+		dataLists.add(PLMModel.TYPE_COMPOLIST);
 		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);						
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.GS1Model;
 
 /**
@@ -90,7 +90,7 @@ public class GS1ChannelType extends AbstractChannelType {
 	@Override
 	public Set<QName> getSupportedContentTypes() {
 		Set<QName> types = new HashSet<QName>();
-		types.add(BeCPGModel.TYPE_FINISHEDPRODUCT);
+		types.add(PLMModel.TYPE_FINISHEDPRODUCT);
 		return types;
 	}
 

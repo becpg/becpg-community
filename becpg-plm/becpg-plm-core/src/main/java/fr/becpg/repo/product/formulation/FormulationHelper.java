@@ -8,7 +8,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
@@ -191,16 +191,16 @@ public class FormulationHelper {
 	}
 
 	public static Double getProductQty(NodeRef nodeRef, NodeService nodeService) {
-		return (Double)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_QTY);
+		return (Double)nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_QTY);
 	}
 	
 	public static Double getDensity(NodeRef nodeRef, NodeService nodeService) {
-		Double density = (Double)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_DENSITY);
+		Double density = (Double)nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_DENSITY);
 		return density != null ? density : DEFAULT_DENSITY;
 	}
 	
 	public static ProductUnit getProductUnit(NodeRef nodeRef, NodeService nodeService) {
-		String strProductUnit = (String)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_UNIT);
+		String strProductUnit = (String)nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_UNIT);
 		return strProductUnit != null ? ProductUnit.valueOf(strProductUnit) : null;
 	}
 	
@@ -239,7 +239,7 @@ public class FormulationHelper {
 	 */
 	public static Double getNetWeight(NodeRef nodeRef, NodeService nodeService, Double defaultValue) {
 		
-		Double netWeight = (Double)nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_NET_WEIGHT);
+		Double netWeight = (Double)nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_NET_WEIGHT);
 		if(netWeight != null){	
 			return netWeight;
 		}
@@ -288,7 +288,7 @@ public class FormulationHelper {
 			else if(FormulationHelper.isProductUnitP(productUnit)){
 				return FormulationHelper.getNetWeight(nodeRef, nodeService, defaultValue);					
 			}
-			else if(BeCPGModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(nodeRef))){
+			else if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(nodeRef))){
 				return qty;
 			}								
 		}
@@ -320,7 +320,7 @@ public class FormulationHelper {
 							
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 		if(qty != null){				
-			Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC);
+			Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), PLMModel.PROP_COMPOLIST_OVERRUN_PERC);
 			if(overrun == null){
 				overrun = FormulationHelper.DEFAULT_OVERRUN;
 			}

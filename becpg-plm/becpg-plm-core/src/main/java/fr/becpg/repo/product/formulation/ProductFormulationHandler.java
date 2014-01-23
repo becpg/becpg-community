@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -191,7 +191,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		
 		NodeRef productNodeRef = formulatedProduct.getNodeRef();
 		List<ReqCtrlListDataItem> reqCtrlList = null;
-		if(BeCPGModel.TYPE_PACKAGINGKIT.isMatch(nodeService.getType(productNodeRef))){
+		if(PLMModel.TYPE_PACKAGINGKIT.isMatch(nodeService.getType(productNodeRef))){
 			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
 		}
 		else{
@@ -211,7 +211,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	
 	private void checkCompositionItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c){
 				
-		if(!BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))){
+		if(!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))){
 			
 			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
 			if(c != null){
@@ -227,7 +227,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 				}
 				
-				Double overrunPerc = (Double) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_COMPOLIST_OVERRUN_PERC);
+				Double overrunPerc = (Double) nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_OVERRUN_PERC);
 				if(FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null){
 					Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 					if(density == null || density.equals(0d)){

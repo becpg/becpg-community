@@ -28,7 +28,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
@@ -94,25 +94,25 @@ public class ECOReportExtractor implements EntityReportExtractor {
 
 			Boolean isCost = Boolean.FALSE;
 			QName charactQName = nodeService.getType(sl.getCharact());
-			if (charactQName != null && charactQName.isMatch(BeCPGModel.TYPE_COST)) {
+			if (charactQName != null && charactQName.isMatch(PLMModel.TYPE_COST)) {
 				isCost = Boolean.TRUE;
 			}
 
-			Serializable projectedQty = nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PROJECTED_QTY);
+			Serializable projectedQty = nodeService.getProperty(sl.getSourceItem(), PLMModel.PROP_PROJECTED_QTY);
 			if (projectedQty == null) {
 				projectedQty = DEFAULT_PROJECTED_QTY;
 			}
 
 			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_HIERARCHY1,
-					HierarchyHelper.getHierachyName((NodeRef) nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PRODUCT_HIERARCHY1), nodeService));
+					HierarchyHelper.getHierachyName((NodeRef) nodeService.getProperty(sl.getSourceItem(), PLMModel.PROP_PRODUCT_HIERARCHY1), nodeService));
 			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_HIERARCHY2,
-					HierarchyHelper.getHierachyName((NodeRef) nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_PRODUCT_HIERARCHY2), nodeService));
+					HierarchyHelper.getHierachyName((NodeRef) nodeService.getProperty(sl.getSourceItem(), PLMModel.PROP_PRODUCT_HIERARCHY2), nodeService));
 			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_CODE, (String) nodeService.getProperty(sl.getSourceItem(), BeCPGModel.PROP_CODE));
 			calculatedCharactElt.addAttribute(ATTR_SOURCEITEM_NAME, (String) nodeService.getProperty(sl.getSourceItem(), ContentModel.PROP_NAME));
 			calculatedCharactElt.addAttribute(ATTR_CHARACT_NAME, (String) nodeService.getProperty(sl.getCharact(), ContentModel.PROP_NAME));
 			calculatedCharactElt.addAttribute(ATTR_SOURCE_VALUE, sl.getSourceValue() == null ? "" : sl.getSourceValue().toString());
 			calculatedCharactElt.addAttribute(ATTR_TARGET_VALUE, sl.getTargetValue() == null ? "" : sl.getTargetValue().toString());
-			calculatedCharactElt.addAttribute(BeCPGModel.PROP_PROJECTED_QTY.getLocalName(), projectedQty.toString());
+			calculatedCharactElt.addAttribute(PLMModel.PROP_PROJECTED_QTY.getLocalName(), projectedQty.toString());
 			calculatedCharactElt.addAttribute(ATTR_IS_COST, isCost.toString());
 
 		}

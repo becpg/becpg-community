@@ -15,6 +15,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -39,6 +41,8 @@ public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 	private static final String PARAM_ID = "id";	
 	private static final String PARAM_VERSION_LABEL = "versionLabel";
 	
+	private static final String PARAM_DATALISTTYPE = "dataListTypeQName"; 
+	
 	private static Log logger = LogFactory.getLog(CompareEntityVersionReportWebScript.class);
 	
 	private CompareEntityReportService compareEntityReportService;
@@ -48,6 +52,8 @@ public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 	private VersionService versionService;
 	
 	private EntityVersionService entityVersionService;
+	
+	private NamespaceService namespaceService;
 	
 	public void setCompareEntityReportService(
 			CompareEntityReportService compareEntityReportService) {
@@ -64,6 +70,11 @@ public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
+	}
+
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
 	}
 
 	/**
@@ -101,12 +112,17 @@ public class CompareEntityVersionReportWebScript extends AbstractWebScript  {
 		List<NodeRef> entities = new ArrayList<NodeRef>();
 		entities.add(entityNodeRef);
 		
+		
+		String itemType = req.getParameter(PARAM_DATALISTTYPE);
+	
+		QName dataType = QName.createQName(itemType, namespaceService);
+		
 		// get the content and stream directly to the response output stream
         // assuming the repository is capable of streaming in chunks, this should allow large files
         // to be streamed directly to the browser response stream.
         try
         {        	
-        	compareEntityReportService.getComparisonReport(entityVersionNodeRef, entities, res.getOutputStream());
+        	compareEntityReportService.getComparisonReport(entityVersionNodeRef,dataType, entities, res.getOutputStream());
     		
     		// set mimetype for the content and the character encoding + length for the stream
             res.setContentType(mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF));

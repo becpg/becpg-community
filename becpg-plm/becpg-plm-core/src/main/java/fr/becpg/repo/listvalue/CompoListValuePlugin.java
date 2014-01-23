@@ -29,7 +29,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
@@ -62,7 +62,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 		if (sourceType.equals(SOURCE_TYPE_COMPOLIST_PARENT_LEVEL)) {
 
 			DataListFilter dataListFilter = new DataListFilter();
-			dataListFilter.setDataType(BeCPGModel.TYPE_COMPOLIST);
+			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
 			dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
 
 			// need to load assoc so we use the MultiLevelDataListService
@@ -101,7 +101,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 					continue;
 				}
 
-				if (nodeService.getType(productNodeRef).isMatch(BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
+				if (nodeService.getType(productNodeRef).isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
 
 					boolean addNode = false;
 					String productName = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
@@ -120,9 +120,9 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 					if (addNode) {
 						logger.debug("add node productName: " + productName);
-						String state = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_PRODUCT_STATE);
+						String state = (String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE);
 						result.add(new ListValueEntry(kv.getKey().toString(), productName,
-								BeCPGModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
+								PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.getLocalName() + "-" + state));
 					}
 				}
 

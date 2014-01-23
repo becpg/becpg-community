@@ -36,6 +36,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.StateableEntity;
 
 /**
  * ProjectData used to manipulate project
@@ -45,7 +46,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "pjt:project")
-public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity {
+public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity, StateableEntity {
 
 	
 	private NodeRef hierarchy1;
@@ -315,6 +316,12 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setScoreList(List<ScoreListDataItem> scoreList) {
 		this.scoreList = scoreList;
 	}
+	
+	@Override
+	public String getEntityState() {
+		return projectState.toString();
+	}
+
 
 	@Override
 	public int hashCode() {

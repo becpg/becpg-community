@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.test.PLMBaseTestCase;
@@ -71,7 +72,7 @@ public class ProductPoliciesTest extends PLMBaseTestCase {
 				productCode2 = (String) nodeService.getProperty(rawMaterial2NodeRef, BeCPGModel.PROP_CODE);
 				assertNotNull("Check product code 1", productCode1);
 				assertNotNull("Check product code 2", productCode2);
-				Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern(BeCPGModel.TYPE_RAWMATERIAL,
+				Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern(PLMModel.TYPE_RAWMATERIAL,
 						BeCPGModel.PROP_CODE));
 
 				Matcher ma1 = p.matcher(productCode1);

@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.comparison.CompareEntityService;
@@ -108,9 +108,9 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Cost " + i);
-					properties.put(BeCPGModel.PROP_COSTCURRENCY, "€");
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 					ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_COST, properties);
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties);
 					costs.add(childAssocRef.getChildRef());
 				}
 
@@ -125,7 +125,7 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Allergen " + i);
 					ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ALLERGEN, properties);
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties);
 					allergens.add(childAssocRef.getChildRef());
 				}
 
@@ -243,14 +243,14 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 			String tempProductList = c.getEntityList() == null ? "" : c.getEntityList().toString();
 			String tempProduct1 = "";
 			if (c.getCharacteristic1() != null) {
-				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
 				NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
 				tempProduct1 = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 			}
 
 			String tempProduct2 = "";
 			if (c.getCharacteristic2() != null) {
-				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
 				NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
 				tempProduct2 = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 			}
@@ -548,8 +548,8 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 
-				List<StructCompareResultDataItem> structCompareResult = compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, BeCPGModel.TYPE_COMPOLIST,
-						BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				List<StructCompareResultDataItem> structCompareResult = compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST,
+						PLMModel.ASSOC_COMPOLIST_PRODUCT);
 
 //				 for(StructCompareResultDataItem c :
 //				 structCompareResult){

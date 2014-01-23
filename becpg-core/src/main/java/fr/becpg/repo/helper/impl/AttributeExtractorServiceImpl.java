@@ -48,7 +48,9 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.config.format.CSVPropertyFormats;
@@ -64,76 +66,45 @@ import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
 
+@Service("attributeExtractorService")
 public class AttributeExtractorServiceImpl implements AttributeExtractorService {
 
 	private static Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
+	@Autowired
 	private NodeService nodeService;
 
-
+	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 	
+	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
+	@Autowired
 	private DictionaryService dictionaryService;
 	
+	@Autowired
 	private AssociationService associationService;
 
+	@Autowired
 	private NamespaceService namespaceService;
 
+	@Autowired
 	private PersonService personService;
 
+	@Autowired
 	private TaggingService taggingService;
 
+	@Autowired
 	private PermissionService permissionService;
 
+	@Autowired
 	private SecurityService securityService;
 
 	private PropertyFormats propertyFormats = new PropertyFormats(false);
 	
 	private PropertyFormats csvPropertyFormats = new CSVPropertyFormats(false);
 
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-		this.entityDictionaryService = entityDictionaryService;
-	}
-
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	public void setPersonService(PersonService personService) {
-		this.personService = personService;
-	}
-	
-	
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	public void setTaggingService(TaggingService taggingService) {
-		this.taggingService = taggingService;
-	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
 
 	public class AttributeExtractorStructure {
 
@@ -612,15 +583,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return extractPropName(type, v);
 	}
 
+	@Deprecated
 	private QName getPropName(QName type) {
 		if (type.equals(ContentModel.TYPE_PERSON)) {
 			return ContentModel.PROP_USERNAME;
 		} else if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 			return ContentModel.PROP_AUTHORITY_DISPLAY_NAME;
 		} else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
-			return BeCPGModel.PROP_LKV_VALUE;
-		}
-			//TODO Alfresco repository
+			return BeCPGModel.PROP_LKV_VALUE; }
 //		} else if (type.equals(ProjectModel.TYPE_TASK_LIST)) {
 //			return ProjectModel.PROP_TL_TASK_NAME;
 //		}
@@ -629,6 +599,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	@Override
+	@Deprecated
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		String metadata = "";
 		if (type.equals(ContentModel.TYPE_PERSON)) {

@@ -59,6 +59,7 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -1240,12 +1241,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			else {
 
 				// is it a product
-				if (!searchByName && dictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
+				if (!searchByName && dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
 					// +@cm\\:localName:%s
 
 					queryPath.append(LuceneHelper.getCond(
 							LuceneHelper.getGroup(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value),
-									LuceneHelper.getCondEqualValue(BeCPGModel.PROP_ERP_CODE, value, LuceneHelper.Operator.OR)), LuceneHelper.Operator.AND));
+									LuceneHelper.getCondEqualValue(PLMModel.PROP_ERP_CODE, value, LuceneHelper.Operator.OR)), LuceneHelper.Operator.AND));
 
 					doQuery = true;
 				}
