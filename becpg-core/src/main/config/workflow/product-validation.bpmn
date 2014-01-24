@@ -45,17 +45,18 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+            <activiti:string>
+            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
 						{
-							var mail = actions.create("mail");
-							mail.parameters.to = bcpgwf_pvQualityApprovalActor.properties.email;
-							mail.parameters.subject = "beCPG demande validation : " + bpm_workflowDescription;
-							mail.parameters.from = initiator.properties.email;
-							mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl")[0];
-							mail.parameters.text = "Vous êtes assigné à une validation de produit.";
-							mail.execute(bpm_package);
+						sendMail(bcpgwf_pvQualityApprovalActor, initiator,
+							bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+							bcpg.getMessage('productValidationWF.mail.notify.message'), 
+							"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+							bpm_package.children);
+						
 		          }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
@@ -72,17 +73,17 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+            <activiti:string>
+            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
 						{
-							var mail = actions.create("mail");
-							mail.parameters.to = bcpgwf_pvProductionApprovalActor.properties.email;
-							mail.parameters.subject = "beCPG demande validation : " + bpm_workflowDescription;
-							mail.parameters.from = initiator.properties.email;
-							mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl")[0];
-							mail.parameters.text = "Vous êtes assigné à une validation de	produit.";
-							mail.execute(bpm_package);
+							sendMail(bcpgwf_pvProductionApprovalActor, initiator,
+								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+								bcpg.getMessage('productValidationWF.mail.notify.message'), 
+								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+								bpm_package.children);							
 		          }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
@@ -99,16 +100,16 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+            <activiti:string>
+            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee) {
-							var mail = actions.create("mail");
-							mail.parameters.to = bcpgwf_pvRDApprovalActor.properties.email;
-							mail.parameters.subject = "beCPG demande validation : " + bpm_workflowDescription;
-							mail.parameters.from = initiator.properties.email;
-							mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl")[0];
-							mail.parameters.text = "Vous êtes assigné à une validation de	produit.";
-							mail.execute(bpm_package);
+               		sendMail(bcpgwf_pvRDApprovalActor, initiator,
+								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+								bcpg.getMessage('productValidationWF.mail.notify.message'), 
+								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+								bpm_package.children);							
 		          }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
@@ -137,17 +138,17 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+            <activiti:string>
+            	&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            	if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
 						{
-							var mail = actions.create("mail");
-							mail.parameters.to = bcpgwf_pvCallerActor.properties.email;
-							mail.parameters.subject = "beCPG demande validation : " + bpm_workflowDescription;
-							mail.parameters.from = initiator.properties.email;
-							mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl")[0];
-							mail.parameters.text = "Vous êtes assigné à une validation de	produit.";
-							mail.execute(bpm_package);
+							sendMail(bcpgwf_pvCallerActor, initiator,
+								bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
+								bcpg.getMessage('productValidationWF.mail.notify.message'), 
+								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+								bpm_package.children);
 		          }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
@@ -170,15 +171,16 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
+            <activiti:string>
+            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
             if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
             if (bcpgwf_notifyMe){
-						var mail = actions.create("mail");
-						mail.parameters.to = initiator.properties.email;
-						mail.parameters.subject = "beCPG validation rejetée : " + bpm_workflowDescription;
-						mail.parameters.template =	search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-rejected-task-email.ftl")[0];
-						mail.parameters.text = "Le processus de validation est terminé. La demande a été refusée.";
-						mail.execute(bpm_package);
+            		sendMail(initiator, null,
+								bcpg.getMessage('productValidationWF.mail.rejected.subject', bpm_workflowDescription),
+								bcpg.getMessage('productValidationWF.mail.rejected.message'), 
+								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-rejected-task-email.ftl",
+								bpm_package.children);
 				 }</activiti:string>
           </activiti:field>
         </activiti:taskListener>
@@ -200,25 +202,23 @@
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
         	 <activiti:field name="runAs"><activiti:string>admin</activiti:string></activiti:field>
           <activiti:field name="script">
-            <activiti:string>if (bcpgwf_notifyMe) {
-			                var mail = actions.create("mail");
-			                mail.parameters.to = initiator.properties.email;
-			                mail.parameters.subject = "beCPG validation acceptée : " + bpm_workflowDescription;
-				 				 mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl")[0];
-			                mail.parameters.text = "Le processus de validation est terminé. La demande a été acceptée.";
-			                mail.execute(bpm_package);
+            <activiti:string>
+            	&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            	if (bcpgwf_notifyMe) {
+            				sendMail(initiator, null,
+									bcpg.getMessage('productValidationWF.mail.approved.subject', bpm_workflowDescription),
+									bcpg.getMessage('productValidationWF.mail.approved.message'), 
+									"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl",
+									bpm_package.children);
 			             }
 			             if (bcpgwf_notifyUsers != null)
 			             {
 			             	for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-			            		
-				            	var user = bcpgwf_notifyUsers.get(i);
-				           		var mail = actions.create("mail");
-				             	mail.parameters.to = user.properties.email;
-				               mail.parameters.subject = "beCPG validation produit : " + bpm_workflowDescription;
-				               mail.parameters.from = initiator.properties.email;
-				 				   mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl")[0];
-				               mail.execute(bpm_package);
+			            		sendMail(bcpgwf_notifyUsers.get(i), null,
+										bcpg.getMessage('productValidationWF.mail.approved.subject', bpm_workflowDescription),
+										bcpg.getMessage('productValidationWF.mail.approved.message'), 
+										"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl",
+										bpm_package.children);
 				           	 }
 			             }
 			             
