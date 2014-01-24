@@ -71,7 +71,7 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		} else if (ACTION_DO_SIMULATION.equals(action)) {
 			ecoService.doSimulation(ecoNodeRef);
 		} else if (ACTION_APPLY.equals(action)) {
-			ecoService.apply(ecoNodeRef, true);
+			ecoService.apply(ecoNodeRef);
 		} else {
 			logger.error("Unknown action '" + action + "'.");
 		}
