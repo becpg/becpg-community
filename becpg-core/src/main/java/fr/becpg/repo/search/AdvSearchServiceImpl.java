@@ -130,14 +130,14 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (datatype != null) {
 			ftsQuery = "+TYPE:\"" + datatype + "\"" + (ftsQuery.length() > 0 ? " AND (" + ftsQuery + ")" : "");
 		}
-
+		
 		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " + "AND -TYPE:\"cm:failedThumbnail\" " + "AND -TYPE:\"cm:rating\" " + "AND -TYPE:\"bcpg:entityListItem\" "
-				+ "AND -TYPE:\"systemfolder\" " + "AND -TYPE:\"rep:report\"";
+				+ "AND -TYPE:\"systemfolder\" " + "AND -TYPE:\"rep:report\" AND -TYPE:\"fm:forum\" AND -TYPE:\"fm:forums\" ";
 
 		// extract data type for this search - advanced search query is type
 		// specific
-		ftsQuery += " AND -ASPECT:\"ecm:simulationEntityAspect\"" + " AND -ASPECT:\"bcpg:hiddenFolder\"" + " AND -ASPECT:\"bcpg:compositeVersion\""
-				+ " AND -ASPECT:\"bcpg:entityTplAspect\"";
+		ftsQuery += " AND -ASPECT:\"bcpg:hiddenFolder\"" + " AND -ASPECT:\"bcpg:compositeVersion\""
+				+ " AND -ASPECT:\"bcpg:entityTplAspect\" AND -ASPECT:\"sys:hidden\" ";
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(" build searchQueryByProperties :" + ftsQuery);
