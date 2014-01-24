@@ -102,7 +102,6 @@ public class ECOTest extends RepoBaseTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		
 		cost1 = costs.get(0);
 		cost2 = costs.get(1);
 
@@ -258,13 +257,13 @@ public class ECOTest extends RepoBaseTestCase {
 				finishedProduct.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				
+
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
@@ -345,15 +344,13 @@ public class ECOTest extends RepoBaseTestCase {
 	 */
 	@Test
 	public void testECOService() throws Exception {
-	
+
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
 		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
 
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				
 				/*
 				 * create a change order to replace RM4 by RM5
 				 */
@@ -383,22 +380,29 @@ public class ECOTest extends RepoBaseTestCase {
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
 
-				
 				assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
-
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
 
 					wul.setIsWUsedImpacted(true);
 					alfrescoRepository.save(wul);
-					
+
 					assertNotNull(wul.getSourceItems().get(0));
-					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItems().get(0));
 					logger.info("Source item " + wul.getSourceItems().get(0));
-					logger.info("ChangeUnit map : " + dbECOData.getChangeUnitMap().toString());
+
+				}
+
+				// simulation
+				ecoService.doSimulation(ecoNodeRef);
+
+				logger.info("ChangeUnit map : " + dbECOData.getChangeUnitMap().toString());
+
+				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+
+					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItems().get(0));
 
 					if (changeUnitData != null) {
-						 if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
+						if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
 
 							checks++;
 							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
@@ -409,11 +413,8 @@ public class ECOTest extends RepoBaseTestCase {
 						}
 					}
 				}
-				
-				assertEquals(2, checks);
 
-				// simulation
-				ecoService.doSimulation(ecoNodeRef);
+				assertEquals(2, checks);
 
 				// verify Simulation
 				checks = 0;
@@ -474,17 +475,24 @@ public class ECOTest extends RepoBaseTestCase {
 				}
 				assertEquals(8, checks);
 
-				// apply
-				ecoService.apply(ecoNodeRef,false);
-
-				return null;
-				
-				
+				return ecoNodeRef;
 
 			}
 
 		}, false, true);
-		
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				// apply
+				ecoService.apply(ecoNodeRef);
+
+				return null;
+
+			}
+
+		}, false, true);
+
 	}
 
 	/**
@@ -576,6 +584,14 @@ public class ECOTest extends RepoBaseTestCase {
 					}
 				}
 
+				return null;
+				
+			}
+		}, false, true);
+
+		final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 				/*
 				 * create a change order to replace RM4 by RM5
 				 */
@@ -603,14 +619,22 @@ public class ECOTest extends RepoBaseTestCase {
 				ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 				assertNotNull("check ECO exist in DB", dbECOData);
 				assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-			     assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
+				assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
 
 				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-					
+
 					wul.setIsWUsedImpacted(true);
 					alfrescoRepository.save(wul);
 
 					assertNotNull(wul.getSourceItems().get(0));
+
+				}
+
+				// simulation
+				ecoService.doSimulation(ecoNodeRef);
+
+				for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+
 					ChangeUnitDataItem changeUnitData = dbECOData.getChangeUnitMap().get(wul.getSourceItems().get(0));
 					if (changeUnitData != null) {
 
@@ -629,10 +653,8 @@ public class ECOTest extends RepoBaseTestCase {
 						}
 					}
 				}
-				assertEquals(4, checks);
 
-				// simulation
-				ecoService.doSimulation(ecoNodeRef);
+				assertEquals(4, checks);
 
 				// verify Simulation
 				checks = 0;
@@ -697,9 +719,6 @@ public class ECOTest extends RepoBaseTestCase {
 						}
 					} else if (sim.getSourceItem().equals(finishedProduct3NodeRef)) {
 
-						logger.debug("PF3 caract: " + nodeService.getProperty(sim.getCharact(), ContentModel.PROP_NAME) + "sourceValue: " + sim.getSourceValue() + "targetValue: "
-								+ sim.getTargetValue());
-
 						if (sim.getCharact().equals(cost1)) {
 
 							checks++;
@@ -725,8 +744,16 @@ public class ECOTest extends RepoBaseTestCase {
 				}
 				assertEquals(12, checks);
 
+				return ecoNodeRef;
+
+			}
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
 				// apply
-				ecoService.apply(ecoNodeRef,false);
+				ecoService.apply(ecoNodeRef);
 
 				return null;
 

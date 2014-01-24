@@ -1,6 +1,7 @@
 package fr.becpg.repo.ecm.data;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private String code;
 	private ECOState ecoState;
 	private ChangeOrderType ecoType;
+	private Date effectiveDate;
 	private List<NodeRef> calculatedCharacts;
 	private List<ReplacementListDataItem> replacementList;
 	private List<WUsedListDataItem> wUsedList;
@@ -50,6 +52,17 @@ public class ChangeOrderData extends BeCPGDataObject {
 
 	public void setEcoState(ECOState ecoState) {
 		this.ecoState = ecoState;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "ecm:effectiveDate")
+	public Date getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(Date effectiveDate) {
+		this.effectiveDate = effectiveDate;
 	}
 
 	@AlfProp
@@ -145,6 +158,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result + ((ecoState == null) ? 0 : ecoState.hashCode());
 		result = prime * result + ((ecoType == null) ? 0 : ecoType.hashCode());
+		result = prime * result + ((effectiveDate == null) ? 0 : effectiveDate.hashCode());
 		result = prime * result + ((replacementList == null) ? 0 : replacementList.hashCode());
 		result = prime * result + ((simulationList == null) ? 0 : simulationList.hashCode());
 		result = prime * result + ((wUsedList == null) ? 0 : wUsedList.hashCode());
@@ -178,6 +192,11 @@ public class ChangeOrderData extends BeCPGDataObject {
 		if (ecoState != other.ecoState)
 			return false;
 		if (ecoType != other.ecoType)
+			return false;
+		if (effectiveDate == null) {
+			if (other.effectiveDate != null)
+				return false;
+		} else if (!effectiveDate.equals(other.effectiveDate))
 			return false;
 		if (replacementList == null) {
 			if (other.replacementList != null)
