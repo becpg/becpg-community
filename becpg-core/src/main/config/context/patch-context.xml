@@ -357,5 +357,22 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
+	
+	<bean id="patch.bcpg.redeployWfProductValidation2" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.redeployWfProductValidation2</value></property>
+        <property name="description"><value>patch.bcpg.redeployWfProductValidation.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10026</value></property>
+        <property name="workflowDefinitions">
+            <list>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean>
     
 </beans>
