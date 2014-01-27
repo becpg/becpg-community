@@ -23,4 +23,4 @@ cd $BECPG_ROOT/distribution/target
 buildnumber=`ls becpg-*-distribution.tar.gz`
 
 cd $TC_DIR/deploy
-./deploy.sh $1 ${buildnumber%%-distribution.*} distribution
+./deploy.sh $1 ${buildnumber%%-distribution.*}

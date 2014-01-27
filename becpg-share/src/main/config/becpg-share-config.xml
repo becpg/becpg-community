@@ -111,6 +111,11 @@
 			              <authority type="group">GROUP_ClaimStart</authority>
 			          </authorities>
 			   </permission-workflow>
+			   <permission-workflow name="activiti$productValidationWF">
+			        <authorities>
+			              <authority type="group">GROUP_ProductValidationStart</authority>
+			          </authorities>
+			   </permission-workflow>
 		</permission-workflows>
 	
 		<hidden-workflows>
@@ -130,7 +135,7 @@
 <!-- 			<workflow name="activiti$activitiParallelReview" /> -->
 			<workflow name="activiti$nonConformityAdhoc" />
 			<workflow name="activiti$nonConformityProcess" />
-			<workflow name="activiti$activitiAdhoc" />
+<!-- 			<workflow name="activiti$activitiAdhoc" /> -->
 			<workflow name="activiti$activitiReview" />
 			<workflow name="activiti$projectAdhoc" />
 			<workflow name="activiti$projectNewProduct" />
@@ -139,6 +144,7 @@
 			<workflow name="jbpm$wf:parallelgroupreview" />
 			<workflow name="jbpm$wf:review" />
 			<workflow name="jbpm$wf:parallelreview" />
+			<workflow name="jbpm$bcpgwf:adhoc" />
 			<workflow name="jbpm$bcpgwf:productValidationWF" />
 			<workflow name="jbpm$npdwf:newProductDevelopmentWF" />			
 		</hidden-workflows>
