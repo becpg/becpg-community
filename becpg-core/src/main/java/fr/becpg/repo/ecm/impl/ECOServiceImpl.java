@@ -561,7 +561,7 @@ public class ECOServiceImpl implements ECOService {
 
 	private NodeRef getProductToImpact(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
 
-		NodeRef productToImpact = changeUnitDataItem.getSourceItem();
+		final NodeRef productToImpact = changeUnitDataItem.getSourceItem();
 
 		if (productToImpact != null) {
 
@@ -575,21 +575,39 @@ public class ECOServiceImpl implements ECOService {
 
 
 					if(!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
-					
-					Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-					aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-					nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+						RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+							@Override
+							public Object doWork() throws Exception {
+								return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+									@Override
+									public NodeRef execute() throws Throwable {
+										logger.debug("Add ASPECT_VERSIONABLE");
+										Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+										aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+										nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+										return productToImpact;
+									}
+									
+								}, false, true);
+							}
+						};
+						AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+						
+						
+						
+						
 					}
 					
 					VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Create new version :" + versionType);
-					}
-
+					
+					logger.debug("Create new version :" + versionType);
+					
+					logger.debug("Checkout");
 					// checkout
 					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(productToImpact);
 
+					logger.debug("Checkin");
 					// checkin
 					Map<String, Serializable> properties = new HashMap<String, Serializable>();
 					properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
