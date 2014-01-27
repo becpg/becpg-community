@@ -28,7 +28,7 @@ public interface ECOService {
 	
 	public void calculateWUsedList(NodeRef ecoNodeRef);
 	
-	public void apply(NodeRef ecoNodeRef, boolean requireNewTx);
+	public void apply(NodeRef ecoNodeRef);
 	
 	public void doSimulation(NodeRef ecoNodeRef);
 }

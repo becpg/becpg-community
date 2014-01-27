@@ -100,6 +100,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 		return targetItem;
 	}
 
+	@Deprecated
 	public void setTargetItem(NodeRef targetItem) {
 		this.targetItem = targetItem;
 	}

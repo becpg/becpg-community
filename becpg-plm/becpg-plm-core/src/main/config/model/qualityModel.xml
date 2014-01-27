@@ -265,7 +265,6 @@
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
-				<aspect>rep:reportEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="qa:controlPlan">
