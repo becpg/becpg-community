@@ -484,13 +484,28 @@ public class ECOTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
+
+				logger.info("Version Before : "+getVersionLabel(finishedProduct1NodeRef));
 				// apply
 				ecoService.apply(ecoNodeRef);
+
 
 				return null;
 
 			}
 
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				logger.info("Version After : "+getVersionLabel(finishedProduct1NodeRef));
+				
+				assertEquals("Check version", "1.1", getVersionLabel(finishedProduct1NodeRef));
+
+				return null;
+
+			}
 		}, false, true);
 
 	}
@@ -606,7 +621,7 @@ public class ECOTest extends RepoBaseTestCase {
 				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
 
 				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
-				replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+				replacementList.add(new ReplacementListDataItem(RevisionType.Major, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
 				changeOrderData.setReplacementList(replacementList);
 
 				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
@@ -641,15 +656,15 @@ public class ECOTest extends RepoBaseTestCase {
 						if (changeUnitData.getSourceItem().equals(finishedProduct1NodeRef)) {
 
 							checks++;
-							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+							assertEquals(RevisionType.Major, changeUnitData.getRevision());
 						} else if (changeUnitData.getSourceItem().equals(finishedProduct2NodeRef)) {
 
 							checks++;
-							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+							assertEquals(RevisionType.Major, changeUnitData.getRevision());
 						} else if (changeUnitData.getSourceItem().equals(finishedProduct3NodeRef)) {
 
 							checks++;
-							assertEquals(RevisionType.Minor, changeUnitData.getRevision());
+							assertEquals(RevisionType.Major, changeUnitData.getRevision());
 						}
 					}
 				}
@@ -663,7 +678,7 @@ public class ECOTest extends RepoBaseTestCase {
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
 
 				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
-					System.out.println("Source - Target for " + nodeService.getProperty(sim.getSourceItem(), ContentModel.PROP_NAME) + " - " + sim.getSourceValue() + " - "
+					logger.info("Source - Target for " + nodeService.getProperty(sim.getSourceItem(), ContentModel.PROP_NAME) + " - " + sim.getSourceValue() + " - "
 							+ sim.getTargetValue());
 				}
 
@@ -752,14 +767,35 @@ public class ECOTest extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
+				logger.info("Version Before : "+getVersionLabel(finishedProduct1NodeRef));
+				
 				// apply
 				ecoService.apply(ecoNodeRef);
+				
+			
+
+				return null;
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				logger.info("Version After : "+getVersionLabel(finishedProduct1NodeRef));
+				
+				assertEquals("Check version", "2.0", getVersionLabel(finishedProduct1NodeRef));
 
 				return null;
 
 			}
 		}, false, true);
 
+	}
+	
+
+	private String getVersionLabel(NodeRef productNodeRef) {
+		return (String)nodeService.getProperty(productNodeRef,ContentModel.PROP_VERSION_LABEL);
 	}
 
 }
