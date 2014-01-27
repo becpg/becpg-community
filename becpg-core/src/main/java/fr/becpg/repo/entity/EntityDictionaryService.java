@@ -39,6 +39,5 @@ public interface EntityDictionaryService {
 	ClassAttributeDefinition getPropDef(QName fieldQname);
 
 	boolean isSubClass(QName fieldQname, QName typeEntitylistItem);
-
 	
 }

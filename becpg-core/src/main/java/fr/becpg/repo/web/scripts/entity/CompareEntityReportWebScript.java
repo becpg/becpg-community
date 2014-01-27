@@ -12,8 +12,6 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -34,7 +32,6 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	private static final int MAX_ENTITIES = 10;
 	private static final String PARAM_ENTITY = "entity";
-	private static final String PARAM_DATALISTTYPE = "dataListTypeQName"; 
 
 	private static final String PARAM_STORE_TYPE = "store_type";
 	private static final String PARAM_STORE_ID = "store_id";
@@ -48,8 +45,6 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	private MimetypeService mimetypeService;
 	
-	private NamespaceService namespaceService;
-
 	public void setCompareEntityReportService(CompareEntityReportService compareEntityReportService) {
 		this.compareEntityReportService = compareEntityReportService;
 	}
@@ -58,9 +53,6 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		this.mimetypeService = mimetypeService;
 	}
 	
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 
 	/**
 	 * Compare entitys.
@@ -113,9 +105,6 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "missing parameters. entity1= '' or entity2=''");
 		}
 		
-		String itemType = req.getParameter(PARAM_DATALISTTYPE);
-	
-		QName dataType = QName.createQName(itemType, namespaceService);
 		
 		
 
@@ -124,7 +113,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		// should allow large files
 		// to be streamed directly to the browser response stream.
 		try {
-			compareEntityReportService.getComparisonReport(entity1NodeRef,dataType, entityNodeRefs, res.getOutputStream());
+			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, res.getOutputStream());
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream

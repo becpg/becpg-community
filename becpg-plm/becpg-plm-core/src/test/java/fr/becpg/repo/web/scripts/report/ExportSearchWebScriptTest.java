@@ -34,6 +34,7 @@ import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -41,6 +42,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.TestWebScriptServer.GetRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
@@ -268,12 +270,13 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 	 * Adds the product image.
 	 *
 	 * @param parentNodeRef the parent node ref
-	 * @throws FileNotFoundException the file not found exception
+	 * @throws IOException 
+	 * @throws ContentIOException 
 	 */
 	@Deprecated 
 	//Use writeImages of entityService instead
-	private void addProductImage(NodeRef parentNodeRef) throws FileNotFoundException{
-		
+	//merge with productserviceTest or inside helper
+	private void addProductImage(NodeRef parentNodeRef) throws ContentIOException, IOException{
 		
 		
 		/*-- add product image--*/
@@ -285,21 +288,21 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 		NodeRef imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
 		
 		ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
-		String imageFullPath = System.getProperty("user.dir" )  + "/src/test/resources/beCPG/birt/productImage.jpg";
-		logger.debug("Load image file " + imageFullPath + " - imgNodeRef: " + imageNodeRef);			
-		FileInputStream imageStream = new FileInputStream(imageFullPath);
-		logger.debug("image file loaded "  + imageStream);
+
+		ClassPathResource img  = new ClassPathResource("beCPG/birt/productImage.jpg");
 		
-		String mimetype = mimetypeService.guessMimetype(imageFullPath);
+
+		String mimetype = mimetypeService.guessMimetype(img.getFilename());
 		ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-		Charset charset = charsetFinder.getCharset(imageStream, mimetype);
+		Charset charset = charsetFinder.getCharset(img.getInputStream(), mimetype);
 		String encoding = charset.name();
+		
 		
 		logger.debug("mimetype : " + mimetype);
 		logger.debug("encoding : " + encoding);
 		writer.setMimetype(mimetype);
 		writer.setEncoding(encoding);
-		writer.putContent(imageStream);		
+		writer.putContent(img.getInputStream());		
    }
 		
 	/**

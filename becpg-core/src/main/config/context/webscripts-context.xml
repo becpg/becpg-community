@@ -79,6 +79,7 @@
 	<bean id="webscript.fr.becpg.entity.entityDictionnary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionnaryWebScript" parent="webscript">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="namespaceService" ref="NamespaceService" />
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 
 	<alias name="webscript.fr.becpg.entity.datalist.data.get" alias="webscript.fr.becpg.entity.datalist.data.post" />

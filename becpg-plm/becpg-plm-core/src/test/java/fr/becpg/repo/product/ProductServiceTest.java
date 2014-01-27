@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -39,6 +40,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -298,10 +300,11 @@ public class ProductServiceTest extends PLMBaseTestCase {
 	 * @param parentNodeRef
 	 *            the parent node ref
 	 * @param typeFinishedproduct 
-	 * @throws FileNotFoundException
-	 *             the file not found exception
+	 * @throws IOException 
 	 */
-	private void addProductImage(NodeRef parentNodeRef, QName typeQName) throws FileNotFoundException {
+	@Deprecated 
+	//Use writeImages of entityService instead
+	private void addProductImage(NodeRef parentNodeRef, QName typeQName) throws IOException {
 		/*-- add product image--*/
 		logger.debug("/*-- add product image--*/");
 		String imageName = entityService.getDefaultImageName(typeQName);
@@ -316,21 +319,20 @@ public class ProductServiceTest extends PLMBaseTestCase {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
 
 			ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
-			String imageFullPath = System.getProperty("user.dir") + "/src/test/resources/beCPG/birt/productImage.jpg";
-			logger.debug("Load image file " + imageFullPath);
-			FileInputStream imageStream = new FileInputStream(imageFullPath);
-			logger.debug("image file loaded " + imageStream);
+			
+			ClassPathResource img  = new ClassPathResource("beCPG/birt/productImage.jpg");
+			
 
-			String mimetype = mimetypeService.guessMimetype(imageFullPath);
+			String mimetype = mimetypeService.guessMimetype(img.getFilename());
 			ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-			Charset charset = charsetFinder.getCharset(imageStream, mimetype);
+			Charset charset = charsetFinder.getCharset(img.getInputStream(), mimetype);
 			String encoding = charset.name();
 
 			logger.debug("mimetype : " + mimetype);
 			logger.debug("encoding : " + encoding);
 			writer.setMimetype(mimetype);
 			writer.setEncoding(encoding);
-			writer.putContent(imageStream);
+			writer.putContent(img.getInputStream());
 		}		
 	}
 

@@ -319,7 +319,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	
 	@Override
 	public String getEntityState() {
-		return projectState.toString();
+		return projectState!=null ? projectState.toString() : null;
 	}
 
 
