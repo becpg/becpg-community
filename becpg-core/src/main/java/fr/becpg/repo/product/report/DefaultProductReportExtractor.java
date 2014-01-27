@@ -491,11 +491,12 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				extractEntityImages(dataItem.getProduct(), imgsElt, images);
 			}
 		} else {
-			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, dataItem.getVariants());
 		}		
 	}
 
-	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {		
+	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, 
+			NodeRef defaultVariantNodeRef, List<NodeRef> currentVariants) {		
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		Element partElt = packagingListElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName());		
@@ -513,10 +514,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				Double tare = FormulationHelper.getTareInKg(dataItem, nodeService);	
 				
 				if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){	
-					packagingData.addTareSecondary(dataItem.getVariants(), tare);
+					packagingData.addTareSecondary(currentVariants, tare);
 				}
 				else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
-					packagingData.addTareTertiary(dataItem.getVariants(), tare);
+					packagingData.addTareTertiary(currentVariants, tare);
 				}							
 			}
 		}
@@ -527,11 +528,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			// product per box and boxes per pallet
 			if(dataItem.getQty()!=null) {
 				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
-				packagingData.setProductPerBoxes(dataItem.getVariants(), dataItem.getQty().intValue());
+				packagingData.setProductPerBoxes(currentVariants, dataItem.getQty().intValue());
 			}
 			Integer palletBoxesPerPallet = (Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
 			if(palletBoxesPerPallet!=null) {
-				packagingData.setBoxesPerPallet(dataItem.getVariants(), palletBoxesPerPallet);
+				packagingData.setBoxesPerPallet(currentVariants, palletBoxesPerPallet);
 			}
 		}
 		
@@ -547,13 +548,13 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	@SuppressWarnings("unchecked")
 	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
 
-		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, dataItem.getVariants());
 		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
 		Element packagingKitListEl = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName()+"s");	
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 	
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {			
-			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef);
+			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef, dataItem.getVariants());
 		}
 	}
 
