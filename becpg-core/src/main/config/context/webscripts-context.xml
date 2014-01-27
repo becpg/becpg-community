@@ -199,6 +199,7 @@
 		<property name="transactionService" ref="TransactionService" />
 		<property name="associationService" ref="associationService" />
 		<property name="repoService" ref="repoService" />
+		<property name="lockService" ref="lockService" />
 	</bean>
 
 

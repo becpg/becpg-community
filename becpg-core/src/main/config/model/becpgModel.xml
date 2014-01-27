@@ -1206,7 +1206,7 @@
 					</source>
 					<target>
 						<class>bcpg:geoOrigin</class>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>true</many>
 					</target>
 				</association>
@@ -1217,7 +1217,7 @@
 					</source>
 					<target>
 						<class>bcpg:geoOrigin</class>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>true</many>
 					</target>
 				</association>
@@ -1228,7 +1228,7 @@
 					</source>
 					<target>
 						<class>bcpg:bioOrigin</class>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>true</many>
 					</target>
 				</association>

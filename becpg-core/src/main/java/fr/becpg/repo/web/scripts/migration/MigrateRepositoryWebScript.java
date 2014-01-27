@@ -18,6 +18,7 @@ import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -75,6 +76,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_RENAME_USER = "renameUser";
 	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";
 	private static final String ACTION_DELETE_UNUSED_INGS = "deleteUnusedIngs";
+	private static final String ACTION_UNKLOCK_NODE = "unLockNode";
 	
 	private static final String ACTION_REMOVE_ASPECT = "removeAspect";
 	private static final String ACTION_ADD_MANDATORY_ASPECT = "addMandatoryAspect";
@@ -130,6 +132,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	protected AssociationService associationService;
 	
 	protected RepoService repoService;
+	
+	protected LockService lockService;
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -197,6 +201,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
+	}
+
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
 	}
 
 	public void doMigrateEntityFolderInMt() {
@@ -449,6 +457,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				}							
 			}
 			
+		}
+		else if(ACTION_UNKLOCK_NODE.equals(action)){
+			NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));			
+			lockService.unlock(nodeRef);			
 		}
 		else {
 			logger.error("Unknown action" + action);
