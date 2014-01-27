@@ -29,6 +29,7 @@
                      },
                      fn : function(instance) {
 
+                        
                         Alfresco.util.PopupManager.displayMessage({
                            text : this.msg("message.eco-calculate-wused.please-wait")
                         });
@@ -42,7 +43,7 @@
                                  Alfresco.util.PopupManager.displayMessage({
                                     text : this.msg("message.eco-calculate-wused.success")
                                  });
-
+                                 YAHOO.Bubbling.fire("refreshDataGrids");
                               },
                               scope : this
                            },
@@ -87,7 +88,7 @@
                                  Alfresco.util.PopupManager.displayMessage({
                                     text : this.msg("message.eco-do-simulation.success")
                                  });
-
+                                 YAHOO.Bubbling.fire("refreshDataGrids");
                               },
                               scope : this
                            },
@@ -120,39 +121,60 @@
                      },
                      fn : function(instance) {
 
-                        Alfresco.util.PopupManager.displayMessage({
-                           text : this.msg("message.eco-apply.please-wait")
-                        });
+                        var me = this;
+                        
+                        Alfresco.util.PopupManager.displayPrompt({
+                           title : this.msg("message.confirm.eco-apply.title"),
+                           text : this.msg("message.confirm.eco-apply.description"),
+                           buttons : [ {
+                              text : this.msg("button.eco-apply"),
+                              handler : function () {
+                                  this.destroy();
+                                  Alfresco.util.PopupManager.displayMessage({
+                                     text : me.msg("message.eco-apply.please-wait")
+                                  });
 
-                        Alfresco.util.Ajax.request({
-                           method : Alfresco.util.Ajax.GET,
-                           url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + this.options.entityNodeRef
-                                 .replace(":/", "") + "/apply",
-                           successCallback : {
-                              fn : function EntityDataListthis_onECOApply_success(response) {
-                                 Alfresco.util.PopupManager.displayMessage({
-                                    text : this.msg("message.eco-apply.success")
-                                 });
+                                  Alfresco.util.Ajax.request({
+                                     method : Alfresco.util.Ajax.GET,
+                                     url : Alfresco.constants.PROXY_URI + "becpg/ecm/changeorder/" + me.options.entityNodeRef
+                                           .replace(":/", "") + "/apply",
+                                     successCallback : {
+                                        fn : function EntityDataListthis_onECOApply_success(response) {
+                                           Alfresco.util.PopupManager.displayMessage({
+                                              text : me.msg("message.eco-apply.success")
+                                           });
+                                           YAHOO.Bubbling.fire("refreshDataGrids");
+                                        },
+                                        scope : me
+                                     },
+                                     failureCallback : {
+                                        fn : function EntityDataListthis_onECOApply_failure(response) {
+                                           if (response.message !== null) {
+                                              Alfresco.util.PopupManager.displayPrompt({
+                                                 text : response.message
+                                              });
+                                           } else {
+                                              Alfresco.util.PopupManager.displayMessage({
+                                                 text : me.msg("message.eco-apply.failure")
+                                              });
+                                           }
+                                        },
+                                        scope : me
+                                     }
 
+                                  });
+                                  
+                              }
+                           }, {
+                              text : this.msg("button.cancel"),
+                              handler : function EntityDataGrid__onActionDelete_cancel() {
+                                  this.destroy();
                               },
-                              scope : this
-                           },
-                           failureCallback : {
-                              fn : function EntityDataListthis_onECOApply_failure(response) {
-                                 if (response.message !== null) {
-                                    Alfresco.util.PopupManager.displayPrompt({
-                                       text : response.message
-                                    });
-                                 } else {
-                                    Alfresco.util.PopupManager.displayMessage({
-                                       text : this.msg("message.eco-apply.failure")
-                                    });
-                                 }
-                              },
-                              scope : this
-                           }
-
+                              isDefault : true
+                           } ]
                         });
+                        
+                      
                      }
                   });
 

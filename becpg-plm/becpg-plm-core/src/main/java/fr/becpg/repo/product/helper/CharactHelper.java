@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 public class CharactHelper {
 
+	@Deprecated
 	public static Double getCharactValue(NodeRef charactNodeRef, QName charactType, ProductData productData) {
 		// TODO make more generic use an annotation instead
 		if (charactType.equals(PLMModel.TYPE_COST)) {
@@ -41,6 +42,7 @@ public class CharactHelper {
 	}
 
 	public static Double getCharactValue(NodeRef charactNodeRef, List<? extends SimpleCharactDataItem> charactList) {
+	
 		if (charactList != null && charactNodeRef != null) {
 			for (SimpleCharactDataItem charactDataListItem : charactList) {
 				if (charactNodeRef.equals(charactDataListItem.getCharactNodeRef())) {

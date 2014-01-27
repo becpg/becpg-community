@@ -47,7 +47,24 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 		return parent;
 	}
 
+	public WUsedListDataItem getRoot() {
+		WUsedListDataItem root = this;
+		WUsedListDataItem parent = getParent();
+		while(parent !=null) {
+			root = parent;
+			parent = parent.getParent();
+		}
+		
+		return root;
+	}
+	
+	
 	public void setParent(WUsedListDataItem parent) {
+		if (parent == null || parent.getDepthLevel() == null) {
+			depthLevel = 1;
+		} else {
+			depthLevel = parent.getDepthLevel() + 1;
+		}
 		this.parent = parent;
 	}
 
@@ -104,21 +121,7 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 	public WUsedListDataItem() {
 		super();
 	}
-
-	public WUsedListDataItem(NodeRef nodeRef, WUsedListDataItem parent, QName impactedDataList, Boolean isWUsedImpacted, NodeRef link, List<NodeRef> sourceItems) {
-		super();
-		this.nodeRef = nodeRef;
-		this.parent = parent;
-		if (parent == null || parent.getDepthLevel() == null) {
-			depthLevel = 1;
-		} else {
-			depthLevel = parent.getDepthLevel() + 1;
-		}
-		this.impactedDataList = impactedDataList;
-		this.isWUsedImpacted = isWUsedImpacted;
-		this.link = link;
-		this.sourceItems = sourceItems;
-	}
+	
 
 
 	@Override
@@ -178,8 +181,9 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 
 	@Override
 	public String toString() {
-		return "WUsedListDataItem [depthLevel=" + depthLevel + ", isWUsedImpacted=" + isWUsedImpacted + ", impactedDataList=" + impactedDataList + ", link=" + link
-				+ ", sourceItems=" + sourceItems + ", parent=" + parent + "]";
+		return "WUsedListDataItem [isWUsedImpacted=" + isWUsedImpacted + ", impactedDataList=" + impactedDataList + ", sourceItems=" + sourceItems + "]";
 	}
+
+	
 
 }

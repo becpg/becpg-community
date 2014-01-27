@@ -1,24 +1,8 @@
-/*******************************************************************************
- * Copyright (C) 2010-2014 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
 package fr.becpg.repo.product.report;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,13 +21,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.model.MPMModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
@@ -69,7 +54,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
 	
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST, MPMModel.TYPE_PROCESSLIST,
-																PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST);
+			PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST);
 	
 	protected static final List<QName> RAWMATERIAL_DATALIST = Arrays.asList(PLMModel.TYPE_INGLIST, PLMModel.TYPE_ORGANOLIST);
 
@@ -86,8 +71,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_1 = "grossWeightPkgLevel1";
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_2 = "grossWeightPkgLevel2";
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_3 = "grossWeightPkgLevel3";
-	private static final String ATTR_NB_PRODUCTS_LEVEL_3 = "nbProductsPkgLevel3";
-	private static final String ATTR_NB_PRODUCTS_LEVEL_2 = "nbProductsPkgLevel2";	
+	private static final String ATTR_NB_PRODUCTS_LEVEL_3= "nbProductsPkgLevel3";
+	private static final String ATTR_NB_PRODUCTS_LEVEL_2= "nbProductsPkgLevel2";
+	private static final String ATTR_VARIANT_ID = "variantId";
+	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
 	
 	protected ProductDictionaryService productDictionaryService;
 
@@ -145,6 +132,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		// TODO make it more generic!!!!
 		ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
+		NodeRef defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
 				
 		if (datalists != null && !datalists.isEmpty()) {
 			
@@ -168,6 +156,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 							}
 							
 							loadDataListItemAttributes(dataListItem, nodeElt);
+							
+							if(dataListItem instanceof AbstractManualVariantListDataItem){
+								extractVariants(((AbstractManualVariantListDataItem)dataListItem).getVariants(), nodeElt, defaultVariantNodeRef);
+							}
 						}
 					}										
 				}				
@@ -219,7 +211,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 						
 						Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
 						loadProductData(dataItem.getProduct(), partElt);
-						loadDataListItemAttributes(dataItem, partElt);
+						loadDataListItemAttributes(dataItem, partElt);																										
+						extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 					}
 				}
 
@@ -230,15 +223,8 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			extractRawMaterials(productData, dataListsElt, images);			
 			
 			// packList
-			if(productData.getVariants().isEmpty()){
-				loadPackagingList(productData, dataListsElt, null, images);
-			}
-			else{
-				for (VariantData variant : productData.getVariants()){
-					loadPackagingList(productData, dataListsElt, variant, images);
-				}	
-			}
-									
+			loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, images);
+
 			
 			// processList
 			if (productData.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
@@ -248,7 +234,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 					Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 					loadProductData(dataItem.getProduct(), partElt);
-					loadDataListItemAttributes(dataItem, partElt);
+					loadDataListItemAttributes(dataItem, partElt);										
+					
+					extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 				}
 
 				loadDynamicCharactList(productData.getProcessListView().getDynamicCharactList(), processListElt);
@@ -432,16 +420,15 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		return false;			
 	}
 	
-	private void loadPackagingList(ProductData productData, Element dataListsElt, VariantData variant, Map<String, byte[]> images){			
+	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images){			
 		
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 			
-			PackagingData packagingData = new PackagingData();
+			PackagingData packagingData = new PackagingData(productData.getVariants());
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName()+"s");
-			loadIsDefaultVariant(packagingListElt, variant);
 
 			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-				loadPackagingItem(dataItem, packagingListElt, packagingData, variant, images);
+				loadPackagingItem(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);				
 			}
 			
 			loadDynamicCharactList(productData.getPackagingListView().getDynamicCharactList(), packagingListElt);
@@ -452,68 +439,85 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				tarePrimary = 0d;
 			}
 			Double netWeightPrimary = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
-			packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_1, toString(tarePrimary));
-			packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_1, toString(netWeightPrimary));
-			packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_1, toString(tarePrimary + netWeightPrimary));
+			Double grossWeightPrimary = tarePrimary + netWeightPrimary;
 			
-			if(packagingData.getProductPerBoxes() != null){							
-				Double tareSecondary = tarePrimary * packagingData.getProductPerBoxes() + packagingData.getTareSecondary();
-				Double netWeightSecondary = netWeightPrimary * packagingData.getProductPerBoxes();
-				packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_2, toString(tareSecondary));
-				packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_2, toString(netWeightSecondary));
-				packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_2, toString(tareSecondary + netWeightSecondary));
-				packagingListElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_2, toString(packagingData.getProductPerBoxes()));
+			for(Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()){
+				VariantPackagingData variantPackagingData = kv.getValue();
 				
-				if(packagingData.getBoxesPerPallet() != null){
-					
-					Double tareTertiary = tareSecondary * packagingData.getBoxesPerPallet() + packagingData.getTareTertiary();
-					Double netWeightTertiary = netWeightSecondary * packagingData.getBoxesPerPallet();
-					packagingListElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
-					packagingListElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_3, toString(netWeightTertiary));
-					packagingListElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_3, toString(tareTertiary + netWeightTertiary));					
-					packagingListElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_3, toString(packagingData.getProductPerBoxes() * packagingData.getBoxesPerPallet()));
+				Element packgLevelMesuresElt = packagingListElt.addElement(TAG_PACKAGING_LEVEL_MEASURES);
+				if(kv.getKey() != null){
+					packgLevelMesuresElt.addAttribute(ATTR_VARIANT_ID, (String)nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME));
+					packgLevelMesuresElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), 
+							Boolean.toString((Boolean)nodeService.getProperty(kv.getKey(), PLMModel.PROP_IS_DEFAULT_VARIANT)));
 				}
-			}
+				else{
+					packgLevelMesuresElt.addAttribute(ATTR_VARIANT_ID, "");
+					packgLevelMesuresElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), "true");
+				}
+				
+				packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_1, toString(tarePrimary));
+				packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_1, toString(netWeightPrimary));
+				packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_1, toString(grossWeightPrimary));
+				
+				if(variantPackagingData.getProductPerBoxes() != null){							
+					Double tareSecondary = tarePrimary * variantPackagingData.getProductPerBoxes() + variantPackagingData.getTareSecondary();
+					Double netWeightSecondary = netWeightPrimary * variantPackagingData.getProductPerBoxes();
+					packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_2, toString(tareSecondary));
+					packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_2, toString(netWeightSecondary));
+					packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_2, toString(tareSecondary + netWeightSecondary));
+					packgLevelMesuresElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_2, toString(variantPackagingData.getProductPerBoxes()));				
 					
+					if(variantPackagingData.getBoxesPerPallet() != null){
+						
+						Double tareTertiary = tareSecondary * variantPackagingData.getBoxesPerPallet() + variantPackagingData.getTareTertiary();
+						Double netWeightTertiary = netWeightSecondary * variantPackagingData.getBoxesPerPallet();
+						packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
+						packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_3, toString(netWeightTertiary));
+						packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_3, toString(tareTertiary + netWeightTertiary));					
+						packgLevelMesuresElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_3, toString(variantPackagingData.getProductPerBoxes() * variantPackagingData.getBoxesPerPallet()));
+					}
+				}
+			}				
 		}		
 	}
 
 	private void loadPackagingItem(PackagingListDataItem dataItem, Element packagingListElt, 
-			PackagingData packagingData,  VariantData variant, Map<String, byte[]> images) {
+			PackagingData packagingData, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {					
-			loadPackagingKit(dataItem, packagingListElt, packagingData, variant);
+			loadPackagingKit(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
 			Element imgsElt = (Element)packagingListElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 			if(imgsElt != null){
 				extractEntityImages(dataItem.getProduct(), imgsElt, images);
 			}
 		} else {
-			loadPackaging(dataItem, packagingListElt, packagingData, variant);
+			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
 		}		
 	}
 
-	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, VariantData variant) {		
+	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {		
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());		
 		loadProductData(dataItem.getProduct(), partElt);
 		loadDataListItemAttributes(dataItem, partElt);		
 
+		extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
+
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_TARE)) {
 			
 			// Sum tare (don't take in account packagingKit)
-			if(dataItem.getPkgLevel() != null && 
-					(variant == null || dataItem.getVariants() == null || dataItem.getVariants().contains(variant.getNodeRef())) &&
+			if(dataItem.getPkgLevel() != null && 					
 					!PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)){
 				
 				Double tare = FormulationHelper.getTareInKg(dataItem, nodeService);	
 				
-				if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){					
-					packagingData.setTareSecondary(packagingData.getTareSecondary() + tare);
+				if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){	
+					packagingData.addTareSecondary(dataItem.getVariants(), tare);
 				}
 				else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
-					packagingData.setTareTertiary(packagingData.getTareTertiary() + tare);
-				}				
+					packagingData.addTareTertiary(dataItem.getVariants(), tare);
+				}							
 			}
 		}
 		
@@ -521,33 +525,35 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			logger.debug("load pallet aspect ");
 			
 			// product per box and boxes per pallet
-			if(variant == null || dataItem.getVariants() == null || dataItem.getVariants().contains(variant.getNodeRef())){
+			if(dataItem.getQty()!=null) {
 				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
-				packagingData.setProductPerBoxes(dataItem.getQty().intValue());
-				packagingData.setBoxesPerPallet((Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET));
-			}			
+				packagingData.setProductPerBoxes(dataItem.getVariants(), dataItem.getQty().intValue());
+			}
+			Integer palletBoxesPerPallet = (Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
+			if(palletBoxesPerPallet!=null) {
+				packagingData.setBoxesPerPallet(dataItem.getVariants(), palletBoxesPerPallet);
+			}
 		}
-
+		
 		// we want labeling template <labelingTemplate>...</labelingTemplate>
         if (nodeService.hasAspect(dataItem.getNodeRef(), PackModel.ASPECT_LABELING)) {        
             extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt);
         }
-        
-        loadIsDefaultVariant(partElt, variant);
 		
 		return partElt;
 	}
 	
 	// manage 2 level depth
-	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData,  VariantData variant) {
+	@SuppressWarnings("unchecked")
+	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
 
-		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, variant);
+		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
 		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
 		Element packagingKitListEl = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName()+"s");	
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 	
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {			
-			loadPackaging(p, packagingKitListEl, packagingData, variant);
+			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef);
 		}
 	}
 
@@ -561,6 +567,64 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	}
 	
 	private class PackagingData{
+		private Map<NodeRef, VariantPackagingData> variants = new HashMap<>();
+		
+		private Collection<VariantPackagingData> getVariantPackagingData(List<NodeRef> variantNodeRefs){			
+			if(variantNodeRefs == null || variantNodeRefs.isEmpty()){
+				return variants.values();
+			}
+			List<VariantPackagingData> selectedVariants = new ArrayList<>();
+			for(NodeRef variantNodeRef : variantNodeRefs){
+				selectedVariants.add(variants.get(variantNodeRef));
+			}			
+			return selectedVariants;
+		}
+		
+		public PackagingData(List<VariantData> variantDataList){
+			boolean hasDefaultVariant = false;
+			
+			for(VariantData variantData : variantDataList){
+				variants.put(variantData.getNodeRef(), new VariantPackagingData());
+				if(variantData.getIsDefaultVariant()){
+					hasDefaultVariant = true;
+				}
+			}
+			
+			if(!hasDefaultVariant){
+				variants.put(null, new VariantPackagingData());
+			}
+		}
+		
+		public Map<NodeRef, VariantPackagingData> getVariants() {
+			return variants;
+		}
+
+		public void addTareSecondary(List<NodeRef> variantNodeRefs, Double value){
+			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
+				variantPackagingData.setTareSecondary(variantPackagingData.getTareSecondary() + value);
+			}			
+		}
+		
+		public void addTareTertiary(List<NodeRef> variantNodeRefs, Double value){
+			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
+				variantPackagingData.setTareTertiary(variantPackagingData.getTareTertiary() + value);
+			}			
+		}
+		
+		public void setProductPerBoxes(List<NodeRef> variantNodeRefs, Integer value){
+			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
+				variantPackagingData.setProductPerBoxes(value);
+			}			
+		}
+		
+		public void setBoxesPerPallet(List<NodeRef> variantNodeRefs, Integer value){
+			for(VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)){
+				variantPackagingData.setBoxesPerPallet(value);
+			}			
+		}		
+	}
+	
+	private class VariantPackagingData{
 		private Double tareSecondary = 0d;
 		private Double tareTertiary = 0d;
 		private Integer productPerBoxes;
@@ -590,7 +654,36 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		public void setBoxesPerPallet(Integer boxesPerPallet) {
 			this.boxesPerPallet = boxesPerPallet;
 		}	
+	}	
+	
+	protected NodeRef loadVariants(ProductData productData, Element entityElt){
+		NodeRef defaultVariantNodeRef = null;
+		if(productData.getVariants() != null){
+			Element variantsElt = entityElt.addElement(PLMModel.ASSOC_VARIANTS.getLocalName());
+			for (VariantData variant : productData.getVariants()) {
+				if (variant.getIsDefaultVariant()) {
+					defaultVariantNodeRef = variant.getNodeRef();
+				}
+				
+				Element variantElt = variantsElt.addElement(PLMModel.TYPE_VARIANT.getLocalName());
+				variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), variant.getName());
+				variantElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));
+				
+			}
+		}		
+		return defaultVariantNodeRef;
 	}
+	
+	protected void extractVariants(List<NodeRef> variantNodeRefs, Element dataItemElt, NodeRef defaultVariantNodeRef){
+		
+		if(variantNodeRefs != null && !variantNodeRefs.isEmpty()){
+			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variantNodeRefs.contains(defaultVariantNodeRef)));
+		}
+		else{
+			dataItemElt.addAttribute(PLMModel.PROP_VARIANTIDS.getLocalName(), "");
+			dataItemElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.TRUE.toString());
+		}
+	}	
 	
 	protected void loadDynamicCharactList(List<DynamicCharactListItem> dynamicCharactList, Element dataListElt) {
 
@@ -610,10 +703,5 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(nodeRef).toPrefixString(namespaceService));
 			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(nodeRef));
 		}			
-	}
-	
-	protected void loadIsDefaultVariant(Element elt, VariantData variantData){
-		boolean isDefautVariant = (variantData == null) ? true : variantData.getIsDefaultVariant();
-		elt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(isDefautVariant));			
 	}
 }

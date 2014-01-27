@@ -27,7 +27,7 @@
 					<show id="cm:description" />
 					<show id="cm:titled" />
 					
-					<show id="ecm:effectiveDate" />
+					<!-- <show id="ecm:effectiveDate" /> -->
 					<show id="ecm:ecoType"/>
 					<show id="ecm:calculatedCharacts" />							
 															
@@ -59,8 +59,8 @@
 					<show id="cm:description" />
 					<show id="cm:titled" />
 					<show id="bcpg:code" />
-					<show id="ecm:ecoState" />
-					<show id="ecm:effectiveDate" />
+					<show id="ecm:ecoState" read-only="true"/>
+					<show id="ecm:effectiveDate" read-only="true"/>
 					<show id="ecm:ecoType" read-only="true"/>
 					<show id="ecm:calculatedCharacts" />							
 					
@@ -210,7 +210,7 @@
 				<field-visibility>
 					<show id="ecm:culRevision" />
 					<show id="ecm:culSourceItem" />
-					<show id="ecm:culTargetItem" />	
+					<!-- <show id="ecm:culTargetItem" />	 -->
 					<show id="ecm:culTreated" />
 					<show id="ecm:culReqType" />
 					<show id="ecm:culReqDetails" />												
@@ -229,7 +229,7 @@
 				<field-visibility>
 					<show id="ecm:culRevision" />
 					<show id="ecm:culSourceItem" />
-					<show id="ecm:culTargetItem" />	
+					<!-- <show id="ecm:culTargetItem" /> -->	
 					<show id="ecm:culTreated" />
 					<show id="ecm:culReqType" />
 					<show id="ecm:culReqDetails" />		
@@ -245,7 +245,7 @@
 				<field-visibility>
 					<show id="ecm:culRevision" />
 					<show id="ecm:culSourceItem" />
-					<show id="ecm:culTargetItem" />	
+					<!-- <show id="ecm:culTargetItem" />	 -->
 					<show id="ecm:culTreated" />
 					<show id="ecm:culReqType" />
 					<show id="ecm:culReqDetails" />

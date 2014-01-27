@@ -21,45 +21,37 @@ function extractName(nc) {
 }
 
 function sendMail(user, from, subject, message, isAction) {
-   try {
-      if(user.properties.email!=null){
-         var mail = actions.create("mail");
-         
-         
-         mail.parameters.template_model = templateModel;
-         mail.parameters.to = user.properties.email;
-         mail.parameters.subject = subject;
-         mail.parameters.from = from.properties.email;
-         mail.parameters.ignore_send_failure = true;
-      
-         // for Local person.properties["{http://www.alfresco.org/model/system/1.0}locale"]
-      
-         mail.parameters.template = search
-               .xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-" + (isAction ? "action"
-                     : "notify") + "-task-email.ftl")[0];
-         var templateArgs = new Array();
-         templateArgs['workflowTitle'] = message;
-         templateArgs['workflowPooled'] = false;
-         templateArgs['workflowDescription'] = bpm_workflowDescription ;
-         templateArgs['workflowDueDate'] = task.dueDate;
-         templateArgs['workflowPriority'] = task.priority;
-         //templateArgs['workflowDocuments'] = [];
-         templateArgs['workflowId'] = "activiti$"+task.id;
-      
-         var templateModel = new Array();
-         templateModel['args'] = templateArgs;
-         mail.parameters.template_model=templateModel;
-      
-         mail.execute(bpm_package);
-      } else {
-         logger.warn("User "+user.properties.firstName+ " doesn't have email ");
-      }
-   } catch (e){
-      logger.error("Cannot send mail to :");
-      logger.error(" - "+user.properties.email);
-      logger.error(" - "+user.properties.firstName);
-      logger.error(" - "+user.name);
-      logger.error(" - "+subject);
-      logger.error(" - "+e);
-   }
+	try {
+		var mail = actions.create("mail");
+		mail.parameters.template_model = templateModel;
+		mail.parameters.to = user.properties.email;
+		mail.parameters.subject = subject;
+		mail.parameters.from = from.properties.email;
+		mail.parameters.ignore_send_failure = true;
+
+		// for Local person.properties["{http://www.alfresco.org/model/system/1.0}locale"]
+
+		mail.parameters.template = search
+				.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-"
+						+ (isAction ? "action" : "notify") + "-task-email.ftl")[0];
+		var templateArgs = new Array();
+		templateArgs['workflowTitle'] = message;
+		templateArgs['workflowPooled'] = false;
+		templateArgs['workflowDescription'] = bpm_workflowDescription;
+		templateArgs['workflowDueDate'] = task.dueDate;
+		templateArgs['workflowPriority'] = task.priority;
+		//templateArgs['workflowDocuments'] = [];
+		templateArgs['workflowId'] = "activiti$" + task.id;
+
+		var templateModel = new Array();
+		templateModel['args'] = templateArgs;
+		mail.parameters.template_model = templateModel;
+
+		mail.execute(bpm_package);
+	} catch (e) {
+		logger.error("Cannot send mail to :");
+		//logger.error(" - user: "+user);		
+		logger.error(" - subject: " + subject);
+		logger.error(" - e: " + e);
+	}
 }

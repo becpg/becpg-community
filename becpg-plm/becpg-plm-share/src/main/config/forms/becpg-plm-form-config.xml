@@ -5135,6 +5135,7 @@
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
+					<show id="bcpg:mblControlStep" />
 				</field-visibility>
 
 				<appearance>
@@ -5157,6 +5158,7 @@
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
+					<show id="bcpg:mblControlStep" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -5177,6 +5179,7 @@
 					<show id="bcpg:mblUnit" />
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
+					<show id="bcpg:mblControlStep" />
 				</field-visibility>
 
 				<appearance>
