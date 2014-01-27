@@ -90,13 +90,15 @@ function createDockBar(beCPGMenu){
    {
       results = eval('(' + result + ')');
 
-     var recentsMenu =  beCPGMenu.config.widgets.push( {
-         name : "alfresco/menus/AlfMenuGroup",
-         config : {
-            label : "header.becpg.recents",
-            widgets : []
-         }
-      } );
+     var recentsMenu = {
+           name : "alfresco/menus/AlfMenuGroup",
+           config : {
+              label : "header.becpg.recents",
+              widgets : []
+           }
+        }; 
+        
+    
       
       for (var i=0; i < results.items.length; i++){
          var item = results.items[i];
@@ -117,6 +119,7 @@ function createDockBar(beCPGMenu){
          });
          
       }
+      beCPGMenu.config.widgets.push( recentsMenu );
                
    }
    
