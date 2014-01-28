@@ -1,7 +1,10 @@
 <rule-config type="action">
 
-   <component>Alfresco.RuleConfigAction</component>
+   <component>beCPG.custom.RuleConfigActionCustom</component>
 
+   <!-- The "webscript" attribute defines a repository WebScript from which to retrieve some
+        data. The remove element will be processed to remove any matching elements from the 
+        return data. -->
    <config-definitions webscript="/api/actiondefinitions">
       <!--
          Public Action Definitions that we don't want displayed in the menu
@@ -27,6 +30,7 @@
 			<action name="classify-by-hierarchy"/>
 		</group>
 		<group>
+			<action name="version-cleaner"/>
 			<action name="check-in"/>
 			<action name="check-out"/>
 		</group>
@@ -67,6 +71,9 @@
 			<action name="counter"/>
 		</group>
       <group>
+         <action name="set-property-value"/>
+      </group>
+      <group>
          <action name="*"/>
       </group>
    </menu>
@@ -76,6 +83,7 @@
       <action name="specialise-type">SpecialiseType</action>
       <action name="add-features">AddFeatures</action>
       <action name="remove-features">RemoveFeatures</action>
+      <action name="version-cleaner">VersionCleaner</action>
       <action name="check-in">CheckIn</action>
       <action name="check-out">Checkout</action>
       <action name="copy">Copy</action>
@@ -88,6 +96,7 @@
       <action name="transform">Transform</action>
       <action name="transform-image">Transform</action>
       <action name="import">Import</action>
+      <action name="set-property-value">SetPropertyValue</action>
    </customise>
 
 </rule-config>

@@ -24,6 +24,12 @@
       <property name="entityService" ref="entityService" />      
     </bean>
     
+    <bean id="version-cleaner" class="fr.becpg.repo.action.VersionCleanerActionExecuter" parent="action-executer">
+    	<property name="ruleService" ref="ruleService"/>
+    	<property name="versionService" ref="versionService"/>
+    	<property name="nodeService" ref="nodeService" />
+    </bean>
+    
     <!-- I18N -->
    
    <bean id="actionResourceBundles" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
