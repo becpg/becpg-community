@@ -1,0 +1,14 @@
+.versioncleaner
+{
+   width: 45em;
+}
+
+.versioncleaner input[type=radio]
+{
+   margin-right: 0.25em;
+}
+
+.versioncleaner input[type=text]
+{
+   width: 3em;
+}
