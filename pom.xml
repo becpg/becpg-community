@@ -345,7 +345,7 @@
 			<id>dev-montrouge</id>
 			<properties>
 			    <!-- Test -->
-				<alfresco.data.location>/opt/becpg/workspace/becpg/alf_data</alfresco.data.location>
+<!-- 				<alfresco.data.location>/opt/becpg/workspace/becpg/alf_data</alfresco.data.location> -->
 				 <alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
 			</properties>
 		</profile>

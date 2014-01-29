@@ -2,7 +2,7 @@
 
 	<config evaluator="string-compare" condition="DocumentLibrary" >
 		<aspects>
-			<visible>
+			<visible>				
 				<aspect name="cm:generalclassifiable" />
 				<aspect name="cm:complianceable" />
 				<aspect name="cm:dublincore" />
@@ -19,6 +19,7 @@
 				<aspect name="exif:exif" />
 				<aspect name="audio:audio" />
 				<aspect name="cm:indexControl" />
+				<aspect name="cm:workingcopy" />
 
 				<!-- beCPG -->
 				<aspect name="bcpg:permissionsTpl" />

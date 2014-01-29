@@ -566,13 +566,13 @@ public class EntityFolderMigrator {
 					QName parentType = nodeService.getType(entityFolderNodeRef);
 
 					String entityName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-					String parentName = (String) nodeService.getProperty(entityFolderNodeRef, ContentModel.PROP_NAME);
+					String entityFolderName = (String) nodeService.getProperty(entityFolderNodeRef, ContentModel.PROP_NAME);
 
 					if (BeCPGModel.TYPE_ENTITY_FOLDER.equals(parentType)) {
 
-						if (entityName != null && !entityName.equals(parentName)) {
+						if (entityName != null && !entityName.equals(entityFolderName)) {
 							logger.warn("EntityName and entityFolderName are not the same. EntityName: " + entityName
-									+ " - entityFolderName: " + parentName);
+									+ " - entityFolderName: " + entityFolderName);
 						}
 
 						logger.info("migrate entity " + entityName + " - " + entityNodeRef);
@@ -587,15 +587,18 @@ public class EntityFolderMigrator {
 							
 							// rename entityFolder, move entity as sibling of
 							// entityFolder and delete entityFolder
+							String newName = entityFolderName;
+							nodeService.setProperty(entityNodeRef, ContentModel.PROP_TITLE, entityName);
+							nodeService.setProperty(entityNodeRef, ContentModel.PROP_NAME, newName);
 							nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, GUID.generate());
 							NodeRef parentNodeRef = nodeService.getPrimaryParent(entityFolderNodeRef).getParentRef();
-							NodeRef targetNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityName);
+							NodeRef targetNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, newName);
 							if(targetNodeRef != null){								
-								entityName += "-" + GUID.generate();
-								logger.warn("Duplicate name -> " + entityName);
-								nodeService.setProperty(entityFolderNodeRef, ContentModel.PROP_NAME, entityName);
+								newName += "-" + GUID.generate();
+								logger.warn("Duplicate name -> " + newName);
+								nodeService.setProperty(entityNodeRef, ContentModel.PROP_NAME, newName);
 							}
-							fileFolderService.move(entityNodeRef, parentNodeRef, entityName);
+							fileFolderService.move(entityNodeRef, parentNodeRef, newName);
 
 							// move sub-folders of entityFolder under entity
 							List<FileInfo> fileInfos = fileFolderService.list(entityFolderNodeRef);
