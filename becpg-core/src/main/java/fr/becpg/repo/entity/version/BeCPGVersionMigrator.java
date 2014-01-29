@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionModel;
@@ -114,7 +116,7 @@ public class BeCPGVersionMigrator {
 		
 		logger.info("entity to migrate size: " + folderChilAssocs.size());
 		
-		VersionNumber prevVersionNumber = new VersionNumber("0.0");
+		VersionNumber prevVersionNumber = new VersionNumber("1.0");
 		for(ChildAssociationRef folderChildAssoc : folderChilAssocs){
 			
 			NodeRef folderNodeRef = folderChildAssoc.getChildRef();
@@ -141,8 +143,9 @@ public class BeCPGVersionMigrator {
 							// has already a version ?							
 							VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 							Version version = null;							
-							try{
+							try{								
 								if(versionHistory !=null){
+									logger.info("versionHistory.getAllVersions() " + versionHistory.getAllVersions());
 									version = versionHistory.getVersion(versionLabel);
 								}								
 							}
@@ -250,7 +253,7 @@ public class BeCPGVersionMigrator {
 //		}
 	}
 	
-	private Version createVersion(NodeRef entityNodeRef, NodeRef evNodeRef, VersionNumber prevVersionNumber, String versionLabel){
+	private Version createVersion(final NodeRef entityNodeRef, NodeRef evNodeRef, VersionNumber prevVersionNumber, String versionLabel){
 		
 		Version version;
 		QName type = nodeService.getType(entityNodeRef);
@@ -261,7 +264,32 @@ public class BeCPGVersionMigrator {
 			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);	
             policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
             policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-			
+            
+            if(!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+				RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+					@Override
+					public Object doWork() throws Exception {
+						return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+							@Override
+							public NodeRef execute() throws Throwable {
+								logger.debug("Add ASPECT_VERSIONABLE");
+								Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+								aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+								nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+								return null;
+							}
+							
+						}, false, true);
+					}
+				};
+				AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+				
+				
+				
+				
+			}
+            
             VersionNumber versionNumber = new VersionNumber(versionLabel);
 			VersionType versionType = (prevVersionNumber.getPart(0) == versionNumber.getPart(0)) ? VersionType.MINOR : VersionType.MAJOR;
 			
@@ -281,8 +309,6 @@ public class BeCPGVersionMigrator {
 			
 			// add/remove system props on entity version
 			nodeService.setProperty(evNodeRef, ContentModel.PROP_VERSION_LABEL, (String)nodeService.getProperty(evNodeRef, BeCPGModel.PROP_VERSION_LABEL));
-			nodeService.removeProperty(evNodeRef, BeCPGModel.PROP_VERSION_DESCRIPTION);			
-			
 		}
 		finally{
 			policyBehaviourFilter.enableBehaviour(type);

@@ -307,34 +307,25 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			}		
 			
 			// MicrobioList
-			Map<NodeRef, MicrobioListDataItem> microbioMap = new HashMap<NodeRef, MicrobioListDataItem>();
-			if (productData.getMicrobioList() != null) {
-				for (MicrobioListDataItem dataItem : productData.getMicrobioList()) {
-					microbioMap.put(dataItem.getMicrobio(), dataItem);
-				}
-			}
+			List<MicrobioListDataItem> microbioList = null;
 			
-			List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
-			if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
-				NodeRef productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
-
-				if (productMicrobioCriteriaNodeRef != null) {
-					ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
-					
-					if (pmcData.getMicrobioList() != null) {
-						for (MicrobioListDataItem dataItem : pmcData.getMicrobioList()) {
-							if(!microbioMap.containsKey(dataItem.getMicrobio())){
-								microbioMap.put(dataItem.getMicrobio(), dataItem);
-							}
-						}
+			if (productData.getMicrobioList() != null) {
+				microbioList = productData.getMicrobioList();
+			}
+			else{
+				List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+				if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
+					NodeRef productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
+					if (productMicrobioCriteriaNodeRef != null) {
+						ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);					
+						microbioList = pmcData.getMicrobioList();					
 					}
 				}
-			}		
+			}			
 			
-			if(!microbioMap.isEmpty()){
+			if(microbioList != null && !microbioList.isEmpty()){
 				Element organoListElt = dataListsElt.addElement(BeCPGModel.TYPE_MICROBIOLIST.getLocalName() + "s");
-				for (MicrobioListDataItem dataItem : microbioMap.values()) {
-
+				for (MicrobioListDataItem dataItem : microbioList) {
 					Element nodeElt = organoListElt.addElement(BeCPGModel.TYPE_MICROBIOLIST.getLocalName());
 					loadDataListItemAttributes(dataItem, nodeElt);				
 				}
