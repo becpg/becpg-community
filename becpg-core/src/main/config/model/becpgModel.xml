@@ -1201,34 +1201,34 @@
 				</association>
 				<association name="bcpg:ingListGeoOrigin">
 					<source>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>true</many>
 					</source>
 					<target>
 						<class>bcpg:geoOrigin</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpg:ingListGeoTransfo">
 					<source>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>true</many>
 					</source>
 					<target>
 						<class>bcpg:geoOrigin</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpg:ingListBioOrigin">
 					<source>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>true</many>
 					</source>
 					<target>
 						<class>bcpg:bioOrigin</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
 				</association>
