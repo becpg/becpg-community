@@ -57,11 +57,6 @@
     padding-left: 24px;
 }
 
-.datalists li a.filter-link-editable-list
-{
-   background: url(images/list-edit-16.png) no-repeat 4px 0;
-}
-
 .datalists li a span
 {
    cursor: pointer;
