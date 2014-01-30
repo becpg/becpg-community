@@ -58,15 +58,6 @@
 			<classifier>api</classifier>
 			<scope>provided</scope>
 		</dependency>
-		
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-core</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>
-
 
 		<!-- alfresco -->
 		<dependency>
