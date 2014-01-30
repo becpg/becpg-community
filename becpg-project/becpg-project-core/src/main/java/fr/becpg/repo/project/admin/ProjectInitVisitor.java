@@ -176,7 +176,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 					PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS),
-					EXPORT_PROJECTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.XLS,
+					EXPORT_PROJECTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.PDF,
 					ProjectModel.TYPE_PROJECT, false, true, false);
 
 			reportTplService
