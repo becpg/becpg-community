@@ -15,30 +15,23 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.olap.jdbc;
+package fr.becpg.tools.http;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+public class ListEntitiesCommand extends AbstractHttpCommand {
 
-public class JdbcUtils {
-	public static Long update(Connection connection, String sql, Object[] objects) throws SQLException {
 
-		try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+	private static String COMMAND_URL_TEMPLATE = "/becpg/remote/entity/list?query=%s&maxResults=-1";
 
-			for (int i = 0; i < objects.length; i++) {
-				pst.setObject(i + 1, objects[i]);
-			}
-			pst.executeUpdate();
-			try (ResultSet rs = pst.getGeneratedKeys();) {
-				if (rs != null && rs.next()) {
-					return rs.getLong(1);
-				}
-			}
-		}
+	
+	public ListEntitiesCommand(String serverUrl) {
+		super(serverUrl);
+	}
 
-	return -1L;
-}
+	@Override
+	public String getHttpUrl(Object... params) {
+	
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
+	}
+	
+	
 }

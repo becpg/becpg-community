@@ -41,8 +41,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
-import fr.becpg.olap.http.GetEntityCommand;
-import fr.becpg.olap.http.ListEntitiesCommand;
+import fr.becpg.tools.http.GetEntityCommand;
+import fr.becpg.tools.http.ListEntitiesCommand;
 
 public class InstanceImporter {
 	private static Log logger = LogFactory.getLog(InstanceImporter.class);

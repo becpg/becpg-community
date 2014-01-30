@@ -23,6 +23,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.util.EntityUtils;
 
+import fr.becpg.tools.http.AbstractHttpCommand;
+
 
 
 public class GetMondrianSchemaCommand  extends AbstractHttpCommand {

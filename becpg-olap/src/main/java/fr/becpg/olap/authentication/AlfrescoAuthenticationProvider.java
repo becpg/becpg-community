@@ -29,8 +29,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.Assert;
 
-import fr.becpg.olap.helper.UserNameHelper;
 import fr.becpg.olap.http.LoginCommand;
+import fr.becpg.tools.helper.UserNameHelper;
 
 /**
  * 

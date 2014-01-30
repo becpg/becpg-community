@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 import junit.framework.TestCase;
-import fr.becpg.olap.InstanceManager;
 import fr.becpg.olap.http.LoginCommand;
-import fr.becpg.olap.jdbc.JdbcConnectionManager;
+import fr.becpg.tools.InstanceManager;
+import fr.becpg.tools.jdbc.JdbcConnectionManager;
 
 
 public class AlfrescoAuthenticationTest extends TestCase {

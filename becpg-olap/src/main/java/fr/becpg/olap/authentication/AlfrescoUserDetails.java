@@ -24,7 +24,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import fr.becpg.olap.InstanceManager.Instance;
+import fr.becpg.tools.InstanceManager.Instance;
 /**
  * 
  * @author matthieu
