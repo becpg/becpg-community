@@ -332,6 +332,7 @@
 
 	</dependencies>
 	<modules>
+		<module>becpg-tools</module>
 		<module>becpg-report</module>
 		<module>becpg-olap</module>
 		<module>becpg-core</module>

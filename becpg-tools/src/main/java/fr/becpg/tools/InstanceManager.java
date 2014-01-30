@@ -15,7 +15,7 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.olap;
+package fr.becpg.tools;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -34,9 +34,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import fr.becpg.olap.helper.UserNameHelper;
-import fr.becpg.olap.jdbc.JdbcConnectionManager;
-import fr.becpg.olap.jdbc.JdbcUtils;
+import fr.becpg.tools.helper.UserNameHelper;
+import fr.becpg.tools.jdbc.JdbcConnectionManager;
+import fr.becpg.tools.jdbc.JdbcUtils;
 
 /**
  * 
@@ -53,10 +53,12 @@ public class InstanceManager {
 	
 	private static Log logger = LogFactory.getLog(InstanceManager.class);
 
+	public enum InstanceState {
+		UP,DOWN
+	}
+	
 	public class Instance  implements Serializable {
-		/**
-		 * 
-		 */
+		
 		private static final long serialVersionUID = -6767708131173643111L;
 		private Long id;
 		private Long batchId;
@@ -65,9 +67,10 @@ public class InstanceManager {
 		private String tenantName;
 		private String instanceName;
 		private String instanceUrl;
+		private InstanceState instanceState;
 		private Date lastImport;
 
-		public Instance(Long id, Long batchId, String tenantUser, String tenantPassword, String tenantName, String instanceName, String instanceUrl, Date lastImport) {
+		public Instance(Long id, Long batchId, String tenantUser, String tenantPassword, String tenantName, String instanceName, String instanceUrl, Date lastImport, InstanceState instanceState) {
 			super();
 			this.id = id;
 			this.batchId = batchId;
@@ -77,6 +80,7 @@ public class InstanceManager {
 			this.instanceName = instanceName;
 			this.instanceUrl = instanceUrl;
 			this.lastImport = lastImport;
+			this.instanceState = instanceState;
 		}
 
 		public Long getId() {
@@ -119,14 +123,31 @@ public class InstanceManager {
 			this.lastImport = lastImport;
 		}
 
+		
+		public InstanceState getInstanceState() {
+			return instanceState;
+		}
+
+		public void setInstanceState(InstanceState instanceState) {
+			this.instanceState = instanceState;
+		}
+
+		@Override
+		public String toString() {
+			return "Instance [id=" + id + ", batchId=" + batchId + ", tenantUser=" + tenantUser + ", tenantPassword=" + tenantPassword + ", tenantName=" + tenantName
+					+ ", instanceName=" + instanceName + ", instanceUrl=" + instanceUrl + ", instanceSate=" + instanceState + ", lastImport=" + lastImport + "]";
+		}
+		
+		
+
 	}
 
 	public List<Instance> getAllInstances() throws SQLException {
 		return jdbcConnectionManager.list(
-				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`  FROM `becpg_instance`",
+				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance`",
 				new JdbcConnectionManager.RowMapper<Instance>() {
 					public Instance mapRow(ResultSet rs, int line) throws SQLException {
-						return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8));
+						return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8), InstanceState.valueOf(rs.getString(9)));
 
 					}
 				}, new Object[] {});
@@ -152,16 +173,21 @@ public class InstanceManager {
 				instance.getId() });
 	}
 	
+	public void updateInstanceState(Connection connection,Instance instance) throws SQLException {
+		JdbcUtils.update(connection,"UPDATE `becpg_instance` SET `instance_state`=?  WHERE `id`=? ", new Object[] { instance.getInstanceState().toString(),
+				instance.getId() });
+	}
+	
 
 	public Instance findInstanceByUserName(String username) throws SQLException {
 		Matcher ma = UserNameHelper.userNamePattern.matcher(username);
 		if (ma.matches()) {
 			List<Instance> instances = jdbcConnectionManager
-					.list("SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`  FROM `becpg_instance` WHERE instance_name = ? and tenant_name = ?",
+					.list("SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE instance_name = ? and tenant_name = ?",
 							new JdbcConnectionManager.RowMapper<Instance>() {
 								public Instance mapRow(ResultSet rs, int line) throws SQLException {
 									return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs
-											.getTimestamp(8));
+											.getTimestamp(8), InstanceState.valueOf(rs.getString(9)));
 
 								}
 							}, new Object[] { ma.group(1), ma.group(3) });

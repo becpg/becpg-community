@@ -35,10 +35,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import fr.becpg.olap.InstanceManager;
-import fr.becpg.olap.InstanceManager.Instance;
-import fr.becpg.olap.helper.UserNameHelper;
-import fr.becpg.olap.http.RetrieveUserCommand;
+import fr.becpg.tools.InstanceManager;
+import fr.becpg.tools.InstanceManager.Instance;
+import fr.becpg.tools.helper.UserNameHelper;
+import fr.becpg.tools.http.RetrieveUserCommand;
 
 /**
  * 

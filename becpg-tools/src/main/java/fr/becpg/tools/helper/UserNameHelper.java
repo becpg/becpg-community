@@ -15,24 +15,33 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.olap.http;
+package fr.becpg.tools.helper;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/**
+ * 
+ * @author matthieu
+ *
+ */
+public class UserNameHelper {
 
-public class RetrieveUserCommand  extends AbstractHttpCommand {
-
-
-	private static String COMMAND_URL_TEMPLATE = "/api/people/%s?groups=true";
-
+	public static Pattern userNamePattern = Pattern.compile("(.*)\\$(.*)@(.*)");
 	
-	public RetrieveUserCommand(String serverUrl) {
-		super(serverUrl);
+	
+	public static String extractLogin(String username){
+		Matcher ma = userNamePattern.matcher(username);
+		if (ma.matches()) {
+			
+			if(!"default".equals(ma.group(3))){
+				return ma.group(2)+"@"+ma.group(3);
+			} else {
+				return ma.group(2);
+			}
+		}
+		return null;
 	}
-
-	@Override
-	public String getHttpUrl(Object... params) {
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
-	}
-
+	
 	
 }

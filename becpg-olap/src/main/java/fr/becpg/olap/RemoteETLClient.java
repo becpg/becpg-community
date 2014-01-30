@@ -29,10 +29,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.HttpClient;
 
-import fr.becpg.olap.InstanceManager.Instance;
 import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
-import fr.becpg.olap.jdbc.JdbcConnectionManager;
-import fr.becpg.olap.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
+import fr.becpg.tools.InstanceManager;
+import fr.becpg.tools.InstanceManager.Instance;
+import fr.becpg.tools.jdbc.JdbcConnectionManager;
+import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
 
 /**
  * 

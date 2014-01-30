@@ -27,6 +27,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import fr.becpg.tools.http.AbstractHttpCommand;
+
 
 public class LoginCommand  extends AbstractHttpCommand {
 

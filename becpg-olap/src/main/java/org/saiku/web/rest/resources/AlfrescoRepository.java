@@ -55,13 +55,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import fr.becpg.olap.InstanceManager;
-import fr.becpg.olap.InstanceManager.Instance;
 import fr.becpg.olap.authentication.AlfrescoUserDetails;
 import fr.becpg.olap.http.DeleteQueryCommand;
 import fr.becpg.olap.http.DownloadQueryCommand;
 import fr.becpg.olap.http.ListQueriesCommand;
 import fr.becpg.olap.http.UploadQueryCommand;
+import fr.becpg.tools.InstanceManager;
+import fr.becpg.tools.InstanceManager.Instance;
 
 /**
  * 

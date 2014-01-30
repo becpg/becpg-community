@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.olap.http;
 
+import fr.becpg.tools.http.AbstractHttpCommand;
+
 
 
 public class DeleteQueryCommand  extends AbstractHttpCommand {
