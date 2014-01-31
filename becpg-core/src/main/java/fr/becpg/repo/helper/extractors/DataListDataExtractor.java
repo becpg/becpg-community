@@ -45,26 +45,26 @@ public class DataListDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 
 		 if(itemType.equals(DataListModel.TYPE_DATALIST)){
-			 ret.put(PROP_NAME,  attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME));
+			 ret.put(PROP_NAME,  nodeService.getProperty(nodeRef,ContentModel.PROP_NAME));
 			 ret.put(PROP_TYPE, "datalist");
-			 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_TITLE)); 
-			 ret.put(PROP_DESCRIPTION, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
+			 ret.put(PROP_DISPLAYNAME, nodeService.getProperty(nodeRef,ContentModel.PROP_TITLE)); 
+			 ret.put(PROP_DESCRIPTION, nodeService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
 		 } else  { //"{http://www.alfresco.org/model/datalist/1.0}dataListItem"
-			 ret.put(PROP_NAME, attributeExtractorService.getProperty(getParent(nodeRef),ContentModel.PROP_NAME) );// used to generate link to parent datalist - not ideal
+			 ret.put(PROP_NAME, nodeService.getProperty(getParent(nodeRef),ContentModel.PROP_NAME) );// used to generate link to parent datalist - not ideal
 			 ret.put(PROP_TYPE, "datalistitem");
 			 
 			 if(nodeService.hasAspect(nodeRef, ContentModel.ASPECT_TITLED)){
-				 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_TITLE)); 
+				 ret.put(PROP_DISPLAYNAME, nodeService.getProperty(nodeRef,ContentModel.PROP_TITLE)); 
 			 } else {
-				 ret.put(PROP_DISPLAYNAME, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME)); 
+				 ret.put(PROP_DISPLAYNAME, nodeService.getProperty(nodeRef,ContentModel.PROP_NAME)); 
 			 }
 		 }
 		 
-		 ret.put(PROP_MODIFIER,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
+		 ret.put(PROP_MODIFIER,  nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
+		 ret.put(PROP_MODIFIED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED)));
 		
-		 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-		 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+		 ret.put(PROP_CREATED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
+		 ret.put(PROP_CREATOR,  nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 	
 		
 		 ret.put(PROP_SIZE, -1);

@@ -98,8 +98,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 	private EntityTplService entityTplService;
 
-	private EntityDictionaryService entityDictionaryService;
-
 	private NamespaceService namespaceService;
 
 	private TransactionService transactionService;
@@ -132,9 +130,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		this.entityTplService = entityTplService;
 	}
 
-	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-		this.entityDictionaryService = entityDictionaryService;
-	}
+//	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+//		this.entityDictionaryService = entityDictionaryService;
+//	}
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;

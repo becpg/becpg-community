@@ -37,5 +37,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/becpg-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

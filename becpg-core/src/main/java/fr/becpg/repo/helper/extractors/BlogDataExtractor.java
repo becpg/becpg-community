@@ -65,17 +65,17 @@ public class BlogDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_NODEREF, childNodeRef.toString());
 		 ret.put(PROP_TAGS, attributeExtractorService.getTags(childNodeRef));
 		 
-		 String name = (String) attributeExtractorService.getProperty(childNodeRef,ContentModel.PROP_NAME);
-		 String title = (String) attributeExtractorService.getProperty(childNodeRef,ContentModel.PROP_TITLE);
+		 String name = (String) nodeService.getProperty(childNodeRef,ContentModel.PROP_NAME);
+		 String title = (String) nodeService.getProperty(childNodeRef,ContentModel.PROP_TITLE);
 
 		 ret.put(PROP_NAME,  name);
 		 ret.put(PROP_DISPLAYNAME, title);
 		
-		 ret.put(PROP_MODIFIER,  attributeExtractorService.getProperty(childNodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(childNodeRef, ContentModel.PROP_MODIFIED));
+		 ret.put(PROP_MODIFIER,  nodeService.getProperty(childNodeRef, ContentModel.PROP_MODIFIER));
+		 ret.put(PROP_MODIFIED,  attributeExtractorService.convertDateValue(nodeService.getProperty(childNodeRef, ContentModel.PROP_MODIFIED)));
 		
-		 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-		 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+		 ret.put(PROP_CREATED,  attributeExtractorService.convertDateValue(nodeService.getProperty(childNodeRef, ContentModel.PROP_CREATED)));
+		 ret.put(PROP_CREATOR,  nodeService.getProperty(childNodeRef, ContentModel.PROP_CREATOR));
 	
 		 ret.put(PROP_TYPE, "blogpost");
 		 ret.put(PROP_SIZE, getSize(childNodeRef));

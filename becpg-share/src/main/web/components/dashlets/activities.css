@@ -102,12 +102,12 @@
 
 .activities .activity .detail .project
 {
-   background-image: url(../images/filetypes/generic-project-16.png);
+   background-image: url(../images/filetypes/generic-entity-16.png);
 }
 
 .activities .activity .detail .projectTask
 {
-   background-image: url(../images/filetypes/generic-task-16.png);
+   background-image: url(../images/task-16.png);
 }
 
 .activities .activity .detail .projectDeliverable

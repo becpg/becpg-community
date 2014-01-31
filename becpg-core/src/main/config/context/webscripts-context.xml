@@ -67,7 +67,6 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="entityTplService" ref="entityTplService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="transactionService" ref="TransactionService" />
 		<property name="dictionaryService" ref="DictionaryService" />

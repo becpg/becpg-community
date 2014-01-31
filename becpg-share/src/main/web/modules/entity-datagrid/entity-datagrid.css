@@ -427,7 +427,7 @@ div.filterButtonsBar{
     border-top: 1px solid #CBCBCB;
     border-bottom: 1px solid #7f7f7f;
     font-weight: bold;
-    background-image: url("../../themes/default/images/title-button-bg.png");
+    background-color: #EEEEEE;
     color: black;
     cursor: pointer;
 }

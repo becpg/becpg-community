@@ -44,31 +44,25 @@
             <source-id>user/${userid}/dashboard</source-id>
             <url>/components/dashlets/my-tasks</url>
          </component>
-         <component>
+          <component>
              <scope>page</scope>
              <region-id>component-1-2</region-id>
              <source-id>user/${userid}/dashboard</source-id>
-             <url>/components/dashlets/my-activities</url>
+             <url>/components/dashlets/product-catalog</url>
          </component>
          <component>
              <scope>page</scope>
              <region-id>component-2-1</region-id>
              <source-id>user/${userid}/dashboard</source-id>
-             <url>/components/dashlets/product-catalog</url>
-             <properties>
-                <height>240</height>
-             </properties>
+             <url>/components/dashlets/project-list</url>
          </component>
          <component>
              <scope>page</scope>
              <region-id>component-2-2</region-id>
              <source-id>user/${userid}/dashboard</source-id>
-             <url>/components/dashlets/project-list</url>
-             <properties>
-                <height>240</height>
-             </properties>
-         </component>
-      </components>
+             <url>/components/dashlets/my-activities</url>
+         </component>   
+      </components>              
       <pages>
          <page id="user/${userid}/dashboard">
             <title>User Dashboard</title>
