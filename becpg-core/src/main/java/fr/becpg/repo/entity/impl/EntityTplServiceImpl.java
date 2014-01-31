@@ -39,12 +39,17 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
@@ -58,66 +63,43 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGSearchService;
 
+@Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"%s\" +@bcpg\\:entityTplEnabled:true +@bcpg\\:entityTplIsDefault:true -ASPECT:\"bcpg:compositeVersion\"";
-//	private static final String QUERY_LOAD_CHARACTS = " +TYPE:\"%s\"";
 
 	private static Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
+	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
 	private DictionaryService dictionaryService;
 
+	@Autowired
 	private BeCPGSearchService beCPGSearchService;
 
+	@Autowired
 	private FormulationService<FormulatedEntity> formulationService;
 
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	@Autowired
 	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
+	@Autowired
 	private TransactionService transactionService;
 
+	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
+	
+	@Autowired
+	private NamespaceService namespaceService;
 
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
-		this.formulationService = formulationService;
-	}
-
-	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
-		this.repositoryEntityDefReader = repositoryEntityDefReader;
-	}
 
 	/**
 	 * Create the entityTpl
@@ -155,7 +137,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityList);
 				if (listNodeRef == null) {
 					listNodeRef = entityListDAO.createList(listContainerNodeRef, entityList);
-					//initializeList(listNodeRef, entityList);
 				}
 			}
 		}
@@ -176,6 +157,34 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		return entityTplNodeRef;
 	}
+	
+	@Override
+	public NodeRef createWUsedList(NodeRef entityTplNodeRef, QName typeQName, QName assocQName) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
+		if (listContainerNodeRef == null) {
+			listContainerNodeRef = entityListDAO.createListContainer(entityTplNodeRef);
+		}
+		
+		String name = RepoConsts.WUSED_PREFIX;
+		if(assocQName!=null) {
+			name+=RepoConsts.WUSED_SEPARATOR+assocQName.toPrefixString(namespaceService);
+		}
+		
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef,name );
+		if (listNodeRef == null) {
+			
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, name);
+			properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage("entity-datalist-wused-title"));
+			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-wused-description"));
+			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
+
+			listNodeRef =  nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, typeQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
+			
+		}
+		return listNodeRef;
+	}
 
 	/**
 	 * Get the entityTpl
@@ -191,48 +200,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return tplsNodeRef != null && !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;
 	}
 
-//	
-//	//Deplacer dans l'init-repo
-//	private void initializeList(NodeRef listNodeRef, QName listType) {
-//
-//		String query = null;
-//		QName associationQName = null;
-//
-//		// TODO : to do more generic
-//		if (listType.equals(BeCPGModel.TYPE_ALLERGENLIST)) {
-//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_ALLERGEN);
-//			query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_ALLERGEN_TYPE, AllergenType.Major.toString(), LuceneHelper.Operator.AND);
-//			associationQName = BeCPGModel.ASSOC_ALLERGENLIST_ALLERGEN;
-//		} else if (listType.equals(BeCPGModel.TYPE_COSTLIST)) {
-//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_COST);
-//			associationQName = BeCPGModel.ASSOC_COSTLIST_COST;
-//		} else if (listType.equals(BeCPGModel.TYPE_NUTLIST)) {
-//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_NUT);
-//			associationQName = BeCPGModel.ASSOC_NUTLIST_NUT;
-//		} else if (listType.equals(BeCPGModel.TYPE_ORGANOLIST)) {
-//			query = String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_ORGANO);
-//			associationQName = BeCPGModel.ASSOC_ORGANOLIST_ORGANO;
-//		} /*
-//		 * else if (listType.equals(BeCPGModel.TYPE_PHYSICOCHEMLIST)) { query =
-//		 * String.format(QUERY_LOAD_CHARACTS, BeCPGModel.TYPE_PHYSICO_CHEM);
-//		 * associationQName = BeCPGModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM; }
-//		 */
-//
-//		if (query != null) {
-//
-//			List<NodeRef> characts = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(ContentModel.PROP_NAME), RepoConsts.MAX_RESULTS_256);
-//
-//			for (NodeRef charact : characts) {
-//
-//				Map<QName, List<NodeRef>> associations = new HashMap<QName, List<NodeRef>>();
-//				List<NodeRef> targetNodes = new ArrayList<NodeRef>();
-//				targetNodes.add(charact);
-//				associations.put(associationQName, targetNodes);
-//
-//				entityListDAO.createListItem(listNodeRef, listType, new HashMap<QName, Serializable>(), associations);
-//			}
-//		}
-//	}
 
 	@Override
 	public void synchronizeEntities(NodeRef tplNodeRef) {

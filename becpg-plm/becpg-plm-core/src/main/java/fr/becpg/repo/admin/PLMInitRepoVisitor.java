@@ -583,7 +583,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<QName>();
-
+			QName wusedQName = null;
+			
+			
 			if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
 
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
@@ -594,6 +596,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				
+				wusedQName = PLMModel.TYPE_COMPOLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
 
@@ -602,12 +606,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PackModel.TYPE_LABELING_LIST);
+				
+				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				
+				wusedQName = MPMModel.TYPE_PROCESSLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
@@ -619,6 +627,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				
+				wusedQName = PLMModel.TYPE_COMPOLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
 
@@ -633,22 +643,30 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				
+				wusedQName = PLMModel.TYPE_COMPOLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_PACKAGINGKIT)) {
 
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				
+				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
 			} else if (productType.equals(SecurityModel.TYPE_ACL_GROUP)) {
-
 				dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
-
 			}
 
-			entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists, subFolders);
 			
+			NodeRef entityTplNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, productType, true, dataLists, subFolders);
+			if(wusedQName!=null) {
+				entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
+			}
 		}
+		
+		
+		
 	}
 
 	private void visitQuality(NodeRef entityTplsNodeRef) {

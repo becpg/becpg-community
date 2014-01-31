@@ -138,4 +138,10 @@ public class RepoConsts {
 	// Sort
 	public static int SORT_DEFAULT_STEP = 100;
 	public static int SORT_INSERTING_STEP = 1;
+	
+	
+	//WUsed
+	public static String WUSED_PREFIX = "WUsed";
+	public static String WUSED_SEPARATOR = "|";
+	
 }
