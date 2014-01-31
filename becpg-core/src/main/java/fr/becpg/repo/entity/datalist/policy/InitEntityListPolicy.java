@@ -19,9 +19,9 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
-// TODO: Auto-generated Javadoc
 /**
  * Store in the name of the product list folder the type of product list.
  *
@@ -39,7 +39,6 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 	/** The dictionary service. */
 	private DictionaryService dictionaryService;
 			
-	
 	
 	/**
 	 * Sets the namespace service.
@@ -93,7 +92,7 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 				if(dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)){
 					
 					String dataListName = (String)nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-					if(!dataListTypeQName.getLocalName().equals(dataListName)){
+					if(!dataListTypeQName.getLocalName().equals(dataListName) && !dataListName.startsWith(RepoConsts.WUSED_PREFIX) ){
 						try {
 						  nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, dataListTypeQName.getLocalName());
 						} catch (DuplicateChildNodeNameException e){

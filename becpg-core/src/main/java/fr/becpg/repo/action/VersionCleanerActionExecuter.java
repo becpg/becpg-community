@@ -16,11 +16,12 @@ GNU Lesser General Public License for more details.
  
 You should have received a copy of the GNU Lesser General Public License 
 along with beCPG. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package fr.becpg.repo.action;
 
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.service.cmr.action.Action;
@@ -38,97 +39,85 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * @author matthieu
- *
+ * 
  */
-public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase
-{
-    public static final String NAME = "version-cleaner";
-    public static final String PARAM_VERSION_TYPE = "versionType";
-    public static final String PARAM_NUMBER_OF_VERSION = "numberOfVersion";
-    public static final String PARAM_NUMBER_OF_DAY = "numberOfDay";
-    public static final String PARAM_NUMBER_BY_DAY = "numberByDay";
-    
-    private Log logger = LogFactory.getLog(VersionCleanerActionExecuter.class);
-    
-//    - Nombre de versions mineures à conserver
-//    - Nombre de versions majeures à conserver
-//    - Nombre de jours à conserver pour les versions mineures
-//    - Nombre de jours à conserver pour les versions majeures
- 
+public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
+	
+	public static final String NAME = "version-cleaner";
 
-    
-//     B) Nombre de versions à conserver, indépendamment de notions temporelles. 
-//
-//     C) Nombre de jours à conserver : 
-//
-//    o Nombre de versions par jour : 
-//
-//     Toutes. 
-//
-//     N (les N dernières) 
-//
-//     Une seule (la dernière saisie de la journée).
-//
-//     Si on choisit l’option C, les deux informations sont obligatoires (nombre de jours et nombre de versions). 
-//
-//     D) Conservation de toutes les versions. Cette option est prévue pour éventuellement annuler les effets d’un 
-//
-//    héritage des règles des niveaux supérieurs.
-    
-  
-    private NodeService nodeService;
-    private RuleService ruleService;
-    private  VersionService versionService;
-    
+
+	public static final String PARAM_VERSION_TYPE = "versionType";
+	public static final String PARAM_NUMBER_OF_VERSION = "numberOfVersion";
+	public static final String PARAM_NUMBER_OF_DAY = "numberOfDay";
+	public static final String PARAM_NUMBER_BY_DAY = "numberByDay";
+
+	private Log logger = LogFactory.getLog(VersionCleanerActionExecuter.class);
+
+	private NodeService nodeService;
+	private RuleService ruleService;
+	private VersionService versionService;
 
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
 	}
 
-
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
-
-	public void setNodeService(NodeService nodeService) 
-	{
+	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
-  
 
-    /**
-     * @see org.alfresco.repo.action.executer.ActionExecuter#execute(org.alfresco.repo.ref.NodeRef, org.alfresco.repo.ref.NodeRef)
-     */
-    @Override
-	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef)
-    {
-           boolean isLastAction = false;
-        	for(Rule rule : ruleService.getRules(actionedUponNodeRef)) {
-        		if(!rule.getRuleDisabled()) {
-	        		if(rule.getAction().getActionDefinitionName().equals(ruleAction.getActionDefinitionName())) {
-	        		   
-	        			if(ruleAction.equals(rule.getAction())) {
-	        				isLastAction = true;
-	        		   } else {
-	        			   isLastAction = false;
-	        		   }
-	        			
-	        		}
-        		}
-        	}
-        	logger.info("Action "+ruleAction.toString()+ " isLastAction "+ isLastAction);
-//         VersionHistory versionHistory = versionService.getVersionHistory(actionedUponNodeRef);
-//         for(Version version : versionHistory.getAllVersions()) {
-//        	 logger.info("Version :"+version.toString());
-//         }
-         
-    }
+
+	/**
+	 * @see org.alfresco.repo.action.executer.ActionExecuter#execute(org.alfresco.repo.ref.NodeRef,
+	 *      org.alfresco.repo.ref.NodeRef)
+	 */
+	@Override
+	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef) {
+		if (nodeService.exists(actionedUponNodeRef)) {
+
+			VersionCleanerActionConfig versionConfig = new VersionCleanerActionConfig();
+
+			boolean isLastAction = false;
+			for (Rule rule : ruleService.getRules(actionedUponNodeRef)) {
+				if (!rule.getRuleDisabled()) {
+					if (rule.getAction().getActionDefinitionName().equals(ruleAction.getActionDefinitionName())) {
+						
+						Integer numberOfDay = (Integer) rule.getAction().getParameterValue(PARAM_NUMBER_OF_DAY);
+						Integer numberByDay = (Integer) rule.getAction().getParameterValue(PARAM_NUMBER_BY_DAY);
+						Integer numberOfVersion = (Integer) rule.getAction().getParameterValue(PARAM_NUMBER_OF_VERSION);
+						String versionType = (String) rule.getAction().getParameterValue(PARAM_VERSION_TYPE);
+						
+						versionConfig.setConfig(versionType, numberOfVersion, numberOfDay, numberByDay);
+						if (ruleAction.equals(rule.getAction())) {
+							isLastAction = true;
+						} else {
+							isLastAction = false;
+						}
+
+					}
+				}
+			}
+			if (isLastAction) {
+				logger.debug("Applying version config :" + versionConfig.toString());
+				logger.debug("To node " + nodeService.getProperty(actionedUponNodeRef, ContentModel.PROP_NAME));
+
+			}
+
+			VersionHistory versionHistory = versionService.getVersionHistory(actionedUponNodeRef);
+
+			for (Version version : versionConfig.versionsToDelete(versionHistory.getAllVersions())) {
+				logger.info("Deleting version :" + version.toString());
+				versionService.deleteVersion(actionedUponNodeRef, version);
+			}
+
+		}
+	}
 
 	@Override
-	protected void addParameterDefinitions(List<ParameterDefinition> paramList) 
-	{
+	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_VERSION_TYPE, DataTypeDefinition.TEXT, true, getParamDisplayLabel(PARAM_VERSION_TYPE)));
 		paramList.add(new ParameterDefinitionImpl(PARAM_NUMBER_BY_DAY, DataTypeDefinition.INT, false, getParamDisplayLabel(PARAM_NUMBER_BY_DAY)));
 		paramList.add(new ParameterDefinitionImpl(PARAM_NUMBER_OF_DAY, DataTypeDefinition.INT, false, getParamDisplayLabel(PARAM_NUMBER_OF_DAY)));

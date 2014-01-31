@@ -41,6 +41,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.BeCPGModel;
@@ -55,46 +56,29 @@ import fr.becpg.repo.helper.TranslateHelper;
  * @author querephi
  * 
  */
-@Repository
+@Repository("entityListDAO")
 public class EntityListDAOImpl implements EntityListDAO {
 
 	private static Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 
+	@Autowired
 	private NodeService nodeService;
-
+	
+	@Autowired
 	private DictionaryService dictionaryService;
-
+	
+	@Autowired
 	private FileFolderService fileFolderService;
-
+	
+	@Autowired
 	private NamespaceService namespaceService;
-
+	
+	@Autowired
 	private CopyService copyService;
-
+	
+	@Autowired
 	private AssociationService associationService;
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	public void setCopyService(CopyService copyService) {
-		this.copyService = copyService;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
 
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {
@@ -107,7 +91,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		NodeRef listNodeRef = null;
 		if (listContainerNodeRef != null) {
-			listNodeRef = nodeService.getChildByName(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, QName.createValidLocalName(name));
+			listNodeRef = nodeService.getChildByName(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, QName.createValidLocalName(name) );
 		}
 		return listNodeRef;
 	}
@@ -150,6 +134,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
 
 	}
+	
 
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
@@ -335,11 +320,19 @@ public class EntityListDAOImpl implements EntityListDAO {
 					for (NodeRef sourceListNodeRef : sourceListsNodeRef) {
 
 						String dataListType = (String) nodeService.getProperty(sourceListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+						String name = (String) nodeService.getProperty(sourceListNodeRef, ContentModel.PROP_NAME);
 						QName listQName = QName.createQName(dataListType, namespaceService);
 
 						if (listQNames == null || listQNames.contains(listQName)) {
 
-							NodeRef existingListNodeRef = getList(targetListContainerNodeRef, listQName);
+							NodeRef existingListNodeRef = null;
+							
+							if(name.startsWith(RepoConsts.WUSED_PREFIX)) {
+								existingListNodeRef = getList(targetListContainerNodeRef, name);
+							} else {
+								existingListNodeRef = getList(targetListContainerNodeRef, listQName);
+							}
+							
 							boolean copy = true;
 							if (existingListNodeRef != null) {
 								if (override) {
@@ -353,7 +346,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 								logger.debug("copy datalist " + listQName);
 								NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST,
 										true);
-								nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, listQName.getLocalName());
+								nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
 							}
 						}
 					}

@@ -35,7 +35,6 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SecurityModel;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
@@ -129,10 +128,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
-
-//	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-//		this.entityDictionaryService = entityDictionaryService;
-//	}
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
@@ -283,12 +278,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 			}
 
-			// WUsed
-//			QName wUsedListQName = entityDictionaryService.getWUsedList(nodeType);
-//
-//			if (wUsedListQName != null) {
-//				wUsedList = wUsedListQName.toPrefixString(namespaceService);
-//			}
 
 		}
 
