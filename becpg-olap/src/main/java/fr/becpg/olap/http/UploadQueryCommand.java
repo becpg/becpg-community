@@ -31,6 +31,8 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.StringBody;
 
+import fr.becpg.tools.http.AbstractHttpCommand;
+
 public class UploadQueryCommand extends AbstractHttpCommand {
 
 	private static String COMMAND_URL_TEMPLATE = "/api/upload";

@@ -15,7 +15,7 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.http;
+package fr.becpg.tools.http;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -45,8 +45,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import fr.becpg.olap.InstanceManager.Instance;
-import fr.becpg.olap.jdbc.JdbcUtils;
+import fr.becpg.tools.InstanceManager.Instance;
+import fr.becpg.tools.jdbc.JdbcUtils;
 
 /**
  * 
