@@ -34,24 +34,6 @@
 	   }
 	}<#if list_has_next>,</#if>
    </#list>
-   <#if wUsedList??>
-   		<#if lists?size != 0>
-   	,
-		</#if>
-	{
-	   "entityName" : "${entity.name}",
-	   "name": "WUsed",
-	   "title": "${message('entity-datalist-wused-title')}",
-	   "description": "${message('entity-datalist-wused-description')}",
-	   "nodeRef": "",
-	   "itemType": "${wUsedList}",
-	   "permissions":
-	   {
-	      "edit": false,
-	      "delete": false
-	   }
-	}
-	</#if>
    ],
    "entity" : {
          "nodeRef": "${entity.nodeRef}",

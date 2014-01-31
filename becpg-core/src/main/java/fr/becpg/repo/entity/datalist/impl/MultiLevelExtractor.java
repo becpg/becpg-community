@@ -28,6 +28,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -156,7 +157,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && dataListFilter.getDataType() != null && entityDictionaryService.isMultiLevelDataList(dataListFilter.getDataType())
-				&& !dataListFilter.getDataListName().startsWith(WUsedExtractor.WUSED_PREFIX);
+				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX);
 	}
 
 	@Override
