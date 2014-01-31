@@ -31,6 +31,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -46,8 +47,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public class WUsedExtractor extends MultiLevelExtractor {
 
-	final static String WUSED_PREFIX = "WUsed";
-
+	
 	private static Log logger = LogFactory.getLog(WUsedExtractor.class);
 
 	private WUsedListService wUsedListService;
@@ -69,8 +69,8 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		QName associationName = null;
 
-		if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf("|") > 0) {
-			associationName = QName.createQName(dataListFilter.getDataListName().split("\\|")[1], namespaceService);
+		if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf(RepoConsts.WUSED_SEPARATOR) > 0) {
+			associationName = QName.createQName(dataListFilter.getDataListName().split("\\"+RepoConsts.WUSED_SEPARATOR)[1], namespaceService);
 		} else {
 			associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
 		}
@@ -166,7 +166,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null && dataListFilter.getDataListName().startsWith(WUsedExtractor.WUSED_PREFIX);
+		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null && dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX);
 	}
 
 	@Override

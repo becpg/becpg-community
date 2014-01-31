@@ -249,7 +249,7 @@
          </sub-components>
       </component>
 
-      <!-- Document Links -->
+      <!-- Document Links 
       <component>
          <region-id>document-links</region-id>
          <url>/components/document-details/document-links</url>
@@ -257,6 +257,7 @@
             <nodeRef>{nodeRef}</nodeRef>
          </properties>
       </component>
+      -->
 
       <!-- Document Metadata -->
       <component>
@@ -267,7 +268,7 @@
          </properties>
       </component>
 
-      <!-- Document Sync -->
+      <!-- Document Sync 
       <component>
          <region-id>document-sync</region-id>
          <url>/components/document-details/document-sync</url>
@@ -275,14 +276,15 @@
             <nodeRef>{nodeRef}</nodeRef>
          </properties>
       </component>
+      -->
 
-      <!-- Document Permissions -->
+      <!-- Document Permissions 
       <component>
          <region-id>document-permissions</region-id>
          <sub-components>
             <sub-component id="default">
                <evaluations>
-                  <!-- if in site: Permissions -->
+                   // if in site: Permissions 
                   <evaluation id="site">
                      <evaluators>
                         <evaluator type="site.component.evaluator"/>
@@ -296,6 +298,8 @@
             </sub-component>
          </sub-components>
       </component>
+		-->
+
 
       <!-- Document Workflows -->
       <component>

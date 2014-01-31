@@ -27,22 +27,14 @@ import fr.becpg.repo.formulation.FormulateException;
 
 public interface EntityTplService {
 
-	/**
-	 * Create the entityTpl
-	 * @param entityTplsNodeRef
-	 * @param entityType
-	 */
-	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders);
+	NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders);
 	
-	/**
-	 * Look for the entityTpl
-	 * @param isContainer
-	 * @param nodeType
-	 * @return
-	 */
-	public NodeRef getEntityTpl(QName nodeType);
+	NodeRef getEntityTpl(QName nodeType);
 	
-	public void synchronizeEntities(NodeRef tplNodeRef);
+	NodeRef createWUsedList(NodeRef entityTplNodeRef, QName typeQName, QName assocQName);
 	
-	public void formulateEntities(NodeRef tplNodeRef) throws FormulateException;
+	void synchronizeEntities(NodeRef tplNodeRef);
+	
+	void formulateEntities(NodeRef tplNodeRef) throws FormulateException;
+
 }
