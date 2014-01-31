@@ -617,16 +617,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	@Override
-	public Serializable getProperty(NodeRef nodeRef, QName propName) {
-		Serializable value = nodeService.getProperty(nodeRef, propName);
-
-		if (value instanceof Date) {
-			return (Serializable) formatDate((Date) value);
-		}
-		return value;
-	}
-
-	@Override
 	public String convertDateValue(Serializable value) {
 		if (value instanceof Date) {
 			return formatDate((Date) value);

@@ -51,17 +51,17 @@ public class WikiDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 		 ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
 		 
-		 String name = (String) attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME);
+		 String name = (String) nodeService.getProperty(nodeRef,ContentModel.PROP_NAME);
 
 		 ret.put(PROP_NAME,  name);
 		 ret.put(PROP_DISPLAYNAME, name.replaceAll("_", " "));
-		 ret.put(PROP_DESCRIPTION, attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
+		 ret.put(PROP_DESCRIPTION, nodeService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
 		
-		 ret.put(PROP_MODIFIER,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
+		 ret.put(PROP_MODIFIER,  nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
+		 ret.put(PROP_MODIFIED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED)));
 		
-		 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-		 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+		 ret.put(PROP_CREATED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
+		 ret.put(PROP_CREATOR,  nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 	
 		 ret.put(PROP_TYPE, "wikipage");
 		 ret.put(PROP_SIZE, getSize(nodeRef));

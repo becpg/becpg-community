@@ -75,10 +75,6 @@ public interface AttributeExtractorService {
 
 	public String extractSiteId(NodeRef entityNodeRef);
 
-	@Deprecated 
-	//Use convertDateValue instead
-	public Serializable getProperty(NodeRef nodeRef, QName propName);
-
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 
 	public String extractAssociationForReport(AssociationRef assocRef);

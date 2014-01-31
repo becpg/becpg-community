@@ -44,13 +44,7 @@
             <region-id>component-1-1</region-id>
             <source-id>user/${userid}/dashboard</source-id>
             <url>/components/dashlets/my-tasks</url>
-         </component>
-         <component>
-             <scope>page</scope>
-             <region-id>component-1-2</region-id>
-             <source-id>user/${userid}/dashboard</source-id>
-             <url>/components/dashlets/my-activities</url>
-         </component>
+         </component>         
          <component>
              <scope>page</scope>
              <region-id>component-2-1</region-id>
@@ -59,6 +53,12 @@
              <properties>
                 <height>240</height>
              </properties>
+         </component>
+         <component>
+             <scope>page</scope>
+             <region-id>component-2-1</region-id>
+             <source-id>user/${userid}/dashboard</source-id>
+             <url>/components/dashlets/my-activities</url>
          </component>
       </components>
       <pages>

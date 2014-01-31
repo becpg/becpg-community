@@ -64,18 +64,18 @@ public class CalendarDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 		 ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
 		 
-		 String name = (String) attributeExtractorService.getProperty(nodeRef,ContentModel.PROP_NAME);
-		 String title = (String) attributeExtractorService.getProperty(nodeRef,PROP_WHAT_EVENT);
+		 String name = (String) nodeService.getProperty(nodeRef,ContentModel.PROP_NAME);
+		 String title = (String) nodeService.getProperty(nodeRef,PROP_WHAT_EVENT);
 
 		 ret.put(PROP_NAME,  name);
 		 ret.put(PROP_DISPLAYNAME, title);
-		 ret.put(PROP_DESCRIPTION, attributeExtractorService.getProperty(nodeRef,PROP_DESCRIPTION_EVENT));
+		 ret.put(PROP_DESCRIPTION, nodeService.getProperty(nodeRef,PROP_DESCRIPTION_EVENT));
 		
-		 ret.put(PROP_MODIFIER, attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_MODIFIED));
+		 ret.put(PROP_MODIFIER, nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
+		 ret.put(PROP_MODIFIED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED)));
 		
-		 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-		 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+		 ret.put(PROP_CREATED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
+		 ret.put(PROP_CREATOR,  nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 	
 		 ret.put(PROP_TYPE, "calendarevent");
 		 ret.put(PROP_SIZE, getSize(nodeRef));

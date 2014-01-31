@@ -27,12 +27,12 @@
                            version = '<span class="document-version">' + record.version + '</span>';
                         }
 
-                        Dom.setStyle(elCell, "width", "12em");
-                        Dom.setStyle(elCell.parentNode, "width", "12em");
+                        Dom.setStyle(elCell, "width", "15em");
+                        Dom.setStyle(elCell.parentNode, "width", "15em");
 
-                        return '<span class="nc ' + record.itemData["prop_qa_ncType"].value + '" ><a href="' + url + '">' + priorityImg + "&nbsp;" + Alfresco.util
-                              .encodeHTML(title) + '</a>&nbsp;<a class="folder-link" href="' + urlFolder + '" title="' + scope
-                              .msg("link.title.open-folder") + '">&nbsp;</a></span>' + version;
+                        return '<span class="nc ' + record.itemData["prop_qa_ncType"].value + '" ><a class="folder-link" href="' + urlFolder + '" title="' + scope
+                        .msg("link.title.open-folder") + '"></a><a href="' + url + '">' + priorityImg + "&nbsp;" + Alfresco.util
+                              .encodeHTML(title) + '</a>&nbsp;</span>' + version;
 
                      }
 

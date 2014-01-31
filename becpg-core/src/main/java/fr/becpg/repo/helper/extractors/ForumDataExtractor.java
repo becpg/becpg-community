@@ -60,18 +60,18 @@ public class ForumDataExtractor extends AbstractNodeDataExtractor  {
 			 ret.put(PROP_NODEREF, topicNode.toString());
 			 ret.put(PROP_TAGS, attributeExtractorService.getTags(topicNode));
 			 
-			 String name = (String) attributeExtractorService.getProperty(topicNode,ContentModel.PROP_NAME);
-			 String title = (String) attributeExtractorService.getProperty(postNode,ContentModel.PROP_TITLE);
+			 String name = (String) nodeService.getProperty(topicNode,ContentModel.PROP_NAME);
+			 String title = (String) nodeService.getProperty(postNode,ContentModel.PROP_TITLE);
 
 			 ret.put(PROP_NAME,  name);
 			 ret.put(PROP_DISPLAYNAME, title);
-			 ret.put(PROP_DESCRIPTION,  attributeExtractorService.getProperty(topicNode, ContentModel.PROP_DESCRIPTION));
+			 ret.put(PROP_DESCRIPTION,  nodeService.getProperty(topicNode, ContentModel.PROP_DESCRIPTION));
 			 
-			 ret.put(PROP_MODIFIER,  attributeExtractorService.getProperty(topicNode, ContentModel.PROP_MODIFIER));
-			 ret.put(PROP_MODIFIED,  attributeExtractorService.getProperty(topicNode, ContentModel.PROP_MODIFIED));
+			 ret.put(PROP_MODIFIER,  nodeService.getProperty(topicNode, ContentModel.PROP_MODIFIER));
+			 ret.put(PROP_MODIFIED,  attributeExtractorService.convertDateValue(nodeService.getProperty(topicNode, ContentModel.PROP_MODIFIED)));
 			
-			 ret.put(PROP_CREATED,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATED));
-			 ret.put(PROP_CREATOR,  attributeExtractorService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+			 ret.put(PROP_CREATED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
+			 ret.put(PROP_CREATOR,  nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 		
 			 ret.put(PROP_TYPE, "forumpost");
 			 ret.put(PROP_SIZE, getSize(topicNode));
