@@ -42,25 +42,11 @@
 	</repositories>
 
 	<dependencies>
-
-		<!-- Logs -->
+	
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-
-		<!-- DB -->
-
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.23</version>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-tools</artifactId>
+			<version>1.0</version>
 		</dependency>
 
 		<!-- Commons -->
@@ -71,17 +57,7 @@
 			<version>1.2</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2.3</version>
-		</dependency>
-
-		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpmime</artifactId>
-		    <version>4.2.3</version>
-		</dependency>
+	
 
   
 		<dependency>

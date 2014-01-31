@@ -26,10 +26,10 @@ import org.apache.http.client.HttpClient;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import fr.becpg.olap.InstanceManager;
-import fr.becpg.olap.InstanceManager.Instance;
 import fr.becpg.olap.authentication.AlfrescoUserDetails;
 import fr.becpg.olap.http.GetMondrianSchemaCommand;
+import fr.becpg.tools.InstanceManager;
+import fr.becpg.tools.InstanceManager.Instance;
 
 public class AlfrescoSchemaProcessor implements DynamicSchemaProcessor {
 

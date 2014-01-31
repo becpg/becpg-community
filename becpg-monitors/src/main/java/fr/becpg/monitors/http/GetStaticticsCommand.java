@@ -15,25 +15,25 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.olap.http;
+package fr.becpg.monitors.http;
+
+import fr.becpg.tools.http.AbstractHttpCommand;
 
 
 
-public class GetEntityCommand  extends AbstractHttpCommand {
+public class GetStaticticsCommand  extends AbstractHttpCommand {
 
-
-	private static String COMMAND_URL_TEMPLATE = "/becpg/remote/entity?nodeRef=%s";
+	private static String COMMAND_URL = "/becpg/admin/repository/show-users";
 
 	
-	public GetEntityCommand(String serverUrl) {
+	public GetStaticticsCommand(String serverUrl) {
 		super(serverUrl);
 	}
 
 	@Override
 	public String getHttpUrl(Object... params) {
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
+		return getServerUrl() + COMMAND_URL;
 	}
-
-
+	
 	
 }

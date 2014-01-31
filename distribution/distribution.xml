@@ -25,6 +25,7 @@
 		<dependencySet>
 			<outputDirectory>/dist/saiku/WEB-INF/lib</outputDirectory>
 			<includes>
+			   <include>fr.becpg:becpg-tools</include>
 				<include>fr.becpg:becpg-olap</include>
 				<include>org.apache.httpcomponents:httpclient</include>
 				<include>org.apache.httpcomponents:httpmime</include>
