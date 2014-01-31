@@ -64,13 +64,7 @@
 					<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-adhoc.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
 					<prop key="redeploy">false</prop>
-				</props>	
-				<props>
-					<prop key="engineId">activiti</prop>
-					<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop>
-					<prop key="mimetype">text/xml</prop>
-					<prop key="redeploy">false</prop>
-				</props>							
+				</props>					
 			</list>
 		</property>
 		<property name="labels">
@@ -84,8 +78,6 @@
 			</list>
 		</property>
 	</bean>
-
-
 
 	<!-- Formulation -->
 	<bean id="projectFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
