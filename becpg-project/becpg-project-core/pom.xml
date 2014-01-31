@@ -40,6 +40,14 @@
 			<classifier>api</classifier>
 		</dependency>
 		
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>
+		
 		<!-- alfresco -->
 		<dependency>
 			<groupId>org.alfresco</groupId>
