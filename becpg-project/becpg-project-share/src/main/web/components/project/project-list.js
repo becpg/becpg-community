@@ -211,7 +211,7 @@ var g; // gantt var
                                  }
 
                                  g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task, oData.nodeRef,
-                                       null, tdates.start), tdates.start, tdates.end, this.getTaskColor(task), null,
+                                       tdates.start), tdates.start, tdates.end, this.getTaskColor(task), null,
                                        tlIsMilestone ? 1 : 0, taskOwner, tlPercent, 0, projectId, 1, precTaskIds));
 
                               }
