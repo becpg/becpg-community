@@ -120,14 +120,7 @@ public interface EntityListDAO {
 	 * @return
 	 */
 	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
-
-	/**
-	 * 
-	 * @param listContainerNodeRef
-	 * @return
-	 */
-	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef);
-
+	
 	/**
 	 * Copy all data lists.
 	 * 

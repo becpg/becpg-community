@@ -5731,7 +5731,7 @@
 					<show id="bcpg:dynamicCharactValue" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:dynamicCharactGroupColor" label-id="becpg.forms.set.grp.label" />
+					<field id="bcpg:dynamicCharactGroupColor" label="hidden" />
 				   <field id="bcpg:dynamicCharactColumn" label="hidden" />
 				   <field id="bcpg:dynamicCharactErrorLog" label="hidden" />
 				</appearance>

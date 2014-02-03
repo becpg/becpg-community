@@ -138,4 +138,11 @@ public class CompareResultDataItem {
 		setProperty(property);
 		setValues(values);
 	}
+
+	@Override
+	public String toString() {
+		return "CompareResultDataItem [entityList=" + entityList + ", charactPath=" + charactPath + ", characteristic="
+				+ characteristic + ", property=" + property + ", values=" + values + "]";
+	}
+	
 }
