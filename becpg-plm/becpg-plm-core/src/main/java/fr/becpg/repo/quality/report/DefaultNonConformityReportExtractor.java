@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.dom4j.Element;
 
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -76,5 +77,10 @@ public class DefaultNonConformityReportExtractor extends AbstractEntityReportExt
 								dataItem.getCreated(), propertyFormats));
 			}
 		}
+	}
+
+	@Override
+	protected boolean isMultiLinesAttribute(QName attribute) {
+		return false;
 	}
 }

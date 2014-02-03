@@ -667,8 +667,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				
 				Element variantElt = variantsElt.addElement(PLMModel.TYPE_VARIANT.getLocalName());
 				variantElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), variant.getName());
-				variantElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));
-				
+				variantElt.addAttribute(PLMModel.PROP_IS_DEFAULT_VARIANT.getLocalName(), Boolean.toString(variant.getIsDefaultVariant()));				
 			}
 		}		
 		return defaultVariantNodeRef;
@@ -703,5 +702,15 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, nodeService.getType(nodeRef).toPrefixString(namespaceService));
 			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(nodeRef));
 		}			
+	}
+
+	@Override
+	protected boolean isMultiLinesAttribute(QName attribute) {
+		if(attribute != null){
+			if(attribute.equals(PLMModel.PROP_INSTRUCTION)){
+				return true;
+			}
+		}
+		return false;
 	}
 }
