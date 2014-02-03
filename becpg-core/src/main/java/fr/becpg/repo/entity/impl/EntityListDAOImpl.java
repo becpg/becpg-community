@@ -191,28 +191,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 	}
 
 	@Override
-	public List<QName> getExistingListsQName(NodeRef listContainerNodeRef) {
-
-		List<QName> existingLists = new ArrayList<QName>();
-
-		if (listContainerNodeRef != null) {
-			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
-
-			for (FileInfo node : nodes) {
-
-				NodeRef listNodeRef = node.getNodeRef();
-				String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-
-				if (dataListType != null && !dataListType.isEmpty()) {
-
-					existingLists.add(QName.createQName(dataListType, namespaceService));
-				}
-			}
-		}
-		return existingLists;
-	}
-
-	@Override
 	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter) {
 
 		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);

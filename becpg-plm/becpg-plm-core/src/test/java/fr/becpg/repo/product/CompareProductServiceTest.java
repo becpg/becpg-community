@@ -25,6 +25,7 @@ import org.junit.Test;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.comparison.CompareEntityService;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareOperator;
@@ -54,6 +55,9 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 	@Resource
 	private CompareEntityService compareEntityService;
 
+	@Resource
+	private EntityListDAO entityListDAO;
+	
 	/** The local s f1 node ref. */
 	private NodeRef localSF1NodeRef;
 
@@ -376,11 +380,17 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
+				
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 
-				List<CompareResultDataItem> compareResult = compareEntityService.compare(fp1NodeRef, productsNodeRef);
+				List<CompareResultDataItem> compareResult = new ArrayList<>();
+				Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
+				compareEntityService.compare(fp1NodeRef, productsNodeRef, compareResult, structCompareResults);
+				
+//				for(CompareResultDataItem c : compareResult){
+//					logger.info("CompareResultDataItem : " + c.toString());
+//				}				
 
 				assertTrue(checkCompareRow(compareResult, "{http://www.bcpg.fr/model/becpg/1.0}allergenList", "Allergen 9",
 						"{http://www.bcpg.fr/model/becpg/1.0}allergenListInVolSources", "[null, MP allergen]"));
@@ -548,8 +558,9 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
 				productsNodeRef.add(fp2NodeRef);
 
-				List<StructCompareResultDataItem> structCompareResult = compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST,
-						PLMModel.ASSOC_COMPOLIST_PRODUCT);
+				Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>(); 
+				compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST,
+						structCompareResults);
 
 //				 for(StructCompareResultDataItem c :
 //				 structCompareResult){
@@ -596,6 +607,7 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 //				 "\"));");
 //				 }
 
+				List<StructCompareResultDataItem> structCompareResult = structCompareResults.get("FP 1 - FP 2 - Composition");
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 1, StructCompareOperator.Equal, "Local semi finished 1",
 						"Local semi finished 1", "{}", "{}"));
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList", 2, StructCompareOperator.Equal, "Raw material 2",

@@ -26,6 +26,8 @@ public class StructCompareResultDataItem {
 	/** The operator. */
 	private StructCompareOperator operator;
 	
+	private QName pivotProperty;
+	
 	/** The characteristic1. */
 	private NodeRef characteristic1;
 	
@@ -83,6 +85,14 @@ public class StructCompareResultDataItem {
 		return operator;
 	}
 	
+	public QName getPivotProperty() {
+		return pivotProperty;
+	}
+
+	public void setPivotProperty(QName pivotProperty) {
+		this.pivotProperty = pivotProperty;
+	}
+
 	/**
 	 * Sets the operator.
 	 *
@@ -175,11 +185,12 @@ public class StructCompareResultDataItem {
 	 * @param properties1 the properties1
 	 * @param properties2 the properties2
 	 */
-	public StructCompareResultDataItem(QName entityList, int depthLevel, StructCompareOperator operator, NodeRef characteristic1, NodeRef characteristic2, Map<QName, String> properties1, Map<QName, String> properties2){
+	public StructCompareResultDataItem(QName entityList, int depthLevel, StructCompareOperator operator, QName pivotProperty, NodeRef characteristic1, NodeRef characteristic2, Map<QName, String> properties1, Map<QName, String> properties2){
 		this.setEntityList(entityList);
 		this.setCharacteristic1(characteristic1);
 		this.setCharacteristic2(characteristic2);
 		this.setOperator(operator);
+		this.setPivotProperty(pivotProperty);
 		this.setDepthLevel(depthLevel);
 		this.setProperties1(properties1);
 		this.setProperties2(properties2);
