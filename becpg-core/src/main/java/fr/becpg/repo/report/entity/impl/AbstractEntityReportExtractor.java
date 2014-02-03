@@ -90,8 +90,6 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
-	protected static final String REPORT_FORM_CONFIG_PATH = "beCPG/birt/document/becpg-report-form-config.xml";
-
 	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_DBID,
 			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
 
@@ -209,9 +207,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
 		return false;
 	}
-
-	protected void loadMultiLinesAttributes(Map.Entry<ClassAttributeDefinition, String> attrKV, Element entityElt) {
-	}
+	
+	protected abstract boolean isMultiLinesAttribute(QName attribute);
 
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 	}
@@ -294,7 +291,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 			if (attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition) attrKV.getKey(), nodeElt)) {
 
-				if (useCData || attrKV.getKey().getName().isMatch(BeCPGModel.PROP_INSTRUCTION)) {
+				if (useCData || isMultiLinesAttribute(attrKV.getKey().getName())) {
 					addCDATA(nodeElt, attrKV.getKey().getName(), attrKV.getValue());
 				} else {
 					nodeElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
@@ -324,7 +321,6 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 						attributeExtractorService.getPropertyFormats().getDateFormat().format(version.getFrozenModifiedDate()));
 			}
 		}
-
 	}
 
 	protected String extractNames(List<NodeRef> nodeRefs) {
@@ -390,13 +386,9 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		    	modified = fileInfo.getModifiedDate();
 		    	if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
 					return true;
-				}		
-		    	
-		    }
-		    
-			
-		}
-		
+				}				    
+		    }		    
+		}		
 		return false;
 	}
 }
