@@ -1,6 +1,7 @@
 package fr.becpg.repo.entity.comparison;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,13 +78,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	private static final String CHARACT_PATH_SEPARATOR = " / ";
 
-	private static final String COMPARISON_SEPARATOR = " - ";
-
 	private static final String PROPERTY_SEPARATOR = " / ";
 
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
-
-	private static final String PARAM_VALUE_HIDE_STRUC_COMP = "StructComparisonHide";
 
 	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 
@@ -121,60 +118,28 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 		if (templateNodeRef != null) {
 
-			// do comparison
-			List<CompareResultDataItem> compareResult = compareEntityService.compare(entity1, entities);
-
-			// do structural comparison
-			Boolean hideStructComparison = true;
+			List<CompareResultDataItem> compareResult = new ArrayList<>();
 			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<String, List<StructCompareResultDataItem>>();
+			
+			compareEntityService.compare(entity1, entities, compareResult, structCompareResults);
 
-			QName dataListTypeQName = null;
-			List<QName> listsQname = entityListDAO.getExistingListsQName(entityListDAO.getListContainer(entity1));
-			for (QName tmp : listsQname) {
-				if (entityDictionaryService.isMultiLevelDataList(dataListTypeQName)) {
-					dataListTypeQName = tmp;
-					break;
-				}
+			// Prepare data source
+			Document document = DocumentHelper.createDocument();
+			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
+			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
+			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("comparison XML " + entitiesCmpElt);
 			}
 
-			if (dataListTypeQName != null) {
+			try {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
+				beCPGReportEngine.createReport(templateNodeRef, entitiesCmpElt, out, params);
 
-				QName pivoAssoc = entityDictionaryService.getDefaultPivotAssoc(dataListTypeQName);
-
-				for (NodeRef entityNodeRef : entities) {
-					String comparison = (String) nodeService.getProperty(entity1, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
-							+ (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-					List<StructCompareResultDataItem> scr = compareEntityService.compareStructDatalist(entity1, entityNodeRef, dataListTypeQName, pivoAssoc);
-					structCompareResults.put(comparison, scr);
-
-					// display struct comparison if there is smth to show
-					if (hideStructComparison && !scr.isEmpty()) {
-						hideStructComparison = false;
-					}
-				}
-
-				// Prepare data source
-				Document document = DocumentHelper.createDocument();
-				Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
-				entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
-				entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, pivoAssoc));
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("comparison XML " + entitiesCmpElt);
-				}
-
-				try {
-					Map<String, Object> params = new HashMap<String, Object>();
-
-					// hide struct comparison
-					params.put(PARAM_VALUE_HIDE_STRUC_COMP, hideStructComparison);
-					params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
-
-					beCPGReportEngine.createReport(templateNodeRef, entitiesCmpElt, out, params);
-
-				} catch (Exception e) {
-					logger.error("Failed to run comparison report: ", e);
-				}
+			} catch (Exception e) {
+				logger.error("Failed to run comparison report: ", e);
 			}
 		}
 
@@ -256,7 +221,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	 *            the pivot property
 	 * @return the element
 	 */
-	private Element renderStructComparisonAsXmlData(Map<String, List<StructCompareResultDataItem>> structCompareResults, QName pivotProperty) {
+	private Element renderStructComparisonAsXmlData(Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
 		Document document = DocumentHelper.createDocument();
 
@@ -282,7 +247,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				String entity1 = "";
 				String properties1 = "";
 				if (c.getCharacteristic1() != null) {
-					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), pivotProperty);
+					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), c.getPivotProperty());
 					NodeRef entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
 					entity1 = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
@@ -299,7 +264,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				String entity2 = "";
 				String properties2 = "";
 				if (c.getCharacteristic2() != null) {
-					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), pivotProperty);
+					List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), c.getPivotProperty());
 					NodeRef entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
 					entity2 = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 

@@ -4,6 +4,7 @@
 package fr.becpg.repo.entity.comparison;
 
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -24,7 +25,9 @@ public interface CompareEntityService {
 	 * @param entities the entities
 	 * @return the list
 	 */
-	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities);
+	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities,
+			List<CompareResultDataItem> compareResult, 
+			Map<String, List<StructCompareResultDataItem>> structCompareResults);
 	
 	/**
 	 * Do a structural comparison.
@@ -35,6 +38,7 @@ public interface CompareEntityService {
 	 * @param pivotProperty the pivot property
 	 * @return the list
 	 */
-	public List<StructCompareResultDataItem> compareStructDatalist(NodeRef entity1, NodeRef entity2, QName datalistType, QName pivotProperty);
+	public void compareStructDatalist(NodeRef entity1, NodeRef entity2, QName datalistType,
+			Map<String, List<StructCompareResultDataItem>> structCompareResults);
 		
 }
