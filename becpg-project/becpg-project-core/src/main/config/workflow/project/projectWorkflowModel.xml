@@ -23,8 +23,6 @@
 			prefix="d" />
 		<import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm" />
 		<import uri="http://www.bcpg.fr/model/project/1.0" prefix="pjt" />
-		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
-		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 	</imports>
 
 	<namespaces>
@@ -60,129 +58,6 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- -->
-		<!-- New Product Tasks -->
-		<!-- -->
-
-
-		<type name="pjtwf:submitNewProductTask">
-			<parent>bpm:startTask</parent>
-			<mandatory-aspects>
-				<aspect>bpm:assignees</aspect>
-			</mandatory-aspects>
-		</type>
-
-
-		<type name="pjtwf:newProductTask">
-			<parent>bpm:activitiOutcomeTask</parent>
-			<properties>
-				<property name="pjtwf:npdProductName">
-					<type>d:text</type>
-					<constraints>
-						<constraint ref="cm:filename" />
-					</constraints>
-				</property>
-				<property name="pjtwf:npdAction">
-					<type>d:text</type>
-					<default>createNewProduct</default>
-					<constraints>
-						<constraint name="pjtwf:npdActions" type="LIST">
-			            <parameter name="allowedValues">
-			                <list>
-			                    <value>createNewProduct</value>
-			                    <value>submitTask</value>                    
-			                </list>
-			            </parameter>
-			        </constraint>
-					</constraints>
-				</property>
-			</properties>
-			<overrides>
-				<property name="bpm:packageActionGroup">
-					<default>add_package_item_actions</default>
-				</property>
-				<property name="bpm:packageItemActionGroup">
-					<default>edit_package_item_actions</default>
-				</property>
-				<!-- Override bpm:outcomePropertyName with our custom property -->
-				<property name="bpm:outcomePropertyName">
-					<default>{http://www.alfresco.org/model/project-workflow/1.0}npdAction</default>
-				</property>
-			</overrides>
-			<mandatory-aspects>
-				<aspect>pjtwf:needDefinitionProductAspect</aspect>
-				<aspect>pjtwf:packagingDescriptionAspect</aspect>
-				<aspect>pjtwf:recipeDescriptionAspect</aspect>
-				<aspect>pjt:workflowAspect</aspect>
-			</mandatory-aspects>
-		</type>
-
-
 	</types>
-
-	<aspects>
-	   <!-- Product description -->
-		<aspect name="pjtwf:packagingDescriptionAspect">
-			<properties>
-				<property name="pjtwf:packagingDescription">
-					<type>d:text</type>
-				</property>
-			</properties>
-			<associations>
-				<association name="pjtwf:needDefinitionPackagingKit">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:finishedProduct</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-			</associations>
-		</aspect>
-		<aspect name="pjtwf:recipeDescriptionAspect">
-			<properties>
-				<property name="pjtwf:recipeDescription">
-					<type>d:text</type>
-				</property>
-			</properties>
-			<associations>
-				<association name="pjtwf:needDefinitionRecipeProduct">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:finishedProduct</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-
-			</associations>
-		</aspect>
-		<aspect name="pjtwf:needDefinitionProductAspect">
-			<properties>
-				<property name="pjtwf:productDescription">
-					<type>d:text</type>
-				</property>
-			</properties>
-			<associations>
-				<association name="pjtwf:needDefinitionProduct">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:finishedProduct</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-			</associations>
-		</aspect>
-	</aspects>
 
 </model>

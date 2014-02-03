@@ -57,7 +57,7 @@
 
 	<properties>
 		<!-- Test -->
-		<alfresco.data.location>/srv/becpg-data/test/becpg</alfresco.data.location>
+		<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
 
 		<!-- By default the H2 embedded database datafile is created under the alfresco.data.location folder -->
 		<alfresco.db.params>MODE=PostgreSQL;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000;MVCC=TRUE</alfresco.db.params>
