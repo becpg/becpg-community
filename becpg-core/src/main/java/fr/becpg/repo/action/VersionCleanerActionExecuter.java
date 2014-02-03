@@ -25,6 +25,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.service.cmr.action.Action;
+import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -42,9 +43,8 @@ import org.apache.commons.logging.LogFactory;
  * 
  */
 public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
-	
-	public static final String NAME = "version-cleaner";
 
+	public static final String NAME = "version-cleaner";
 
 	public static final String PARAM_VERSION_TYPE = "versionType";
 	public static final String PARAM_NUMBER_OF_VERSION = "numberOfVersion";
@@ -69,7 +69,6 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 		this.nodeService = nodeService;
 	}
 
-
 	/**
 	 * @see org.alfresco.repo.action.executer.ActionExecuter#execute(org.alfresco.repo.ref.NodeRef,
 	 *      org.alfresco.repo.ref.NodeRef)
@@ -83,37 +82,60 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 			boolean isLastAction = false;
 			for (Rule rule : ruleService.getRules(actionedUponNodeRef)) {
 				if (!rule.getRuleDisabled()) {
-					if (rule.getAction().getActionDefinitionName().equals(ruleAction.getActionDefinitionName())) {
-						
-						Integer numberOfDay = (Integer) rule.getAction().getParameterValue(PARAM_NUMBER_OF_DAY);
-						Integer numberByDay = (Integer) rule.getAction().getParameterValue(PARAM_NUMBER_BY_DAY);
-						Integer numberOfVersion = (Integer) rule.getAction().getParameterValue(PARAM_NUMBER_OF_VERSION);
-						String versionType = (String) rule.getAction().getParameterValue(PARAM_VERSION_TYPE);
-						
-						versionConfig.setConfig(versionType, numberOfVersion, numberOfDay, numberByDay);
-						if (ruleAction.equals(rule.getAction())) {
-							isLastAction = true;
-						} else {
-							isLastAction = false;
-						}
 
+					if (rule.getAction() instanceof CompositeAction) {
+						for (Action compositeAction : ((CompositeAction) rule.getAction()).getActions()) {
+							isLastAction =  parseAction(ruleAction, compositeAction, versionConfig,isLastAction);
+						}
+					} else {
+						isLastAction =  parseAction(ruleAction, rule.getAction(), versionConfig,isLastAction);
 					}
 				}
 			}
 			if (isLastAction) {
 				logger.debug("Applying version config :" + versionConfig.toString());
 				logger.debug("To node " + nodeService.getProperty(actionedUponNodeRef, ContentModel.PROP_NAME));
+				VersionHistory versionHistory = versionService.getVersionHistory(actionedUponNodeRef);
+				if (versionHistory != null) {
+					for (Version version : versionConfig.versionsToDelete(versionHistory.getAllVersions())) {
+						logger.info("Deleting version :" + version.getVersionLabel());
+						versionService.deleteVersion(actionedUponNodeRef, version);
+					}
+				}
 
-			}
-
-			VersionHistory versionHistory = versionService.getVersionHistory(actionedUponNodeRef);
-
-			for (Version version : versionConfig.versionsToDelete(versionHistory.getAllVersions())) {
-				logger.info("Deleting version :" + version.toString());
-				versionService.deleteVersion(actionedUponNodeRef, version);
 			}
 
 		}
+	}
+
+	/**
+	 * @param ruleAction
+	 * @param compositeAction
+	 * @param versionConfig
+	 * @param isLastAction
+	 */
+	private boolean parseAction(Action ruleAction, Action compositeAction, VersionCleanerActionConfig versionConfig, boolean isLastAction) {
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("Test matching rule : " + compositeAction.getActionDefinitionName() + " with " + ruleAction.getActionDefinitionName());
+		}
+		if (compositeAction.getActionDefinitionName().equals(ruleAction.getActionDefinitionName())) {
+			logger.debug("Match OK");
+
+			Integer numberOfDay = (Integer) compositeAction.getParameterValue(PARAM_NUMBER_OF_DAY);
+			Integer numberByDay = (Integer) compositeAction.getParameterValue(PARAM_NUMBER_BY_DAY);
+			Integer numberOfVersion = (Integer) compositeAction.getParameterValue(PARAM_NUMBER_OF_VERSION);
+			String versionType = (String) compositeAction.getParameterValue(PARAM_VERSION_TYPE);
+
+			versionConfig.setConfig(versionType, numberOfVersion, numberOfDay, numberByDay);
+			if (ruleAction.equals(compositeAction)) {
+				isLastAction = true;
+			} else {
+				isLastAction = false;
+			}
+
+		}
+		return isLastAction;
 	}
 
 	@Override
