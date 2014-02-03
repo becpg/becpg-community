@@ -4,13 +4,6 @@
 	padding-left: 20px;
 }
 
-.datagrid span.resourceProduct-ToValidate {
-	background:
-		url(../../components/images/filetypes/generic-resourceProduct-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
 .datagrid span.finishedProduct-Valid {
 	background: url(../../components/images/states/valid-10.png),
 		url(../../components/images/filetypes/generic-finishedProduct-16.png);
@@ -499,6 +492,13 @@
 	{
 	background:
 		url(../../components/images/filetypes/generic-semiFinishedProduct-16.png)
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.resourceProduct,.datagrid span.resourceProduct-ToValidate{
+	background:
+		url(../../components/images/filetypes/generic-resourceProduct-16.png)
 		no-repeat;
 	padding-left: 20px;
 }
