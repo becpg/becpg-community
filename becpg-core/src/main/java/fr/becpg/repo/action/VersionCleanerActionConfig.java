@@ -135,27 +135,27 @@ public class VersionCleanerActionConfig {
 	 */
 	public Collection<Version> versionsToDelete(Collection<Version> versions) {
 
-		List<Version> ret = new ArrayList<>(versions);
-		List<Version> majorToKeep = versionToKeep(versions, VersionType.MAJOR, numberOfDayMajor, numberByDayMajor, numberOfVersionMajor);
-		List<Version> minorToKeep = new LinkedList<>();
-
-		List<Version> tmp = new LinkedList<>();
-		for (Version version : versions) {
-			if (VersionType.MINOR.equals(version.getVersionType())) {
-				tmp.add(version);
-			} else {
-				if (majorToKeep.contains(version)) {
-					minorToKeep.addAll(versionToKeep(tmp, VersionType.MINOR, numberOfDayMinor, numberByDayMinor, numberOfVersionMinor));
+			List<Version> ret = new ArrayList<>(versions);
+			List<Version> majorToKeep = versionToKeep(versions, VersionType.MAJOR, numberOfDayMajor, numberByDayMajor, numberOfVersionMajor);
+			List<Version> minorToKeep = new LinkedList<>();
+	
+			List<Version> tmp = new LinkedList<>();
+			for (Version version : versions) {
+				if (VersionType.MINOR.equals(version.getVersionType())) {
+					tmp.add(version);
+				} else {
+					if (majorToKeep.contains(version)) {
+							minorToKeep.addAll(versionToKeep(tmp, VersionType.MINOR, numberOfDayMinor, numberByDayMinor, numberOfVersionMinor));
+					}
+					tmp = new LinkedList<>();
 				}
-				tmp = new LinkedList<>();
 			}
-		}
-		
-
-		ret.removeAll(majorToKeep);
-		ret.removeAll(minorToKeep);
-
-		return ret;
+			
+	
+			ret.removeAll(majorToKeep);
+			ret.removeAll(minorToKeep);
+	
+			return ret;
 	}
 
 	public Date removeTime(Date date) {

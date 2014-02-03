@@ -40,17 +40,21 @@
       customisations : {
          VersionCleaner : {
             text : function(configDef, ruleConfig, configEl) {
-               // Display minor/major instead of Yes/No
-               // ruleConfig.parameterValues = ruleConfig.parameterValues || {};
-               // if (ruleConfig.parameterValues["minorChange"])
-               // {
-               // ruleConfig.parameterValues["minorChange"] = this.msg("label.checkin.minor");
-               // }
-               // else
-               // {
-               // ruleConfig.parameterValues["minorChange"] = this.msg("label.checkin.major");
-               // }
-               // this._getParamDef(configDef, "minorChange").type = "d:text";
+               ruleConfig.parameterValues = ruleConfig.parameterValues || {};
+               ruleConfig.parameterValues["versionType"] = this.msg("label.version-cleaner."+ruleConfig.parameterValues["versionType"]);
+               
+               if(ruleConfig.parameterValues["numberOfVersion"]!=null){
+                  ruleConfig.parameterValues["numberOfVersion"] = this.msg("label.version-cleaner.message.numberOfVersion",ruleConfig.parameterValues["numberOfVersion"]);
+               }
+               if(ruleConfig.parameterValues["numberOfDay"]!=null){
+                  ruleConfig.parameterValues["numberOfDay"] = this.msg("label.version-cleaner.message.numberOfDay",ruleConfig.parameterValues["numberOfDay"]);
+               }
+               
+               if(ruleConfig.parameterValues["numberByDay"]!=null){
+                  ruleConfig.parameterValues["numberByDay"] = this.msg("label.version-cleaner.message.numberByDay",ruleConfig.parameterValues["numberByDay"]);
+               }
+               
+               
                return configDef;
             },
             edit : function(configDef, ruleConfig, configEl) {

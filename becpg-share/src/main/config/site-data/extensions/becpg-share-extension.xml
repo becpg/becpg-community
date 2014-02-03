@@ -16,6 +16,10 @@
 					<sourcePackageRoot>org.alfresco.components.custom-rules</sourcePackageRoot>
 				</customization>
 				<customization>
+					<targetPackageRoot>org.alfresco.components.rules.config</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-rules.config</sourcePackageRoot>
+				</customization>
+				<customization>
 					<targetPackageRoot>org.alfresco.components.documentlibrary</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-documentlibrary</sourcePackageRoot>
 				</customization>
