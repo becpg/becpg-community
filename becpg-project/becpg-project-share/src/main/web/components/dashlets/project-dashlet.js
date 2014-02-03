@@ -499,12 +499,12 @@
                         if (isTask) {
                            if (!this.options.simpleView) {
                               desc += '<h3 class="filename">';
-                              desc += this.getTaskTitle(record, record.itemData["dt_pjt_project"].nodeRef, true, null,
+                              desc += this.getTaskTitle(record, record.itemData["dt_pjt_project"].nodeRef, null,
                                     true);
                               desc += '</h3>';
                            } else {
                               desc += '<h3 class="filename simple-view">' + this.getTaskTitle(record,
-                                    record.itemData["dt_pjt_project"].nodeRef, false, null, false) + '</h3>';
+                                    record.itemData["dt_pjt_project"].nodeRef, null, false) + '</h3>';
                            }
 
 
@@ -655,7 +655,7 @@
                         var task = tasks[j];
                         if (task["itemData"]["prop_pjt_tlState"].value == this.widgets.filter.value) {
                            idx++;
-                           ret += "<li>" + this.getTaskTitle(task, oRecord.getData().nodeRef, true) + "</li>";
+                           ret += "<li>" + this.getTaskTitle(task, oRecord.getData().nodeRef) + "</li>";
                         }
                      }
                      ret += "</ul>";

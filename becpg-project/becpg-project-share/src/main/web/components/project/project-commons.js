@@ -197,13 +197,9 @@
          return date;
       },
 
-      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, full, start, large) {
+      getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, start, large) {
 
       	var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value + '">';
-
-         if (full && this.taskLegends) {
-            ret += '<span class="task-legend" style="background-color:#' + this.getTaskColor(task) + '" ></span>';
-         }
       	
          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
                .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue + (task["itemData"]["prop_pjt_completionPercent"].value != null ? ' (' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%)' : "") + '</a></span>';
