@@ -43,6 +43,7 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.helper.impl.PersonAttributeExtractorPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 
 public abstract class AbstractDataListExtractor implements DataListExtractor {
@@ -96,23 +97,15 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String FORMAT_CSV = "csv";
 
 	public static final String PROP_NODE = "nodeRef";
-//	public static final String PROP_TAGS = "tags";
-//	public static final String PROP_DISPLAYNAME = "displayName";
-//	public static final String PROP_NAME = "name";
 	public static final String PROP_TITLE = "title";
 	public static final String PROP_SHORTNAME = "shortName";
-//	public static final String PROP_DESCRIPTION = "description";
-//	public static final String PROP_MODIFIER = "modifiedByUser";
 	public static final String PROP_MODIFIED = "modifiedOn";
 	public static final String PROP_CREATED = "createdOn";
-//	public static final String PROP_CREATOR = "createdByUser";
 	public static final String PROP_PATH = "path";
 	public static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
 	public static final String PROP_CREATOR_DISPLAY = "createdBy";
 	public static final String PROP_NODEDATA = "itemData";
-	//public static final String PROP_ACTIONSET = "actionSet";
 	public static final String PROP_PERMISSIONS = "permissions";
-	// public static final String PROP_ACTIONLABELS = "actionLabels";
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 	public static final String PROP_SITE = "site";
 	@Deprecated
@@ -161,7 +154,6 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			ret.put(PROP_MODIFIED, attributeExtractorService.convertDateValue(properties.get( ContentModel.PROP_MODIFIED)));
 			ret.put(PROP_MODIFIER_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_MODIFIER)));
 
-			//ret.put(PROP_ACTIONSET, "");
 
 			Map<String, Object> permissions = new HashMap<String, Object>(1);
 			Map<String, Boolean> userAccess = new HashMap<String, Boolean>(5);
@@ -177,8 +169,6 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			ret.put(PROP_PERMISSIONS, permissions);
 
-		//	ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));
-		//	ret.put(PROP_ACTIONLABELS, new HashMap<String, Object>());
 
 			ret.put(PROP_NODEDATA, doExtract(nodeRef, itemType, metadataFields,AttributeExtractorMode.JSON, properties, props, cache));
 

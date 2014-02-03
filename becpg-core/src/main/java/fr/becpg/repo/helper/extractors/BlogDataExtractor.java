@@ -28,6 +28,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.helper.AttributeExtractorService;
 
+
 public class BlogDataExtractor extends AbstractNodeDataExtractor  {
 
 

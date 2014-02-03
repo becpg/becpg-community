@@ -38,9 +38,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -52,6 +50,7 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
+import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;

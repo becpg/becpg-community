@@ -1291,8 +1291,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 						String typeTitle = type.toString();
 						TypeDefinition typeDef = dictionaryService.getType(type);
-						if (typeDef != null && typeDef.getTitle() != null && !typeDef.getTitle().isEmpty()) {
-							typeTitle = typeDef.getTitle();
+						if (typeDef != null && typeDef.getTitle(dictionaryService) != null && !typeDef.getTitle(dictionaryService).isEmpty()) {
+							typeTitle = typeDef.getTitle(dictionaryService);
 						}
 
 						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
@@ -1318,8 +1318,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 									String typeTitle = type.toString();
 									TypeDefinition typeDef = dictionaryService.getType(type);
-									if (typeDef != null && typeDef.getTitle() != null && !typeDef.getTitle().isEmpty()) {
-										typeTitle = typeDef.getTitle();
+									if (typeDef != null && typeDef.getTitle(dictionaryService) != null && !typeDef.getTitle(dictionaryService).isEmpty()) {
+										typeTitle = typeDef.getTitle(dictionaryService);
 									}
 
 									throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_SEVERAL, typeTitle, value));
@@ -1332,8 +1332,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 							String typeTitle = type.toString();
 							TypeDefinition typeDef = dictionaryService.getType(type);
-							if (typeDef != null && typeDef.getTitle() != null && !typeDef.getTitle().isEmpty()) {
-								typeTitle = typeDef.getTitle();
+							if (typeDef != null && typeDef.getTitle(dictionaryService) != null && !typeDef.getTitle(dictionaryService).isEmpty()) {
+								typeTitle = typeDef.getTitle(dictionaryService);
 							}
 
 							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));

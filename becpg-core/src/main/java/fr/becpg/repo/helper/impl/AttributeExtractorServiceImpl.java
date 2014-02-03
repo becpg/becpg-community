@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
@@ -39,7 +38,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
 import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.tagging.TaggingService;
@@ -48,6 +46,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -57,7 +56,6 @@ import fr.becpg.config.format.CSVPropertyFormats;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
@@ -67,7 +65,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
 
 @Service("attributeExtractorService")
-public class AttributeExtractorServiceImpl implements AttributeExtractorService {
+public class AttributeExtractorServiceImpl implements AttributeExtractorService,InitializingBean {
 
 	private static Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
@@ -100,6 +98,35 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	@Autowired
 	private SecurityService securityService;
+	
+	@Autowired
+	private AttributeExtractorPlugin[] attributeExtractorPlugins;
+	
+	@Autowired
+	private PersonAttributeExtractorPlugin personAttributeExtractorPlugin;
+	
+	private Map<QName, AttributeExtractorPlugin> pluginsCache = new HashMap<>();
+	
+
+	
+	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
+		
+		return pluginsCache.get(type);
+	}
+
+	
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		for(AttributeExtractorPlugin plugin  : attributeExtractorPlugins) {
+			for(QName type : plugin.getMatchingTypes()) {
+				pluginsCache.put(type, plugin);
+			}
+		} 
+		
+	}
+
+	
 
 	private PropertyFormats propertyFormats = new PropertyFormats(false);
 	
@@ -566,11 +593,22 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return null;
 	}
 
+	private String extractPropName(NodeRef v) {
+		QName type = nodeService.getType((NodeRef) v);
+		return extractPropName(type, v);
+	}
+
+	
 	private String extractPropName(QName type, NodeRef nodeRef) {
 		String value = "";
 
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
-			value = (String) nodeService.getProperty(nodeRef, getPropName(type));
+			AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type, nodeRef);
+			if(plugin != null) {
+				value = plugin.extractPropName( type, nodeRef);
+			} else {
+				value = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			}
 		} else {
 			value = I18NUtil.getMessage("message.becpg.access.denied");
 		}
@@ -578,43 +616,28 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return value;
 	}
 
-	private String extractPropName(NodeRef v) {
-		QName type = nodeService.getType((NodeRef) v);
-		return extractPropName(type, v);
-	}
-
-	@Deprecated
-	private QName getPropName(QName type) {
-		if (type.equals(ContentModel.TYPE_PERSON)) {
-			return ContentModel.PROP_USERNAME;
-		} else if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-			return ContentModel.PROP_AUTHORITY_DISPLAY_NAME;
-		} else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
-			return BeCPGModel.PROP_LKV_VALUE; }
-//		} else if (type.equals(ProjectModel.TYPE_TASK_LIST)) {
-//			return ProjectModel.PROP_TL_TASK_NAME;
-//		}
-
-		return ContentModel.PROP_NAME;
-	}
-
 	@Override
-	@Deprecated
-	public String extractMetadata(QName type, NodeRef nodeRef) {
+	public  String extractMetadata(QName type, NodeRef nodeRef) {
+		
 		String metadata = "";
-		if (type.equals(ContentModel.TYPE_PERSON)) {
-			metadata = getPersonDisplayName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
+		
+		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type, nodeRef);
+		if(plugin != null) {
+			metadata = plugin.extractMetadata( type, nodeRef);
 		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
 			metadata = "container";
-		} else {
+    	} else {
 			metadata = type.toPrefixString(namespaceService).split(":")[1];
-			//#798
-//			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
-//				metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
-//			}
 		}
+		
+		
 		return metadata;
 	}
+	
+	
+
+
+	
 
 	@Override
 	public String convertDateValue(Serializable value) {
@@ -629,31 +652,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return propertyFormats.getDateFormat().format(date);
 	}
 
-	@Override
-	public String getPersonDisplayName(final String userId) {
-		if (userId == null) {
-			return "";
-		}
-		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())) {
-			return userId;
-		}
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId + ".person", new BeCPGCacheDataProviderCallBack<String>() {
-			public String getData() {
-				String displayName = "";
-				try {
-					NodeRef personNodeRef = personService.getPerson(userId);
-					if (personNodeRef != null) {
-						displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
-					}
-				} catch (NoSuchPersonException e){
-					//Case person was deleted
-					return userId;
-				}
-				return displayName;
-			}
-		});
-
-	}
+	
 
 	@Override
 	public String getDisplayPath(NodeRef nodeRef) {
@@ -719,5 +718,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		} else {
 			return (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
 		}
+	}
+
+
+
+	@Override
+	public String getPersonDisplayName(String userId) {
+		return personAttributeExtractorPlugin.getPersonDisplayName(userId);
 	}	
 }

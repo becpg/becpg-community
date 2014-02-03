@@ -173,6 +173,7 @@ var g; // gantt var
 
                               var dates = this.extractDates(oData);
 
+                              
                               g.AddTaskItem(new JSGantt.TaskItem(projectId, title, dates.start, dates.due, 'FFBC00',
                                     '', 0, initiator, percent, 1, 1, 1));
 

@@ -163,8 +163,8 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 				if (uris.contains(type.getNamespaceURI())) {
 					DataTypeDefinition typeDef = serviceRegistry.getDictionaryService().getDataType(type);
 					String suggestion = type.toPrefixString(serviceRegistry.getNamespaceService()) + SEPARATOR +
-							(typeDef != null && typeDef.getTitle()!=null && typeDef.getTitle().length()>0
-							? typeDef.getTitle():type.toPrefixString(serviceRegistry.getNamespaceService()));
+							(typeDef != null && typeDef.getTitle(serviceRegistry.getDictionaryService())!=null && typeDef.getTitle(serviceRegistry.getDictionaryService()).length()>0
+							? typeDef.getTitle(serviceRegistry.getDictionaryService()):type.toPrefixString(serviceRegistry.getNamespaceService()));
 					if (filter(suggestion,query)) {
 						suggestions.add(suggestion);
 					}
@@ -208,8 +208,8 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 				if (uris.contains(type.getNamespaceURI())) {
 					TypeDefinition typeDef = serviceRegistry.getDictionaryService().getType(type);
 					String suggestion = type.toPrefixString(serviceRegistry.getNamespaceService()) + SEPARATOR +
-							(typeDef != null && typeDef.getTitle()!=null && typeDef.getTitle().length()>0
-							? typeDef.getTitle():type.toPrefixString(serviceRegistry.getNamespaceService()));
+							(typeDef != null && typeDef.getTitle(serviceRegistry.getDictionaryService())!=null && typeDef.getTitle(serviceRegistry.getDictionaryService()).length()>0
+							? typeDef.getTitle(serviceRegistry.getDictionaryService()):type.toPrefixString(serviceRegistry.getNamespaceService()));
 						if (filter(suggestion,query)) {
 							suggestions.add(suggestion);
 						}
@@ -250,8 +250,8 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 				if (uris.contains(aspect.getNamespaceURI())) {
 					AspectDefinition typeDef = serviceRegistry.getDictionaryService().getAspect(aspect);
 					String suggestion = aspect.toPrefixString(serviceRegistry.getNamespaceService()) + SEPARATOR +
-							(typeDef != null && typeDef.getTitle()!=null && typeDef.getTitle().length()>0
-							? typeDef.getTitle():aspect.toPrefixString(serviceRegistry.getNamespaceService()));
+							(typeDef != null && typeDef.getTitle(serviceRegistry.getDictionaryService())!=null && typeDef.getTitle(serviceRegistry.getDictionaryService()).length()>0
+							? typeDef.getTitle(serviceRegistry.getDictionaryService()):aspect.toPrefixString(serviceRegistry.getNamespaceService()));
 						if (filter(suggestion,query)) {
 							suggestions.add(suggestion);
 						}

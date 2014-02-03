@@ -34,7 +34,8 @@
 		</property>
 
 		<property name="labels">
-			<list>				
+			<list>
+				<value>alfresco/module/${artifactId}/model/becpgModelExt</value>				
 				<value>alfresco/module/${artifactId}/model/ecmModel</value>
 				<value>alfresco/module/${artifactId}/model/gs1Model</value>
 				<value>alfresco/module/${artifactId}/model/mpmModel</value>
