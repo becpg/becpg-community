@@ -178,7 +178,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			Map<NodeRef, Double> totalQtyIngMap,
 			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException{				
 			
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<IngListDataItem> componentIngList = (List)alfrescoRepository.loadDataList(compoListDataItem.getProduct(), PLMModel.TYPE_INGLIST, PLMModel.TYPE_INGLIST);
 		
 		// check product respect specification

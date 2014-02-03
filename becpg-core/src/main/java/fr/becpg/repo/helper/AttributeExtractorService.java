@@ -18,6 +18,7 @@
 package fr.becpg.repo.helper;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,21 +42,22 @@ public interface AttributeExtractorService {
 		
 		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
 
-
 	}
+	
+	public interface AttributeExtractorPlugin {
+
+		String extractPropName(QName type, NodeRef nodeRef);
+
+		String extractMetadata(QName type,NodeRef nodeRef);
+		
+		Collection<QName> getMatchingTypes();
+		
+	}
+	
 	
 	public enum AttributeExtractorMode {
 		SEARCH,JSON,CSV;
 	}
-
-	
-	
-	
-	public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
-	
-	public String getPersonDisplayName(String userId);
-
-	public String convertDateValue(Serializable value);
 
 	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
 	
@@ -63,13 +65,16 @@ public interface AttributeExtractorService {
 	
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,  List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
 
+	
+    public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
+	
+	public String convertDateValue(Serializable value);
+
 	public String getDisplayPath(NodeRef nodeRef);
 
 	public String[] getTags(NodeRef nodeRef);
 
 	public String formatDate(Date date);
-
-	public String extractMetadata(QName type, NodeRef nodeRef);
 
 	public PropertyFormats getPropertyFormats();
 
@@ -78,4 +83,9 @@ public interface AttributeExtractorService {
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 
 	public String extractAssociationForReport(AssociationRef assocRef);
+
+	
+	public String extractMetadata(QName type, NodeRef entityNodeRef);
+
+	public String getPersonDisplayName(String userId);
 }

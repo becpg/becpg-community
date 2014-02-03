@@ -296,6 +296,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			// NutList
 			Element nutListsElt = (Element)dataListsElt.selectSingleNode(PLMModel.TYPE_NUTLIST.getLocalName()+"s");
 			if(nutListsElt != null){
+				@SuppressWarnings("unchecked")
 				List<Element> nutListElts = (List<Element>)nutListsElt.selectNodes(PLMModel.TYPE_NUTLIST.getLocalName());
 				for(Element nutListElt : nutListElts){
 					String nut = nutListElt.valueOf("@"+PLMModel.ASSOC_NUTLIST_NUT.getLocalName());

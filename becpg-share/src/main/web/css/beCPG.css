@@ -11,6 +11,18 @@
 	padding-bottom: 0em;
 }
 
+//Fix 1.6
+
+.form-container .yui-g .form-field  .datepicker-icon {
+    margin: 0;
+}
+
+.form-container .form-field  textarea {
+    width: 95% !important;
+}
+
+//End Fix
+
 .yui-g .form-field input[type="text"], 
 .form-container .yui-g .form-field select {
 	width: 27em;

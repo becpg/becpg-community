@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.report;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
