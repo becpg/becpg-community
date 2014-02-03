@@ -65,14 +65,14 @@
 			<list>
 				<value>alfresco/module/${pom.artifactId}/workflow/workflow-messages</value>
 				<value>alfresco/module/${pom.artifactId}/workflow/quality/non-conformity-messages</value>
-				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflow-messages</value>			
+				<value>alfresco/module/${pom.artifactId}/workflow/project/npdWorkflow-messages</value>			
 			</list>
 		</property>
 		<property name="models">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/workflow/workflowModel.xml</value>
 				<value>alfresco/module/${pom.artifactId}/workflow/quality/nonConformityModel.xml</value>
-				<value>alfresco/module/${pom.artifactId}/workflow/project/projectWorkflowModel.xml</value>
+				<value>alfresco/module/${pom.artifactId}/workflow/project/npdWorkflowModel.xml</value>
 			</list>
 		</property>
 	</bean>		
