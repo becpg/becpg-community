@@ -316,7 +316,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				microbioList = productData.getMicrobioList();
 			}
 			else{
-				List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+				List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef, PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
 				if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
 					NodeRef productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
 					if (productMicrobioCriteriaNodeRef != null) {
@@ -327,9 +327,9 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			}			
 			
 			if(microbioList != null && !microbioList.isEmpty()){
-				Element organoListElt = dataListsElt.addElement(BeCPGModel.TYPE_MICROBIOLIST.getLocalName() + "s");
+				Element organoListElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
 				for (MicrobioListDataItem dataItem : microbioList) {
-					Element nodeElt = organoListElt.addElement(BeCPGModel.TYPE_MICROBIOLIST.getLocalName());
+					Element nodeElt = organoListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
 					loadDataListItemAttributes(dataItem, nodeElt);				
 				}
 			}
@@ -544,7 +544,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, dataItem.getVariants());
 		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
-		Element packagingKitListEl = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName()+"s");	
+		Element packagingKitListEl = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName()+"s");	
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 	
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {			
