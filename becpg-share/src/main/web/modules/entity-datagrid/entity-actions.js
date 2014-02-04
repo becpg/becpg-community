@@ -58,7 +58,11 @@
 				   Dom.get(p_dialog.id + "-form-bulkAction").checked = this.onActionCreateBulkEdit;
 				   Dom.get(p_dialog.id + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-create");
 			   }
-
+			   
+			   if(this.options.formWidth !="34em"){
+                  Dom.addClass(p_dialog.id+"-dialog","large-dialog");
+                }
+			  
 		   };
 
 		   var templateUrl = YAHOO.lang
@@ -151,6 +155,10 @@
 				   Dom.get(p_dialog.id + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-edit");
 			   }
 
+			   if(this.options.formWidth !="34em"){
+	                 Dom.addClass(p_dialog.id+"-dialog","large-dialog");
+	           }
+			   
 		   };
 
 		   var templateUrl = YAHOO.lang

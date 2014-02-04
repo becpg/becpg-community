@@ -175,7 +175,7 @@ var g; // gantt var
 
                               
                               g.AddTaskItem(new JSGantt.TaskItem(projectId, title, dates.start, dates.due, 'FFBC00',
-                                    '', 0, initiator, percent, 1, 1, 1));
+                                    '', 0, initiator, percent, 1, 0, 0));
 
                               var start = dates.start;
 
@@ -218,9 +218,11 @@ var g; // gantt var
                               }
 
                            }
-
+                           
+                           
                            g.Draw();
                            g.DrawDependencies();
+                           
                         } else {
                            Alfresco.util.populateHTML([ this.id + "-gantt",
                                  "<div class=\"yui-dt-liner\">" + this.msg("message.empty") + "</div>" ]);

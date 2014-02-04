@@ -1348,11 +1348,12 @@ if (!JSGantt) {
 
                vcurrDivID = vTaskList[i].getID();
 
-               if (vTaskList[i].getVisible() === 0)
-                  vLeftTable += '<TR id="child_' + vcurrDivID + '" class="g' + vRowType + '"  style="display:none"  onMouseover=g.mouseOver(this,"' + vcurrDivID + '","left","' + vRowType + '") onMouseout=g.mouseOut(this,"' + vcurrDivID + '","left","' + vRowType + '")>';
-               else
+               if (vTaskList[i].getVisible() === 0) {
+                  vLeftTable += '<TR id="child_' + vcurrDivID + '" class="g' + vRowType + ' hidden"  onMouseover=g.mouseOver(this,"' + vcurrDivID + '","left","' + vRowType + '") onMouseout=g.mouseOut(this,"' + vcurrDivID + '","left","' + vRowType + '")>';
+               } else {
                   vLeftTable += '<TR id="child_' + vcurrDivID + '"  class="g' + vRowType + '"  onMouseover=g.mouseOver(this,"' + vcurrDivID + '","left","' + vRowType + '") onMouseout=g.mouseOut(this,"' + vcurrDivID + '","left","' + vRowType + '")>';
-
+               }
+                  
                vLeftTable += '  <TD class="gname  nowrap"><NOBR><span style="color: #aaaaaa">';
 
                for ( var j = 1; j < vTaskList[i].getLevel(); j++) {
@@ -1362,11 +1363,11 @@ if (!JSGantt) {
                vLeftTable += '</span>';
 
                if (vTaskList[i].getGroup()) {
-                  if (vTaskList[i].getOpen() == 1)
+                  if (vTaskList[i].getOpen() == 1){
                      vLeftTable += '<div id="group_' + vcurrDivID + '" class="gicon ggroup-expanded" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
-                  else
+                  } else {
                      vLeftTable += '<div id="group_' + vcurrDivID + '" class="gicon ggroup-collapsed" onclick="JSGantt.folder(\'' + vcurrDivID + '\',' + vGanttVar + ');' + vGanttVar + '.DrawDependencies();"></div>';
-
+                  }
                } else {
 
                   vLeftTable += '<span style="color: #000000; font-weight:bold; FONT-SIZE: 12px;">&nbsp&nbsp&nbsp&nbsp&nbsp</span>';
@@ -1664,10 +1665,11 @@ if (!JSGantt) {
                   vNumUnits = (vTaskList[i].getEnd() - vTaskList[i].getStart()) / (60 * 1000) + 1;
                }
 
-               if (vTaskList[i].getVisible() === 0)
-                  vRightTable += '<DIV id="childgrid_' + vcurrDivID + '" style="position:relative; display:none;">';
-               else
+               if (vTaskList[i].getVisible() === 0) {
+                  vRightTable += '<DIV id="childgrid_' + vcurrDivID + '" style="position:relative;" class="hidden" >';
+               } else {
                   vRightTable += '<DIV id="childgrid_' + vcurrDivID + '" style="position:relative">';
+               }
 
                if (vTaskList[i].getMile()) {
 
