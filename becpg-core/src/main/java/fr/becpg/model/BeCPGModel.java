@@ -125,6 +125,7 @@ public interface BeCPGModel {
 
 	QName PROP_COMPOLIST_QTY_SUB_FORMULA = QName.createQName(BECPG_URI, "compoListQtySubFormula");
 
+	@Deprecated
 	QName PROP_COMPOLIST_QTY_AFTER_PROCESS = QName.createQName(BECPG_URI, "compoListQtyAfterProcess");
 
 	/** The Constant PROP_COMPOLIST_UNIT. */
@@ -732,5 +733,8 @@ public interface BeCPGModel {
 	QName ASPECT_FORMULATED_ENTITY = QName.createQName(BECPG_URI, "formulatedEntityAspect");
 
 	QName PROP_FORMULATED_DATE = QName.createQName(BECPG_URI, "formulatedDate");
+
+	@Deprecated
+	QName ASPECT_PRODUCT_STATE = QName.createQName(BECPG_URI, "productStateAspect");
 	
 }
