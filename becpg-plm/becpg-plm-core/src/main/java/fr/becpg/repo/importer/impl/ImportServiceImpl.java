@@ -247,7 +247,7 @@ public class ImportServiceImpl implements ImportService {
 				return importContext;
 			}
 		};
-		ImportContext importContext = serviceRegistry.getRetryingTransactionHelper().doInTransaction(prepareContextCallback, true, requiresNewTransaction);
+		ImportContext importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(prepareContextCallback, true, requiresNewTransaction);
 
 		importContext.setStopOnFirstError(true);
 		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH : FORMAT_DATE_ENGLISH;
@@ -318,7 +318,7 @@ public class ImportServiceImpl implements ImportService {
 				return null;
 			}
 		};
-		serviceRegistry.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
 	
 	/**
@@ -358,7 +358,7 @@ public class ImportServiceImpl implements ImportService {
 			logger.info(info);
 
 			// use transaction
-			importContext = serviceRegistry.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ImportContext>() {
+			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ImportContext>() {
 				public ImportContext execute() throws Exception {
 
 					return importInBatch(finalImportContext, finalLastIndex);

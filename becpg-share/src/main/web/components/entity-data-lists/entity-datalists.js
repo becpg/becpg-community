@@ -26,7 +26,7 @@
    /**
     * YUI Library aliases
     */
-   var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector;
+   var Dom = YAHOO.util.Dom;
 
    /**
     * Alfresco Slingshot aliases

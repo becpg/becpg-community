@@ -144,6 +144,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 					if((isExtractedProduct && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) ||
 							!isExtractedProduct && RAWMATERIAL_DATALIST.contains(dataListQName)){
 					
+						@SuppressWarnings({ "rawtypes", "unchecked" })
 						List<BeCPGDataObject> dataListItems = (List)datalists.get(dataListQName);
 						
 						for(BeCPGDataObject dataListItem : dataListItems){
@@ -172,6 +173,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			Element allergenListElt = (Element)dataListsElt.selectSingleNode(PLMModel.TYPE_ALLERGENLIST.getLocalName()+"s");				
 			if (allergenListElt != null) {
 				
+				@SuppressWarnings("unchecked")
 				List<AllergenListDataItem> allergenList = (List<AllergenListDataItem>)datalists.get(PLMModel.TYPE_ALLERGENLIST);
 				String volAllergens = "";
 				String inVolAllergens = "";

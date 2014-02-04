@@ -294,7 +294,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		String comparison = (String) nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
 				+ (String) nodeService.getProperty(entity2NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
-				+ dictionaryService.getType(datalistType).getTitle();
+				+ dictionaryService.getType(datalistType).getTitle(dictionaryService);
 		
 		structCompareResults.put(comparison, structComparisonList);
 	}

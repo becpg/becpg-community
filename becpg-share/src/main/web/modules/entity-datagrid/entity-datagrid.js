@@ -32,7 +32,7 @@
    /**
     * Alfresco Slingshot aliases
     */
-   var $html = Alfresco.util.encodeHTML, $links = Alfresco.util.activateLinks, $combine = Alfresco.util.combinePaths;
+   var $html = Alfresco.util.encodeHTML, $links = Alfresco.util.activateLinks;
 
    /**
     * Entity DataGrid constructor.
@@ -641,7 +641,7 @@
 
                      //Toolbar contribs
                     if(Dom.get("toolbar-contribs-"+this.id)){              
-                       var controls = Dom.getChildren("toolbar-contribs-"+this.id)
+                       var controls = Dom.getChildren("toolbar-contribs-"+this.id);
                        if(controls){
                           for(var el in controls){
                            (new  YAHOO.util.Element("toolbar-contribs")).appendChild(controls[el]);
@@ -1114,7 +1114,7 @@
 
                      if (this.options.usePagination) {
 
-                        var paginationContainers = [ this.id + "-paginator" ]
+                        var paginationContainers = [ this.id + "-paginator" ];
 
                         if (this.options.displayBottomPagination) {
                            paginationContainers.push(this.id + "-paginatorBottom");
@@ -1323,7 +1323,7 @@
                            }
                            
                           
-                         } 
+                         };
                         
                         
                         this.widgets.dataTable.subscribe("cellClickEvent",  function (oArgs){

@@ -44,13 +44,9 @@ public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	private static String SEPARATOR = "|";
 
-	/** The service registry. */
 	private ServiceRegistry serviceRegistry;
+	
 
-	/**
-	 * @param serviceRegistry
-	 *            the serviceRegistry to set
-	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
@@ -106,7 +102,7 @@ public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
 				TypeDefinition typeDef = serviceRegistry.getDictionaryService().getType(type);
 				String suggestion = type.toPrefixString(serviceRegistry.getNamespaceService())
 						+ SEPARATOR
-						+ (typeDef != null && typeDef.getTitle() != null && typeDef.getTitle().length() > 0 ? typeDef.getTitle() : type.toPrefixString(serviceRegistry
+						+ (typeDef != null && typeDef.getTitle(serviceRegistry.getDictionaryService()) != null && typeDef.getTitle(serviceRegistry.getDictionaryService()).length() > 0 ? typeDef.getTitle(serviceRegistry.getDictionaryService()) : type.toPrefixString(serviceRegistry
 								.getNamespaceService()));
 				if (filter(suggestion, query)) {
 					suggestions.add(suggestion);

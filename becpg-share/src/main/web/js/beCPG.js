@@ -90,4 +90,4 @@ beCPG.util.contains = function(array, obj) {
        }
    }
    return false;
-}
+};

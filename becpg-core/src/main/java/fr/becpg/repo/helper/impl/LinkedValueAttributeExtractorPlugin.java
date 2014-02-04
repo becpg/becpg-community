@@ -21,7 +21,6 @@ package fr.becpg.repo.helper.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -41,24 +40,6 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPlugin {
 
 	
-//else 
-//	metadata = type.toPrefixString(namespaceService).split(":")[1];
-//	//#798
-////	if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_PRODUCT)) {
-////		metadata += "-" + nodeService.getProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE);
-////	}
-//}
-//@Deprecated
-//private QName getPropName(QName type) {
-//else if (type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
-//		return BeCPGModel.PROP_LKV_VALUE; }
-////	} else if (type.equals(ProjectModel.TYPE_TASK_LIST)) {
-////		return ProjectModel.PROP_TL_TASK_NAME;
-////	}
-//
-//	return ContentModel.PROP_NAME;
-//}
-	
 	@Autowired
 	private NodeService nodeService;
 	
@@ -68,7 +49,6 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	
 	@Override
 	public Collection<QName> getMatchingTypes() {
-	
 		return Arrays.asList(BeCPGModel.TYPE_LINKED_VALUE);
 	}
 	

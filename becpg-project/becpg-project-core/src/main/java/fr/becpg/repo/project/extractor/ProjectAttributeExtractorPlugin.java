@@ -21,7 +21,6 @@ package fr.becpg.repo.project.extractor;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;

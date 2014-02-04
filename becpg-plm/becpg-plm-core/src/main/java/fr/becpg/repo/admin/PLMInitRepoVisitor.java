@@ -744,10 +744,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 				
 				ClassDefinition classDef = dictionaryService.getClass(productType);
 				
-				if(repoService.getFolderByPath(productReportTplsNodeRef, classDef.getTitle()) == null){
+				if(repoService.getFolderByPath(productReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null){
 					
 					NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef,
-							classDef.getTitle(), classDef.getTitle());
+							classDef.getTitle(dictionaryService), classDef.getTitle(dictionaryService));
 					
 					if(defaultReport[i] != null && defaultReportName[i] != null){
 						reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i],
@@ -777,8 +777,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_NC);
 			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef,
-					classDef.getTitle(), classDef.getTitle());
-			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(),
+					classDef.getTitle(dictionaryService), classDef.getTitle(dictionaryService));
+			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
 					NC_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_NC, true, true, false);
 		} catch (Exception e) {
 			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_NC, e);

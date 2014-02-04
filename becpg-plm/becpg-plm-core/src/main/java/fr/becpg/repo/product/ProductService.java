@@ -17,16 +17,14 @@
  ******************************************************************************/
 package fr.becpg.repo.product;
 
-import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.ProductData;
 
 /**
  * @author querephi

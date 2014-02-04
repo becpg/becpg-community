@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.becpg.model.SystemState;

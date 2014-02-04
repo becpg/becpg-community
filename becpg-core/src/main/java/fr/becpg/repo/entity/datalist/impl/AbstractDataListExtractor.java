@@ -43,7 +43,6 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.extractors.AbstractNodeDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
-import fr.becpg.repo.helper.impl.PersonAttributeExtractorPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 
 public abstract class AbstractDataListExtractor implements DataListExtractor {

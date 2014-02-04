@@ -29,7 +29,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;

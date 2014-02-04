@@ -51,16 +51,16 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 	private static final String WF_URI = "http://www.bcpg.fr/model/workflow/1.0";
 
-	private static final QName PROP_reviewQualityApproval = QName.createQName(WF_URI, "reviewQualityApproval");
-	private static final QName PROP_reviewQualityComment = QName.createQName(WF_URI, "reviewQualityComment");
-	private static final QName PROP_reviewProductionApproval = QName.createQName(WF_URI, "reviewProductionApproval");
+//	private static final QName PROP_reviewQualityApproval = QName.createQName(WF_URI, "reviewQualityApproval");
+//	private static final QName PROP_reviewQualityComment = QName.createQName(WF_URI, "reviewQualityComment");
+//	private static final QName PROP_reviewProductionApproval = QName.createQName(WF_URI, "reviewProductionApproval");
 	private static final QName PROP_pvTransmitterComment = QName.createQName(WF_URI, "pvTransmitterComment");
 	private static final QName PROP_reviewRDApproval = QName.createQName(WF_URI, "reviewRDApproval");
 	private static final QName PROP_reviewRDComment = QName.createQName(WF_URI, "reviewRDComment");
 	private static final QName PROP_reviewCallerApproval = QName.createQName(WF_URI, "reviewCallerApproval");
 	private static final QName PROP_pvCallerActor = QName.createQName(WF_URI, "pvCallerActor");
-	private static final QName PROP_pvQualityApprovalActor = QName.createQName(WF_URI, "pvQualityApprovalActor");
-	private static final QName PROP_pvProductionApprovalActor = QName.createQName(WF_URI, "pvProductionApprovalActor");
+//	private static final QName PROP_pvQualityApprovalActor = QName.createQName(WF_URI, "pvQualityApprovalActor");
+//	private static final QName PROP_pvProductionApprovalActor = QName.createQName(WF_URI, "pvProductionApprovalActor");
 	private static final QName PROP_pvRDApprovalActor = QName.createQName(WF_URI, "pvRDApprovalActor");
 	protected static final QName PROP_notifyUsers  = QName.createQName(WF_URI, "notifyUsers");
 
