@@ -382,4 +382,4 @@ Alfresco.module.getRevertVersionInstance = function()
 {
    var instanceId = "alfresco-revertVersion-instance";
    return Alfresco.util.ComponentManager.get(instanceId) || new Alfresco.module.RevertVersion(instanceId);
-}
+};

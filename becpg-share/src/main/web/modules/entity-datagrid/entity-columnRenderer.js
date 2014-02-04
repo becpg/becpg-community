@@ -541,7 +541,7 @@
                        if (oSelf instanceof YAHOO.widget.RadioCellEditor) {
                           
                           oNewValue = "true" === oNewValue;
-                          oDisplayValue = oNewValue ? scope.msg("data.boolean.true") : scope.msg("data.boolean.false")
+                          oDisplayValue = oNewValue ? scope.msg("data.boolean.true") : scope.msg("data.boolean.false");
                           
                        }
                        

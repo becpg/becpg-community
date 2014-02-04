@@ -518,7 +518,7 @@
                   },
 
                   getValues : function AutoCompletePicker_getValues() {
-                     var me = this, inputAdded = Dom.get(me.controlId + "-added")
+                     var me = this, inputAdded = Dom.get(me.controlId + "-added");
                      inputOrig = Dom.get(me.controlId + "-orig"), inputRemoved = Dom.get(me.controlId + "-removed"),
                            orig = [], removed = [], ret = [];
 
@@ -543,7 +543,7 @@
                            }
                         }
                         if (add) {
-                           ret.push(orig[i])
+                           ret.push(orig[i]);
                         }
                      }
 

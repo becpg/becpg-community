@@ -349,7 +349,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 						
 						genRawMaterialData.getCompoListView().setCompoList(compoList);
 						logger.info("Create new gen raw material " + kv.getKey());						
-						ProductData productData = alfrescoRepository.create(repository.getCompanyHome(), genRawMaterialData);
+						alfrescoRepository.create(repository.getCompanyHome(), genRawMaterialData);
 						//nodeService.setProperty(productData.getNodeRef(), BeCPGModel.PROP_ERP_CODE, kv.getKey());	
 					}						
 				}

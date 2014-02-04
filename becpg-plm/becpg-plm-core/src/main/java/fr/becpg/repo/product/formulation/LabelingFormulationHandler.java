@@ -23,7 +23,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;

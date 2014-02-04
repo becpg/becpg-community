@@ -6,15 +6,12 @@
  */
 (function() {
 
-   /**
-    * YUI Library aliases
-    */
-   var Dom = YAHOO.util.Dom, Selector = YAHOO.util.Selector, Event = YAHOO.util.Event;
+ 
 
    /**
     * Alfresco Slingshot aliases
     */
-   var $html = Alfresco.util.encodeHTML, $hasEventInterest = Alfresco.util.hasEventInterest;
+   var  $hasEventInterest = Alfresco.util.hasEventInterest;
 
    beCPG.custom.RuleConfigActionCustom = function(htmlId) {
       beCPG.custom.RuleConfigActionCustom.superclass.constructor.call(this, htmlId);

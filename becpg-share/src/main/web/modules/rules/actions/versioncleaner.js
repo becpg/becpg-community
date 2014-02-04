@@ -16,7 +16,6 @@
    /**
     * Alfresco Slingshot aliases
     */
-    var $html = Alfresco.util.encodeHTML;
 
    Alfresco.module.RulesVersionCleanerAction = function(htmlId)
    {

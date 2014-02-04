@@ -51,7 +51,6 @@
    <bean id="securityListValuePlugin" parent="baseListValuePlugin"
 		init-method="init" class="fr.becpg.repo.security.listvalue.SecurityListValuePlugin">
       <property name="serviceRegistry" ref="ServiceRegistry"/>
-
 	</bean>
    
    <!-- script context -->

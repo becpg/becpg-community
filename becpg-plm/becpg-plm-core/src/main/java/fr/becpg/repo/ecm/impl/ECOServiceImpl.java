@@ -482,15 +482,15 @@ public class ECOServiceImpl implements ECOService {
 	//
 	// }
 
-	private <T extends CompositionDataItem> void applyToList(List<T> items, NodeRef sourceNodeRef, NodeRef targetNodeRef) {
-		for (T item : items) {
-			if (item.getProduct() != null && item.getProduct().equals(sourceNodeRef)) {
-				item.setProduct(targetNodeRef);
-				break;
-			}
-		}
-
-	}
+//	private <T extends CompositionDataItem> void applyToList(List<T> items, NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+//		for (T item : items) {
+//			if (item.getProduct() != null && item.getProduct().equals(sourceNodeRef)) {
+//				item.setProduct(targetNodeRef);
+//				break;
+//			}
+//		}
+//
+//	}
 
 	private void applyReplacementList(ChangeOrderData ecoData, ProductData product) {
 

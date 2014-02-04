@@ -25,8 +25,6 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
@@ -41,8 +39,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class ProductServiceImpl implements ProductService {
 	
-	private static Log logger = LogFactory.getLog(ProductServiceImpl.class);
-
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	private FormulationService<ProductData> formulationService;

@@ -12,7 +12,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;

@@ -20,19 +20,15 @@ package fr.becpg.repo.product.formulation;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class TareFormulationHandler extends FormulationBaseHandler<ProductData> {

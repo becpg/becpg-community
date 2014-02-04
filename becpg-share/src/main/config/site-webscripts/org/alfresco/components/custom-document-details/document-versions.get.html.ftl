@@ -5,6 +5,6 @@
 
 <@markup id="customDocumentVersions-js" target="js" action="after">
    <#-- JavaScript Dependencies -->
-   <@script type="text/javascript" src="${url.context}/res/components/document-details/custom-document-versions.js"  group="document-details" />
+    <@script type="text/javascript" src="${url.context}/res/components/document-details/custom-document-versions.js"  group="document-details" />
 	
 </@>

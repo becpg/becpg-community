@@ -37,6 +37,7 @@
                <@region id="document-attachments" scope="template"/>
             </#if>
          </div>
+         <@region id="archive-and-download" scope="template"/>
       </div>
 
       <@region id="html-upload" scope="template"/>

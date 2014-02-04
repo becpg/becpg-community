@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.FormulateException;
 
