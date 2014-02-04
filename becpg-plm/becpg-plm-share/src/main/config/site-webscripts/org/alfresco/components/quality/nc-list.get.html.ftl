@@ -1,8 +1,6 @@
 
 <@markup id="css" >
    <#include "../entity-charact-views/include/entity-datagrid.css.ftl"/>
-   
-	<@link href="${url.context}/res/css/fixForm.css" group="nc-list" />
 	<@link href="${url.context}/res/components/quality/nc-list.css" group="nc-list" />
 	<@link href="${url.context}/res/components/comments/comments-list.css" group="comments"/>
 </@>

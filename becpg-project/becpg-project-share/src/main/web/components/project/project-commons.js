@@ -19,7 +19,7 @@
          var doBeforeDialogShow = function PL_onActionShowTask_doBeforeDialogShow(p_form, p_dialog) {
 
             Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle", me.msg("label.edit-row.title") ]);
-
+            
          };
 
          var nodes = className.replace("node-", "").split("|");

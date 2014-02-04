@@ -15,12 +15,59 @@
 	margin-left: 0px;
 }
 
-.yui-dialog .yui-g .form-field input[type="text"], 
-.yui-dialog .form-container .yui-g .form-field select {
-	width: 12em;
-}
-
 
 .alfresco-share .yui-panel .bd .form-container .yui-u.first {
 	text-align: left;
+}
+
+/** Dialog */
+
+
+.yui-dialog .form-container .yui-g .form-field input[type="text"], 
+.yui-dialog .form-container .yui-g .form-field input[type="file"],
+.yui-dialog .form-container .yui-g .form-field input[type="password"],
+.yui-dialog .form-container .yui-g .form-field input,
+.yui-dialog .form-container .yui-g .form-field select,
+.yui-dialog .form-container .yui-g .form-field textarea,
+.yui-dialog .form-container .yui-g .yui-ac .ac-body {
+	width: 13em !important;
+}
+
+.yui-dialog .form-container .form-field input[type="text"], 
+.yui-dialog .form-container .form-field input[type="file"],
+.yui-dialog .form-container .form-field input[type="password"],
+.yui-dialog .form-container .form-field input,
+.yui-dialog .form-container .form-field select,
+.yui-dialog .form-container .form-field textarea,
+.yui-dialog .form-container .yui-ac .ac-body {
+	width: 30em !important;
+}
+
+.yui-dialog .form-container .yui-g .yui-ac .ac-body .yui-ac-input {
+	width: 80% !important;
+}
+
+
+.yui-dialog .large-dialog .form-container .yui-g .form-field input[type="text"], 
+.yui-dialog .large-dialog .form-container .yui-g .form-field input[type="file"],
+.yui-dialog .large-dialog .form-container .yui-g .form-field input[type="password"],
+.yui-dialog .large-dialog .form-container .yui-g .form-field input,
+.yui-dialog .large-dialog .form-container .yui-g .form-field select,
+.yui-dialog .large-dialog .form-container .yui-g .form-field textarea,
+.yui-dialog .large-dialog .form-container .yui-g .yui-ac .ac-body {
+	width: 27em !important;
+}
+
+.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="text"], 
+.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="file"],
+.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="password"],
+.yui-dialog .large-dialog .form-container .yui-gb .form-field input,
+.yui-dialog .large-dialog .form-container .yui-gb .form-field select,
+.yui-dialog .large-dialog .form-container .yui-gb .form-field textarea,
+.yui-dialog .large-dialog .form-container .yui-gb .yui-ac .ac-body {
+	width: 13em !important;
+}
+
+.yui-dialog .large-dialog .form-container .yui-g .yui-ac .ac-body .yui-ac-input {
+	width: 90% !important;
 }
