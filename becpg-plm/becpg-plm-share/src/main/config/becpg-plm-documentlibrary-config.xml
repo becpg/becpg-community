@@ -18,6 +18,8 @@
 				<aspect name="exif:exif" />
 				<aspect name="audio:audio" />
 				<aspect name="cm:indexControl" />
+				<aspect name="cm:workingcopy" />
+
 				<!-- beCPG -->
 				<aspect name="bcpg:permissionsTpl" />
 				<aspect name="bcpg:clientsAspect" />

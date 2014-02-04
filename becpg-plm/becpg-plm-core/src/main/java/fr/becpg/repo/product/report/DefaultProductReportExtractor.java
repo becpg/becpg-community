@@ -310,35 +310,26 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			}		
 			
 			// MicrobioList
-			Map<NodeRef, MicrobioListDataItem> microbioMap = new HashMap<NodeRef, MicrobioListDataItem>();
-			if (productData.getMicrobioList() != null) {
-				for (MicrobioListDataItem dataItem : productData.getMicrobioList()) {
-					microbioMap.put(dataItem.getMicrobio(), dataItem);
-				}
-			}
+			List<MicrobioListDataItem> microbioList = null;
 			
-			List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef, PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
-			if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
-				NodeRef productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
-
-				if (productMicrobioCriteriaNodeRef != null) {
-					ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
-					
-					if (pmcData.getMicrobioList() != null) {
-						for (MicrobioListDataItem dataItem : pmcData.getMicrobioList()) {
-							if(!microbioMap.containsKey(dataItem.getMicrobio())){
-								microbioMap.put(dataItem.getMicrobio(), dataItem);
-							}
-						}
+			if (productData.getMicrobioList() != null) {
+				microbioList = productData.getMicrobioList();
+			}
+			else{
+				List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+				if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
+					NodeRef productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
+					if (productMicrobioCriteriaNodeRef != null) {
+						ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);					
+						microbioList = pmcData.getMicrobioList();					
 					}
 				}
-			}		
+			}			
 			
-			if(!microbioMap.isEmpty()){
-				Element organoListElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
-				for (MicrobioListDataItem dataItem : microbioMap.values()) {
-
-					Element nodeElt = organoListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
+			if(microbioList != null && !microbioList.isEmpty()){
+				Element organoListElt = dataListsElt.addElement(BeCPGModel.TYPE_MICROBIOLIST.getLocalName() + "s");
+				for (MicrobioListDataItem dataItem : microbioList) {
+					Element nodeElt = organoListElt.addElement(BeCPGModel.TYPE_MICROBIOLIST.getLocalName());
 					loadDataListItemAttributes(dataItem, nodeElt);				
 				}
 			}
@@ -494,11 +485,12 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				extractEntityImages(dataItem.getProduct(), imgsElt, images);
 			}
 		} else {
-			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, dataItem.getVariants());
 		}		
 	}
 
-	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {		
+	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, 
+			NodeRef defaultVariantNodeRef, List<NodeRef> currentVariants) {		
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());		
@@ -516,10 +508,10 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 				Double tare = FormulationHelper.getTareInKg(dataItem, nodeService);	
 				
 				if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary)){	
-					packagingData.addTareSecondary(dataItem.getVariants(), tare);
+					packagingData.addTareSecondary(currentVariants, tare);
 				}
 				else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)){
-					packagingData.addTareTertiary(dataItem.getVariants(), tare);
+					packagingData.addTareTertiary(currentVariants, tare);
 				}							
 			}
 		}
@@ -530,11 +522,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			// product per box and boxes per pallet
 			if(dataItem.getQty()!=null) {
 				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
-				packagingData.setProductPerBoxes(dataItem.getVariants(), dataItem.getQty().intValue());
+				packagingData.setProductPerBoxes(currentVariants, dataItem.getQty().intValue());
 			}
 			Integer palletBoxesPerPallet = (Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
 			if(palletBoxesPerPallet!=null) {
-				packagingData.setBoxesPerPallet(dataItem.getVariants(), palletBoxesPerPallet);
+				packagingData.setBoxesPerPallet(currentVariants, palletBoxesPerPallet);
 			}
 		}
 		
@@ -550,13 +542,13 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	@SuppressWarnings("unchecked")
 	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
 
-		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, dataItem.getVariants());
 		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
-		Element packagingKitListEl = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName()+"s");	
+		Element packagingKitListEl = dataListsElt.addElement(BeCPGModel.TYPE_PACKAGINGLIST.getLocalName()+"s");	
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 	
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {			
-			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef);
+			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef, dataItem.getVariants());
 		}
 	}
 
