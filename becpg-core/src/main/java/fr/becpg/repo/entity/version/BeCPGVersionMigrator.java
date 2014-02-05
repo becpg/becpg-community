@@ -90,16 +90,15 @@ public class BeCPGVersionMigrator {
 	public void migrateVersionHistory(){
 		//remove compositeVersion on entity
 		String query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITYLISTS))+
-				LuceneHelper.mandatory(LuceneHelper.getCondAspect(ContentModel.ASPECT_VERSIONABLE))+
 				LuceneHelper.mandatory(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)) +
 				" -PATH:\"/bcpg:entitiesHistory//*\"";
 		
-		List<NodeRef> entityVersionableToFixList = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
-		logger.info("remove compositeVersion on entities. Found " + entityVersionableToFixList.size());
+		List<NodeRef> entityToFixList = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		logger.info("remove compositeVersion on entities. Found " + entityToFixList.size());
 		
-		for(NodeRef entityVersionableToFix : entityVersionableToFixList){
-			if(nodeService.exists(entityVersionableToFix)){
-				nodeService.removeAspect(entityVersionableToFix, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+		for(NodeRef entityToFix : entityToFixList){
+			if(nodeService.exists(entityToFix)){
+				nodeService.removeAspect(entityToFix, BeCPGModel.ASPECT_COMPOSITE_VERSION);
 			}
 		}
 		
