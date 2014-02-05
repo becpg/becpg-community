@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>versioncleaner</shortname>
+  <description>Version cleaner rule action dialog</description>
+  <url>/modules/rules/actions/versioncleaner</url>
+</webscript>
