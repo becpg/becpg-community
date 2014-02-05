@@ -144,7 +144,6 @@ public class BeCPGVersionMigrator {
 							Version version = null;							
 							try{								
 								if(versionHistory !=null){
-									logger.info("versionHistory.getAllVersions() " + versionHistory.getAllVersions());
 									version = versionHistory.getVersion(versionLabel);
 								}								
 							}
