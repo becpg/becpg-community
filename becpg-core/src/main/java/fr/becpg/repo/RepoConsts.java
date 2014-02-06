@@ -144,4 +144,9 @@ public class RepoConsts {
 	public static String WUSED_PREFIX = "WUsed";
 	public static String WUSED_SEPARATOR = "|";
 	
+	
+	//Version
+	public static final String VERSION_NAME_DELIMITER = " v";
+	public static final String INITIAL_VERSION = "1.0";
+	public static final String VERSION_DELIMITER = ".";
 }

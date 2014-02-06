@@ -121,6 +121,49 @@
 	
 	<aspects>
 
+		<aspect name="bcpg:compareWithAspect">
+			<associations>
+				<association name="bcpg:compareWithEntities">
+					<title>Compare with entities</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:entityBranchAspect">
+		 <properties>
+				<property name="bcpg:branchFromVersionLabel">
+					<title>Branch from version label</title>
+               <type>d:text</type>
+               <protected>true</protected>
+               <mandatory>true</mandatory>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:branchFromEntity">
+					<title>Branch from entity</title>
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+	
+
 		<aspect name="bcpg:formulatedEntityAspect">
 			<properties>
 				<property name="bcpg:formulatedDate">

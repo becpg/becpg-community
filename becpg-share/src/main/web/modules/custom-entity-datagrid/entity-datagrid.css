@@ -239,6 +239,23 @@
 	padding-left: 20px;
 }
 
+.datagrid span.dynaCompIncrease{
+	background: url(../../components/images/increase-16.png) no-repeat;
+	padding-left: 20px;
+	 margin-left: 5px;
+}
+
+.datagrid span.dynaCompDecrease{
+	background: url(../../components/images/decrease-16.png) no-repeat;
+	padding-left: 20px;
+	margin-left: 5px;
+}
+
+.datagrid span.dynaCompNone{
+	padding-left: 20px;
+}
+
+
 .datagrid .reqTypeTolerated,.datagrid span.dynaError,.datagrid span.lcl-formulated-error
 	{
 	background: url(../../components/images/states/warning-16.png) no-repeat;
