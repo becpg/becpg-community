@@ -164,27 +164,30 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return ret;
 	}
 
-	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
+	protected int extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
 
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-
-				String imgName = fileInfo.getName().toLowerCase();
-				NodeRef imgNodeRef = fileInfo.getNodeRef();
-				String imgId = String.format(PRODUCT_IMG_ID, cnt);
-				byte[] imageBytes = entityService.getImage(imgNodeRef);
-				if (imageBytes != null) {
-					Element imgElt = imgsElt.addElement(TAG_IMAGE);
-					imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
-					imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgName);
-					imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-
-					images.put(imgId, imageBytes);
-				}
+				extractImage(fileInfo.getNodeRef(), cnt, imgsElt, images);
 				cnt++;
 			}
+		}
+		
+		return cnt;
+	}
+	
+	protected void extractImage(NodeRef imgNodeRef, int cnt, Element imgsElt, Map<String, byte[]> images){
+		String imgId = String.format(PRODUCT_IMG_ID, cnt);
+		byte[] imageBytes = entityService.getImage(imgNodeRef);
+		if (imageBytes != null) {
+			Element imgElt = imgsElt.addElement(TAG_IMAGE);
+			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
+			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
+			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+
+			images.put(imgId, imageBytes);
 		}
 	}
 

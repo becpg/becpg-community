@@ -114,10 +114,10 @@ public class BeCPGVersionMigrator {
 		List<ChildAssociationRef> folderChilAssocs = nodeService.getChildAssocs(versionHistoryNodeRef);
 		
 		logger.info("entity to migrate size: " + folderChilAssocs.size());
-		
-		VersionNumber prevVersionNumber = new VersionNumber("1.0");
+				
 		for(ChildAssociationRef folderChildAssoc : folderChilAssocs){
 			
+			VersionNumber prevVersionNumber = new VersionNumber("0.0");
 			NodeRef folderNodeRef = folderChildAssoc.getChildRef();
 			logger.info("folder: " + folderNodeRef);
 			
@@ -283,9 +283,7 @@ public class BeCPGVersionMigrator {
 				};
 				AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
 				
-				
-				
-				
+				prevVersionNumber = new VersionNumber("1.0");							
 			}
             
             VersionNumber versionNumber = new VersionNumber(versionLabel);
@@ -404,12 +402,12 @@ public class BeCPGVersionMigrator {
 
 			@Override
 			public int compare(NodeRef v1, NodeRef v2) {
-				Date modifiedDateV1 = (Date) nodeService.getProperty(v1, BeCPGModel.PROP_FROZEN_MODIFIED);
-				Date modifiedDateV2 = (Date) nodeService.getProperty(v2, BeCPGModel.PROP_FROZEN_MODIFIED);
+//				Date modifiedDateV1 = (Date) nodeService.getProperty(v1, BeCPGModel.PROP_FROZEN_MODIFIED);
+//				Date modifiedDateV2 = (Date) nodeService.getProperty(v2, BeCPGModel.PROP_FROZEN_MODIFIED);
 				int result = 0;
-				if(modifiedDateV1 != null && modifiedDateV2 != null){
-					result = modifiedDateV1.compareTo(modifiedDateV2);
-					if (result == 0) {
+//				if(modifiedDateV1 != null && modifiedDateV2 != null){
+//					result = modifiedDateV1.compareTo(modifiedDateV2);
+//					if (result == 0) {
 						Long dbid1 = (Long) nodeService.getProperty(v1, ContentModel.PROP_NODE_DBID);
 						Long dbid2 = (Long) nodeService.getProperty(v2, ContentModel.PROP_NODE_DBID);
 
@@ -423,8 +421,8 @@ public class BeCPGVersionMigrator {
 										+ v2.toString());
 							}
 						}
-					}					
-				}
+//					}					
+//				}
 				
 				return result;				
 			}
