@@ -227,9 +227,33 @@ if (beCPG.module.EntityDataGridRenderers) {
                            if (!color) {
                               color = "000000";
                            }
+                           
+                           if(data.value.indexOf && data.value.indexOf("\"comp\":")>-1){
+                              var json = JSON.parse(data.value);
+                              if(json){
+                                 var ret = "", i=0, refValue = null , className, currValue = null ;
+                                 for( i = 0; i< json.comp.length; i++ ){
+                                    if(i==0){
+                                       refValue = parseFloat(json.comp[i].replace(",","."));
+                                       ret +='<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i]) + '</span>';
+                                    } else {
+                                       currValue = parseFloat(json.comp[i].replace(",","."));
+                                       if(currValue != Number.NaN && refValue != Number.NaN){
+                                          className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
+                                       } else {
+                                         className = "dynaCompNone";
+                                       }
+                                       ret +='<span  class="'+className+'" >(' + Alfresco.util.encodeHTML(json.comp[i]) + ')</span>';
+                                    }
+                                 }
+                                 return ret;
+                              }
+                           }
+
                            return '<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
                         }
 
+                    
                         return '<span class="dyna' + data.value.replace("#", "") + '" title="' + Alfresco.util
                               .encodeHTML(error) + '">' + Alfresco.util.encodeHTML(error.substring(0, 7)) + '</span>';
                      }
@@ -400,6 +424,30 @@ if (beCPG.module.EntityDataGridRenderers) {
             if (oColumn.hidden) {
                scope.widgets.dataTable.showColumn(oColumn);
                Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+            } else {
+               if(data.value.indexOf && data.value.indexOf("\"comp\":")>-1){
+                  var json = JSON.parse(data.value);
+                  if(json){
+                     var ret = "", i=0, refValue = null , className, currValue = null ;
+                     for( i = 0; i< json.comp.length; i++ ){
+                        if(i==0){
+                           refValue = parseFloat(json.comp[i].replace(",","."));
+                           ret +='<span>' + Alfresco.util.encodeHTML(json.comp[i]) + '</span>';
+                        } else {
+                           currValue = parseFloat(json.comp[i].replace(",","."));
+                           if(currValue != Number.NaN && refValue != Number.NaN){
+                              className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
+                           } else {
+                             className = "dynaCompNone";
+                           }
+                           ret +='<span  class="'+className+'" >(' + Alfresco.util.encodeHTML(json.comp[i]) + ')</span>';
+                        }
+                     }
+                     return ret;
+                  }
+               }
+               
+               
             }
             return data.displayValue;
          }

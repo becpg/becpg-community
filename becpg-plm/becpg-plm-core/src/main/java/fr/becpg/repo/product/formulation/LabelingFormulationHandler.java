@@ -16,6 +16,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
@@ -323,7 +324,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 									if (error != null) {
 
-										if (nodeService.exists(parent.getNodeRef())) {
+										if (parent.getNodeRef()!=null && nodeService.exists(parent.getNodeRef())) {
 											error.getSources().add(parent.getNodeRef());
 										}
 										if (logger.isDebugEnabled()) {

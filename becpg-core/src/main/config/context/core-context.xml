@@ -121,20 +121,6 @@
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 
-	<!-- EntityVersion -->
-	<bean id="entityVersionService" class="fr.becpg.repo.entity.version.EntityVersionServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="copyService" ref="copyService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="entityService" ref="entityService" />
-		<property name="versionService" ref="versionService" />
-		<property name="authenticationService" ref="authenticationService"/>
-		<property name="permissionService" ref="permissionService"/>
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
-	</bean>
-
 
 
 	<!-- Entity -->

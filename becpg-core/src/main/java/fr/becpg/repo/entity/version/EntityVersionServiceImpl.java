@@ -2,12 +2,14 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -30,6 +32,8 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -38,6 +42,7 @@ import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -46,7 +51,9 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
+@Service("entityVersionService")
 public class EntityVersionServiceImpl implements EntityVersionService {
+	
 	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
 
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, ENTITIES_HISTORY_NAME);
@@ -56,77 +63,40 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
 
-	/** The Constant VERSION_NAME_DELIMITER. */
-	private static final String VERSION_NAME_DELIMITER = " v";
-	private static final String INITIAL_VERSION = "1.0";
 
-	/** The logger. */
+
 	private static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
-	/** The node service. */
+	@Autowired
 	private NodeService nodeService;
 
-	/** The copy service. */
+	@Autowired
 	private CopyService copyService;
 
-	/** The search service. */
+	@Autowired
 	private BeCPGSearchService beCPGSearchService;
 
+	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 
+	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
 	private EntityService entityService;
 
+	@Autowired
 	private VersionService versionService;
 
+	@Autowired
 	private AuthenticationService authenticationService;
 
+	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
+	@Autowired
 	private PermissionService permissionService;
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setCopyService(CopyService copyService) {
-		this.copyService = copyService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-
-	public void setVersionService(VersionService versionService) {
-		this.versionService = versionService;
-	}
-
-	public void setAuthenticationService(AuthenticationService authenticationService) {
-		this.authenticationService = authenticationService;
-	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
+	
 	@Override
 	public NodeRef createVersion(final NodeRef nodeRef, Map<String, Serializable> versionProperties) {
 		return internalCreateVersionAndCheckin(nodeRef, null, versionProperties);
@@ -140,8 +110,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Override
 	public NodeRef checkOutDataListAndFiles(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
-		
-
 		
 		// Copy entity datalists (rights are checked by copyService during
 		// recursiveCopy)
@@ -244,7 +212,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			// nodeService.getProperties(versionNodeRef);
 			String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion);
 
-			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + VERSION_NAME_DELIMITER + versionLabel;
+			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
 			Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);
 			aspectProperties.put(ContentModel.PROP_NAME, name);
 			aspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, versionLabel);
@@ -470,15 +438,45 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		});
 
 		return versionRefs;
-
 	}
 
+
+	@Override
+	public List<NodeRef> getCurrentVersionBranches(NodeRef entityNodeRef) {
+		String versionLabel  = RepoConsts.INITIAL_VERSION;
+		
+		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			versionLabel = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
+		} 
+
+		List<NodeRef> ret = new ArrayList<>();
+		for(NodeRef branchNodeRef : getAllVersionBranches(entityNodeRef)) {
+			if(Objects.equals(versionLabel, nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL))) {
+				ret.add(branchNodeRef);
+			}
+		}
+		return ret;
+	}
+
+	
+	@Override
+	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef) {
+		List<NodeRef> ret = new ArrayList<>();
+		for(AssociationRef associationRef :  nodeService.getSourceAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
+			if(!nodeService.hasAspect(associationRef.getTargetRef(),BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				ret.add(associationRef.getTargetRef());
+			}
+		}
+		return ret;
+	}
+
+	
 	private String getVersionLabel(NodeRef origNodeRef, Map<String, Serializable> versionProperties, boolean isInitialVersion) {
 
 		QName classRef = nodeService.getType(origNodeRef);
 		Version preceedingVersion = versionService.getCurrentVersion(origNodeRef);
 
-		String versionLabel = INITIAL_VERSION;
+		String versionLabel = RepoConsts.INITIAL_VERSION;
 		if (!isInitialVersion) {
 			// Default the version label to the SerialVersionLabelPolicy
 			SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
@@ -571,5 +569,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
 		}
 	}
+
 
 }

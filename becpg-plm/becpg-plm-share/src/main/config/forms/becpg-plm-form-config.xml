@@ -533,6 +533,7 @@
 					<show id="bcpg:netWeight" force="true" />				
 					<show id="bcpg:productDensity" />					
 					<show id="bcpg:productSpecifications" />		
+					<show id="bcpg:compareWithEntities" force="true" />	
 					<show id="bcpg:entityTplRef" force="true" />	
             </field-visibility>
             <appearance>
@@ -548,6 +549,13 @@
 					<field id="bcpg:productSpecifications" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					<field id="bcpg:compareWithEntities" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct</control-param>
 							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>

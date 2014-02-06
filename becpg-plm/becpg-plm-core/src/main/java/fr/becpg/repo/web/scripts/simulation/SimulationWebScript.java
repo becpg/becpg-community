@@ -19,12 +19,15 @@ package fr.becpg.repo.web.scripts.simulation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -32,8 +35,10 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 
@@ -57,6 +62,7 @@ public class SimulationWebScript extends AbstractWebScript {
 	private CopyService copyService;
 	
 	
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -72,7 +78,8 @@ public class SimulationWebScript extends AbstractWebScript {
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
 	}
-
+	
+	
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
@@ -95,10 +102,8 @@ public class SimulationWebScript extends AbstractWebScript {
 
 		if (!dataListItemsNodeRefs.isEmpty()) {
 			for (NodeRef dataListItem : dataListItemsNodeRefs) {
-				
 				simulationNodeRef = createSimulationNodeRef(associationService.getTargetAssoc(dataListItem, PLMModel.ASSOC_COMPOLIST_PRODUCT), nodeService.getPrimaryParent(entityListDAO.getEntity(dataListItem)).getParentRef());
 				associationService.update(dataListItem, PLMModel.ASSOC_COMPOLIST_PRODUCT, simulationNodeRef);
-
 			}
 		} else if (entityNodeRef != null) {
 			simulationNodeRef = createSimulationNodeRef(entityNodeRef, nodeService.getPrimaryParent(entityNodeRef).getParentRef());
@@ -114,15 +119,23 @@ public class SimulationWebScript extends AbstractWebScript {
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
 			ret.write(res.getWriter());
-		}  catch (JSONException e) {
+		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} 
 
 	}
 
+	
 	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
 		NodeRef simulationNodeRef = copyService.copyAndRename(entityNodeRef, parentRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			nodeService.setProperty(simulationNodeRef,BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
+		} else {
+			nodeService.setProperty(simulationNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL ,   RepoConsts.INITIAL_VERSION);
+		}
+		
+		nodeService.setAssociations(simulationNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Arrays.asList(entityNodeRef));
 		return simulationNodeRef;
 	}
 

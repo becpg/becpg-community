@@ -176,9 +176,9 @@
 
                            if (me.options.dsStr.indexOf("?") > 0) {
                               return "&" + q;
-                           } else {
-                              return "?" + q;
-                           }
+                           } 
+                           return "?" + q;
+                           
 
                         };
 

@@ -108,5 +108,13 @@ public interface BeCPGModel {
 	// isDeleted aspect
 	QName ASPECT_DELETED = QName.createQName(BeCPGModel.BECPG_URI, "isDeletedAspect");
 	QName PROP_IS_DELETED = QName.createQName(BeCPGModel.BECPG_URI, "isDeleted");
-
+	
+	
+	QName ASPECT_COMPARE_WITH = QName.createQName(BeCPGModel.BECPG_URI, "compareWithAspect");
+	QName ASSOC_COMPARE_WITH_ENTITIES = QName.createQName(BECPG_URI, "compareWithEntities");
+	
+	QName ASPECT_ENTITY_BRANCH = QName.createQName(BeCPGModel.BECPG_URI, "entityBranchAspect");
+	QName ASSOC_BRANCH_FROM_ENTITY = QName.createQName(BECPG_URI, "branchFromEntity");
+	QName PROP_BRANCH_FROM_VERSION_LABEL = QName.createQName(BECPG_URI, "branchFromVersionLabel");
+	
 }

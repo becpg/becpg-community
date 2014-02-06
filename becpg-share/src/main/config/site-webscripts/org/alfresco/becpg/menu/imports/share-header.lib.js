@@ -94,6 +94,10 @@ function createDockBar(beCPGMenu){
                var item = results.items[i];
                
                var targetUrl = "entity-details?nodeRef=" +item.nodeRef ;
+               if(page.url.uri.indexOf("entity-data-lists")){
+                  targetUrl = "entity-data-lists?nodeRef=" +item.nodeRef ;
+               }
+               
                
                if(item.site){
                   targetUrl = "site/" + item.site.shortName+"/"+targetUrl ;
