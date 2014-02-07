@@ -24,8 +24,10 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
  * The Class VersionHistoryWebScript.
@@ -37,22 +39,25 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 	// request parameter names
 	private static final String PARAM_NODEREF = "nodeRef";		
 	private static final String DISPLAY_FORMAT = "dd MMM yyyy HH:mm:ss 'GMT'Z '('zzz')'";
+	private static final String PARAM_MODE = "mode";
 	
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityVersionWebScript.class);		
 	
-	/** The entity version service. */
 	private EntityVersionService entityVersionService;
 	
 	private NodeService nodeService;
 	
 	private PersonService personService;
 		
-	/**
-	 * Sets the entity version service.
-	 *
-	 * @param entityVersionService the new entity version service
-	 */
+	
+	private AttributeExtractorService attributeExtractorService;
+
+	
+	
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
+	}
+
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
@@ -73,9 +78,11 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 		
 		logger.debug("VersionWebScript executeImpl()");			
 		NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));	
+		String mode = req.getParameter(PARAM_MODE);
 		SimpleDateFormat displayFormat = new SimpleDateFormat(DISPLAY_FORMAT);
 				
 		List<EntityVersion> versions = entityVersionService.getAllVersions(nodeRef);
+		
 		
 		try {
 			JSONArray jsonVersions = new JSONArray();
@@ -107,11 +114,47 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 					
 					jsonVersion.put("creator", getPerson(version.getFrozenModifier()));					
 				}
-			}				
+			}
 			
 			res.setContentType("application/json");
 	        res.setContentEncoding("UTF-8");		
-			res.getWriter().write(jsonVersions.toString(3));
+	        
+			if("branches".equals(mode)) {
+				JSONArray jsonBranches = new JSONArray();
+				List<NodeRef> branches = entityVersionService.getAllVersionBranches(nodeRef);
+				for(NodeRef branchNodeRef : branches) {
+					JSONObject jsonBranch = new JSONObject();
+					jsonBranch.put("nodeRef", branchNodeRef);
+					jsonBranch.put("name", nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME));
+					if (nodeService.hasAspect(branchNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+						jsonBranch.put("label", nodeService.getProperty(branchNodeRef, ContentModel.PROP_VERSION_LABEL));
+					} else {
+						jsonBranch.put("label",   RepoConsts.INITIAL_VERSION);
+					}
+					
+					
+					jsonBranch.put("description", nodeService.getProperty(branchNodeRef, ContentModel.PROP_TITLE));
+					jsonBranch.put("createdDate", displayFormat.format((Date)nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
+					jsonBranch.put("createdDateISO", ISO8601DateFormat.format((Date)nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
+					jsonBranch.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(branchNodeRef), branchNodeRef));
+					jsonBranch.put("siteId", attributeExtractorService.extractSiteId( branchNodeRef));
+					jsonBranches.put(jsonBranch);
+					
+					jsonBranch.put("creator", getPerson((String)nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATOR)));
+				}
+				
+				
+				JSONObject jsonObject  = new JSONObject();
+				jsonObject.put("versions", jsonVersions);
+				jsonObject.put("branches", jsonBranches);
+				res.getWriter().write(jsonObject.toString(3));
+				
+			} else {
+				res.getWriter().write(jsonVersions.toString(3));
+			}
+			
+			
+			
 			
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON");

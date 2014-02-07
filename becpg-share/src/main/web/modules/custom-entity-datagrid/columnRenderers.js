@@ -234,16 +234,16 @@ if (beCPG.module.EntityDataGridRenderers) {
                                  var ret = "", i=0, refValue = null , className, currValue = null ;
                                  for( i = 0; i< json.comp.length; i++ ){
                                     if(i==0){
-                                       refValue = parseFloat(json.comp[i].replace(",","."));
-                                       ret +='<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i]) + '</span>';
+                                       refValue = parseFloat(json.comp[i].value);
+                                       ret +='<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
                                     } else {
-                                       currValue = parseFloat(json.comp[i].replace(",","."));
+                                       currValue = parseFloat(json.comp[i].value);
                                        if(currValue != Number.NaN && refValue != Number.NaN){
                                           className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
                                        } else {
                                          className = "dynaCompNone";
                                        }
-                                       ret +='<span  class="'+className+'" >(' + Alfresco.util.encodeHTML(json.comp[i]) + ')</span>';
+                                       ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( data.siteId, json.comp[i].nodeRef)+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
                                     }
                                  }
                                  return ret;
@@ -431,16 +431,16 @@ if (beCPG.module.EntityDataGridRenderers) {
                      var ret = "", i=0, refValue = null , className, currValue = null ;
                      for( i = 0; i< json.comp.length; i++ ){
                         if(i==0){
-                           refValue = parseFloat(json.comp[i].replace(",","."));
-                           ret +='<span>' + Alfresco.util.encodeHTML(json.comp[i]) + '</span>';
+                           refValue = parseFloat(json.comp[i].value.replace(",","."));
+                           ret +='<span>' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
                         } else {
-                           currValue = parseFloat(json.comp[i].replace(",","."));
+                           currValue = parseFloat(json.comp[i].value.replace(",","."));
                            if(currValue != Number.NaN && refValue != Number.NaN){
                               className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
                            } else {
                              className = "dynaCompNone";
                            }
-                           ret +='<span  class="'+className+'" >(' + Alfresco.util.encodeHTML(json.comp[i]) + ')</span>';
+                           ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( data.siteId, json.comp[i].nodeRef)+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
                         }
                      }
                      return ret;

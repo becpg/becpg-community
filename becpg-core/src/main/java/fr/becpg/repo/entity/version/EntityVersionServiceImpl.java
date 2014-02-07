@@ -463,8 +463,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef) {
 		List<NodeRef> ret = new ArrayList<>();
 		for(AssociationRef associationRef :  nodeService.getSourceAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
-			if(!nodeService.hasAspect(associationRef.getTargetRef(),BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-				ret.add(associationRef.getTargetRef());
+			if(!nodeService.hasAspect(associationRef.getSourceRef(),BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				ret.add(associationRef.getSourceRef());
 			}
 		}
 		return ret;

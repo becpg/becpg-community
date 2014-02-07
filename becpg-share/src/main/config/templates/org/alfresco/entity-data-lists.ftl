@@ -83,7 +83,8 @@
            </div>
            <div class="yui-b" id="alf-filters">
                <@region id="datalists" scope="template"  />
-               <@region id="filter" scope="template"  />
+              <#-- <@region id="filter" scope="template"  /> -->
+               <@region id="document-versions" scope="template"/>
            </div>
         </div>
    </div>
