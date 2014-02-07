@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.data;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -47,6 +48,8 @@ public class DataListFilter {
 	public static final String FTS_FILTER = "fts";
 	
 	public static final String PROP_DEPTH_LEVEL = "prop_bcpg_depthLevel";
+
+	private static final String VERSION_FILTER = "version";
 	
 	private String filterId = ALL_FILTER;
 	
@@ -104,6 +107,9 @@ public class DataListFilter {
 	}
 
 	public List<NodeRef> getEntityNodeRefs() {
+		if(isVersionFilter()) {
+			return Arrays.asList(new NodeRef(filterData));
+		}
 		return entityNodeRefs;
 	}
 
@@ -252,6 +258,10 @@ public class DataListFilter {
 		return allFilter && parentNodeRef!=null;
 	}
 
+	public boolean isVersionFilter() {
+		return filterId!=null && filterId.equals(VERSION_FILTER);
+	}
+	
 	public void buildQueryFilter( String filterId, String filterData, String params ) throws JSONException {
 		
 		Pattern ftsQueryPattern = Pattern.compile("fts\\((.*)\\)");
@@ -450,6 +460,8 @@ public class DataListFilter {
 			return false;
 		return true;
 	}
+
+	
 
 
 	

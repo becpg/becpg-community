@@ -181,13 +181,24 @@
 			<url>/components/entity-data-lists/entity-datalists</url>
 		</component>
 
-		<!-- Filter -->
+		<!-- Filter 
 		<component>
 			<region-id>filter</region-id>
 			<url>/components/data-lists/filter</url>
 		</component>
-
-		<!-- Actions Common -->
+		-->
+		
+		 <!-- Document Versions -->
+      <component>
+         <region-id>document-versions</region-id>
+         <url>/components/entity-data-lists/entity-versions</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>
+      
+      
+      <!-- Actions Common -->
 		<component>
 			<region-id>actions-common</region-id>
 			<url>/components/data-lists/actions-common</url>
