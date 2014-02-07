@@ -25,7 +25,7 @@
 		<#assign el=args.htmlid?html>
 		<#assign prefFilter = preferences.filter!"InProgress">
 		<#assign prefView = preferences.view!"projects">
-		<#assign prefSimpleView = preferences.simpleView!false>
+		<#assign prefSimpleView = preferences.simpleView!true>
 		<script type="text/javascript">//<![CDATA[
 		(function()
 		{

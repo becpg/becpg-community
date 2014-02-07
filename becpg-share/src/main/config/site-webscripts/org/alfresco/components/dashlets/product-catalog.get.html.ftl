@@ -17,7 +17,7 @@
 		<#assign el=args.htmlid?html>
 		<#assign prefFilter = preferences.filter!"Valid">
 		<#assign prefType = preferences.type!"finishedProduct">
-		<#assign prefSimpleView = preferences.simpleView!false>
+		<#assign prefSimpleView = preferences.simpleView!true>
 		<script type="text/javascript">//<![CDATA[
 		(function()
 		{
