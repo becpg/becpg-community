@@ -1,0 +1,42 @@
+PATH;/System/QualityLists/bcpg:entityLists/ClaimSources
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Email
+VALUES;Mail other
+VALUES;Call center
+VALUES;Mail from web site
+VALUES;Call other
+;
+;
+PATH;/System/QualityLists/bcpg:entityLists/ClaimTrackingValues
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Create customer complaint + answer customer
+VALUES;Create customer complaint + give answer to sales
+VALUES;Create customer complaint
+;
+;
+PATH;/System/QualityLists/bcpg:entityLists/ClaimTypes
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Secondary packaging
+VALUES;Sick person without hospitalization
+VALUES;Sick person with hospitalization
+VALUES;Primary packaging
+VALUES;Foreign objects
+VALUES;Organoleptic
+VALUES;Presence of mold
+VALUES;Product inflated
+VALUES;Recipe design
+VALUES;Bacteriological analysis on pathogens
+VALUES;Bacteriological analysis on other germs
+VALUES;Physicochemical analysis
+VALUES;Other reason (information, labeling ... )
+;
+PATH;/System/QualityLists/bcpg:entityLists/ClaimResponseStates
+TYPE;bcpg:listValue
+COLUMNS;cm:name
+VALUES;Answer done - sent by email to the customer - see mail attachment
+VALUES;Response done ​​- delivered via the client-cf mail attachment
+VALUES;Answer attached to customer complaint
+VALUES;Standard mail attached to complaint - remains to send
