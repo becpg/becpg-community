@@ -2332,8 +2332,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
 			
 			// add overrun
-			compoList.get(6).getExtraProperties().put(PLMModel.PROP_COMPOLIST_OVERRUN_PERC, 80d);
-			compoList.get(7).getExtraProperties().put(PLMModel.PROP_COMPOLIST_OVERRUN_PERC, 70d);
+			compoList.get(6).setOverrunPerc(80d);
+			compoList.get(7).setOverrunPerc(70d);
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
@@ -2349,11 +2349,9 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			assertNotNull(formulatedProduct1.getCompoList());
 			int checks=0;
 			for(CompoListDataItem compoListDataItem : formulatedProduct1.getCompoList()){				
-				
-				
-				Double volume = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), PLMModel.PROP_COMPOLIST_VOLUME);
-				
-				Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), PLMModel.PROP_COMPOLIST_OVERRUN_PERC);
+								
+				Double volume = compoListDataItem.getVolume();				
+				Double overrun = compoListDataItem.getOverrunPerc();
 				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);				
 				logger.info("Product: " + nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
 				logger.info("overrun: " + overrun);
