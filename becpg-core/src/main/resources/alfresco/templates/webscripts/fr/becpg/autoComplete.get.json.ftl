@@ -9,7 +9,7 @@
 			,"metadatas": [
 			<#list result.metadatas?keys as key>
 				{"key": "${key}",
-				"value": "${result.metadatas[key]}"}
+				"value": <#if result.metadatas[key]??>"${result.metadatas[key]}"<#else>""</#if> }
 				<#if key_has_next >,</#if>
 			</#list>
 			]}
