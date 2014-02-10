@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.impl.util.json.JSONArray;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -19,6 +20,8 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.CompareHelper;
 
 /**
  * Compare several entities (properties, datalists and composite datalists).
@@ -713,6 +717,14 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		String strValue1 = attributeExtractorService.getStringValue(propertyDef, oValue1, propertyFormats);
 		String strValue2 = attributeExtractorService.getStringValue(propertyDef, oValue2, propertyFormats);
+		
+		if(DataTypeDefinition.ANY.equals(propertyDef.getDataType())) {
+			strValue1 = CompareHelper.cleanCompareJSON(strValue1);
+			strValue2 = CompareHelper.cleanCompareJSON(strValue2);
+		}
+		
+		
+		
 		String key = String.format("%s-%s-%s", entityList, characteristic, propertyDef.getName());
 		CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
 
@@ -727,6 +739,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 	}
 
+	
 	private boolean isCompareableProperty(QName qName, boolean isDataList) {
 
 		boolean isCompareable = true;

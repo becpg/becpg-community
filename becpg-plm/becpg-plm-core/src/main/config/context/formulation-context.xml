@@ -121,6 +121,7 @@
 					<property name="productService" ref="productService"/>
 					<property name="associationService" ref="associationService" />
 					<property name="nodeService" ref="nodeService" />
+					<property name="attributeExtractorService" ref="attributeExtractorService"/>
 				</bean>
 				
 			</list>

@@ -10,22 +10,13 @@
    </@>
    
    <@markup id="widgets">
-         <@createWidgets group="document-details"/>
-         <@inlineScript group="document-details">
-            YAHOO.util.Event.onContentReady("${args.htmlid?js_string}-heading", function() {
-               Alfresco.util.createTwister("${args.htmlid?js_string}-heading", "EntityVersions");
-            });
-         </@>
+         <@createWidgets group="entity-version"/>
    </@>
    
    <@markup id="html">
       <@uniqueIdDiv>
                <#assign el=args.htmlid?html>
-               <div id="${el}-body" class="entity-versions filter">
-                  <h2 id="${el}-heading">
-                     ${msg("header.versionHistory")}
-                  </h2>
-                  <div class="bd">
+               <div id="${el}-body" class="entity-versions filter hidden">
 				         <div class="nav flat-button">
 								<a href="#" rel="previous" class="version-historic-nav prev">previous</a>
 								<a href="#" rel="next" class="version-historic-nav next">next</a>
@@ -40,7 +31,6 @@
 	                  <div class="panel-body">
 	                     <div id="${el}-branches" class="version-list datagrid"></div>
 	                  </div>
-                  </div>
                </div>
       </@>
    </@>

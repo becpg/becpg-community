@@ -2,14 +2,17 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -30,6 +33,7 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +46,6 @@ import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -53,7 +56,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 @Service("entityVersionService")
 public class EntityVersionServiceImpl implements EntityVersionService {
-	
+
 	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
 
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, ENTITIES_HISTORY_NAME);
@@ -62,8 +65,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private static final String KEY_ENTITIES_HISTORY = "EntitiesHistory";
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
-
-
 
 	private static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
@@ -96,7 +97,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Autowired
 	private PermissionService permissionService;
-	
+
 	@Override
 	public NodeRef createVersion(final NodeRef nodeRef, Map<String, Serializable> versionProperties) {
 		return internalCreateVersionAndCheckin(nodeRef, null, versionProperties);
@@ -110,7 +111,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Override
 	public NodeRef checkOutDataListAndFiles(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
-		
+
 		// Copy entity datalists (rights are checked by copyService during
 		// recursiveCopy)
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
@@ -220,7 +221,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			updateVersionEffectivity(origNodeRef, versionNodeRef);
 
-
 			return versionNodeRef;
 
 		} finally {
@@ -261,7 +261,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		for (AssociationRef targetAssocRef : targetAssocRefs) {
 
-			if (!ContentModel.ASSOC_WORKING_COPY_LINK.equals(targetAssocRef.getTypeQName())	) {
+			if (!ContentModel.ASSOC_WORKING_COPY_LINK.equals(targetAssocRef.getTypeQName())) {
 
 				if (!assocs.contains(targetAssocRef.getTypeQName())) {
 
@@ -361,7 +361,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("delete versionHistoryRef " + versionHistoryRef);
 			}
-			nodeService.deleteNode(versionHistoryRef);			
+			nodeService.deleteNode(versionHistoryRef);
 		}
 	}
 
@@ -440,37 +440,81 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return versionRefs;
 	}
 
-
 	@Override
 	public List<NodeRef> getCurrentVersionBranches(NodeRef entityNodeRef) {
-		String versionLabel  = RepoConsts.INITIAL_VERSION;
-		
+		String versionLabel = RepoConsts.INITIAL_VERSION;
+
 		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-			versionLabel = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
-		} 
+			versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
+		}
 
 		List<NodeRef> ret = new ArrayList<>();
-		for(NodeRef branchNodeRef : getAllVersionBranches(entityNodeRef)) {
-			if(Objects.equals(versionLabel, nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL))) {
+		for (NodeRef branchNodeRef : getAllVersionBranches(entityNodeRef)) {
+			if (Objects.equals(versionLabel, nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL))) {
 				ret.add(branchNodeRef);
 			}
 		}
 		return ret;
 	}
 
-	
 	@Override
 	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef) {
-		List<NodeRef> ret = new ArrayList<>();
-		for(AssociationRef associationRef :  nodeService.getSourceAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
-			if(!nodeService.hasAspect(associationRef.getSourceRef(),BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-				ret.add(associationRef.getSourceRef());
+
+		NodeRef primaryParentNodeRef = entityNodeRef;
+
+		// Look for primary parent
+		List<AssociationRef> tmp = null;
+
+		do {
+			tmp = nodeService.getTargetAssocs(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+			if(tmp!=null) {
+				for (AssociationRef associationRef : tmp) {
+					primaryParentNodeRef = associationRef.getTargetRef();
+				}
 			}
-		}
+		} while (tmp != null && tmp.size() > 0);
+		
+		List<NodeRef> ret = new LinkedList<>();
+		ret.add(primaryParentNodeRef);
+		ret.addAll(getAllChildVersionBranches(primaryParentNodeRef));
+		
+		Collections.sort(ret, new Comparator<NodeRef>() {
+
+			@Override
+			public int compare(NodeRef o1, NodeRef o2) {
+				Date d1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
+				Date d2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
+				return (d1 == d2)? 0 : d2==null ? -1 : d2.compareTo(d1);
+			}
+			
+		});
+		
 		return ret;
 	}
 
-	
+	/**
+	 * @param tmpNodeRef
+	 * @return
+	 */
+	private List<NodeRef> getAllChildVersionBranches(NodeRef entityNodeRef) {
+
+		List<NodeRef> ret = new LinkedList<>();
+		// Look for childs
+		for (AssociationRef associationRef : nodeService.getSourceAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
+			if (!nodeService.hasAspect(associationRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				NodeRef tmpNodeRef = associationRef.getSourceRef();
+				if (!ret.contains(tmpNodeRef)) {
+					ret.add(tmpNodeRef);
+					ret.addAll(getAllChildVersionBranches(tmpNodeRef));
+				}
+			}
+		}
+		
+		
+		
+		return ret;
+	}
+
 	private String getVersionLabel(NodeRef origNodeRef, Map<String, Serializable> versionProperties, boolean isInitialVersion) {
 
 		QName classRef = nodeService.getType(origNodeRef);
@@ -569,6 +613,5 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
 		}
 	}
-
 
 }

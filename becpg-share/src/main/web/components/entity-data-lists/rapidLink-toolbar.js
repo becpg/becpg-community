@@ -1,21 +1,11 @@
-/*******************************************************************************
- *  Copyright (C) 2010-2014 beCPG. 
- *   
- *  This file is part of beCPG 
- *   
- *  beCPG is free software: you can redistribute it and/or modify 
- *  it under the terms of the GNU Lesser General Public License as published by 
- *  the Free Software Foundation, either version 3 of the License, or 
- *  (at your option) any later version. 
- *   
- *  beCPG is distributed in the hope that it will be useful, 
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- *  GNU Lesser General Public License for more details. 
- *   
- *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
- *   If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
+/***********************************************************************************************************************
+ * Copyright (C) 2010-2014 beCPG. This file is part of beCPG beCPG is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. beCPG is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU
+ * Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ **********************************************************************************************************************/
 (function() {
 
    /**
@@ -65,6 +55,8 @@
 
                      siteId : null,
 
+                     list : null,
+
                      formWidth : "34em"
 
                   },
@@ -78,31 +70,43 @@
                    */
                   onReady : function RapidLinkToolbar_onReady() {
 
-                     var rapidLinkPickerMenu = [], instance = this;
+                     var rapidLinkPickerMenu = [], instance = this, createList = null;
 
-                     [ "finishedProduct", "rawMaterial", "localSemiFinishedProduct", "semiFinishedProduct" ]
-                           .forEach(function(type) {
-                              rapidLinkPickerMenu.push({
-                                 text : '<span class="' + type + '" title="' + instance
-                                       .msg("action.rapid-link.create." + type + ".description") + '" >' + instance
-                                       .msg("action.rapid-link.create." + type) + '</span>',
+                     if ("packagingList" == this.options.list) {
+                        createList = [ "packagingMaterial", "packagingKit" ];
+                     } else if ("processList" == this.options.list) {
+                        createList = [ "resourceProduct" ];
+                     } else {
+                        createList = [ "finishedProduct", "rawMaterial", "localSemiFinishedProduct",
+                              "semiFinishedProduct" ];
+                     }
+
+                     createList.forEach(function(type) {
+                        rapidLinkPickerMenu.push({
+                           text : '<span class="' + type + '" title="' + instance
+                                 .msg("action.rapid-link.create." + type + ".description") + '" >' + instance
+                                 .msg("action.rapid-link.create." + type) + '</span>',
+                           onclick : {
+                              fn : instance.onMenuCreateTypeClick(type),
+                              scope : instance
+                           }
+                        });
+
+                     });
+
+                     if ("compoList" == this.options.list) {
+
+                        rapidLinkPickerMenu
+                              .push({
+                                 text : '<span class="import" title="' + this
+                                       .msg("action.rapid-link.import.description") + '" >' + this
+                                       .msg("action.rapid-link.import") + '</span>',
                                  onclick : {
-                                    fn : instance.onMenuCreateTypeClick(type),
-                                    scope : instance
+                                    fn : this.onClickImport,
+                                    scope : this
                                  }
                               });
-
-                           });
-
-                     rapidLinkPickerMenu
-                           .push({
-                              text : '<span class="import" title="' + this.msg("action.rapid-link.import.description") + '" >' + this
-                                    .msg("action.rapid-link.import") + '</span>',
-                              onclick : {
-                                 fn : this.onClickImport,
-                                 scope : this
-                              }
-                           });
+                     }
 
                      rapidLinkPickerMenu.push({
                         text : '<span class="simulation" title="' + this
@@ -163,7 +167,8 @@
                                  onSuccess : {
                                     fn : function(response) {
                                        if (response.json) {
-                                          instance.addToDataList(response.json.persistedObject, "message.rapid-link.create.success");
+                                          instance.addToDataList(response.json.persistedObject,
+                                                "message.rapid-link.create.success");
                                        }
                                     },
                                     scope : this
@@ -186,7 +191,7 @@
                            .setOptions({
                               width : this.options.formWidth,
                               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-importer/entity-importer",
-                              actionUrl : Alfresco.constants.PROXY_URI + "becpg/remote/import?destination="+this.options.entity.parentNodeRef,
+                              actionUrl : Alfresco.constants.PROXY_URI + "becpg/remote/import?destination=" + this.options.entity.parentNodeRef,
                               validateOnSubmit : false,
                               firstFocus : this.id + "-entityImporter-supplier-field",
                               doBeforeFormSubmit : {
@@ -200,8 +205,7 @@
                               onSuccess : {
                                  fn : function FormulationView_onActionEntityImport_success(response) {
                                     if (response.json) {
-                                       this.addToDataList( response.json[0] ,
-                                             "message.rapid-link.import.success");
+                                       this.addToDataList(response.json[0], "message.rapid-link.import.success");
                                     }
                                  },
                                  scope : this
@@ -222,59 +226,76 @@
                      Alfresco.util.PopupManager.displayMessage({
                         text : this.msg("message.rapid-link.simulation.please-wait")
                      });
-                     
-                     
-                     Alfresco.util.Ajax.request({
-                        method : Alfresco.util.Ajax.POST,
-                        url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?entityNodeRef="+this.options.entity.nodeRef,
-                        successCallback : {
-                           fn : function(resp) {
-                              if (resp.json) {
-                                window.location.href = beCPG.util.entityCharactURL(this.options.siteId, resp.json.persistedObject, this.options.entity.type);
+
+                     Alfresco.util.Ajax
+                           .request({
+                              method : Alfresco.util.Ajax.POST,
+                              url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?entityNodeRef=" + this.options.entity.nodeRef,
+                              successCallback : {
+                                 fn : function(resp) {
+                                    if (resp.json) {
+                                       window.location.href = beCPG.util.entityCharactURL(this.options.siteId,
+                                             resp.json.persistedObject, this.options.entity.type);
+                                    }
+                                 },
+                                 scope : this
+                              },
+                              failureCallback : {
+                                 fn : function(resp) {
+                                    Alfresco.util.PopupManager.displayMessage({
+                                       text : this.msg("message.rapid-link.simulation.failure")
+                                    });
+                                 },
+                                 scope : this
                               }
-                           },
-                           scope : this
-                        },
-                        failureCallback : {
-                           fn : function(resp) {
-                              Alfresco.util.PopupManager.displayMessage({
-                                 text : this.msg("message.rapid-link.simulation.failure")
-                              });
-                           },
-                           scope : this
-                        }
-                     });
+                           });
                   },
                   addToDataList : function RapidLinkToolbar_addToDataList(nodeRef, msgKey) {
 
-                     var instance = this;
-                     Alfresco.util.Ajax.jsonRequest({
-                        method : Alfresco.util.Ajax.POST,
-                        url : Alfresco.constants.PROXY_URI + "api/type/bcpg:compoList/formprocessor",
-                        dataObj : {
-                           "alf_destination" : instance.options.dataListNodeRef,
-                           "assoc_bcpg_compoListProduct_added" : nodeRef,
-                           "prop_bcpg_compoListUnit":"kg",
-                           "prop_bcpg_compoListQtySubFormula":"0"
-                        },
-                        successCallback : {
-                           fn : function(resp) {
-                              if (resp.json) {
-                                 YAHOO.Bubbling.fire("dataItemCreated", {
-                                    nodeRef : resp.json.persistedObject,
-                                    callback : function(item) {
-                                       Alfresco.util.PopupManager.displayMessage({
-                                          text : instance.msg(msgKey)
-                                       });
-                                    }
-                                 });
-                              }
-                           },
-                           scope : this
-                        }
-                     });
-
-                  }
+                     var instance = this, dataObj = null;
+                     
+                     if ("packagingList" == this.options.list) {
+                        dataObj = {
+                              "alf_destination" : instance.options.dataListNodeRef,
+                              "assoc_bcpg_packagingListProduct_added" : nodeRef,
+                              "prop_bcpg_packagingListUnit" : "P",
+                              "prop_bcpg_packagingListQty" : "0"
+                           };
+                     } else if ("processList" == this.options.list) {
+                        dataObj = {
+                              "alf_destination" : instance.options.dataListNodeRef,
+                              "assoc_mpm_plResource_added" : nodeRef
+                           };
+                     } else {
+                        dataObj = {
+                              "alf_destination" : instance.options.dataListNodeRef,
+                              "assoc_bcpg_compoListProduct_added" : nodeRef,
+                              "prop_bcpg_compoListUnit" : "kg",
+                              "prop_bcpg_compoListQtySubFormula" : "0"
+                           };
+                     }
+                     
+                        Alfresco.util.Ajax.jsonRequest({
+                           method : Alfresco.util.Ajax.POST,
+                           url : Alfresco.constants.PROXY_URI + "api/type/bcpg:"+this.options.list+"/formprocessor",
+                           dataObj : dataObj,
+                           successCallback : {
+                              fn : function(resp) {
+                                 if (resp.json) {
+                                    YAHOO.Bubbling.fire("dataItemCreated", {
+                                       nodeRef : resp.json.persistedObject,
+                                       callback : function(item) {
+                                          Alfresco.util.PopupManager.displayMessage({
+                                             text : instance.msg(msgKey)
+                                          });
+                                       }
+                                    });
+                                 }
+                              },
+                              scope : this
+                           }
+                        });
+                     }
 
                }, true);
 

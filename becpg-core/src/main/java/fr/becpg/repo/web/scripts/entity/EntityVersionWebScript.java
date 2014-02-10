@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -48,10 +49,10 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 	private NodeService nodeService;
 	
 	private PersonService personService;
-		
-	
+			
 	private AttributeExtractorService attributeExtractorService;
 
+	private ServiceRegistry serviceRegistry;
 	
 	
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
@@ -68,6 +69,12 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
+	}
+	
+	
+
+	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+		this.serviceRegistry = serviceRegistry;
 	}
 
 	/**
@@ -120,6 +127,7 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 	        res.setContentEncoding("UTF-8");		
 	        
 			if("branches".equals(mode)) {
+				
 				JSONArray jsonBranches = new JSONArray();
 				List<NodeRef> branches = entityVersionService.getAllVersionBranches(nodeRef);
 				for(NodeRef branchNodeRef : branches) {
@@ -138,9 +146,12 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 					jsonBranch.put("createdDateISO", ISO8601DateFormat.format((Date)nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
 					jsonBranch.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(branchNodeRef), branchNodeRef));
 					jsonBranch.put("siteId", attributeExtractorService.extractSiteId( branchNodeRef));
+					jsonBranch.put("itemType",nodeService.getType(branchNodeRef).toPrefixString(serviceRegistry.getNamespaceService()));
 					jsonBranches.put(jsonBranch);
 					
 					jsonBranch.put("creator", getPerson((String)nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATOR)));
+			
+					
 				}
 				
 				

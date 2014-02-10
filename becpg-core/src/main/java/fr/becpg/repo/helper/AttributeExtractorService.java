@@ -88,4 +88,9 @@ public interface AttributeExtractorService {
 	public String extractMetadata(QName type, NodeRef entityNodeRef);
 
 	public String getPersonDisplayName(String userId);
+
+
+	public Object formatValue(Object value);
+
+
 }
