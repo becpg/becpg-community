@@ -1,14 +1,7 @@
 
-
-
-div.entity-versions .bdhd 
-{
-   text-align:center; 
-   padding:0;
-}
-
 div.entity-versions div.nav 
 {
+	margin: 5px 0;
    width:11.5em;   
 }
 
@@ -50,19 +43,32 @@ div.entity-versions div.nav h6
    border:none;   
 }
 
+.entity-versions .datagrid span.document-version {
+	visibility: visible;
+}
+
+.entity-versions .datagrid span.current {
+	font-weight: bold;
+}
+
+
 
 .entity-versions .datagrid {
     padding: 0;
     visibility: visible;
 }
 
+/* .entity-versions .entity-branch h3 {
+        font-size: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 150px;
+        display: block;
+} */
 
-
-.entity-versions .actions
-{
-   float: right;
-   width: 5em;
-   text-align: right;
+.entity-versions div.entity-branches {
+	margin-right : 1em;
 }
 
 .entity-versions .actions a
@@ -73,14 +79,10 @@ div.entity-versions div.nav h6
    text-decoration: none;
 }
 
-
-
 .entity-versions .actions a.compare
 {
    background-image: url(../document-details/images/compare-16.png);
 }
-
-
 
 .entity-versions  .alfresco-datatable td
 {

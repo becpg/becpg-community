@@ -573,7 +573,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		return null;
 	}
 
-	private Object formatValue(Serializable value) {
+	@Override
+	public  Object formatValue(Object value) {
 		if (value != null) {
 			if (value instanceof Date) {
 				return ISO8601DateFormat.format((Date) value);

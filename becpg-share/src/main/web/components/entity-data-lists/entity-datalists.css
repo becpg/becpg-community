@@ -1,6 +1,6 @@
 .datalists .header-bar
 {
-   margin-left: -10px;
+   margin-left: -20px;
    min-height: 2em;
    padding: 4px 1em;
 }
@@ -16,7 +16,7 @@
    padding-left: 24px;
 }
 
-.datalists h2
+.datalists div.filter
 {
    padding-top: 0.5em;
 }
@@ -36,7 +36,6 @@
 {
    background: url(../images/list-16.png) no-repeat 4px 0;
    display: block;
-   margin-left: 14px;
    padding: 0 0 0 24px;
 }
 

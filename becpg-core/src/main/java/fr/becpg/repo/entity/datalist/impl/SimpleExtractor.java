@@ -170,7 +170,22 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		} else {
 
-			results = advSearchService.queryAdvSearch(dataListFilter.getSearchQuery(), SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(),
+			String queryString = dataListFilter.getSearchQuery();
+			
+			// Look for Version
+			if(dataListFilter.isVersionFilter()) {
+				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(new NodeRef(dataListFilter.getFilterData()));
+				if (listsContainerNodeRef != null) {
+
+					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
+					if (dataListNodeRef != null) {
+						queryString = dataListFilter.getSearchQuery(dataListNodeRef);
+					}
+				}
+			}
+			
+			
+			results = advSearchService.queryAdvSearch(queryString, SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(),
 					dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), pagination.getMaxResults());
 
 			if (dataListFilter.getSortId() != null) {

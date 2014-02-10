@@ -1344,6 +1344,11 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
+			</form>
 			<form id="bulk-edit">
 				<field-visibility>
 
@@ -1674,6 +1679,11 @@
 					</field>
 
 				</appearance>
+			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
 			</form>
 			 <form id="search">
 				<field-visibility>
@@ -2878,6 +2888,11 @@
 						</control>
 					</field>
 				</appearance>
+			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
 			</form>
 		</forms>
 	</config>

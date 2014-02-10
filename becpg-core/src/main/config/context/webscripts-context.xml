@@ -130,6 +130,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="personService" ref="personService" />
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
+		<property name="serviceRegistry" ref="ServiceRegistry"/>
 	</bean>
 
 	<!-- Report -->
