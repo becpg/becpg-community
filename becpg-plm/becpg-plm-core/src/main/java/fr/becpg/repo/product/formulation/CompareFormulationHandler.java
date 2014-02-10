@@ -17,9 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +28,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -111,55 +108,53 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 						Map<DynamicCharactListItem, JSONArray> dynamicCharactToTreat = new HashMap<>();
 						Map<Pair<CompositionDataItem, QName>, JSONArray> dynamicColumnToTreat = new HashMap<>();
+						try {
+							for (ProductData toCompareWith : toCompareWithProductDatas) {
 
-						for (ProductData toCompareWith : toCompareWithProductDatas) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Comparing : " + productData.getName() + " with " + toCompareWith.getName() + " for view " + view.getClass().getName());
+								}
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("Comparing : " + productData.getName() + " with " + toCompareWith.getName() + " for view " + view.getClass().getName());
-							}
+								for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
+									DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem, getMatchingView(toCompareWith, view)
+											.getDynamicCharactList());
+									if (toCompareDynamicCharactListItem != null) {
 
-							for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-								DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem, getMatchingView(toCompareWith, view)
-										.getDynamicCharactList());
-								if (toCompareDynamicCharactListItem != null) {
+										if (logger.isDebugEnabled()) {
+											logger.debug(" - Found matching charact to compare: ");
+											logger.debug(" - " + toCompareDynamicCharactListItem.toString());
+										}
 
-									if (logger.isDebugEnabled()) {
-										logger.debug(" - Found matching charact to compare: ");
-										logger.debug(" - " + toCompareDynamicCharactListItem.toString());
-									}
-
-									// DynamicColumns
-									if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
-										QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
-										for (CompositionDataItem dataListItem : view.getMainDataList()) {
-											CompositionDataItem toCompareWithCompositionDataItem = getMatchingCompositionDataItem(dataListItem, columnName,
-													getMatchingView(toCompareWith, view).getMainDataList());
-											if (toCompareWithCompositionDataItem != null) {
-												JSONArray values = dynamicColumnToTreat.get(new Pair<>(dataListItem, columnName));
-												if (values == null) {
-													values = new JSONArray();
-													values.put(formatValue(dataListItem.getExtraProperties().get(columnName)));
+										// DynamicColumns
+										if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
+											QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
+											for (CompositionDataItem dataListItem : view.getMainDataList()) {
+												CompositionDataItem toCompareWithCompositionDataItem = getMatchingCompositionDataItem(dataListItem, columnName,
+														getMatchingView(toCompareWith, view).getMainDataList());
+												if (toCompareWithCompositionDataItem != null) {
+													JSONArray values = dynamicColumnToTreat.get(new Pair<>(dataListItem, columnName));
+													if (values == null) {
+														values = new JSONArray();
+														values.put(getJSONValue(toCompareWith, dataListItem.getExtraProperties().get(columnName)));
+													}
+													values.put(getJSONValue(toCompareWith, toCompareWithCompositionDataItem.getExtraProperties().get(columnName)));
+													dynamicColumnToTreat.put(new Pair<>(dataListItem, columnName), values);
 												}
-												values.put(formatValue(toCompareWithCompositionDataItem.getExtraProperties().get(columnName)));
-												dynamicColumnToTreat.put(new Pair<>(dataListItem, columnName), values);
 											}
+											// DynamicCharacts
+										} else {
+											JSONArray values = dynamicCharactToTreat.get(dynamicCharactListItem);
+											if (values == null) {
+												values = new JSONArray();
+												values.put(getJSONValue(toCompareWith, dynamicCharactListItem.getValue()));
+											}
+											values.put(getJSONValue(toCompareWith, toCompareDynamicCharactListItem.getValue()));
+											dynamicCharactToTreat.put(dynamicCharactListItem, values);
 										}
-										// DynamicCharacts
-									} else {
-										JSONArray values = dynamicCharactToTreat.get(dynamicCharactListItem);
-										if (values == null) {
-											values = new JSONArray();
-											values.put(formatValue(dynamicCharactListItem.getValue()));
-										}
-										values.put(formatValue(toCompareDynamicCharactListItem.getValue()));
-										dynamicCharactToTreat.put(dynamicCharactListItem, values);
 									}
 								}
+
 							}
-
-						}
-
-						try {
 
 							// Set definitive value
 							for (Map.Entry<DynamicCharactListItem, JSONArray> entry : dynamicCharactToTreat.entrySet()) {
@@ -193,6 +188,15 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	PropertyFormats propertyFormats = new PropertyFormats(true);
 
+	private JSONObject getJSONValue(ProductData toCompareWith, Object value) throws JSONException {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("nodeRef", toCompareWith.getNodeRef());
+		jsonObject.put("name", toCompareWith.getName());
+		jsonObject.put("value", value);
+		jsonObject.put("displayValue", formatValue(value));
+		return jsonObject;
+	}
+
 	private Object formatValue(Object v) {
 		if (v != null && (v instanceof Double || v instanceof Float)) {
 
@@ -215,7 +219,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private CompositionDataItem getMatchingCompositionDataItem(CompositionDataItem dataListItem, QName columnName, List<? extends CompositionDataItem> compositionDataItems) {
-		// TODO should be better matching base on sort and approching name or branches
+		// TODO should be better matching base on sort and approching name or
+		// branches
 		for (CompositionDataItem tmp : compositionDataItems) {
 			if (Objects.equals(tmp.getProduct(), dataListItem.getProduct())
 					&& !Objects.equals(tmp.getExtraProperties().get(columnName), dataListItem.getExtraProperties().get(columnName))) {

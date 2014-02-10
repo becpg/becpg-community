@@ -129,6 +129,7 @@
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="personService" ref="personService" />
+		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 	</bean>
 
 	<!-- Report -->
