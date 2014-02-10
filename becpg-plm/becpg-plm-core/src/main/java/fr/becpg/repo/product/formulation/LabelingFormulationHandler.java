@@ -16,7 +16,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
@@ -553,17 +552,32 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				isMultiLevel = true;
 			}
 
-			compositeLabeling = new CompositeLabeling(productData);
-			compositeLabeling.setQty(qty);
-			compositeLabeling.setDeclarationType(declarationType);
-			if (composite.isLeaf()) {
-				compositeLabeling.setQtyRMUsed(qty);
+			AbstractLabelingComponent lc = parent.get(productData.getNodeRef());			
+			if(lc != null && lc instanceof CompositeLabeling){
+				compositeLabeling = (CompositeLabeling)lc;
+				if(qty != null){
+					
+					if(compositeLabeling.getQty() != null){
+						compositeLabeling.setQty(qty + compositeLabeling.getQty());
+					}
+					if (composite.isLeaf() && compositeLabeling.getQtyRMUsed() != null) {
+						compositeLabeling.setQtyRMUsed(qty + compositeLabeling.getQtyRMUsed());
+					}
+				}
 			}
-			parent.add(compositeLabeling);
+			else{
+				compositeLabeling = new CompositeLabeling(productData);
+				compositeLabeling.setQty(qty);
+				compositeLabeling.setDeclarationType(declarationType);
+				if (composite.isLeaf()) {
+					compositeLabeling.setQtyRMUsed(qty);
+				}
+				parent.add(compositeLabeling);
 
-			if (logger.isTraceEnabled()) {
-				logger.trace(" - Add detailed labeling component : " + compositeLabeling.getName() + " qty: " + qty);
-			}
+				if (logger.isTraceEnabled()) {
+					logger.trace(" - Add detailed labeling component : " + compositeLabeling.getName() + " qty: " + qty);
+				}
+			}			
 
 		} else if (DeclarationType.Omit.equals(declarationType)) {
 			return parent;
