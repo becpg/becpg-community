@@ -306,7 +306,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
 
-			boolean hasWriteAccess = true;
+			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
 				hasWriteAccess = !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
 						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;

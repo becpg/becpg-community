@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>entity-versions</shortname>
+  <description>Entity Versions Component</description>
+  <url>/components/entity-data-lists/entity-versions</url>
+</webscript>
