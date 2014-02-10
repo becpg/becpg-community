@@ -11,20 +11,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.activiti.engine.impl.util.json.JSONArray;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.CompareHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -686,10 +692,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			Element dynamicCharact = dynCharactListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getTitle());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(),
-					dc.getValue() == null ? VALUE_NULL : dc.getValue().toString());
+					dc.getValue() == null ? VALUE_NULL : CompareHelper.cleanCompareJSON(dc.getValue().toString()));
 		}
 	}
-	
+
+
 	protected void loadProductData(NodeRef nodeRef, Element dataListItemElt){
 		if(nodeRef != null){
 			loadNodeAttributes(nodeRef, dataListItemElt, false);

@@ -100,7 +100,7 @@ public class CompareFormulationTest extends FormulationFullTest {
 				}
 
 
-				assertEquals(formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),"{\"comp\":\"[2,3]\"}");
+				assertEquals(formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),"{\"comp\":[{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":2,\"nodeRef\":\"workspace://SpacesStore/a028a96e-7ae0-40ed-ae6f-7c2d37cda6f0\",\"displayValue\":2},{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":3,\"nodeRef\":\"workspace://SpacesStore/a028a96e-7ae0-40ed-ae6f-7c2d37cda6f0\",\"displayValue\":3}]}");
 
 				return null;
 

@@ -8,12 +8,12 @@
    /**
     * YUI Library aliases
     */
-   var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector;
+   var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event;
 
    /**
     * Alfresco Slingshot aliases
     */
-   var $html = Alfresco.util.encodeHTML, $userProfileLink = Alfresco.util.userProfileLink, $userAvatar = Alfresco.Share.userAvatar;
+   var $html = Alfresco.util.encodeHTML;
 
    /**
     * EntityVersions constructor.
@@ -127,6 +127,8 @@
                                        Event.addListener(navEls[0], "click", instance.onNavButtonClick, instance, true);
                                        Event.addListener(navEls[1], "click", instance.onNavButtonClick, instance, true);
                                        instance.updateNavState();
+                                       
+                                       Dom.removeClass(this.id + "-body", "hidden");
                                     }
 
                                     return ({
@@ -184,21 +186,23 @@
                    *            {Object} The details for the document
                    */
                   getDocumentVersionMarkup : function DocumentVersions_getDocumentVersionMarkup(doc) {
-                     var compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + this.options.nodeRef
-                           .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name) + ".pdf", html = '';
+                     var compareURL =  Alfresco.constants.PROXY_URI + 'becpg/entity/compare/'
+                     + this.options.nodeRef.replace(":/", "") + "/compare.pdf?entities="+doc.nodeRef, html = '', current = ( this.options.nodeRef == doc.nodeRef);
 
-                     html += '<div class="entity-branch">';
-                     html += '   <span class="'+doc.metadata+'" ><a href="'+beCPG.util.entityCharactURL( doc.siteId, doc.nodeRef)+'">' + $html(doc.name) + '</a></span>';
+                     html += '<div class="entity-branches">';
                      html += '   <span class="document-version">' + $html(doc.label) + '</span>';
-                     html += '   <span class="actions">';
-                        html += '      <a href="' + compareURL + '" class="compare" title="' + this
-                              .msg("label.compare") + '">&nbsp;</a>';
-                     html += '   </span>';
+                     html += '   <span class="'+doc.metadata+(current ? " current":"")+'" ><a href="'+beCPG.util.entityCharactURL(doc.siteId, doc.nodeRef, doc.itemType)+'">' + $html(doc.name) + '</a></span>';
+                   if(!current) {
+                     html += '   <span class="actions"><a href="' + compareURL + '" class="compare" title="' + this
+                     .msg("label.compare") + '">&nbsp;</a></span>';
+                   }
                      html += '</div>';
 
                      return html;
                   },
 
+                  
+                  
        
                   /**
                   *
@@ -209,8 +213,7 @@
                   */
                  onVersionMenuChange: function HPV_onVersionMenuChange(sType, aArgs, p_obj)
                  {
-                    var domEvent = aArgs[0],
-                       eventTarget = aArgs[1],
+                    var eventTarget = aArgs[1],
                        newNodeRef = eventTarget.value;
 
                     // Update the display:
@@ -233,19 +236,25 @@
 
                        var filterObj =
                        {
-                          filterOwner: "beCPG.component.EntityVersions",
-                          filterId: "version",
-                          filterData : newNodeRef
+                             filterId: "all"
                        };
+         
+                     if(this.latestVersion.nodeRef != newNodeRef){
+                        filterObj =
+                        {
+                           filterOwner: "beCPG.component.EntityVersions",
+                           filterId: "version",
+                           filterData : newNodeRef
+                        };
+                     }
+                      
+                     YAHOO.Bubbling.fire("changeFilter", filterObj);
+                    
+                      // Update the Menu
+                      this.setMenuTitle();
 
-
-                       YAHOO.Bubbling.fire("changeFilter", filterObj);
-
-                       // Update the Menu
-                       this.setMenuTitle();
-
-                       // Update the Navigation
-                       this.updateNavState();
+                      // Update the Navigation
+                      this.updateNavState();
                     }
                  },
 
@@ -285,7 +294,7 @@
                            .createElement("h6"), previousVersionHeader = document.createElement("h6"), currentTitle = Alfresco.util
                            .message("version-historic.menu.title", this.name, {
                               "0" : this.latestVersion.label
-                           }), menuHTML = [], menuTitle = "";
+                           }), menuHTML = [];
 
                      // Write HTML for menu & add current version and option groups to menu:
                      menuHTML.push({
@@ -309,9 +318,9 @@
                            value : version.nodeRef,
                            text : title
                         });
-                        if (version.nodeRef === this.options.nodeRef) {
-                           menuTitle = title;
-                        }
+//                        if (version.nodeRef === this.options.nodeRef) {
+//                           menuTitle = title;
+//                        }
                      }
 
                      for (var i = 0; i < menuHTML.length; i++) {
@@ -330,7 +339,7 @@
                            });
 
                      // Set the menu title:
-                     this.setMenuTitle(menuTitle);
+                     this.setMenuTitle(currentTitle);
 
                      var firstUL = Dom.getElementsByClassName("first-of-type", "ul", navContainer)[0], firstLI = Dom
                            .getElementsByClassName("first-of-type", "li", firstUL)[0];

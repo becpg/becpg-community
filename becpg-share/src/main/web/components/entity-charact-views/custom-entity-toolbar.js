@@ -389,7 +389,7 @@
                   {
                      actionName : "product-metadata",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "compoList") && entity != null && entity.userAccess.edit;
+                        return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -426,7 +426,7 @@
          actionName : "rapid-link",
          right : false,
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "compoList") && entity != null && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
          },
          createWidget : function(containerDiv, instance) {
 
@@ -445,6 +445,8 @@
                dataListNodeRef : dataListNodeRef,
                entity : instance.entity,
                containerDiv : divEl,
+               list : encodeURIComponent(instance.datalistMeta.name != null ? instance.datalistMeta.name
+                     : instance.options.list),
                siteId : instance.options.siteId
             });
 
