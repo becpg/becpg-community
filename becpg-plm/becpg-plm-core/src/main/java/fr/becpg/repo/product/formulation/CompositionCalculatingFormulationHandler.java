@@ -138,7 +138,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			
 			// calculate volume ?			
 			Double volume = FormulationHelper.getNetVolume(component.getData(), nodeService); 
-			component.getData().getExtraProperties().put(PLMModel.PROP_COMPOLIST_VOLUME, volume);
+			component.getData().setVolume(volume);
 			
 			// calculate children
 			if(!component.isLeaf()){
@@ -254,10 +254,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if(!component.isLeaf()){
 				// calculate children
 				value = calculateVolumeFromChildren(component);
-				component.getData().getExtraProperties().put(PLMModel.PROP_COMPOLIST_VOLUME, value);				
+				component.getData().setVolume(value);				
 				
 			}else{
-				value = (Double)component.getData().getExtraProperties().get(PLMModel.PROP_COMPOLIST_VOLUME);
+				value = (Double)component.getData().getVolume();
 				value = value != null ? value : 0d;
 			}			
 			volume += value;
