@@ -1,21 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright (C) 2010-2014 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
--->
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
     <simple-property-list name="includeResource">
@@ -732,8 +715,8 @@
             <property name="borderTopWidth">1pt</property>
         </style>
         <style name="beCPG-Group" id="1551">
-            <property name="backgroundColor">#669999</property>
-            <property name="color">#FFFFFF</property>
+            <property name="backgroundColor">#EEEEEE</property>
+            <property name="color">#000000</property>
             <property name="textLineThrough">none</property>
             <property name="marginTop">5pt</property>
             <property name="marginBottom">5pt</property>
@@ -742,23 +725,24 @@
         </style>
         <style name="beCPG-Table-Header" id="1553">
             <property name="fontWeight">bold</property>
-            <property name="color">#339966</property>
+            <property name="color">#000000</property>
         </style>
         <style name="beCPG-table-row-header" id="1554">
             <property name="fontWeight">bold</property>
-            <property name="color">#808080</property>
+            <property name="fontStyle">italic</property>
+            <property name="color">#000000</property>
         </style>
         <style name="beCPG-Table-border" id="1557">
-            <property name="borderBottomColor">#339966</property>
+            <property name="borderBottomColor">#000000</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderLeftColor">#339966</property>
+            <property name="borderLeftColor">#000000</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
-            <property name="borderRightColor">#339966</property>
+            <property name="borderRightColor">#000000</property>
             <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">thin</property>
-            <property name="borderTopColor">#339966</property>
+            <property name="borderTopColor">#000000</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
         </style>
@@ -853,7 +837,7 @@
                 <cell id="1808">
                     <table id="1678">
                         <property name="style">beCPG-Table-border</property>
-                        <property name="width">10.455357142857142in</property>
+                        <property name="width">10.447916666666666in</property>
                         <property name="dataSet">StructComparison</property>
                         <list-property name="visibility">
                             <structure>
@@ -923,11 +907,7 @@ else{
                             </structure>
                         </list-property>
                         <column id="1697">
-                            <property name="width">0.24107142857142858in</property>
-                        </column>
-                        <column id="1698">
-                            <property name="width">0.2857142857142857in</property>
-                            <property name="style">beCPG-table-col</property>
+                            <property name="width">0.2916666666666667in</property>
                         </column>
                         <column id="1699">
                             <property name="width">5.053571428571429in</property>
@@ -948,7 +928,7 @@ else{
                                 <row id="1722">
                                     <property name="style">beCPG-table-row</property>
                                     <cell id="1723">
-                                        <property name="colSpan">4</property>
+                                        <property name="colSpan">3</property>
                                         <property name="rowSpan">1</property>
                                         <data id="1734">
                                             <property name="fontSize">12pt</property>
@@ -965,7 +945,6 @@ else{
                             <footer>
                                 <row id="1728">
                                     <cell id="1729"/>
-                                    <cell id="1730"/>
                                     <cell id="1731"/>
                                     <cell id="1732"/>
                                 </row>
@@ -981,10 +960,12 @@ else{
                             <header>
                                 <row id="1750">
                                     <cell id="1751">
-                                        <property name="colSpan">4</property>
+                                        <property name="colSpan">3</property>
                                         <property name="rowSpan">1</property>
                                         <data id="1762">
                                             <property name="style">beCPG-Group</property>
+                                            <property name="backgroundColor">#EEEEEE</property>
+                                            <property name="color">#000000</property>
                                             <property name="resultSetColumn">entityList</property>
                                         </data>
                                     </cell>
@@ -993,7 +974,6 @@ else{
                             <footer>
                                 <row id="1756">
                                     <cell id="1757"/>
-                                    <cell id="1758"/>
                                     <cell id="1759"/>
                                     <cell id="1760"/>
                                 </row>
@@ -1003,19 +983,8 @@ else{
                             <row id="1685">
                                 <property name="style">beCPG-table-row</property>
                                 <cell id="1686">
+                                    <property name="textAlign">center</property>
                                     <image id="1771">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["operator"]!="Added"</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">added.jpg</property>
-                                    </image>
-                                    <image id="1772">
                                         <property name="height">16px</property>
                                         <property name="width">16px</property>
                                         <list-property name="visibility">
@@ -1025,9 +994,9 @@ else{
                                             </structure>
                                         </list-property>
                                         <property name="source">embed</property>
-                                        <property name="imageName">modified.jpg</property>
+                                        <property name="imageName">Modified.png</property>
                                     </image>
-                                    <image id="1774">
+                                    <image id="1825">
                                         <property name="height">16px</property>
                                         <property name="width">16px</property>
                                         <list-property name="visibility">
@@ -1037,21 +1006,21 @@ else{
                                             </structure>
                                         </list-property>
                                         <property name="source">embed</property>
-                                        <property name="imageName">delete-16.jpg</property>
+                                        <property name="imageName">Removed.png</property>
                                     </image>
-                                    <image id="1802">
+                                    <image id="1824">
                                         <property name="height">16px</property>
                                         <property name="width">16px</property>
                                         <list-property name="visibility">
                                             <structure>
                                                 <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["operator"]!="Equal"</expression>
+                                                <expression name="valueExpr" type="javascript">row["operator"]!="Added"</expression>
                                             </structure>
                                         </list-property>
                                         <property name="source">embed</property>
-                                        <property name="imageName">equal.jpg</property>
+                                        <property name="imageName">Added.png</property>
                                     </image>
-                                    <image id="1773">
+                                    <image id="1823">
                                         <property name="height">16px</property>
                                         <property name="width">16px</property>
                                         <list-property name="visibility">
@@ -1061,15 +1030,20 @@ else{
                                             </structure>
                                         </list-property>
                                         <property name="source">embed</property>
-                                        <property name="imageName">replaced.jpg</property>
+                                        <property name="imageName">Replaced.png</property>
                                     </image>
-                                </cell>
-                                <cell id="1687">
-                                    <data id="1764">
-                                        <property name="textAlign">center</property>
-                                        <property name="whiteSpace">nowrap</property>
-                                        <property name="resultSetColumn">depthLevel</property>
-                                    </data>
+                                    <image id="1826">
+                                        <property name="height">16px</property>
+                                        <property name="width">16px</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["operator"]!="Equal"</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="source">embed</property>
+                                        <property name="imageName">Equal.png</property>
+                                    </image>
                                 </cell>
                                 <cell id="1688">
                                     <grid id="1796">
@@ -1082,11 +1056,11 @@ else{
                                         </column>
                                         <row id="1799">
                                             <cell id="1800">
-                                                <data id="1768">
+                                                <text id="3300">
                                                     <property name="style">beCPG-table-row-header</property>
-                                                    <property name="whiteSpace">normal</property>
-                                                    <property name="resultSetColumn">item1</property>
-                                                </data>
+                                                    <property name="contentType">html</property>
+                                                    <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["item1"]</VALUE-OF>]]></text-property>
+                                                </text>
                                             </cell>
                                             <cell id="1801">
                                                 <data id="1775">
@@ -1108,11 +1082,11 @@ else{
                                         </column>
                                         <row id="1793">
                                             <cell id="1794">
-                                                <data id="1770">
+                                                <text id="3301">
                                                     <property name="style">beCPG-table-row-header</property>
-                                                    <property name="whiteSpace">normal</property>
-                                                    <property name="resultSetColumn">item2</property>
-                                                </data>
+                                                    <property name="contentType">html</property>
+                                                    <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["item2"]</VALUE-OF>]]></text-property>
+                                                </text>
                                             </cell>
                                             <cell id="1795">
                                                 <data id="1776">
@@ -1128,7 +1102,6 @@ else{
                         <footer>
                             <row id="1691">
                                 <cell id="1692"/>
-                                <cell id="1693"/>
                                 <cell id="1694"/>
                                 <cell id="1695"/>
                             </row>
@@ -1352,87 +1325,6 @@ else{
                                         <expression name="valueExpr">row["value1"]</expression>
                                         <property name="contentType">html</property>
                                     </text-data>
-                                    <image id="1651">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <property name="dataSet">ComparisonDataSet</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row._outer["value1"] != null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <list-property name="boundDataColumns">
-                                            <structure>
-                                                <property name="name">entityList</property>
-                                                <text-property name="displayName">entityList</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">characteristic</property>
-                                                <text-property name="displayName">characteristic</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">property</property>
-                                                <text-property name="displayName">property</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["property"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value1</property>
-                                                <text-property name="displayName">value1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value2</property>
-                                                <text-property name="displayName">value2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value3</property>
-                                                <text-property name="displayName">value3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value4</property>
-                                                <text-property name="displayName">value4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity1</property>
-                                                <text-property name="displayName">entity1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity2</property>
-                                                <text-property name="displayName">entity2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity3</property>
-                                                <text-property name="displayName">entity3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity4</property>
-                                                <text-property name="displayName">entity4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">delete-16.jpg</property>
-                                    </image>
                                 </cell>
                                 <cell id="1497">
                                     <text-data id="1647">
@@ -1445,87 +1337,6 @@ else{
                                         <expression name="valueExpr">row["value2"]</expression>
                                         <property name="contentType">html</property>
                                     </text-data>
-                                    <image id="1641">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <property name="dataSet">ComparisonDataSet</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row._outer["value2"] != null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <list-property name="boundDataColumns">
-                                            <structure>
-                                                <property name="name">entityList</property>
-                                                <text-property name="displayName">entityList</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">characteristic</property>
-                                                <text-property name="displayName">characteristic</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">property</property>
-                                                <text-property name="displayName">property</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["property"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value1</property>
-                                                <text-property name="displayName">value1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value2</property>
-                                                <text-property name="displayName">value2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value3</property>
-                                                <text-property name="displayName">value3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value4</property>
-                                                <text-property name="displayName">value4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity1</property>
-                                                <text-property name="displayName">entity1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity2</property>
-                                                <text-property name="displayName">entity2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity3</property>
-                                                <text-property name="displayName">entity3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity4</property>
-                                                <text-property name="displayName">entity4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">delete-16.jpg</property>
-                                    </image>
                                 </cell>
                                 <cell id="1498">
                                     <text-data id="1648">
@@ -1538,87 +1349,6 @@ else{
                                         <expression name="valueExpr">row["value3"]</expression>
                                         <property name="contentType">html</property>
                                     </text-data>
-                                    <image id="1645">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <property name="dataSet">ComparisonDataSet</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row._outer["value3"] != null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <list-property name="boundDataColumns">
-                                            <structure>
-                                                <property name="name">entityList</property>
-                                                <text-property name="displayName">entityList</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">characteristic</property>
-                                                <text-property name="displayName">characteristic</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">property</property>
-                                                <text-property name="displayName">property</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["property"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value1</property>
-                                                <text-property name="displayName">value1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value2</property>
-                                                <text-property name="displayName">value2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value3</property>
-                                                <text-property name="displayName">value3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value4</property>
-                                                <text-property name="displayName">value4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity1</property>
-                                                <text-property name="displayName">entity1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity2</property>
-                                                <text-property name="displayName">entity2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity3</property>
-                                                <text-property name="displayName">entity3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity4</property>
-                                                <text-property name="displayName">entity4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">delete-16.jpg</property>
-                                    </image>
                                 </cell>
                                 <cell id="1499">
                                     <text-data id="1649">
@@ -1631,87 +1361,6 @@ else{
                                         <expression name="valueExpr">row["value4"]</expression>
                                         <property name="contentType">html</property>
                                     </text-data>
-                                    <image id="1646">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <property name="dataSet">ComparisonDataSet</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row._outer["value4"] != null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <list-property name="boundDataColumns">
-                                            <structure>
-                                                <property name="name">entityList</property>
-                                                <text-property name="displayName">entityList</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">characteristic</property>
-                                                <text-property name="displayName">characteristic</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">property</property>
-                                                <text-property name="displayName">property</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["property"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value1</property>
-                                                <text-property name="displayName">value1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value2</property>
-                                                <text-property name="displayName">value2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value3</property>
-                                                <text-property name="displayName">value3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">value4</property>
-                                                <text-property name="displayName">value4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity1</property>
-                                                <text-property name="displayName">entity1</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity2</property>
-                                                <text-property name="displayName">entity2</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity3</property>
-                                                <text-property name="displayName">entity3</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                            <structure>
-                                                <property name="name">entity4</property>
-                                                <text-property name="displayName">entity4</text-property>
-                                                <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
-                                                <property name="dataType">string</property>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">delete-16.jpg</property>
-                                    </image>
                                 </cell>
                             </row>
                         </detail>
@@ -1920,76 +1569,58 @@ else{
             </property>
         </structure>
         <structure>
-            <property name="name">delete-16.jpg</property>
+            <property name="name">Modified.png</property>
+            <property name="type">image/png</property>
             <property name="data">
-                /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERET
-                FhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4e
-                Hh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAQABADASIAAhEBAxEB/8QA
-                FgABAQEAAAAAAAAAAAAAAAAABAUH/8QAJhAAAQQBAwMEAwAAAAAAAAAAAQIDBAURBxIhAAZBExYiQiRR
-                Uv/EABUBAQEAAAAAAAAAAAAAAAAAAAUH/8QAIBEAAQIFBQAAAAAAAAAAAAAAAgERAAQTMUEDBRIhwf/a
-                AAwDAQACEQMRAD8A2rurvm0r9SptFYRpcBTSUvVTwyWJLO1O8nHBO4kEHxjGDz0G01Gt/cdZHrIcmwuZ
-                76W2IjG70W2gRvK/G0A5KjznGMcAE1Vg99zNRXIcaremNykpTUPoP47aMDeHT9Npyo/0MY56k1dDqPRd
-                619QiIuRZNupUizaG2IuP91q/RA+JR5JHRJnq1FZFZ4oMtKbesmBEQVOD36tn1Lu7Zj/2Q==
+                iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRF
+                WHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJdJREFUeNpi/P//PwMlgIkUxbNmzVoAwmQZ
+                ANUYD8LIhjCRqBkG4IYwkaGZ+DDAo3lhWlpaAl4DiNGM0wBiNWM1gBTNpEQjVs0gwIJkM0iBA0ghkM2A
+                5AqcmlEMAAKQInuQZiRDGPBpBgFGUF4AKlYAsu8T42RcYVCAJHYQiA8Qm8RhXggA4olAPAFo8wNSMhgj
+                pdkZIMAAdFRMXo75bNwAAAAASUVORK5CYII=
             </property>
         </structure>
         <structure>
-            <property name="name">added.jpg</property>
+            <property name="name">Removed.png</property>
+            <property name="type">image/png</property>
             <property name="data">
-                /9j/4AAQSkZJRgABAQEARwBHAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAQABADASIAAhEBAxEB/8QA
-                FQABAQAAAAAAAAAAAAAAAAAABwr/xAAeEAACAwEBAQEBAQAAAAAAAAAEBwMFBgIIAQkRFP/EABUBAQEA
-                AAAAAAAAAAAAAAAAAAgJ/8QAIhEAAgEDBAIDAAAAAAAAAAAAAQIDBAURBgcSEwgWFBUX/9oADAMBAAIR
-                AxEAPwCg/wBU+xFv6nwCiGoFvt6nPVW4lZxdgwiU3NVm0h6QbWVz3EFHlWttdP1dSabd5YsYYvNDfKrk
-                cmxPKrZq35/TjyB7rXnkNdOyo3StZtxV2Dbv2YDa4AtJfKcfK8K9bUc3HNVsnLidR0fAZj7ieYYLNkwE
-                cyQ/4iSy5Zx4Dr3J4hVng1dqBjZ/0E7LPP2rOPWFrTuTWKfrCg0EqAeGqouIp6VW4mxEsx9Xh8mJUyza
-                Hvib7LID9GJLMHliNvz08ILL9DVQ+mLuPQL1pqenfOoUVJUqDSJ/5jzchAplNpyZPpmsUbBuJ7Ei53mi
-                EIIC0cIcAkIQogIk4s0089EsvkEN/wCK7z1Ghm1h6ZUUitDFclsfr5uNO2JOeU+7CKhUBOnqEpD5YcCR
-                PNuT+kRU8KWgavNqln5M1MaT4S00EZBk6RGMxkFYwobmHPM5GP/Z
+                iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRF
+                WHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAARhJREFUeNqsU7utwkAQPF8F0IHJkaABJDqg
+                hEfk2B0AHTi1I7sEOjiJBngSOXQAHZgZNGutHBAAJ41s7c5+bnYv6/s+jE/TNDk+ayCX6QakoihuY27m
+                EyhwD/wBR+As1xLYAB39PtGQAMEkJaAV6THqaqLkW3YH/3lIoMo0lHC04c0BlwkqdsVOouzM3FowSHtV
+                HKrTxn9xWsWErK5rVr8CU7Yt4g74l5BBV1sAB3As+R2YRZGO7s6VghlwEhayVeriIZHXUaMytc3JpBdg
+                LlwknBeWMXkMX56oJVmOxpVcZeskeWEV85oCyRvnLN2dV4JpUroiXKwUtVWdjYUqU227s9PkIJ+NvWPs
+                14v0m1X+yWP69Dk/BRgAYruwtxyR/i4AAAAASUVORK5CYII=
             </property>
         </structure>
         <structure>
-            <property name="name">modified.jpg</property>
+            <property name="name">Added.png</property>
+            <property name="type">image/png</property>
             <property name="data">
-                /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAQABADASIAAhEBAxEB/8QA
-                FgABAQEAAAAAAAAAAAAAAAAACQcK/8QAIBAAAgMAAwACAwAAAAAAAAAABQYDBAcBAggRFRIUF//EABQB
-                AQAAAAAAAAAAAAAAAAAAAAj/xAAcEQADAAMBAQEAAAAAAAAAAAADBAUBAgcGFBX/2gAMAwEAAhEDEQA/
-                ANzGr6+u5XVFUp/1iry2/aRoyVwR6DrRzkJFVlNmyd7ivf7ryIqRXhtlzb5R96AR1JhwosYwvDSmp7OB
-                O8R7P6f9FLCf551d9D+jgJEI4ca6sQdR2dqnRaJVeSqJoy1KSuxq2N1RZgjdTbAnqyNMTHfO5/oH9Vua
-                5zdoVAq8OfrMQPdvJh0zrLD6E0rSVFh0q+vt4hNzxKzTQW9TEjRjpeVh64OybPBw6aIX3GfFt+cLR99W
-                11of202PuLX5i8uInl5DgU1biU2wk5q5R/fiFfpCefGXrFL1+xu/lbtyUAYvmzbgWlzi7e6B6tmzYs3T
-                LEUPsZoTr79t7T3Z36Vh+G4BzKi/MAoYStFzqljdcWutvLW2M5QDKLtqSF+YVZuA6Bhqi2zS2FIXS0Nu
-                FxKKp6YLmaXSntcayo5VFCryyLsFXol9NNprMKs+dJphhDaHRVYD6bTOzJAiEMOJ3//Z
+                iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRF
+                WHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAD9JREFUeNpi/P//PwMlgImBQoDXgFmzZv0H
+                4YFzwdAwgBEWjYQCCx2kpaUxUtcFuKIR2bbRaCQjEOniAoAAAwCDPBmrCtjhPQAAAABJRU5ErkJggg==
             </property>
         </structure>
         <structure>
-            <property name="name">replaced.jpg</property>
+            <property name="name">Replaced.png</property>
+            <property name="type">image/png</property>
             <property name="data">
-                /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERET
-                FhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4e
-                Hh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAQABADASIAAhEBAxEB/8QA
-                FgABAQEAAAAAAAAAAAAAAAAAAAEI/8QAIBAAAgICAgMBAQAAAAAAAAAAAQIDBBESBSEGBxUiMf/EABUB
-                AQEAAAAAAAAAAAAAAAAAAAUG/8QAIBEAAQMCBwAAAAAAAAAAAAAAEQATYRKBJCVBobLB8P/aAAwDAQAC
-                EQMRAD8A0FyvseNfLIYKayfGqO62ZUjBe2+rKAm2MRqxB26LkZGEGZJxXsaNvLJoLgk+NbdFrSugD1H1
-                VSH1zmNmBO3ZQnvKnMblvXMZ8shnqNJ8a27tZiRwHqPqzApt/Y2YAa9lCcD8nEbifXMY8smnttIeGpuj
-                VoncF7b6qxL64xGrEjXouRg4UYkXwTcj1+oU3mr2gqsBxG8r/9k=
+                iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMA
+                AAsTAAALEwEAmpwYAAAAB3RJTUUH3gEfCR01d/QqNgAAAQ5JREFUOMuVkz8vREEUxX/3eYmETqIQiVK3
+                zweQKHRan0Ai9lDQ6H0AoaGakvgohHq3UyqQ0JGsP7s7CvM243nLm5NMJnPvnDNn7syFCM65H3MSIvJB
+                Ci8vyZJwznWA2xQBq5BbwBVwBExE+6Ylndc6mKQfkwGWw6iiViB7J9+PyMnIJB0Dpw0LPf+rBlHyBNgF
+                ziRtjBG4AbaArqRvB2VS0l5wMvOHiT7QAVrls1vNKWvANXABvFXIq8BsWBeSulb9TOFJ54D7/2risZUs
+                DpT3aojnIf4uH5N8BQ6BXhT7AAQsAE8DWAJ7sMR+uQQWB1AY9rijNnmKgIeXIRQE8qiZmuITW5/yvre5
+                3R7FvgCaCF3Ebd4rDwAAAABJRU5ErkJggg==
             </property>
         </structure>
         <structure>
-            <property name="name">equal.jpg</property>
+            <property name="name">Equal.png</property>
+            <property name="type">image/png</property>
             <property name="data">
-                /9j/4AAQSkZJRgABAQEARwBHAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAQABADASIAAhEBAxEB/8QA
-                FwAAAwEAAAAAAAAAAAAAAAAABAgJCv/EAB4QAAMBAQADAQEBAAAAAAAAAAQFBgcDAQIICRUk/8QAFQEB
-                AQAAAAAAAAAAAAAAAAAAAgT/xAAcEQEAAgMBAQEAAAAAAAAAAAABAhEDEiExIkH/2gAMAwEAAhEDEQA/
-                ANi8P+hPy3eaFaZwJoYaLpHraNsFdWHuHLZpcqodae2v2sRZsWHIE9bFKFbR8eY19EY1LHqHejZ/0rs4
-                Qva1ZNHUv1Z1hxtSFlg6Dh1x1JQrJ9HAP5jt5tfoju7bDJv9XEkPzVQLKtKLEUYnKpguVesdlqn2noql
-                i/Iw2NG+6PznbxbwnUPnqKYWmY0TrkxpsgnkpFA/y6n/AKXM8N9nc2GOWze5kc85jEcZRIGY6yB90CIl
-                RCsiI5g4i4nwV8EcsR5L9t20EIvdDQSvE3Ne5AbJPhaduB2DNCBOE6FLHeruVZZCy2t1hRahApNY5xnD
-                EycKt7jW0OOGMkbZpIa4+bylURWkHtN8C/WiorzzyGL5jIntLKcZQWKEaqyjsQb8f0f/2Q==
+                iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMA
+                AAsTAAALEwEAmpwYAAAAB3RJTUUH3gIKDxkqunpDCAAAACFJREFUOMtjYBhowDhz5sz/lBjARKkLBt6A
+                UTCaDgYHAAA8+gWjN0rv7AAAAABJRU5ErkJggg==
             </property>
         </structure>
     </list-property>

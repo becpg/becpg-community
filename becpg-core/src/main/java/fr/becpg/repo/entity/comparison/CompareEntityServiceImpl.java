@@ -667,8 +667,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		if (comparisonDataItem == null) {
 			List<String> values = new ArrayList<String>(nbEntities);
-			values.add(0, strValue1);
-			values.add(comparisonPosition, strValue2);
+			values.add(strValue1);
+			values.add(strValue2);
 			comparisonDataItem = new CompareResultDataItem(entityList, charactPath, characteristic, propertyQName, values);
 			comparisonMap.put(key, comparisonDataItem);
 		} else {
@@ -718,8 +718,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		if (comparisonDataItem == null) {
 			List<String> values = new ArrayList<String>(nbEntities);
-			values.add(0, strValue1);
-			values.add(comparisonPosition, strValue2);
+			values.add(strValue1);
+			values.add(strValue2);
 			comparisonDataItem = new CompareResultDataItem(entityList, charactPath, characteristic, propertyQName, values);
 			comparisonMap.put(key, comparisonDataItem);
 		} else {
