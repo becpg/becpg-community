@@ -320,8 +320,8 @@ public class FormulationHelper {
 							
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 		if(qty != null){				
-			Double overrun = (Double)nodeService.getProperty(compoListDataItem.getNodeRef(), PLMModel.PROP_COMPOLIST_OVERRUN_PERC);
-			if(overrun == null){
+			Double overrun = compoListDataItem.getOverrunPerc();
+			if(compoListDataItem.getOverrunPerc() == null){
 				overrun = FormulationHelper.DEFAULT_OVERRUN;
 			}
 			Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);

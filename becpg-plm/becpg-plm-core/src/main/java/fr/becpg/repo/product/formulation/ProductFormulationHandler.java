@@ -226,7 +226,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 				}
 				
-				Double overrunPerc = (Double) nodeService.getProperty(c.getNodeRef(), PLMModel.PROP_COMPOLIST_OVERRUN_PERC);
+				Double overrunPerc = c.getOverrunPerc();
 				if(FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null){
 					Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 					if(density == null || density.equals(0d)){
