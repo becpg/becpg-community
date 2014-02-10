@@ -31,7 +31,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	
 	private Double yieldPerc = null;
 	
-	private DeclarationType declType = DeclarationType.Declare;			
+	private DeclarationType declType = DeclarationType.Declare;
+	
+	private Double overrunPerc = null;
+	
+	private Double volume;
 	
 	private NodeRef product;
 	
@@ -126,6 +130,26 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		this.declType = declType;
 	}
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListOverrunPerc")
+	public Double getOverrunPerc() {
+		return overrunPerc;
+	}
+
+	public void setOverrunPerc(Double overrunPerc) {
+		this.overrunPerc = overrunPerc;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:compoListVolume")
+	public Double getVolume() {
+		return volume;
+	}
+
+	public void setVolume(Double volume) {
+		this.volume = volume;
+	}
+
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:compoListProduct")
