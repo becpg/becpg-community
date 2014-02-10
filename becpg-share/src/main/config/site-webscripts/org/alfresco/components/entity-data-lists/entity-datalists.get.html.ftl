@@ -31,8 +31,7 @@
 		      </div>
 		   </div>
 		   
-		   <h2>${msg("header.lists")}</h2>
-		   <div id="${el}-lists" class="filter"></div>
+		   <div id="${el}-lists" class="filter "></div>
 		
 		   <div class="horiz-rule">&nbsp;</div>
 		</div>

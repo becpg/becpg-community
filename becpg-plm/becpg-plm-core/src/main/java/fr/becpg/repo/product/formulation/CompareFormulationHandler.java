@@ -37,11 +37,12 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.google.gdata.util.common.base.Pair;
 
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.CompareHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
@@ -72,6 +73,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	private NamespaceService namespaceService;
 
 	private NodeService nodeService;
+	
+	private AttributeExtractorService attributeExtractorService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -91,6 +94,11 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+	
+	
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
 	}
 
 	@Override
@@ -160,7 +168,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 							for (Map.Entry<DynamicCharactListItem, JSONArray> entry : dynamicCharactToTreat.entrySet()) {
 
 								JSONObject jsonObject = new JSONObject();
-								jsonObject.put("comp", entry.getValue());
+								jsonObject.put(CompareHelper.JSON_COMP_ITEMS, entry.getValue());
 
 								entry.getKey().setValue(jsonObject.toString());
 							}
@@ -168,7 +176,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 							for (Map.Entry<Pair<CompositionDataItem, QName>, JSONArray> entry : dynamicColumnToTreat.entrySet()) {
 
 								JSONObject jsonObject = new JSONObject();
-								jsonObject.put("comp", entry.getValue());
+								jsonObject.put(CompareHelper.JSON_COMP_ITEMS, entry.getValue());
 
 								entry.getKey().getFirst().getExtraProperties().put(entry.getKey().getSecond(), jsonObject.toString());
 							}
@@ -186,28 +194,20 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return true;
 	}
 
-	PropertyFormats propertyFormats = new PropertyFormats(true);
-
 	private JSONObject getJSONValue(ProductData toCompareWith, Object value) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("nodeRef", toCompareWith.getNodeRef());
+		jsonObject.put(CompareHelper.JSON_COMP_ITEM_NODEREF, toCompareWith.getNodeRef());
 		jsonObject.put("name", toCompareWith.getName());
-		jsonObject.put("value", value);
-		jsonObject.put("displayValue", formatValue(value));
+		jsonObject.put(CompareHelper.JSON_COMP_VALUE, value);
+		jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
+		jsonObject.put("displayValue", attributeExtractorService.formatValue(value));
+		String siteId =attributeExtractorService. extractSiteId(toCompareWith.getNodeRef());
+		if (siteId != null) {
+			jsonObject.put("siteId", siteId);
+		}
 		return jsonObject;
 	}
 
-	private Object formatValue(Object v) {
-		if (v != null && (v instanceof Double || v instanceof Float)) {
-
-			if (propertyFormats.getDecimalFormat() != null) {
-				return propertyFormats.getDecimalFormat().format(v);
-			} else {
-				return v.toString();
-			}
-		}
-		return v;
-	}
 
 	private AbstractProductDataView getMatchingView(ProductData productData, AbstractProductDataView view) {
 		for (AbstractProductDataView tmp : productData.getViews()) {

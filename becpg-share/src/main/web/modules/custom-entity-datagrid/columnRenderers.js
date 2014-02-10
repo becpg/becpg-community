@@ -233,17 +233,19 @@ if (beCPG.module.EntityDataGridRenderers) {
                               if(json){
                                  var ret = "", i=0, refValue = null , className, currValue = null ;
                                  for( i = 0; i< json.comp.length; i++ ){
-                                    if(i==0){
-                                       refValue = parseFloat(json.comp[i].value);
-                                       ret +='<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
-                                    } else {
-                                       currValue = parseFloat(json.comp[i].value);
-                                       if(currValue != Number.NaN && refValue != Number.NaN){
-                                          className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
+                                    if(json.comp[i].value){
+                                       if(i==0){
+                                          refValue = parseFloat(json.comp[i].value);
+                                          ret +='<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
                                        } else {
-                                         className = "dynaCompNone";
+                                          currValue = parseFloat(json.comp[i].value);
+                                          if(currValue != Number.NaN && refValue != Number.NaN){
+                                             className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
+                                          } else {
+                                            className = "dynaCompNone";
+                                          }
+                                          ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( data.siteId, json.comp[i].nodeRef)+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
                                        }
-                                       ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( data.siteId, json.comp[i].nodeRef)+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
                                     }
                                  }
                                  return ret;
@@ -430,17 +432,19 @@ if (beCPG.module.EntityDataGridRenderers) {
                   if(json){
                      var ret = "", i=0, refValue = null , className, currValue = null ;
                      for( i = 0; i< json.comp.length; i++ ){
-                        if(i==0){
-                           refValue = parseFloat(json.comp[i].value.replace(",","."));
-                           ret +='<span>' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
-                        } else {
-                           currValue = parseFloat(json.comp[i].value.replace(",","."));
-                           if(currValue != Number.NaN && refValue != Number.NaN){
-                              className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
+                        if(json.comp[i].value){
+                           if(i==0){
+                              refValue = parseFloat(json.comp[i].value.replace(",","."));
+                              ret +='<span>' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
                            } else {
-                             className = "dynaCompNone";
+                              currValue = parseFloat(json.comp[i].value.replace(",","."));
+                              if(currValue != Number.NaN && refValue != Number.NaN){
+                                 className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
+                              } else {
+                                className = "dynaCompNone";
+                              }
+                              ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( json.comp[i].siteId, json.comp[i].nodeRef, json.comp[i].itemType)+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
                            }
-                           ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( data.siteId, json.comp[i].nodeRef)+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
                         }
                      }
                      return ret;

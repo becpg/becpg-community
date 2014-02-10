@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.data;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -107,9 +106,6 @@ public class DataListFilter {
 	}
 
 	public List<NodeRef> getEntityNodeRefs() {
-		if(isVersionFilter()) {
-			return Arrays.asList(new NodeRef(filterData));
-		}
 		return entityNodeRefs;
 	}
 

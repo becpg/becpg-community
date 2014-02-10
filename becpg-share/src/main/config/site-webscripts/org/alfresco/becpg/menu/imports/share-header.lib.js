@@ -96,6 +96,14 @@ function createDockBar(beCPGMenu){
                var targetUrl = "entity-details?nodeRef=" +item.nodeRef ;
                if(page.url.uri.indexOf("entity-data-lists")){
                   targetUrl = "entity-data-lists?nodeRef=" +item.nodeRef ;
+                  //TODO Should be split or better
+                  // page.url.args.list
+                  if (item.itemType == "bcpg:finishedProduct" || item.itemType == "bcpg:semiFinishedProduct") {
+                     targetUrl += "&list=compoList";
+                  } else if (item.itemType == "bcpg:packagingKit") {
+                     targetUrl += "&list=packagingList";
+                  }
+                  
                }
                
                

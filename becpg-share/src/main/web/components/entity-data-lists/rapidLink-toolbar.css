@@ -40,3 +40,18 @@
 		url(../images/filetypes/generic-localSemiFinishedProduct-16.png)
 		no-repeat 2px 50%;
 }
+
+.datalist-toolbar .rapidLink  span.packagingMaterial {
+	background: url(../images/filetypes/generic-packagingMaterial-16.png)
+		no-repeat 2px 50%;
+}
+
+.datalist-toolbar .rapidLink  span.packagingKit {
+	background: url(../images/filetypes/generic-packagingKit-16.png)
+		no-repeat 2px 50%;
+}
+
+.datalist-toolbar .rapidLink  span.resourceProduct {
+	background: url(../images/filetypes/generic-resourceProduct-16.png)
+		no-repeat 2px 50%;
+}
