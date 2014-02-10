@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mvn clean
+
 for file in `find -name *_fr.properties`
 do
 	echo "creating  ${file%%_fr.*}_en.properties"
@@ -7,8 +9,8 @@ do
 done
 
 
-
-for file in `find -name *_*.properties`
+for file in `find -name *_*.properties -not -path "*bin*"`
 do
-	cp $file /target/${file%%_fr.properties}
+   mkdir -p target/properties/$(dirname ${file})
+	cp $file target/properties/$(dirname ${file})/
 done
