@@ -66,7 +66,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		MultiLevelListData listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(PROP_ACCESSRIGHT, false);
+		props.put(PROP_ACCESSRIGHT, true); //TODO
 
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 

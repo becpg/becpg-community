@@ -37,6 +37,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.google.gdata.util.common.base.Pair;
 
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -194,13 +195,15 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return true;
 	}
 
+	PropertyFormats propertyFormats = new PropertyFormats(true);
+
 	private JSONObject getJSONValue(ProductData toCompareWith, Object value) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(CompareHelper.JSON_COMP_ITEM_NODEREF, toCompareWith.getNodeRef());
 		jsonObject.put("name", toCompareWith.getName());
 		jsonObject.put(CompareHelper.JSON_COMP_VALUE, value);
 		jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
-		jsonObject.put("displayValue", attributeExtractorService.formatValue(value));
+		jsonObject.put("displayValue", formatValue(value));
 		String siteId =attributeExtractorService. extractSiteId(toCompareWith.getNodeRef());
 		if (siteId != null) {
 			jsonObject.put("siteId", siteId);
@@ -208,6 +211,18 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return jsonObject;
 	}
 
+	
+	private Object formatValue(Object v) {
+		if (v != null && (v instanceof Double || v instanceof Float)) {
+
+			if (propertyFormats.getDecimalFormat() != null) {
+				return propertyFormats.getDecimalFormat().format(v);
+			} else {
+				return v.toString();
+			}
+		}
+		return v;
+	}
 
 	private AbstractProductDataView getMatchingView(ProductData productData, AbstractProductDataView view) {
 		for (AbstractProductDataView tmp : productData.getViews()) {
