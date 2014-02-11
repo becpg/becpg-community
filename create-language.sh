@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mvn clean
+#mvn clean
 
 for file in `find -name *_fr.properties`
 do
@@ -14,3 +14,4 @@ do
    mkdir -p target/properties/$(dirname ${file})
 	cp $file target/properties/$(dirname ${file})/
 done
+
