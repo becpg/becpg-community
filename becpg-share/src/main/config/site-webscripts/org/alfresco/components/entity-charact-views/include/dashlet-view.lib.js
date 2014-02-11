@@ -48,6 +48,12 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType){
          useMessages: false
       };
 
+//    TODO doesn't work because surf component for this page are only on memory  
+//    var component =  sitedata.getComponent(dashletName);
+//    if( component!=null ){
+//       model.dashletHeight = { dashletId : component.properties.height};
+//    } 
+      
       var dashletTitleBarActions = {
          id : "DashletTitleBarActions",
          name : "Alfresco.widget.DashletTitleBarActions",
@@ -66,6 +72,8 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType){
             ]
          }
       };
+      
+    
       
       return [entityDataGrid, dashletResizer, dashletTitleBarActions];
    

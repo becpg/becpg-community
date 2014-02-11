@@ -77,12 +77,14 @@
       Bubbling.on("dataListDetailsUpdated", this.onDataListDetailsUpdated, this);
 
       Bubbling.on("refreshDataGrids", this.onDataGridRefresh, this);
+      
       Bubbling.on(this.scopeId + "columnRenamed", this.onColumnRenamed, this);
 
       // Local Events
       Bubbling.on(this.scopeId + "userAccess", this.onUserAccess, this);
       Bubbling.on(this.scopeId + "filterChanged", this.onFilterChanged, this);
       Bubbling.on(this.scopeId + "changeFilter", this.onChangeFilter, this);
+      Bubbling.on(this.scopeId + "versionChangeFilter", this.onChangeFilter, this);
       Bubbling.on(this.scopeId + "dataItemCreated", this.onDataItemCreated, this);
       Bubbling.on(this.scopeId + "dataItemUpdated", this.onDataItemUpdated, this);
       Bubbling.on(this.scopeId + "dataItemsDeleted", this.onDataItemsDeleted, this);
