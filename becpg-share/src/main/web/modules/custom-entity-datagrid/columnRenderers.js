@@ -434,10 +434,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                      for( i = 0; i< json.comp.length; i++ ){
                         if(json.comp[i].value){
                            if(i==0){
-                              refValue = parseFloat(json.comp[i].value.replace(",","."));
+                              refValue = parseFloat(json.comp[i].value);
                               ret +='<span>' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
                            } else {
-                              currValue = parseFloat(json.comp[i].value.replace(",","."));
+                              currValue = parseFloat(json.comp[i].value);
                               if(currValue != Number.NaN && refValue != Number.NaN){
                                  className =(refValue>currValue)?"dynaCompIncrease":"dynaCompDecrease";
                               } else {
