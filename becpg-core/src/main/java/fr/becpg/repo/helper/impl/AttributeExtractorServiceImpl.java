@@ -589,9 +589,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 					return 0 == f.compareTo(Float.POSITIVE_INFINITY) ? "23456789012E777" : "-23456789012E777";
 				}
 			}
-			return value;
 		}
-		return null;
+		return value;
 	}
 
 	private String extractPropName(NodeRef v) {
