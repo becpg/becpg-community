@@ -7,10 +7,6 @@ parseActions(page.url.args.list!=null ?page.url.args.list : null);
 function main()
 {
    
-//TODO var component =  sitedata.getComponent("compoListDashlet");
-//if( component!=null ){
-//   model.height = component.properties.height;
-//}
  
 // Widget instantiation metadata...
 var formulationView = {

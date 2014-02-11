@@ -19,11 +19,11 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 */
 package fr.becpg.repo.helper;
 
-import org.activiti.engine.impl.util.json.JSONArray;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONTokener;
 
 /**
  * @author matthieu
@@ -42,13 +42,13 @@ public class CompareHelper {
 	 * @param strValue1
 	 * @return
 	 */
-	public static String cleanCompareJSON(String value) {
+	public static Object cleanCompareJSON(String value) {
 		if(value!=null && value.contains(JSON_COMP_ITEMS)) {
 			try {
-				JSONParser parser=new JSONParser();
-				JSONObject jsonObject = (JSONObject) parser.parse(value);
+				JSONTokener tokener = new JSONTokener(value);
+				JSONObject jsonObject = new JSONObject(tokener);
 				JSONArray array = (JSONArray) jsonObject.get(JSON_COMP_ITEMS);
-				return (String) ((JSONObject)array.get(0)).get(JSON_COMP_VALUE);
+				return((JSONObject)array.get(0)).get(JSON_COMP_VALUE);
 			} catch (Exception e) {
 				logger.warn("Cannot parse "+value,e);
 			}

@@ -60,6 +60,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.CompareHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
@@ -692,7 +693,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			PropertyFormats propertyFormats) {
 		
 		if (value != null) {
+
 			if (value instanceof NodeRef || value instanceof String || value instanceof List) {
+				if(DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && value instanceof String) {
+					value = (Serializable) CompareHelper.cleanCompareJSON((String)value);
+				}
+				
 				return getStringValue(propertyDef, value, propertyFormats);
 			}
 			else if (value instanceof Date) {

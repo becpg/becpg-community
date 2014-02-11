@@ -44,7 +44,7 @@
 			      </div>
 			      <div class="clear"></div>
 			</div>
-			<div  class="body scrollableList" <#if extra["height"]??>style="height: ${extra["dashletTitle"]?string}px;"</#if> >
+			<div  class="body scrollableList" <#if dashletHeight?? && dashletHeight[dashletId]??>style="height: ${dashletHeight[dashletId]?string}px;"</#if> >
 		  	
 			   <div id="${dashletId}-grid" class="grid"></div>
 			

@@ -248,7 +248,7 @@
                         };
                      }
                       
-                     YAHOO.Bubbling.fire("changeFilter", filterObj);
+                     YAHOO.Bubbling.fire("versionChangeFilter", filterObj);
                     
                       // Update the Menu
                       this.setMenuTitle();

@@ -69,7 +69,7 @@
 		      	<option value="chartData">${msg("picker.chart.type.data")}</option>
 		      </select>
 		   </div>
-			<div class="body " >
+			<div class="body"  <#if args.height??>style="height: ${args.height}px;"</#if> >
 				<div id="${el}-chartContainer" class="yui-content">
 					<div class="chart olapChart" id="${el}-chart" >
 						<div class="empty"><h3>${msg("empty.title")}</h3><span>${msg("empty.description")}</span></div>
