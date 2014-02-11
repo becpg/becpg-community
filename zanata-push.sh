@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mvn org.zanata:zanata-maven-plugin:3.1.2:push-module -Dzanata.pushType=both  -Dzanata.excludes='**/becpg-config-*.properties,**/test/**/*.properties,becpg-monitors/**/*.properties,becpg-olap/**/*.properties,becpg-report/**/*.properties,**/dataTypeAnalyzers.properties,**/bin/**/*.properties,**/log4j.properties,**/module.properties,alfresco-patch/**/*.properties,**/file-mapping.properties'
