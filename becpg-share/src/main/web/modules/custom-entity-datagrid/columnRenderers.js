@@ -471,7 +471,7 @@ if (beCPG.module.EntityDataGridRenderers) {
             if (data.value < 0.0001) {
                qty = data.value * 1000000;
                unit = " mg";
-            } else if (data.value < 0.1) {
+            } else if (data.value < 1) {
                qty = data.value * 1000;
                unit = " g";
             } else if (data.value > 1000) {
@@ -480,6 +480,28 @@ if (beCPG.module.EntityDataGridRenderers) {
             } else {
                qty = data.value;
                unit = " kg";
+            }
+
+            qty = parseFloat(qty.toPrecision(5)) + unit;
+         }
+
+         return Alfresco.util.encodeHTML(qty);
+      }
+   });
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:compoListVolume",
+      renderer : function(oRecord, data, label, scope) {
+
+         var qty = "";
+         if (data.value != null) {
+            var unit = "";
+            if (data.value < 1) {
+               qty = data.value * 1000;
+               unit = " mL";
+            } else {
+               qty = data.value;
+               unit = " L";
             }
 
             qty = parseFloat(qty.toPrecision(5)) + unit;
