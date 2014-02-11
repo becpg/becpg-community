@@ -244,7 +244,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                                           } else {
                                             className = "dynaCompNone";
                                           }
-                                          ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( data.siteId, json.comp[i].nodeRef)+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
+                                          ret +='<span  class="'+className+'" >(<a title="'+json.comp[i].name+'" href="'+beCPG.util.entityCharactURL( json.comp[i].siteId, json.comp[i].nodeRef,json.comp[i].itemType )+'">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
                                        }
                                     }
                                  }
