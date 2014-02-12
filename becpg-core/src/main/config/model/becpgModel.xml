@@ -151,12 +151,12 @@
 				<association name="bcpg:branchFromEntity">
 					<title>Branch from entity</title>
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
 						<class>bcpg:entityV2</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -449,6 +449,22 @@
 					<duplicate>false</duplicate>
 					<propagateTimestamps>true</propagateTimestamps>
 				</child-association>
+			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:docLinkedEntitiesAspect">
+			<associations>
+				<association name="bcpg:docLinkedEntities">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 			</associations>
 		</aspect>
 

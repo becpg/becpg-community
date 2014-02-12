@@ -79,7 +79,7 @@
 	
 		<!-- Workflow -->
 	<bean id="CreateProduct" parent="baseJavaDelegate"
-		class="fr.becpg.repo.workflow.activiti.project.CreateProduct">
+		class="fr.becpg.repo.workflow.activiti.npd.CreateProduct">
 		<property name="nodeService" ref="nodeService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityService" ref="entityService" />

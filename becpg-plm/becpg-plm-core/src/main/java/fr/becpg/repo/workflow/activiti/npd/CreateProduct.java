@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.workflow.activiti.project;
+package fr.becpg.repo.workflow.activiti.npd;
 
 import java.util.List;
 
@@ -105,7 +105,7 @@ public class CreateProduct extends BaseJavaDelegate {
 					NodeRef packagingNodeRef = null;
 
 					String entityName = (String) task.getVariable(
-							"pjtwf_npdProductName");
+							"npdwf_npdProductName");
 					
 					if(entityName == null || entityName.isEmpty()){
 						// use project name as default
@@ -113,21 +113,21 @@ public class CreateProduct extends BaseJavaDelegate {
 					}
 					
 					ActivitiScriptNode productNode = (ActivitiScriptNode) task.getVariable(
-							"pjtwf_needDefinitionProduct");
+							"npdwf_needDefinitionProduct");
 					if (productNode != null) {
 						logger.debug("Product node exist");
 						sourceNodeRef = productNode.getNodeRef();
 					}
 
 					ActivitiScriptNode recipeNode = (ActivitiScriptNode) task.getVariable(
-							"pjtwf_needDefinitionRecipeProduct");
+							"npdwf_needDefinitionRecipeProduct");
 					if (recipeNode != null) {
 						logger.debug("Recipe node exist");
 						recipeNodeRef = recipeNode.getNodeRef();
 					} 
 
 					ActivitiScriptNode packagingNode = (ActivitiScriptNode) task.getVariable(
-							"pjtwf_needDefinitionPackagingKit");
+							"npdwf_needDefinitionPackagingKit");
 					if (packagingNode != null) {
 						logger.debug("Packaging node exist");
 						packagingNodeRef = packagingNode.getNodeRef();
@@ -138,7 +138,7 @@ public class CreateProduct extends BaseJavaDelegate {
 							productName);
 					
 					// change state: ToValidate
-					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, "ToValidate");
+					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, "Simulation");
 					
 					String localName = QName.createValidLocalName(productName);
 					QName qName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, localName);
