@@ -265,10 +265,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);			
 		
 		CompositeComparableItem compositeItem1 = new CompositeComparableItem(0, null, null);		
-		loadComparableItems(compositeItem1, listData1, pivotProperty);
+		loadComparableItems(compositeItem1, listData1);
 
 		CompositeComparableItem compositeItem2 = new CompositeComparableItem(0, null, null);
-		loadComparableItems(compositeItem2, listData2, pivotProperty);
+		loadComparableItems(compositeItem2, listData2);
 
 		List<StructCompareResultDataItem> structComparisonList = new LinkedList<StructCompareResultDataItem>();
 		structCompareCompositeDataLists(datalistType, pivotProperty, structComparisonList, compositeItem1, compositeItem2);
@@ -290,14 +290,19 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
 	}
 	
-	private void loadComparableItems(CompositeComparableItem compositeItem, MultiLevelListData listData, QName pivotProperty) {		
+	private void loadComparableItems(CompositeComparableItem compositeItem, MultiLevelListData listData) {		
 
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef nodeRef = entry.getKey();
-			String pivot = entry.getValue().getEntityNodeRef().toString();
+			
+			//TODO generic should be able to combine several properties (ie: EAN, Funtion,...)
+			String pivot = (String)nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
+			if(pivot == null){
+				pivot = entry.getValue().getEntityNodeRef().toString();
+			}			
 			CompositeComparableItem c = new CompositeComparableItem(entry.getValue().getDepth(), pivot, nodeRef);
 			addComparableItem(compositeItem, pivot, c);
-			loadComparableItems(c, entry.getValue(), pivotProperty);
+			loadComparableItems(c, entry.getValue());
 		}
 	}
 	
