@@ -2,7 +2,6 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -10,13 +9,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
+import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.repo.version.common.versionlabel.SerialVersionLabelPolicy;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -33,7 +32,6 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +44,7 @@ import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
@@ -97,6 +96,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Autowired
 	private PermissionService permissionService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Override
 	public NodeRef createVersion(final NodeRef nodeRef, Map<String, Serializable> versionProperties) {
@@ -379,10 +381,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (versionHistory != null) {
 			List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
 
+			NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
 			for (Version version : versionHistory.getAllVersions()) {
 				NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
 				if (entityVersionNodeRef != null) {
-					entityVersions.add(new EntityVersion(version, entityVersionNodeRef));
+					EntityVersion entityVersion = new EntityVersion(version,entityNodeRef,  entityVersionNodeRef,branchFromNodeRef);
+					if(RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
+						entityVersion.setCreatedDate((Date)nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+					}
+					
+					entityVersions.add(entityVersion);
 				}
 			}
 		}
@@ -441,20 +449,44 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	@Override
-	public List<NodeRef> getCurrentVersionBranches(NodeRef entityNodeRef) {
-		String versionLabel = RepoConsts.INITIAL_VERSION;
-
-		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-			versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
-		}
-
-		List<NodeRef> ret = new ArrayList<>();
+	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef) {
+		List<EntityVersion> ret = new LinkedList<>();
 		for (NodeRef branchNodeRef : getAllVersionBranches(entityNodeRef)) {
-			if (Objects.equals(versionLabel, nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL))) {
-				ret.add(branchNodeRef);
+			List<EntityVersion> entityVersions = getAllVersions(branchNodeRef);
+			
+			if (!entityVersions.isEmpty()) {
+				for (EntityVersion entityVersion : getAllVersions(branchNodeRef)) {
+					ret.add(entityVersion);
+				}
+			} else {
+				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
+
+				propsMap.put(Version2Model.PROP_FROZEN_MODIFIED, nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED));
+				propsMap.put(Version2Model.PROP_FROZEN_MODIFIER, nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATOR));
+				propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+
+				EntityVersion initialVersion = new EntityVersion(new VersionImpl(propsMap, branchNodeRef),branchNodeRef,  branchNodeRef, getBranchFromNodeRef(branchNodeRef));
+				ret.add(initialVersion);
 			}
 		}
+		
+		Collections.sort(ret, new Comparator<EntityVersion>() {
+
+			@Override
+			public int compare(EntityVersion o1, EntityVersion o2) {
+				Date d1 = (Date) o1.getFrozenModifiedDate();
+				Date d2 = (Date) o2.getFrozenModifiedDate();
+				return (d1 == d2) ? 0 : d2 == null ? -1 : d2.compareTo(d1);
+			}
+
+		});
+
 		return ret;
+	}
+
+	
+	private NodeRef getBranchFromNodeRef(NodeRef branchNodeRef) {
+		return associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 	}
 
 	@Override
@@ -463,32 +495,30 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		NodeRef primaryParentNodeRef = entityNodeRef;
 
 		// Look for primary parent
-		List<AssociationRef> tmp = null;
+		NodeRef tmp = null;
 
 		do {
-			tmp = nodeService.getTargetAssocs(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
-			if(tmp!=null) {
-				for (AssociationRef associationRef : tmp) {
-					primaryParentNodeRef = associationRef.getTargetRef();
-				}
+			tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+			if (tmp != null) {
+				primaryParentNodeRef = tmp;
 			}
-		} while (tmp != null && tmp.size() > 0);
-		
+		} while (tmp != null );
+
 		List<NodeRef> ret = new LinkedList<>();
 		ret.add(primaryParentNodeRef);
 		ret.addAll(getAllChildVersionBranches(primaryParentNodeRef));
-		
+
 		Collections.sort(ret, new Comparator<NodeRef>() {
 
 			@Override
 			public int compare(NodeRef o1, NodeRef o2) {
 				Date d1 = (Date) nodeService.getProperty(o1, ContentModel.PROP_CREATED);
 				Date d2 = (Date) nodeService.getProperty(o2, ContentModel.PROP_CREATED);
-				return (d1 == d2)? 0 : d2==null ? -1 : d2.compareTo(d1);
+				return (d1 == d2) ? 0 : d2 == null ? -1 : d2.compareTo(d1);
 			}
-			
+
 		});
-		
+
 		return ret;
 	}
 
@@ -509,9 +539,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 			}
 		}
-		
-		
-		
+
 		return ret;
 	}
 
