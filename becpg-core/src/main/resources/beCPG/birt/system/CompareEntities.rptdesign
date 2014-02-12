@@ -716,6 +716,8 @@
         </style>
         <style name="beCPG-Group" id="1551">
             <property name="backgroundColor">#EEEEEE</property>
+            <property name="fontSize">11pt</property>
+            <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
             <property name="textLineThrough">none</property>
             <property name="marginTop">5pt</property>
@@ -725,12 +727,12 @@
         </style>
         <style name="beCPG-Table-Header" id="1553">
             <property name="fontWeight">bold</property>
-            <property name="color">#000000</property>
+            <property name="color">#4D4D4D</property>
         </style>
         <style name="beCPG-table-row-header" id="1554">
             <property name="fontWeight">bold</property>
             <property name="fontStyle">italic</property>
-            <property name="color">#000000</property>
+            <property name="color">#4D4D4D</property>
         </style>
         <style name="beCPG-Table-border" id="1557">
             <property name="borderBottomColor">#000000</property>
@@ -1247,25 +1249,25 @@ else{
                                 </cell>
                                 <cell id="1488">
                                     <data id="1560">
-                                        <property name="whiteSpace">nowrap</property>
+                                        <property name="whiteSpace">normal</property>
                                         <property name="resultSetColumn">entity1</property>
                                     </data>
                                 </cell>
                                 <cell id="1489">
                                     <data id="1561">
-                                        <property name="whiteSpace">nowrap</property>
+                                        <property name="whiteSpace">normal</property>
                                         <property name="resultSetColumn">entity2</property>
                                     </data>
                                 </cell>
                                 <cell id="1490">
                                     <data id="1562">
-                                        <property name="whiteSpace">nowrap</property>
+                                        <property name="whiteSpace">normal</property>
                                         <property name="resultSetColumn">entity3</property>
                                     </data>
                                 </cell>
                                 <cell id="1491">
                                     <data id="1563">
-                                        <property name="whiteSpace">nowrap</property>
+                                        <property name="whiteSpace">normal</property>
                                         <property name="resultSetColumn">entity4</property>
                                     </data>
                                 </cell>

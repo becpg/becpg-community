@@ -17,7 +17,7 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <entitiesComparison>
-	<comparisonRows entity1="Quiche lorraine 200g v1.2" entity2="Quiche lorraine 200g v1.1" entity3="" entity4="">
+	<comparisonRows entity1="Quiche lorraine 200g Quiche lorraine 200g v1.2" entity2="Quiche lorraine 200g v1.1" entity3="" entity4="">
 		<comparisonRow entityList="1. Propriétés" characteristic="" property="Description" value1="Description modifiée" value2="" value3="" value4="" />
 		<comparisonRow entityList="1. Propriétés" characteristic="" property="Autre propriété" value1="valeur 1" value2="valeur 2" value3="" value4="" />
 		<comparisonRow entityList="2. Nutriments" characteristic="kJoules" property="Valeur" value1="800" value2="850" value3="" value4="" />
