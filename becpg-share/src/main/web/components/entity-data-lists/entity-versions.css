@@ -94,3 +94,9 @@ div.entity-versions div.nav h6
    padding: 4px 0 10px;
 }
 
+
+.entity-versions .actions a.versions-graph
+{
+   background-image: url(images/fork-16.png);
+}
+

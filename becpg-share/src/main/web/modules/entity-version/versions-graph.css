@@ -1,0 +1,30 @@
+
+.versions-graph .datagrid span.document-version {
+	visibility: inherit;
+}
+
+.versions-graph .datagrid span.current {
+	font-weight: bold;
+}
+
+
+
+.versions-graph .datagrid {
+    padding: 0;
+    visibility: inherit;
+}
+
+
+.versions-graph div.graph-nodes {
+    position: absolute;
+}
+
+
+.versions-graph div.graph-content {
+    position: relative;
+     margin-left: 100px;
+}
+
+.versions-graph div.version-details {
+	margin-left:25px;
+}

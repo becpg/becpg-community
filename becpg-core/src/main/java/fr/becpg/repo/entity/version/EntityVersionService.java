@@ -37,9 +37,9 @@ public interface EntityVersionService {
 
 	public void cancelCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 	
-	public List<NodeRef> getCurrentVersionBranches(NodeRef entityNodeRef);
+	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef);
 	
 	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef);
-	
+
 	
 }
