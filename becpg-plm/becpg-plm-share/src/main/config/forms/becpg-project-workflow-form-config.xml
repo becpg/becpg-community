@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2010-2014 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<alfresco-config>
+	
+	<config evaluator="task-type" condition="npdwf:submitNewProductTask">
+      <forms>
+         <form id="workflow-details">
+            <field-visibility>
+               <show id="bpm:sendEMailNotifications" />
+               <show id="packageItems" />
+            </field-visibility>
+            <appearance>
+               <set id="" appearance="title" label-id="workflow.set.workflow.more_info" />
+               <set id="items" appearance="title" label-id="workflow.set.items" />
+               
+               <field id="packageItems" set="items" />
+            </appearance>
+         </form>
+         
+         <form>
+            <field-visibility>
+               <show id="message" />
+               <show id="taskOwner" />
+               <show id="bpm:workflowPriority" />
+               <show id="bpm:workflowDueDate" />
+               <show id="bpm:taskId" />
+               <show id="bpm:status" />
+               <show id="packageItems" />
+               <show id="bpm:sendEMailNotifications" />
+            </field-visibility>
+            <appearance>
+               <set id="" appearance="title" label-id="workflow.set.task.info" />
+               <set id="info" appearance="" template="/org/alfresco/components/form/3-column-set.ftl" />
+               <set id="progress" appearance="title" label-id="workflow.set.task.progress" />
+               <set id="items" appearance="title" label-id="workflow.set.items" />
+               <set id="other" appearance="title" label-id="workflow.set.other" />
+               
+               <field id="message">
+                  <control template="/org/alfresco/components/form/controls/info.ftl" />
+               </field>
+               <field id="taskOwner" set="info" />
+               <field id="bpm:taskId" set="info">
+                  <control template="/org/alfresco/components/form/controls/info.ftl" />
+               </field>
+               <field id="bpm:workflowPriority" label-id="workflow.field.priority" set="info" read-only="true">
+                  <control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+               </field>
+               <field id="bpm:workflowDueDate" set="info" label-id="workflow.field.due">
+                  <control template="/org/alfresco/components/form/controls/info.ftl" />
+               </field>
+               <field id="bpm:status" set="progress" />
+               <field id="bpm:sendEMailNotifications" set="other" />
+               <field id="packageItems" set="items" />
+            </appearance>
+         </form>
+      </forms>
+   </config>
+	<config condition="activiti$projectNewProduct" evaluator="string-compare"
+		replace="false">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="bpm:workflowDueDate" />
+					<show force="false" id="bpm:workflowPriority" />
+					<show force="false" id="bpm:assignees" />
+					<show force="true" id="pjt:workflowTask" />
+					<show force="false" id="packageItems" />
+					<show force="false" id="bpm:workflowDescription" />
+				</field-visibility>
+				<appearance>
+					<set appearance="title" id="main" label-id="workflow.set.general" />
+					<set appearance="title" id="assignee" label-id="workflow.set.assignee" />
+					<set appearance="title" id="items" label-id="workflow.set.items" />
+
+					<field id="bpm:workflowDueDate" label-id="workflow.field.due"
+						mandatory="false" read-only="false" set="main" />
+					<field id="bpm:workflowPriority" label-id="workflow.field.priority"
+						mandatory="false" read-only="false" set="main">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+
+					<field id="bpm:assignees" label-id="workflow.field.assign_to"
+						mandatory="false" read-only="false" set="assignee" />
+
+					<field id="pjt:workflowTask" label="Tâche" mandatory="false"
+						read-only="true" set="items">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="packageItems" mandatory="false" read-only="false"
+						set="items" />
+					<field id="bpm:workflowDescription" label-id="workflow.field.message"
+						mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="style">width: 95%</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config condition="npdwf:newProductTask" evaluator="task-type"
+		replace="false">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="message" />
+					<show force="false" id="bpm:priority" />
+					<show force="false" id="bpm:dueDate" />					
+					<show force="false" id="pjt:workflowTask" />
+					
+					<show force="false" id="npdwf:npdProductName" />
+					<show force="false" id="npdwf:needDefinitionProduct" />
+					<show force="false" id="npdwf:needDefinitionPackagingKit" />
+					<show force="false" id="npdwf:needDefinitionRecipeProduct" />					
+					<show force="false" id="packageItems" />
+					<show force="false" id="npdwf:npdAction" />
+				</field-visibility>
+				<appearance>
+					<field id="message" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+							
+					<set id="info" appearance="title" label-id="workflow.set.task.info"
+						template="/org/alfresco/components/form/2-column-set.ftl" />		
+					<field id="bpm:priority" mandatory="false" read-only="true"
+						set="info">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="bpm:dueDate" label-id="workflow.field.due"
+						mandatory="false" read-only="false" set="info">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+
+					<set id="project" />			
+					<field id="pjt:workflowTask" mandatory="false" read-only="true"
+						set="project" >
+						<control	template="/org/alfresco/components/form/controls/workflow/project-task.ftl" />
+					</field>
+									
+					<set appearance="title" id="product" label-id="becpg.forms.set.new-product.label" 
+					template="/org/alfresco/components/form/2-column-set.ftl" />									
+					<field id="npdwf:npdProductName" label-id="becpg.forms.set.product.name"
+						mandatory="false" read-only="false" set="product" />					
+					<field id="npdwf:needDefinitionProduct" label-id="becpg.forms.set.existing-product.label"
+						mandatory="false" read-only="false" set="product">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>					
+					<field id="npdwf:needDefinitionPackagingKit" label-id="becpg.forms.set.existing-packaging.label"
+						mandatory="false" read-only="false" set="product">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="npdwf:needDefinitionRecipeProduct" label-id="becpg.forms.set.existing-recipe.label"
+						mandatory="false" read-only="false" set="product">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+					<set appearance="title" id="items" label-id="workflow.set.items" />
+					<field id="packageItems" mandatory="false" read-only="false"
+						set="items" />
+					
+					<set appearance="title" id="response" label-id="workflow.set.response" />								
+					<field id="npdwf:npdAction" label-id="workflow.field.outcome" set="response" >
+							<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+						</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+</alfresco-config>

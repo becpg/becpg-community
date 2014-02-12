@@ -45,7 +45,6 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
-import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 
 /**
@@ -58,8 +57,6 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 
 	private static final String WORKFLOW_DESCRIPTION = "%s - %s";
-	private static final String DESCRIPTION__TASK_DL_SEPARATOR = " : ";
-	private static final String DESCRIPTION_DL_SEPARATOR = ", ";
 	private static final String DEFAULT_INITIATOR = "System";
 	
 	private static Log logger = LogFactory.getLog(ProjectWorkflowServiceImpl.class);
@@ -149,23 +146,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 	
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> nextDeliverables){
 		
-		// deliverable list
-		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName(), taskListDataItem.getTaskName());
-		boolean isFirst = true;
-
-		for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-
-			if (DeliverableState.InProgress.equals(nextDeliverable.getState())) {
-				if (isFirst) {
-					isFirst = false;
-					workflowDescription += DESCRIPTION__TASK_DL_SEPARATOR;
-				} else {
-					workflowDescription += DESCRIPTION_DL_SEPARATOR;
-				}
-				workflowDescription += nextDeliverable.getDescription();
-			}
-		}
-		
+		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName(), taskListDataItem.getTaskName());		
 		return workflowDescription;
 	}
 

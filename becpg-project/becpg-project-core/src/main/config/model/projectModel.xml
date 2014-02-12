@@ -258,7 +258,7 @@
 		</type>
 
 		<type name="pjt:taskLegend">
-			<parent>bcpg:charact</parent>
+			<parent>bcpg:entityListItem</parent>
 			<mandatory-aspects>
 				<aspect>bcpg:colorAspect</aspect>
 			</mandatory-aspects>

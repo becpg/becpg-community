@@ -1,4 +1,4 @@
-package fr.becpg.repo.workflow.activiti.project;
+package fr.becpg.repo.workflow.activiti.npd;
 
 import org.activiti.engine.delegate.DelegateTask;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
@@ -41,12 +41,20 @@ public class SubmitTask extends ScriptTaskListener {
 		nodeService = getServiceRegistry().getNodeService();		
 		projectService = (ProjectService)ApplicationContextHelper.getApplicationContext().getBean("projectService");
 		
-		ActivitiScriptNode taskNode = (ActivitiScriptNode) task.getVariable("pjt_workflowTask");
-		if (taskNode != null) {
-			logger.debug("taskNode exist " + taskNode.getNodeRef());
-			NodeRef taskNodeRef = taskNode.getNodeRef();
-			if(nodeService.exists(taskNodeRef)){	            	
-            	projectService.submitTask(taskNodeRef);
+		/**
+		 *  update task
+		 */
+		String action = (String) task.getVariable("npdwf_npdAction");
+		
+		// for compatibility with existing workflow (not the best) we need this for old instances, otherwise endDate is not filled 
+		if(action == null || action.equals("submitTask")){
+			ActivitiScriptNode taskNode = (ActivitiScriptNode) task.getVariable("pjt_workflowTask");
+			if (taskNode != null) {
+				logger.debug("taskNode exist " + taskNode.getNodeRef());
+				NodeRef taskNodeRef = taskNode.getNodeRef();
+				if(nodeService.exists(taskNodeRef)){	            	
+	            	projectService.submitTask(taskNodeRef);
+				}
 			}
 		}			
 	}

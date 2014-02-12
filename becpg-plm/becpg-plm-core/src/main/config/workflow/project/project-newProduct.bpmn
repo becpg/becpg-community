@@ -38,7 +38,7 @@ execution.setVariable('npdwf_needDefinitionPackagingKit', task.getVariable('npdw
 execution.setVariable('npdwf_npdAction', task.getVariable('npdwf_npdAction'));</activiti:string>
           </activiti:field>
         </activiti:taskListener>
-        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.project.SubmitTask"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.npd.SubmitTask"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <serviceTask id="servicetask1" name="Create Product Service Task" activiti:delegateExpression="${CreateProduct}"></serviceTask>
