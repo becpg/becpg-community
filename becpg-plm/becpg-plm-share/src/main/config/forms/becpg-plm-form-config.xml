@@ -80,7 +80,7 @@
 					<field id="bcpg:productState" set="product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">,ToValidate|state.product.tovalidate,Valid|state.product.valid,Refused|state.product.refused,Archived|state.product.archived</control-param>
+							 <control-param name="options">,ToValidate|status.entity.tovalidate,Valid|status.entity.valid,Refused|status.entity.refused,Archived|status.entity.archived</control-param>
 							 <control-param name="isSearch">true</control-param>
 						</control>
 					</field>
@@ -528,6 +528,7 @@
 			<form id="formulation">
             <field-visibility>
             	<show id="cm:name" />
+            	<show id="cm:description" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
@@ -814,6 +815,7 @@
 			<form id="formulation">
             <field-visibility>
             	<show id="cm:name" />
+            	<show id="cm:description" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
@@ -1071,6 +1073,7 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -1347,6 +1350,7 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
 				</field-visibility>
 			</form>
 			<form id="bulk-edit">
@@ -1683,6 +1687,7 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
 				</field-visibility>
 			</form>
 			 <form id="search">
@@ -1723,7 +1728,7 @@
 					<field id="bcpg:productState" set="product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">,ToValidate|state.product.tovalidate,Valid|state.product.valid,Refused|state.product.refused,Archived|state.product.archived</control-param>
+							 <control-param name="options">,ToValidate|status.entity.tovalidate,Valid|status.entity.valid,Refused|status.entity.refused,Archived|status.entity.archived</control-param>
 							 <control-param name="isSearch">true</control-param>
 						</control>
 					</field>		
@@ -1967,7 +1972,8 @@
           </form>
           <form id="formulation">
 				<field-visibility>
-					<show id="cm:name" />				
+					<show id="cm:name" />
+					<show id="cm:description" />				
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -2136,7 +2142,8 @@
 			</form>
 			<form id="formulation">
 				<field-visibility>
-					<show id="cm:name" />				
+					<show id="cm:name" />
+					<show id="cm:description" />				
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
@@ -2360,6 +2367,7 @@
 			<form id="formulation">
             <field-visibility>
           	   <show id="cm:name" />
+          	   <show id="cm:description" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
@@ -2612,6 +2620,7 @@
 		   <form id="formulation">
             <field-visibility>
           	   <show id="cm:name" />
+          	   <show id="cm:description" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />	
 					<show id="bcpg:netWeight" force="true" />				
@@ -2900,6 +2909,7 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
 				</field-visibility>
 			</form>
 		</forms>
