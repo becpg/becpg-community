@@ -141,7 +141,7 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 					}
 					
 					
-					jsonBranch.put("description", nodeService.getProperty(branchNodeRef, ContentModel.PROP_TITLE));
+					jsonBranch.put("description", nodeService.getProperty(branchNodeRef, ContentModel.PROP_DESCRIPTION));
 					jsonBranch.put("createdDate", displayFormat.format((Date)nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
 					jsonBranch.put("createdDateISO", ISO8601DateFormat.format((Date)nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED)));
 					jsonBranch.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(branchNodeRef), branchNodeRef));
