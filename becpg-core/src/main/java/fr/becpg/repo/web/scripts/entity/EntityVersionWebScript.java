@@ -14,6 +14,7 @@ import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,7 +89,12 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 		String mode = req.getParameter(PARAM_MODE);
 		SimpleDateFormat displayFormat = new SimpleDateFormat(DISPLAY_FORMAT);
 				
-		List<EntityVersion> versions = entityVersionService.getAllVersions(nodeRef);
+		List<EntityVersion> versions = null;
+		if("graph".equals(mode)) {
+			versions =  entityVersionService.getAllVersionAndBranches(nodeRef);
+		} else {
+			versions =  entityVersionService.getAllVersions(nodeRef);
+		}
 		
 		
 		try {
@@ -99,27 +105,40 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 				JSONObject jsonVersion = new JSONObject();
 				jsonVersion.put("nodeRef", nodeRef);
 				jsonVersion.put("name", nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-				jsonVersion.put("label", "1.0");
+				jsonVersion.put("label", RepoConsts.INITIAL_VERSION);
 				jsonVersion.put("description", "");
 				jsonVersion.put("createdDate", displayFormat.format((Date)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
 				jsonVersion.put("createdDateISO", ISO8601DateFormat.format((Date)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
+				jsonVersion.put("creator", getPerson((String)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR)));
 				jsonVersions.put(jsonVersion);
 				
-				jsonVersion.put("creator", getPerson((String)nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR)));
 			}
 			else{
 				for(EntityVersion version : versions){
 					
 					JSONObject jsonVersion = new JSONObject();
+					//Version info
 					jsonVersion.put("nodeRef", version.getEntityVersionNodeRef());
 					jsonVersion.put("name", nodeService.getProperty(version.getFrozenStateNodeRef(), ContentModel.PROP_NAME));
 					jsonVersion.put("label", version.getVersionLabel());
 					jsonVersion.put("description", version.getDescription());
-					jsonVersion.put("createdDate", displayFormat.format(version.getFrozenModifiedDate()));
-					jsonVersion.put("createdDateISO", ISO8601DateFormat.format(version.getFrozenModifiedDate()));
-					jsonVersions.put(jsonVersion);
 					
-					jsonVersion.put("creator", getPerson(version.getFrozenModifier()));					
+					Date createdDate = version.getFrozenModifiedDate();
+	
+					jsonVersion.put("createdDate", displayFormat.format(createdDate));
+					jsonVersion.put("createdDateISO", ISO8601DateFormat.format(createdDate));
+					jsonVersion.put("creator", getPerson(version.getFrozenModifier()));		
+					
+					
+					QName itemType = nodeService.getType(version.getFrozenStateNodeRef());
+					//Branch info
+					jsonVersion.put("entityNodeRef",  version.getEntityNodeRef());
+					jsonVersion.put("entityFromBranch", version.getEntityBranchFromNodeRef());
+					jsonVersion.put("metadata", attributeExtractorService.extractMetadata(itemType, version.getEntityNodeRef()));
+					jsonVersion.put("siteId", attributeExtractorService.extractSiteId( version.getEntityNodeRef()));
+					jsonVersion.put("itemType",itemType.toPrefixString(serviceRegistry.getNamespaceService()));
+					
+					jsonVersions.put(jsonVersion);	
 				}
 			}
 			

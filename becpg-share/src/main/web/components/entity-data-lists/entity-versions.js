@@ -160,23 +160,6 @@
                      elCell.innerHTML = this.getDocumentVersionMarkup(oRecord.getData());
                   },
 
-                  /**
-                   * Triggers the archiving and download of a single folders contents
-                   * 
-                   * @method onActionFolderDownload
-                   * @param record
-                   *            {object} Object literal representing the folder to be actioned
-                   */
-                  onActionEntityDownload : function DocumentVersions_onActionEntityDownload(nodeRef) {
-
-                     var downloadDialog = Alfresco.getArchiveAndDownloadInstance(), config = {
-                        nodesToArchive : [ {
-                           "nodeRef" : nodeRef
-                        } ],
-                        archiveName : encodeURIComponent(this.latestVersion.name)
-                     };
-                     downloadDialog.show(config);
-                  },
 
                   /**
                    * Builds and returns the markup for a version.
@@ -185,7 +168,7 @@
                    * @param doc
                    *            {Object} The details for the document
                    */
-                  getDocumentVersionMarkup : function DocumentVersions_getDocumentVersionMarkup(doc) {
+                  getDocumentVersionMarkup : function EntityVersions_getDocumentVersionMarkup(doc) {
                      var compareURL =  Alfresco.constants.PROXY_URI + 'becpg/entity/compare/'
                      + this.options.nodeRef.replace(":/", "") + "/compare.pdf?entities="+doc.nodeRef, html = '', current = ( this.options.nodeRef == doc.nodeRef);
 
@@ -195,6 +178,9 @@
                    if(!current) {
                      html += '   <span class="actions"><a href="' + compareURL + '" class="compare" title="' + this
                      .msg("label.compare") + '">&nbsp;</a></span>';
+                   } else {
+                      html += '  <span class="actions"><a href="#" name=".onVersionsGraphClick" rel="' + this.options.nodeRef + '" class="' + this.id + ' versions-graph" title="' + this
+                      .msg("label.versionsGraph") + '">&nbsp;</a></span>';
                    }
                      html += '</div>';
 
@@ -318,9 +304,6 @@
                            value : version.nodeRef,
                            text : title
                         });
-//                        if (version.nodeRef === this.options.nodeRef) {
-//                           menuTitle = title;
-//                        }
                      }
 
                      for (var i = 0; i < menuHTML.length; i++) {
@@ -454,7 +437,22 @@
                      // Set the title.
                      this.widgets.versionMenu.set("label", title);
 
-                  }
+                  },
+                  
+                  /**
+                   * Called when a "onViewHistoricPropertiesClick" link has been clicked for a version. Will display the
+                   * Properties dialogue for that version.
+                   * 
+                   * @method onViewHistoricPropertiesClick
+                   * @param version
+                   */
+                  onVersionsGraphClick : function EntityVersions_onVersionsGraphClick(nodeRef) {
+
+                     beCPG.module.getVersionsGraphInstance().show({
+                        nodeRef : nodeRef
+                     });
+
+                  },
 
                });
 })();
