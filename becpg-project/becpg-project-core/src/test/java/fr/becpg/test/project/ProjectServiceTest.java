@@ -616,7 +616,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(taskListDataItem.getResources(), taskListDataItemDB.getResources());
 				assertEquals(2, taskListDataItemDB.getResources().size());
 				checkWorkflowProperties(workflowInstanceId, taskListDataItemDB.getNodeRef(),
-						"Pjt 1 - task1 modified : Deliveray descr 1", taskListDataItemDB.getEnd(), taskListDataItemDB.getResources());				
+						"Pjt 1 - task1 modified", taskListDataItemDB.getEnd(), taskListDataItemDB.getResources());				
 
 				return null;
 			}
@@ -662,7 +662,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				String workflowInstanceId = projectData.getTaskList().get(0).getWorkflowInstance();
 				assertEquals(true, workflowService.getWorkflowById(workflowInstanceId).isActive());				
 				checkWorkflowProperties(workflowInstanceId, taskListDataItem.getNodeRef(),
-						"Pjt 1 - task1 : Deliveray descr 1", taskListDataItem.getEnd(), taskListDataItem.getResources());
+						"Pjt 1 - task1", taskListDataItem.getEnd(), taskListDataItem.getResources());
 				
 				// delete deliverable
 				logger.info("Delete DL");
