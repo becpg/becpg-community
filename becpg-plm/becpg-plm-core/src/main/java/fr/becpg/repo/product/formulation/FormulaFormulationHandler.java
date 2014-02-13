@@ -32,12 +32,15 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.expression.AccessException;
+import org.springframework.expression.BeanResolver;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.util.MethodInvoker;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
@@ -100,6 +103,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = new StandardEvaluationContext(createSecurityProxy(productData));
+		
+		registerCustomFunctions(context);
+		
+		
 
 		for (AbstractProductDataView view : productData.getViews()) {
 			computeFormula(productData, parser, context, view);
@@ -145,8 +152,34 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		return true;
 	}
+	
+	
+	public class SpelHelperFonctions {
+		public ProductData findOne(NodeRef nodeRef) {
+			return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
+		}
+	}
+	
 
-	private Object createSecurityProxy(ProductData productData) {
+	/**
+	 * @param context
+	 */
+	private void registerCustomFunctions(StandardEvaluationContext context) {
+		context.setBeanResolver(new BeanResolver() {
+			
+			SpelHelperFonctions spelHelperFonctions = new SpelHelperFonctions();
+			
+			@Override
+			public Object resolve(EvaluationContext context, String beanName) throws AccessException {
+				if(beanName.equals("beCPG")) {
+					return spelHelperFonctions;
+				}
+				return null;
+			}
+		});
+	}
+
+	private ProductData createSecurityProxy(ProductData productData) {
 		ProxyFactory factory = new ProxyFactory();
 		factory.setTarget(productData);
 		factory.addAdvice(securityMethodBeforeAdvice);
