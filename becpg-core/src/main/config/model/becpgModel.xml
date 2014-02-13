@@ -117,6 +117,14 @@
 			</mandatory-aspects>
 		</type>		
 		
+		<type name="bcpg:charact">
+			<parent>bcpg:entityListItem</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:legalNameAspect</aspect>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
 	</types>
 	
 	<aspects>
@@ -170,6 +178,23 @@
 					<type>d:datetime</type>
 				</property>
 			</properties>
+		</aspect>
+		
+		
+		<aspect name="bcpg:docLinkedEntitiesAspect">
+			<associations>
+				<association name="bcpg:docLinkedEntities">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 	
 		<aspect name="bcpg:legalNameAspect">
