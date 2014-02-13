@@ -159,7 +159,7 @@
          "{http://www.alfresco.org/model/transfer/1.0}transferTarget" : "server",
          "trx:transferTarget" : "server",
          "{http://www.bcpg.fr/model/security/1.0}aclGroup" : "aclGroup",
-         "sec:aclGroup" : "acl",
+         "sec:aclGroup" : "aclGroup",
          "{http://www.bcpg.fr/model/becpg/1.0}cost" : "cost",
          "bcpg:cost" : "cost",
          "{http://www.bcpg.fr/model/becpg/1.0}microbio" : "microbio",
