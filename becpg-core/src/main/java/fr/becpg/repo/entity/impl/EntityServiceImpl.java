@@ -301,12 +301,13 @@ public class EntityServiceImpl implements EntityService {
 				@Override
 				public NodeRef doWork() throws Exception {
 					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
 					return ret;
 				}
 			}, AuthenticationUtil.getSystemUserName());
 
 		} else {
-			logger.debug("Create new entity");
+			logger.debug("Create new entity with name " + entityName);
 			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
 		}
