@@ -362,20 +362,25 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					operator = StructCompareOperator.Removed;
 				}
 
-				StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c1.getDepthLevel(), operator, pivotProperty, nodeRef1, nodeRef2, properties1,
-						properties2);
-				strucComparisonList.add(structComparison);
+				// we display only changes
+				if(!StructCompareOperator.Equal.equals(operator)){
+					
+					StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c1.getDepthLevel(), operator, pivotProperty, nodeRef1, nodeRef2, properties1,
+							properties2);
+					strucComparisonList.add(structComparison);
 
-				CompositeComparableItem tempCompositeItem1 = null;
-				CompositeComparableItem tempCompositeItem2 = null;
-				if (c1 instanceof CompositeComparableItem) {
-					tempCompositeItem1 = (CompositeComparableItem) c1;
-				}
-				if (c2 instanceof CompositeComparableItem) {
-					tempCompositeItem2 = (CompositeComparableItem) c2;
-				}
+					CompositeComparableItem tempCompositeItem1 = null;
+					CompositeComparableItem tempCompositeItem2 = null;
+					if (c1 instanceof CompositeComparableItem) {
+						tempCompositeItem1 = (CompositeComparableItem) c1;
+					}
+					if (c2 instanceof CompositeComparableItem) {
+						tempCompositeItem2 = (CompositeComparableItem) c2;
+					}
 
-				structCompareCompositeDataLists(entityListType, pivotProperty, strucComparisonList, tempCompositeItem1, tempCompositeItem2);
+					structCompareCompositeDataLists(entityListType, pivotProperty, strucComparisonList, tempCompositeItem1, tempCompositeItem2);
+				}
+				
 			}
 		}
 
@@ -615,8 +620,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			return;
 		}
 
-		String strValue1 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue1, propertyFormats);
-		String strValue2 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue2, propertyFormats);
+		String strValue1 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue1, propertyFormats, true);
+		String strValue2 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue2, propertyFormats, true);
 		
 				
 		String key = String.format("%s-%s-%s", dataListType, characteristic, propertyDef.getName());
@@ -645,7 +650,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				||
 				// system properties
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY) || qName.equals(BeCPGModel.PROP_END_EFFECTIVITY)
-				|| qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED) || qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL)) {
+				|| qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED) || qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL)
+				// TODO plugin
+				|| qName.getLocalName().contains("dynamicCharactColumn")) {
 
 			isCompareable = false;
 		}

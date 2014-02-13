@@ -648,17 +648,11 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 							+ "\", \"" + product2Name + "\", \"" + c.getProperties1() + "\", \"" + c.getProperties2()
 							+ "\"));");
 				}
-
-				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						1, StructCompareOperator.Equal, "Local semi finished 1", "Local semi finished 1", "{}", "{}"));
-				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						2, StructCompareOperator.Equal, "Raw material 2", "Raw material 2", "{}", "{}"));
+				
 				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
 						2, StructCompareOperator.Modified, "Raw material 1", "Raw material 1",
 						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=1}",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));
-				assertTrue(checkStructCompareRow(structCompareResult, "{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						1, StructCompareOperator.Equal, "Local semi finished 2", "Local semi finished 2", "{}", "{}"));
+						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2}"));				
 				assertTrue(checkStructCompareRow(
 						structCompareResult,
 						"{http://www.bcpg.fr/model/becpg/1.0}compoList",
