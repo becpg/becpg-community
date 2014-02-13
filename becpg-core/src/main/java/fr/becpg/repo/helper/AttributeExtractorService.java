@@ -80,7 +80,7 @@ public interface AttributeExtractorService {
 
 	public String extractSiteId(NodeRef entityNodeRef);
 
-	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
+	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
 
 	public String extractAssociationForReport(AssociationRef assocRef);
 

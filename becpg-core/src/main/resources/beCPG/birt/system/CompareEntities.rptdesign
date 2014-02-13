@@ -431,42 +431,59 @@
                 <structure>
                     <property name="columnName">comparison</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">comparison</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">entityList</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">entityList</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">depthLevel</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">depthLevel</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">item1</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">item1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">item2</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">item2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">operator</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">operator</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">properties1</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">properties1</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">properties2</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">properties2</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["operator"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"Equal"</value>
+                    </simple-property-list>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1048,56 +1065,22 @@ else{
                                     </image>
                                 </cell>
                                 <cell id="1688">
-                                    <grid id="1796">
-                                        <property name="width">5in</property>
-                                        <column id="1797">
-                                            <property name="width">2.1339285714285716in</property>
-                                        </column>
-                                        <column id="1798">
-                                            <property name="width">2.8660714285714284in</property>
-                                        </column>
-                                        <row id="1799">
-                                            <cell id="1800">
-                                                <text id="3300">
-                                                    <property name="style">beCPG-table-row-header</property>
-                                                    <property name="contentType">html</property>
-                                                    <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["item1"]</VALUE-OF>]]></text-property>
-                                                </text>
-                                            </cell>
-                                            <cell id="1801">
-                                                <data id="1775">
-                                                    <property name="whiteSpace">normal</property>
-                                                    <property name="resultSetColumn">properties1</property>
-                                                </data>
-                                            </cell>
-                                        </row>
-                                    </grid>
+                                    <text id="3300">
+                                        <property name="style">beCPG-table-row-header</property>
+                                        <property name="fontWeight">normal</property>
+                                        <property name="fontStyle">normal</property>
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item1"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["properties1"]</VALUE-OF>]]></text-property>
+                                    </text>
                                 </cell>
                                 <cell id="1689">
-                                    <grid id="1790">
-                                        <property name="width">4.803571428571429in</property>
-                                        <column id="1791">
-                                            <property name="width">2.1160714285714284in</property>
-                                        </column>
-                                        <column id="1792">
-                                            <property name="width">2.6875in</property>
-                                        </column>
-                                        <row id="1793">
-                                            <cell id="1794">
-                                                <text id="3301">
-                                                    <property name="style">beCPG-table-row-header</property>
-                                                    <property name="contentType">html</property>
-                                                    <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["item2"]</VALUE-OF>]]></text-property>
-                                                </text>
-                                            </cell>
-                                            <cell id="1795">
-                                                <data id="1776">
-                                                    <property name="whiteSpace">normal</property>
-                                                    <property name="resultSetColumn">properties2</property>
-                                                </data>
-                                            </cell>
-                                        </row>
-                                    </grid>
+                                    <text id="3302">
+                                        <property name="style">beCPG-table-row-header</property>
+                                        <property name="fontWeight">normal</property>
+                                        <property name="fontStyle">normal</property>
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item2"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["properties2"]</VALUE-OF>]]></text-property>
+                                    </text>
                                 </cell>
                             </row>
                         </detail>

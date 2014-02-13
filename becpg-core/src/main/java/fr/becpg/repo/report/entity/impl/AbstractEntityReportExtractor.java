@@ -255,7 +255,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 					logger.error("This property doesn't exist. Name: " + property.getKey());
 					continue;
 				}
-				values.put(propertyDef, attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats));
+				values.put(propertyDef, attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false));
 			}
 		}
 

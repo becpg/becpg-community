@@ -78,7 +78,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	private static final String CHARACT_PATH_SEPARATOR = " / ";
 
-	private static final String PROPERTY_SEPARATOR = " / ";
+	private static final String PROPERTY_SEPARATOR = " ; ";
 
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
 

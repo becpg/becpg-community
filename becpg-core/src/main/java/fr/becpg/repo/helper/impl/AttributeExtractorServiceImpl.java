@@ -690,7 +690,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value,
-			PropertyFormats propertyFormats) {
+			PropertyFormats propertyFormats, boolean formatData) {
 		
 		if (value != null) {
 
@@ -702,9 +702,20 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				return getStringValue(propertyDef, value, propertyFormats);
 			}
 			else if (value instanceof Date) {
-				return ISO8601DateFormat.format((Date) value);
+				if(formatData){
+					return getStringValue(propertyDef, value, propertyFormats);
+				}
+				else{
+					return ISO8601DateFormat.format((Date) value);
+				}
+				
 			} else {
-				return value.toString();
+				if(formatData){
+					return getStringValue(propertyDef, value, propertyFormats);
+				}
+				else{
+					return value.toString();
+				}
 			}								
 		}
 		else{
