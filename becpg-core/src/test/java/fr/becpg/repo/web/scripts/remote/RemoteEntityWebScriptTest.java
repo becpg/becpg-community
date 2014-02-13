@@ -45,36 +45,36 @@ public class RemoteEntityWebScriptTest extends fr.becpg.test.BaseWebScriptTest {
 		// Call webscript on raw material
 		String url = "/becpg/remote/entity";
 
-//		Resource res = new ClassPathResource("beCPG/remote/entity.xml");
-//		Resource data = new ClassPathResource("beCPG/remote/data.xml");
-//
-//		Response response = sendRequest(new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"), 200, "admin");
-//		logger.info("Resp : " + response.getContentAsString());
-//
-//		 NodeRef nodeRef = parseNodeRef(response.getContentAsString());
-//		
-//		logger.info("Name : " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-//		logger.info("Path : " + nodeService.getPath(nodeRef).toPrefixString(serviceRegistry.getNamespaceService()));
-//		
-//		Assert.assertTrue(nodeService.exists(nodeRef));
-//
-//		NodeRef imageNodeRef = entityService.getImageFolder(nodeRef);
-//		
-//		Assert.assertNotNull(imageNodeRef);
-//		Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
-//		
-//		response = sendRequest(new PostRequest(url + "/data?nodeRef=" + nodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200, "admin");
-//		logger.info("Resp : " + response.getContentAsString());
-//		
-//		for(FileInfo file : fileFolderService.list(nodeRef)){
-//			logger.info(file.getName());
-//			for(FileInfo file2 : fileFolderService.list(file.getNodeRef())){
-//				logger.info("-- "+file2.getName());
-//			}
-//		}
-//		
-//		
-//		Assert.assertEquals(1, fileFolderService.list(imageNodeRef).size());
+		Resource res = new ClassPathResource("beCPG/remote/entity.xml");
+		Resource data = new ClassPathResource("beCPG/remote/data.xml");
+
+		Response response = sendRequest(new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"), 200, "admin");
+		logger.info("Resp : " + response.getContentAsString());
+
+		 NodeRef nodeRef = parseNodeRef(response.getContentAsString());
+		
+		logger.info("Name : " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+		logger.info("Path : " + nodeService.getPath(nodeRef).toPrefixString(serviceRegistry.getNamespaceService()));
+		
+		Assert.assertTrue(nodeService.exists(nodeRef));
+
+		NodeRef imageNodeRef = entityService.getImageFolder(nodeRef);
+		
+		Assert.assertNotNull(imageNodeRef);
+		Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
+		
+		response = sendRequest(new PostRequest(url + "/data?nodeRef=" + nodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200, "admin");
+		logger.info("Resp : " + response.getContentAsString());
+		
+		for(FileInfo file : fileFolderService.list(nodeRef)){
+			logger.info(file.getName());
+			for(FileInfo file2 : fileFolderService.list(file.getNodeRef())){
+				logger.info("-- "+file2.getName());
+			}
+		}
+		
+		
+		Assert.assertEquals(1, fileFolderService.list(imageNodeRef).size());
 
 	}
 
