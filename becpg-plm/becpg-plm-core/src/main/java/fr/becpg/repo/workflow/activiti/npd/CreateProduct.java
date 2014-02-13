@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sun.star.lang.NullPointerException;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityService;
@@ -104,8 +105,7 @@ public class CreateProduct extends BaseJavaDelegate {
 					NodeRef recipeNodeRef = null;
 					NodeRef packagingNodeRef = null;
 
-					String entityName = (String) task.getVariable(
-							"npdwf_npdProductName");
+					String entityName = (String) task.getVariable("npdwf_npdProductName");
 					
 					if(entityName == null || entityName.isEmpty()){
 						// use project name as default
@@ -139,6 +139,11 @@ public class CreateProduct extends BaseJavaDelegate {
 					
 					// change state: ToValidate
 					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, "ToValidate");
+					
+					// remove entityTpl (if we choose an entityTpl as source)
+					if(nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+						nodeService.removeAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
+					}
 					
 					String localName = QName.createValidLocalName(productName);
 					QName qName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, localName);
