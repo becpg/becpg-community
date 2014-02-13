@@ -133,6 +133,9 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				dynamicCharactListItems.add(new DynamicCharactListItem("Boolean  1", "costList[1].value > 1"));
 				// Assignment
 				dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1", "nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
+				
+				//Spel method
+				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne","@beCPG.findOne(nodeRef).qty"));
 
 				// DynamicColumn
 
@@ -253,7 +256,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		// dynamicCharact
 		assertNotNull("DynamicCharact is null", formulatedProduct.getCompoListView().getDynamicCharactList());
 		for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()) {
-			String trace = "Dyn charact :" + dynamicCharactListItem.getName() + " value " + dynamicCharactListItem.getValue();
+			String trace = "Dyn charact :" + dynamicCharactListItem.getTitle() + " value " + dynamicCharactListItem.getValue();
 			logger.info(trace);
 			assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
 		}

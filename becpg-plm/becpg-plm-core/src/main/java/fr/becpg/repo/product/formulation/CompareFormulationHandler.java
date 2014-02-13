@@ -27,14 +27,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.parsers.CMISParser.integerLiteral_return;
-import org.alfresco.rest.antlr.WhereClauseParser.matchespredicate_return;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.boolean_factor_return;
-import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -198,9 +194,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 
 			}, true);
-
 		}
-
 		return true;
 	}
 
@@ -253,8 +247,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 			if (!cache.contains(tmp)) {
 				// Same NodeRef Same Pos
 				if (Objects.equals(tmp.getProduct(), dataListItem.getProduct()) ) {
-
-					// We break as not better match
+					// We break as no better match
 					if(tmpPos == currentPos) {
 						ret = tmp;
 						break;
@@ -267,9 +260,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 				if(approxMatch(dataListItem.getProduct(), tmp.getProduct()) && Math.abs(tmpPos-currentPos)<posDiff) {
 					posDiff = Math.abs(tmpPos-currentPos);
 					ret = tmp;
-				}
-				
-				
+				}	
 			}
 			tmpPos++;
 		}
