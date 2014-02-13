@@ -531,7 +531,7 @@
                               /**
                                * Simple View
                                */
-                              desc += '<h3 class="filename">' + this.getProjectTitle(record, true, false) + '</h3>';
+                              desc += '<h3 class="filename simple-view">' + this.getProjectTitle(record, true, false) + '</h3>';
                               desc += '<div class="detail">';
 
                               desc += '<span class="project-date">[ ' + dateLine + ' ]</span>';

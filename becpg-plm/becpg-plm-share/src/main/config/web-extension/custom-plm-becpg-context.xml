@@ -41,7 +41,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 				<value>classpath:alfresco/forms/becpg-publication-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-claim-workflow-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-pack-form-config.xml</value>
-				<value>classpath:alfresco/forms/becpg-project-workflow-form-config.xml</value>				
+				<value>classpath:alfresco/forms/becpg-npd-workflow-form-config.xml</value>				
 				
 				<!-- Share custom config -->
 				<value>classpath:alfresco/web-extension/becpg-config-custom.xml</value>

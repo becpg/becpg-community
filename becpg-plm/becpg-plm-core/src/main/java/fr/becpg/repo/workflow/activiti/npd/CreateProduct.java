@@ -138,7 +138,7 @@ public class CreateProduct extends BaseJavaDelegate {
 							productName);
 					
 					// change state: ToValidate
-					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, "Simulation");
+					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, "ToValidate");
 					
 					String localName = QName.createValidLocalName(productName);
 					QName qName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, localName);

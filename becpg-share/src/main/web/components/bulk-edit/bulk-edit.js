@@ -649,7 +649,7 @@
 																	+ oRecord.getData("nodeRef")) + '">'
 															+ $html(data.displayValue) + '</a>';
 												} else if(datalistColumn.name == "bcpg:productState" && data.value!=null){
-													html += $links($html(scope.msg("state.product."+data.value.toLowerCase())));
+													html += $links($html(scope.msg("status.entity-"+data.value.toLowerCase())));
 												}
 
 												else {
