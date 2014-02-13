@@ -426,8 +426,9 @@ if (beCPG.module.EntityDataGridRenderers) {
             if (oColumn.hidden) {
                scope.widgets.dataTable.showColumn(oColumn);
                Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-            } else {
-               if(data.value.indexOf && data.value.indexOf("\"comp\":")>-1){
+            } 
+            
+            if(data.value.indexOf && data.value.indexOf("\"comp\":")>-1){
                   var json = JSON.parse(data.value);
                   if(json){
                      var ret = "", i=0, refValue = null , className, currValue = null ;
@@ -449,10 +450,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                      }
                      return ret;
                   }
-               }
-               
-               
-            }
+             }
             return data.displayValue;
          }
          return "";

@@ -1,4 +1,3 @@
-
 /**
  * Entity Version component.
  * 
@@ -9,13 +8,12 @@
    /**
     * YUI Library aliases
     */
-   var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, KeyListener = YAHOO.util.KeyListener;
-   
+   var Dom = YAHOO.util.Dom, KeyListener = YAHOO.util.KeyListener;
+
    /**
     * Alfresco Slingshot aliases
     */
-   var $html = Alfresco.util.encodeHTML, $userProfileLink = Alfresco.util.userProfileLink, $userAvatar = Alfresco.Share.userAvatar;
-
+   var $html = Alfresco.util.encodeHTML, $userAvatar = Alfresco.Share.userAvatar;
 
    beCPG.module.VersionsGraph = function(containerId) {
       this.name = "beCPG.module.VersionsGraph";
@@ -57,12 +55,12 @@
       },
 
       graphData : [],
-      
+
       colors : [ [ 1.0, 0.0, 0.0 ], [ 1.0, 1.0, 0.0 ], [ 0.0, 1.0, 0.0 ], [ 0.0, 1.0, 1.0 ], [ 0.0, 0.0, 1.0 ],
             [ 1.0, 0.0, 1.0 ], [ 1.0, 1.0, 0.0 ], [ 0.0, 0.0, 0.0 ] ],
 
       line_width : 2.0,
-      dot_radius : 3.5,
+      dot_radius : 5,
       widgets : {},
 
       /**
@@ -176,7 +174,7 @@
       update : function VersionsGraph_update() {
 
          var instance = this;
-         
+
          this.widgets.alfrescoDataTable = new Alfresco.util.DataTable(
                {
                   dataSource : {
@@ -184,7 +182,7 @@
                      doBeforeParseData : function(oRequest, oFullResponse) {
 
                         instance.graphData = oFullResponse;
-                        
+
                         return ({
                            "data" : oFullResponse
                         });
@@ -192,21 +190,20 @@
                   },
                   dataTable : {
                      container : this.id + "-graphContent",
-                     columnDefinitions : [  {
+                     columnDefinitions : [ {
                         key : "version",
                         sortable : false,
                         formatter : this.renderCellVersion
-                     },{
+                     }, {
                         key : "date",
                         sortable : false,
                         formatter : this.renderCellDate
-                     } 
-                     ,  {
+                     }, {
                         key : "author",
                         sortable : false,
                         formatter : this.renderCellAuthor
                      }
-                     
+
                      ],
                      config : {
                         MSG_EMPTY : Alfresco.util.message("message.noVersions", this.name)
@@ -214,8 +211,6 @@
                   }
                });
 
-       
-         
          this.widgets.alfrescoDataTable.getDataTable().subscribe("postRenderEvent", function() {
 
             instance.widgets.canvas = Dom.get(instance.id + "-graphCanvas");
@@ -226,13 +221,12 @@
             instance.ctx = instance.widgets.canvas.getContext('2d');
             instance.ctx.strokeStyle = 'rgb(0, 0, 0)';
             instance.ctx.fillStyle = 'rgb(0, 0, 0)';
-            
-            instance.renderGraph( 100);
+
+            instance.renderGraph(100);
 
          });
 
       },
-      
 
       /**
        * Version renderer
@@ -240,44 +234,44 @@
        * @method renderCellVersion
        */
       renderCellVersion : function VersionsGraph_renderCellVersions(elCell, oRecord, oColumn, oData) {
-         var html = "", doc = oRecord.getData(),current = ( beCPG.module.getVersionsGraphInstance().options.nodeRef == doc.entityNodeRef);
+         var html = "", doc = oRecord.getData(), current = (beCPG.module.getVersionsGraphInstance().options.nodeRef == doc.entityNodeRef);
 
          html += '<div id="graph-version-row-' + this.getRecordIndex(oRecord) + '" class="entity-branches">';
          html += '   <span class="document-version">' + $html(doc.label) + '</span>';
-         html += '   <span class="'+doc.metadata+(current ? " current":"")+'" ><a href="' + beCPG.util.entityCharactURL(doc.siteId,
-               doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a></span>';
-         html +='<div class="version-details">';
+         html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" ><a href="' + beCPG.util
+               .entityCharactURL(doc.siteId, doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a></span>';
+         html += '<div class="version-details">';
          html += ((doc.description || "").length > 0) ? $html(doc.description, true)
-               : '<span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module.getVersionsGraphInstance().name) + ')</span>';
-         html +='</div>';
+               : '<span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module
+                     .getVersionsGraphInstance().name) + ')</span>';
          html += '</div>';
-         
+         html += '</div>';
+
          elCell.innerHTML = html;
       },
-      
+
       renderCellAuthor : function VersionsGraph_renderCellDetails(elCell, oRecord, oColumn, oData) {
          var html = "", doc = oRecord.getData();
-        
-         var uri  = Alfresco.util.uriTemplate("userprofilepage",
-               {
-                  userid: doc.creator.userName
-               });
-         
-         html += '<a href="'+uri+'" title="'+ $html(doc.creator.firstName + ' ' + doc.creator.lastName)+'">'+$userAvatar(doc.creator.userName, 32)+'</a>';
-         
+
+         var uri = Alfresco.util.uriTemplate("userprofilepage", {
+            userid : doc.creator.userName
+         });
+
+         html += '<a href="' + uri + '" title="' + $html(doc.creator.firstName + ' ' + doc.creator.lastName) + '">' + $userAvatar(
+               doc.creator.userName, 32) + '</a>';
+
          elCell.innerHTML = html;
       },
-      
+
       renderCellDate : function VersionsGraph_renderCellDate(elCell, oRecord, oColumn, oData) {
          var doc = oRecord.getData();
-       
-         elCell.innerHTML = Alfresco.util.relativeTime(Alfresco.util.fromISO8601(doc.createdDateISO)) ;
+
+         elCell.innerHTML = Alfresco.util.relativeTime(Alfresco.util.fromISO8601(doc.createdDateISO));
       },
-      
 
       setColor : function VersionsGraph_setColor(color, bg, fg) {
-        var vColor = color%this.colors.length;
-         
+         var vColor = color % this.colors.length;
+
          var red = (this.colors[vColor][0] * fg) || bg;
          var green = (this.colors[vColor][1] * fg) || bg;
          var blue = (this.colors[vColor][2] * fg) || bg;
@@ -289,84 +283,101 @@
          this.ctx.fillStyle = s;
       },
 
-      renderGraph : function VersionsGraph_renderGraph( canvasWidth) {
-        
-         var nbCols =0 , columns = {},shouldBranch = false;
-         for(var i in this.graphData){
-            var test = columns[this.graphData[i].entityNodeRef];
-            if(!test && test!=0){
-               columns[this.graphData[i].entityNodeRef] = nbCols++;
-            }
+      renderGraph : function VersionsGraph_renderGraph(canvasWidth) {
+
+
+         this.graphData.reverse();
+         
+         var nbCols = 0, columnsPos = {}, shouldBranch = false, columns = {};
+         for ( var i in this.graphData) {
+            var entityNodeRef = this.graphData[i].entityNodeRef, entityFromBranch = this.graphData[i].entityFromBranch;
             
+            var test = columnsPos[entityNodeRef];
+            if (!test && test != 0) {
+               //reorder cols
+               if(entityFromBranch){
+                  for(var j in columnsPos){
+                     if(columnsPos[j] > columnsPos[entityFromBranch]){
+                        columnsPos[j] = columnsPos[j] + 1; 
+                     }
+                  }
+                  columnsPos[this.graphData[i].entityNodeRef] = columnsPos[entityFromBranch]+1;
+               } else {
+                  columnsPos[this.graphData[i].entityNodeRef] = nbCols;
+               }
+               nbCols++;
+            }
+
          }
-       
+
          var edge_pad = this.dot_radius + 2;
          var box_size = Math.min(18, Math.floor((canvasWidth - edge_pad * 2) / (nbCols)));
          var base_x = canvasWidth - edge_pad - 10;
+
+         var prec = {}, extra = 15;
+         nbCols = 0;
          
-         
-         columns = {},nbCols = 0;
-   
-         
-         var idx = this.graphData.length-1;
-         
-         this.graphData.reverse();
-         
-         for(var i in this.graphData){
-            
-            var nextY = Dom.getY("graph-version-row-" + (idx - 1)) - Dom.getY(this.id+"-graphNodes") + 10;
-            var rowY =  Dom.getY("graph-version-row-" + (idx ))- Dom.getY(this.id+"-graphNodes") + 10;
-            var prevY =  Dom.getY("graph-version-row-" + (idx + 1))- Dom.getY(this.id+"-graphNodes") + 10;
-            var entityNodeRef = this.graphData[i].entityNodeRef,entityFromBranch = this.graphData[i].entityFromBranch;
-           
+         var idx = this.graphData.length - 1;
+
+
+         var yOffset = Dom.getY(this.id + "-graphNodes") - extra;
+
+         for ( var i in this.graphData) {
+
+            var nextY = Dom.getY("graph-version-row-" + (idx - 1)) - yOffset;
+            var rowY = Dom.getY("graph-version-row-" + (idx)) - yOffset;
+
+            var entityNodeRef = this.graphData[i].entityNodeRef, entityFromBranch = this.graphData[i].entityFromBranch;
+
             var test = columns[entityNodeRef];
-            if(!test && test!=0){
+            if (!test && test != 0) {
                columns[entityNodeRef] = nbCols++;
                shouldBranch = true;
             }
-            
-            
-            for(var j in columns ){
-               
-               var end = columns[j], start = (shouldBranch && j == entityNodeRef && entityFromBranch!=null)? columns[entityFromBranch]: end;
+
+            for ( var j in columns) {
+               var end = columnsPos[j], precNodeRef = (shouldBranch && j == entityNodeRef && entityFromBranch != null) ? entityFromBranch
+                     : j, start = columnsPos[precNodeRef];
 
                this.setColor(end, 0.0, 0.65);
-               
+
                x = base_x - box_size * start;
 
                this.ctx.lineWidth = this.line_width;
                this.ctx.beginPath();
-               
-                if (start != end) {
+
+               if (start != end) {
+                  var prevY = Dom.getY("graph-version-row-" + (prec[precNodeRef])) - yOffset - this.dot_radius;
                   this.ctx.moveTo(x, prevY);
                   var x2 = base_x - box_size * end;
                   var ymid = (rowY + prevY) / 2;
-                  this.ctx.bezierCurveTo(x, ymid , x2, ymid, x2, rowY);
+                  this.ctx.bezierCurveTo(x, ymid, x2, ymid, x2, rowY);
                   this.ctx.moveTo(x2, rowY);
-                  this.ctx.lineTo(x2, nextY , 3);
+                  this.ctx.lineTo(x2, nextY, 3);
                } else {
                   this.ctx.moveTo(x, rowY);
-                  this.ctx.lineTo(x, nextY , 3);
+                  this.ctx.lineTo(x, nextY, 3);
                }
-                
+
                this.ctx.stroke();
-               
+
             }
-            
+
             shouldBranch = false;
-            
+
             radius = this.dot_radius;
 
-            x = base_x - box_size * columns[entityNodeRef];
+            x = base_x - box_size * columnsPos[entityNodeRef];
+
+            prec[entityNodeRef] = idx;
 
             this.ctx.beginPath();
-            this.setColor(columns[entityNodeRef], 0.25, 0.75);
+            this.setColor(columnsPos[entityNodeRef], 0.25, 0.75);
             this.ctx.arc(x, rowY, radius, 0, Math.PI * 2, true);
             this.ctx.fill();
             idx--;
          }
-         
-         
+
       },
       /**
        * Prepares the gui and shows the panel.

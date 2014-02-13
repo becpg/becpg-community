@@ -19,15 +19,22 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.search.impl.parsers.CMISParser.integerLiteral_return;
+import org.alfresco.rest.antlr.WhereClauseParser.matchespredicate_return;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.boolean_factor_return;
+import org.apache.chemistry.opencmis.server.support.query.CmisQlExtParser_CmisBaseGrammar.null_predicate_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -74,7 +81,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	private NamespaceService namespaceService;
 
 	private NodeService nodeService;
-	
+
 	private AttributeExtractorService attributeExtractorService;
 
 	public void setNodeService(NodeService nodeService) {
@@ -96,8 +103,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
-	
+
 	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
 		this.attributeExtractorService = attributeExtractorService;
 	}
@@ -137,9 +143,11 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 										// DynamicColumns
 										if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
 											QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
+											int pos = 0;
+											Set<CompositionDataItem> cache = new HashSet<>();
 											for (CompositionDataItem dataListItem : view.getMainDataList()) {
 												CompositionDataItem toCompareWithCompositionDataItem = getMatchingCompositionDataItem(dataListItem, columnName,
-														getMatchingView(toCompareWith, view).getMainDataList());
+														getMatchingView(toCompareWith, view).getMainDataList(), cache, pos);
 												if (toCompareWithCompositionDataItem != null) {
 													JSONArray values = dynamicColumnToTreat.get(new Pair<>(dataListItem, columnName));
 													if (values == null) {
@@ -149,6 +157,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 													values.put(getJSONValue(toCompareWith, toCompareWithCompositionDataItem.getExtraProperties().get(columnName)));
 													dynamicColumnToTreat.put(new Pair<>(dataListItem, columnName), values);
 												}
+												pos++;
 											}
 											// DynamicCharacts
 										} else {
@@ -204,14 +213,13 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		jsonObject.put(CompareHelper.JSON_COMP_VALUE, value);
 		jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
 		jsonObject.put("displayValue", formatValue(value));
-		String siteId =attributeExtractorService. extractSiteId(toCompareWith.getNodeRef());
+		String siteId = attributeExtractorService.extractSiteId(toCompareWith.getNodeRef());
 		if (siteId != null) {
 			jsonObject.put("siteId", siteId);
 		}
 		return jsonObject;
 	}
 
-	
 	private Object formatValue(Object v) {
 		if (v != null && (v instanceof Double || v instanceof Float)) {
 
@@ -233,16 +241,58 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		throw new IllegalStateException("No Matching view");
 	}
 
-	private CompositionDataItem getMatchingCompositionDataItem(CompositionDataItem dataListItem, QName columnName, List<? extends CompositionDataItem> compositionDataItems) {
-		// TODO should be better matching base on sort and approching name or
+	private CompositionDataItem getMatchingCompositionDataItem(CompositionDataItem dataListItem, QName columnName, List<? extends CompositionDataItem> compositionDataItems,
+			Set<CompositionDataItem> cache, int currentPos) {
 		// branches
+
+		CompositionDataItem ret = null;
+		int tmpPos = 0;
+		int posDiff = 1000;
 		for (CompositionDataItem tmp : compositionDataItems) {
-			if (Objects.equals(tmp.getProduct(), dataListItem.getProduct())
-					&& !Objects.equals(tmp.getExtraProperties().get(columnName), dataListItem.getExtraProperties().get(columnName))) {
-				return tmp;
+			//Skip if already match
+			if (!cache.contains(tmp)) {
+				// Same NodeRef Same Pos
+				if (Objects.equals(tmp.getProduct(), dataListItem.getProduct()) ) {
+
+					// We break as not better match
+					if(tmpPos == currentPos) {
+						ret = tmp;
+						break;
+					} else if (Math.abs(tmpPos-currentPos)<posDiff){
+						posDiff = Math.abs(tmpPos-currentPos);
+						ret = tmp;
+					}
+				}
+				
+				if(approxMatch(dataListItem.getProduct(), tmp.getProduct()) && Math.abs(tmpPos-currentPos)<posDiff) {
+					posDiff = Math.abs(tmpPos-currentPos);
+					ret = tmp;
+				}
+				
+				
+			}
+			tmpPos++;
+		}
+
+		if (ret != null) {
+			cache.add(ret);
+			if(Objects.equals(ret.getExtraProperties().get(columnName), dataListItem.getExtraProperties().get(columnName))) {
+				//Match but same value
+				 ret = null;
 			}
 		}
-		return null;
+
+		return ret;
+	}
+
+	private boolean approxMatch(NodeRef refProductNodeRef, NodeRef toCompareProductNoRef) {
+		//TODO test fuzzy match
+		NodeRef copiedFromRef = associationService.getTargetAssoc(refProductNodeRef, ContentModel.ASSOC_ORIGINAL);
+		NodeRef copiedFromComp = associationService.getTargetAssoc(toCompareProductNoRef, ContentModel.ASSOC_ORIGINAL);
+		
+		return (copiedFromRef!=null && copiedFromRef.equals(toCompareProductNoRef)) ||
+				(copiedFromComp!=null && copiedFromComp.equals(refProductNodeRef)) ||
+				nodeService.getProperty(refProductNodeRef, ContentModel.PROP_NAME).equals(nodeService.getProperty(toCompareProductNoRef, ContentModel.PROP_NAME));
 	}
 
 	private DynamicCharactListItem getMatchingCharact(DynamicCharactListItem dynamicCharactListItem, List<DynamicCharactListItem> dynamicCharactList) {
