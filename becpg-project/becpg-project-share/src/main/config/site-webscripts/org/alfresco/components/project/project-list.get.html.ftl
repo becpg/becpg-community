@@ -1,5 +1,5 @@
 <@markup id="css" >
-   <#include "../entity-charact-views/include/entity-datagrid.css.ftl"/>
+   <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
 
 	<@link href="${url.context}/res/components/project/jsgantt.css" group="project-list" />
 	<@link href="${url.context}/res/components/project/project-commons.css" group="project-list" />

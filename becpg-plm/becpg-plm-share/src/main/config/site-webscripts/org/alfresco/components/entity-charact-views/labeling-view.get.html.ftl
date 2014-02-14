@@ -1,11 +1,11 @@
 <@markup id="css" >
-	<#include "./include/entity-datagrid.css.ftl"/>
+	<#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
 	
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-charact-views/labeling-view.css" group="formulation-view" />
 </@>
 
 <@markup id="js">
-   <#include "./include/entity-datagrid.js.ftl"/>
+   <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="formulation-view"/>
 </@>

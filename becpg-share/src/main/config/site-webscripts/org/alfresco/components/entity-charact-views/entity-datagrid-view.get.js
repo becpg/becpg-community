@@ -16,10 +16,10 @@ function main()
        entityNodeRef: page.url.args.nodeRef!=null ?page.url.args.nodeRef : "",
        list: page.url.args.list!=null ?page.url.args.list : "",
        sortable : true,
-       sortUrl : page.url.context+"/proxy/alfresco/" + "becpg/entity/datalists/sort/node",
+       sortUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/" +  (args.dataUrl!=null ? args.dataUrl :"becpg/entity/datalists/data/node"),
        itemUrl : page.url.context+"/proxy/alfresco/" +  (args.itemUrl!=null ? args.itemUrl :"becpg/entity/datalists/item/node/"),
-       saveFieldUrl : page.url.context+"/proxy/alfresco/" + "becpg/bulkedit/save"
+       saveFieldUrl : page.url.context+"/proxy/alfresco/becpg/bulkedit/save"
       }
    };
     
