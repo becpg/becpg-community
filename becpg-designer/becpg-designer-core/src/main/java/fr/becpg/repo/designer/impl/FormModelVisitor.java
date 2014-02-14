@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -76,7 +76,7 @@ public class FormModelVisitor {
 	 * @throws FactoryConfigurationError
 	 */
 	public List<FormControl> visitControls(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-		List<FormControl> ret = new ArrayList<FormControl>();
+		List<FormControl> ret = new LinkedList<FormControl>();
 
 		Document doc = DOMUtils.parse(is);
 

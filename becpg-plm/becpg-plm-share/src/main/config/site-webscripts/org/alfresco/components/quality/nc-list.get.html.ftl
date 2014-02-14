@@ -1,12 +1,12 @@
 
 <@markup id="css" >
-   <#include "../entity-charact-views/include/entity-datagrid.css.ftl"/>
+   <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
 	<@link href="${url.context}/res/components/quality/nc-list.css" group="nc-list" />
 	<@link href="${url.context}/res/components/comments/comments-list.css" group="comments"/>
 </@>
 
 <@markup id="js">
-   <#include "../entity-charact-views/include/entity-datagrid.js.ftl"/>
+   <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
    
 	<@script type="text/javascript" src="${url.context}/res/components/quality/nc-list.js" group="nc-list"></@script>
 	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>

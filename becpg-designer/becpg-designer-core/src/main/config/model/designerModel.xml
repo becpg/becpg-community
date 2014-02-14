@@ -26,6 +26,7 @@
 		<import uri="http://www.alfresco.org/model/dictionary/1.0"
 			prefix="d" />
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 		<import uri="http://www.bcpg.fr/model/m2/1.0" prefix="m2" />
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 	</imports>
@@ -133,6 +134,7 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>dsg:identifierAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="dsg:form">
@@ -153,6 +155,7 @@
 				<aspect>dsg:identifierAspect</aspect>
 				<aspect>dsg:formFieldsAspect</aspect>
 				<aspect>dsg:formSetsAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="dsg:formSet">
@@ -173,6 +176,7 @@
 				<aspect>dsg:templatePathAspect</aspect>
 				<aspect>dsg:formFieldsAspect</aspect>
 				<aspect>dsg:formSetsAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="dsg:formField">
@@ -243,6 +247,7 @@
 			<mandatory-aspects>
 				<aspect>dsg:identifierAspect</aspect>
 				<aspect>dsg:labelAspect</aspect>
+				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="dsg:formControl">

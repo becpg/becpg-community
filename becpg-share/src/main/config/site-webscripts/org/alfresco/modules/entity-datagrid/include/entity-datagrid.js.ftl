@@ -1,4 +1,4 @@
- <#include "../../form/form.js.ftl"/>
+ <#include "../../../components/form/form.js.ftl"/>
 
 <@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="entity-datagrid"></@script>
 <@script src="${url.context}/res/modules/custom-entity-datagrid/columnRenderers.js" group="entity-datagrid"></@script>

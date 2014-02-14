@@ -112,6 +112,8 @@
 				               case "m2:propertyOverrides":
 					               dropGroup = "type";
 					               break;
+				               case "m2:associations":
+                               case "m2:childAssociations":    
 				               case "m2:association":
 				               case "m2:childAssociation":
 					               dropGroup = "association";

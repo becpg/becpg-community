@@ -67,9 +67,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	private NamespaceService namespaceService;
 
 	protected DataListSortRegistry dataListSortRegistry;
-	
+
 	protected EntityDictionaryService entityDictionaryService;
-	
+
 	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	public void setFileFolderService(FileFolderService fileFolderService) {
@@ -91,8 +91,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
-	
-	
 
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
@@ -133,23 +131,24 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		List<NodeRef> results = new ArrayList<NodeRef>();
 
-		if (dataListFilter.isAllFilter()) {
+		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(BeCPGModel.TYPE_ENTITYLIST_ITEM, dataListFilter.getDataType())) {
 
-			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
+			Set<QName> ignoreTypeQNames = new HashSet<QName>();
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("DataType to filter :" + dataListFilter.getDataType());
 			}
 
-			Set<QName> ignoreTypeQNames = new HashSet<QName>(qnames.size());
-			for (QName qname : qnames) {
-				if (!qname.equals(dataListFilter.getDataType())) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Add to ignore :" + qname);
+				Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+				for (QName qname : qnames) {
+					if (!qname.equals(dataListFilter.getDataType())) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Add to ignore :" + qname);
+						}
+						ignoreTypeQNames.add(qname);
 					}
-					ignoreTypeQNames.add(qname);
 				}
-			}
 
 			int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
 			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
@@ -171,9 +170,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		} else {
 
 			String queryString = dataListFilter.getSearchQuery();
-			
+
 			// Look for Version
-			if(dataListFilter.isVersionFilter()) {
+			if (dataListFilter.isVersionFilter()) {
 				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(new NodeRef(dataListFilter.getFilterData()));
 				if (listsContainerNodeRef != null) {
 
@@ -183,10 +182,9 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					}
 				}
 			}
-			
-			
-			results = advSearchService.queryAdvSearch(queryString, SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(),
-					dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), pagination.getMaxResults());
+
+			results = advSearchService.queryAdvSearch(queryString, SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(), dataListFilter.getCriteriaMap(),
+					dataListFilter.getSortMap(), pagination.getMaxResults());
 
 			if (dataListFilter.getSortId() != null) {
 				DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
@@ -203,9 +201,11 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	@Override
 	public Date computeLastModified(DataListFilter dataListFilter) {
-//		if (dataListFilter.getParentNodeRef() != null) {
-//			return (Date) nodeService.getProperty(dataListFilter.getParentNodeRef(), ContentModel.PROP_MODIFIED);
-//		}
+		// if (dataListFilter.getParentNodeRef() != null) {
+		// return (Date)
+		// nodeService.getProperty(dataListFilter.getParentNodeRef(),
+		// ContentModel.PROP_MODIFIED);
+		// }
 		return null;
 	}
 
@@ -224,8 +224,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					if (listNodeRef != null) {
 						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
-						
-						
 						for (NodeRef itemNodeRef : results) {
 							addExtracted(itemNodeRef, field, cache, mode, ret);
 						}
