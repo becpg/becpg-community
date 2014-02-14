@@ -8,7 +8,8 @@
    <#include "./include/entity-datagrid.js.ftl"/>
    
    <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
-	<@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/formulation-view.js" group="formulation-view"></@script>
+   <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="formulation-view"/>
+   <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/formulation-view.js" group="formulation-view"/>
 </@>
 
 <@markup id="widgets">

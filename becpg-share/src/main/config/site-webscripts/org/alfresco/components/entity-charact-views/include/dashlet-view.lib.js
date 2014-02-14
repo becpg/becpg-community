@@ -43,16 +43,22 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType){
 
       var dashletResizer = {
          id : "DashletResizer",
-         name : "Alfresco.widget.DashletResizer",
+         name : "beCPG.widget.DashletResizer",
          initArgs : ["\"" + dashletId + "\"", "\"" + dashletName + "\""],
          useMessages: false
       };
+      
+      
+      
+      var prefs = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet."+dashletName);
 
-//    TODO doesn't work because surf component for this page are only on memory  
-//    var component =  sitedata.getComponent(dashletName);
-//    if( component!=null ){
-//       model.dashletHeight = { dashletId : component.properties.height};
-//    } 
+      if(prefs){
+         if(!model.dashletPrefs){
+            model.dashletPrefs = {};
+         }
+         model.dashletPrefs[dashletId] = prefs;
+      }
+      
       
       var dashletTitleBarActions = {
          id : "DashletTitleBarActions",
