@@ -44,8 +44,7 @@
 			      </div>
 			      <div class="clear"></div>
 			</div>
-			<div  class="body scrollableList" <#if dashletHeight?? && dashletHeight[dashletId]??>style="height: ${dashletHeight[dashletId]?string}px;"</#if> >
-		  	
+			<div  class="body scrollableList" <#if dashletPrefs?? && dashletPrefs[dashletId]?? && dashletPrefs[dashletId].height??>style="height: ${dashletPrefs[dashletId].height?string}px;"</#if> >
 			   <div id="${dashletId}-grid" class="grid"></div>
 			
 			   <div id="${dashletId}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>

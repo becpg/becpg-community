@@ -12,7 +12,7 @@ echo "**********************************************************"
 echo "Build AMP"
 echo "**********************************************************"
 
-mvn -T 2C clean package  -Dmaven.test.skip=true $MVN_PROFILE
+mvn  clean package  -DskipTests=true $MVN_PROFILE
 
 
 echo "**********************************************************"
