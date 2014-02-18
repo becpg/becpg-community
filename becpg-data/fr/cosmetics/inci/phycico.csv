@@ -1,5 +1,0 @@
-PATH;/System/Characts/bcpg:entityLists/PhysicoChems;
-TYPE;bcpg:physicoChem;
-COLUMNS;cm:name;bcpg:physicoChemUnit
-VALUES;Indice de saponification;-
-VALUES;Densité;-

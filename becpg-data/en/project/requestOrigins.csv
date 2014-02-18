@@ -1,9 +1,0 @@
-PATH;/System/ProjectLists/bcpg:entityLists/RequestOrigins
-TYPE;bcpg:listValue
-COLUMNS;cm:name
-VALUES;Direction
-VALUES;Marketing
-VALUES;Sales
-VALUES;Clients
-VALUES;Production
-VALUES;R&D

@@ -1,7 +1,0 @@
-PATH;/Temp/Products;;;;;;;;;;;;
-TYPE;bcpg:rawMaterial;;;;;;;;;;;;
-MAPPING;Products;;;;;;;;;;;;
-COLUMNS;cm:name;bcpg:legalName;cm:description;bcpg:productComments;bcpg:productHierarchy1;bcpg:productHierarchy2;bcpg:productState;bcpg:productUnit;bcpg:productDensity;bcpg:erpCode;bcpg:eanCode;bcpg:suppliers;bcpg:productMicrobioCriteria
-VALUES;MP1;MP1;;;Oeufs et dérivés;Oeufs et dérivés;ToValidate;kg;1;ERP1;;F18,F19;
-VALUES;MP2;MP2;;;Oeufs et dérivés;Oeufs et dérivés;ToValidate;kg;1;ERP2;;F18;
-VALUES;MP3;MP3;;;Oeufs et dérivés;Oeufs et dérivés;ToValidate;kg;1;ERP3;;F19;

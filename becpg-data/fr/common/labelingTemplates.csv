@@ -1,5 +1,0 @@
-PATH;/System/Characts/bcpg:entityLists/LabelingTemplates;
-TYPE;pack:labelingTemplate;
-COLUMNS;cm:name;cm:description
-VALUES;Marquage LOT;"N° de lot : AAJJJ (AA : derniers chiffres de l’année ; JJJ : quantième du jour de fabrication)"
-VALUES;Marquage DLUO;"A consommer de préférence avant fin : MMAAAA (Mois ; Année)"

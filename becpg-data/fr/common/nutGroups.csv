@@ -1,6 +1,0 @@
-PATH;/System/Lists/bcpg:entityLists/NutGroups
-TYPE;bcpg:listValue
-COLUMNS;cm:name
-VALUES;Groupe 1
-VALUES;Groupe 2
-VALUES;Autre

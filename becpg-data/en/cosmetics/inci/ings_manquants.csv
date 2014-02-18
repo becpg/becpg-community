@@ -1,5 +1,0 @@
-PATH;/System/Characts/bcpg:entityLists/Ings;;;;;;
-TYPE;bcpg:ing;;;;;;
-COLUMNS;cm:name;cm:description;bcpg:ingType;bcpg:ingCEECode;bcpg:legalName;bcpg:legalName_fr;bcpg:legalName_en
-VALUES;Lavandula angustifolia flower;;--;;Lavandula angustifolia flower;Lavandula angustifolia flower;Lavandula angustifolia flower
-VALUES;Salvia sclarea Linnaeus;;--;;Salvia sclarea Linnaeus;Salvia sclarea Linnaeus;Salvia sclarea Linnaeus
