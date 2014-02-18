@@ -356,25 +356,27 @@ public class FormulationHelper {
 		CompoListUnit unit = compoList.getCompoListUnit();
 		if(compoList.getProduct() != null && qty != null && unit != null){
 			Double productQty = FormulationHelper.getProductQty(compoList.getProduct(), nodeService);
+			if(productQty == null){
+				productQty = 1d;
+			}
 			ProductUnit productUnit = FormulationHelper.getProductUnit(compoList.getProduct(), nodeService);
 			Double tare = FormulationHelper.getTareInKg(compoList.getProduct(), nodeService);
 			
-			if(tare != null && productUnit != null && productQty != null){
+			if(tare != null && productUnit != null){
 				
-				if(FormulationHelper.isProductUnitP(productUnit)){
-					productQty = 1d;
+				if(FormulationHelper.isCompoUnitP(unit)){
 					qty = compoList.getQtySubFormula();
 				}
-				else if(FormulationHelper.isProductUnitLiter(productUnit)){						
-					int compoFactor = unit.equals(CompoListUnit.L) ? 1000 : 1;
-					int productFactor = productUnit.equals(ProductUnit.L) ? 1000 : 1;						
-					qty = compoList.getQtySubFormula() * compoFactor / productFactor;					
-				}
-				else if(FormulationHelper.isProductUnitKg(productUnit)){
-					if(productUnit.equals(ProductUnit.g)){
-						qty = qty * 1000;
-					}
-				}			
+//				else if(FormulationHelper.isCompoUnitLiter(unit)){						
+//					int compoFactor = unit.equals(CompoListUnit.L) ? 1000 : 1;
+//					int productFactor = productUnit.equals(ProductUnit.L) ? 1000 : 1;						
+//					qty = compoList.getQtySubFormula() * compoFactor / productFactor;					
+//				}
+//				else if(FormulationHelper.isCompoUnitKg(unit)){
+//					if(unit.equals(CompoListUnit.g)){
+//						qty = qty * 1000;
+//					}
+//				}			
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);					
 				return tare * qty / productQty;
 			}
