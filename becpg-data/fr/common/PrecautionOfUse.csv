@@ -1,4 +1,0 @@
-PATH;/System/Characts/bcpg:entityLists/PrecautionOfUse;
-TYPE;bcpg:precautionOfUse;
-COLUMNS;cm:name;cm:description
-VALUES;Produit surgelé;NE JAMAIS RECONGELER UN PRODUIT DÉCONGELÉ

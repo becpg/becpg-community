@@ -1,7 +1,0 @@
-PATH;/System/ProjectLists/bcpg:entityLists/ScoreCriteria
-TYPE;bcpg:listValue
-COLUMNS;cm:name
-VALUES;Stratégique
-VALUES;Marché
-VALUES;Rentabilité
-VALUES;Faisabilité

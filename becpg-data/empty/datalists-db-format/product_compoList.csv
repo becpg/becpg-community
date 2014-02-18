@@ -1,9 +1,0 @@
-STOP_ON_FIRST_ERROR;false;;;;;
-IMPORT_TYPE;EntityListItem;;;;;
-PATH;/Temp/Products;;;;;
-TYPE;bcpg:compoList;;;;;
-MAPPING;Products;;;;;
-COLUMNS;bcpg:erpCode;bcpg:compoListProduct;bcpg:compoListQtySubFormula;bcpg:compoListUnit;bcpg:compoListLossPerc;bcpg:compoListYieldPerc
-VALUES;ERP code 1;ERP1;1;kg;;
-VALUES;ERP code 1;ERP2;2;kg;;
-VALUES;ERP code 1;ERP3;3;P;;
