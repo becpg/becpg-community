@@ -234,4 +234,12 @@
    width: 20px;
 }
 
+.alfresco-share .dijitIcon.dijitMenuItemIcon.changeOrder {
+	background: url(../../components/images/filetypes/generic-changeOrder-16.png);
+   background-repeat: no-repeat;
+   height: 20px;
+   width: 20px;
+}
+
+
 
