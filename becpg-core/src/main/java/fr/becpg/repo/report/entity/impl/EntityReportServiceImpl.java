@@ -328,30 +328,37 @@ public class EntityReportServiceImpl implements EntityReportService {
 			String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
 
 			NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
-			if (documentNodeRef != null) {
-				// Run report
-				try {
-					ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 
-					if (writer != null) {
-						String mimetype = mimetypeService.guessMimetype(documentName);
-						writer.setMimetype(mimetype);
-						Map<String, Object> params = new HashMap<String, Object>();
-
-						params.put(ReportParams.PARAM_IMAGES, images);
-						params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-
-						logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
-						beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
-
+				if (documentNodeRef != null) {
+					// Run report
+					try {
+						policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+						
+						ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+	
+						if (writer != null) {
+							String mimetype = mimetypeService.guessMimetype(documentName);
+							writer.setMimetype(mimetype);
+							Map<String, Object> params = new HashMap<String, Object>();
+	
+							params.put(ReportParams.PARAM_IMAGES, images);
+							params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+	
+							logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+							beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
+	
+						}
+					
+					} catch (ReportException e) {
+						logger.error("Failed to execute report for template : " + tplNodeRef, e);
+					} finally {
+						policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 					}
-				} catch (ReportException e) {
-					logger.error("Failed to execute report for template : " + tplNodeRef, e);
+	
+					// Set Assoc
+					newReports.add(documentNodeRef);
 				}
-
-				// Set Assoc
-				newReports.add(documentNodeRef);
-			}
+			
 		}
 
 		updateReportsAssoc(entityNodeRef, newReports);
