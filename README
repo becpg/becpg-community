@@ -1,43 +1,68 @@
-###########################
+##################################################################################
 # 
-# beCPG developers README
+#  beCPG developers README
+#
+#  Copyright (C) 2010-2014 beCPG. 
+#   
+#  This file is part of beCPG 
+#   
+#  beCPG is free software: you can redistribute it and/or modify 
+#  it under the terms of the GNU Lesser General Public License as published by 
+#  the Free Software Foundation, either version 3 of the License, or 
+#  (at your option) any later version. 
+#   
+#  beCPG is distributed in the hope that it will be useful, 
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+#  GNU Lesser General Public License for more details. 
+#   
+#  You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+#  If not, see <http://www.gnu.org/licenses/>.
 # 
-###########################
+##################################################################################
 
-0 - Setup project
-------------------
+1 - Build project
+-----------------
 
-Copy common.sh.sample to common.sh
-and change properties
+You should use Apache Maven version 3 or more to build project.
+Maven can be found at https://maven.apache.org/
+
+To build projects use : 
+
+$> mvn clean package -DskipTests=true 
+
+Projects can be found in target dirs. 
 
 
-1 - Install development project
--------------------------------
+2 - Run Tests
+--------------
 
-To install becpg artifacts download https://becpg.fr/redmine/attachments/download/2/birt_3.7.1_lib.tar.gz
-and extract jars into "becpg-bootstrap/lib".
- Then run install.sh
+To run all Junit tests :
 
- 
-2 - Run project
-----------------
+$> mvn clean test -Dmaven.test.failure.ignore=true -P purge
 
-./deploy-in-webapp.sh
+To run specific test
 
-cd $ALFRESCO
-alfresco.sh start
+$> mvn test -Dtest=MyTest.java -DfailIfNoTests=false
 
-3 - Test
----------
-Run Junit tests :
+Some tests require beCPG report server to be launch first.
+In other console:
 
-mvn clean test -Dsurefire.useFile=false
+$> cd becpg-report
+$> mvn jetty:run
+or
+$> mvn tomcat:run
 
-Start report server :
+3 - Deploy projects
+-------------------
 
-cd becpg-report
-mvn tomcat:run
+Refer to INSTALL
 
-Run specific test
-cd becpg-core 
-mvn clean test -Dsurefire.useFile=false -Dtest=MyTest.java
+4 - Translate projects
+---------------------
+
+Create an account to 
+
+https://translate.zanata.org/zanata/project/view/becpg
+
+and submit your translations
