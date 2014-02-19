@@ -14,10 +14,6 @@
 					<sourcePackageRoot>org.alfresco.components.custom-presets-plm</sourcePackageRoot>
 				</customization>
 				<customization>
-					<targetPackageRoot>org.alfresco.components.footer</targetPackageRoot>
-					<sourcePackageRoot>org.alfresco.components.custom-footer</sourcePackageRoot>
-				</customization>
-				<customization>
 					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>
 				</customization>

@@ -1,20 +1,7 @@
-<!--
-  Copyright (C) 2010-2014 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
--->
+<!-- Copyright (C) 2010-2014 beCPG. This file is part of beCPG beCPG is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by 
+	the Free Software Foundation, either version 3 of the License, or (at your option) any later version. beCPG is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the 
+	implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License 
+	along with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -26,6 +13,24 @@
 	<artifactId>becpg-olap</artifactId>
 	<packaging>jar</packaging>
 	<name>beCPG OLAP</name>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+			<comments>Copyright (C) 2010-2014 beCPG. 
+  
+			  beCPG is free software: you can redistribute it and/or modify 
+			  it under the terms of the GNU Lesser General Public License as published by 
+			  the Free Software Foundation, either version 3 of the License, or 
+			  (at your option) any later version. 
+			   
+			  beCPG is distributed in the hope that it will be useful, 
+			  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+			  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+			  GNU Lesser General Public License for more details. 
+			 </comments>
+		</license>
+	</licenses>
 	<properties>
 		<spring.saiku.version>3.0.3.RELEASE</spring.saiku.version>
 	</properties>
@@ -42,7 +47,7 @@
 	</repositories>
 
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-tools</artifactId>
@@ -57,9 +62,7 @@
 			<version>1.2</version>
 		</dependency>
 
-	
 
-  
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -148,7 +151,7 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/saiku-service-2.5.jar</systemPath>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-web</artifactId>
@@ -156,47 +159,51 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/saiku-web-2.5.jar</systemPath>
 		</dependency>
-
-
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2.1</version>
-				<executions>
-					<execution>
-						<id>jar-with-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifest>
-									<mainClass>fr.becpg.olap.RemoteETLClient</mainClass>
-								</manifest>
-							</archive>
-						</configuration>
-					</execution>
-					<execution>
-						<id>make-assembly</id>
-			<!--		<phase>package</phase> -->
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>becpg-olap-${project.version}-${maven.build.timestamp}</finalName>
-							<descriptors>
-								<descriptor>src/main/assembly/distribution.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+	<profiles>
+		<profile>
+			<id>standalone</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>jar-with-dependencies</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptorRefs>
+										<descriptorRef>jar-with-dependencies</descriptorRef>
+									</descriptorRefs>
+									<archive>
+										<manifest>
+											<mainClass>fr.becpg.olap.RemoteETLClient</mainClass>
+										</manifest>
+									</archive>
+								</configuration>
+							</execution>
+							<execution>
+								<id>make-assembly</id>
+								<!-- <phase>package</phase> -->
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<finalName>becpg-olap-${project.version}-${maven.build.timestamp}</finalName>
+									<descriptors>
+										<descriptor>src/main/assembly/distribution.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
 </project>
