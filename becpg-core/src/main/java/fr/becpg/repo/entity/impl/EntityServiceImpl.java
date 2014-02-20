@@ -55,6 +55,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gdata.data.Content;
+
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
@@ -311,6 +313,11 @@ public class EntityServiceImpl implements EntityService {
 			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
 		}
+		
+		if(nodeService.hasAspect(ret, ContentModel.ASPECT_VERSIONABLE)){
+			nodeService.removeAspect(ret, ContentModel.ASPECT_VERSIONABLE);
+		}
+		
 		return ret;
 	}
 	

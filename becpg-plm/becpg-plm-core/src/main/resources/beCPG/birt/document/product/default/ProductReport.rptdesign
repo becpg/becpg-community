@@ -1,21 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright (C) 2010-2014 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
--->
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
     <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
@@ -40,7 +23,7 @@
     <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -4838,51 +4821,53 @@ row["illValue"]
                 </structure>
                 <structure>
                     <property name="columnName">tarePkgLevel2</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">tarePkgLevel2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">netWeightPkgLevel2</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">netWeightPkgLevel2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">grossWeightPkgLevel2</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">grossWeightPkgLevel2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">tarePkgLevel3</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">tarePkgLevel3</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">netWeightPkgLevel3</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">netWeightPkgLevel3</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">grossWeightPkgLevel3</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">grossWeightPkgLevel3</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">nbProductsPkgLevel2</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">nbProductsPkgLevel2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">nbProductsPkgLevel3</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">nbProductsPkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">variantId</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">variantId</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">isDefaultVariant</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">isDefaultVariant</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -4943,6 +4928,16 @@ row["illValue"]
                         <property name="name">nbProductsPkgLevel3</property>
                         <property name="dataType">float</property>
                     </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">variantId</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">isDefaultVariant</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">DataXml</property>
@@ -4973,59 +4968,73 @@ row["illValue"]
                     <property name="name">tarePkgLevel2</property>
                     <property name="nativeName">tarePkgLevel2</property>
                     <property name="dataType">float</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
                     <property name="name">netWeightPkgLevel2</property>
                     <property name="nativeName">netWeightPkgLevel2</property>
                     <property name="dataType">float</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
                     <property name="name">grossWeightPkgLevel2</property>
                     <property name="nativeName">grossWeightPkgLevel2</property>
                     <property name="dataType">float</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
                     <property name="name">tarePkgLevel3</property>
                     <property name="nativeName">tarePkgLevel3</property>
                     <property name="dataType">float</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
                     <property name="name">netWeightPkgLevel3</property>
                     <property name="nativeName">netWeightPkgLevel3</property>
                     <property name="dataType">float</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
                     <property name="name">grossWeightPkgLevel3</property>
                     <property name="nativeName">grossWeightPkgLevel3</property>
                     <property name="dataType">float</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
                     <property name="name">nbProductsPkgLevel2</property>
                     <property name="nativeName">nbProductsPkgLevel2</property>
                     <property name="dataType">float</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">nbProductsPkgLevel3</property>
                     <property name="nativeName">nbProductsPkgLevel3</property>
                     <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">variantId</property>
+                    <property name="nativeName">variantId</property>
+                    <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">isDefaultVariant</property>
+                    <property name="nativeName">isDefaultVariant</property>
+                    <property name="dataType">boolean</property>
+                    <property name="nativeDataType">16</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists]#:#{tarePkgLevel1;DOUBLE;/@tarePkgLevel1},{netWeightPkgLevel1;DOUBLE;/@netWeightPkgLevel1},{grossWeightPkgLevel1;DOUBLE;/@grossWeightPkgLevel1},{tarePkgLevel2;DOUBLE;/@tarePkgLevel2},{netWeightPkgLevel2;DOUBLE;/@netWeightPkgLevel2},{grossWeightPkgLevel2;DOUBLE;/@grossWeightPkgLevel2},{tarePkgLevel3;DOUBLE;/@tarePkgLevel3},{netWeightPkgLevel3;DOUBLE;/@netWeightPkgLevel3},{grossWeightPkgLevel3;DOUBLE;/@grossWeightPkgLevel3},{nbProductsPkgLevel2;DOUBLE;/@nbProductsPkgLevel2},{nbProductsPkgLevel3;DOUBLE;/@nbProductsPkgLevel3}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingLevelMeasures]#:#{tarePkgLevel1;DOUBLE;/@tarePkgLevel1},{netWeightPkgLevel1;DOUBLE;/@netWeightPkgLevel1},{grossWeightPkgLevel1;DOUBLE;/@grossWeightPkgLevel1},{tarePkgLevel2;DOUBLE;/@tarePkgLevel2},{netWeightPkgLevel2;DOUBLE;/@netWeightPkgLevel2},{grossWeightPkgLevel2;DOUBLE;/@grossWeightPkgLevel2},{tarePkgLevel3;DOUBLE;/@tarePkgLevel3},{netWeightPkgLevel3;DOUBLE;/@netWeightPkgLevel3},{grossWeightPkgLevel3;DOUBLE;/@grossWeightPkgLevel3},{nbProductsPkgLevel2;DOUBLE;/@nbProductsPkgLevel2},{nbProductsPkgLevel3;DOUBLE;/@nbProductsPkgLevel3},{variantId;STRING;/@variantId},{isDefaultVariant;BOOLEAN;/@isDefaultVariant}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
