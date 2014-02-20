@@ -4,35 +4,6 @@
 	along with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
 <alfresco-config>
 
-	<config evaluator="string-compare" condition="Edition" replace="true">
-		<!-- footer logo and copyright text -->
-		<footer>
-			<logo>becpg-footer-logo.png</logo>
-			<alt-text>beCPG for Alfresco Share</alt-text>
-			<css-class>footer-becpg</css-class>
-			<label>beCPG @2010-2014</label>
-		</footer>
-		<about>
-			<css-class>logo-com</css-class>
-		</about>
-	</config>
-
-	<config evaluator="string-compare" condition="Analytics">
-		<provider>
-			<provider-id>none</provider-id>
-			<!-- <provider-id>google</provider-id> <analytics-id>UA-33644643-1</analytics-id> -->
-		</provider>
-	</config>
-
-	<config evaluator="string-compare" condition="HelpPages" replace="true">
-		<help-pages>
-			<share-help>http://becpg.fr/google/support</share-help>
-			<share-tutorial>http://becpg.fr/documentation/starting-kit
-			</share-tutorial>
-		</help-pages>
-	</config>
-
-
 	<config evaluator="string-compare" condition="Workflow">
 		<permission-workflows default="allow">
 			<permission-workflow name="activiti$claimProcess">

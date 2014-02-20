@@ -7,7 +7,6 @@
 		<project>becpg-report</project>
 		<project>becpg-project-core</project>
 		<project>becpg-designer-core</project>
-		<project>spring-webscripts</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
