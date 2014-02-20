@@ -26,6 +26,7 @@ import com.sun.star.lang.NullPointerException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.ProductService;
@@ -137,8 +138,8 @@ public class CreateProduct extends BaseJavaDelegate {
 					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, PLMModel.TYPE_FINISHEDPRODUCT,
 							productName);
 					
-					// change state: ToValidate
-					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, "ToValidate");
+					// change state
+					nodeService.setProperty(productNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 					
 					// remove entityTpl (if we choose an entityTpl as source)
 					if(nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){

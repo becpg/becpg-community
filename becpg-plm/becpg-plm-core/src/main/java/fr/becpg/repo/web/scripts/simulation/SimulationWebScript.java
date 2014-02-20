@@ -23,11 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.version.Version;
-import org.alfresco.service.cmr.version.VersionService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -40,7 +37,9 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
 
 /**
  * 
@@ -59,9 +58,9 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	private NodeService nodeService;
 
-	private CopyService copyService;
+	private EntityService entityService;
 	
-	
+	private RepoService repoService;
 	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -74,12 +73,15 @@ public class SimulationWebScript extends AbstractWebScript {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-
-	public void setCopyService(CopyService copyService) {
-		this.copyService = copyService;
+	
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
-	
-	
+
+	public void setRepoService(RepoService repoService) {
+		this.repoService = repoService;
+	}
+
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
@@ -125,9 +127,9 @@ public class SimulationWebScript extends AbstractWebScript {
 
 	}
 
-	
 	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef) {
-		NodeRef simulationNodeRef = copyService.copyAndRename(entityNodeRef, parentRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+		String newEntityName = repoService.getAvailableName(parentRef, (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+		NodeRef simulationNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
 		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			nodeService.setProperty(simulationNodeRef,BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
