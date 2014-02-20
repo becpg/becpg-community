@@ -20,7 +20,9 @@ package fr.becpg.repo.admin.impl;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
@@ -221,7 +223,14 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 
-		/*NodeRef entityTplsNodeRef =*/ visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
+		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
+		
+		
+		// visit acls
+		Set<QName> dataLists = new LinkedHashSet<QName>();
+		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
+		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists, null);
+		
 
 //
 //		Set<String> subFolders = new HashSet<String>();		

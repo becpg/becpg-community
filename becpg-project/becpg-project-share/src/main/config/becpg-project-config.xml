@@ -83,7 +83,6 @@
 
 		<types>
 			<type name="cm:content">
-
 				<subtype name="pjt:project" />
 			</type>
 
@@ -113,9 +112,54 @@
 				</param>
 			</content>
 		</create-content>
-
+		
 	</config>
 	
+	
+	<config evaluator="string-compare" condition="DocLibActions">
+		<!-- Action definitions -->
+		<actions>
+			
+			<!-- Manage permissions (site roles) -->
+			<action id="entity-manage-site-permissions" type="javascript" icon="document-manage-permissions" label="actions.document.manage-permissions">
+				<param name="function">onActionManagePermissions</param>
+				<permissions>
+					<permission allow="true">ChangePermissions</permission>
+				</permissions>
+				<evaluator>evaluator.doclib.action.siteBased</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.project</evaluator>
+			</action>
+
+			<!-- Manage permissions (repository roles) -->
+			<action id="entity-manage-repo-permissions" type="pagelink" icon="document-manage-permissions" label="actions.document.manage-permissions">
+				<param name="page">manage-permissions?nodeRef={node.nodeRef}</param>
+				<permissions>
+					<permission allow="true">ChangePermissions</permission>
+				</permissions>
+				<evaluator negate="true">evaluator.doclib.action.siteBased</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.project</evaluator>
+			</action>
+
+			<!-- Manage permissions (projects) -->
+			<action id="project-manage-permissions" type="pagelink" icon="document-manage-permissions" label="actions.document.manage-permissions">
+				<param name="page">manage-permissions?nodeRef={node.nodeRef}</param>
+				<permissions>
+					<permission allow="true">ChangePermissions</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.project</evaluator>
+			</action>
+
+		</actions>
+		<actionGroups>
+			<actionGroup id="entity-browse">
+				<action index="201" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+			</actionGroup>
+			<actionGroup id="entity-details">
+				<action index="181" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+			</actionGroup>
+			
+		</actionGroups>
+	</config>
 	
 
 </alfresco-config>

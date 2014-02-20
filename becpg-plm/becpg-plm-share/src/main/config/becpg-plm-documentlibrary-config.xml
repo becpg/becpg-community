@@ -2,43 +2,17 @@
 	<config evaluator="string-compare" condition="DocumentLibrary">
 		<aspects>
 			<visible>
-				<aspect name="cm:generalclassifiable" />
-				<aspect name="cm:complianceable" />
-				<aspect name="cm:dublincore" />
-				<aspect name="cm:effectivity" />
-				<aspect name="cm:summarizable" />
-				<aspect name="cm:versionable" />
-				<aspect name="cm:templatable" />
-				<aspect name="cm:emailed" />
-				<aspect name="emailserver:aliasable" />
-				<aspect name="cm:taggable" />
-				<aspect name="app:inlineeditable" />
-				<aspect name="gd:googleEditable" />
-				<aspect name="cm:geographic" />
-				<aspect name="exif:exif" />
-				<aspect name="audio:audio" />
-				<aspect name="cm:indexControl" />
-				<aspect name="cm:workingcopy" />
 
 				<!-- beCPG -->
-				<aspect name="bcpg:permissionsTpl" />
 				<aspect name="bcpg:clientsAspect" />
 				<aspect name="bcpg:suppliersAspect" />
-				<aspect name="rep:reportTplsAspect" />
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
-				<aspect name="dsg:modelAspect" />
-				<aspect name="dsg:configAspect" />
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="pack:palletAspect" />
 				<aspect name="pack:sizeAspect" />
 				<aspect name="pack:tareAspect" />
-				<aspect name="ext1:customAspect" />
-				<aspect name="bp:cataloguable" />
-				<aspect name="bcpg:entityTplAspect" />
-				<aspect name="pjt:projectAspect" />
-				<aspect name="bcpg:docLinkedEntitiesAspect" />
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
 			<addable>
@@ -68,18 +42,10 @@
 				<subtype name="qa:workItemAnalysis" />
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />
-				<subtype name="ecm:changeOrder" />
-				<subtype name="bcpg:linkedValue" />
-				<subtype name="bcpg:listValue" />
-				<subtype name="ext1:customType" />
-				<subtype name="dsg:config" />
-				<subtype name="cm:dictionaryModel" />
-				<subtype name="bpm:workflowDefinition" />
-				<subtype name="pjt:project" />
+				<subtype name="ecm:changeOrder" />	
 			</type>
 			<type name="cm:folder">
 				<subtype name="bcpg:productReportTemplate" />
-				<subtype name="bcpg:entityFolder" />
 			</type>
 			<type name="dl:dataListItem">
 				<subtype name="bcpg:allergenList" />
@@ -112,27 +78,7 @@
 			<indicator id="entity-archived" index="10">
 				<evaluator>evaluator.becpg.doclib.indicator.entity.archived</evaluator>
 			</indicator>
-			<indicator id="project-planned" index="10">
-				<evaluator>evaluator.becpg.doclib.indicator.project.planned</evaluator>
-			</indicator>
-			<indicator id="project-inprogress" index="10">
-				<evaluator>evaluator.becpg.doclib.indicator.project.inprogress</evaluator>
-			</indicator>
-			<indicator id="project-onhold" index="10">
-				<evaluator>evaluator.becpg.doclib.indicator.project.onhold</evaluator>
-			</indicator>
-			<indicator id="project-cancelled" index="10">
-				<evaluator>evaluator.becpg.doclib.indicator.project.cancelled</evaluator>
-			</indicator>
-			<indicator id="project-completed" index="10">
-				<evaluator>evaluator.becpg.doclib.indicator.project.completed</evaluator>
-			</indicator>
 		</indicators>
-		<metadata-templates>
-			<!-- <template id="producTemplate"> <evaluator>evaluator.becpg.doclib.action.product</evaluator> <line index="10" id="date">{date}</line> <line index="20" id="description" view="detailed">{description}</line> 
-				<line index="30" id="productInfo" >{legalName label.legalName}{productHierarchy1 label.productHierarchy1}{productHierarchy2 label.productHierarchy2}</line> <line index="40" id="productCode" >{code label.code}{erpCode 
-				label.erpCode}{eanCode label.eanCode}</line> <line index="10" id="bcpg:suppliers" /> <line index="10" id="bcpg:clients"" /> </template> -->
-		</metadata-templates>
 		<!-- File upload configuration -->
 		<file-upload>
 			<!-- Adobe Flash™ In certain environments, an HTTP request originating from Flash cannot be authenticated using an existing session. See: http://bugs.adobe.com/jira/browse/FP-4830 For these cases, it 
@@ -177,10 +123,10 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:resourceProduct&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<!-- <content id="project" label="menu.create-content.project" type="pagelink" index="110" icon="project">
+			<content id="project" label="menu.create-content.project" type="pagelink" index="110" icon="project">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
-			</content> -->
+			</content>
 			<content id="project-npd" label="menu.create-content.project-npd" type="pagelink" index="111" icon="project">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create-npd&amp;isEntity=true
 				</param>
@@ -219,123 +165,10 @@
 	<config evaluator="string-compare" condition="DocLibActions">
 		<!-- Action definitions -->
 		<actions>
-			<action id="entity-view-datalists" type="javascript" label="actions.entity.view-datalists">
-				<param name="function">onActionShowCharact</param>
-				<!-- aspect check bcpg:entityListsAspect -->
-				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
-			</action>
-			<action id="entity-refresh-reports" type="javascript" label="actions.document.refreshReports">
-				<param name="function">onActionRefreshReport</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<!-- aspect check rep:reportEntityAspect -->
-				<evaluator>evaluator.becpg.doclib.action.generateReport</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entityTpl</evaluator>
-			</action>
 
-			<action id="entity-checkin" type="javascript" label="actions.document.checkin-entity">
-				<param name="function">onActionCheckInEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy
-				</evaluator>
-			</action>
-			<action id="entity-checkout" type="javascript" label="actions.document.checkout-entity">
-				<param name="function">onActionCheckOutEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
-				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
-			</action>
-			<!-- Cancel editing (cancel checkout) -->
-			<action id="entity-cancel-editing" type="javascript" label="actions.document.cancel-checkout-entity">
-				<param name="function">onActionCancelCheckOutEntity</param>
-				<permissions>
-					<permission allow="true">CancelCheckOut</permission>
-				</permissions>
-				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
-			</action>
 			<action id="entity-compare" type="javascript" label="actions.entity.compare">
 				<param name="function">onActionCompareEntity</param>
-			</action>
-
-			<action id="entity-view-documents" type="javascript" label="actions.entity.view-documents">
-				<param name="function">onActionShowDocs</param>
-				<!-- <param name="page">documentlibrary?path={location.path}/{displayName}</param> -->
-			</action>
-
-			<!-- View original (of a Working Copy pair) -->
-			<action id="entity-view-original" type="pagelink" label="actions.document.view-original">
-				<param name="page">entity-details?nodeRef={workingCopy.sourceNodeRef}</param>
-				<!-- cm:workingcopy aspect -->
-				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
-			</action>
-			<!-- View working copy (of a Working Copy pair) -->
-			<action id="entity-view-working-copy" type="pagelink" label="actions.document.view-working-copy">
-				<param name="page">entity-details?nodeRef={workingCopy.workingCopyNodeRef}</param>
-				<!-- cm:workingcopy aspect -->
-				<evaluator>evaluator.doclib.action.hasWorkingCopy</evaluator>
-			</action>
-
-			<!-- Manage permissions (site roles) -->
-			<action id="entity-manage-site-permissions" type="javascript" icon="document-manage-permissions" label="actions.document.manage-permissions">
-				<param name="function">onActionManagePermissions</param>
-				<permissions>
-					<permission allow="true">ChangePermissions</permission>
-				</permissions>
-				<evaluator>evaluator.doclib.action.siteBased</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.project</evaluator>
-			</action>
-
-			<!-- Manage permissions (repository roles) -->
-			<action id="entity-manage-repo-permissions" type="pagelink" icon="document-manage-permissions" label="actions.document.manage-permissions">
-				<param name="page">manage-permissions?nodeRef={node.nodeRef}</param>
-				<permissions>
-					<permission allow="true">ChangePermissions</permission>
-				</permissions>
-				<evaluator negate="true">evaluator.doclib.action.siteBased</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.project</evaluator>
-			</action>
-
-			<!-- Manage permissions (projects) -->
-			<action id="project-manage-permissions" type="pagelink" icon="document-manage-permissions" label="actions.document.manage-permissions">
-				<param name="page">manage-permissions?nodeRef={node.nodeRef}</param>
-				<permissions>
-					<permission allow="true">ChangePermissions</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.project</evaluator>
-			</action>
-
-			<action id="reportTpl-refresh" type="javascript" icon="entity-refresh-reports" label="actions.document.refreshReports">
-				<param name="function">onActionReportTplRefresh</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
-			</action>
-
-
-			<action id="reportTpl-update-permissions" type="javascript" icon="document-manage-permissions" label="actions.reportTpl-update-permissions">
-				<param name="function">onActionReportTplUpdatePermissions</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
-				<evaluator>evaluator.becpg.doclib.action.reportTpl</evaluator>
-			</action>
-
-			<!-- Cancel editing (unlock) -->
-			<action id="document-cancel-editing-unlock" type="javascript" label="actions.document.cancel-editing">
-				<param name="function">onActionCancelEditing</param>
-				<permissions>
-					<permission allow="true">CancelCheckOut</permission>
-				</permissions>
-				<evaluator>evaluator.doclib.metadata.isLocked</evaluator>
-				<!-- patch #535 -->
-				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>
 
 			<action id="entityTpl-synchronize-entities" type="javascript" icon="entity-refresh-reports" label="actions.entityTpl-synchronize-entities">
@@ -361,82 +194,18 @@
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>
 		</actions>
-		<!-- Action Group resolver - decides which action group id to use for a node -->
-		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
+
 		<actionGroups>
-			<actionGroup id="entity-browse">
-				<action index="10" id="entity-view-datalists" />
-				<action index="100" id="entity-view-documents" />
-				<action index="101" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" />
-				<!--<action index="105" id="folder-view-details" /> -->
-				<action index="110" id="folder-download" />
 
-				<!-- <action index="111" id="entity-checkin" /> -->
-
-				<!-- <action index="112" id="entity-checkout" /> -->
-
-				<!-- <action index="113" id="entity-cancel-editing" /> -->
-				<action index="114" id="entity-view-original" />
-				<action index="115" id="entity-view-working-copy" />
-				<action index="120" id="document-approve" icon="folder-approve" />
-				<action index="130" id="document-reject" icon="folder-reject" />
-				<action index="140" id="document-locate" icon="document-locate" label="actions.folder.locate" />
-				<action index="150" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
-				<action index="160" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
-				<action index="170" id="folder-manage-rules" />
-				<action index="180" id="document-delete" icon="folder-delete" label="actions.entity.delete" />
-				<action index="190" id="entity-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<action index="200" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<action index="201" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<action index="210" id="document-manage-aspects" label="actions.folder.manage-aspects" />
-				<action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
-				<action index="360" id="document-cloud-sync" />
-				<action index="370" id="document-cloud-unsync" />
-				<action index="380" id="document-view-in-cloud" />
-				<action index="390" id="document-request-sync" />
-			</actionGroup>
 			<actionGroup id="entity-details">
-				<action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
-				<action index="101" id="entity-checkin" />
-				<action index="102" id="entity-checkout" />
-				<action index="103" id="entity-cancel-editing" />
-				<action index="104" id="entity-view-original" />
-				<action index="105" id="entity-view-working-copy" />
 				<action index="106" id="entity-compare" icon="compare" />
-				<action index="107" id="entity-refresh-reports" />
 				<action index="108" id="entityTpl-synchronize-entities" />
 				<action index="109" id="entityTpl-formulate-entities" />
 				<action index="110" id="entityTpl-wused" />
-				<action index="111" id="document-approve" icon="folder-approve" />
-				<action index="120" id="document-reject" icon="folder-reject" />
-				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
-				<action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
-				<action index="150" id="folder-manage-rules" />
-				<action index="160" id="document-delete" icon="folder-delete" label="actions.entity.delete" />
-				<action index="170" id="entity-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<action index="180" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<action index="181" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<action index="190" id="document-manage-aspects" label="actions.folder.manage-aspects" />
-				<action index="210" id="view-in-explorer" />
-				<action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
-				<action index="270" id="document-assign-workflow" />
-				<action index="340" id="document-publish" />
-				<action index="360" id="document-cloud-sync" />
-				<action index="370" id="document-cloud-unsync" />
-				<action index="380" id="document-view-in-cloud" />
-				<action index="390" id="document-request-sync" />
-			</actionGroup>
-			<actionGroup id="document-details">
-				<action index="121" id="reportTpl-refresh" />
-				<action index="301" id="reportTpl-update-permissions" />
 			</actionGroup>
 
-			<actionGroup id="document-browse">
-				<action index="131" id="reportTpl-refresh" />
-				<action index="371" id="reportTpl-update-permissions" />
-			</actionGroup>
 		</actionGroups>
 	</config>
-	
+
 
 </alfresco-config>
