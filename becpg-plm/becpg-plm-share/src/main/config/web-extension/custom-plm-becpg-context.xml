@@ -43,9 +43,6 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 				<value>classpath:alfresco/forms/becpg-pack-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-npd-workflow-form-config.xml</value>				
 				
-				<!-- Share custom config -->
-				<value>classpath:alfresco/web-extension/becpg-config-custom.xml</value>
-				<value>jar:*!/META-INF/becpg-config-custom.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -58,14 +55,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			</list>
 		</property>
 	</bean>	
-	<!-- Extension unsure is loaded last and override current keys -->
-	<bean id="becpgCustomResourceBundle" depends-on="becpgResourceBundle" class="fr.becpg.util.ResourceBundleBootstrapComponent">
-		<property name="resourceBundles">
-			<list>
-				<value>alfresco.messages.becpg-custom</value>
-			</list>
-		</property>
-	</bean>	
+	
 	<!-- evaluators -->
 	
 	<bean id="evaluator.becpg.doclib.action.product" parent="evaluator.doclib.action.nodeType">
@@ -159,10 +149,4 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 		</property>
 	</bean>
 	
-	<!-- Remove alfresco logo Patch -->
-	<bean id="webscript.org.springframework.extensions.messages.get" parent="webscript" class="fr.becpg.web.scripts.MessagesWebScript">
-		<property name="webFrameworkConfigElement" ref="webframework.config.element" />
-		<property name="dependencyHandler" ref="dependency.handler" />
-	</bean>
-	<bean id="webscript.org.springframework.extensions.messages.post" parent="webscript" class="fr.becpg.web.scripts.MessagesWebScript" />
 </beans>
