@@ -29,13 +29,7 @@
     <bean id="classify-by-hierarchy" class="fr.becpg.repo.hierarchy.action.ClassifyByHierarchyActionExecuter" parent="action-executer">
       <property name="hierarchyService" ref="hierarchyService" />      
     </bean>
-    
-    <bean id="version-cleaner" class="fr.becpg.repo.action.VersionCleanerActionExecuter" parent="action-executer">
-    	<property name="ruleService" ref="ruleService"/>
-    	<property name="versionService" ref="versionService"/>
-    	<property name="nodeService" ref="nodeService" />
-    </bean>
-    
+
     <bean id="version-cleaner" class="fr.becpg.repo.action.VersionCleanerActionExecuter" parent="action-executer">
     	<property name="ruleService" ref="ruleService"/>
     	<property name="versionService" ref="versionService"/>
