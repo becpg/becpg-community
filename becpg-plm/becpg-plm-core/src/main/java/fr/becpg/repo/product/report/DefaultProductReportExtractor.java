@@ -313,7 +313,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			// MicrobioList
 			List<MicrobioListDataItem> microbioList = null;
 			
-			if (productData.getMicrobioList() != null) {
+			if (!productData.getMicrobioList().isEmpty()) {
 				microbioList = productData.getMicrobioList();
 			}
 			else{

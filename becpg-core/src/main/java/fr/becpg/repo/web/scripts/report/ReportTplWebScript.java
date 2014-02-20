@@ -20,6 +20,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
@@ -116,14 +117,30 @@ public class ReportTplWebScript extends AbstractWebScript {
 			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) + LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY))
 					+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
 
-			List<NodeRef> entityNodeRefs = beCPGSearchService.luceneSearch(query);
+			// TODO : duplicate code
+			List<NodeRef> refs = null;
+			int page = 1;
+			List<NodeRef> tmp = beCPGSearchService.lucenePaginatedSearch(query, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
+			
+			if (tmp!=null && !tmp.isEmpty()) {
+				logger.info(" - Page 1:"+tmp.size());
+				refs = tmp;
+			}
+			while(tmp!=null && tmp.size() == RepoConsts.MAX_RESULTS_256 ){
+				page ++;
+				tmp	=  beCPGSearchService.lucenePaginatedSearch(query, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
+				if (tmp!=null && !tmp.isEmpty()) {
+					logger.info(" - Page "+page+":"+tmp.size());
+					refs.addAll(tmp);
+				}
+			}
 
-			logger.info("Refresh reports of " + entityNodeRefs.size() + " entities. action: " + action);
+			logger.info("Refresh reports of " + refs.size() + " entities. action: " + action);
 
 			if (ACTION_REFRESH.equals(action)) {
-				entityReportAsyncGenerator.queueNodes(entityNodeRefs);
+				entityReportAsyncGenerator.queueNodes(refs);
 			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
-				for (NodeRef entityNodeRef : entityNodeRefs) {
+				for (NodeRef entityNodeRef : refs) {
 					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 					for (NodeRef report : reports) {
 						NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
