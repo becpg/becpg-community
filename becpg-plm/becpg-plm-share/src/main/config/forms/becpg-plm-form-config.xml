@@ -17,11 +17,6 @@
 -->
 <alfresco-config>
 
-
-
-
-	<!--___________________________________________________ PRODUITS __________________________________________________ -->
-
 	<!-- bcpg:product type (creating nodes nodes) -->
 	<config evaluator="model-type" condition="bcpg:product">
 		<forms>
@@ -80,11 +75,12 @@
 					<field id="bcpg:productState" set="product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">,ToValidate|status.entity.tovalidate,Valid|status.entity.valid,Refused|status.entity.refused,Archived|status.entity.archived</control-param>
+							 <control-param name="options">,Simulation|status.entity-simultion,ToValidate|status.entity-tovalidate,Valid|status.entity-valid,Refused|status.entity-refused,Archived|status.entity-archived</control-param>
 							 <control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" set="product-criteria" />
+					
 					<field id="bcpg:erpCode" set="product-criteria" />
 
 					<!-- bcpg:eanAspect -->
@@ -1728,7 +1724,7 @@
 					<field id="bcpg:productState" set="product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">,ToValidate|status.entity.tovalidate,Valid|status.entity.valid,Refused|status.entity.refused,Archived|status.entity.archived</control-param>
+							 <control-param name="options">,Simulation|status.entity-simultion,ToValidate|status.entity-tovalidate,Valid|status.entity-valid,Refused|status.entity-refused,Archived|status.entity-archived</control-param>
 							 <control-param name="isSearch">true</control-param>
 						</control>
 					</field>		
@@ -4051,7 +4047,6 @@
 		</forms>
 	</config>
 	
-	<!-- ______________________________________________ SUPPLIER_________________________________________ -->
 	<!-- bcpg:supplier type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:supplier">
 		<forms>
@@ -4119,7 +4114,6 @@
 		</forms>
 	</config>
 
-	<!-- ______________________________________________ CLIENT_________________________________________ -->
 	<!-- bcpg:client type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:client">
 		<forms>
@@ -4187,9 +4181,7 @@
 			</form>
 		</forms>
 	</config>
-
-	<!-- ________________________________________________________________ COMPO 
-		________________________________________________________________ -->
+	
 	<!-- bcpg:compoList type -->
 	<config evaluator="model-type" condition="bcpg:compoList">
 		<forms>
@@ -4390,7 +4382,6 @@
 		</forms>
 	</config>
 
-	<!-- _________________________________________________ PACKAGING _____________________________________________ -->
 	<!-- bcpg:packagingList type -->
 	<config evaluator="model-type" condition="bcpg:packagingList">
 		<forms>
@@ -4541,8 +4532,6 @@
 		</forms>
 	</config>
 
-	<!-- ________________________________________________________________ LISTES 
-		DE CARACT. ________________________________________________________________ -->
 	<!-- bcpg:allergenList type (creating nodes) -->
 	<config evaluator="model-type" condition="bcpg:allergenList">
 		<forms>
@@ -5912,11 +5901,6 @@
 			</form>
 		</forms>
 	</config>
-
-	
-	<!-- ________________________________________________________________ ASPECTS 
-		________________________________________________________________ -->
-
 
 	<config evaluator="aspect" condition="bcpg:productTypeAspect">
 		<forms>
