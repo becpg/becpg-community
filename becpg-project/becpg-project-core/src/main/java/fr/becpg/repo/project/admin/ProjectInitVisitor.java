@@ -128,7 +128,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	@Override
 	public boolean shouldInit(NodeRef companyHomeNodeRef) {
 		NodeRef systemNodeRef = visitFolder(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(ProjectRepoConsts.PATH_PROJECTS)) == null;
+		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(ProjectRepoConsts.PATH_PROJECT_LISTS)) == null;
 	}
 	
 	private void visitReports(NodeRef systemNodeRef) {
