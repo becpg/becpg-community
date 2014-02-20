@@ -80,48 +80,51 @@ function createDockBar(beCPGMenu){
          {
             results = eval('(' + result + ')');
       
-           var recentsMenu = {
-                 name : "alfresco/menus/AlfMenuGroup",
-                 config : {
-                    label : "header.becpg.recents",
-                    widgets : []
-                 }
-              }; 
-              
-          
-            
-            for (var i=0; i < results.items.length; i++){
-               var item = results.items[i];
+            if(results.items.length>0){
+              var recentsMenu = {
+                    name : "alfresco/menus/AlfMenuGroup",
+                    config : {
+                       label : "header.becpg.recents",
+                       widgets : []
+                    }
+                 }; 
+                 
+             
                
-               var targetUrl = "entity-details?nodeRef=" +item.nodeRef ;
-               if(page.url.uri.indexOf("entity-data-lists")){
-                  targetUrl = "entity-data-lists?nodeRef=" +item.nodeRef ;
-                  //TODO Should be split or better
-                  // page.url.args.list
-                  if (item.itemType == "bcpg:finishedProduct" || item.itemType == "bcpg:semiFinishedProduct") {
-                     targetUrl += "&list=compoList";
-                  } else if (item.itemType == "bcpg:packagingKit") {
-                     targetUrl += "&list=packagingList";
+               for (var i=0; i < results.items.length; i++){
+                  var item = results.items[i];
+                  
+                  var targetUrl = "entity-details?nodeRef=" +item.nodeRef ;
+                  if(page.url.uri.indexOf("entity-data-lists")){
+                     targetUrl = "entity-data-lists?nodeRef=" +item.nodeRef ;
+                     //TODO Should be split or better
+                     // page.url.args.list
+                     if (item.itemType == "bcpg:finishedProduct" || item.itemType == "bcpg:semiFinishedProduct") {
+                        targetUrl += "&list=compoList";
+                     } else if (item.itemType == "bcpg:packagingKit") {
+                        targetUrl += "&list=packagingList";
+                     }
+                     
                   }
+                  
+                  
+                  if(item.site){
+                     targetUrl = "site/" + item.site.shortName+"/"+targetUrl ;
+                  }
+                  
+                  recentsMenu.config.widgets.push( {
+                     name : "alfresco/header/AlfMenuItem",
+                     config : {
+                        label : item.displayName,
+                        iconClass : item.itemType.split(":")[1],
+                        targetUrl : targetUrl
+                     }
+                  });
                   
                }
                
-               
-               if(item.site){
-                  targetUrl = "site/" + item.site.shortName+"/"+targetUrl ;
-               }
-               
-               recentsMenu.config.widgets.push( {
-                  name : "alfresco/header/AlfMenuItem",
-                  config : {
-                     label : item.displayName,
-                     iconClass : item.itemType.split(":")[1],
-                     targetUrl : targetUrl
-                  }
-               });
-               
+               beCPGMenu.config.widgets.push( recentsMenu );
             }
-            beCPGMenu.config.widgets.push( recentsMenu );
          }
       } catch(e){
         logger.log(e);  

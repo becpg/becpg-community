@@ -49,7 +49,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 	<bean id="becpgPlmResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
 		<property name="resourceBundles">
 			<list>
-				<value>alfresco.messages.becpg-model</value>
+				<value>alfresco.messages.becpg-plm-model</value>
 				<value>alfresco.messages.becpg-pages</value>
 				<value>alfresco.messages.becpg-forms</value>
 			</list>
@@ -107,46 +107,6 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 				<property name="value" value="Archived" />
 			</bean>
 		</property>
-	</bean>	<!-- pjt:projectState -->
-	<bean id="evaluator.becpg.doclib.indicator.project.planned" parent="evaluator.doclib.action.value">
-		<property name="accessor" value="node.properties.pjt:projectState" />
-		<property name="comparator">
-			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-				<property name="value" value="Planned" />
-			</bean>
-		</property>
-	</bean>
-	<bean id="evaluator.becpg.doclib.indicator.project.inprogress" parent="evaluator.doclib.action.value">
-		<property name="accessor" value="node.properties.pjt:projectState" />
-		<property name="comparator">
-			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-				<property name="value" value="InProgress" />
-			</bean>
-		</property>
-	</bean>
-	<bean id="evaluator.becpg.doclib.indicator.project.onhold" parent="evaluator.doclib.action.value">
-		<property name="accessor" value="node.properties.pjt:projectState" />
-		<property name="comparator">
-			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-				<property name="value" value="OnHold" />
-			</bean>
-		</property>
-	</bean>
-	<bean id="evaluator.becpg.doclib.indicator.project.cancelled" parent="evaluator.doclib.action.value">
-		<property name="accessor" value="node.properties.pjt:projectState" />
-		<property name="comparator">
-			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-				<property name="value" value="Cancelled" />
-			</bean>
-		</property>
-	</bean>
-	<bean id="evaluator.becpg.doclib.indicator.project.completed" parent="evaluator.doclib.action.value">
-		<property name="accessor" value="node.properties.pjt:projectState" />
-		<property name="comparator">
-			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
-				<property name="value" value="Completed" />
-			</bean>
-		</property>
-	</bean>
+	</bean>	
 	
 </beans>

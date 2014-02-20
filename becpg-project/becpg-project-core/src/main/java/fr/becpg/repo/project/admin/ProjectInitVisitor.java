@@ -77,24 +77,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		// EntityTemplates
 		visitEntityTpls(systemNodeRef);
 
-		// Project Tpl
-		visitFolder(systemNodeRef, ProjectRepoConsts.PATH_PROJECT_TEMPLATES);
-
 		visitReports(systemNodeRef);
 		
 	}
 
-	/**
-	 * Initialize the rules of the repository
-	 */
-	@Override
-	protected void visitRules(NodeRef nodeRef, String folderName) {
-
-		if (folderName == ProjectRepoConsts.PATH_PROJECT_TEMPLATES) {
-			createRuleAspect(nodeRef, true, ProjectModel.TYPE_PROJECT, BeCPGModel.ASPECT_ENTITY_TPL);
-		}
-
-	}
 
 	/**
 	 * Create the entity templates
@@ -138,26 +124,11 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
-	@Override
-	protected void vivitFolderAspects(NodeRef folderNodeRef, String folderName) {
-		switch (folderName) {
-		case ProjectRepoConsts.PATH_PROJECT_TEMPLATES:
-			if (!nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
-				nodeService.addAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
-			}
-			break;
-		default:
-			break;
-		}
-
-	}
 
 	@Override
 	public boolean shouldInit(NodeRef companyHomeNodeRef) {
 		NodeRef systemNodeRef = visitFolder(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-		
-		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(ProjectRepoConsts.PATH_PROJECT_TEMPLATES)) == null;
-		
+		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(ProjectRepoConsts.PATH_PROJECTS)) == null;
 	}
 	
 	private void visitReports(NodeRef systemNodeRef) {

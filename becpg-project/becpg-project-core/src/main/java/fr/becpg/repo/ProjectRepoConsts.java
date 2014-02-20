@@ -7,7 +7,6 @@ public class ProjectRepoConsts {
 	public static final String PATH_PROJECT_LISTS = "ProjectLists";
 	public static final String PATH_TASKS = "Tasks";
 	public static final String PATH_TASK_LEGENDS = "TaskLegends";
-	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
 	public static final String PATH_PROJECT_HIERARCHY = "project_Hierarchy";
 	public static final String PATH_REQUEST_STATES = "RequestStates";
 	public static final String PATH_REQUEST_ORIGINS = "RequestOrigins";

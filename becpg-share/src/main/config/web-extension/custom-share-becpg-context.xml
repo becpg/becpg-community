@@ -28,6 +28,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			<list>
 				<value>classpath:alfresco/becpg-share-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-form-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-security-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-report-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-bulkedit-form-config.xml</value>
 			</list>
@@ -38,6 +39,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			<list>
 				<value>alfresco.messages.becpg-share</value>
 				<value>alfresco.messages.becpg-controls</value>
+				<value>alfresco.messages.becpg-model</value>
 			</list>
 		</property>
 	</bean> 

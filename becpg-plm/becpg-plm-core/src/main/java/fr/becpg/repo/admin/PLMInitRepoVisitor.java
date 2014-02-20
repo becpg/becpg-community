@@ -439,11 +439,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_CLIENT, true, dataLists, subFolders);
 
-		// visit acls
-		dataLists = new LinkedHashSet<QName>();
-		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
-		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists, null);
-		
 		// visit ECO
 		dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ECMModel.TYPE_REPLACEMENTLIST);

@@ -170,23 +170,10 @@
 	</config>
 	
 	
-	<config evaluator="string-compare" condition="DocumentLibrary" replace="true">
+	<config evaluator="string-compare" condition="DocumentLibrary" >
 		<aspects>
 			<visible>
-				<aspect name="cm:generalclassifiable" />
-            <aspect name="cm:complianceable" />
-            <aspect name="cm:dublincore" />
-            <aspect name="cm:effectivity" />
-            <aspect name="cm:summarizable" />
-            <aspect name="cm:versionable" />
-            <aspect name="cm:templatable" />
-            <aspect name="cm:emailed" />
-            <aspect name="emailserver:aliasable" />
-            <aspect name="cm:taggable" />
-            <aspect name="app:inlineeditable" />
-            <aspect name="gd:googleEditable" />
-            <aspect name="cm:geographic" />
-            <aspect name="exif:exif" />
+			
             <!-- designer -->
             <aspect name="dsg:modelAspect" />
 				<aspect name="dsg:configAspect" />
@@ -206,10 +193,9 @@
 				 <!-- designer -->
 				<subtype name="dsg:config" />
 				<subtype name="cm:dictionaryModel" />
+				<subtype name="bpm:workflowDefinition" />
 			</type>
 			
-         <type name="cm:folder">
-         </type>
 		</types>
   </config>
   
