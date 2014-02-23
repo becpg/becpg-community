@@ -84,21 +84,6 @@ public class QualityControlTest extends PLMBaseTestCase {
 		controlPointData.setControlDefList(controlDefList);
 		controlPointNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPointData).getNodeRef();
 
-		// // create group
-		// Set<String> zones = new HashSet<String>();
-		// zones.add(AuthorityService.ZONE_APP_DEFAULT);
-		// zones.add(AuthorityService.ZONE_APP_SHARE);
-		// zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-		// String group = "groupQual";
-		//
-		// if(!authorityService.authorityExists(PermissionService.GROUP_PREFIX +
-		// group)){
-		// logger.debug("create group: " + group);
-		// authorityService.createAuthority(AuthorityType.GROUP, group, group,
-		// zones);
-		// }
-		// NodeRef controlingGroup = authorityService.getA
-
 		// create control plan
 		ControlPlanData controlPlanData = new ControlPlanData();
 		controlPlanData.setName("Control plan");
