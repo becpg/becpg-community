@@ -70,11 +70,11 @@ public class DataListSortServiceImpl implements DataListSortService {
 	@Override
 	public void computeDepthAndSort(Set<NodeRef> nodeRefs) {		
 		
-		NodeRef prevLastChild = null;
 		NodeRef prevParentLevel = null;
 		
 		NodeRef prevListContainer = null;
 		int sort = RepoConsts.SORT_DEFAULT_STEP - RepoConsts.SORT_INSERTING_STEP;
+		int level = DEFAULT_LEVEL;
 		
 		HashSet<NodeRef> pendingNodeRefs = new HashSet<NodeRef>(nodeRefs);
 		
@@ -88,8 +88,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 				NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 				
 				// cycle detection
-				if(nodeRef.equals(parentLevel)){
-					
+				if(nodeRef.equals(parentLevel)){					
 					logger.error("Cannot select itself as parent, otherwise we get a cycle. nodeRef: " + nodeRef);
 				}
 				else{
@@ -101,11 +100,16 @@ public class DataListSortServiceImpl implements DataListSortService {
 					// #351 : we avoid lucene queries
 					if(prevParentLevel == null || !prevParentLevel.equals(parentLevel)){
 						prevParentLevel = parentLevel;
-						prevLastChild = getLastChildOfLevel(dataType, listContainer, parentLevel, nodeRef);
+						NodeRef prevSiblingNode = getLastChildOfLevel(dataType, listContainer, parentLevel, nodeRef);
+						insertAfter(dataType, listContainer, prevSiblingNode, nodeRef, pendingNodeRefs);
+						sort = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
+						level = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+					}
+					else{
+						sort += RepoConsts.SORT_INSERTING_STEP;
+						setProperty(nodeRef, BeCPGModel.PROP_SORT, sort);
+						setProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL, level);
 					}					
-
-					insertAfter(dataType, listContainer, prevLastChild, nodeRef, pendingNodeRefs);
-					prevLastChild = nodeRef;
 				}			
 			} else {
 
@@ -122,7 +126,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 				}
 				
 				sort += RepoConsts.SORT_INSERTING_STEP;
-				nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sort);				
+				setProperty(nodeRef, BeCPGModel.PROP_SORT, sort);				
 			}
 			
 			pendingNodeRefs.remove(nodeRef);
