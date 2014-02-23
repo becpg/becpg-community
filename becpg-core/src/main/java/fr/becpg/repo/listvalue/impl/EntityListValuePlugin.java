@@ -344,7 +344,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
 
-		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME,
+		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LV_VALUE,
 				nodeService));
 
 	}

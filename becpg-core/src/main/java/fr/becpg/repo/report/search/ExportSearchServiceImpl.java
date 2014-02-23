@@ -43,6 +43,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.search.BeCPGSearchService;
 import fr.becpg.report.client.ReportFormat;
@@ -554,7 +555,8 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 
 	private NodeRef getItemByTypeAndName(QName type, String name) {
 
-		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
+		String queryPath = LuceneHelper.mandatory(LuceneHelper.getCondType(type)) + 
+				LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name));
 
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 
@@ -563,9 +565,5 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		}
 
 		return null;
-
 	}
-
-		
-
 }

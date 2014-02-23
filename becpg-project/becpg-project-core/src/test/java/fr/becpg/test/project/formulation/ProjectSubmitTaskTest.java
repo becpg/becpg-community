@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ForumModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -179,11 +178,7 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 
 				// reopen deliverables
 				nodeService.setProperty(projectData.getDeliverableList().get(1).getNodeRef(),
-						ProjectModel.PROP_DL_STATE, DeliverableState.InProgress);
-				
-				// check comment has been added to project
-				Integer commentCount = (Integer)nodeService.getProperty(projectNodeRef, ForumModel.PROP_COMMENT_COUNT);
-				assertEquals(new Integer(1), commentCount);
+						ProjectModel.PROP_DL_STATE, DeliverableState.InProgress);				
 
 				return null;
 			}

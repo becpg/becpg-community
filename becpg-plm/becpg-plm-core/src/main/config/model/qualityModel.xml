@@ -125,7 +125,7 @@
 				<value>bcpg:listValue</value>
 			</parameter>
 			<parameter name="constraintProp">
-				<value>cm:name</value>
+				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
 		<constraint name="qa:claimTrackingValues" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -138,7 +138,7 @@
 				<value>bcpg:listValue</value>
 			</parameter>
 			<parameter name="constraintProp">
-				<value>cm:name</value>
+				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
 		<constraint name="qa:claimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -151,7 +151,7 @@
 				<value>bcpg:listValue</value>
 			</parameter>
 			<parameter name="constraintProp">
-				<value>cm:name</value>
+				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
 		<constraint name="qa:claimResponseStates" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -164,7 +164,7 @@
 				<value>bcpg:listValue</value>
 			</parameter>
 			<parameter name="constraintProp">
-				<value>cm:name</value>
+				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
 		<constraint name="qa:controlUnits" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
@@ -177,7 +177,7 @@
 				<value>bcpg:listValue</value>
 			</parameter>
 			<parameter name="constraintProp">
-				<value>cm:name</value>
+				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>

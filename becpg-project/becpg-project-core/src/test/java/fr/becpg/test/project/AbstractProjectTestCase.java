@@ -99,9 +99,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_SCORE_CRITERIA);
 		for (int i = 0; i < 5; i++) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, "Criterion" + i);
+			properties.put(BeCPGModel.PROP_LV_VALUE, "Criterion" + i);
 			nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties)
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties)
 					.getChildRef();
 		}
 

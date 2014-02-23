@@ -436,7 +436,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	public  String findCharact(String type, String name) {
-		NodeRef ret = getItemByTypeAndName(QName.createQName(type, namespaceService), name);
+		NodeRef ret = getItemByTypeAndProp(QName.createQName(type, namespaceService), ContentModel.PROP_NAME, name);
 		if(ret==null){
 			logger.error("Cannot find ("+type+","+name+")");
 			return null;
@@ -817,7 +817,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					charactNodeRef = new NodeRef(charactNodeRefString);
 				} else if (!charactName.isEmpty()) {
 					AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-					charactNodeRef = getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
+					charactNodeRef = getItemByTypeAndProp(assocDef.getTargetClass().getName(), ContentModel.PROP_NAME, charactName);
 
 					if (charactNodeRef == null) {
 						String error = I18NUtil.getMessage(MSG_ERROR_GET_NODEREF_CHARACT, assocDef.getTargetClass().getName(), charactName);
@@ -1344,7 +1344,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 			// list value => by name
 			else if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
-				nodeRef = getItemByTypeAndName(type, value);
+				nodeRef = getItemByTypeAndProp(type, BeCPGModel.PROP_LV_VALUE, value);
 			}
 
 			// add in the cache
@@ -1354,10 +1354,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return nodeRef;
 	}
 
-	private NodeRef getItemByTypeAndName(QName type, String name) {
+	private NodeRef getItemByTypeAndProp(QName type, QName prop, String value) {
 
-		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
-
+		String queryPath = LuceneHelper.mandatory(LuceneHelper.getCondType(type)) + 
+							LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(prop, value));
+		
 		queryPath += DEFAULT_IGNORE_QUERY;
 		
 		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
