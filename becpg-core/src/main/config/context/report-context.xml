@@ -26,14 +26,6 @@
 	 <property name="contentService" ref="contentService"/>
 	</bean>
 
-	<!-- Report -->
-	<bean id="reportTplService" class="fr.becpg.repo.report.template.impl.ReportTplServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />		
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="mimetypeService" ref="mimetypeService"/>		
-		<property name="associationService" ref="associationService"/>
-	</bean>
 	
 	<!-- Node report -->	
 	<bean id="entityReportService" class="fr.becpg.repo.report.entity.impl.EntityReportServiceImpl">
@@ -86,18 +78,6 @@
         <property name="entityReportService" ref="entityReportService"/>
     </bean>
     
-    		<!-- Search report -->	
-	<bean id="exportSearchService" class="fr.becpg.repo.report.search.ExportSearchServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />
-		<property name="beCPGReportEngine" ref="beCPGReportEngine" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="entityService" ref="entityService" />
-		<property name="attributeExtractorService" ref="attributeExtractorService"/>		
-		<property name="dictionaryService" ref="dictionaryService" />
-	</bean>
 	
 		<!-- Export search -->
 	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">

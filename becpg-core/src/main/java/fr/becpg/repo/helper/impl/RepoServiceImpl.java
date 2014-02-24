@@ -16,69 +16,38 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RepoServiceImpl.
  *
  * @author querephi
  */
+@Service("repoService")
 public class RepoServiceImpl implements RepoService {
 	
-	/** The Constant XPATH. */
-	private static final String XPATH = "./%s:%s";
 	
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(RepoServiceImpl.class);
 	
-	/** The node service. */
+	@Autowired
 	private NodeService nodeService = null;	
 	
-	/** The search service. */
-	private BeCPGSearchService beCPGSearchService;
-	
-	/** The fileFolderService service. */
+	@Autowired
 	private FileFolderService fileFolderService;
 	
-
+	@Autowired
 	private Repository repository;
 
 
-	public void setRepository(Repository repository) {
-		this.repository = repository;
-	}
-
-	/**
-	 * 
-	 * @param fileFolderService
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}		
-	
-	
-
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.helper.RepoService#createFolderByPaths(org.alfresco.service.cmr.repository.NodeRef, java.util.List)
@@ -122,13 +91,9 @@ public class RepoServiceImpl implements RepoService {
 	@Override
 	public NodeRef getFolderByPath(NodeRef parentNodeRef, String path) {
 		
-		String xPath = path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? 
-						path : String.format(XPATH, NamespaceService.CONTENT_MODEL_PREFIX, ISO9075.encode(path));
-		
-		List<NodeRef> nodes = beCPGSearchService.searchByPath(parentNodeRef,xPath);
-		
-		if(!nodes.isEmpty()){
-			return nodes.get(0);			
+		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef,path);
+		if(ret!=null){
+			return ret;			
 		}
 		else if(!path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)){
 			//try by name...

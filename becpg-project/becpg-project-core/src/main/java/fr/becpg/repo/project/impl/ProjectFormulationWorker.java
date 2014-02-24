@@ -32,23 +32,18 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectState;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectFormulationWorker {
 
 	private static Log logger = LogFactory.getLog(ProjectFormulationWorker.class);
 	
-	private BeCPGSearchService beCPGSearchService;
 	private ProjectService projectService;
 	private BehaviourFilter policyBehaviourFilter;
 	private TransactionService transactionService;
 	
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
@@ -68,18 +63,22 @@ public class ProjectFormulationWorker {
         	
         	public Object execute() throws Throwable{
         		
+        		
+        		
+        		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+        				.ofType(ProjectModel.TYPE_PROJECT)
+        				.andProp(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+        		
+        		List<NodeRef> projectNodeRefs = queryBuilder.list();
+        		
         		// query
-        		String queryInProgress = LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT) +
-        				LuceneHelper.getCondEqualValue(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString(), LuceneHelper.Operator.AND);
+        		 queryBuilder = BeCPGQueryBuilder.createQuery()
+         				.ofType(ProjectModel.TYPE_PROJECT)
+         				.andProp(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
+         				.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
         		
-        		String queryPlanned = LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT) +
-        				LuceneHelper.getCondEqualValue(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString(), LuceneHelper.Operator.AND) + 
-        				LuceneHelper.getCondMinMax(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()), LuceneHelper.Operator.AND);
-        		
-        		String query = "(" + queryInProgress + ") OR (" + queryPlanned + ")";
-        		logger.debug("ProjectFormulationWorker: " + query);        		
-        		List<NodeRef> projectNodeRefs = beCPGSearchService.luceneSearch(query);
-        		
+        		 projectNodeRefs.addAll(queryBuilder.list());
+        		 
         		try{
         			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
         			

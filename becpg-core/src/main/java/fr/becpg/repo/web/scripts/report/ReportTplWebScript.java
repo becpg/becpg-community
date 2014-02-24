@@ -18,14 +18,12 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * @author querephi
@@ -49,8 +47,6 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	private EntityReportService entityReportService;
 
-	private BeCPGSearchService beCPGSearchService;
-
 	private AssociationService associationService;
 
 	private EntityReportAsyncGenerator entityReportAsyncGenerator;
@@ -65,10 +61,6 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	public void setAssociationService(AssociationService associationService) {
@@ -114,26 +106,11 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		if (isSystem != null && isSystem && classType != null) {
 
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(classType)) + LuceneHelper.mandatory(LuceneHelper.getCondAspect(ReportModel.ASPECT_REPORT_ENTITY))
-					+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-
-			// TODO : duplicate code
-			List<NodeRef> refs = null;
-			int page = 1;
-			List<NodeRef> tmp = beCPGSearchService.lucenePaginatedSearch(query, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
-			
-			if (tmp!=null && !tmp.isEmpty()) {
-				logger.info(" - Page 1:"+tmp.size());
-				refs = tmp;
-			}
-			while(tmp!=null && tmp.size() == RepoConsts.MAX_RESULTS_256 ){
-				page ++;
-				tmp	=  beCPGSearchService.lucenePaginatedSearch(query, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
-				if (tmp!=null && !tmp.isEmpty()) {
-					logger.info(" - Page "+page+":"+tmp.size());
-					refs.addAll(tmp);
-				}
-			}
+			List<NodeRef> refs = BeCPGQueryBuilder.createQuery()
+					.ofType(classType)
+					.withAspect(ReportModel.ASPECT_REPORT_ENTITY)
+					.excludeVersions()
+					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 			logger.info("Refresh reports of " + refs.size() + " entities. action: " + action);
 

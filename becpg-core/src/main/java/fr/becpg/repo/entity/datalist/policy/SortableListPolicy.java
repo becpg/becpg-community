@@ -5,7 +5,6 @@ package fr.becpg.repo.entity.datalist.policy;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,11 +23,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListSortService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * The Class SortableListPolicy.
@@ -45,14 +42,9 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
 
 	private DataListSortService dataListSortService;
-	private BeCPGSearchService beCPGSearchService;
 	
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	/**
@@ -208,13 +200,14 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 				Integer sourceParentSort = (Integer)nodeService.getProperty(sourceParentLevelNodeRef, BeCPGModel.PROP_SORT);
 				
 				NodeRef targetParentNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
-				String query = LuceneHelper.getCondParent(targetParentNodeRef, null);
-				query += LuceneHelper.getCondType(nodeService.getType(sourceParentLevelNodeRef));
-				query += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : "", LuceneHelper.Operator.AND);
-				List<NodeRef> result = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
 				
-				if(!result.isEmpty()){
-					NodeRef copiedParentNodeRef = result.get(0);
+				NodeRef copiedParentNodeRef = BeCPGQueryBuilder.createQuery()
+							.parent(targetParentNodeRef)
+							.ofType(nodeService.getType(sourceParentLevelNodeRef))
+							.andProp(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : "")
+							.singleValue();
+				
+				if(copiedParentNodeRef!=null){
 					logger.debug("update the parent of copied node " + targetParentLevelNodeRef + " with value " + copiedParentNodeRef);
 					nodeService.setProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL, copiedParentNodeRef);
 				}

@@ -19,31 +19,16 @@ package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.alfresco.query.PagingRequest;
-import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.FileFilterMode;
-import org.alfresco.util.FileFilterMode.Client;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
@@ -55,33 +40,20 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class SimpleExtractor extends AbstractDataListExtractor {
-
-	private FileFolderService fileFolderService;
 
 	protected EntityListDAO entityListDAO;
 
 	protected AssociationService associationService;
 
-	private NamespaceService namespaceService;
-
 	protected DataListSortRegistry dataListSortRegistry;
 
 	protected EntityDictionaryService entityDictionaryService;
 
-	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
-
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
 	}
 
 	public void setDataListSortRegistry(DataListSortRegistry dataListSortRegistry) {
@@ -131,45 +103,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		List<NodeRef> results = new ArrayList<NodeRef>();
 
-		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(BeCPGModel.TYPE_ENTITYLIST_ITEM, dataListFilter.getDataType())) {
-
-			Set<QName> ignoreTypeQNames = new HashSet<QName>();
-			
-			if (logger.isDebugEnabled()) {
-				logger.debug("DataType to filter :" + dataListFilter.getDataType());
-			}
-
-				Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
-				for (QName qname : qnames) {
-					if (!qname.equals(dataListFilter.getDataType())) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Add to ignore :" + qname);
-						}
-						ignoreTypeQNames.add(qname);
-					}
-				}
-
-			int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
-			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
-
-			PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
-			pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-
-			PagingResults<FileInfo> pageOfNodeInfos = null;
-			FileFilterMode.setClient(Client.script);
-			try {
-				pageOfNodeInfos = this.fileFolderService.list(dataListFilter.getParentNodeRef(), true, false, null, ignoreTypeQNames,
-						dataListFilter.getSortProps(namespaceService), pageRequest);
-			} finally {
-				FileFilterMode.clearClient();
-			}
-
-			results = pagination.paginate(pageOfNodeInfos);
-
-		} else {
-
-			String queryString = dataListFilter.getSearchQuery();
+	
+			BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
 
 			// Look for Version
 			if (dataListFilter.isVersionFilter()) {
@@ -178,14 +113,13 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
 					if (dataListNodeRef != null) {
-						queryString = dataListFilter.getSearchQuery(dataListNodeRef);
+						queryBuilder = dataListFilter.getSearchQuery(dataListNodeRef);
 					}
 				}
 			}
-
-			results = advSearchService.queryAdvSearch(queryString, SearchService.LANGUAGE_LUCENE, dataListFilter.getDataType(), dataListFilter.getCriteriaMap(),
-					dataListFilter.getSortMap(), pagination.getMaxResults());
-
+			
+			results = advSearchService.queryAdvSearch(dataListFilter.getDataType(), queryBuilder, dataListFilter.getCriteriaMap(), pagination.getMaxResults());
+			
 			if (dataListFilter.getSortId() != null) {
 				DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
 				if (plugin != null) {
@@ -195,7 +129,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 			results = pagination.paginate(results);
 
-		}
 		return results;
 	}
 

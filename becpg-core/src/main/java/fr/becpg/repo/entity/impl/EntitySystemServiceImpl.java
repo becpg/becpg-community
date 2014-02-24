@@ -28,48 +28,33 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * 
  * @author matthieu
  * 
  */
+@Service("entitySystemService")
 public class EntitySystemServiceImpl implements EntitySystemService {
 
-	private static final String XPATH = "./%s:%s";
-
+	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
+	@Autowired
 	private NodeService nodeService;
 
-	private BeCPGSearchService beCPGSearchService;
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 
 	@Override
 	public NodeRef createSystemEntity(NodeRef parentNodeRef, String entityPath, Map<String, QName> entitySystemDataLists) {
@@ -119,16 +104,8 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public NodeRef getSystemEntity(NodeRef parentNodeRef, String systemEntityPath) {
-		String xPath = systemEntityPath.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? systemEntityPath : String.format(XPATH, NamespaceService.CONTENT_MODEL_PREFIX,
-				ISO9075.encode(systemEntityPath));
-
-		List<NodeRef> nodes = beCPGSearchService.searchByPath(parentNodeRef, xPath);
-
-		if (!nodes.isEmpty()) {
-			return nodes.get(0);
-		}
-
-		return null;
+		
+		return BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef, systemEntityPath);
 	}
 
 	@Override
@@ -147,16 +124,15 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public List<NodeRef> getSystemEntities() {
-		String searchQuery = "+TYPE:\"" + BeCPGModel.TYPE_SYSTEM_ENTITY + "\""
-				+ " -@cm\\:lockType:READ_ONLY_LOCK"
-				+ " -ASPECT:\"bcpg:compositeVersion\"";
-		return beCPGSearchService.luceneSearch(searchQuery);
+		
+		return BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).excludeVersions().list();
 	}
 
 	@Override
 	public List<NodeRef> getSystemFolders() {
-		String searchQuery = "+TYPE:\"" + ContentModel.TYPE_FOLDER + "\" +ASPECT:\""+BeCPGModel.ASPECT_SYSTEM_FOLDER+"\"";
-		return beCPGSearchService.luceneSearch(searchQuery);
+		
+		return BeCPGQueryBuilder.createQuery().ofType(ContentModel.TYPE_FOLDER).withAspect(BeCPGModel.ASPECT_SYSTEM_FOLDER).list();
+		
 	}
 
 }

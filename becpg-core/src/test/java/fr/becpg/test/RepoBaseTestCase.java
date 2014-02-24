@@ -53,7 +53,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
 
-import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.entity.EntitySystemService;
@@ -62,7 +61,7 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * base class of test cases for product classes.
@@ -138,9 +137,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	protected PersonService personService;
-
-	@Resource
-	protected BeCPGSearchService beCPGSearchService;
 
 	@Resource
 	protected EntityTplService entityTplService;
