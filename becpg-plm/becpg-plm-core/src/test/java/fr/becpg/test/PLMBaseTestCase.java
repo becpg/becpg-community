@@ -230,6 +230,16 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 			nodeService.createNode(labelingPositionFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
+		
+		// labelClaimTypes
+		NodeRef labelClaimTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELCLAIMS_TYPES);
+		String[] labelClaimTypes = { "Nutritionnelle" };
+		for (String labelClaimType : labelClaimTypes) {
+			properties = new HashMap<QName, Serializable>();
+			properties.put(BeCPGModel.PROP_LV_VALUE, labelClaimType);
+			nodeService.createNode(labelClaimTypesFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
 
 		// Quality
 		NodeRef qualityListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, PlmRepoConsts.PATH_QUALITY_LISTS);

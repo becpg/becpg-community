@@ -18,6 +18,6 @@ public enum SystemState {
 		
 		
 		public static SystemState getSystemState(String systemState) {	
-		   return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
+		   return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.Simulation;		
 		}
 }

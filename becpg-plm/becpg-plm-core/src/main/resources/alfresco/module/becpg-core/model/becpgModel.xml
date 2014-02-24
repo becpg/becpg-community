@@ -289,17 +289,7 @@
 					<value>-</value>
 				</list>
 			</parameter>
-		</constraint>
-		<constraint name="bcpg:microbioControlSteps" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>à J0</value>
-					<value>à DLC</value>							
-				</list>
-			</parameter>
-		</constraint>
-
+		</constraint>		
 		<constraint name="bcpg:packagingListUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -341,15 +331,36 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:labelClaimTypes" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value></value>
-					<value>Nutritionnelle</value>
-					<value>Santé</value>
-					<value>Environnementale</value>
-					<value>Certification</value>
+					<value>/System/Lists/bcpg:entityLists/LabelClaimTypes</value>
 				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:microbioControlSteps" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/MicrobioControlSteps</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:dynamicCharactColumns" type="LIST">
@@ -724,6 +735,24 @@
 		<type name="bcpg:supplier">
 			<parent>bcpg:entityV2</parent>
 			<properties>
+				<property name="bcpg:supplierHierarchy1">
+					<type>d:noderef</type>
+				</property>
+				<property name="bcpg:supplierHierarchy2">
+					<type>d:noderef</type>
+				</property>
+				<property name="bcpg:supplierState">
+					<type>d:text</type>
+					<default>Simulation</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
 				<property name="bcpg:supplierTel">
 					<type>d:text</type>
 				</property>
@@ -745,7 +774,28 @@
 		<type name="bcpg:client">
 			<parent>bcpg:entityV2</parent>
 			<properties>
+				<property name="bcpg:clientHierarchy1">
+					<type>d:noderef</type>
+				</property>
+				<property name="bcpg:clientHierarchy2">
+					<type>d:noderef</type>
+				</property>
+				<property name="bcpg:clientState">
+					<type>d:text</type>
+					<default>Simulation</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
 				<property name="bcpg:clientTel">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:clientFax">
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:clientEmail">
@@ -2043,7 +2093,7 @@
 				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>
-					<default>ToValidate</default>
+					<default>Simulation</default>
 					<index enabled="true">
 						<atomic>false</atomic>
 						<stored>false</stored>
