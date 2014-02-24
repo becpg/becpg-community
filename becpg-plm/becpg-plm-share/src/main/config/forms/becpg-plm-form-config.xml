@@ -3965,6 +3965,10 @@
 
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:supplierHierarchy1" />
+					<show id="bcpg:supplierHierarchy2" />
+					<show id="bcpg:supplierState" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
@@ -3980,14 +3984,26 @@
 					<show id="bcpg:locationCountry" />
 				</field-visibility>
 				<appearance>
-					<appearance>
-						<field id="cm:description">
-							<control>
-								<control-param name="activateLinks">true</control-param>
-							</control>
-						</field>
-						<field id="bcpg:code" read-only="true" />
-					</appearance>
+					<field id="bcpg:supplierHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:supplierHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_supplierHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
 				</appearance>
 			</form>
 		</forms>
@@ -3999,6 +4015,10 @@
 			<form id="create">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:supplierHierarchy1" />
+					<show id="bcpg:supplierHierarchy2" />
+					<show id="bcpg:supplierState" />
 					<show id="cm:description" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:supplierTel" />
@@ -4014,6 +4034,20 @@
 					<show id="bcpg:locationCountry" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:supplierHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:supplierHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_supplierHierarchy1
+							</control-param>
+						</control>
+					</field>
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4032,7 +4066,11 @@
 
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:clientHierarchy1" />
+					<show id="bcpg:clientHierarchy2" />
+					<show id="bcpg:clientState" />
+					<show id="cm:description" />					
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:clientTel" />
@@ -4048,14 +4086,26 @@
 					<show id="bcpg:locationCountry" />
 				</field-visibility>
 				<appearance>
-					<appearance>
-						<field id="cm:description">
-							<control>
-								<control-param name="activateLinks">true</control-param>
-							</control>
-						</field>
-						<field id="bcpg:code" read-only="true" />
-					</appearance>
+					<field id="bcpg:clientHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:clientHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_clientHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
 				</appearance>
 			</form>
 		</forms>
@@ -4067,6 +4117,10 @@
 			<form id="create">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:clientHierarchy1" />
+					<show id="bcpg:clientHierarchy2" />
+					<show id="bcpg:clientState" />
 					<show id="cm:description" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:clientTel" />
@@ -4082,6 +4136,20 @@
 					<show id="bcpg:locationCountry" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:clientHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:clientHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_clientHierarchy1
+							</control-param>
+						</control>
+					</field>
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>

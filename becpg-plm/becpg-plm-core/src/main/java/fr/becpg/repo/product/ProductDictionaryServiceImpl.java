@@ -42,7 +42,7 @@ public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	 */
 	public static SystemState getSystemState(String systemState) {
 		
-		return (systemState != null && systemState != "") ? SystemState.valueOf(systemState) : SystemState.ToValidate;		
+		return (systemState != null && systemState != "") ? SystemState.valueOf(systemState) : SystemState.Simulation;		
 	}	
 	
 	@Override

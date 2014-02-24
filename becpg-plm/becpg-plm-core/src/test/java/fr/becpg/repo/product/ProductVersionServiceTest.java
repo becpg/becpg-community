@@ -404,7 +404,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				assertEquals("Check state new version", SystemState.ToValidate.toString(), nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
+				assertEquals("Check state new version", SystemState.Simulation.toString(), nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				expected = "/app:company_home/cm:Products/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
