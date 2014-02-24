@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -49,8 +48,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Abstract remote entity webscript
@@ -94,7 +92,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected RemoteEntityService remoteEntityService;
 
-	protected BeCPGSearchService beCPGSearchService;
 
 	protected MimetypeService mimetypeService;
 
@@ -102,11 +99,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		this.mimetypeService = mimetypeService;
 	}
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	
 
 	public void setRemoteEntityService(RemoteEntityService remoteEntityService) {
 		this.remoteEntityService = remoteEntityService;
@@ -132,49 +124,33 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 		}
 		
+		
+		
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+		
+		queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2).excludeDefaults();
+		
 		if(maxResults==null){
-			maxResults = RepoConsts.MAX_RESULTS_256;
+			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
+		} else {
+			queryBuilder.maxResults(maxResults);
 		}
 		
-		String runnedQuery = LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_ENTITY_V2))
-				+ LuceneHelper.DEFAULT_IGNORE_QUERY;
-		
-		
 		if (path != null && path.length() > 0) {
-			runnedQuery+= " +PATH:\"" + path + "//*\"";
+			queryBuilder.inPath(path);
 		}
 		
 		
 		if (query != null && query.length() > 0) {
-			runnedQuery += " "+query;
+			queryBuilder.andFTSQuery(query);
 		
 		}
 		
-		List<NodeRef> refs = null;
+		List<NodeRef> refs = queryBuilder.list();
 		
-		if(RepoConsts.MAX_RESULTS_UNLIMITED == maxResults){
-			int page = 1;
-			
-			logger.info("Unlimited results ask -  start pagination");
-			List<NodeRef> tmp	=  beCPGSearchService.lucenePaginatedSearch(runnedQuery, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
-			
-			if (tmp!=null && !tmp.isEmpty()) {
-				logger.info(" - Page 1:"+tmp.size());
-				refs = tmp;
-			}
-			while(tmp!=null && tmp.size() == RepoConsts.MAX_RESULTS_256 ){
-				page ++;
-				tmp	=  beCPGSearchService.lucenePaginatedSearch(runnedQuery, LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false), page, RepoConsts.MAX_RESULTS_256);
-				if (tmp!=null && !tmp.isEmpty()) {
-					logger.info(" - Page "+page+":"+tmp.size());
-					refs.addAll(tmp);
-				}
-			}		
-			
-			
-		} else {
-			refs = beCPGSearchService.luceneSearch(runnedQuery,LuceneHelper.getSort(ContentModel.PROP_MODIFIED,false) ,maxResults );
-		}
+	
+		
 		
 		if (refs!=null && !refs.isEmpty()) {
 			logger.info("Returning "+refs.size()+" entities");
@@ -182,7 +158,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			return refs;
 		}
 		
-		logger.info("No entities found for query " + runnedQuery);
+		logger.info("No entities found for query " + queryBuilder.toString());
 		return new ArrayList<NodeRef>();
 		
 	}

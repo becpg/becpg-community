@@ -34,6 +34,8 @@ import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -41,7 +43,7 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
@@ -51,51 +53,31 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
  * Security Service : is in charge to compute acls by node Type. And provide
  * permission on properties
  * 
- * @author "Matthieu Laborie <laborima@gmail.com>"
+ * @author "Matthieu Laborie"
  */
+@Service("securityService")
 public class SecurityServiceImpl implements SecurityService {
 
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
 
 	private static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
+	@Autowired
 	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
 
+	@Autowired
 	private AuthorityService authorityService;
 
-	private BeCPGSearchService beCPGSearchService;
-
+	@Autowired
 	private DictionaryService dictionaryService;
 
+	@Autowired
 	private NamespacePrefixResolver namespacePrefixResolver;
 
+    @Autowired
 	private BeCPGCacheService beCPGCacheService;
-
-	public void setNamespacePrefixResolver(NamespacePrefixResolver namespacePrefixResolver) {
-		this.namespacePrefixResolver = namespacePrefixResolver;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
 	
-	public void setAlfrescoRepository(AlfrescoRepository<ACLGroupData> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
-		this.beCPGCacheService = beCPGCacheService;
-	}
-
+	
 	@Override
 	public int computeAccessMode(QName nodeType, String propName) {
 		StopWatch stopWatch = null;
@@ -222,8 +204,7 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private List<NodeRef> findAllAclGroups() {
-		String runnedQuery = "+TYPE:\"" + SecurityModel.TYPE_ACL_GROUP.toString() + "\"";
-		return beCPGSearchService.luceneSearch(runnedQuery);
+		return BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).list();
 	}
 
 	@Override

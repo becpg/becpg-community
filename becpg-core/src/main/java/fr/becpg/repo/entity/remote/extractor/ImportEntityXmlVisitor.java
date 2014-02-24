@@ -49,8 +49,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * 
@@ -63,8 +62,6 @@ public class ImportEntityXmlVisitor {
 
 	private NamespaceService namespaceService;
 
-	private BeCPGSearchService beCPGSearchService;
-
 	private EntityProviderCallBack entityProviderCallBack;
 
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
@@ -73,11 +70,10 @@ public class ImportEntityXmlVisitor {
 
 	private static Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
 
-	public ImportEntityXmlVisitor(NodeService nodeService, NamespaceService namespaceService, BeCPGSearchService beCPGSearchService) {
+	public ImportEntityXmlVisitor(NodeService nodeService, NamespaceService namespaceService) {
 		super();
 		this.nodeService = nodeService;
 		this.namespaceService = namespaceService;
-		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	public NodeRef visit(NodeRef entityNodeRef, InputStream in) throws IOException, SAXException, ParserConfigurationException {
@@ -337,15 +333,14 @@ public class ImportEntityXmlVisitor {
 	}
 
 	private NodeRef findNodeByPath(String parentPath) {
-		String runnedQuery = "+PATH:\"" + parentPath + "\"";
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		if (!ret.isEmpty()) {
-			logger.debug("Found node for query :" + runnedQuery);
-		} else {
-			ret = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_TO_DO, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		
+		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(null,parentPath);  
+		
+		if (ret ==null) {
+			ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(null,RepoConsts.FULL_PATH_IMPORT_TO_DO);
 		}
 
-		return ret.get(0);
+		return ret;
 
 	}
 
@@ -359,40 +354,43 @@ public class ImportEntityXmlVisitor {
 		if (nodeRef != null && nodeService.exists(new NodeRef(nodeRef))) {
 			return new NodeRef(nodeRef);
 		}
-
-		String runnedQuery = "";
+		
+		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
+		
 
 		if (type != null) {
-			runnedQuery += " +TYPE:\"" + type.toString() + "\" ";
+			beCPGQueryBuilder.ofType(type);
 		}
 
 		if (path != null) {
-			runnedQuery += " +PATH:\"" + path + "//.\" ";
+			beCPGQueryBuilder.inPath(path);
 		}
 
 		if (code != null && code.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, code, null);
+			beCPGQueryBuilder.andProp(BeCPGModel.PROP_CODE, code);
 		} else if (name != null && name.length() > 0) {
-			runnedQuery += LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), name, null);
+			beCPGQueryBuilder.andProp(RemoteHelper.getPropName(type), name);
 		}
+		
+		beCPGQueryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
 
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(runnedQuery, null, RepoConsts.MAX_RESULTS_256);
+		List<NodeRef> ret = beCPGQueryBuilder.list();
 		if (!ret.isEmpty()) {
 			for (NodeRef node : ret) {
 				if (nodeService.exists(node) && name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
-					logger.debug("Found node for query :" + runnedQuery);
+					logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
 					return node;
 				}
 			}
 		}
 
 		if (code != null) {
-			logger.debug("Retrying findNode without code for previous query : " + runnedQuery);
+			logger.debug("Retrying findNode without code for previous query : " + beCPGQueryBuilder.toString());
 			return findNode(nodeRef, null, name, path, type, currProp);
 		}
 
 		if (path != null) {
-			logger.debug("Retrying findNode without path for previous query : " + runnedQuery);
+			logger.debug("Retrying findNode without path for previous query : " + beCPGQueryBuilder.toString());
 			return findNode(nodeRef, code, name, null, type, currProp);
 		}
 

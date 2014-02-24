@@ -35,6 +35,8 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
@@ -44,47 +46,29 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
-import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * 
  * @author matthieu
  * 
  */
+@Service("remoteEntityService")
 public class RemoteEntityServiceImpl implements RemoteEntityService {
 
+	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
 	private NamespaceService namespaceService;
 
+	@Autowired
 	private DictionaryService dictionaryService;
 
-	private BeCPGSearchService beCPGSearchService;
-
+	@Autowired
 	private EntityService entityService;
 
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-	
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
@@ -102,7 +86,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService);
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 			NodeRef ret = null;
 			try {
@@ -157,7 +141,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, beCPGSearchService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService);
 			try {
 				Map<String, byte[]> images = xmlEntityVisitor.visitData(in);
 				entityService.writeImages(entityNodeRef, images);

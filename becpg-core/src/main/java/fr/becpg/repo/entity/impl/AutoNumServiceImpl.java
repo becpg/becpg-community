@@ -5,7 +5,6 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -17,21 +16,23 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AutoNumServiceImpl.
  *
  * @author querephi
  */
+@Service("autoNumService")
 public class AutoNumServiceImpl implements AutoNumService {
 
 	/** The Constant NAME. */
@@ -50,63 +51,17 @@ public class AutoNumServiceImpl implements AutoNumService {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(AutoNumServiceImpl.class);
 	
-	/** The search service. */
-	private BeCPGSearchService beCPGSearchService;
-	
-	/** The node service. */
+	@Autowired
 	private NodeService nodeService;
 	
-	/** The repo service. */
+	@Autowired
 	private RepoService repoService;
 	
-	/** The repository helper. */
+	@Autowired
 	private Repository repositoryHelper;
 	
-	/**
-	 * Dictionnary Service
-	 */
+	@Autowired
 	private DictionaryService dictionaryService;
-		
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the repo service.
-	 *
-	 * @param repoService the new repo service
-	 */
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
-	
-	
-	/**
-	 * Sets the dictionaryService service.
-	 * 
-	 * @param dictionaryService
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	/**
-	 * Sets the repository helper.
-	 *
-	 * @param repositoryHelper the new repository helper
-	 */
-	public void setRepositoryHelper(Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
-	}
 	
 	/**
 	 * Get the next autoNum value.
@@ -271,21 +226,13 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 */
 	private NodeRef getAutoNumNodeRef(QName className, QName propertyName) {
 		
-		NodeRef autoNumNodeRef = null;
+		return BeCPGQueryBuilder.createQuery()
+				.ofType(BeCPGModel.TYPE_AUTO_NUM)
+				.andProp(BeCPGModel.PROP_AUTO_NUM_CLASS_NAME, className.toString())
+				.andProp(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName.toString())
+				.singleValue();
 		
-		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(String.format(RepoConsts.QUERY_AUTONUM, className, propertyName), null , RepoConsts.MAX_RESULTS_SINGLE_VALUE );
 		
-		for(NodeRef nodeRef : nodeRefs){
-			if(nodeService.exists(nodeRef)){
-				autoNumNodeRef = nodeRef;
-				break;
-			}			
-			else{
-				logger.warn("Node doesn't exist : " + nodeRef);
-			}
-		}		
-		
-        return autoNumNodeRef;
 	}
 
 	@Override

@@ -295,7 +295,9 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				}
 			}
 
-			dataListFilter.buildQueryFilter(filterId, filterData, filterParams);
+			dataListFilter.setFilterId(filterId);
+			dataListFilter.setFilterData(filterData);
+			dataListFilter.setFilterParams(filterParams);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());

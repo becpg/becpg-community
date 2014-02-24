@@ -46,11 +46,8 @@
 				</list>
 			</parameter>
 		</constraint>
-		
 	</constraints>
-
 	<types>
-	
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
 			<mandatory-aspects>

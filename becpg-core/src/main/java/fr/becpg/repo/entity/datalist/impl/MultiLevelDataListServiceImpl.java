@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
@@ -97,9 +96,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
 				if (dataListNodeRef != null) {
 
-					List<NodeRef> childRefs = advSearchService.queryAdvSearch(dataListFilter.getSearchQuery(dataListNodeRef), SearchService.LANGUAGE_LUCENE,
-							dataListFilter.getDataType(), dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
-
+					List<NodeRef> childRefs = advSearchService.queryAdvSearch(dataListFilter.getDataType(),  
+							dataListFilter.getSearchQuery(dataListNodeRef), dataListFilter.getCriteriaMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
 					//Adv search already filter by perm 
 					
 					for (NodeRef childRef : childRefs) {

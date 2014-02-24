@@ -21,15 +21,6 @@
 <beans>
     
 
-	<bean id="securityService" class="fr.becpg.repo.security.impl.SecurityServiceImpl" >
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="authorityService" ref="authorityService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="namespacePrefixResolver" ref="namespaceService" />
-		<property name="beCPGCacheService" ref="beCPGCacheService"/>
-	</bean>
-
 	<!-- Form Processor Filters to process permission on property level -->
 	<bean id="beCPGNodeFormFilter" parent="baseFormFilter"
 		class="fr.becpg.repo.security.filter.PropertyPermissionNodeFormFilter">

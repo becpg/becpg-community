@@ -82,6 +82,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 			@SuppressWarnings("unchecked")
 			@Override
 			public NodeRef execute() throws Throwable {
+				
 
 				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT))
 						+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
