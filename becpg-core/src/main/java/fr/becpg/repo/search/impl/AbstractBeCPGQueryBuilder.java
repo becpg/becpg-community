@@ -109,11 +109,11 @@ public abstract class AbstractBeCPGQueryBuilder {
 	}
 
 	protected  String mandatory(String condType) {
-		return " +"+condType;
+		return (SearchService.LANGUAGE_LUCENE.equals(language)?" +":" AND +")+condType;
 	}
 
 	protected  String prohibided(String condType) {
-		return " -"+condType;
+		return (SearchService.LANGUAGE_LUCENE.equals(language)?" +":" AND -")+condType;
 	}
 
 	protected  String optional(String condType) {

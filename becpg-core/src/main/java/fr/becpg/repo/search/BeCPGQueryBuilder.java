@@ -317,10 +317,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 		}
 		
 		if(logger.isTraceEnabled()) {
-			logger.trace("Try to find node in path: "+encodePath(xPath)+" - with parentContextRef: "+parentNodeRef);
+			logger.trace("Try to find node in path: "+xPath+" - with parentContextRef: "+parentNodeRef);
 		}
 		
-		return  searchService.selectNodes(parentNodeRef, encodePath(xPath), null, namespaceService, false);
+		return  searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
 	}
 	
 
@@ -463,12 +463,23 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 			}
 		}
 		
-		for(String ftsQuery : ftsQueries) {
-			runnedQuery.append(optional(ftsQuery));
+		if(!ftsQueries.isEmpty()){
+			runnedQuery.append(mandatory(startGroup()));
+			for(String ftsQuery : ftsQueries) {
+				runnedQuery.append(optional(ftsQuery));
+			}
+			runnedQuery.append(endGroup());
 		}
 		
+		String ret = runnedQuery.toString();
 		
-		return runnedQuery.toString();
+		if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)){
+			if(ret.startsWith(" AND")){
+				return ret.replaceFirst(" AND", "");
+			}
+		}
+		
+		return ret;
 	}
 
 
