@@ -86,7 +86,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
 
-
 	@Autowired
 	private AuthorityService authorityService;
 
@@ -113,7 +112,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 	
 	@Autowired
 	private EntitySystemService entitySystemService;
-
 
 	/**
 	 * Initialize the repository with system folders.
@@ -161,7 +159,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 		// Products
 		 visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
-		 
 
 		// Quality
 		NodeRef qualityNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_QUALITY);
@@ -210,26 +207,20 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		visitFolder(systemImportNodeRef, PlmRepoConsts.PATH_MAPPING);
 
 		visitFolder(systemImportNodeRef, PlmRepoConsts.PATH_IMPORT_SAMPLES);
-		
-		
+				
 		//Designer		
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
 		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-plm-core/model/qualityModel.xml");
-		
-		
+				
 		//OLAP
-		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
-		
-		
+		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);		
 	}
-
 
 	@Override
 	public boolean shouldInit(NodeRef companyHomeNodeRef) {
 	return nodeService.getChildByName(companyHomeNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE)) == null;
 		
 	}
-	
 
 	/**
 	 * Add resources to folder
@@ -243,19 +234,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		if (folderName == PlmRepoConsts.PATH_MAPPING) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
 		}
-//		if (folderName == RepoConsts.PATH_IMPORT_SAMPLES) {
-//			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/samples/*.csv");
-//		}
 		if (folderName == RepoConsts.PATH_OLAP_QUERIES) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
 		}
-
 	}
 
-	
-	
-	
-	
 	/**
 	 * Initialize the rules of the repository
 	 */
@@ -402,8 +385,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(),
 					PermissionService.WRITE, true);
 			
-	
-
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(),
 					PermissionService.WRITE, true);
 			
@@ -448,11 +429,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, true, dataLists, null);
 
 		// visit quality
-		visitQuality(entityTplsNodeRef);
-		
+		visitQuality(entityTplsNodeRef);		
 	}
-
-	
 	
 	/** 
 	 * Create system charact file
@@ -489,8 +467,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 	
-	
-
 	private NodeRef visitSystemHierachiesEntity(NodeRef parentNodeRef, String path) {
 		
        Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
@@ -502,12 +478,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_PACKAGINGKIT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_CLIENT), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_SUPPLIER), BeCPGModel.TYPE_LINKED_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);		
 	}
-	
 
-	
 	/**
 	 * Create dyn List values
 	 * @param parentNodeRef
@@ -525,15 +501,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		entityLists.put(PlmRepoConsts.PATH_NUT_FACTS_METHODS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_POSITIONS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS_TYPES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_MICROBIO_CONTROL_STEPS,BeCPGModel.TYPE_LIST_VALUE);
 		
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
-	
-	
 
-	
-	
-	
 	private NodeRef visitSystemQualityListValuesEntity(NodeRef parentNodeRef, String path) {
 		
 		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
@@ -547,10 +520,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_CHARACTS,QualityModel.TYPE_CONTROL_CHARACT);
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_UNITS,BeCPGModel.TYPE_LIST_VALUE);
 		
-		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
-		
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);	
 	}
-	
 	
 	/**
 	 * Create product tpls
@@ -658,10 +629,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 			if(wusedQName!=null) {
 				entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
 			}
-		}
-		
-		
-		
+		}		
 	}
 
 	private void visitQuality(NodeRef entityTplsNodeRef) {
@@ -918,11 +886,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 					PermissionService.GROUP_PREFIX + SystemGroup.TradeMgr.toString());
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString()))
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(),
-					PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString());
-	
-
+					PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString());	
 	}
-
-
-
 }

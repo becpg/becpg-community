@@ -50,6 +50,12 @@
 	<types>
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:lvValue">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>

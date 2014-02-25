@@ -23,13 +23,12 @@ public interface BeCPGModel {
 
 	// linkedValue
 	QName TYPE_LINKED_VALUE = QName.createQName(BECPG_URI, "linkedValue");
-
-	// lkvValue
 	QName PROP_LKV_VALUE = QName.createQName(BECPG_URI, "lkvValue");
 
 	// listValue
 	QName TYPE_LIST_VALUE = QName.createQName(BECPG_URI, "listValue");
-
+	QName PROP_LV_VALUE = QName.createQName(BECPG_URI, "lvValue");
+	
 	// entity
 	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");
 

@@ -598,7 +598,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				String workflowInstanceId = projectData.getTaskList().get(0).getWorkflowInstance();
 				assertEquals(true, workflowService.getWorkflowById(workflowInstanceId).isActive());				
 				checkWorkflowProperties(workflowInstanceId, taskListDataItem.getNodeRef(),
-						"Pjt 1 - task1 : Deliveray descr 1", taskListDataItem.getEnd(), taskListDataItem.getResources());
+						"Pjt 1 - task1", taskListDataItem.getEnd(), taskListDataItem.getResources());
 				
 				// modify WF props (duration and add a resource)
 				logger.info("modify WF props");

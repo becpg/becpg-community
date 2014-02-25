@@ -49,7 +49,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private MLText legalName;
 	private String title;
 	private String erpCode;
-	private SystemState state = SystemState.ToValidate;
+	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
 

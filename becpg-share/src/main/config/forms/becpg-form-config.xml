@@ -114,7 +114,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -126,7 +126,7 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -134,14 +134,14 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
