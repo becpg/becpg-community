@@ -172,7 +172,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 				
 				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery()
 						.ofType(constraintType)
-						.inPath("/app:company_home/"+path)
+						.inPath(path)
 						.addSort(BeCPGModel.PROP_SORT, true).list();
 
 						for (NodeRef nodeRef : nodeRefs) {

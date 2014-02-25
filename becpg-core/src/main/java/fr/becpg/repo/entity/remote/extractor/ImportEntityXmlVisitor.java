@@ -367,9 +367,9 @@ public class ImportEntityXmlVisitor {
 		}
 
 		if (code != null && code.length() > 0) {
-			beCPGQueryBuilder.andProp(BeCPGModel.PROP_CODE, code);
+			beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 		} else if (name != null && name.length() > 0) {
-			beCPGQueryBuilder.andProp(RemoteHelper.getPropName(type), name);
+			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type), name);
 		}
 		
 		beCPGQueryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);

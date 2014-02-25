@@ -56,9 +56,7 @@ public class RepoServiceImpl implements RepoService {
 	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths) {			    
 		
     	for(String folderName : paths){
-    		
     		if(folderName.equals("") == false){    				    		    		
-    			
     			parentNodeRef = getOrCreateFolderByPath(parentNodeRef, folderName, folderName);    		
     		}
     	}

@@ -64,15 +64,14 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
  * Abstract class used to import a node with its attributes and files.
@@ -80,15 +79,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * @author querephi
  */
 public class AbstractImportVisitor implements ImportVisitor, ApplicationContextAware {
-
-	// we don't know where is the node ? product may be in the Products folder
-	// or in the sites or somewhere else !
-	protected static final String QUERY_NODE_BY_TYPE = " +TYPE:\"%s\"";
-
-	// we want to be able so update -ASPECT:\"bcpg:entityTplAspect\" so we don't
-	// use LuceneHelper.DEFAULT_IGNORE_QUERY
-	protected static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" " + " -@cm\\:lockType:READ_ONLY_LOCK" + " -ASPECT:\"bcpg:compositeVersion\""
-			+ " -ASPECT:\"bcpg:hiddenFolder\"";
 
 	/** The Constant QUERY_XPATH_MAPPING. */
 	protected static final String QUERY_XPATH_MAPPING = "mapping";
@@ -168,12 +158,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";
 	protected static final String MSG_ERROR_NO_DOCS_BASE_PATH_SET = "import_service.error.err_no_docs_base_path_set";
 
-
 	private static Log logger = LogFactory.getLog(AbstractImportVisitor.class);
 
 	protected NodeService nodeService;
-
-	protected BeCPGSearchService beCPGSearchService;
 
 	protected DictionaryService dictionaryService;
 
@@ -205,59 +192,22 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		this.nodeService = nodeService;
 	}
 
-	/**
-	 * @param beCPGSearchService
-	 */
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	/**
-	 * Sets the dictionary service.
-	 * 
-	 * @param dictionaryService
-	 *            the new dictionary service
-	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
 
-	/**
-	 * Sets the repo service.
-	 * 
-	 * @param repoService
-	 *            the new repo service
-	 */
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
-	/**
-	 * Sets the content service.
-	 * 
-	 * @param contentService
-	 *            the new content service
-	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
-	/**
-	 * Sets the mimetype service.
-	 * 
-	 * @param mimetypeService
-	 *            the new mimetype service
-	 */
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
 
-	/**
-	 * Sets the namespace service.
-	 * 
-	 * @param namespaceService
-	 *            the new namespace service
-	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -407,8 +357,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return properties;
 	}
-	
-
 
 	private String parseFormula(String formula) throws ImporterException {
 		try {
@@ -430,15 +378,15 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 			}).getValue(context, String.class);
 		} catch (Exception e) {
-			logger.error("Cannot parse formula :" + formula,e);
-			throw new ImporterException("Cannot parse formula :" + formula,e);
+			logger.error("Cannot parse formula :" + formula, e);
+			throw new ImporterException("Cannot parse formula :" + formula, e);
 		}
 	}
 
-	public  String findCharact(String type, String name) {
+	public String findCharact(String type, String name) {
 		NodeRef ret = getItemByTypeAndName(QName.createQName(type, namespaceService), name);
-		if(ret==null){
-			logger.error("Cannot find ("+type+","+name+")");
+		if (ret == null) {
+			logger.error("Cannot find (" + type + "," + name + ")");
 			return null;
 		}
 		return ret.toString();
@@ -1036,10 +984,23 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 */
 	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, QName type, QName codeQName, Map<QName, Serializable> properties) {
 
+		// // we don't know where is the node ? product may be in the Products
+		// folder
+		// // or in the sites or somewhere else !
+		// protected static final String QUERY_NODE_BY_TYPE = " +TYPE:\"%s\"";
+		//
+		// // we want to be able so update -ASPECT:\"bcpg:entityTplAspect\" so
+		// we don't
+		// // use LuceneHelper.DEFAULT_IGNORE_QUERY
+		// protected static final String DEFAULT_IGNORE_QUERY =
+		//
+
 		NodeRef nodeRef = null;
 
 		ClassMapping classMapping = importContext.getClassMappings().get(type);
-		String queryPath = String.format(QUERY_NODE_BY_TYPE, type);
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type);
+
 		boolean doQuery = false;
 
 		// nodeColumnKeys
@@ -1049,17 +1010,19 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute)) {
 					// query by path
-					queryPath += LuceneHelper.getCondPath(importContext.getPath(), Operator.AND);
+					queryBuilder.inPath(importContext.getPath());
+
 					doQuery = true;
 				} else if (properties.get(attribute) != null) {
 
 					if (ImportHelper.NULL_VALUE.equals(properties.get(attribute))) {
-						queryPath += LuceneHelper.getCondIsNullValue(attribute, LuceneHelper.Operator.AND);
+
+						queryBuilder.isNull(attribute);
+
 					} else {
 
+						queryBuilder.andPropQuery(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null);
 						// +@cm\\:localName:%s
-						queryPath += LuceneHelper.getCondEqualValue(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null,
-								LuceneHelper.Operator.AND);
 					}
 					doQuery = true;
 				} else {
@@ -1070,7 +1033,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		// code
 		else if (properties.get(codeQName) != null) {
 			// +@cm\\:localName:%s
-			queryPath += LuceneHelper.getCondEqualValue(codeQName, (String) properties.get(codeQName), LuceneHelper.Operator.AND);
+			queryBuilder.andPropQuery(codeQName, (String) properties.get(codeQName));
 			doQuery = true;
 		} else {
 			if (logger.isDebugEnabled()) {
@@ -1079,16 +1042,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 
 		if (doQuery) {
-			logger.debug("findNodeByKeyOrCode: " + queryPath);
+			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 
-			queryPath += DEFAULT_IGNORE_QUERY;
+			queryBuilder.excludeDefaults();
 
-			List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+			nodeRef = queryBuilder.singleValue();
 
-			logger.debug("resultSet.length() : " + resultSet.size());
-			if (!resultSet.isEmpty()) {
-				nodeRef = resultSet.get(0);
-
+			if (nodeRef != null) {
 				// check node exist
 				if (!nodeService.exists(nodeRef)) {
 					nodeRef = null;
@@ -1202,20 +1162,19 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, QName type, String value, boolean searchByName) throws ImporterException {
 
 		NodeRef nodeRef = null;
-		
-		//Try value is a nodeRef
+
+		// Try value is a nodeRef
 		try {
 			nodeRef = new NodeRef(value);
-			if(nodeService.exists(nodeRef)){
+			if (nodeService.exists(nodeRef)) {
 				return nodeRef;
 			}
-		} catch (Exception e){
+		} catch (Exception e) {
 			logger.debug("Value is not a nodeRef");
 		}
-		
-		
-		StringBuilder queryPath = new StringBuilder(128);
-		queryPath.append(String.format(QUERY_NODE_BY_TYPE, type));
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type);
+
 		ClassMapping classMapping = importContext.getClassMappings().get(type);
 		boolean doQuery = false;
 
@@ -1230,9 +1189,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (classMapping != null && classMapping.getNodeColumnKeys() != null && !classMapping.getNodeColumnKeys().isEmpty()) {
 
 				for (QName attribute : classMapping.getNodeColumnKeys()) {
+					queryBuilder.andPropQuery(attribute, value);
 
 					// +@cm\\:localName:%s
-					queryPath.append(LuceneHelper.getCondEqualValue(attribute, value, LuceneHelper.Operator.AND));
 					doQuery = true;
 					break;
 				}
@@ -1243,10 +1202,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				// is it a product
 				if (!searchByName && dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
 					// +@cm\\:localName:%s
+					// TODO Remove that CRAP
 
-					queryPath.append(LuceneHelper.getCond(
-							LuceneHelper.getGroup(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value),
-									LuceneHelper.getCondEqualValue(PLMModel.PROP_ERP_CODE, value, LuceneHelper.Operator.OR)), LuceneHelper.Operator.AND));
+					String ftsQuery = "+( " + BeCPGQueryBuilder.createQuery().getCondEqualValue(BeCPGModel.PROP_CODE, value) + " "
+							+ BeCPGQueryBuilder.createQuery().getCondEqualValue(PLMModel.PROP_ERP_CODE, value) + ")";
+					queryBuilder.andFTSQuery(ftsQuery);
 
 					doQuery = true;
 				}
@@ -1258,7 +1218,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
 							if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
 								// +@cm\\:localName:%s
-								queryPath.append(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_CODE, value, LuceneHelper.Operator.AND));
+								queryBuilder.andPropQuery(BeCPGModel.PROP_CODE, value);
+
 								doQuery = true;
 								break;
 							}
@@ -1269,7 +1230,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					// test the name
 					if (doQuery == false) {
 						// +@cm\\:localName:%s
-						queryPath.append(LuceneHelper.getCondEqualValue(RemoteHelper.getPropName(type), value, LuceneHelper.Operator.AND));
+						queryBuilder.andPropQuery(RemoteHelper.getPropName(type), value);
 						doQuery = true;
 						searchByName = true;
 					}
@@ -1278,11 +1239,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			if (doQuery) {
 
-				logger.debug("findTargetNodeByValue: " + queryPath);
+				queryBuilder.excludeDefaults();
 
-				queryPath.append(DEFAULT_IGNORE_QUERY);
+				logger.debug("findTargetNodeByValue: " + queryBuilder.toString());
 
-				List<NodeRef> resultSet = beCPGSearchService.luceneSearch(queryPath.toString(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+				List<NodeRef> resultSet = queryBuilder.list();
 
 				logger.debug("resultSet.length() : " + resultSet.size());
 				if (resultSet.isEmpty()) {
@@ -1356,17 +1317,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	private NodeRef getItemByTypeAndName(QName type, String name) {
 
-		String queryPath = String.format(RepoConsts.QUERY_CHARACT_BY_TYPE_AND_NAME, type, name);
-
-		queryPath += DEFAULT_IGNORE_QUERY;
-		
-		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-		if (!nodes.isEmpty()) {
-			return nodes.get(0);
-		}
-
-		return null;
+		return BeCPGQueryBuilder.createQuery().ofType(type).andPropQuery(ContentModel.PROP_NAME, name).excludeDefaults().singleValue();
 
 	}
 

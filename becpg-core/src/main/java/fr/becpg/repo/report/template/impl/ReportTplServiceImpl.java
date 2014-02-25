@@ -95,7 +95,7 @@ public class ReportTplServiceImpl implements ReportTplService{
     	
 		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, true);
 		if(tplName!=null && tplName!="*"){
-			queryBuilder.andProp(ContentModel.PROP_NAME, tplName);
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		}
 		
 		return queryBuilder.singleValue();
@@ -121,7 +121,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 		
 		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, false);
 		if(tplName!=null && tplName!="*"){
-			queryBuilder.andProp(ContentModel.PROP_NAME, tplName);
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		}
 		
 		return queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256).list();
@@ -147,7 +147,7 @@ public class ReportTplServiceImpl implements ReportTplService{
     	
 		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, false);
 		if(tplName!=null && tplName!="*"){
-			queryBuilder.andProp(ContentModel.PROP_NAME, tplName);
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		}
 		
 		return queryBuilder.singleValue();
@@ -346,10 +346,10 @@ public class ReportTplServiceImpl implements ReportTplService{
 	private BeCPGQueryBuilder getQueryReportTpl(ReportType reportType, QName nodeType, boolean isSystem){
 					
 		return BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
-				.andProp(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
-				.andProp(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, ""+isSystem)
-				.andProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, ""+false)
-				.andProp(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);
+				.andPropQuery(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.FALSE.toString())
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);
 		//(@rep\\:reportTplIsDisabled:false ISNULL:rep\\:reportTplIsDisabled)
 		
 	}

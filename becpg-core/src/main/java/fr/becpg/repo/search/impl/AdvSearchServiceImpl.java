@@ -77,7 +77,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		addCriteriaMap(beCPGQueryBuilder, criteria);
 
-		List<NodeRef> nodes = beCPGQueryBuilder.list();
+		List<NodeRef> nodes = beCPGQueryBuilder.ftsLanguage().list();
 
 		if (advSearchPlugins != null) {
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
@@ -178,14 +178,14 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 								} else {
 
-									queryBuilder.andProp(QName.createQName(propName, namespaceService), propValue);
+									queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), propValue);
 								}
 							}
 						} else if (propName.contains("productHierarchy")) {
 							String hierarchyQuery = getHierarchyQuery(propName, propValue);
 							if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
 
-								queryBuilder.andProp(QName.createQName(propName, namespaceService), hierarchyQuery);
+								queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), hierarchyQuery);
 
 							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
@@ -206,7 +206,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 								// propName + ":\"" + propValue + "\"";
-								queryBuilder.andProp(QName.createQName(propName, namespaceService), propValue);
+								queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), propValue);
 								// TODO
 
 							} else {
@@ -253,10 +253,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
 					+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService))
 					.inType(BeCPGModel.TYPE_LINKED_VALUE)
-					.andProp(BeCPGModel.PROP_LKV_VALUE, hierachyName);
+					.andPropEquals(BeCPGModel.PROP_LKV_VALUE, hierachyName);
 			
 			if (propName.endsWith("productHierarchy1")) {
-				queryBuilder.andProp(BeCPGModel.PROP_DEPTH_LEVEL, "1");
+				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
 			nodes = queryBuilder.list();
 		}

@@ -29,8 +29,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.querymodel.QueryOptions;
-import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.model.ForumModel;
+import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
@@ -40,32 +40,46 @@ import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
-import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.SiteHelper;
-import fr.becpg.repo.search.impl.QueryBuilderHelper;
+import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
  * @author matthieu
  * 
  */
-public class BeCPGQueryBuilder {
+@Service("beCPGQueryBuilder")
+public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements InitializingBean  {
 
 	private static Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
 
 	private static final String DEFAULT_FIELD_NAME = "keywords";
-	private NamespaceService namespaceService;
+
+	private static BeCPGQueryBuilder INSTANCE = null;
+	
+	@Autowired
 	private SearchService searchService;
+	@Autowired
+	private NamespaceService namespaceService;
+	
+	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private NodeRef parentNodeRef;
 	private QName type = null;
 	private Set<QName> types = new HashSet<>();
+	private Set<QName> aspects = new HashSet<>();
 	private String path = null;
 	private String membersPath = null;
 	private Set<NodeRef> ids = new HashSet<>();
@@ -74,14 +88,34 @@ public class BeCPGQueryBuilder {
 	private Set<QName> nullProps = new HashSet<>();
 	private Map<QName, String> propQueriesMap = new HashMap<QName, String>();
 	private Set<String> ftsQueries = new HashSet<>();
+	private Set<QName> excludedAspects = new HashSet<>();
+	private Set<QName> excludedTypes = new HashSet<>();
+	private Map<QName, String> excludedPropQueriesMap = new HashMap<QName, String>();
+
+
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		INSTANCE = this;
+		
+	}
 
 	private BeCPGQueryBuilder() {
+		//Make creation private
 		
 	}
 
 	public static BeCPGQueryBuilder createQuery() {
-		return new BeCPGQueryBuilder();
+		BeCPGQueryBuilder builder = new BeCPGQueryBuilder();
+		if(INSTANCE!=null) {
+			builder.searchService = INSTANCE.searchService;
+			builder.namespaceService = INSTANCE.namespaceService;
+			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
+		}
+		return builder;
 	}
+	
+	
 
 	public BeCPGQueryBuilder ofType(QName typeQname) {
 		if (this.type != null) {
@@ -93,9 +127,12 @@ public class BeCPGQueryBuilder {
 	}
 
 	public BeCPGQueryBuilder inType(QName typeQname) {
-
 		types.add(typeQname);
-
+		return this;
+	}
+	
+	public BeCPGQueryBuilder withAspect(QName aspect) {
+		aspects.add(aspect);
 		return this;
 	}
 
@@ -154,21 +191,23 @@ public class BeCPGQueryBuilder {
 	}
 
 	public BeCPGQueryBuilder andNotID(NodeRef nodeRef) {
-		this.notIds.add(nodeRef);
+		if(!ids.contains(nodeRef)) {
+			this.notIds.add(nodeRef);
+		} else {
+			logger.warn("Unconsistent search id already in ids : "+nodeRef);
+		}
 		return this;
 	}
 
 	Map<String, Boolean> sortProps = new TreeMap<>();
 
 	public BeCPGQueryBuilder addSort(Map<String, Boolean> sortMap) {
-		
 		this.sortProps.putAll(sortMap);
-
 		return this;
 	}
 
 	public BeCPGQueryBuilder addSort(QName propToSort, boolean sortOrder) {
-		sortProps.put(QueryBuilderHelper.getSortProp(propToSort), sortOrder);
+		sortProps.put(getSortProp(propToSort), sortOrder);
 		return this;
 	}
 
@@ -178,7 +217,11 @@ public class BeCPGQueryBuilder {
 	}
 
 	public BeCPGQueryBuilder isNull(QName propQName) {
-		nullProps.add(propQName);
+		if(!notNullProps.contains(propQName)) {
+			nullProps.add(propQName);
+		} else {
+			logger.warn("Unconsistent search null prop already in notNullProps : "+propQName);
+		}
 		return this;
 	}
 
@@ -187,7 +230,12 @@ public class BeCPGQueryBuilder {
 		return this;
 	}
 
-	public BeCPGQueryBuilder andProp(QName propQName, String propQuery) {
+	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
+		propQueriesMap.put(propQName, "\""+value+"\"");
+		return this;
+	}
+	
+	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
 		propQueriesMap.put(propQName, propQuery);
 		return this;
 	}
@@ -196,6 +244,85 @@ public class BeCPGQueryBuilder {
 		propQueriesMap.put(propQName, String.format("[%s TO %s]", start, end));
 		return this;
 	}
+	
+	public BeCPGQueryBuilder excludeProp(QName propName, String query) {
+		excludedPropQueriesMap.put(propName, query);
+		return this;
+	}
+
+	public BeCPGQueryBuilder excludeType(QName type) {
+		if(!types.contains(type) && !type.equals(this.type)) {
+			excludedTypes.add(type);
+		} else {
+			logger.warn("Unconsistent search type already in inType : "+type);
+		}
+		return this;
+	}
+	
+	
+	public BeCPGQueryBuilder excludeAspect(QName aspect) {
+		if(!aspects.contains(aspect)) {
+			excludedAspects.add(aspect);
+		} else {
+			logger.warn("Unconsistent search aspect already in withAspect : "+aspect);
+		}
+		
+		return this;
+	}
+
+	public BeCPGQueryBuilder excludeVersions() {
+		excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);
+		return this;
+	}
+
+	public BeCPGQueryBuilder excludeDefaults() {
+		excludeVersions();
+		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
+		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
+		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);
+		excludeProp(ContentModel.PROP_LOCK_TYPE, "READ_ONLY_LOCK");
+		return this;
+	}
+	public BeCPGQueryBuilder excludeSearch() {
+		
+		excludeDefaults();
+		excludeType(ContentModel.TYPE_THUMBNAIL);
+		excludeType(ContentModel.TYPE_FAILED_THUMBNAIL);
+		excludeType(ContentModel.TYPE_RATING);
+		excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		excludeType(ReportModel.TYPE_REPORT);
+		excludeType(ForumModel.TYPE_FORUM);
+		excludeType(ForumModel.TYPE_FORUMS);
+		excludeAspect(ContentModel.ASPECT_HIDDEN);
+
+		return this;
+	}
+	
+	public NodeRef selectNodeByXPath(String xPath) {
+		List<NodeRef> ret = selectNodesByPath(null, xPath);
+		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
+	}
+	
+	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
+		List<NodeRef> ret = selectNodesByPath(parentNodeRef, xPath);
+		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
+	}
+
+
+	public List<NodeRef> selectNodesByPath(NodeRef parentNodeRef, String xPath) {
+		
+		if(parentNodeRef == null) {
+			this.language = SearchService.LANGUAGE_XPATH;
+			return search(xPath, sortProps, -1, maxResults);
+		}
+		
+		if(logger.isTraceEnabled()) {
+			logger.trace("Try to find node in path: "+encodePath(xPath)+" - with parentContextRef: "+parentNodeRef);
+		}
+		
+		return  searchService.selectNodes(parentNodeRef, encodePath(xPath), null, namespaceService, false);
+	}
+	
 
 	public List<NodeRef> list() {
 
@@ -207,7 +334,7 @@ public class BeCPGQueryBuilder {
 			int page = 1;
 
 			logger.info("Unlimited results ask -  start pagination");
-			List<NodeRef> tmp = search(runnedQuery, QueryBuilderHelper.getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+			List<NodeRef> tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
 
 			if (tmp != null && !tmp.isEmpty()) {
 				logger.info(" - Page 1:" + tmp.size());
@@ -215,7 +342,7 @@ public class BeCPGQueryBuilder {
 			}
 			while (tmp != null && tmp.size() == RepoConsts.MAX_RESULTS_256) {
 				page++;
-				tmp = search(runnedQuery, QueryBuilderHelper.getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+				tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
 				if (tmp != null && !tmp.isEmpty()) {
 					logger.info(" - Page " + page + ":" + tmp.size());
 					refs.addAll(tmp);
@@ -228,37 +355,7 @@ public class BeCPGQueryBuilder {
 
 		return refs;
 	}
-
-	private String buildQuery() {
-//		private QName type = null;
-//		private Set<QName> types = new HashSet<>();
-//		private Set<NodeRef> ids = new HashSet<>();
-//		private Set<NodeRef> notIds = new HashSet<>();
-//		private Set<QName> notNullProps = new HashSet<>();
-//		private Set<QName> nullProps = new HashSet<>();
-//		private Map<QName, String> propQueriesMap = new HashMap<QName, String>();
-//		private Set<String> ftsQueries = new HashSet<>();
-		
-		StringBuilder runnedQuery = new StringBuilder();
-		
-		if(parentNodeRef!=null) {
-			runnedQuery.append(QueryBuilderHelper.getCondParent(parentNodeRef, QueryBuilderHelper.Operator.AND));
-		} else if(membersPath !=null) {
-			runnedQuery.append(QueryBuilderHelper.getCondMembers(membersPath, QueryBuilderHelper.Operator.AND));
-		} else if(path !=null) {
-			runnedQuery.append(QueryBuilderHelper.getCondPath(path, QueryBuilderHelper.Operator.AND));
-		} 
-		
-		if(type!=null) {
-			runnedQuery.append(QueryBuilderHelper.getCondType(type));
-		} else if(!types.isEmpty()) {
-			
-		}
-		
-		
-		return null;
-	}
-
+	
 	public NodeRef singleValue() {
 
 		this.maxResults = RepoConsts.MAX_RESULTS_SINGLE_VALUE;
@@ -266,6 +363,119 @@ public class BeCPGQueryBuilder {
 
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
+
+
+	/*
+	 *   1) Lucene's QueryParser class does not parse boolean expressions -- it
+	        might look like it, but it does not.
+		 2) Lucene's BooleanQuery clause does not model Boolean Queries ... it
+		    models aggregate queries.
+		 3) the most native way to represent the options available in a lucene
+		    "BooleanQuery" as a string is with the +/- prefixes, where...
+		     +foo ... means foo is a required clause and docs must match it
+		     -foo ... means foo is prohibited clause and docs must not match it
+		      foo ... means foo is an optional clause and docs that match it will
+		              get score benefits for doing so.
+		 4) in an attempt to make things easier for people who have
+		    simple needs, QueryParser "fakes" that it parses boolean expressions
+		    by interpreting "A AND B" as "+A +B"; "A OR B" as "A B" and "NOT A" as
+		    "-A"
+		 5) if you change the default operator on QueryParser to be AND then
+		    things get more complicated, mainly because then QueryParser treats
+		    "A B" the same as "+A +B"
+		 6) you should avoid thinking in terms of AND, OR, and NOT ... think in
+		    terms of OPTIONAL, REQUIRED, and PROHIBITED ... your life will be much
+		    easier: documentation will make more sense, conversations on the email
+		    list will be more synergistastic, wine will be sweeter, and food will
+		    taste better.
+	 */
+	private String buildQuery() {
+		
+		StringBuilder runnedQuery = new StringBuilder();
+		
+		if(parentNodeRef!=null) {
+			runnedQuery.append(mandatory(getCondParent(parentNodeRef)));
+		} else if(membersPath !=null) {
+			runnedQuery.append(mandatory(getCondMembers(membersPath)));
+		} else if(path !=null) {
+			runnedQuery.append(mandatory(getCondPath(path)));
+		} 
+		
+		if(type!=null) {
+			runnedQuery.append(mandatory(getCondType(type)));
+		} else if(!types.isEmpty()) {
+			runnedQuery.append(mandatory(startGroup()));
+			for(QName tmpQName : types) {
+				runnedQuery.append(optional(getCondType(tmpQName)));
+			}
+			runnedQuery.append(endGroup());
+		} else if(!excludedTypes.isEmpty()) {
+			for(QName tmpQName : types) {
+				runnedQuery.append(prohibided(getCondType(tmpQName)));
+			}
+		}
+		
+		if(!aspects.isEmpty()) {
+			for(QName tmpQName : aspects) {
+				runnedQuery.append(mandatory(getCondAspect(tmpQName)));
+			}
+		} 
+		
+		if(!excludedAspects.isEmpty()) {
+			for(QName tmpQName : excludedAspects) {
+				runnedQuery.append(prohibided(getCondAspect(tmpQName)));
+			}
+		}
+		
+		if(!notNullProps.isEmpty()) {
+			for(QName tmpQName : notNullProps) {
+				runnedQuery.append(prohibided(getCondIsNullValue(tmpQName)));
+			}
+		} 
+		
+		if(!nullProps.isEmpty()) {
+			for(QName tmpQName : nullProps) {
+				runnedQuery.append(mandatory(getCondIsNullValue(tmpQName)));
+			}
+		}
+		
+		if(!ids.isEmpty()) {
+			for(NodeRef tmpNodeRef : ids) {
+				runnedQuery.append(mandatory(getCondEqualID(tmpNodeRef)));
+			}
+		} 
+		
+		if(!notIds.isEmpty()) {
+			for(NodeRef tmpNodeRef : notIds) {
+				runnedQuery.append(prohibided(getCondEqualID(tmpNodeRef)));
+			}
+		} 
+		
+		if(!propQueriesMap.isEmpty()) {
+			for(Map.Entry<QName, String> propQueryEntry : propQueriesMap.entrySet()) {
+				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+			}
+		}
+		
+		if(!excludedPropQueriesMap.isEmpty()) {
+			for(Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
+				runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+			}
+		}
+		
+		for(String ftsQuery : ftsQueries) {
+			runnedQuery.append(optional(ftsQuery));
+		}
+		
+		
+		return runnedQuery.toString();
+	}
+
+
+     public BeCPGQueryBuilder ftsLanguage() {
+    	 this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
+    	 return this;
+     }
 
 
 
@@ -278,27 +488,19 @@ public class BeCPGQueryBuilder {
 
 		SearchParameters sp = new SearchParameters();
 		sp.addStore(RepoConsts.SPACES_STORE);
-		sp.setLanguage(SearchService.LANGUAGE_FTS_ALFRESCO);
+	
 		sp.setQuery(runnedQuery);
 		sp.addLocale(Locale.getDefault());
 		sp.excludeDataInTheCurrentTransaction(false);
-		sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
-		sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
 		
-		//
-// AdVSearch Query should use eventual
-		//http://docs.alfresco.com/4.2/index.jsp?topic=%2Fcom.alfresco.enterprise.doc%2Fconcepts%2Fintrans-metadata.html
-//	    perform transactional execution of queries;
-//	    execute queries transactionally, when possible, and fall back to eventual consistency; or
-//	    always execute eventual consistency.
-		//
-//	    solr.query.cmis.queryConsistency
-//	    solr.query.fts.queryConsistency
-//		system.metadata-query-indexes.ignored=false
-
+		sp.setLanguage(language);
+		if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
+			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
+			sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
+		}
 		
-
 		//Force the database use if possible
+		//execute queries transactionally, when possible, and fall back to eventual consistency; or
 		sp.setQueryConsistency(QueryConsistency.TRANSACTIONAL_IF_POSSIBLE);
 		
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
@@ -328,6 +530,8 @@ public class BeCPGQueryBuilder {
 			if (result != null) {
 				nodes = new LinkedList<NodeRef>(result.getNodeRefs());
 			}
+		} catch(FTSQueryException e) { 
+		  logger.error("Incorrect query :"+runnedQuery,e);
 		} finally {
 			if (result != null) {
 				result.close();
@@ -344,66 +548,13 @@ public class BeCPGQueryBuilder {
 		return nodes;
 	}
 
-	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
-		// return searchService.selectNodes(parentNodeRef, xPath, null,
-		// namespaceService, false);
-		return null;
+	@Override
+	public String toString() {
+		return buildQuery();
 	}
 
-	/**
-	 * @param aspectReportEntity
-	 * @return
-	 */
-	public BeCPGQueryBuilder withAspect(QName aspectReportEntity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	/**
-	 * @return
-	 */
-	public BeCPGQueryBuilder excludeVersions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public static final String DEFAULT_IGNORE_QUERY = " -TYPE:\"systemfolder\" -ASPECT:\"bcpg:entityTplAspect\" " + " -@cm\\:lockType:READ_ONLY_LOCK"
-			+ " -ASPECT:\"bcpg:compositeVersion\"" + " -ASPECT:\"bcpg:hiddenFolder\"";
 
-	/**
-	 * 
-	 */
-	public void excludeDefaults() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @param classDef
-	 */
-	public BeCPGQueryBuilder exclude(ClassDefinition classDef) {
-
-		// query += LuceneHelper.exclude(classDef.isAspect() ?
-		// LuceneHelper.getCondAspect(classQName) :
-		// LuceneHelper.getCondType(classQName));
-
-		return null;
-	}
 	
-	public void excludeSearch() {
-		// ftsQuery += " AND -TYPE:\"cm:thumbnail\" " +
-		// "AND -TYPE:\"cm:failedThumbnail\" " + "AND -TYPE:\"cm:rating\" " +
-		// "AND -TYPE:\"bcpg:entityListItem\" "
-		// + "AND -TYPE:\"systemfolder\" " +
-		// "AND -TYPE:\"rep:report\" AND -TYPE:\"fm:forum\" AND -TYPE:\"fm:forums\" ";
-		//
-		// // extract data type for this search - advanced search query is type
-		// // specific
-		// ftsQuery += " AND -ASPECT:\"bcpg:hiddenFolder\"" +
-		// " AND -ASPECT:\"bcpg:compositeVersion\""
-		// +
-		// " AND -ASPECT:\"bcpg:entityTplAspect\" AND -ASPECT:\"sys:hidden\" ";
-
-	}
-
 }
