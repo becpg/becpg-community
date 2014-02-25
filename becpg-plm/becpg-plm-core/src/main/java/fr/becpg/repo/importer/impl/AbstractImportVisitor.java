@@ -1012,7 +1012,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				// look in import folder
 				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
-			} else if (!type.equals(BeCPGModel.TYPE_LINKED_VALUE)) {
+			} else if (!type.equals(BeCPGModel.TYPE_LINKED_VALUE) && !type.equals(BeCPGModel.TYPE_LIST_VALUE)) {
 
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));
 			}
