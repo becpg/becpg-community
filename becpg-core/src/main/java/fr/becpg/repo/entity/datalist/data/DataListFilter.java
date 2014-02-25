@@ -283,16 +283,16 @@ public class DataListFilter {
 				date.add(Calendar.DATE, -dayCount);
 				String fromQuery = date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
 
-				queryBuilder.andProp(QName.createQName(ContentModel.USER_MODEL_URI, dateField), "[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]");
+				queryBuilder.andPropQuery(QName.createQName(ContentModel.USER_MODEL_URI, dateField), "[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]");
 				
 				if (onlySelf) {
-					queryBuilder.andProp(QName.createQName(ContentModel.USER_MODEL_URI, ownerField), getUserName());
+					queryBuilder.andPropEquals(QName.createQName(ContentModel.USER_MODEL_URI, ownerField), getUserName());
 				}
 
 				sortMap.put("@cm:" + dateField, false);
 
 			} else if (filterId.equals("createdByMe")) {
-				queryBuilder.andProp(ContentModel.PROP_CREATOR, getUserName());
+				queryBuilder.andPropEquals(ContentModel.PROP_CREATOR, getUserName());
 			} else if (filterId.equals(NODE_FILTER)) {
 				queryBuilder.andID(nodeRef);
 				

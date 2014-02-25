@@ -36,7 +36,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
@@ -44,7 +43,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.PLMBaseTestCase;
 
 // TODO: Auto-generated Javadoc
@@ -80,9 +79,6 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 	@Resource
 	private HierarchyService hierarchyService;
-
-	@Resource
-	private BeCPGSearchService beCPGSearchService;
 
 	/*
 	 * (non-Javadoc)
@@ -688,11 +684,11 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		assertNotNull(hierarchy2Spices);
 
 		// check unicity
-		List<NodeRef> listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy1USDA, null), RepoConsts.MAX_RESULTS_256);
+		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy1USDA).list();
 		assertEquals(1, listItems.size());
-		listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy2Dairy, null), RepoConsts.MAX_RESULTS_256);
+		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Dairy).list();
 		assertEquals(1, listItems.size());
-		listItems = beCPGSearchService.luceneSearch(LuceneHelper.getCondEqualID(hierarchy2Spices, null), RepoConsts.MAX_RESULTS_256);
+		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Spices).list();
 		assertEquals(1, listItems.size());
 	}
 

@@ -35,7 +35,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -46,7 +45,7 @@ import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * The Class MigrateRepositoryWebScript.
@@ -87,8 +86,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 
-	/** The search service. */
-	private BeCPGSearchService beCPGSearchService;
 
 	private BehaviourFilter policyBehaviourFilter;
 
@@ -115,10 +112,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
@@ -243,11 +236,13 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			String [] nutFactsMethods = {"CIQUAL 2012", "USDA"};
 			
 			for(int i=0 ; i<supplierNames.length ; i++){
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_SUPPLIER)) +
-						LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, supplierNames[i]));
+				
+				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+						.ofType(PLMModel.TYPE_SUPPLIER)
+						.andPropEquals(ContentModel.PROP_NAME, supplierNames[i]);
 				
 				final String nutFactsMethod = nutFactsMethods[i];
-				List<NodeRef> results = beCPGSearchService.luceneSearch(query);
+				List<NodeRef> results = queryBuilder.list();
 				if(!results.isEmpty()){					
 					NodeRef supplierNodeRef = results.get(0);
 					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIERS);
@@ -280,11 +275,14 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}
 		else if(ACTION_CREATE_GEN_RAWMATERIAL.equals(action)){
 			
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_RAWMATERIAL)) +
-						LuceneHelper.exclude(LuceneHelper.getCondIsNullValue(PLMModel.PROP_ERP_CODE)) +
-						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL)) + 
-						LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-			List<NodeRef> rawMaterialNodeRefs = beCPGSearchService.luceneSearch(query, LuceneHelper.getSort(PLMModel.PROP_ERP_CODE));
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+					.ofType(PLMModel.TYPE_RAWMATERIAL)
+					.isNotNull(PLMModel.PROP_ERP_CODE)
+					.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+					.excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					.addSort(PLMModel.PROP_ERP_CODE,true);
+							
+			List<NodeRef> rawMaterialNodeRefs = queryBuilder.list();
 			Map<String, List<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<String, List<NodeRef>>();
 			
 			for(NodeRef rawMaterialNodeRef : rawMaterialNodeRefs){	
@@ -357,8 +355,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}
 		else if(ACTION_DELETE_UNUSED_INGS.equals(action)){
 			
-			String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_ING));
-			List<NodeRef> ingNodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+					.ofType(PLMModel.TYPE_ING);
+			
+			List<NodeRef> ingNodeRefs = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 			
 			for(NodeRef ingNodeRef : ingNodeRefs){	
 				

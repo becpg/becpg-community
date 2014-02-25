@@ -67,14 +67,14 @@ public class ProjectFormulationWorker {
         		
         		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
         				.ofType(ProjectModel.TYPE_PROJECT)
-        				.andProp(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+        				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
         		
         		List<NodeRef> projectNodeRefs = queryBuilder.list();
         		
         		// query
         		 queryBuilder = BeCPGQueryBuilder.createQuery()
          				.ofType(ProjectModel.TYPE_PROJECT)
-         				.andProp(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
+         				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
          				.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
         		
         		 projectNodeRefs.addAll(queryBuilder.list());

@@ -31,6 +31,7 @@ import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,7 +73,7 @@ public class SecurityServiceImpl implements SecurityService {
 	private DictionaryService dictionaryService;
 
 	@Autowired
-	private NamespacePrefixResolver namespacePrefixResolver;
+	private NamespaceService namespaceService;
 
     @Autowired
 	private BeCPGCacheService beCPGCacheService;
@@ -153,7 +154,7 @@ public class SecurityServiceImpl implements SecurityService {
 						if (aclGroups != null) {
 							for (NodeRef aclGroupNodeRef : aclGroups) {
 								ACLGroupData aclGrp = alfrescoRepository.findOne(aclGroupNodeRef);
-								QName aclGrpType= QName.createQName(aclGrp.getNodeType(),namespacePrefixResolver);
+								QName aclGrpType= QName.createQName(aclGrp.getNodeType(),namespaceService);
 								List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
 								if (aclEntries != null) {
 									for (ACLEntryDataItem aclEntry : aclEntries) {
@@ -217,7 +218,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 				ACLGroupData aclGroup = alfrescoRepository.findOne(aclGroupNodeRef);
 
-				TypeDefinition typeDefinition = dictionaryService.getType( QName.createQName(aclGroup.getNodeType(),namespacePrefixResolver));
+				TypeDefinition typeDefinition = dictionaryService.getType( QName.createQName(aclGroup.getNodeType(),namespaceService));
 
 				if (typeDefinition != null && typeDefinition.getProperties() != null) {
 					for (Map.Entry<QName, PropertyDefinition> properties : typeDefinition.getProperties().entrySet()) {
@@ -256,7 +257,7 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private void appendPropName(TypeDefinition typeDefinition, Entry<QName, PropertyDefinition> properties, List<String> ret) {
-		String key = properties.getKey().toPrefixString(namespacePrefixResolver);
+		String key = properties.getKey().toPrefixString(namespaceService);
 		String label = properties.getValue().getTitle(dictionaryService);
 
 		if (!ret.contains(key + "|" + typeDefinition.getTitle(dictionaryService) + " - " + label) && label != null) {

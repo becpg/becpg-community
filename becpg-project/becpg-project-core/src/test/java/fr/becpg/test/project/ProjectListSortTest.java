@@ -37,10 +37,10 @@ import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectListSortTest extends AbstractProjectTestCase {
 
@@ -84,9 +84,13 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 			public NodeRef execute() throws Throwable {
 				
 
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT))
-						+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-				List<NodeRef> projectNodeRefs = beCPGSearchService.luceneSearch(query,LuceneHelper.getSort(ProjectModel.PROP_PROJECT_HIERARCHY2));
+				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+						.ofType(ProjectModel.TYPE_PROJECT)
+						.excludeVersions()
+						.addSort(ProjectModel.PROP_PROJECT_HIERARCHY2,true);
+				
+				
+				List<NodeRef> projectNodeRefs = queryBuilder.list();
 
 				for (NodeRef projectNodeRef : projectNodeRefs) {
 					logger.debug("project " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
@@ -95,7 +99,6 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 				DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataListName( "projectList");
 				dataListFilter.setDataType(ProjectModel.TYPE_PROJECT);
-				dataListFilter.setFilterQuery(query);
 				dataListFilter.setSortId("ProjectList");
 
 				DataListPagination pagination = new DataListPagination();

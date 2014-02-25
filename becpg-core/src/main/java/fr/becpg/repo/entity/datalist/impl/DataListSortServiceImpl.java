@@ -279,8 +279,11 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 			if (startSort != null && level != null) {
 
-				NodeRef tmpNodeRef = BeCPGQueryBuilder.createQuery().parent(listContainer).andBetween(BeCPGModel.PROP_SORT, String.valueOf(startSort + 1), "MAX")
-						.andBetween(BeCPGModel.PROP_DEPTH_LEVEL, "1", Integer.toString(level)).isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true).singleValue();
+				NodeRef tmpNodeRef = BeCPGQueryBuilder.createQuery()
+						.parent(listContainer)
+						.andBetween(BeCPGModel.PROP_SORT, String.valueOf(startSort + 1), "MAX")
+						.andBetween(BeCPGModel.PROP_DEPTH_LEVEL, "1", Integer.toString(level))
+						.isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true).singleValue();
 
 				if (tmpNodeRef != null) {
 					Integer stopSort = (Integer) nodeService.getProperty(tmpNodeRef, BeCPGModel.PROP_SORT);
@@ -294,8 +297,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		logger.debug("startSort: " + startSort + " - stopCond: " + stopSortCond);
 
-		NodeRef tmpNodeRef = getQueryByParentLevel(listContainer, destNodeRef, isDepthList).andNotID(nodeRef)
-				.andBetween(BeCPGModel.PROP_SORT, startSort != null ? Integer.toString(startSort + 1) : "1", stopSortCond).addSort(BeCPGModel.PROP_SORT, false).singleValue();
+		NodeRef tmpNodeRef = getQueryByParentLevel(listContainer, destNodeRef, isDepthList)
+				.andNotID(nodeRef)
+				.andBetween(BeCPGModel.PROP_SORT, startSort != null ? Integer.toString(startSort + 1) : "1", stopSortCond)
+				.addSort(BeCPGModel.PROP_SORT, false).singleValue();
 
 		if (tmpNodeRef != null) {
 			if (isDepthList) {
@@ -314,7 +319,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 * Get the last sibling node of the level
 	 */
 	private NodeRef getLastChildOfLevel(QName dataType, NodeRef listContainer, NodeRef parentLevel, NodeRef nodeRef) {
-		return getQueryByParentLevel(listContainer, parentLevel, true).andNotID(nodeRef).isNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, false).singleValue();
+		return getQueryByParentLevel(listContainer, parentLevel, true)
+				.andNotID(nodeRef)
+				.isNotNull(BeCPGModel.PROP_SORT)
+				.addSort(BeCPGModel.PROP_SORT, false).singleValue();
 	}
 
 	private NodeRef getNextSiblingNode(QName dataType, NodeRef listContainer, NodeRef nodeRef, boolean moveUp) {
@@ -331,7 +339,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 				.addSort(BeCPGModel.PROP_SORT, !moveUp);
 
 		if (level != null) {
-			queryBuilder.andProp(BeCPGModel.PROP_DEPTH_LEVEL, level.toString());
+			queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, level.toString());
 		}
 
 		return queryBuilder.singleValue();
@@ -342,7 +350,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 */
 	private NodeRef getSortedNode(QName dataType, NodeRef listContainer, Integer sort, NodeRef nodeRef) {
 
-		return BeCPGQueryBuilder.createQuery().parent(listContainer).andProp(BeCPGModel.PROP_SORT, String.valueOf(sort)).andNotID(nodeRef).singleValue();
+		return BeCPGQueryBuilder.createQuery()
+				.parent(listContainer)
+				.andPropEquals(BeCPGModel.PROP_SORT, String.valueOf(sort))
+				.andNotID(nodeRef).singleValue();
 
 	}
 
@@ -350,7 +361,8 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 * Get the children of the children of the parent
 	 */
 	private List<NodeRef> getChildren(QName dataType, NodeRef listContainer, NodeRef parentLevel, boolean isDepthList) {
-		return getQueryByParentLevel(listContainer, parentLevel, isDepthList).ofType(dataType).addSort(BeCPGModel.PROP_SORT, true).list();
+		return getQueryByParentLevel(listContainer, parentLevel, isDepthList)
+				.ofType(dataType).addSort(BeCPGModel.PROP_SORT, true).list();
 	}
 
 	/*
@@ -358,14 +370,15 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 */
 	private BeCPGQueryBuilder getQueryByParentLevel(NodeRef listContainer, NodeRef parentLevel, boolean isDepthList) {
 
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().parent(listContainer);
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+				.parent(listContainer);
 
 		if (parentLevel == null) {
 			if (isDepthList) {
-				queryBuilder.andProp(BeCPGModel.PROP_DEPTH_LEVEL, "1");
+				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
 		} else {
-			queryBuilder.andProp(BeCPGModel.PROP_PARENT_LEVEL, parentLevel.toString());
+			queryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentLevel.toString());
 		}
 
 		return queryBuilder;

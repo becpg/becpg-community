@@ -491,7 +491,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 
 	private NodeRef getItemByTypeAndName(QName type, String name) {
 		
-		return BeCPGQueryBuilder.createQuery().ofType(type).andProp(ContentModel.PROP_NAME,name).singleValue();
+		return BeCPGQueryBuilder.createQuery().ofType(type).andPropQuery(ContentModel.PROP_NAME,name).singleValue();
 		
 
 	}

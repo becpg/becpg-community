@@ -229,7 +229,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("TearDown :");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 

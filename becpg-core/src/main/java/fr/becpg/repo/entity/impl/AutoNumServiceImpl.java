@@ -14,6 +14,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.antlr.grammar.v3.ANTLRParser.finallyClause_return;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -46,6 +49,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	private static final String DEFAULT_PREFIX = "";
 
 	private static final String DEFAULT_PATTERN = "(^[A-Z]+)(\\d+$)";
+
 	
 	
 	/** The logger. */
@@ -62,6 +66,10 @@ public class AutoNumServiceImpl implements AutoNumService {
 	
 	@Autowired
 	private DictionaryService dictionaryService;
+	
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
+	
 	
 	/**
 	 * Get the next autoNum value.
@@ -224,13 +232,23 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 * @param propertyName the property name
 	 * @return the auto num node ref
 	 */
-	private NodeRef getAutoNumNodeRef(QName className, QName propertyName) {
+	private NodeRef getAutoNumNodeRef(final QName className,final QName propertyName) {
 		
-		return BeCPGQueryBuilder.createQuery()
-				.ofType(BeCPGModel.TYPE_AUTO_NUM)
-				.andProp(BeCPGModel.PROP_AUTO_NUM_CLASS_NAME, className.toString())
-				.andProp(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName.toString())
-				.singleValue();
+		return beCPGCacheService.getFromCache(AutoNumServiceImpl.class.getName(), className.toString()+"-"+propertyName.toString(), new BeCPGCacheDataProviderCallBack<NodeRef>() {
+
+			@Override
+			public NodeRef getData() {
+				return BeCPGQueryBuilder.createQuery()
+						.ofType(BeCPGModel.TYPE_AUTO_NUM)
+						.andPropEquals(BeCPGModel.PROP_AUTO_NUM_CLASS_NAME, className.toString())
+						.andPropEquals(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName.toString())
+						.singleValue();
+			}
+			
+		
+		});
+		
+		
 		
 		
 	}

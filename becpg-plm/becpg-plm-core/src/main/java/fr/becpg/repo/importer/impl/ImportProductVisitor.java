@@ -26,6 +26,7 @@ import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -96,7 +97,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 							// stored
 							String path = hierarchyService.getHierarchyPath(hierarchy);
 
-							List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
+							List<NodeRef> nodes = BeCPGQueryBuilder.createQuery().selectNodesByPath(repositoryHelper.getCompanyHome(), path);
 
 							if (!nodes.isEmpty()) {
 								nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);

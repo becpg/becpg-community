@@ -50,6 +50,7 @@ import fr.becpg.repo.product.data.productList.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * base class of test cases for product classes.
@@ -146,11 +147,14 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 
+				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+						.ofType(PLMModel.TYPE_PRODUCT)
+						.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+						.excludeProp(ContentModel.PROP_NAME, "Eau");
+								
+				
 				// products
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.TYPE_PRODUCT))
-						+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_ENTITY_TPL))
-						+ LuceneHelper.exclude(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, "Eau"));
-				List<NodeRef> productNodeRefs = beCPGSearchService.luceneSearch(query);
+				List<NodeRef> productNodeRefs = queryBuilder.list();
 
 				for (NodeRef productNodeRef : productNodeRefs) {
 					if (nodeService.exists(productNodeRef)) {

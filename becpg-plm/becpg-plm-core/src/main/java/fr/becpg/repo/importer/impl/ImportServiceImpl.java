@@ -45,7 +45,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -54,7 +53,7 @@ import fr.becpg.repo.importer.ImportService;
 import fr.becpg.repo.importer.ImportType;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Import service.
@@ -63,6 +62,10 @@ import fr.becpg.repo.search.BeCPGSearchService;
  */
 public class ImportServiceImpl implements ImportService {
 
+	
+	
+//	private static final String PATH_QUERY_THUMBNAIL = " +PATH:\"/app:company_home/cm:System/cm:Icons/*\" +@cm\\:name:\"%s\"";
+	
 	/** The Constant PFX_COMMENT. */
 	private static final String PFX_COMMENT = "#";
 
@@ -126,7 +129,6 @@ public class ImportServiceImpl implements ImportService {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImportServiceImpl.class);
 
-	private BeCPGSearchService beCPGSearchService = null;
 
 	private NodeService nodeService = null;
 
@@ -151,10 +153,6 @@ public class ImportServiceImpl implements ImportService {
 	private DictionaryService dictionaryService;
 
 	private BehaviourFilter policyBehaviourFilter;
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -258,6 +256,9 @@ public class ImportServiceImpl implements ImportService {
 
 		return importCSV(importContext);
 	}
+	
+	
+
 
 	@Override
 	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String titleLog, final String fileLog) {
@@ -269,12 +270,10 @@ public class ImportServiceImpl implements ImportService {
 
 					// delete files that have the same name before moving it in
 					// the succeeded or failed folder
-					List<NodeRef> resultSet = null;
 					String csvFileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 					
 					// failed
-					resultSet = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_FAILED_FOLDER, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-					NodeRef failedFolder = resultSet.isEmpty() ? null : resultSet.get(0);
+					NodeRef failedFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), RepoConsts.FULL_PATH_IMPORT_FAILED_FOLDER);
 
 					if (failedFolder != null) {											
 						NodeRef csvNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS,
@@ -285,8 +284,7 @@ public class ImportServiceImpl implements ImportService {
 					}
 					
 					// succeeded
-					resultSet = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_SUCCEEDED_FOLDER, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-					NodeRef succeededFolder = resultSet.isEmpty() ? null : resultSet.get(0);
+					NodeRef succeededFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), RepoConsts.FULL_PATH_IMPORT_SUCCEEDED_FOLDER);
 
 					if (succeededFolder != null) {
 						NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS,
@@ -298,8 +296,7 @@ public class ImportServiceImpl implements ImportService {
 					
 					// log					
 					if(fileLog != null && !fileLog.isEmpty()){
-						resultSet = beCPGSearchService.luceneSearch(RepoConsts.PATH_QUERY_IMPORT_LOG_FOLDER, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-						NodeRef logFolder = resultSet.isEmpty() ? null : resultSet.get(0);
+						NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), RepoConsts.FULL_PATH_IMPORT_LOG_FOLDER);
 						if(logFolder != null){
 							String logFileName = csvFileName.substring(0, csvFileName.length()-4) + RepoConsts.EXTENSION_LOG;
 							createLogFile(logFolder, logFileName, fileLog);
@@ -636,19 +633,23 @@ public class ImportServiceImpl implements ImportService {
 	 *            the name
 	 * @return the element
 	 */
+
+
+	
 	private Element loadMapping(String name) throws ImporterException {
 
 		Element mappingElt = null;
 		NodeRef mappingNodeRef = null;
 
-		String queryPath = String.format(PlmRepoConsts.PATH_QUERY_IMPORT_MAPPING, name);
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+				.inPath(RepoConsts.FULL_PATH_IMPORT_MAPPING)
+				.andPropEquals(ContentModel.PROP_NAME, name+".xml");
 
-		logger.debug(queryPath);
+		logger.debug(queryBuilder.toString());
 
-		List<NodeRef> rets = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		if (!rets.isEmpty()) {
-			mappingNodeRef = rets.get(0);
-		}
+		mappingNodeRef = queryBuilder.singleValue();
+	
 
 		if (mappingNodeRef == null) {
 			String msg = I18NUtil.getMessage(MSG_ERROR_MAPPING_NOT_FOUND, name);

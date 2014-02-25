@@ -193,11 +193,13 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		// Is code or name search
 		if (isQueryCode(query, type, arrClassNames)) {
 			String codeQuery = prepareQueryCode(query, type, arrClassNames);
+			
+			//TODO erpCOde and eanCode not in COre
 			queryBuilder.andFTSQuery(String.format("(@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s)", codeQuery,codeQuery,codeQuery));
 			
 			
 		} else if (!isAllQuery(query)) { 
-			queryBuilder.andProp(ContentModel.PROP_NAME, query);
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, query);
 		}
 
 		// filter by classNames
@@ -286,7 +288,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				}
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
-					path = path.replace("/app:company_home/", "");
 				}
 			}
 		}
@@ -330,12 +331,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		
 		
-		queryBuilder.inPath("/app:company_home/"+path);
+		queryBuilder.inPath(path);
 		queryBuilder.ofType(BeCPGModel.TYPE_LIST_VALUE);
 		
 		if (!isAllQuery(query)) {
 			//TODO merge with philippe use value !!!
-			queryBuilder.andProp(ContentModel.PROP_NAME, prepareQuery(query));
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, prepareQuery(query));
 			
 		}
 
@@ -511,7 +512,11 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				QName classQName = QName.createQName(className, namespaceService);
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
 
-				queryBuilder.exclude(classDef);
+				if(classDef.isAspect()) {
+					queryBuilder.excludeAspect(classQName);
+				} else {
+					queryBuilder.excludeType(classQName);
+				}
 						
 			}
 		}
@@ -606,7 +611,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum, Integer pageSize) {
 		
 		List<NodeRef> ret =	BeCPGQueryBuilder.createQuery().ofType(datalistType)
-				   .andProp(propertyQName,prepareQuery(query))
+				   .andPropQuery(propertyQName,prepareQuery(query))
 				   .inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService))
 				   .addSort(propertyQName,true)
 				   .maxResults(RepoConsts.MAX_SUGGESTIONS).list();

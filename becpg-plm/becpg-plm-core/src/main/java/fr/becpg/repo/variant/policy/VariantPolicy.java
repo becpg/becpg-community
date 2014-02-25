@@ -37,18 +37,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy, CheckOutCheckInServicePolicies.OnCheckOut,
 		CheckOutCheckInServicePolicies.BeforeCheckIn {
 
 	private static Log logger = LogFactory.getLog(VariantPolicy.class);
 
-	private BeCPGSearchService beCPGSearchService;
 
 	private CopyService copyService;
 
@@ -58,9 +55,6 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		this.entityListDAO = entityListDAO;
 	}
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 
 	public void setCopyService(CopyService copyService) {
 		this.copyService = copyService;
@@ -80,16 +74,19 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 		NodeRef entityNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
 
-		String query = LuceneHelper.mandatory(LuceneHelper.getCondAspect(PLMModel.ASPECT_ENTITYLIST_VARIANT));
-		query += LuceneHelper.getCondEqualValue(PLMModel.PROP_VARIANTIDS, sourceNodeRef.toString(), LuceneHelper.Operator.AND);
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+		.withAspect(PLMModel.ASPECT_ENTITYLIST_VARIANT)
+		.andPropEquals(PLMModel.PROP_VARIANTIDS, sourceNodeRef.toString());
+		
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Entity of destination " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " " + entityNodeRef + 
 					" variant: " + nodeService.getProperty(sourceNodeRef, ContentModel.PROP_NAME));
-			logger.debug("Search for" + query);
+			logger.debug("Search for" + queryBuilder.toString());
 		}
 
-		List<NodeRef> result = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		List<NodeRef> result = queryBuilder.list();
 
 		if (!result.isEmpty()) {
 			if (logger.isDebugEnabled()) {
