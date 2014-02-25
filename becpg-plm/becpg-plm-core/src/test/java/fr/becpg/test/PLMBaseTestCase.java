@@ -184,27 +184,27 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		String[] nutGroups = { "Groupe 1", "Groupe 2", "Autre" };
 		for (String nutGroup : nutGroups) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, nutGroup);
+			properties.put(BeCPGModel.PROP_LV_VALUE, nutGroup);
 			nodeService.createNode(nutGroupsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 		// nutTypes
 		NodeRef nutTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_NUT_TYPES);
 		String[] nutTypes = { "Nutriment", "Vitamine", "Minéraux", "Valeur énergétique" };
 		for (String nutType : nutTypes) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, nutType);
+			properties.put(BeCPGModel.PROP_LV_VALUE, nutType);
 			nodeService.createNode(nutTypesFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 		// nutFactsMethods
 		NodeRef nutFactsMethodsFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_NUT_FACTS_METHODS);
 		String[] nutFactsMethods = { "Formulation", "CIQUAL", "USDA" };
 		for (String nutFactsMethod : nutFactsMethods) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, nutFactsMethod);
+			properties.put(BeCPGModel.PROP_LV_VALUE, nutFactsMethod);
 			nodeService.createNode(nutFactsMethodsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 
 		// ingTypes
@@ -212,39 +212,49 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase  {
 		String[] ingTypes = { "Epaississant" };
 		for (String ingType : ingTypes) {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, ingType);
+			properties.put(BeCPGModel.PROP_LV_VALUE, ingType);
 			nodeService.createNode(ingTypesFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 
 		// allergenTypes
 		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_ALLERGEN_TYPES);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, AllergenType.Major.toString());
+		properties.put(BeCPGModel.PROP_LV_VALUE, AllergenType.Major.toString());
 		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
 
 		// labelingPosition
 		NodeRef labelingPositionFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELING_POSITIONS);
 		String[] labelingPositions = { "Côté de la boîte", "Dessus de la boite" };
 		for (String labelingPosition : labelingPositions) {
 			properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, labelingPosition);
+			properties.put(BeCPGModel.PROP_LV_VALUE, labelingPosition);
 			nodeService.createNode(labelingPositionFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
+		
+		// labelClaimTypes
+		NodeRef labelClaimTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELCLAIMS_TYPES);
+		String[] labelClaimTypes = { "Nutritionnelle" };
+		for (String labelClaimType : labelClaimTypes) {
+			properties = new HashMap<QName, Serializable>();
+			properties.put(BeCPGModel.PROP_LV_VALUE, labelClaimType);
+			nodeService.createNode(labelClaimTypesFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 
-//		// Quality
-//		NodeRef qualityListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_QUALITY_LISTS);
-//
-//		NodeRef controlUnitsFolder = entitySystemService.getSystemEntityDataList(qualityListsFolder, RepoConsts.PATH_CONTROL_UNITS);
-//		String[] controlUnits = { "kcal/100g", "mg/100g", "µg/100g", "g/100g" };
-//		for (String controlUnit : controlUnits) {
-//			properties = new HashMap<QName, Serializable>();
-//			properties.put(ContentModel.PROP_NAME, controlUnit);
-//			nodeService.createNode(controlUnitsFolder, ContentModel.ASSOC_CONTAINS,
-//					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_LIST_VALUE, properties);
-//		}
+		// Quality
+		NodeRef qualityListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, PlmRepoConsts.PATH_QUALITY_LISTS);
+
+		NodeRef controlUnitsFolder = entitySystemService.getSystemEntityDataList(qualityListsFolder, PlmRepoConsts.PATH_CONTROL_UNITS);
+		String[] controlUnits = { "kcal/100g", "mg/100g", "µg/100g", "g/100g" };
+		for (String controlUnit : controlUnits) {
+			properties = new HashMap<QName, Serializable>();
+			properties.put(BeCPGModel.PROP_LV_VALUE, controlUnit);
+			nodeService.createNode(controlUnitsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties);
+		}
 
 	}
 

@@ -24,7 +24,8 @@ public class PlmRepoConsts {
 	public static final String PATH_ALLERGENS = "Allergens";
 	public static final String PATH_COSTS = "Costs";
 	public static final String PATH_PHYSICO_CHEM = "PhysicoChems";
-	public static final String PATH_MICROBIOS = "Microbios";
+	public static final String PATH_MICROBIO_CONTROL_STEPS = "MicrobioControlSteps";
+	public static final String PATH_MICROBIOS = "Microbios";	
 	public static final String PATH_GEO_ORIGINS = "GeoOrigins";
 	public static final String PATH_BIO_ORIGINS = "BioOrigins";
 	public static final String PATH_SUBSIDIARIES = "Subsidiaries";	
@@ -34,12 +35,13 @@ public class PlmRepoConsts {
 	public static final String PATH_APPROVALNUMBERS = "ApprovalNumbers";
 	public static final String PATH_PROCESSSTEPS = "ProcessSteps";
 	public static final String PATH_LABELCLAIMS = "LabelClaims";	
+	public static final String PATH_LABELCLAIMS_TYPES = "LabelClaimTypes";
 	public static final String PATH_STORAGE_CONDITIONS = "StorageConditions";
 	public static final String PATH_PRECAUTION_OF_USE = "PrecautionOfUse";
 	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
 	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
 	public static final String PATH_LABEL = "Labels";
-	public static final String PATH_LABEL_TYPES = "LabelTypes";
+	public static final String PATH_LABEL_TYPES = "LabelTypes";	
 	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
 	public static final String PATH_QUALITY_TEMPLATES = "QualityTemplates";
@@ -93,6 +95,5 @@ public class PlmRepoConsts {
 		
 	// ECO
 	public static final String PATH_ECO = "ECO";
-	public static final String PATH_ECO_TEMPORARY = "Temporary";	
 	
 }

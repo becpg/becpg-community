@@ -42,7 +42,7 @@
 				<value>bcpg:listValue</value>
 			</parameter>
 			<parameter name="constraintProp">
-				<value>cm:name</value>
+				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
 		<constraint name="pack:labelTypes"
@@ -56,7 +56,7 @@
 				<value>bcpg:listValue</value>
 			</parameter>
 			<parameter name="constraintProp">
-				<value>cm:name</value>
+				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
      </constraints>		
