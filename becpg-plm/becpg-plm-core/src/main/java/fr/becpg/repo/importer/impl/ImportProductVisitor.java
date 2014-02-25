@@ -97,7 +97,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 							// stored
 							String path = hierarchyService.getHierarchyPath(hierarchy);
 
-							List<NodeRef> nodes = BeCPGQueryBuilder.createQuery().selectNodesByPath(repositoryHelper.getCompanyHome(), path);
+							List<NodeRef> nodes = BeCPGQueryBuilder.createQuery().selectNodesByPath(repositoryHelper.getCompanyHome(), "./"+path);
 
 							if (!nodes.isEmpty()) {
 								nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);
