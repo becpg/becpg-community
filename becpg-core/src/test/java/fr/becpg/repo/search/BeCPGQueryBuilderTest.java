@@ -41,8 +41,24 @@ public  class BeCPGQueryBuilderTest {
 		.ofType(BeCPGModel.TYPE_ENTITY_V2)
 		.isNotNull(BeCPGModel.PROP_CODE)
 		.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL)
-		.excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+		.withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
 		.addSort(BeCPGModel.PROP_CODE,true);
+		
+//		List<NodeRef> ret = BeCPGQueryBuilder.createQuery()
+//				.ofType(ContentModel.TYPE_FOLDER)
+//				.isNotNull(ContentModel.PROP_MODIFIED)
+//				.excludeAspect(ContentModel.ASPECT_WORKING_COPY)
+//				.withAspect(ContentModel.ASPECT_TITLED)
+//				.addSort(ContentModel.PROP_MODIFIED,true).list();
+//
+//List<NodeRef> ret = BeCPGQueryBuilder.createQuery()
+//	.ofType(ContentModel.TYPE_FOLDER).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+//
+//NodeRef nodeRef  = BeCPGQueryBuilder.createQuery()
+//	.ofType(ContentModel.TYPE_FOLDER)
+//	.andPropEquals(ContentModel.PROP_NAME, "Test").singleValue();
+
+		
 	
 		System.out.println(queryBuilder.toString());
 		

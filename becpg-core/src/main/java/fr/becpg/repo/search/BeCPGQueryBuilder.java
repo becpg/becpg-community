@@ -299,11 +299,17 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 	}
 	
 	public NodeRef selectNodeByXPath(String xPath) {
-		List<NodeRef> ret = selectNodesByPath(null, xPath);
+		this.language = SearchService.LANGUAGE_XPATH;
+		List<NodeRef> ret = search(xPath, sortProps, -1, maxResults);
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 	
 	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
+		
+		if(!xPath.startsWith("./")){
+			xPath = encodePath(xPath);
+		}
+		
 		List<NodeRef> ret = selectNodesByPath(parentNodeRef, xPath);
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
@@ -311,10 +317,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 
 	public List<NodeRef> selectNodesByPath(NodeRef parentNodeRef, String xPath) {
 		
-		if(parentNodeRef == null) {
-			this.language = SearchService.LANGUAGE_XPATH;
-			return search(xPath, sortProps, -1, maxResults);
-		}
 		
 		if(logger.isTraceEnabled()) {
 			logger.trace("Try to find node in path: "+xPath+" - with parentContextRef: "+parentNodeRef);
@@ -530,7 +532,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 	
 		if (sort != null) {
 			for (Map.Entry<String, Boolean> kv : sort.entrySet()) {
-				logger.debug("Add sort :" + kv.getKey() + " " + kv.getValue());
+				if(logger.isTraceEnabled()){
+					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
+				}
 				sp.addSort(kv.getKey(), kv.getValue());
 			}
 		}

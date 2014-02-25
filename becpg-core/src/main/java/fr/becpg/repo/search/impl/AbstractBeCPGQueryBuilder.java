@@ -38,7 +38,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	
 
     private  final String QUERY_COND_PROP_EQUAL_VALUE = "@%s:\"%s\"";
-	private  final String QUERY_COND_PROP_CONTAINS_VALUE = "@%s:%s";
+	private  final String QUERY_COND_PROP_CONTAINS_VALUE = "@%s:(%s)";
 	private  final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
 	private  final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
 	private  final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
@@ -168,6 +168,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 		if(path.indexOf("/")==0) {
 				path = path.substring(1);
 		}
+		
 		
 		StringBuilder pathBuffer = new StringBuilder(64);
 		String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);

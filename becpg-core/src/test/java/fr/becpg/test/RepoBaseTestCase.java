@@ -55,6 +55,7 @@ import org.subethamail.wiser.Wiser;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
@@ -146,6 +147,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	
 	@Resource
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Resource
+	protected BeCPGCacheService beCPGCacheService;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -175,7 +179,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Before
 	public void setUp() throws Exception {
-
 
 		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
