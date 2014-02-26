@@ -334,10 +334,10 @@ public class ImportEntityXmlVisitor {
 
 	private NodeRef findNodeByPath(String parentPath) {
 		
-		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(null,parentPath);  
+		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByXPath(parentPath);  
 		
 		if (ret ==null) {
-			ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(null,RepoConsts.FULL_PATH_IMPORT_TO_DO);
+			ret = BeCPGQueryBuilder.createQuery().selectNodeByXPath(RepoConsts.FULL_PATH_IMPORT_TO_DO);
 		}
 
 		return ret;

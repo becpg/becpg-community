@@ -81,10 +81,14 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 		Long autoNumValue = DEFAULT_AUTO_NUM;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
+		
+		
+		
 		String prefix = DEFAULT_PREFIX;
 
 		// get value store in db
-		if (autoNumNodeRef != null) {
+		if (autoNumNodeRef != null && nodeService.exists(autoNumNodeRef)) {
+
 			Long v = (Long) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
 			prefix = getPrefix(autoNumNodeRef, DEFAULT_PREFIX);
 
@@ -165,7 +169,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
 
-		if (autoNumNodeRef != null) {
+		if (autoNumNodeRef != null && nodeService.exists(autoNumNodeRef)) {
 			nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
 		} else {
 			createAutoNum(className, propertyName, autoNumValue, prefix);
@@ -194,7 +198,12 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
 		if (autoNumNodeRef != null) {
-			nodeService.deleteNode(autoNumNodeRef);
+			
+			beCPGCacheService.removeFromCache(AutoNumServiceImpl.class.getName(), className.toString() + "-" + propertyName.toString());
+			
+			if(nodeService.exists(autoNumNodeRef)){
+				nodeService.deleteNode(autoNumNodeRef);
+			}
 		}
 	}
 
@@ -211,6 +220,8 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 */
 	private Long createAutoNum(QName className, QName propertyName, Long autoNumValue, String autoNumPrefix) {
 
+		beCPGCacheService.removeFromCache(AutoNumServiceImpl.class.getName(), className.toString() + "-" + propertyName.toString());
+		
 		NodeRef systemNodeRef = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 		NodeRef autoNumFolderNodeRef = repoService.getOrCreateFolderByPath(systemNodeRef, RepoConsts.PATH_AUTO_NUM,
