@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
@@ -93,7 +92,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 				List<NodeRef> projectNodeRefs = queryBuilder.list();
 
 				for (NodeRef projectNodeRef : projectNodeRefs) {
-					logger.debug("project " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
+					logger.info("project " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
 				}
 
 				DataListFilter dataListFilter = new DataListFilter();
@@ -125,10 +124,10 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 					Map<String, Object> hierarchy2Data = (Map<String, Object>) itemData.get("prop_pjt_projectHierarchy2");					
 					String projectHierarchy2 = (String)hierarchy2Data.get("displayValue");
 					String projectName = (String)nameData.get("displayValue");
-					logger.debug("project sorted " + projectName + " - "
+					logger.info("project sorted " + projectName + " - "
 							+ projectHierarchy2);
 					
-					if(i<21){
+					if(i<20){
 						assertEquals("Crustacean", projectHierarchy2);
 					}
 					else{

@@ -346,7 +346,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 	private BeCPGQueryBuilder getQueryReportTpl(ReportType reportType, QName nodeType, boolean isSystem){
 					
 		return BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
-				.andPropQuery(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.FALSE.toString())
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);

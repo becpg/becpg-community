@@ -59,19 +59,19 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  * 
  */
 @Service("beCPGQueryBuilder")
-public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements InitializingBean  {
+public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements InitializingBean {
 
 	private static Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
 
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
-	
+
 	@Autowired
 	private SearchService searchService;
 	@Autowired
 	private NamespaceService namespaceService;
-	
+
 	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
 
@@ -92,30 +92,26 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 	private Set<QName> excludedTypes = new HashSet<>();
 	private Map<QName, String> excludedPropQueriesMap = new HashMap<QName, String>();
 
-
-	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
-		
+
 	}
 
 	private BeCPGQueryBuilder() {
-		//Make creation private
-		
+		// Make creation private
+
 	}
 
 	public static BeCPGQueryBuilder createQuery() {
 		BeCPGQueryBuilder builder = new BeCPGQueryBuilder();
-		if(INSTANCE!=null) {
+		if (INSTANCE != null) {
 			builder.searchService = INSTANCE.searchService;
 			builder.namespaceService = INSTANCE.namespaceService;
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
 		}
 		return builder;
 	}
-	
-	
 
 	public BeCPGQueryBuilder ofType(QName typeQname) {
 		if (this.type != null) {
@@ -130,7 +126,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 		types.add(typeQname);
 		return this;
 	}
-	
+
 	public BeCPGQueryBuilder withAspect(QName aspect) {
 		aspects.add(aspect);
 		return this;
@@ -191,10 +187,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 	}
 
 	public BeCPGQueryBuilder andNotID(NodeRef nodeRef) {
-		if(!ids.contains(nodeRef)) {
+		if (!ids.contains(nodeRef)) {
 			this.notIds.add(nodeRef);
 		} else {
-			logger.warn("Unconsistent search id already in ids : "+nodeRef);
+			logger.warn("Unconsistent search id already in ids : " + nodeRef);
 		}
 		return this;
 	}
@@ -217,10 +213,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 	}
 
 	public BeCPGQueryBuilder isNull(QName propQName) {
-		if(!notNullProps.contains(propQName)) {
+		if (!notNullProps.contains(propQName)) {
 			nullProps.add(propQName);
 		} else {
-			logger.warn("Unconsistent search null prop already in notNullProps : "+propQName);
+			logger.warn("Unconsistent search null prop already in notNullProps : " + propQName);
 		}
 		return this;
 	}
@@ -231,10 +227,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 	}
 
 	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
-		propQueriesMap.put(propQName, "\""+value+"\"");
+		propQueriesMap.put(propQName, "\"" + value + "\"");
 		return this;
 	}
-	
+
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
 		propQueriesMap.put(propQName, propQuery);
 		return this;
@@ -244,29 +240,28 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 		propQueriesMap.put(propQName, String.format("[%s TO %s]", start, end));
 		return this;
 	}
-	
+
 	public BeCPGQueryBuilder excludeProp(QName propName, String query) {
 		excludedPropQueriesMap.put(propName, query);
 		return this;
 	}
 
 	public BeCPGQueryBuilder excludeType(QName type) {
-		if(!types.contains(type) && !type.equals(this.type)) {
+		if (!types.contains(type) && !type.equals(this.type)) {
 			excludedTypes.add(type);
 		} else {
-			logger.warn("Unconsistent search type already in inType : "+type);
+			logger.warn("Unconsistent search type already in inType : " + type);
 		}
 		return this;
 	}
-	
-	
+
 	public BeCPGQueryBuilder excludeAspect(QName aspect) {
-		if(!aspects.contains(aspect)) {
+		if (!aspects.contains(aspect)) {
 			excludedAspects.add(aspect);
 		} else {
-			logger.warn("Unconsistent search aspect already in withAspect : "+aspect);
+			logger.warn("Unconsistent search aspect already in withAspect : " + aspect);
 		}
-		
+
 		return this;
 	}
 
@@ -280,11 +275,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
 		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);
-		excludeProp(ContentModel.PROP_LOCK_TYPE, "READ_ONLY_LOCK");
+		excludeProp(ContentModel.PROP_LOCK_TYPE, "\"READ_ONLY_LOCK\"");
 		return this;
 	}
+
 	public BeCPGQueryBuilder excludeSearch() {
-		
+
 		excludeDefaults();
 		excludeType(ContentModel.TYPE_THUMBNAIL);
 		excludeType(ContentModel.TYPE_FAILED_THUMBNAIL);
@@ -297,67 +293,86 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 
 		return this;
 	}
-	
+
 	public NodeRef selectNodeByXPath(String xPath) {
 		this.language = SearchService.LANGUAGE_XPATH;
 		List<NodeRef> ret = search(xPath, sortProps, -1, maxResults);
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
-	
+
 	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
-		
-		if(!xPath.startsWith("./")){
+
+		if (!xPath.startsWith("./")) {
 			xPath = encodePath(xPath);
 		}
-		
+
 		List<NodeRef> ret = selectNodesByPath(parentNodeRef, xPath);
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
-
 	public List<NodeRef> selectNodesByPath(NodeRef parentNodeRef, String xPath) {
-		
-		
-		if(logger.isTraceEnabled()) {
-			logger.trace("Try to find node in path: "+xPath+" - with parentContextRef: "+parentNodeRef);
+
+		if (logger.isTraceEnabled()) {
+			logger.trace("Try to find node in path: " + xPath + " - with parentContextRef: " + parentNodeRef);
 		}
-		
-		return  searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
+
+		return searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
 	}
-	
 
 	public List<NodeRef> list() {
 
-		String runnedQuery = buildQuery();
+		StopWatch watch = new StopWatch();
+		watch.start();
 
 		List<NodeRef> refs = new LinkedList<NodeRef>();
 
-		if (RepoConsts.MAX_RESULTS_UNLIMITED == maxResults) {
-			int page = 1;
+		String runnedQuery = buildQuery();
 
-			logger.info("Unlimited results ask -  start pagination");
-			List<NodeRef> tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+		try {
 
-			if (tmp != null && !tmp.isEmpty()) {
-				logger.info(" - Page 1:" + tmp.size());
-				refs = tmp;
-			}
-			while (tmp != null && tmp.size() == RepoConsts.MAX_RESULTS_256) {
-				page++;
-				tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+			if (RepoConsts.MAX_RESULTS_UNLIMITED == maxResults) {
+				int page = 1;
+
+				logger.info("Unlimited results ask -  start pagination");
+				List<NodeRef> tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+
 				if (tmp != null && !tmp.isEmpty()) {
-					logger.info(" - Page " + page + ":" + tmp.size());
-					refs.addAll(tmp);
+					logger.info(" - Page 1:" + tmp.size());
+					refs = tmp;
 				}
+				while (tmp != null && tmp.size() == RepoConsts.MAX_RESULTS_256) {
+					page++;
+					tmp = search(runnedQuery, getSort(ContentModel.PROP_MODIFIED, false), page, RepoConsts.MAX_RESULTS_256);
+					if (tmp != null && !tmp.isEmpty()) {
+						logger.info(" - Page " + page + ":" + tmp.size());
+						refs.addAll(tmp);
+					}
+				}
+
+			} else {
+				refs = search(runnedQuery, sortProps, -1, maxResults);
 			}
 
-		} else {
-			refs = search(runnedQuery, sortProps ,-1, maxResults);
+		} finally {
+
+			watch.stop();
+			if (watch.getTotalTimeSeconds() > 1) {
+				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + refs.size());
+			}
+
+			if (logger.isDebugEnabled()) {
+				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
+				
+				logger.debug(runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + refs.size()
+						+" caller - (" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
+								+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + ")"
+						);
+			}
 		}
 
 		return refs;
 	}
-	
+
 	public NodeRef singleValue() {
 
 		this.maxResults = RepoConsts.MAX_RESULTS_SINGLE_VALUE;
@@ -366,156 +381,146 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
-
 	/*
-	 *   1) Lucene's QueryParser class does not parse boolean expressions -- it
-	        might look like it, but it does not.
-		 2) Lucene's BooleanQuery clause does not model Boolean Queries ... it
-		    models aggregate queries.
-		 3) the most native way to represent the options available in a lucene
-		    "BooleanQuery" as a string is with the +/- prefixes, where...
-		     +foo ... means foo is a required clause and docs must match it
-		     -foo ... means foo is prohibited clause and docs must not match it
-		      foo ... means foo is an optional clause and docs that match it will
-		              get score benefits for doing so.
-		 4) in an attempt to make things easier for people who have
-		    simple needs, QueryParser "fakes" that it parses boolean expressions
-		    by interpreting "A AND B" as "+A +B"; "A OR B" as "A B" and "NOT A" as
-		    "-A"
-		 5) if you change the default operator on QueryParser to be AND then
-		    things get more complicated, mainly because then QueryParser treats
-		    "A B" the same as "+A +B"
-		 6) you should avoid thinking in terms of AND, OR, and NOT ... think in
-		    terms of OPTIONAL, REQUIRED, and PROHIBITED ... your life will be much
-		    easier: documentation will make more sense, conversations on the email
-		    list will be more synergistastic, wine will be sweeter, and food will
-		    taste better.
+	 * 1) Lucene's QueryParser class does not parse boolean expressions -- it
+	 * might look like it, but it does not. 2) Lucene's BooleanQuery clause does
+	 * not model Boolean Queries ... it models aggregate queries. 3) the most
+	 * native way to represent the options available in a lucene "BooleanQuery"
+	 * as a string is with the +/- prefixes, where... +foo ... means foo is a
+	 * required clause and docs must match it -foo ... means foo is prohibited
+	 * clause and docs must not match it foo ... means foo is an optional clause
+	 * and docs that match it will get score benefits for doing so. 4) in an
+	 * attempt to make things easier for people who have simple needs,
+	 * QueryParser "fakes" that it parses boolean expressions by interpreting
+	 * "A AND B" as "+A +B"; "A OR B" as "A B" and "NOT A" as "-A" 5) if you
+	 * change the default operator on QueryParser to be AND then things get more
+	 * complicated, mainly because then QueryParser treats "A B" the same as
+	 * "+A +B" 6) you should avoid thinking in terms of AND, OR, and NOT ...
+	 * think in terms of OPTIONAL, REQUIRED, and PROHIBITED ... your life will
+	 * be much easier: documentation will make more sense, conversations on the
+	 * email list will be more synergistastic, wine will be sweeter, and food
+	 * will taste better.
 	 */
 	private String buildQuery() {
-		
+
 		StringBuilder runnedQuery = new StringBuilder();
-		
-		if(parentNodeRef!=null) {
+
+		if (parentNodeRef != null) {
 			runnedQuery.append(mandatory(getCondParent(parentNodeRef)));
-		} else if(membersPath !=null) {
+		} else if (membersPath != null) {
 			runnedQuery.append(mandatory(getCondMembers(membersPath)));
-		} else if(path !=null) {
+		} else if (path != null) {
 			runnedQuery.append(mandatory(getCondPath(path)));
-		} 
-		
-		if(type!=null) {
+		}
+
+		if (type != null) {
 			runnedQuery.append(mandatory(getCondType(type)));
-		} else if(!types.isEmpty()) {
+		} else if (!types.isEmpty()) {
 			runnedQuery.append(mandatory(startGroup()));
-			for(QName tmpQName : types) {
+			for (QName tmpQName : types) {
 				runnedQuery.append(optional(getCondType(tmpQName)));
 			}
 			runnedQuery.append(endGroup());
-		} else if(!excludedTypes.isEmpty()) {
-			for(QName tmpQName : types) {
+		} else if (!excludedTypes.isEmpty()) {
+			for (QName tmpQName : types) {
 				runnedQuery.append(prohibided(getCondType(tmpQName)));
 			}
 		}
-		
-		if(!aspects.isEmpty()) {
-			for(QName tmpQName : aspects) {
+
+		if (!aspects.isEmpty()) {
+			for (QName tmpQName : aspects) {
 				runnedQuery.append(mandatory(getCondAspect(tmpQName)));
 			}
-		} 
-		
-		if(!excludedAspects.isEmpty()) {
-			for(QName tmpQName : excludedAspects) {
+		}
+
+		if (!excludedAspects.isEmpty()) {
+			for (QName tmpQName : excludedAspects) {
 				runnedQuery.append(prohibided(getCondAspect(tmpQName)));
 			}
 		}
-		
-		if(!notNullProps.isEmpty()) {
-			for(QName tmpQName : notNullProps) {
+
+		if (!notNullProps.isEmpty()) {
+			for (QName tmpQName : notNullProps) {
 				runnedQuery.append(prohibided(getCondIsNullValue(tmpQName)));
 			}
-		} 
-		
-		if(!nullProps.isEmpty()) {
-			for(QName tmpQName : nullProps) {
+		}
+
+		if (!nullProps.isEmpty()) {
+			for (QName tmpQName : nullProps) {
 				runnedQuery.append(mandatory(getCondIsNullValue(tmpQName)));
 			}
 		}
-		
-		if(!ids.isEmpty()) {
-			for(NodeRef tmpNodeRef : ids) {
+
+		if (!ids.isEmpty()) {
+			for (NodeRef tmpNodeRef : ids) {
 				runnedQuery.append(mandatory(getCondEqualID(tmpNodeRef)));
 			}
-		} 
-		
-		if(!notIds.isEmpty()) {
-			for(NodeRef tmpNodeRef : notIds) {
+		}
+
+		if (!notIds.isEmpty()) {
+			for (NodeRef tmpNodeRef : notIds) {
 				runnedQuery.append(prohibided(getCondEqualID(tmpNodeRef)));
 			}
-		} 
-		
-		if(!propQueriesMap.isEmpty()) {
-			for(Map.Entry<QName, String> propQueryEntry : propQueriesMap.entrySet()) {
+		}
+
+		if (!propQueriesMap.isEmpty()) {
+			for (Map.Entry<QName, String> propQueryEntry : propQueriesMap.entrySet()) {
 				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
 			}
 		}
-		
-		if(!excludedPropQueriesMap.isEmpty()) {
-			for(Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
+
+		if (!excludedPropQueriesMap.isEmpty()) {
+			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
 				runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
 			}
 		}
-		
-		if(!ftsQueries.isEmpty()){
+
+		if (!ftsQueries.isEmpty()) {
 			runnedQuery.append(mandatory(startGroup()));
-			for(String ftsQuery : ftsQueries) {
+			for (String ftsQuery : ftsQueries) {
 				runnedQuery.append(optional(ftsQuery));
 			}
 			runnedQuery.append(endGroup());
 		}
-		
+
 		String ret = runnedQuery.toString();
-		
-		if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)){
-			if(ret.startsWith(" AND")){
+
+		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
+			if (ret.startsWith(" AND")) {
 				return ret.replaceFirst(" AND", "");
 			}
 		}
-		
+
 		return ret;
 	}
 
-
-     public BeCPGQueryBuilder ftsLanguage() {
-    	 this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
-    	 return this;
-     }
-
-
+	public BeCPGQueryBuilder ftsLanguage() {
+		this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
+		return this;
+	}
 
 	private List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults) {
 
 		List<NodeRef> nodes = new LinkedList<NodeRef>();
 
-		StopWatch watch = new StopWatch();
-		watch.start();
-
 		SearchParameters sp = new SearchParameters();
 		sp.addStore(RepoConsts.SPACES_STORE);
-	
+
 		sp.setQuery(runnedQuery);
 		sp.addLocale(Locale.getDefault());
 		sp.excludeDataInTheCurrentTransaction(false);
-		
+
 		sp.setLanguage(language);
-		if(SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
+		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
 			sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
 		}
-		
-		//Force the database use if possible
-		//execute queries transactionally, when possible, and fall back to eventual consistency; or
+
+		// Force the database use if possible
+		// execute queries transactionally, when possible, and fall back to
+		// eventual consistency; or
 		sp.setQueryConsistency(QueryConsistency.TRANSACTIONAL_IF_POSSIBLE);
-		
+
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
 		} else {
@@ -529,10 +534,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 			sp.setMaxPermissionChecks(page * 1000);
 		}
 
-	
 		if (sort != null) {
 			for (Map.Entry<String, Boolean> kv : sort.entrySet()) {
-				if(logger.isTraceEnabled()){
+				if (logger.isTraceEnabled()) {
 					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
 				}
 				sp.addSort(kv.getKey(), kv.getValue());
@@ -545,19 +549,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 			if (result != null) {
 				nodes = new LinkedList<NodeRef>(result.getNodeRefs());
 			}
-		} catch(FTSQueryException e) { 
-		  logger.error("Incorrect query :"+runnedQuery,e);
+		} catch (FTSQueryException e) {
+			logger.error("Incorrect query :" + runnedQuery, e);
 		} finally {
 			if (result != null) {
 				result.close();
-			}
-			watch.stop();
-			if (watch.getTotalTimeSeconds() > 1) {
-				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + nodes.size());
-			}
-
-			if (logger.isDebugEnabled()) {
-				logger.debug(runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + nodes.size());
 			}
 		}
 		return nodes;
@@ -568,8 +564,4 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder  implements Ini
 		return buildQuery();
 	}
 
-
-
-
-	
 }

@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -128,14 +129,14 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		String containerId = req.getParameter(PARAM_CONTAINER);
 		String repo = req.getParameter(PARAM_REPOSITORY);
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+		BeCPGQueryBuilder queryBuilder = null;
 		
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 		if(nodeRef!=null && !nodeRef.isEmpty()){
-			queryBuilder.inPath(getPath(nodeRef))
-			.excludeDefaults();
-//			queryBuilder += LuceneHelper.DEFAULT_IGNORE_QUERY
-//					+ " -TYPE:\"bcpg:entityListItem\"";
+			queryBuilder = BeCPGQueryBuilder.createQuery()
+			 .inPath(getPath(nodeRef))
+			 .excludeDefaults()
+			 .excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			if (itemType != null && !itemType.isEmpty()) {
 				queryBuilder.ofType(QName.createQName(itemType,namespaceService));
 			} 
