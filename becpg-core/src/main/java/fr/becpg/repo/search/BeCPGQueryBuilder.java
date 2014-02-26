@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
+import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
@@ -91,6 +92,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Set<QName> excludedAspects = new HashSet<>();
 	private Set<QName> excludedTypes = new HashSet<>();
 	private Map<QName, String> excludedPropQueriesMap = new HashMap<QName, String>();
+	private QueryConsistency queryConsistancy = QueryConsistency.TRANSACTIONAL_IF_POSSIBLE;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -163,18 +165,21 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return this;
 	}
+	
+	public BeCPGQueryBuilder inDB(){
+		queryConsistancy = QueryConsistency.TRANSACTIONAL;
+		return this;
+	}
 
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
 		String path = SiteHelper.SITES_SPACE_QNAME_PATH;
 		if (siteId != null && siteId.length() > 0) {
-			path += "cm:" + ISO9075.encode(siteId) + "/";
-		} else {
-			path += "*/";
+			path += "cm:" + ISO9075.encode(siteId) ;
+		} else if (containerId != null && containerId.length() > 0) {
+			path += "*";
 		}
 		if (containerId != null && containerId.length() > 0) {
-			path += "cm:" + ISO9075.encode(containerId) + "/";
-		} else {
-			path += "*/";
+			path += "/cm:" + ISO9075.encode(containerId) ;
 		}
 		inPath(path);
 
@@ -232,7 +237,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
-		propQueriesMap.put(propQName, propQuery);
+		propQueriesMap.put(propQName, "(" +propQuery+ ")");
 		return this;
 	}
 
@@ -416,11 +421,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (type != null) {
 			runnedQuery.append(mandatory(getCondType(type)));
 		} else if (!types.isEmpty()) {
-			runnedQuery.append(mandatory(startGroup()));
-			for (QName tmpQName : types) {
-				runnedQuery.append(optional(getCondType(tmpQName)));
+			if(types.size()==1){
+				runnedQuery.append(mandatory(getCondType(types.iterator().next())));
+			} else {
+				runnedQuery.append(mandatory(startGroup()));
+				for (QName tmpQName : types) {
+					runnedQuery.append(optional(getCondType(tmpQName)));
+				}
+				runnedQuery.append(endGroup());
 			}
-			runnedQuery.append(endGroup());
 		} else if (!excludedTypes.isEmpty()) {
 			for (QName tmpQName : types) {
 				runnedQuery.append(prohibided(getCondType(tmpQName)));
@@ -519,7 +528,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// Force the database use if possible
 		// execute queries transactionally, when possible, and fall back to
 		// eventual consistency; or
-		sp.setQueryConsistency(QueryConsistency.TRANSACTIONAL_IF_POSSIBLE);
+		sp.setQueryConsistency(queryConsistancy);
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
@@ -551,6 +560,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		} catch (FTSQueryException e) {
 			logger.error("Incorrect query :" + runnedQuery, e);
+		} catch (QueryModelException e) {
+				logger.error("Incorrect query :" + runnedQuery, e);
+			
 		} finally {
 			if (result != null) {
 				result.close();

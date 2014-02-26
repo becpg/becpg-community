@@ -29,6 +29,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.SiteHelper;
 
 /**
  * @author matthieu
@@ -82,6 +83,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 	
 
 	protected  String getCondPath(String path) {
+		if(path.startsWith(SiteHelper.SITES_SPACE_QNAME_PATH)){
+			return String.format(QUERY_COND_PATH, path);
+		}
+		
 		return String.format(QUERY_COND_PATH, encodePath(path));
 	}
 

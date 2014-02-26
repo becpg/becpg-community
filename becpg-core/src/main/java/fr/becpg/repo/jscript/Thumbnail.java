@@ -38,7 +38,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private static final String THUMB_CACHE_KEY_PREFIX = "thumbCache_";
-	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb*";
+	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb.png";
 
 	private static Log logger = LogFactory.getLog(Thumbnail.class);
 
@@ -127,7 +127,10 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 			@Override
 			public NodeRef getData() {
-				NodeRef imageNodeRef = BeCPGQueryBuilder.createQuery().inPath(RepoConsts.FULL_PATH_THUMBNAIL).andPropEquals(ContentModel.PROP_NAME, imgName).singleValue();
+				NodeRef imageNodeRef = BeCPGQueryBuilder.createQuery()
+						.inPath(RepoConsts.FULL_PATH_THUMBNAIL)
+						.andPropEquals(ContentModel.PROP_NAME, imgName)
+						.inDB().singleValue();
 				
 				if (imageNodeRef==null) {
 					logger.debug("image not found. imgName: " + imgName);
