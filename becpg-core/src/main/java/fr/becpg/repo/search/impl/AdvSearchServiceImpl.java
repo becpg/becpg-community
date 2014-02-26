@@ -107,7 +107,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 
 		if (datatype != null) {
-			beCPGQueryBuilder.inType(datatype);
+			beCPGQueryBuilder.ofType(datatype);
 		}
 
 		beCPGQueryBuilder.excludeSearch();
@@ -176,16 +176,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), from, to);
 
-								} else {
-
-									queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), propValue);
+								}
+							} else {
+								if (!propValue.isEmpty()) {
+									queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), propValue);
 								}
 							}
 						} else if (propName.contains("productHierarchy")) {
 							String hierarchyQuery = getHierarchyQuery(propName, propValue);
 							if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
 
-								queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), hierarchyQuery);
+								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), hierarchyQuery);
 
 							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
@@ -206,7 +207,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 								// propName + ":\"" + propValue + "\"";
-								queryBuilder.andPropEquals(QName.createQName(propName, namespaceService), propValue);
+								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), propValue);
 								// TODO
 
 							} else {

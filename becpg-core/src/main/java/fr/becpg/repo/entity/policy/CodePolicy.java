@@ -5,6 +5,7 @@ package fr.becpg.repo.entity.policy;
 
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
@@ -71,12 +72,12 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 				if (code != null && !code.isEmpty()) {
 					
-					//private static final String QUERY_NODE_BY_CODE = " +TYPE:\"%s\" +@bcpg\\:code:\"%s\"  -@sys\\:node-uuid:\"%s\" ";
 					generateCode = BeCPGQueryBuilder
 							.createQuery()
 							.ofType(typeQName)
 							.andPropEquals(BeCPGModel.PROP_CODE,code)
-							.excludeVersions()
+							.excludeProp(ContentModel.PROP_NODE_UUID, "\""+nodeRef.getId()+"\"")
+							.excludeVersions().inDB()
 							.singleValue()!=null;
 				}
 
