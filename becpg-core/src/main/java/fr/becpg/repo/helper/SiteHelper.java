@@ -19,7 +19,7 @@ package fr.becpg.repo.helper;
 
 public class SiteHelper {
 
-	static String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
+	public static String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
 	
 	public static String extractSiteId(String path, String displayPath)
 	{

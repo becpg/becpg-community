@@ -32,7 +32,6 @@
 
 	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" parent="abstractBeCPGPolicy">
 		<property name="autoNumService" ref="autoNumService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 
 	<bean id="docLinkedEntitiesPolicy" class="fr.becpg.repo.entity.policy.DocLinkedEntitiesPolicy" parent="abstractBeCPGPolicy">
@@ -68,7 +67,6 @@
 	</bean>
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
 		<property name="dataListSortService" ref="dataListSortService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 	</bean>
 
 

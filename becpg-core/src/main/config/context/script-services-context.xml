@@ -27,7 +27,6 @@
 			<value>bThumbnail</value>
 		</property>
 		<property name="entityService" ref="entityService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />

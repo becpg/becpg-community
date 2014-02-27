@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONException;
@@ -32,9 +31,10 @@ import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.search.AdvSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 public abstract class AbstractSearchWebScript extends AbstractWebScript {
@@ -129,15 +129,16 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		String containerId = req.getParameter(PARAM_CONTAINER);
 		String repo = req.getParameter(PARAM_REPOSITORY);
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
-		String searchQuery = null;
+		BeCPGQueryBuilder queryBuilder = null;
 		
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 		if(nodeRef!=null && !nodeRef.isEmpty()){
-			searchQuery += LuceneHelper.DEFAULT_IGNORE_QUERY
-					+ " -TYPE:\"bcpg:entityListItem\"";
-			searchQuery += " +PATH:\"" + getPath(nodeRef) + "//*\"";
+			queryBuilder = BeCPGQueryBuilder.createQuery()
+			 .inPath(getPath(nodeRef))
+			 .excludeDefaults()
+			 .excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			if (itemType != null && !itemType.isEmpty()) {
-				searchQuery += " +TYPE:\"" + itemType + "\"";
+				queryBuilder.ofType(QName.createQName(itemType,namespaceService));
 			} 
 		}
 		
@@ -156,16 +157,14 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 			datatype =  QName.createQName(jsonObject.getString("datatype"), namespaceService);
 			
 		}
-	
-		String language = SearchService.LANGUAGE_FTS_ALFRESCO;
-		if(searchQuery==null){
-			searchQuery = advSearchService.getSearchQueryByProperties(datatype, term, tag, isRepo, siteId, containerId);
-		} else {
-			language = SearchService.LANGUAGE_LUCENE;
-		}
+		
+		if(queryBuilder==null){
+			queryBuilder = advSearchService.createSearchQuery(datatype, term, tag, isRepo, siteId, containerId);
+		} 
 
-
-		return advSearchService.queryAdvSearch(searchQuery, language, datatype, criteriaMap, sortMap, maxResults!=null ? maxResults : RepoConsts.MAX_RESULTS_256);
+		queryBuilder.addSort(sortMap);
+		
+		return advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, RepoConsts.MAX_RESULTS_256);
 
 	}
 

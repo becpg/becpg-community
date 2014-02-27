@@ -23,7 +23,6 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.Version;
@@ -45,7 +44,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
@@ -73,8 +72,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Autowired
 	private CopyService copyService;
 
-	@Autowired
-	private BeCPGSearchService beCPGSearchService;
 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
@@ -320,15 +317,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			@Override
 			public NodeRef getData() {
 
-				NodeRef entitiesHistoryNodeRef = null;
-				List<NodeRef> resultSet = null;
-
+				NodeRef entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByXPath(ENTITIES_HISTORY_XPATH);
 				try {
-					resultSet = beCPGSearchService.search(ENTITIES_HISTORY_XPATH, null, RepoConsts.MAX_RESULTS_SINGLE_VALUE, SearchService.LANGUAGE_XPATH);
-
-					if (!resultSet.isEmpty()) {
-						entitiesHistoryNodeRef = resultSet.get(0);
-					} else {
+					 if(entitiesHistoryNodeRef ==null) {
 
 						// create folder
 						final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);

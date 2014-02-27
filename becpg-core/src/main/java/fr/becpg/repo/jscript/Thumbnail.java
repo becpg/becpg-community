@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
-import java.util.List;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -35,12 +33,12 @@ import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private static final String THUMB_CACHE_KEY_PREFIX = "thumbCache_";
-	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb*";
+	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb.png";
 
 	private static Log logger = LogFactory.getLog(Thumbnail.class);
 
@@ -49,8 +47,6 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	private EntityService entityService;
 
 	private EntityReportService entityReportService;
-
-	private BeCPGSearchService beCPGSearchService;
 
 	private BeCPGCacheService beCPGCacheService;
 
@@ -64,9 +60,6 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		this.entityService = entityService;
 	}
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
@@ -134,21 +127,16 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 			@Override
 			public NodeRef getData() {
-				String query = String.format(RepoConsts.PATH_QUERY_THUMBNAIL, imgName);
-
-				List<NodeRef> listItems = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Look for thumbnail : " + query);
-					logger.debug("Found  : " + listItems.size() + " results");
-				}
-
-				if (listItems.isEmpty()) {
+				NodeRef imageNodeRef = BeCPGQueryBuilder.createQuery()
+						.inPath(RepoConsts.FULL_PATH_THUMBNAIL)
+						.andPropEquals(ContentModel.PROP_NAME, imgName)
+						.inDB().singleValue();
+				
+				if (imageNodeRef==null) {
 					logger.debug("image not found. imgName: " + imgName);
-					return null;
 				}
-
-				return listItems.get(0);
+					
+				return imageNodeRef;
 			}
 
 		});

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteService;
@@ -32,9 +33,8 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
-import org.json.JSONException;
 
-import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class DataListFilter {
 
@@ -52,7 +52,7 @@ public class DataListFilter {
 	
 	private String filterId = ALL_FILTER;
 	
-	private String filterQuery = null;
+	private String filterParams = null;
 	
 	private String dataListName = null; 
 	
@@ -74,8 +74,6 @@ public class DataListFilter {
 	
 	private String containerId = SiteService.DOCUMENT_LIBRARY;
 	
-	private boolean allFilter = false;
-	
 	private String filterData = null;
 	
 	private String sortId = null;
@@ -84,27 +82,12 @@ public class DataListFilter {
 	
 	public DataListFilter() {
 		super();
-		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
-	}
-
-	public List<Pair<QName, Boolean>> getSortProps(NamespaceService namespaceService) {
-
-		List<Pair<QName, Boolean>> sortProps = new LinkedList<Pair<QName, Boolean>>();
+		sortMap.put("@bcpg:sort", true);
 		
-		for(Map.Entry<String, Boolean> entry : sortMap.entrySet()){
-			
-			sortProps.add(new Pair<QName, Boolean>(QName.createQName(entry.getKey().replace("@",""), namespaceService),entry.getValue()));
-		}
-
-		return sortProps;
-	}
-	
-	
-	public String getFilterQuery() {
-		return filterQuery;
 	}
 
+	
 	public List<NodeRef> getEntityNodeRefs() {
 		return entityNodeRefs;
 	}
@@ -192,8 +175,22 @@ public class DataListFilter {
 		return maxLevel;
 	}
 
-	public void setFilterQuery(String filterQuery) {
-		this.filterQuery = filterQuery;
+	
+
+	public String getFilterParams() {
+		return filterParams;
+	}
+
+	public void setFilterParams(String filterParams) {
+		this.filterParams = filterParams;
+	}
+
+	public void setFilterId(String filterId) {
+		this.filterId = filterId;
+	}
+
+	public void setFilterData(String filterData) {
+		this.filterData = filterData;
 	}
 
 	public void setEntityNodeRefs(List<NodeRef> entityNodeRefs) {
@@ -226,53 +223,55 @@ public class DataListFilter {
 		this.dataType = dataType;
 	}
 	
-	public String getSearchQuery (){
+	public BeCPGQueryBuilder getSearchQuery (){
 		return getSearchQuery(this.parentNodeRef);
 	}
 	
 	
+	public NodeRef getNodeRef() {
+		return nodeRef;
+	}
+
+
 	public void setNodeRef(NodeRef nodeRef) {
 		this.nodeRef = nodeRef;
 	}
 
-	public String getSearchQuery(NodeRef parentNodeRef) {
-		String searchQuery = filterQuery + (parentNodeRef!=null ? " +PARENT:\"" + parentNodeRef + "\" ":"");
+	public BeCPGQueryBuilder getSearchQuery(NodeRef parentNodeRef) {
 		
+		BeCPGQueryBuilder queryBuilder = createFilterQuery();
 		
-		if (!isRepo && parentNodeRef==null) {
-			searchQuery = 	LuceneHelper.mandatory(LuceneHelper.getSiteSearchPath( siteId, containerId))+ " AND ("+searchQuery+")";
+		if(!isSimpleItem()){
+			if(parentNodeRef!=null) {
+				queryBuilder.parent(parentNodeRef);
+			} else if(!isRepo) {
+				queryBuilder.inSite(siteId, containerId);
+			}
+			queryBuilder.excludeDefaults();
+			queryBuilder.addSort(sortMap);
+		} else {
+			//Force DB Mode
+			queryBuilder.inDB();
 		}
-		return searchQuery;
+		
+		
+		
+		return queryBuilder;
 	}
 	
-	public boolean isSimpleItem() {
-		return nodeRef!=null;
-	}
 
-
-	public boolean isAllFilter() {
-		return allFilter && parentNodeRef!=null;
-	}
-
-	public boolean isVersionFilter() {
-		return filterId!=null && filterId.equals(VERSION_FILTER);
-	}
-	
-	public void buildQueryFilter( String filterId, String filterData, String params ) throws JSONException {
+	private BeCPGQueryBuilder createFilterQuery() {
+		
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+		
 		
 		Pattern ftsQueryPattern = Pattern.compile("fts\\((.*)\\)");
 
-		filterQuery = LuceneHelper.mandatory(LuceneHelper.getCondType(dataType));
-
-		// Common types and aspects to filter from the UI
-		String searchQueryDefaults = LuceneHelper.DEFAULT_IGNORE_QUERY; 
-
+		queryBuilder.ofType(dataType);
 		
 		
 		if (filterId != null) {
-			
-			this.filterId = filterId;
-			this.filterData = filterData;
 
 			if (filterId.equals("recentlyAdded") || filterId.equals("recentlyModified") || filterId.equals("recentlyCreatedByMe") || filterId.equals("recentlyModifiedByMe")) {
 				boolean onlySelf = (filterId.indexOf("ByMe")) > 0 ? true : false;
@@ -282,52 +281,65 @@ public class DataListFilter {
 				// Default to 7 days - can be overridden using "days" argument
 				int dayCount = 7;
 				
-				if (params != null && params.startsWith("day=")) {
+				if (filterParams != null && filterParams.startsWith("day=")) {
 					try {
-						dayCount = Integer.parseInt(params.replace("day=", ""));
+						dayCount = Integer.parseInt(filterParams.replace("day=", ""));
 					} catch (NumberFormatException e) {
 
 					}
 				}
 				Calendar date = Calendar.getInstance();
+				
 				String toQuery = date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
 				date.add(Calendar.DATE, -dayCount);
 				String fromQuery = date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
 
-				filterQuery += " +@cm\\:" + dateField + ":[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]";
+				queryBuilder.andPropQuery(QName.createQName(ContentModel.USER_MODEL_URI, dateField), "[" + fromQuery + "T00\\:00\\:00.000 TO " + toQuery + "T23\\:59\\:59.999]");
+				
 				if (onlySelf) {
-					filterQuery += " +@cm\\:" + ownerField + ":\"" + getUserName() + '"';
+					queryBuilder.andPropEquals(QName.createQName(ContentModel.USER_MODEL_URI, ownerField), getUserName());
 				}
-				filterQuery += " -TYPE:\"folder\"";
 
 				sortMap.put("@cm:" + dateField, false);
 
 			} else if (filterId.equals("createdByMe")) {
-				filterQuery += " +@cm\\:creator:\"" + getUserName() + '"';
-				filterQuery += " -TYPE:\"folder\"";
+				queryBuilder.andPropEquals(ContentModel.PROP_CREATOR, getUserName());
 			} else if (filterId.equals(NODE_FILTER)) {
-				filterQuery = "+ID:\"" + nodeRef + "\"";
+				queryBuilder.andID(nodeRef);
 			} else if (filterId.equals("tag")) {
+				String fData = filterData;
 				// Remove any trailing "/" character
-				if (filterData.charAt(filterData.length() - 1) == '/') {
-					filterData = filterData.substring(0, filterData.length() - 2);
+				if (fData.charAt(fData.length() - 1) == '/') {
+					fData = fData.substring(0, fData.length() - 2);
 				}
-				filterQuery += "+PATH:\"/cm:taggable/cm:" + ISO9075.encode(filterData) + "/member\"";
-			}  else if (filterId.equals(ALL_FILTER)) {
-				allFilter = true;
-			} else if(filterId.equals(FTS_FILTER)){
-				filterQuery += " "+filterData;
-			} else if(params!=null) {
-				Matcher ma = ftsQueryPattern.matcher(params);
+				queryBuilder.members("/cm:taggable/cm:" + ISO9075.encode(fData));
+				
+			}  else if(filterId.equals(FTS_FILTER)){
+				queryBuilder.andFTSQuery(filterData);
+			} else if(filterParams!=null) {
+				Matcher ma = ftsQueryPattern.matcher(filterParams);
 				if(ma.matches()){
-					filterQuery += " "+ma.group(1);
+					queryBuilder.andFTSQuery(ma.group(1));
 				}
 			}
 		}
-
-		 filterQuery += searchQueryDefaults;
-
+		
+		return queryBuilder;
 	}
+
+	public boolean isSimpleItem() {
+		return nodeRef!=null;
+	}
+
+
+	public boolean isAllFilter() {
+		return filterId!=null && filterId.equals(ALL_FILTER) && parentNodeRef!=null;
+	}
+
+	public boolean isVersionFilter() {
+		return filterId!=null && filterId.equals(VERSION_FILTER);
+	}
+	
 	
 	
 
@@ -337,10 +349,9 @@ public class DataListFilter {
 
 	@Override
 	public String toString() {
-		return "DataListFilter [filterId=" + filterId + ", filterQuery=" + filterQuery + ", dataListName=" + dataListName + ", entityNodeRefs=" + entityNodeRefs
+		return "DataListFilter [filterId=" + filterId + ", filterParams=" + filterParams + ", dataListName=" + dataListName + ", entityNodeRefs=" + entityNodeRefs
 				+ ", parentNodeRef=" + parentNodeRef + ", nodeRef=" + nodeRef + ", criteriaMap=" + criteriaMap + ", sortMap=" + sortMap + ", dataType=" + dataType + ", isRepo="
-				+ isRepo + ", siteId=" + siteId + ", containerId=" + containerId + ", allFilter=" + allFilter + ", filterData=" + filterData + ", sortId=" + sortId + ", format="
-				+ format + "]";
+				+ isRepo + ", siteId=" + siteId + ", containerId=" + containerId + ", filterData=" + filterData + ", sortId=" + sortId + ", format=" + format + "]";
 	}
 
 
@@ -352,7 +363,6 @@ public class DataListFilter {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (allFilter ? 1231 : 1237);
 		result = prime * result + ((containerId == null) ? 0 : containerId.hashCode());
 		result = prime * result + ((criteriaMap == null) ? 0 : criteriaMap.hashCode());
 		result = prime * result + ((dataListName == null) ? 0 : dataListName.hashCode());
@@ -360,7 +370,7 @@ public class DataListFilter {
 		result = prime * result + ((entityNodeRefs == null) ? 0 : entityNodeRefs.hashCode());
 		result = prime * result + ((filterData == null) ? 0 : filterData.hashCode());
 		result = prime * result + ((filterId == null) ? 0 : filterId.hashCode());
-		result = prime * result + ((filterQuery == null) ? 0 : filterQuery.hashCode());
+		result = prime * result + ((filterParams == null) ? 0 : filterParams.hashCode());
 		result = prime * result + ((format == null) ? 0 : format.hashCode());
 		result = prime * result + (isRepo ? 1231 : 1237);
 		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
@@ -380,8 +390,6 @@ public class DataListFilter {
 		if (getClass() != obj.getClass())
 			return false;
 		DataListFilter other = (DataListFilter) obj;
-		if (allFilter != other.allFilter)
-			return false;
 		if (containerId == null) {
 			if (other.containerId != null)
 				return false;
@@ -417,10 +425,10 @@ public class DataListFilter {
 				return false;
 		} else if (!filterId.equals(other.filterId))
 			return false;
-		if (filterQuery == null) {
-			if (other.filterQuery != null)
+		if (filterParams == null) {
+			if (other.filterParams != null)
 				return false;
-		} else if (!filterQuery.equals(other.filterQuery))
+		} else if (!filterParams.equals(other.filterParams))
 			return false;
 		if (format == null) {
 			if (other.format != null)

@@ -295,7 +295,9 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				}
 			}
 
-			dataListFilter.buildQueryFilter(filterId, filterData, filterParams);
+			dataListFilter.setFilterId(filterId);
+			dataListFilter.setFilterData(filterData);
+			dataListFilter.setFilterParams(filterParams);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());
@@ -390,7 +392,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				metadata.put("parent", parent);
 				
 				ret.put("metadata", metadata);
-				if (dataListFilter.isSimpleItem()) {
+				if (dataListFilter.isSimpleItem() &&  !extractedItems.getPageItems().isEmpty()) {
 					Map<String, Object> item = extractedItems.getPageItems().get(0);
 					ret.put("item", new JSONObject(item));
 					ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef) item.get(AbstractDataListExtractor.PROP_NODE)));

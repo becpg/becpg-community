@@ -29,12 +29,11 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class TaskValuePlugin extends EntityListValuePlugin {
 
@@ -70,20 +69,20 @@ public class TaskValuePlugin extends EntityListValuePlugin {
 	}
 	
 	private ListValuePage suggestDatalistItem(NodeRef entityNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query, Integer pageNum, Integer pageSize) {
-		String queryPath = "";
-
-		query = prepareQuery(query);
+	
+		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery()
+				.ofType(datalistType)
+				.andPropQuery(propertyQName, prepareQuery(query))
+				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService));
 		
-		queryPath += LuceneHelper.mandatory(LuceneHelper.getCondType(datalistType));
-		queryPath += LuceneHelper.getCondContainsValue(propertyQName, query, Operator.AND);
-		queryPath += LuceneHelper.getCond(String.format(" +PATH:\"%s/*/*/*\"", nodeService.getPath(entityNodeRef).toPrefixString(namespaceService)), Operator.AND);
 		if(itemId != null){
-			queryPath += LuceneHelper.getCondEqualID(itemId, LuceneHelper.Operator.NOT);
+			beCPGQueryBuilder.andNotID(itemId);
+			
 		}
-		
-		logger.debug("suggestDatalistItem for query : " + queryPath);
+	
+		logger.debug("suggestDatalistItem for query : " + beCPGQueryBuilder.toString());
 
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(propertyQName), RepoConsts.MAX_SUGGESTIONS);
+		List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}

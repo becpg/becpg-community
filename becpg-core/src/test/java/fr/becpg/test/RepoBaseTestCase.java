@@ -55,6 +55,7 @@ import org.subethamail.wiser.Wiser;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
@@ -62,7 +63,6 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.search.BeCPGSearchService;
 
 /**
  * base class of test cases for product classes.
@@ -76,6 +76,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
+
 	
 	protected NodeRef testFolderNodeRef;
 	protected NodeRef systemFolderNodeRef;
@@ -139,9 +140,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	protected PersonService personService;
 
 	@Resource
-	protected BeCPGSearchService beCPGSearchService;
-
-	@Resource
 	protected EntityTplService entityTplService;
 
 	@Resource
@@ -149,6 +147,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	
 	@Resource
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Resource
+	protected BeCPGCacheService beCPGCacheService;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -178,7 +179,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Before
 	public void setUp() throws Exception {
-
 
 		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -232,7 +232,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("TearDown :");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 
@@ -244,4 +243,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}
 		}, false, true);
 	}
+
+
+
+
 }

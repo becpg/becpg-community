@@ -119,7 +119,6 @@
 	<bean id="taskValuePlugin" parent="baseListValuePlugin" init-method="init" class="fr.becpg.repo.project.listvalue.TaskValuePlugin">
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="dictionaryDAO" ref="dictionaryDAO" />
 	</bean>
 
@@ -157,7 +156,6 @@
 
    <!-- Worker -->
 	<bean id="projectFormulationWorker" class="fr.becpg.repo.project.impl.ProjectFormulationWorker">
-		<property name="beCPGSearchService" ref="beCPGSearchService" />
 		<property name="projectService" ref="projectService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="transactionService" ref="transactionService" />

@@ -31,8 +31,10 @@ import org.alfresco.service.namespace.QName;
  */
 public interface AdvSearchService {
 
-	List<NodeRef> queryAdvSearch(String query, String language, QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxItem);
+	
+	BeCPGQueryBuilder createSearchQuery(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId);
 
-	String getSearchQueryByProperties(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId);
+
+	List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults);
 
 }

@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 
@@ -81,7 +80,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
 
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString() + ".propDef",
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), fieldQname.toString() + ".propDef",
 				new BeCPGCacheDataProviderCallBack<ClassAttributeDefinition>() {
 					public ClassAttributeDefinition getData() {
 						ClassAttributeDefinition propDef = dictionaryService.getProperty(fieldQname);
@@ -96,7 +95,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
 	@Override
 	public boolean isSubClass(final QName fieldQname, final QName typeEntitylistItem) {
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), fieldQname.toString() + "_" + typeEntitylistItem.toString() + ".isSubClass",
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), fieldQname.toString() + "_" + typeEntitylistItem.toString() + ".isSubClass",
 				new BeCPGCacheDataProviderCallBack<Boolean>() {
 					public Boolean getData() {
 						return dictionaryService.isSubClass(fieldQname, typeEntitylistItem);
@@ -106,7 +105,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 
 	@Override
 	public Collection<QName> getSubTypes(final QName typeQname) {
-		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), typeQname.toString() + ".getSubTypes",
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), typeQname.toString() + ".getSubTypes",
 				new BeCPGCacheDataProviderCallBack<Collection<QName>>() {
 					public Collection<QName> getData() {
 						return dictionaryService.getSubTypes(typeQname, true);

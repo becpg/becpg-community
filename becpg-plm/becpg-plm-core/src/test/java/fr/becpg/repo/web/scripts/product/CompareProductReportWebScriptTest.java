@@ -219,9 +219,10 @@ private void initObjects(){
 		
 		/**
 		 * Test compare products.
+		 * @throws IOException 
 		 */
 	    @Test
-		public void testCompareProducts(){
+		public void testCompareProducts() throws IOException{
 
 			
 			// init objects
@@ -342,16 +343,12 @@ private void initObjects(){
 					
 				}},false,true);
 			
-			try{
 			
 				String url = String.format("/becpg/entity/compare/%s/%s/Produit", fpNodeRef.toString().replace("://", "/"), "1.0");;
 				Response response = sendRequest(new GetRequest(url), 200, "admin");
 				
 				logger.debug("response: " + response.getContentAsString());
-			}
-			catch(Exception e){
-				logger.error("Failed to execute webscript", e);
-			}
+		
 			
 	   }
 	

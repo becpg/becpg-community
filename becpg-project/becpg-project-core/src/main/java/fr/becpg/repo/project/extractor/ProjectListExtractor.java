@@ -29,7 +29,6 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
@@ -45,9 +44,9 @@ import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectListExtractor extends SimpleExtractor {
 
@@ -158,18 +157,18 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		// pjt:project
 		QName dataType = dataListFilter.getDataType();
-		String query = dataListFilter.getSearchQuery();
+		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery();
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
 			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRefs().get(0), ProjectModel.ASSOC_PROJECT_ENTITY);
 		} else {
 			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
 				dataType = ProjectModel.TYPE_TASK_LIST;
-				query = query.replace(LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT)), LuceneHelper.mandatory(LuceneHelper.getCondType(dataType)));
+				beCPGQueryBuilder.ofType(dataType);
+				
 			}
 
-			results = advSearchService.queryAdvSearch(query, SearchService.LANGUAGE_LUCENE, dataType, dataListFilter.getCriteriaMap(), dataListFilter.getSortMap(),
-					pagination.getMaxResults());
+			results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(),	pagination.getMaxResults());
 
 			// Always should return project
 			if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {

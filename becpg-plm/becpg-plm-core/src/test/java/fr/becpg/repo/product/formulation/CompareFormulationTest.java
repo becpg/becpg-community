@@ -98,10 +98,8 @@ public class CompareFormulationTest extends FormulationFullTest {
 					logger.info(trace);
 					assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
 				}
-
-
-				assertEquals(formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),"{\"comp\":[{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":2,\"nodeRef\":\"workspace://SpacesStore/a028a96e-7ae0-40ed-ae6f-7c2d37cda6f0\",\"displayValue\":2},{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":3,\"nodeRef\":\"workspace://SpacesStore/a028a96e-7ae0-40ed-ae6f-7c2d37cda6f0\",\"displayValue\":3}]}");
-
+				
+				assertEquals(formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),"{\"comp\":[{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":[4000,4,6],\"nodeRef\":\"workspace://SpacesStore/90948074-d16e-44a5-a04a-704cc30c62a0\",\"displayValue\":[4000,4,6]},{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":[4000,2.6666666666666665,4],\"nodeRef\":\"workspace://SpacesStore/90948074-d16e-44a5-a04a-704cc30c62a0\",\"displayValue\":[4000,2.6666666666666665,4]}]}");
 				return null;
 
 			}

@@ -45,15 +45,12 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.helper.LuceneHelper.Operator;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.lucene.analysis.FrenchSnowballAnalyserThatRemovesAccents;
 
 public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
@@ -97,8 +94,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	protected NamespaceService namespaceService;
 
 
-	protected BeCPGSearchService beCPGSearchService;
-
 	protected DictionaryService dictionaryService;
 
 	private DictionaryDAO dictionaryDAO;
@@ -136,9 +131,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		this.autoNumService = autoNumService;
 	}
 
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
@@ -192,25 +184,29 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				logger.debug("suggestTargetAssoc with arrClassNames : " + Arrays.toString(arrClassNames));
 			}
 		}
+		
 
-		String queryPath = "";
-
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+		queryBuilder.ofType(type);
+		queryBuilder.excludeVersions();
+		
 		// Is code or name search
 		if (isQueryCode(query, type, arrClassNames)) {
 			String codeQuery = prepareQueryCode(query, type, arrClassNames);
-			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_CODE, type, codeQuery,  query, query);
-		} else if (isAllQuery(query)) {
-			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_ALL, type);
-		} else {
-			query = prepareQuery(query);
-			queryPath = String.format(RepoConsts.QUERY_SUGGEST_TARGET_BY_NAME, type, query);
+			
+			//TODO erpCOde and eanCode not in COre
+			queryBuilder.andFTSQuery(String.format("(@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s)", codeQuery,codeQuery,codeQuery));
+			
+			
+		} else if (!isAllQuery(query)) { 
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, query);
 		}
 
 		// filter by classNames
-		queryPath = filterByClass(queryPath, arrClassNames);
+		filterByClass(queryBuilder, arrClassNames);
 
 		// filter product state
-		queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE, SystemState.Archived, SystemState.Refused);
+		//TODO queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE, SystemState.Archived, SystemState.Refused);
 
 		List<NodeRef> ret = null;
 
@@ -219,7 +215,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			// exclude class
 			String excludeClassNames = (String) props.get(ListValueService.PROP_EXCLUDE_CLASS_NAMES);
 			String[] arrExcludeClassNames = excludeClassNames != null ? excludeClassNames.split(PARAM_VALUES_SEPARATOR) : null;
-			queryPath = excludeByClass(queryPath, arrExcludeClassNames);
+			excludeByClass(queryBuilder, arrExcludeClassNames);
 			
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
@@ -233,8 +229,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 					if (nodeService.exists(nodeRef)) {
 
-						List<NodeRef> tmp = beCPGSearchService
-								.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_UNLIMITED);
+						List<NodeRef> tmp = queryBuilder.list();
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 
@@ -249,9 +244,10 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				}
 			}
 		}
-
+		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
+		
 		if (ret == null) {
-			ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
+			ret = queryBuilder.list();
 		}
 
 		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);
@@ -292,7 +288,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				}
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
-					path = path.replace("/app:company_home/", "");
 				}
 			}
 		}
@@ -332,17 +327,20 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private ListValuePage suggestListValue(String path, String query, Integer pageNum, Integer pageSize) {
 
 		logger.debug("suggestListValue");
-
-		String queryPath = "";
-		path = LuceneHelper.encodePath(path);
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+		
+		
+		queryBuilder.inPath(path);
+		queryBuilder.ofType(BeCPGModel.TYPE_LIST_VALUE);
+		
 		if (!isAllQuery(query)) {
-			query = prepareQuery(query);
-			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE, path, query);
-		} else {
-			queryPath = String.format(RepoConsts.PATH_QUERY_SUGGEST_VALUE_ALL, path);
+			//TODO merge with philippe use value !!!
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, prepareQuery(query));
+			
 		}
 
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_SUGGESTIONS);
+		List<NodeRef> ret = queryBuilder.list();
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(BeCPGModel.PROP_LV_VALUE,
 				nodeService));
@@ -484,35 +482,28 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return luceneAnaLyzer;
 	}
 
-	private String filterByClass(String query, String[] arrClassNames) {
+	private BeCPGQueryBuilder filterByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
 
 		if (arrClassNames != null) {
-
-			String queryClassNames = "";
-			boolean isFirst = true;
 
 			for (String className : arrClassNames) {				
 				
 				QName classQName = QName.createQName(className, namespaceService);
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
-				LuceneHelper.Operator op = isFirst ? null : LuceneHelper.Operator.OR;
-				isFirst = false;
-
 				if(classDef.isAspect()){
-					queryClassNames += LuceneHelper.mandatory(LuceneHelper.getCondAspect(classQName));
+					
+					queryBuilder.withAspect(classQName);
 				}
 				else{
-					queryClassNames += LuceneHelper.getCond(LuceneHelper.getCondType(classQName),op);
+					queryBuilder.inType(classQName);
 				}				
 			}
-
-			query += " AND (" + queryClassNames + ")";
 		}
 
-		return query;
+		return queryBuilder;
 	}
 	
-	private String excludeByClass(String query, String[] arrClassNames) {
+	private BeCPGQueryBuilder excludeByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
 
 		if (arrClassNames != null) {
 
@@ -521,11 +512,16 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				QName classQName = QName.createQName(className, namespaceService);
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
 
-				query += LuceneHelper.exclude(classDef.isAspect() ? LuceneHelper.getCondAspect(classQName) : LuceneHelper.getCondType(classQName));				
+				if(classDef.isAspect()) {
+					queryBuilder.excludeAspect(classQName);
+				} else {
+					queryBuilder.excludeType(classQName);
+				}
+						
 			}
 		}
 
-		return query;
+		return queryBuilder;
 	}
 
 	protected boolean isAllQuery(String query) {
@@ -613,17 +609,12 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	 * @return
 	 */
 	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum, Integer pageSize) {
-		String queryPath = "";
-
-		query = prepareQuery(query);
 		
-		queryPath += LuceneHelper.mandatory(LuceneHelper.getCondType(datalistType));
-		queryPath += LuceneHelper.getCondContainsValue(propertyQName, query, Operator.AND);
-		queryPath += LuceneHelper.getCond(String.format(" +PATH:\"%s/*/*/*\"", nodeService.getPath(entityNodeRef).toPrefixString(namespaceService)), Operator.AND);		
-		
-		logger.debug("suggestDatalistItem for query : " + queryPath);
-
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, LuceneHelper.getSort(propertyQName), RepoConsts.MAX_SUGGESTIONS);
+		List<NodeRef> ret =	BeCPGQueryBuilder.createQuery().ofType(datalistType)
+				   .andPropQuery(propertyQName,prepareQuery(query))
+				   .inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService))
+				   .addSort(propertyQName,true)
+				   .maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
