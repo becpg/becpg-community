@@ -138,14 +138,6 @@ public class ECOTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				// remove products folder since products created in test folder
-				// are classified by policy
-				NodeRef productsFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
-				if (productsFolder != null) {
-					nodeService.deleteNode(productsFolder);
-				}
-
 				/*-- create raw materials --*/
 				logger.debug("/*-- create raw materials --*/");
 				/*-- Raw material 1 --*/

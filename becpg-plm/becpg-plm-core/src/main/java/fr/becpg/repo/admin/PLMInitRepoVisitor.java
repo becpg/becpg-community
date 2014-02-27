@@ -157,9 +157,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_LOG);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_USER);
 
-		// Products
-		 visitFolder(companyHome, RepoConsts.PATH_PRODUCTS);
-
 		// Quality
 		NodeRef qualityNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_QUALITY);
 		// Regulations
@@ -355,11 +352,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		if (folderName == RepoConsts.PATH_SYSTEM) {
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(),
-					PermissionService.WRITE, true);
-		} else if (folderName == RepoConsts.PATH_PRODUCTS) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString(),
-					PermissionService.WRITE, true);
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString(),
 					PermissionService.WRITE, true);
 		} else if (folderName == PlmRepoConsts.PATH_EXCHANGE) {
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(),

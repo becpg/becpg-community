@@ -71,9 +71,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		// Lists of characteristics for Project
 		visitSystemProjectListValuesEntity(systemNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
 
-		// Projects
-		visitFolder(companyHome, ProjectRepoConsts.PATH_PROJECTS);
-
 		// EntityTemplates
 		visitEntityTpls(systemNodeRef);
 

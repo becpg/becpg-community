@@ -36,17 +36,15 @@ import org.alfresco.service.cmr.workflow.WorkflowNode;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.test.BeCPGTestHelper;
 
 public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
-	private static final String USER_ONE = "matthieuWF";
-	private static final String USER_TWO = "philippeWF";
 	private static String PATH_PRODUCTFOLDER = "TestProductFolder";
 
 	private static final String WF_URI = "http://www.bcpg.fr/model/workflow/1.0";
@@ -67,54 +65,6 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ProductValidationWorkflowTest.class);
 
-	private void createUsers() {
-
-		/*
-		 * Matthieu : user Philippe : validators
-		 */
-
-		// USER_ONE
-		NodeRef userOne = this.personService.getPerson(USER_ONE);
-		if (userOne != null) {
-			this.personService.deletePerson(userOne);
-		}
-
-		if (!authenticationDAO.userExists(USER_ONE)) {
-			createUser(USER_ONE);
-		}
-
-		// USER_TWO
-		NodeRef userTwo = this.personService.getPerson(USER_TWO);
-		if (userTwo != null) {
-			this.personService.deletePerson(userTwo);
-		}
-
-		if (!authenticationDAO.userExists(USER_TWO)) {
-			createUser(USER_TWO);
-
-		}
-
-		for (String s : authorityService.getAuthoritiesForUser(USER_ONE)) {
-			logger.debug("user in group: " + s);
-		}
-
-	}
-
-	private void createUser(String userName) {
-		if (this.authenticationService.authenticationExists(userName) == false) {
-			this.authenticationService.createAuthentication(userName, "PWD".toCharArray());
-
-			PropertyMap ppOne = new PropertyMap(4);
-			ppOne.put(ContentModel.PROP_USERNAME, userName);
-			ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName");
-			ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
-			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
-			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
-
-			this.personService.createPerson(ppOne);
-		}
-	}
-
 	@Test
 	public void testWorkFlow() {
 
@@ -122,7 +72,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		final NodeRef rawMaterial1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				createUsers();
+				BeCPGTestHelper.createUsers();
 
 				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);
 				if (folderNodeRef != null) {
@@ -175,10 +125,10 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 			     nodeService.addChild((NodeRef)workflowPackage, productNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, childAssoc.getQName());	
 
 				List<NodeRef> assignees = new ArrayList<NodeRef>();
-				assignees.add(personService.getPerson(USER_ONE));
+				assignees.add(personService.getPerson(BeCPGTestHelper.USER_ONE));
 				properties.put(PROP_pvRDApprovalActor, (Serializable) assignees);
 				assignees = new ArrayList<NodeRef>();
-				assignees.add(personService.getPerson(USER_TWO));
+				assignees.add(personService.getPerson(BeCPGTestHelper.USER_TWO));
 				properties.put(PROP_pvCallerActor, (Serializable) assignees);
 
 				WorkflowPath path = workflowService.startWorkflow(workflowId, properties);

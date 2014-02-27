@@ -49,6 +49,7 @@ public class TaskListDataItem extends BeCPGDataObject {
 	private Integer completionPercent = 0;
 	private List<NodeRef> prevTasks;
 	private List<NodeRef> resources;
+	private List<NodeRef> observers;
 	private NodeRef taskLegend;
 	private String workflowName;
 	private String workflowInstance;
@@ -143,6 +144,16 @@ public class TaskListDataItem extends BeCPGDataObject {
 
 	public void setResources(List<NodeRef> resources) {
 		this.resources = resources;
+	}
+
+	@AlfMultiAssoc
+	@AlfQname(qname = "pjt:tlObservers")
+	public List<NodeRef> getObservers() {
+		return observers;
+	}
+
+	public void setObservers(List<NodeRef> observers) {
+		this.observers = observers;
 	}
 
 	@AlfSingleAssoc

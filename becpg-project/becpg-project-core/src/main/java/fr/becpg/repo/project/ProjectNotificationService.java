@@ -15,24 +15,17 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.hierarchy;
-
-import java.util.List;
+package fr.becpg.repo.project;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
-public interface HierarchyService {
+/**
+ * Class used to manage notification
+ * @author quere
+ *
+ */
+public interface ProjectNotificationService {
 
-	NodeRef getRootHierarchy(QName type, String value);
-	NodeRef getHierarchy(QName type, NodeRef hierarchyParent, String value);
-	NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value);
-	List<NodeRef> getRootHierarchies(QName type, String value);
-	List<NodeRef> getHierarchies(QName type, NodeRef hierarchyParent, String value);	
-	List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value);
-	List<NodeRef> getAllHierarchiesByPath(String path, String query);
-	NodeRef createRootHierarchy(NodeRef dataListNodeRef, String value);
-	NodeRef createHierarchy(NodeRef dataListNodeRef, NodeRef hierarchyParent, String value);
-	void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef);
+	public void sendObserverNotificationEMail(NodeRef taskNodeRef);	
 	
 }

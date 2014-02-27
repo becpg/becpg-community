@@ -110,7 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
 		if(siteId!=null && siteId.length()>0){
 			return siteService.getContainer(siteId,SiteService.DOCUMENT_LIBRARY);
 		}
-		return repoService.getFolderByPath(ProjectRepoConsts.PATH_PROJECTS);
+		return null;
 	}
 
 	@Override

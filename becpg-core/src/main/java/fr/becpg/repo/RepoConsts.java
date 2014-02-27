@@ -42,9 +42,7 @@ public class RepoConsts {
 	public static final String PATH_LISTS = "Lists";
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
-	
-	
-	public static final String PATH_PRODUCTS = "Products";
+			
 	//Security
 	public static final String PATH_SECURITY = "Security";
 	
