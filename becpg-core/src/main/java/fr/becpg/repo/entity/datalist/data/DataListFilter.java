@@ -82,8 +82,9 @@ public class DataListFilter {
 	
 	public DataListFilter() {
 		super();
-		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
+		sortMap.put("@bcpg:sort", true);
+		
 	}
 
 	
@@ -227,6 +228,11 @@ public class DataListFilter {
 	}
 	
 	
+	public NodeRef getNodeRef() {
+		return nodeRef;
+	}
+
+
 	public void setNodeRef(NodeRef nodeRef) {
 		this.nodeRef = nodeRef;
 	}
@@ -235,14 +241,19 @@ public class DataListFilter {
 		
 		BeCPGQueryBuilder queryBuilder = createFilterQuery();
 		
-		if(parentNodeRef!=null) {
-			queryBuilder.parent(parentNodeRef);
-		} else if(!isRepo) {
-			queryBuilder.inSite(siteId, containerId);
+		if(!isSimpleItem()){
+			if(parentNodeRef!=null) {
+				queryBuilder.parent(parentNodeRef);
+			} else if(!isRepo) {
+				queryBuilder.inSite(siteId, containerId);
+			}
+			queryBuilder.excludeDefaults();
+			queryBuilder.addSort(sortMap);
+		} else {
+			//Force DB Mode
+			queryBuilder.inDB();
 		}
 		
-		
-		queryBuilder.addSort(sortMap);
 		
 		
 		return queryBuilder;
@@ -257,7 +268,7 @@ public class DataListFilter {
 		
 		Pattern ftsQueryPattern = Pattern.compile("fts\\((.*)\\)");
 
-		queryBuilder.ofType(dataType).excludeDefaults();
+		queryBuilder.ofType(dataType);
 		
 		
 		if (filterId != null) {
@@ -295,7 +306,6 @@ public class DataListFilter {
 				queryBuilder.andPropEquals(ContentModel.PROP_CREATOR, getUserName());
 			} else if (filterId.equals(NODE_FILTER)) {
 				queryBuilder.andID(nodeRef);
-				
 			} else if (filterId.equals("tag")) {
 				String fData = filterData;
 				// Remove any trailing "/" character

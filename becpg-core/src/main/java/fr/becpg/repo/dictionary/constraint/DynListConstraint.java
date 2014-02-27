@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -25,7 +26,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -43,7 +44,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private static Log logger = LogFactory.getLog(DynListConstraint.class);
 
 	private static ServiceRegistry serviceRegistry;
-
+	
 	private List<String> paths = null;
 
 	private String constraintType = null;
@@ -71,6 +72,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		DynListConstraint.serviceRegistry = serviceRegistry;
 	}
+	
 
 	public void setConstraintType(String constraintType) {
 		this.constraintType = constraintType;
@@ -170,13 +172,20 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			public List<String> doWork() throws Exception {
 				List<String> allowedValues = new ArrayList<String>();
 				
+				
 				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery()
+						.selectNodesByPath(serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
+								"/app:company_home/"+BeCPGQueryBuilder.encodePath(path)+"/*");
+						
+						
+						/*
+						BeCPGQueryBuilder.createQuery()
 						.ofType(constraintType)
 						.inPath(path)
-						.addSort(BeCPGModel.PROP_SORT, true).inDB().list();
+						.addSort(BeCPGModel.PROP_SORT, true).inDB().list();*/
 
 						for (NodeRef nodeRef : nodeRefs) {
-							if (serviceRegistry.getNodeService().exists(nodeRef)) {
+							if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
 								String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
 								if (!allowedValues.contains(value) && value != null && checkLevel(nodeRef)) {
 									allowedValues.add(value);

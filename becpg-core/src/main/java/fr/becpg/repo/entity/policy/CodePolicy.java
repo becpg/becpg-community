@@ -76,7 +76,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 							.createQuery()
 							.ofType(typeQName)
 							.andPropEquals(BeCPGModel.PROP_CODE,code)
-							.excludeProp(ContentModel.PROP_NODE_UUID, "\""+nodeRef.getId()+"\"")
+							.andNotID(nodeRef)
 							.excludeVersions().inDB()
 							.singleValue()!=null;
 				}
