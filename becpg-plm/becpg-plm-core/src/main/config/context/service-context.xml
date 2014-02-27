@@ -90,7 +90,6 @@
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor" parent="parentImportVisitor" />
 
 	<bean id="importProductVisitor" class="fr.becpg.repo.importer.impl.ImportProductVisitor" parent="parentImportVisitor">
-		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
 

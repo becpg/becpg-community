@@ -384,8 +384,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				// Valid it
 				nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 				// products
-    			NodeRef productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
-    			hierarchyService.classifyByHierarchy(productsFolder, rawMaterialNodeRef);
+    			hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				String expected = "/app:company_home/cm:Products/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";

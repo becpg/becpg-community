@@ -111,8 +111,6 @@ public class ProductServiceTest extends PLMBaseTestCase {
 	@Resource
 	private EntityService entityService;
 
-	private NodeRef productsFolder = null; 
-
 	/**
 	 * Test create product.
 	 */
@@ -348,14 +346,6 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {				
 				
-				/*-- Clean --*/
-				NodeRef productsNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
-
-				if (productsNodeRef != null) {
-					nodeService.deleteNode(productsNodeRef);
-				}
-
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 				RawMaterialData rawMaterial = new RawMaterialData();
@@ -371,12 +361,9 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		final NodeRef rawMaterial2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
     			
-				// products
-    			productsFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_PRODUCTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_PRODUCTS));
-    			
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
-				hierarchyService.classifyByHierarchy(productsFolder, rawMaterialNodeRef);
+				hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
 				/*-- Check --*/
 				List<Path> paths = nodeService.getPaths(rawMaterialNodeRef, true);
@@ -395,7 +382,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 				/*-- classify twice --*/
 				logger.debug("/*-- classify twice --*/");
-				hierarchyService.classifyByHierarchy(productsFolder, rawMaterialNodeRef);
+				hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
 				/*-- Check --*/
 				paths = nodeService.getPaths(rawMaterialNodeRef, true);
@@ -430,7 +417,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 				/*-- classify --*/
 				logger.debug("/*-- classify --*/");
-				hierarchyService.classifyByHierarchy(productsFolder, rawMaterial2NodeRef);
+				hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterial2NodeRef);
 
 				/*-- Check --*/
 				List<Path> paths = nodeService.getPaths(rawMaterial2NodeRef, true);
@@ -445,6 +432,18 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[3]);
 				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
 				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
+				
+				return null;
+
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				// clean
+				nodeService.deleteNode(rawMaterialNodeRef);
+				nodeService.deleteNode(rawMaterial2NodeRef);
 
 				return null;
 

@@ -378,16 +378,17 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				JSONObject permissions = new JSONObject();
 				JSONObject userAccess = new JSONObject();
 
+				logger.info("###dataListFilter.getParentNodeRef(): " + dataListFilter.getParentNodeRef());
 				userAccess
 						.put("create",
-								(extractor.hasWriteAccess() && hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+								((dataListFilter.getSiteId() != "" || dataListFilter.getParentNodeRef() != null) && extractor.hasWriteAccess() && hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
 
 				permissions.put("userAccess", userAccess);
 
 				parent.put("permissions", permissions);
 
 				metadata.put("parent", parent);
-
+				
 				ret.put("metadata", metadata);
 				if (dataListFilter.isSimpleItem()) {
 					Map<String, Object> item = extractedItems.getPageItems().get(0);

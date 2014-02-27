@@ -182,18 +182,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return query;
 	}
 
-	@Override
-	public String getHierarchyPath(NodeRef hierarchyNodeRef) {
-
-		StringBuilder path = new StringBuilder();
-
-		path.append("./cm:" + RepoConsts.PATH_PRODUCTS);
-
-		appendNamePath(path, hierarchyNodeRef);
-
-		return path.toString();
-	}
-
 	/**
 	 * Classify according to the hierarchy.
 	 * 

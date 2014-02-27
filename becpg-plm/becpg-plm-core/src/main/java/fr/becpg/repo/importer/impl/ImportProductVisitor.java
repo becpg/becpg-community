@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -20,14 +18,12 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Class used to import a product with its attributes, characteristics and
  * files.
@@ -41,16 +37,9 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	protected static final String MSG_ERROR_UNKNOWN_PRODUCTTYPE = "import_service.error.err_unknown_producttype";
 	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 
-	/** The repository helper. */
-	private Repository repositoryHelper;
-
 	private HierarchyService hierarchyService;
 
 	private static Log logger = LogFactory.getLog(ImportProductVisitor.class);
-
-	public void setRepositoryHelper(Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
-	}
 
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
@@ -74,53 +63,6 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
 		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, BeCPGModel.PROP_CODE, properties);
-
-		// look by name
-		if (nodeRef == null) {
-
-			String name = (String) properties.get(ContentModel.PROP_NAME);
-			if (name != null && name != "") {
-
-				// look in the product hierarchy of the repository if we don't
-				// import in a site
-				if (nodeRef == null && !importContext.isSiteDocLib()) {
-
-					if (dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
-
-						// TODO change by unique hierachy field
-						// hierarchy
-						NodeRef hierarchy = (NodeRef) properties.get(PLMModel.PROP_PRODUCT_HIERARCHY2);
-						if (hierarchy != null) {
-
-							// look for path where product should be
-							// stored
-							String path = hierarchyService.getHierarchyPath(hierarchy);
-
-							List<NodeRef> nodes = beCPGSearchService.searchByPath(repositoryHelper.getCompanyHome(), path);
-
-							if (!nodes.isEmpty()) {
-								nodeRef = nodeService.getChildByName(nodes.get(0), ContentModel.ASSOC_CONTAINS, name);
-							}
-
-						} else {
-							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
-						}
-
-					} else {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_PRODUCTTYPE, nodeService.getType(nodeRef)));
-					}
-				}
-
-				// Check if product exists in Import folder
-				if (nodeRef == null) {
-					logger.debug("Product to update found in import folder");
-					nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
-				}
-			} else {
-
-				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));
-			}
-		}
 
 		// check key columns, we don't want to update the wrong product
 		if (nodeRef != null) {
