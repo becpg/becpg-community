@@ -39,76 +39,35 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
+@Service("reportTplService")
 public class ReportTplServiceImpl implements ReportTplService{
 
-	private static final String QUERY_REPORTTEMPLATE = " +TYPE:\"rep:reportTpl\" +@rep\\:reportTplType:%s +@rep\\:reportTplIsSystem:%s AND (@rep\\:reportTplIsDisabled:false ISNULL:rep\\:reportTplIsDisabled)";
 	
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
 	
-	/** The node service. */
+	@Autowired
 	private NodeService nodeService;
-	
-	/** The content service. */
+	@Autowired
 	private ContentService contentService;	
-	
-	private BeCPGSearchService beCPGSearchService;
-	
-	/** The mimetype service. */
+	@Autowired
 	private MimetypeService mimetypeService;
-	
-	
+	@Autowired
 	private AssociationService associationService;
 			
 	
 	
-	
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the content service.
-	 *
-	 * @param contentService the new content service
-	 */
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-		
-	/**
-	 * Sets the mimetype service.
-	 *
-	 * @param mimetypeService the new mimetype service
-	 */
-	public void setMimetypeService(MimetypeService mimetypeService){
-		this.mimetypeService = mimetypeService;
-	}				
-	
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 
 	/**
 	 * Get the report templates of the product.
@@ -124,10 +83,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 		if(nodeType == null){
 			return new ArrayList<NodeRef>();
 		}		
-		
-		String query = getQueryReportTpl(reportType, nodeType, true);							
-		
-		return beCPGSearchService.luceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_256);
+				
+		return getQueryReportTpl(reportType, nodeType, true).maxResults(RepoConsts.MAX_RESULTS_256).list();
 	}
 	
 	/**
@@ -136,13 +93,13 @@ public class ReportTplServiceImpl implements ReportTplService{
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
     	
-		String query = getQueryReportTpl(reportType, nodeType, true);		
+		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, true);
 		if(tplName!=null && tplName!="*"){
-			query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		}
 		
-        List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query, new HashMap<String, Boolean>(), RepoConsts.MAX_RESULTS_SINGLE_VALUE);       
-        return !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;        
+		return queryBuilder.singleValue();
+		
 	}
 	
 	/**
@@ -161,13 +118,15 @@ public class ReportTplServiceImpl implements ReportTplService{
 			logger.warn("suggestUserReportTemplates: nodeType is null, exit.");
 			return new ArrayList<NodeRef>();
 		}		
-    	
-		String query = getQueryReportTpl(reportType, nodeType, false);		
+		
+		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, false);
 		if(tplName!=null && tplName!="*"){
-			query += LuceneHelper.getCondContainsValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		}
 		
-		return beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_256);
+		return queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256).list();
+		
+		
 	}
 	
 	/**
@@ -186,13 +145,12 @@ public class ReportTplServiceImpl implements ReportTplService{
 			return null;
 		}		
     	
-		String query = getQueryReportTpl(reportType, nodeType, false);
+		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, false);
 		if(tplName!=null && tplName!="*"){
-			query += LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, tplName, LuceneHelper.Operator.AND);
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		}
 		
-		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-		return !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;		
+		return queryBuilder.singleValue();
 	}
 	
 	/**
@@ -385,19 +343,14 @@ public class ReportTplServiceImpl implements ReportTplService{
 		return reportFormat;
 	}	
 	
-	private String getQueryReportTpl(ReportType reportType, QName nodeType, boolean isSystem){
+	private BeCPGQueryBuilder getQueryReportTpl(ReportType reportType, QName nodeType, boolean isSystem){
+					
+		return BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
+				.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
+				.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);
 		
-		String query = String.format(QUERY_REPORTTEMPLATE, reportType, isSystem);				
-		
-		// nodeType
-		if(nodeType == null){
-			query += LuceneHelper.getCondIsNullValue(ReportModel.PROP_REPORT_TPL_CLASS_NAME, LuceneHelper.Operator.AND);
-		}
-		else{
-			query += LuceneHelper.getCondEqualValue(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType.toString(), LuceneHelper.Operator.AND);
-		}
-		
-		return query;
 	}
 
 	@Override

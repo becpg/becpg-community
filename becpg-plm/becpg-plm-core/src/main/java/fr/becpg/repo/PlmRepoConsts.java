@@ -12,8 +12,6 @@ package fr.becpg.repo;
 public class PlmRepoConsts {
 
 	/*-- Path query --*/			
-	public static final String PATH_QUERY_IMPORT_MAPPING = " +PATH:\"/app:company_home/cm:System/cm:Exchange/cm:Import/cm:Mapping/*\" +@cm\\:name:\"%s.xml\"";
-	public static final String PATH_QUERY_THUMBNAIL = " +PATH:\"/app:company_home/cm:System/cm:Icons/*\" +@cm\\:name:\"%s\"";
 
 	public static final String PATH_ING_TYPES = "ingTypeItem";
 	public static final String PATH_ALLERGEN_TYPES = "AllergenTypes";

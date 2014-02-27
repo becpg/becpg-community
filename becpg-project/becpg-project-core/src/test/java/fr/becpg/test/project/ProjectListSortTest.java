@@ -30,17 +30,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectListSortTest extends AbstractProjectTestCase {
 
@@ -82,19 +81,23 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 			@SuppressWarnings("unchecked")
 			@Override
 			public NodeRef execute() throws Throwable {
+				
 
-				String query = LuceneHelper.mandatory(LuceneHelper.getCondType(ProjectModel.TYPE_PROJECT))
-						+ LuceneHelper.exclude(LuceneHelper.getCondAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION));
-				List<NodeRef> projectNodeRefs = beCPGSearchService.luceneSearch(query,LuceneHelper.getSort(ProjectModel.PROP_PROJECT_HIERARCHY2));
+				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+						.ofType(ProjectModel.TYPE_PROJECT)
+						.excludeVersions()
+						.addSort(ProjectModel.PROP_PROJECT_HIERARCHY2,true);
+				
+				
+				List<NodeRef> projectNodeRefs = queryBuilder.list();
 
 				for (NodeRef projectNodeRef : projectNodeRefs) {
-					logger.debug("project " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
+					logger.info("project " + getHierarchy(projectNodeRef, ProjectModel.PROP_PROJECT_HIERARCHY2));
 				}
 
 				DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataListName( "projectList");
 				dataListFilter.setDataType(ProjectModel.TYPE_PROJECT);
-				dataListFilter.setFilterQuery(query);
 				dataListFilter.setSortId("ProjectList");
 
 				DataListPagination pagination = new DataListPagination();
@@ -121,10 +124,10 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 					Map<String, Object> hierarchy2Data = (Map<String, Object>) itemData.get("prop_pjt_projectHierarchy2");					
 					String projectHierarchy2 = (String)hierarchy2Data.get("displayValue");
 					String projectName = (String)nameData.get("displayValue");
-					logger.debug("project sorted " + projectName + " - "
+					logger.info("project sorted " + projectName + " - "
 							+ projectHierarchy2);
 					
-					if(i<21){
+					if(i<20){
 						assertEquals("Crustacean", projectHierarchy2);
 					}
 					else{

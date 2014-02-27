@@ -39,14 +39,13 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Service that manages hierarchies
@@ -63,8 +62,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	@Autowired
 	private NamespaceService namespaceService;
-	@Autowired
-	private BeCPGSearchService beCPGSearchService;
 	@Autowired
 	private NodeService nodeService;
 	@Autowired
@@ -101,7 +98,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		NodeRef hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_CODE, value, false), value);
 
 		if (hierarchyNodeRef == null) {
-			hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false), value);
+			hierarchyNodeRef = getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).singleValue();
 		}
 
 		return hierarchyNodeRef;
@@ -109,12 +106,12 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	@Override
 	public List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value) {
-		return beCPGSearchService.luceneSearch(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false), RepoConsts.MAX_SUGGESTIONS);
+		return getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).list();
 	}
 
 	@Override
 	public List<NodeRef> getAllHierarchiesByPath(String path, String value) {
-		return beCPGSearchService.luceneSearch(getLuceneQuery(path, null, BeCPGModel.PROP_LKV_VALUE, value, true), RepoConsts.MAX_SUGGESTIONS);
+		return getLuceneQuery(path, null, BeCPGModel.PROP_LKV_VALUE, value, true).list();
 	}
 
 	@Override
@@ -144,11 +141,10 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return entityNodeRef;
 	}
 
-	private NodeRef getHierarchyByQuery(String queryPath, String value) {
+	private NodeRef getHierarchyByQuery(BeCPGQueryBuilder queryBuilder, String value) {
 
-		List<NodeRef> ret = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		List<NodeRef> ret = queryBuilder.list();
 
-		logger.debug("resultSet.length() : " + ret.size() + " for " + queryPath);
 		if (ret.size() == 1) {
 			return ret.get(0);
 		} else if (ret.size() > 1) {
@@ -162,24 +158,26 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return null;
 	}
 
-	private String getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all) {
+	private BeCPGQueryBuilder getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all) {
 
-		String query = LuceneHelper.getCondPath(LuceneHelper.encodePath(path), null) + LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_LINKED_VALUE));
-
+		
+		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery()
+				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS)
+				.inPath(path);
+		
 		if (parentNodeRef != null) {
-			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString()));
+			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());
 		} else if (!all) {
-			// query +=
-			// LuceneHelper.mandatory(LuceneHelper.getCondIsNullValue(BeCPGModel.PROP_PARENT_LEVEL));
-			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(BeCPGModel.PROP_DEPTH_LEVEL, "1"));
-		}
+			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, null);
+			ret.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
+		} 
 
 		// value == * -> return all
 		if (!isAllQuery(value)) {
-			query += LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(property, value));
+			ret.andPropEquals(property, value);
 		}
 
-		return query;
+		return ret;
 	}
 
 	/**

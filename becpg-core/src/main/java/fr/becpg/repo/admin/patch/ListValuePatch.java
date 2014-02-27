@@ -9,8 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.helper.LuceneHelper;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Copy prop value of cm:name in bcpg:lvValue to support all char
@@ -22,16 +22,13 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	private static Log logger = LogFactory.getLog(ListValuePatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.listValuePatch.result";
 
-	private BeCPGSearchService beCPGSearchService;
-	
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
 	
 	@Override
 	protected String applyInternal() throws Exception {
 		
-		List<NodeRef> dataListNodeRefs = beCPGSearchService.luceneSearch(LuceneHelper.mandatory(LuceneHelper.getCondType(BeCPGModel.TYPE_LIST_VALUE)));
+		List<NodeRef> dataListNodeRefs = BeCPGQueryBuilder.createQuery()
+				.ofType(BeCPGModel.TYPE_LIST_VALUE)
+				.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).inDB().list();
 		logger.info("ListValuePatch migrator, size: " + dataListNodeRefs.size());
 		
 		for(NodeRef dataListNodeRef : dataListNodeRefs){

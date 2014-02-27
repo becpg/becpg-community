@@ -33,6 +33,8 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.config.mapping.AttributeMapping;
@@ -43,9 +45,8 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
@@ -54,6 +55,7 @@ import fr.becpg.report.client.ReportParams;
  *
  * @author querephi
  */
+@Service("exportSearchService")
 public class ExportSearchServiceImpl implements ExportSearchService{		
 		
 	/** The Constant QUERY_XPATH_DATE_FORMAT. */
@@ -118,97 +120,31 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	public static final String KEY_IMAGE_NODE_IMG = "%s-%s";
 	
 	
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);	
 	
-	
-	/** The node service. */
+	@Autowired
 	private NodeService nodeService;
 	
-	/** The content service. */
+	@Autowired
 	private ContentService contentService;
 	
-	/** The report engine. */
+	@Autowired
 	private BeCPGReportEngine beCPGReportEngine;
 	
-	/** The namespace service. */
+	@Autowired
 	private NamespaceService namespaceService;
 	
-	/** The dictionary service. */
+	@Autowired
 	private DictionaryService dictionaryService;
 	
-	/** The product dao. */
+	@Autowired
 	private EntityListDAO entityListDAO;
 	
-	private BeCPGSearchService beCPGSearchService;
 	
 	private EntityService entityService;				
 	
 	private AttributeExtractorService attributeExtractorService;
 	
-
-	/**
-	 * @param entityService the entityService to set
-	 */
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-
-	/**
-	 * Sets the node service.
-	 *
-	 * @param nodeService the new node service
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-	
-	/**
-	 * Sets the content service.
-	 *
-	 * @param contentService the new content service
-	 */
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-	
-	
-	
-	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
-		this.beCPGReportEngine = beCPGReportEngine;
-	}
-
-	/**
-	 * Sets the namespace service.
-	 *
-	 * @param namespaceService the new namespace service
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-	
-	/**
-	 * Sets the dictionary service.
-	 *
-	 * @param dictionaryService the new dictionary service
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-		
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
-	}
-
-	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
-		this.attributeExtractorService = attributeExtractorService;
-	}
-
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.report.ExportSearchService#getReport(java.lang.String, java.lang.String, java.io.OutputStream)
@@ -554,16 +490,12 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	}
 
 	private NodeRef getItemByTypeAndName(QName type, String name) {
+		
+		return BeCPGQueryBuilder.createQuery().ofType(type).andPropQuery(ContentModel.PROP_NAME,name).singleValue();
+		
 
-		String queryPath = LuceneHelper.mandatory(LuceneHelper.getCondType(type)) + 
-				LuceneHelper.mandatory(LuceneHelper.getCondEqualValue(ContentModel.PROP_NAME, name));
-
-		List<NodeRef> nodes = beCPGSearchService.luceneSearch(queryPath, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
-
-		if (nodes!=null && !nodes.isEmpty()) {
-			return nodes.get(0);
-		}
-
-		return null;
 	}
+
+		
+
 }

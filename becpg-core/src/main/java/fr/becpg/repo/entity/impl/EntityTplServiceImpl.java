@@ -61,12 +61,11 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
-	private static final String QUERY_ENTITY_TEMPLATE = " +TYPE:\"%s\" +@bcpg\\:entityTplEnabled:true +@bcpg\\:entityTplIsDefault:true -ASPECT:\"bcpg:compositeVersion\"";
 
 	private static Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
@@ -79,8 +78,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Autowired
 	private DictionaryService dictionaryService;
 
-	@Autowired
-	private BeCPGSearchService beCPGSearchService;
 
 	@Autowired
 	private FormulationService<FormulatedEntity> formulationService;
@@ -195,9 +192,14 @@ public class EntityTplServiceImpl implements EntityTplService {
 		if (nodeType == null) {
 			return null;
 		}
-
-		List<NodeRef> tplsNodeRef = beCPGSearchService.luceneSearch(String.format(QUERY_ENTITY_TEMPLATE, nodeType));
-		return tplsNodeRef != null && !tplsNodeRef.isEmpty() ? tplsNodeRef.get(0) : null;
+		
+		return BeCPGQueryBuilder.createQuery()
+		.ofType(nodeType)
+		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED, Boolean.TRUE.toString())
+		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString())
+		.excludeVersions()
+		.singleValue();
+		
 	}
 
 

@@ -27,7 +27,6 @@ import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +35,7 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 import fr.becpg.repo.search.AdvSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public final class Search extends BaseScopableProcessorExtension{
 
@@ -134,14 +134,16 @@ public final class Search extends BaseScopableProcessorExtension{
 			logger.debug("queryAdvSearch, sortMap: " + sortMap);
 		}
 		
-		String language = SearchService.LANGUAGE_FTS_ALFRESCO;
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().andFTSQuery(query);
+		
 		if(query==null){
-			query = advSearchService.getSearchQueryByProperties(datatypeQName, term, tag, isRepo, siteId, containerId);
-		} else {
-			language = SearchService.LANGUAGE_LUCENE;
+			queryBuilder = advSearchService.createSearchQuery(datatypeQName, term, tag, isRepo, siteId, containerId);
 		}
 		
-        List<NodeRef> nodes = advSearchService.queryAdvSearch(query,language , datatypeQName , criteriaMap, sortMap, maxResults);     
+		queryBuilder.addSort(sortMap);
+		
+        List<NodeRef> nodes =advSearchService.queryAdvSearch(datatypeQName, queryBuilder, criteriaMap, maxResults);
+
         
         if(!nodes.isEmpty()){
         	

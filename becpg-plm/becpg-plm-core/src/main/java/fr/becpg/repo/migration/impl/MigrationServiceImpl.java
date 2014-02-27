@@ -38,11 +38,9 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.common.collect.Lists;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.migration.MigrationService;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Service to migrate model and data
@@ -57,8 +55,6 @@ public class MigrationServiceImpl implements MigrationService {
 	
 	private NodeService nodeService;
 	
-	private BeCPGSearchService beCPGSearchService;
-	
 	private TenantAdminService tenantAdminService;
 	
 	private TransactionService transactionService;
@@ -67,10 +63,6 @@ public class MigrationServiceImpl implements MigrationService {
 		
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-
-	public void setBeCPGSearchService(BeCPGSearchService beCPGSearchService) {
-		this.beCPGSearchService = beCPGSearchService;
 	}
 
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
@@ -118,11 +110,9 @@ public class MigrationServiceImpl implements MigrationService {
 	//TODO Use BatchProcessWorkProvider to do batching
 	
 	public void addMandatoryAspect(QName type, final QName aspect) {
-
-		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(type))
-				+ LuceneHelper.exclude(LuceneHelper.getCondAspect(aspect));
-
-		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		
+		
+		List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().ofType(type).excludeAspect(aspect).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 		logger.info("Found " + nodeRefs.size() + " node of type " + type + " without mandatory aspect " + aspect);
 
@@ -185,11 +175,8 @@ public class MigrationServiceImpl implements MigrationService {
 	}
 
 	private void removeAspect(QName type, final QName aspect) {
-
-		String query = LuceneHelper.mandatory(LuceneHelper.getCondType(type))
-				+ LuceneHelper.mandatory(LuceneHelper.getCondAspect(aspect));
-
-		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(query, RepoConsts.MAX_RESULTS_UNLIMITED);
+		
+		List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().ofType(type).withAspect(aspect).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 		logger.info("Found " + nodeRefs.size() + " node of type " + type + " with aspect " + aspect + ". Start remove aspects");
 
@@ -214,14 +201,14 @@ public class MigrationServiceImpl implements MigrationService {
 		}
 	}
 	
-	private String getLuceneQueryforClass(QName classQName){
+	private BeCPGQueryBuilder getLuceneQueryforClass(QName classQName){
 		ClassDefinition classDef = dictionaryService.getClass(classQName);
 		
 		if(classDef.isAspect()){
-			return LuceneHelper.mandatory(LuceneHelper.getCondAspect(PLMModel.ASPECT_TRANSFORMATION));
+			return BeCPGQueryBuilder.createQuery().withAspect(classQName);
 		}
 		else{
-			return LuceneHelper.mandatory(LuceneHelper.getCondType(PLMModel.ASPECT_TRANSFORMATION));
+			return BeCPGQueryBuilder.createQuery().ofType(classQName);
 		}
 	}
 	
@@ -257,7 +244,7 @@ public class MigrationServiceImpl implements MigrationService {
 	@Override
 	public void migrateAssociation(QName classQName, final QName sourceAssoc, final QName targetAssoc) {
 
-		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(getLuceneQueryforClass(classQName), RepoConsts.MAX_RESULTS_UNLIMITED);
+		List<NodeRef> nodeRefs = getLuceneQueryforClass(classQName).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 		logger.info("Found " + nodeRefs.size() + " nodes. migrate association " + sourceAssoc + " in " + targetAssoc);
 
@@ -319,7 +306,7 @@ public class MigrationServiceImpl implements MigrationService {
 
 	private void migrateProperty(QName classQName, final QName sourceProp, final QName targetProp) {
 
-		List<NodeRef> nodeRefs = beCPGSearchService.luceneSearch(getLuceneQueryforClass(classQName), RepoConsts.MAX_RESULTS_UNLIMITED);
+		List<NodeRef> nodeRefs = getLuceneQueryforClass(classQName).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 
 		logger.info("Found " + nodeRefs.size() + " nodes. migrate property " + sourceProp + " in " + targetProp);
 

@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -34,11 +33,10 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
 import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
@@ -62,106 +60,69 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private NamespaceService namespaceService;
 
 	@Autowired
-	private BeCPGSearchService beCPGSearchService;
-
-	@Autowired
 	private PermissionService permissionService;
 
-	@Autowired(required=false)
+	@Autowired(required = false)
 	private AdvSearchPlugin[] advSearchPlugins;
-	
+
 	@Autowired
 	private HierarchyService hierarchyService;
-	
-	
+
 	@Override
-	public List<NodeRef> queryAdvSearch(String searchQuery, String language, QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxResults) {
+	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
 
 		if (maxResults <= 0) {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
 		}
 
-		searchQuery = appendCriteria(searchQuery, language, criteria);
+		addCriteriaMap(beCPGQueryBuilder, criteria);
 
+		List<NodeRef> nodes = beCPGQueryBuilder.ftsLanguage().list();
 
-		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, RepoConsts.MAX_RESULTS_UNLIMITED , language);
-
-		if(advSearchPlugins!=null) {
-			for(AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-				nodes = advSearchPlugin.filter(nodes, datatype, criteria);	
+		if (advSearchPlugins != null) {
+			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+				nodes = advSearchPlugin.filter(nodes, datatype, criteria);
 			}
 		}
-		
+
 		nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
 
 		return nodes;
 	}
 
 	@Override
-	public String getSearchQueryByProperties(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId) {
-		String ftsQuery = "";
+	public BeCPGQueryBuilder createSearchQuery(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId) {
+		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		// Simple keyword search and tag specific search
 		if (term != null && term.length() != 0) {
-			ftsQuery = term + " ";
+			beCPGQueryBuilder.andFTSQuery(term);
 		} else if (tag != null && tag.length() != 0) {
-			ftsQuery = "TAG:" + tag;
+			beCPGQueryBuilder.andFTSQuery("TAG:" + tag);
 		}
 
 		// we processed the search terms, so suffix the PATH query
 
 		if (!isRepo) {
-			ftsQuery = LuceneHelper.getSiteSearchPath(siteId, containerId) + (ftsQuery.length() > 0 ? " AND (" + ftsQuery + ")" : "");
+			beCPGQueryBuilder.inSite(siteId, containerId);
 		}
 
 		if (datatype != null) {
-			ftsQuery = "+TYPE:\"" + datatype + "\"" + (ftsQuery.length() > 0 ? " AND (" + ftsQuery + ")" : "");
-		}
-		
-		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " + "AND -TYPE:\"cm:failedThumbnail\" " + "AND -TYPE:\"cm:rating\" " + "AND -TYPE:\"bcpg:entityListItem\" "
-				+ "AND -TYPE:\"systemfolder\" " + "AND -TYPE:\"rep:report\" AND -TYPE:\"fm:forum\" AND -TYPE:\"fm:forums\" ";
-
-		// extract data type for this search - advanced search query is type
-		// specific
-		ftsQuery += " AND -ASPECT:\"bcpg:hiddenFolder\"" + " AND -ASPECT:\"bcpg:compositeVersion\""
-				+ " AND -ASPECT:\"bcpg:entityTplAspect\" AND -ASPECT:\"sys:hidden\" ";
-
-		if (logger.isDebugEnabled()) {
-			logger.debug(" build searchQueryByProperties :" + ftsQuery);
+			beCPGQueryBuilder.ofType(datatype);
 		}
 
-		return ftsQuery;
+		beCPGQueryBuilder.excludeSearch();
+
+
+		return beCPGQueryBuilder;
 	}
 
+	private void addCriteriaMap(BeCPGQueryBuilder queryBuilder, Map<String, String> criteriaMap) {
+		if (criteriaMap != null && !criteriaMap.isEmpty()) {
 
-
-	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes, BeCPGPermissionFilter filter, int maxResults) {
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		nodes = filter.filter(nodes, permissionService, maxResults);
-
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("filterWithPermissions executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
-	}
-
-	private String appendCriteria(String query, String language, Map<String, String> criteria) {
-		if (criteria != null && !criteria.isEmpty()) {
-
-			String formQuery = "";
-
-			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
+			for (Map.Entry<String, String> criterion : criteriaMap.entrySet()) {
 
 				String key = criterion.getKey();
 				String propValue = criterion.getValue();
-				String operator = (language == SearchService.LANGUAGE_FTS_ALFRESCO) ? (formQuery.length() < 1 ? "" : " AND ") : " +";
 
 				if (!propValue.isEmpty()) {
 					// properties
@@ -172,13 +133,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						String propName = key.substring(5);
 						if (propName.contains("_")) {
 
-							// property name - convert to DD property name
-							// format
-							if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
-								propName = propName.replace("_", ":");
-							} else {
-								propName = "@" + propName.replace("_", "\\:");
-							}
+							propName = propName.replace("_", ":");
 
 							// special case for range packed properties
 							if (propName.endsWith("-range")) {
@@ -215,17 +170,20 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										from = (sepindex == 0 ? "MIN" : propValue.substring(0, sepindex));
 										to = (sepindex == propValue.length() - 1 ? "MAX" : propValue.substring(sepindex + 1));
 									}
-									formQuery += operator + propName + ":\"" + from + "\"..\"" + to + "\"";
+
+									queryBuilder.andBetween(QName.createQName(propName, namespaceService), from, to);
+
 								}
-							} else if (propName.contains("productHierarchy")) {
-								String hierarchyQuery = getHierarchyQuery(propName, propValue);
-								if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
-									if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
-										formQuery += operator + propName + ":(" + hierarchyQuery + ")";
-									} else {
-										formQuery += operator + propName + ":\"" + hierarchyQuery + "\"";
-									}
+							} else {
+								if (!propValue.isEmpty()) {
+									queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), propValue);
 								}
+							}
+						} else if (propName.contains("productHierarchy")) {
+							String hierarchyQuery = getHierarchyQuery(propName, propValue);
+							if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
+
+								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), hierarchyQuery);
 
 							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
@@ -235,9 +193,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									// do nothing
 								}
 								if (maxLevel != null) {
-									formQuery += operator + propName + ":[0 TO " + propValue + "]";
+									queryBuilder.andBetween(QName.createQName(propName, namespaceService), "0", propValue);
+
 								}
-							} else if (!propName.contains("llPosition") ){
+							} else if (!propName.contains("llPosition")) {
 
 								// beCPG - bug fix : pb with operator -, AND, OR
 								// poivre AND -noir
@@ -245,31 +204,40 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 								// propName + ":\"" + propValue + "\"";
+								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), propValue);
+								// TODO
 
-								if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
-									formQuery += operator + propName + ":(" + propValue + ")";
-								} else {
-									formQuery += operator + propName + ":\"" + propValue + "\"";
-								}
+							} else {
+								// pseudo cm:content property - e.g.
+								// mimetype,size
+								// or encoding
+								queryBuilder.andFTSQuery("cm:content." + propName + ":\"" + propValue + "\"");
+
 							}
-						} else {
-							// pseudo cm:content property - e.g. mimetype, size
-							// or encoding
-							formQuery += operator + "cm:content." + propName + ":\"" + propValue + "\"";
 						}
 					}
 				}
 			}
-
-			if (query != null && query.length() > 0 && formQuery.length() > 0) {
-				query += " AND (" + formQuery + ")";
-			} else if (formQuery.length() > 0) {
-				query = formQuery;
-			}
-
 		}
 
-		return query;
+	}
+
+	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes, BeCPGPermissionFilter filter, int maxResults) {
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		nodes = filter.filter(nodes, permissionService, maxResults);
+
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("filterWithPermissions executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
+
+		return nodes;
 	}
 
 	private String getHierarchyQuery(String propName, String hierachyName) {
@@ -278,15 +246,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (!NodeRef.isNodeRef(hierachyName)) {
 
 			// TODO use HierarchyService, not generic
-			String searchQuery = String
-					.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
-							LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
-									+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)), hierachyName);
-
+			// " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvValue:\"%s\" ";
+			
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
+					+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService))
+					.inType(BeCPGModel.TYPE_LINKED_VALUE)
+					.andPropEquals(BeCPGModel.PROP_LKV_VALUE, hierachyName);
+			
 			if (propName.endsWith("productHierarchy1")) {
-				searchQuery += " +@bcpg\\:depthLevel:1";
+				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
-			nodes = beCPGSearchService.luceneSearch(searchQuery, -1);
+			nodes = queryBuilder.list();
 		}
 		String ret = "";
 		if (nodes != null && !nodes.isEmpty()) {
@@ -299,6 +269,5 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		return ret;
 	}
-
 
 }

@@ -34,7 +34,6 @@
         <property name="fixesFromSchema"><value>0</value></property>
         <property name="fixesToSchema"><value>${version.schema}</value></property>
         <property name="targetSchema"><value>10100</value></property>
-        <property name="beCPGSearchService" ref="beCPGSearchService"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>

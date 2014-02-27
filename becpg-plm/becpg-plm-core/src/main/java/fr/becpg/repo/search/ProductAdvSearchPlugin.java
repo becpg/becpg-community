@@ -35,9 +35,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin{
 	private NamespaceService namespaceService;
 
 	@Autowired
-	private BeCPGSearchService beCPGSearchService;
-
-	@Autowired
 	private DictionaryService dictionaryService;
 	
 	@Autowired

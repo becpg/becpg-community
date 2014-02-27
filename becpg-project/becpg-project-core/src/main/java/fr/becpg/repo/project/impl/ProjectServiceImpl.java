@@ -35,7 +35,6 @@ import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.LuceneHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -44,7 +43,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGSearchService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Project service that manage project
@@ -56,8 +55,6 @@ import fr.becpg.repo.search.BeCPGSearchService;
 @Service("projectService")
 public class ProjectServiceImpl implements ProjectService {
 
-	private static final String QUERY_TASK_LEGEND = "+TYPE:\"pjt:taskLegend\"";
-
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
 	@Autowired
@@ -66,8 +63,6 @@ public class ProjectServiceImpl implements ProjectService {
 	private AssociationService associationService;
 	@Autowired
 	private NodeService nodeService;
-	@Autowired
-	private BeCPGSearchService beCPGSearchService;
 	@Autowired	
 	private RepoService repoService;
 	@Autowired
@@ -102,7 +97,7 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	@Override
 	public List<NodeRef> getTaskLegendList() {
-		return beCPGSearchService.luceneSearch(QUERY_TASK_LEGEND, LuceneHelper.getSort(BeCPGModel.PROP_SORT, true));
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).list();
 	}
 
 	@Override

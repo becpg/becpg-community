@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -21,20 +21,13 @@ import org.alfresco.service.cmr.dictionary.DictionaryException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
-import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.PermissionEvaluationMode;
-import org.alfresco.service.cmr.search.ResultSet;
-import org.alfresco.service.cmr.search.ResultSetRow;
-import org.alfresco.service.cmr.search.SearchParameters;
-import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.LuceneHelper;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Class used to load the dynamic constraints.
@@ -51,7 +44,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private static Log logger = LogFactory.getLog(DynListConstraint.class);
 
 	private static ServiceRegistry serviceRegistry;
-
+	
 	private List<String> paths = null;
 
 	private String constraintType = null;
@@ -79,6 +72,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		DynListConstraint.serviceRegistry = serviceRegistry;
 	}
+	
 
 	public void setConstraintType(String constraintType) {
 		this.constraintType = constraintType;
@@ -177,31 +171,21 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			@Override
 			public List<String> doWork() throws Exception {
 				List<String> allowedValues = new ArrayList<String>();
-				String encodedPath = LuceneHelper.encodePath(path.substring(1));
+				
+				
+				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery()
+						.selectNodesByPath(serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
+								"/app:company_home/"+BeCPGQueryBuilder.encodePath(path)+"/*");
+						
+						
+						/*
+						BeCPGQueryBuilder.createQuery()
+						.ofType(constraintType)
+						.inPath(path)
+						.addSort(BeCPGModel.PROP_SORT, true).inDB().list();*/
 
-				String queryPath = String.format(RepoConsts.PATH_QUERY_LIST_CONSTRAINTS, encodedPath, constraintType);
-
-				ResultSet resultSet = null;
-				SearchParameters sp = new SearchParameters();
-				sp.addStore(RepoConsts.SPACES_STORE);
-				sp.setLanguage(SearchService.LANGUAGE_LUCENE);
-				sp.setQuery(queryPath);
-				sp.setLimitBy(LimitBy.UNLIMITED);
-				sp.addLocale(Locale.getDefault());
-				sp.setPermissionEvaluation(PermissionEvaluationMode.EAGER);
-				sp.excludeDataInTheCurrentTransaction(false);
-				sp.addSort("@" + BeCPGModel.PROP_SORT, true);
-				try {
-					resultSet = serviceRegistry.getSearchService().query(sp);
-					if (logger.isDebugEnabled()) {
-						logger.debug("queryPath : " + queryPath);
-						logger.debug("resultSet.length() : " + resultSet.length());
-					}
-
-					if (resultSet.length() != 0) {
-						for (ResultSetRow row : resultSet) {
-							NodeRef nodeRef = row.getNodeRef();
-							if (serviceRegistry.getNodeService().exists(nodeRef)) {
+						for (NodeRef nodeRef : nodeRefs) {
+							if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
 								String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
 								if (!allowedValues.contains(value) && value != null && checkLevel(nodeRef)) {
 									allowedValues.add(value);
@@ -210,16 +194,13 @@ public class DynListConstraint extends ListOfValuesConstraint {
 								logger.warn("Node doesn't exist : " + nodeRef);
 							}
 						}
-					}
+				
 					if (logger.isDebugEnabled()) {
 						logger.debug("allowedValues.size() : " + allowedValues.size());
 						logger.debug("allowed values: " + allowedValues.toString());
 					}
 					return allowedValues;
-				} finally {
-					if (resultSet != null)
-						resultSet.close();
-				}
+				
 			}
 
 			private boolean checkLevel(NodeRef nodeRef) {
