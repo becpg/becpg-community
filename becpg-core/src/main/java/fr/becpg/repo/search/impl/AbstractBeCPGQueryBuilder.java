@@ -166,7 +166,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	}
 
 
-	protected  String encodePath(String path) {
+	static public String encodePath(String path) {
 
 		path = path.replace("/app:company_home/", "");
 		

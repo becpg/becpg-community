@@ -391,7 +391,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				metadata.put("parent", parent);
 
 				ret.put("metadata", metadata);
-				if (dataListFilter.isSimpleItem()) {
+				if (dataListFilter.isSimpleItem() &&  !extractedItems.getPageItems().isEmpty()) {
 					Map<String, Object> item = extractedItems.getPageItems().get(0);
 					ret.put("item", new JSONObject(item));
 					ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef) item.get(AbstractDataListExtractor.PROP_NODE)));

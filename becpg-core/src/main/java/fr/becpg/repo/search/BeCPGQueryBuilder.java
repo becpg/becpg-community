@@ -203,7 +203,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	Map<String, Boolean> sortProps = new TreeMap<>();
 
 	public BeCPGQueryBuilder addSort(Map<String, Boolean> sortMap) {
-		this.sortProps.putAll(sortMap);
+		this.sortProps = sortMap;
 		return this;
 	}
 
@@ -232,12 +232,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
-		propQueriesMap.put(propQName, "\"" + value + "\"");
+		if(value == null){
+			isNull(propQName);
+		} else {
+			propQueriesMap.put(propQName, "\"" + value + "\"");
+		}
 		return this;
 	}
 
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
-		propQueriesMap.put(propQName, "(" +propQuery+ ")");
+		if(propQuery == null){
+			isNull(propQName);
+		} else {
+			propQueriesMap.put(propQName, "(" +propQuery+ ")");
+		}
 		return this;
 	}
 
@@ -304,7 +312,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		List<NodeRef> ret = search(xPath, sortProps, -1, maxResults);
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
-
+	
 	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
 
 		if (!xPath.startsWith("./")) {
@@ -504,7 +512,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder ftsLanguage() {
-		this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
+		if(!QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)){
+			this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
+		} else {
+			logger.info("FTS not supported for transactionnal query");
+		}
 		return this;
 	}
 
@@ -520,6 +532,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.excludeDataInTheCurrentTransaction(false);
 
 		sp.setLanguage(language);
+		
 		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
 			sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
@@ -529,6 +542,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// execute queries transactionally, when possible, and fall back to
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
+		
+		if(logger.isTraceEnabled() &&QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)){
+			logger.trace("Transactionnal Search");
+		}
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);

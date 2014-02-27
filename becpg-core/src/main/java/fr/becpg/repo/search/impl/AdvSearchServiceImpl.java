@@ -112,9 +112,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		beCPGQueryBuilder.excludeSearch();
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(" build beCPGQueryBuilder :" + beCPGQueryBuilder);
-		}
 
 		return beCPGQueryBuilder;
 	}

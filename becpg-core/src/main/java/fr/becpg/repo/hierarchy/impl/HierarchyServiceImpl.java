@@ -162,22 +162,19 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		
 		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery()
-				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS);
-		
-	
-		if(parentNodeRef == null) {
-			ret.inPath(path);
-		}
+				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS)
+				.inPath(path);
 		
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());
 		} else if (!all) {
+			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, null);
 			ret.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 		} 
 
 		// value == * -> return all
 		if (!isAllQuery(value)) {
-			ret.andPropQuery(property, value);
+			ret.andPropEquals(property, value);
 		}
 
 		return ret;
