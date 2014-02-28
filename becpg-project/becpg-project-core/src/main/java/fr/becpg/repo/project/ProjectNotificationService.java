@@ -26,6 +26,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public interface ProjectNotificationService {
 
-	public void sendObserverNotificationEMail(NodeRef taskNodeRef);	
+	public void sendTaskStateChanged(NodeRef taskNodeRef, String beforeState, String afterState);	
 	
 }
