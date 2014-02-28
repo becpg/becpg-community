@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.MailActionExecuter;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -62,10 +63,13 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
     @Autowired
     private FileFolderService fileFolderService;
     
+    @Autowired
+    private Repository repositoryHelper;
+    
 	@Override
 	public void sendTaskStateChanged(NodeRef taskNodeRef, String beforeState, String afterState) {
 		
-		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByXPath(MAIL_TEMPLATE);
+		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), MAIL_TEMPLATE);
 		
 		if(templateNodeRef == null){
 			logger.warn("Template not found.");
