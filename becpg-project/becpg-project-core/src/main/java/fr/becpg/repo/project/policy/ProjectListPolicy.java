@@ -208,7 +208,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (beforeState != null && afterState != null && !beforeState.equals(afterState)) {
 			
 			projectActivityService.postTaskStateChangeActivity(nodeRef, beforeState, afterState);
-			projectNotificationService.sendObserverNotificationEMail(nodeRef);
+			if(!afterState.equals(TaskState.InProgress.toString())){
+				projectNotificationService.sendTaskStateChanged(nodeRef, beforeState, afterState);
+			}			
 			formulateProject = true;
 			
 			if (beforeState.equals(DeliverableState.Completed.toString())

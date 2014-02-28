@@ -37,9 +37,11 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
 @Service
@@ -51,6 +53,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 	
+	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project";
+	
 
 	@Autowired
 	private EntitySystemService entitySystemService;
@@ -60,6 +64,9 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	
 	@Autowired 
 	private ReportTplService reportTplService;
+	
+	@Autowired
+	private ContentHelper contentHelper;
 
 	@Override
 	public void visitContainer(NodeRef companyHome) {
@@ -76,6 +83,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		visitReports(systemNodeRef);
 		
+		// MailTemplates		
+		contentHelper.addFilesResources(BeCPGQueryBuilder.createQuery().selectNodeByXPath(MAIL_TEMPLATE), "classpath:beCPG/mails/project/*.ftl");		
 	}
 
 

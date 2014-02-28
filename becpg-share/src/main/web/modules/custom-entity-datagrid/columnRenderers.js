@@ -209,7 +209,7 @@ if (beCPG.module.EntityDataGridRenderers) {
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlState", "pjt:dlState" ],
       renderer : function(oRecord, data, label, scope) {
-         return '<span class="' + "task-" + data.displayValue.toLowerCase() + '" title="' + data.displayValue + '" />';
+         return '<span class="' + "task-" + data.value.toLowerCase() + '" title="' + data.displayValue + '" />';
       }
 
    });

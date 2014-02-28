@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.repo.project.data.ProjectData;
@@ -23,9 +21,6 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * @author quere
  */
 public class ProjectNotificationTest extends AbstractProjectTestCase {	
-
-	private static Log logger = LogFactory.getLog(ProjectNotificationTest.class);
-	
 
 	/**
 	 * Test observers get notifications
