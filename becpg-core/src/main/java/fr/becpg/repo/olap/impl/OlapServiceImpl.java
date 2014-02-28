@@ -123,7 +123,7 @@ public class OlapServiceImpl implements OlapService {
 
 	@Override
 	public NodeRef getOlapQueriesFolder() {
-		return repoService.getFolderByPath("./cm:"+RepoConsts.PATH_SYSTEM +"/cm:" + RepoConsts.PATH_OLAP_QUERIES);
+		return repoService.getFolderByPath("/"+RepoConsts.PATH_SYSTEM +"/" + RepoConsts.PATH_OLAP_QUERIES);
 	}
 
 	@Override

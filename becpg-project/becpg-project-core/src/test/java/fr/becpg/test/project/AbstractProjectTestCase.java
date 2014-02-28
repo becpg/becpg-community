@@ -135,6 +135,11 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	
 				}
 			}, false, true);
+		} else {
+			PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.getRootHierarchy(ProjectModel.TYPE_PROJECT, HIERARCHY1_SEA_FOOD);
+			PROJECT_HIERARCHY2_FISH_REF = hierarchyService.getHierarchy(ProjectModel.TYPE_PROJECT, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+			PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchy(ProjectModel.TYPE_PROJECT, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+			
 		}
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

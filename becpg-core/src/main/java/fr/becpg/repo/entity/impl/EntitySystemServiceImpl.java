@@ -104,8 +104,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public NodeRef getSystemEntity(NodeRef parentNodeRef, String systemEntityPath) {
-		
-		return BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef, systemEntityPath);
+		return BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef, BeCPGQueryBuilder.encodePath(systemEntityPath));
 	}
 
 	@Override

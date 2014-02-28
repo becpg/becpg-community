@@ -165,8 +165,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return this;
 	}
-	
-	public BeCPGQueryBuilder inDB(){
+
+	public BeCPGQueryBuilder inDB() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL;
 		return this;
 	}
@@ -174,12 +174,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public BeCPGQueryBuilder inSite(String siteId, String containerId) {
 		String path = SiteHelper.SITES_SPACE_QNAME_PATH;
 		if (siteId != null && siteId.length() > 0) {
-			path += "cm:" + ISO9075.encode(siteId) ;
+			path += "cm:" + ISO9075.encode(siteId);
 		} else if (containerId != null && containerId.length() > 0) {
 			path += "*";
 		}
 		if (containerId != null && containerId.length() > 0) {
-			path += "/cm:" + ISO9075.encode(containerId) ;
+			path += "/cm:" + ISO9075.encode(containerId);
 		}
 		inPath(path);
 
@@ -232,7 +232,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
-		if(value == null){
+		if (value == null) {
 			isNull(propQName);
 		} else {
 			propQueriesMap.put(propQName, "\"" + value + "\"");
@@ -241,10 +241,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
-		if(propQuery == null){
+		if (propQuery == null) {
 			isNull(propQName);
 		} else {
-			propQueriesMap.put(propQName, "(" +propQuery+ ")");
+			propQueriesMap.put(propQName, "(" + propQuery + ")");
 		}
 		return this;
 	}
@@ -307,29 +307,40 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
-	public NodeRef selectNodeByXPath(String xPath) {
-		this.language = SearchService.LANGUAGE_XPATH;
-		List<NodeRef> ret = search(xPath, sortProps, -1, maxResults);
-		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
-	}
-	
 	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
 
-		if (!xPath.startsWith("./")) {
-			xPath = encodePath(xPath);
-		}
-
+		this.maxResults = RepoConsts.MAX_RESULTS_SINGLE_VALUE;
 		List<NodeRef> ret = selectNodesByPath(parentNodeRef, xPath);
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	public List<NodeRef> selectNodesByPath(NodeRef parentNodeRef, String xPath) {
+		List<NodeRef> ret = null;
+		StopWatch watch = new StopWatch();
+		watch.start();
 
-		if (logger.isTraceEnabled()) {
-			logger.trace("Try to find node in path: " + xPath + " - with parentContextRef: " + parentNodeRef);
+		
+		try {
+			ret =  searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
+		}finally {
+			watch.stop();
+			if (watch.getTotalTimeSeconds() > 1) {
+				logger.warn("Slow query [" + xPath + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
+			}
+
+			if (logger.isDebugEnabled()) {
+				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
+
+				logger.debug("["
+						+ Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
+						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] "
+						+ xPath + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size() );
+			}
+			
+			
 		}
 
-		return searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
+		return ret;
 	}
 
 	public List<NodeRef> list() {
@@ -375,11 +386,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			if (logger.isDebugEnabled()) {
 				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
-				
-				logger.debug(runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + refs.size()
-						+" caller - (" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
-								+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + ")"
-						);
+
+				logger.debug("["
+						+ Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
+						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] "
+						+ runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + refs.size() );
 			}
 		}
 
@@ -429,7 +440,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (type != null) {
 			runnedQuery.append(mandatory(getCondType(type)));
 		} else if (!types.isEmpty()) {
-			if(types.size()==1){
+			if (types.size() == 1) {
 				runnedQuery.append(mandatory(getCondType(types.iterator().next())));
 			} else {
 				runnedQuery.append(mandatory(startGroup()));
@@ -512,7 +523,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder ftsLanguage() {
-		if(!QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)){
+		if (!QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
 			this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
 		} else {
 			logger.info("FTS not supported for transactionnal query");
@@ -529,10 +540,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		sp.setQuery(runnedQuery);
 		sp.addLocale(Locale.getDefault());
-		sp.excludeDataInTheCurrentTransaction(false);
+		sp.excludeDataInTheCurrentTransaction(true);
 
 		sp.setLanguage(language);
-		
+
 		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
 			sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
@@ -542,9 +553,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// execute queries transactionally, when possible, and fall back to
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
-		
-		if(logger.isTraceEnabled() &&QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)){
+
+		if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
 			logger.trace("Transactionnal Search");
+			//Will ensure coherency between solr and lucene
+			sp.excludeDataInTheCurrentTransaction(false);
 		}
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
@@ -578,8 +591,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		} catch (FTSQueryException e) {
 			logger.error("Incorrect query :" + runnedQuery, e);
 		} catch (QueryModelException e) {
-				logger.error("Incorrect query :" + runnedQuery, e);
-			
+			logger.error("Incorrect query :" + runnedQuery, e);
+
 		} finally {
 			if (result != null) {
 				result.close();

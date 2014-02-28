@@ -56,7 +56,7 @@ public class RepoServiceImpl implements RepoService {
 	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths) {			    
 		
     	for(String folderName : paths){
-    		if(folderName.equals("") == false){    				    		    		
+    		if(folderName!=null && !folderName.isEmpty()){    				    		    		
     			parentNodeRef = getOrCreateFolderByPath(parentNodeRef, folderName, folderName);    		
     		}
     	}
@@ -89,16 +89,13 @@ public class RepoServiceImpl implements RepoService {
 	@Override
 	public NodeRef getFolderByPath(NodeRef parentNodeRef, String path) {
 		
-		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef,path);
-		if(ret!=null){
-			return ret;			
-		}
-		else if(!path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)){
+		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(parentNodeRef,BeCPGQueryBuilder.encodePath(path));
+		if(ret==null && !path.contains(RepoConsts.MODEL_PREFIX_SEPARATOR)){
 			//try by name...
 			return nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, path);
 		}
 		
-		return null;
+		return ret;
 	}
 	
 

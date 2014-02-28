@@ -63,7 +63,7 @@ public class ImportEntityXmlVisitor {
 	private NamespaceService namespaceService;
 
 	private EntityProviderCallBack entityProviderCallBack;
-
+	
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
 		this.entityProviderCallBack = entityProviderCallBack;
 	}
@@ -334,10 +334,12 @@ public class ImportEntityXmlVisitor {
 
 	private NodeRef findNodeByPath(String parentPath) {
 		
-		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByXPath(parentPath);  
+		NodeRef rootNode =  nodeService.getRootNode(RepoConsts.SPACES_STORE);
+		
+		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,parentPath);  
 		
 		if (ret ==null) {
-			ret = BeCPGQueryBuilder.createQuery().selectNodeByXPath(RepoConsts.FULL_PATH_IMPORT_TO_DO);
+			ret = BeCPGQueryBuilder.createQuery().selectNodeByPath( rootNode ,"/app:company_home"+RepoConsts.FULL_PATH_IMPORT_TO_DO);
 		}
 
 		return ret;
@@ -374,7 +376,7 @@ public class ImportEntityXmlVisitor {
 		
 		beCPGQueryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
 
-		List<NodeRef> ret = beCPGQueryBuilder.list();
+		List<NodeRef> ret = beCPGQueryBuilder.inDB().list();
 		if (!ret.isEmpty()) {
 			for (NodeRef node : ret) {
 				if (nodeService.exists(node) && name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
