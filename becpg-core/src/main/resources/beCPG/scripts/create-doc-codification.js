@@ -21,8 +21,8 @@ function createDocCodification() {
 	}
 
 	// set name
-	document.properties["cm:name"] = codification;
-	document.properties["cm:title"] = codification;
+	document.properties["cm:title"] = document.properties["cm:name"];
+	document.properties["cm:name"] = codification;	
 	document.save();
 }
 
