@@ -195,7 +195,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			String codeQuery = prepareQueryCode(query, type, arrClassNames);
 			
 			//TODO erpCOde and eanCode not in COre
-			queryBuilder.andFTSQuery(String.format("(@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s)", codeQuery,codeQuery,codeQuery));
+			queryBuilder.andFTSQuery(String.format("@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s", codeQuery,codeQuery,codeQuery));
 			
 			
 		} else if (!isAllQuery(query)) { 
