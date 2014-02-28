@@ -88,13 +88,13 @@
 	</config>
 	<config evaluator="string-compare" condition="DocumentLibrary" replace="true">
 		<create-content>
+			 <content id="folder" label="create-content.folder" icon="folder" index="5" type="javascript">
+	            <param name="function">onNewFolder</param>
+	         </content>
 			<content id="plain-text" label="create-content.text" type="pagelink" index="10" icon="text">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain
 				</param>
 			</content>
-			<!-- <content id="html" icon="html-file" label="create-content.html" type="pagelink" index="20"> <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/html 
-				</param> </content> <content id="xml" icon="xml-file" label="create-content.xml" type="pagelink" index="30"> <param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/xml 
-				</param> </content> -->
 			<content id="finishedProduct" label="menu.create-content.finishedProduct" type="pagelink" index="40" icon="finishedProduct">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:finishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
@@ -151,7 +151,7 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=ecm:changeOrder&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
-			<content id="entity" label="menu.create-content.entity" type="pagelink" index="170" icon="entity">
+			<content id="entity" label="menu.create-content.entity" type="pagelink" index="180" icon="entity">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:folder&amp;formId=create-entity&amp;isEntity=true
 				</param>
 			</content>

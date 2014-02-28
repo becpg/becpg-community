@@ -31,6 +31,7 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
@@ -62,8 +63,7 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	}
 
 	protected NodeRef searchFolder(String xpath) {
-		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), xpath, null, namespaceService,
-				false);
+		List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(repository.getRootHome(), xpath);
 		if (nodeRefs.size() > 1) {
 			throw new PatchException("XPath returned too many results: \n" + "   xpath: " + xpath + "\n"
 					+ "   results: " + nodeRefs);
@@ -84,7 +84,15 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	}
 	
 
-
+	public NodeRef getFolder(NodeRef parentNodeRef, String folderPath) {
+		String folderName = TranslateHelper.getTranslatedPath(folderPath);
+		if (folderName == null) {
+			folderName = folderPath;
+		}
+		return repoService.getFolderByPath(parentNodeRef, folderPath);
+	}
+	
+	
 	public NodeRef getSystemCharactsEntity(NodeRef parentNodeRef) {
 		return entitySystemService.getSystemEntity(parentNodeRef, RepoConsts.PATH_CHARACTS);
 	}
@@ -101,13 +109,7 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		return entitySystemService.getSystemEntityDataList(systemEntityNodeRef, dataListPath);
 	}
 
-	public NodeRef getFolder(NodeRef parentNodeRef, String folderPath) {
-		String folderName = TranslateHelper.getTranslatedPath(folderPath);
-		if (folderName == null) {
-			folderName = folderPath;
-		}
-		return repoService.getFolderByPath(parentNodeRef, folderPath);
-	}
+	
 
 
 }

@@ -71,7 +71,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	@SuppressWarnings("unchecked")
 	public void onApplicationEvent(ContextRefreshedEvent refreshEvent) {
 		domainMapping.clear();
-		logger.debug("Scanning classpath for AlfType annotation");
+		logger.debug("Scanning classpath for AlfType annotation ");
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
 
 		scanner.addIncludeFilter(new AnnotationTypeFilter(AlfType.class));

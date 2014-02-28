@@ -44,7 +44,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.AllergenType;
@@ -125,18 +124,15 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					dictionaryDAO.reset();
 				}
 
-				initCharacteristics();
+				getOrInitCharacteristics();
 				if (shouldInit) {
 					initEntityTemplates();
 				}
-				initHierarchyLists();
+				getOrInitHierarchyLists();
 
 				// initSystemProducts();
-				initLabelingTemplate();
-				// reset dictionary to reload constraints on list_values
-				if (shouldInit) {
-					dictionaryDAO.reset();
-				}
+				getOrInitLabelingTemplate();
+				
 
 				return null;
 
@@ -270,7 +266,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	/**
 	 * Initialize the characteristics of the repository.
 	 */
-	private void initCharacteristics() {
+	private void getOrInitCharacteristics() {
 
 		NodeRef charactsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_CHARACTS);
 
@@ -413,7 +409,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	/**
 	 * Init the hierarchy lists
 	 */
-	private void initHierarchyLists() {
+	private void getOrInitHierarchyLists() {
 
 		logger.debug("initHierarchyLists");
 
@@ -431,18 +427,39 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 		/*-- create hierarchy --*/
 		// RawMaterial - Sea food
-		HIERARCHY1_SEA_FOOD_REF = hierarchyService.createRootHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
-		HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
-		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+		HIERARCHY1_SEA_FOOD_REF = hierarchyService.getRootHierarchy(PLMModel.TYPE_RAWMATERIAL, HIERARCHY1_SEA_FOOD);
+		if(HIERARCHY1_SEA_FOOD_REF == null){
+			HIERARCHY1_SEA_FOOD_REF	= hierarchyService.createRootHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
+		}
+		HIERARCHY2_FISH_REF = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+		if(HIERARCHY2_FISH_REF == null){	
+			HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+		}
+		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+		if(HIERARCHY2_CRUSTACEAN_REF == null){	
+			HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+		}
+		
 
 		// FinishedProduct - Frozen
-		HIERARCHY1_FROZEN_REF = hierarchyService.createRootHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
-		HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
-		HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
+		
+		HIERARCHY1_FROZEN_REF = hierarchyService.getRootHierarchy(PLMModel.TYPE_FINISHEDPRODUCT, HIERARCHY1_FROZEN);
+		if(HIERARCHY1_FROZEN_REF == null){
+			HIERARCHY1_FROZEN_REF	= hierarchyService.createRootHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
+		}
+		HIERARCHY2_PIZZA_REF = hierarchyService.getHierarchy(PLMModel.TYPE_FINISHEDPRODUCT, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
+		if(HIERARCHY2_PIZZA_REF == null){	
+			HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
+		}
+		HIERARCHY2_QUICHE_REF = hierarchyService.getHierarchy(PLMModel.TYPE_FINISHEDPRODUCT, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
+		if(HIERARCHY2_QUICHE_REF == null){	
+			HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
+		}
+		
 
 	}
 
-	private void initLabelingTemplate() {
+	private void getOrInitLabelingTemplate() {
 
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_CHARACTS);
 
