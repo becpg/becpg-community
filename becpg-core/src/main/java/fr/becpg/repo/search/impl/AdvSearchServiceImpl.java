@@ -112,7 +112,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		beCPGQueryBuilder.excludeSearch();
 
-
 		return beCPGQueryBuilder;
 	}
 
@@ -174,16 +173,14 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), from, to);
 
 								}
-							} else {
-								if (!propValue.isEmpty()) {
-									queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), propValue);
-								}
-							}
-						} else if (propName.contains("productHierarchy")) {
-							String hierarchyQuery = getHierarchyQuery(propName, propValue);
-							if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
 
-								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), hierarchyQuery);
+							} else if (propName.contains("productHierarchy")) {
+								String hierarchyQuery = getHierarchyQuery(propName, propValue);
+								if (hierarchyQuery != null && hierarchyQuery.length() > 0) {
+
+									queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), hierarchyQuery);
+
+								}
 
 							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
@@ -198,7 +195,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								}
 							} else if (!propName.contains("llPosition")) {
 
-								// beCPG - bug fix : pb with operator -, AND, OR
+								// beCPG - bug fix : pb with operator -,
+								// AND, OR
 								// poivre AND -noir
 								// poivre AND noir
 								// sushi AND (saumon OR thon) AND -dorade
@@ -206,8 +204,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// propName + ":\"" + propValue + "\"";
 								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), propValue);
 								// TODO
-
-							} else {
+							}  else {
 								// pseudo cm:content property - e.g.
 								// mimetype,size
 								// or encoding
@@ -216,8 +213,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 							}
 						}
 					}
+
 				}
 			}
+
 		}
 
 	}
@@ -247,12 +246,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 			// TODO use HierarchyService, not generic
 			// " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvValue:\"%s\" ";
-			
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
-					+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService))
-					.inType(BeCPGModel.TYPE_LINKED_VALUE)
+
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder
+					.createQuery()
+					.inPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
+							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)).inType(BeCPGModel.TYPE_LINKED_VALUE)
 					.andPropEquals(BeCPGModel.PROP_LKV_VALUE, hierachyName);
-			
+
 			if (propName.endsWith("productHierarchy1")) {
 				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}

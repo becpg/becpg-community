@@ -317,7 +317,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			@Override
 			public NodeRef getData() {
 
-				NodeRef entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByXPath(ENTITIES_HISTORY_XPATH);
+				NodeRef entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath( nodeService.getRootNode(RepoConsts.SPACES_STORE), ENTITIES_HISTORY_XPATH);
 				try {
 					 if(entitiesHistoryNodeRef ==null) {
 

@@ -19,7 +19,6 @@ package fr.becpg.repo.entity.datalist.data;
 
 import java.util.Calendar;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -29,10 +28,8 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO9075;
-import org.alfresco.util.Pair;
 
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -167,7 +164,7 @@ public class DataListFilter {
 		int maxLevel = 1;
 		if(isDepthDefined()){
 			try {
-				maxLevel = Integer.parseInt(criteriaMap.get("prop_bcpg_depthLevel"));
+				maxLevel = Integer.parseInt(criteriaMap.get(PROP_DEPTH_LEVEL));
 			} catch (Exception e) {
 				maxLevel = -1;
 			}

@@ -306,6 +306,32 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}
 	
 	
+	
+	public void testRoutinILL() throws Exception {
+//		1. Liste d'ingrédients par ordre pondéral	
+//		
+//		Les sucres et l'acide :	les pourcentages pondéraux du saccharose et de l'acide citrique sont calculés sur la matière sèche (mise en œuvre de sucre sec et d'acide citrique en poudre)
+//			le pourcentage pondéral du glucose est calculé sur le glucose liquide (mise en œuvre d'un sirop de glucose)
+//			 (voir colonne %P/P avant ou après reconstitution)
+//			
+//		Les jus :	Les jus mis en œuvre sont des jus concentrés, le pourcentage pondéral est calculé après reconstitution des jus (voir colonne %P/P après reconstitution des jus)
+//			
+//		2. Déclaration des jus	La réglementation des sirops impose une déclaration de la liste d'ingrédients par ordre pondéral avec reconstitution des jus, 
+//			et déclaration de la quantité de jus reconstitués totale et de la quantité du jus reconstitué de la dénomination (ici la fraise) en pourcentage volume / volume
+//			(voir colonne %P/P avant reconstitution des jus)
+//			Avec l'exemple du cas pratique sirop de fraise :
+//			sucre, sirop de glucose-fructose, eau,  jus de fruits à base de concentrés 13% ( fraise 10%, sureau), acidifiant: acide citrique, arôme, colorant: E 129.
+//					
+//		4. Les valeurs nutritionnelles	calcul personnalisable selon le client/le pays (paramétrage facile car modifications très fréquentes)
+//			à noter : les valeurs nutritionnelles des sirops ne sont pas calculées en faisant la somme des valeurs nutritionnelles des ingrédients mais un calcul réalisé sur la quantité de glucides 
+//			(glucides = matières sèches - acide)
+//			Les quantités des protéines, lipides, acides gras saturés, fibres, sodium sont indiquées à 0 ou < à une valeur demandée par le client => d'où un calcul de l'énergie variable selon la demande client
+//		
+
+	}
+	
+	
+	
 	/**
 	 * Test ingredients calculating.
 	 * 
