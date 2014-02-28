@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,9 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	
 	@Autowired
 	private ContentHelper contentHelper;
+	
+	@Autowired
+    private Repository repositoryHelper;
 
 	@Override
 	public void visitContainer(NodeRef companyHome) {
@@ -84,7 +88,9 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		visitReports(systemNodeRef);
 		
 		// MailTemplates		
-		contentHelper.addFilesResources(BeCPGQueryBuilder.createQuery().selectNodeByXPath(MAIL_TEMPLATE), "classpath:beCPG/mails/project/*.ftl");		
+		contentHelper.addFilesResources(
+				BeCPGQueryBuilder.createQuery()
+				.selectNodeByPath(repositoryHelper.getCompanyHome(), MAIL_TEMPLATE), "classpath:beCPG/mails/project/*.ftl");		
 	}
 
 
