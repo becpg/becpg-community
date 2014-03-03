@@ -29,6 +29,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public abstract class AbstractLabelingComponent extends BeCPGDataObject implements LabelingComponent, Comparable<LabelingComponent> {
 
 	protected Double qty = 0d;
+	
+	protected Double qtyVolumePerc;
 
 	protected MLText legalName;
 	
@@ -84,6 +86,15 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	}
 	
 	
+	public Double getQtyVolumePerc() {
+		return qtyVolumePerc;
+	}
+
+
+	public void setQtyVolumePerc(Double qtyVolumePerc) {
+		this.qtyVolumePerc = qtyVolumePerc;
+	}
+
 
 	@Override
 	public int hashCode() {
