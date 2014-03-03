@@ -632,6 +632,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							qty = null;
 						}			
 						CompositeLabeling c = new CompositeLabeling();
+						c.setQtyVolumePerc(component.getData().getVolumeQtyPerc());
 						c.setNodeRef(ingItem.getNodeRef());
 						c.setName(ingItem.getName());
 						c.setLegalName(ingItem.getLegalName());

@@ -1222,6 +1222,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListVolumeQtyPerc"> 
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingListIsGMO">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
@@ -2005,6 +2010,16 @@
 				</property>
 			</properties>
 		</aspect>		
+		
+		<aspect name="bcpg:reconstitutableAspect">
+			<properties>
+				<property name="bcpg:reconstitutionRate">
+					<type>d:double</type>
+				</property>
+			</properties>
+		</aspect>	
+		
+		<aspect name="bcpg:diluentAspect"></aspect>
 		
 		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
 		<aspect name="bcpg:entityTplAspect">

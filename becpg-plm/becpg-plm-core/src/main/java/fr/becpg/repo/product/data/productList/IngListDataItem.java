@@ -41,6 +41,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private Double qtyPerc = 0d;
 	
+	private Double volumeQtyPerc = 0d;
+	
 	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
 	
 	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
@@ -71,6 +73,20 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		this.qtyPerc = qtyPerc;
 	}
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListVolumeQtyPerc")
+	public Double getVolumeQtyPerc() {
+		return volumeQtyPerc;
+	}
+
+
+	public void setVolumeQtyPerc(Double volumeQtyPerc) {
+		this.volumeQtyPerc = volumeQtyPerc;
+	}
+
+
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:ingListGeoOrigin")
 	public List<NodeRef> getGeoOrigin() {
@@ -252,13 +268,16 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((bioOrigin == null) ? 0 : bioOrigin.hashCode());
+		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
 		result = prime * result + ((geoOrigin == null) ? 0 : geoOrigin.hashCode());
 		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
 		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
 		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
 		result = prime * result + ((isProcessingAid == null) ? 0 : isProcessingAid.hashCode());
+		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
+		result = prime * result + ((volumeQtyPerc == null) ? 0 : volumeQtyPerc.hashCode());
 		return result;
 	}
 
@@ -276,6 +295,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				return false;
 		} else if (!bioOrigin.equals(other.bioOrigin))
 			return false;
+		if (depthLevel == null) {
+			if (other.depthLevel != null)
+				return false;
+		} else if (!depthLevel.equals(other.depthLevel))
+			return false;
 		if (geoOrigin == null) {
 			if (other.geoOrigin != null)
 				return false;
@@ -285,7 +309,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 			if (other.ing != null)
 				return false;
 		} else if (!ing.equals(other.ing))
-			return false;		
+			return false;
 		if (isGMO == null) {
 			if (other.isGMO != null)
 				return false;
@@ -306,17 +330,28 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				return false;
 		} else if (!isProcessingAid.equals(other.isProcessingAid))
 			return false;
+		if (parent == null) {
+			if (other.parent != null)
+				return false;
+		} else if (!parent.equals(other.parent))
+			return false;
 		if (qtyPerc == null) {
 			if (other.qtyPerc != null)
 				return false;
 		} else if (!qtyPerc.equals(other.qtyPerc))
+			return false;
+		if (volumeQtyPerc == null) {
+			if (other.volumeQtyPerc != null)
+				return false;
+		} else if (!volumeQtyPerc.equals(other.volumeQtyPerc))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO
-				+ ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual + ", isProcessingAid=" + isProcessingAid + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin
+				+ ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual + ", isProcessingAid="
+				+ isProcessingAid + ", depthLevel=" + depthLevel + ", parent=" + parent + "]";
 	}
 }

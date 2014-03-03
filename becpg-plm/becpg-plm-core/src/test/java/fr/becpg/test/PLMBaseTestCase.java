@@ -148,10 +148,10 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			public Boolean execute() throws Throwable {
 
 				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT)
-						.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL).excludeProp(ContentModel.PROP_NAME, "\"Eau\"");
+						.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 
 				// products
-				List<NodeRef> productNodeRefs = queryBuilder.list();
+				List<NodeRef> productNodeRefs = queryBuilder.inDB().list();
 
 				for (NodeRef productNodeRef : productNodeRefs) {
 					if (nodeService.exists(productNodeRef)) {

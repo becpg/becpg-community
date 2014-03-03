@@ -532,7 +532,7 @@ public class LabelingFormulaContext {
 					subIngBuff.append(getIngName(subIngItem));
 				}
 
-				ret.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() }));
+				ret.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), ingItem.getQtyVolumePerc() }));
 
 			} else if (component instanceof CompositeLabeling) {
 				ret.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component) }));

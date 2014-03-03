@@ -1778,7 +1778,8 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />					
+					<show id="bcpg:productDensity" />
+					<show id="bcpg:reconstitutionRate" />					
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />													
 					<show id="bcpg:periodAfterOpening" force="true" />					
@@ -1790,7 +1791,7 @@
 					
 					<!-- Tare -->
 					<show id="pack:tare" />
-		         <show id="pack:tareUnit" />
+		            <show id="pack:tareUnit" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1870,6 +1871,7 @@
 					<field id="bcpg:productUnit" set="consumer" />
 					<field id="bcpg:netWeight" set="consumer" />	
 					<field id="bcpg:productDensity" set="consumer" />		
+					<field id="bcpg:reconstitutionRate" set="consumer" />
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />				
 					<field id="bcpg:periodAfterOpening" set="consumer" />
@@ -2018,6 +2020,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:reconstitutionRate" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />					
@@ -2095,6 +2098,7 @@
 					<field id="bcpg:productUnit" set="consumer" />
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:productDensity" set="consumer" />
+					<field id="bcpg:reconstitutionRate" set="consumer" />
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />			
 					<field id="bcpg:periodAfterOpening" set="consumer" />					
@@ -5069,6 +5073,7 @@
 					<show id="bcpg:variantIds" force="true"/>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
+					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
@@ -5890,6 +5895,17 @@
 			</form>
 		</forms>
 	</config>
+<!-- 	
+	<config evaluator="aspect" condition="bcpg:reconstitutableAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:reconstitutionRate" force="true"/>
+				</field-visibility>
+			</form>
+		</forms>
+	</config> -->
+	
 
 	<config evaluator="aspect" condition="bcpg:docLinkedEntitiesAspect">
 		<forms>
