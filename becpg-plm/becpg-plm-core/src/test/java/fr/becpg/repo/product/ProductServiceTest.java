@@ -370,14 +370,13 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				logger.debug("/*-- Check --*/");
 				logger.debug("path: " + paths.get(0));
 				String displayPath = paths.get(0).toDisplayPath(nodeService, permissionService);
-				logger.debug("display path: " + displayPath);
+				logger.info("###display path: " + displayPath);
 				String[] arrDisplayPaths = displayPath.split(RepoConsts.PATH_SEPARATOR);
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
-				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("5th Path should be 'Matièrespremière'", "Matière première", arrDisplayPaths[3]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
+				assertEquals("5th Path should be 'Matièrespremière'", "Matière première", arrDisplayPaths[2]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[3]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[4]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- classify twice --*/
@@ -393,10 +392,9 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				arrDisplayPaths = displayPath.split(RepoConsts.PATH_SEPARATOR);
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
-				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[3]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
+				assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[2]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[3]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[4]);
 				assertEquals("check name", "Raw material", nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_NAME));
 
 				/*-- Create raw material 2 --*/
@@ -428,10 +426,9 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				String []arrDisplayPaths = displayPath.split(RepoConsts.PATH_SEPARATOR);
 				assertEquals("1st Path should be ''", "", arrDisplayPaths[0]);
 				assertEquals("2nd Path should be 'Espace racine'", "Espace racine", arrDisplayPaths[1]);
-				assertEquals("3rd Path should be 'Produits'", "Produits", arrDisplayPaths[2]);
-				assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[3]);
-				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[4]);
-				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[5]);
+				assertEquals("5th Path should be 'Matière première'", "Matière première", arrDisplayPaths[2]);
+				assertEquals("6th Path should be 'Frozen'", HIERARCHY1_FROZEN, arrDisplayPaths[3]);
+				assertEquals("7th Path should be 'Pizza'", HIERARCHY2_PIZZA, arrDisplayPaths[4]);
 				
 				return null;
 

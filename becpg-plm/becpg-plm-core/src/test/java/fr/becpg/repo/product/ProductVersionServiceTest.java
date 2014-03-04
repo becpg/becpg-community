@@ -375,6 +375,8 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 	@Test
 	public void testCheckOutCheckInValidProduct() {
 
+		logger.info("testCheckOutCheckInValidProduct");
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
@@ -387,8 +389,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
     			hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				String expected = "/app:company_home/cm:Products/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
-				
+				String expected = "/app:company_home/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				// Check out
@@ -406,7 +407,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				assertEquals("Check state new version", SystemState.Simulation.toString(), nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
-				expected = "/app:company_home/cm:Products/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
+				expected = "/app:company_home/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
 				assertEquals("check path", expected, path.substring(0, expected.length()));
 
 				return null;
