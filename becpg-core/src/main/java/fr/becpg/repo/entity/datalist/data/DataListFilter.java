@@ -79,9 +79,8 @@ public class DataListFilter {
 	
 	public DataListFilter() {
 		super();
-		sortMap.put("@cm:created", true);
 		sortMap.put("@bcpg:sort", true);
-		
+		sortMap.put("@cm:created", true);
 	}
 
 	
