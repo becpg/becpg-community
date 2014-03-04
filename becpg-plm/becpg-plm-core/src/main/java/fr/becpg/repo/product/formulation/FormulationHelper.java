@@ -338,6 +338,7 @@ public class FormulationHelper {
 		return null;
 	}
 	
+
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight){
 		
 		if(totalValue == null && value == null){
@@ -427,5 +428,6 @@ public class FormulationHelper {
 			}
 			return tare;
 		}				
-	}	
+	}
+
 }

@@ -7,6 +7,8 @@
 				<aspect name="bcpg:clientsAspect" />
 				<aspect name="bcpg:suppliersAspect" />
 				<aspect name="bcpg:profitabilityAspect" />
+				<aspect name="bcpg:reconstitutableAspect" />
+				<aspect name="bcpg:diluentAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="gs1:gs1Aspect" />

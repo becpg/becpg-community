@@ -139,6 +139,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.variants = variants;
 	}
 	
+	
+	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy1")
@@ -247,6 +249,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
+
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productDensity")
