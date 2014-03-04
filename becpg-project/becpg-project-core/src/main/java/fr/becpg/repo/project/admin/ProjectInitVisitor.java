@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 	
-	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project";
+	public static final String EMAIL_TEMPLATES = "/app:company_home/app:dictionary/app:email_templates";
 	
 
 	@Autowired
@@ -67,10 +66,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	private ReportTplService reportTplService;
 	
 	@Autowired
-	private ContentHelper contentHelper;
-	
-	@Autowired
-    private Repository repositoryHelper;
+	private ContentHelper contentHelper;	
 
 	@Override
 	public void visitContainer(NodeRef companyHome) {
@@ -88,9 +84,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		visitReports(systemNodeRef);
 		
 		// MailTemplates		
-		contentHelper.addFilesResources(
-				BeCPGQueryBuilder.createQuery()
-				.selectNodeByPath(repositoryHelper.getCompanyHome(), MAIL_TEMPLATE), "classpath:beCPG/mails/project/*.ftl");		
+		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery()
+				.selectNodeByPath(companyHome, EMAIL_TEMPLATES), 
+				ProjectRepoConsts.PATH_EMAILS_PROJECT);
+		contentHelper.addFilesResources(emailsProject, "classpath:beCPG/mails/project/*.ftl");		
 	}
 
 
