@@ -197,11 +197,6 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		
 		
 	}
-
-	@Override
-	public boolean shouldInit(NodeRef companyHomeNodeRef) {
-		return 	nodeService.getChildByName(companyHomeNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
-	}
 	
 	private void visitReports(NodeRef systemNodeRef) {
 

@@ -49,6 +49,7 @@ import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 import fr.becpg.test.data.EntityTestData;
@@ -110,6 +111,16 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 					.getChildRef();
 		}
 
+	}
+	
+	@Override
+	protected boolean shouldInit(){		
+		if(super.shouldInit()){
+			return true;
+		}
+		else{
+			return BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(repositoryHelper.getCompanyHome(), HIERARCHY_PROJECT_PATH + "/*") == null;
+		}
 	}
 	
 	@Override

@@ -213,12 +213,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);		
 	}
 
-	@Override
-	public boolean shouldInit(NodeRef companyHomeNodeRef) {
-	return nodeService.getChildByName(companyHomeNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_EXCHANGE)) == null;
-		
-	}
-
 	/**
 	 * Add resources to folder
 	 */
