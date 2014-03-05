@@ -77,15 +77,10 @@ Tests in error:
  */
 public class ImportServiceTest extends PLMBaseTestCase {
 
-	/** The PAT h_ temp. */
 	private static String PATH_TEMP = "Temp";
-
-	/** The PAT h_ products. */
 	private static String PATH_PRODUCTS = "Products";
-
-	private static String PATH_SITE_FOLDER = "./st:sites/cm:folder";
-
-	/** The logger. */
+	private static String PATH_SITE_FOLDER = "./st:sites/cm:folder";	
+	
 	private static Log logger = LogFactory.getLog(ImportServiceTest.class);
 
 	@Resource
@@ -648,21 +643,21 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		importHierarchies();
 
 		// search by name
-		List<NodeRef> ret = hierarchyService.getRootHierarchies(PLMModel.TYPE_RAWMATERIAL, "USDA");
+		List<NodeRef> ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
 		assertEquals(1, ret.size());
 
 		// search by code
-		assertNotNull(hierarchyService.getRootHierarchy(PLMModel.TYPE_RAWMATERIAL, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 
 		NodeRef parentNodeRef = ret.get(0);
 
 		// search by name
-		ret = hierarchyService.getHierarchies(PLMModel.TYPE_RAWMATERIAL, parentNodeRef, "Dairy and Egg Products");
+		ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, "Dairy and Egg Products");
 		
 		assertEquals(1, ret.size());
 
 		// search by code
-		assertNotNull(hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, parentNodeRef, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
+		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 	}
 
 	private void importHierarchies() {
@@ -700,11 +695,11 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 		/*-- Check hierarchies --*/
 		logger.debug("Check hierarchies");
-		NodeRef hierarchy1USDA = hierarchyService.getRootHierarchy(PLMModel.TYPE_RAWMATERIAL, "USDA");
+		NodeRef hierarchy1USDA = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
 		assertNotNull(hierarchy1USDA);
-		NodeRef hierarchy2Dairy = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Dairy and Egg Products");
+		NodeRef hierarchy2Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Dairy and Egg Products");
 		assertNotNull(hierarchy2Dairy);
-		NodeRef hierarchy2Spices = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, hierarchy1USDA, "Spices and Herbs");
+		NodeRef hierarchy2Spices = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Spices and Herbs");
 		assertNotNull(hierarchy2Spices);
 
 		// check unicity

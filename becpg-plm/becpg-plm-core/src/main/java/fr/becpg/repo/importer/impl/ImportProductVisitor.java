@@ -18,6 +18,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.PlmRepoConsts;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
@@ -102,15 +104,16 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 
 		if (attributeMapping instanceof HierarchyMapping) {
 			NodeRef hierarchyNodeRef = null;
+			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + HierarchyHelper.getHierarchyPathName(importContext.getType());
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null && !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
 				if (parentHierachyNodeRef != null) {
-					hierarchyNodeRef = hierarchyService.getHierarchy(importContext.getType(), parentHierachyNodeRef, value);
+					hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, parentHierachyNodeRef, value);
 				} else {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
 				}
 			} else {
-				hierarchyNodeRef = hierarchyService.getRootHierarchy(importContext.getType(), value);
+				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, value);
 			}
 			if (hierarchyNodeRef == null) {
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
