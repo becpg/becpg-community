@@ -30,7 +30,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 
 	protected Double qty = 0d;
 	
-	protected Double qtyVolumePerc;
+	protected Double volumeQtyPerc;
 
 	protected MLText legalName;
 	
@@ -86,13 +86,13 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	}
 	
 	
-	public Double getQtyVolumePerc() {
-		return qtyVolumePerc;
+	public Double getVolumeQtyPerc() {
+		return volumeQtyPerc;
 	}
 
 
-	public void setQtyVolumePerc(Double qtyVolumePerc) {
-		this.qtyVolumePerc = qtyVolumePerc;
+	public void setVolumeQtyPerc(Double qtyVolumePerc) {
+		this.volumeQtyPerc = qtyVolumePerc;
 	}
 
 

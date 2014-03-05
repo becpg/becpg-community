@@ -94,13 +94,13 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
-		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (getLegalName(I18NUtil.getContentLocaleLang())==null ? "root" : getLegalName(I18NUtil.getContentLocaleLang()))+" - "+getQty()+" ("+getQtyRMUsed()+") "+(declarationType!=null ? declarationType.toString():"")+"]\n");
+		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (getLegalName(I18NUtil.getContentLocaleLang())==null ? "root" : getLegalName(I18NUtil.getContentLocaleLang()))+" - "+getQty()+" ("+getQtyRMUsed()+", vol: "+getVolumeQtyPerc()+") "+(declarationType!=null ? declarationType.toString():"")+"]\n");
         for (Iterator<AbstractLabelingComponent> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
         	AbstractLabelingComponent labelingComponent =  iterator.next();
         	if(labelingComponent  instanceof CompositeLabeling) {
 				((CompositeLabeling)labelingComponent).print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
 			} else {
-				sb.append(prefix + (isTail ? "    " : "│   ") +(!iterator.hasNext() ? "└──[" : "├──[")+ labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())+" - "+labelingComponent.getQty()  +"]\n");
+				sb.append(prefix + (isTail ? "    " : "│   ") +(!iterator.hasNext() ? "└──[" : "├──[")+ labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())+" - "+labelingComponent.getQty() +" ( vol : "+labelingComponent.getVolumeQtyPerc()+") ]\n");
 			      
 			}
  

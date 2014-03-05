@@ -17,22 +17,27 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import com.ibm.icu.util.Calendar;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.AbstractFinishedProductTest;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -306,8 +311,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}
 	
 	
-	
-	public void testRoutinILL() throws Exception {
+	@Test
+	public void testReconstitutionLabeling() throws Exception {
 //		1. Liste d'ingrédients par ordre pondéral	
 //		
 //		Les sucres et l'acide :	les pourcentages pondéraux du saccharose et de l'acide citrique sont calculés sur la matière sèche (mise en œuvre de sucre sec et d'acide citrique en poudre)
@@ -321,13 +326,52 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			(voir colonne %P/P avant reconstitution des jus)
 //			Avec l'exemple du cas pratique sirop de fraise :
 //			sucre, sirop de glucose-fructose, eau,  jus de fruits à base de concentrés 13% ( fraise 10%, sureau), acidifiant: acide citrique, arôme, colorant: E 129.
-//					
-//		4. Les valeurs nutritionnelles	calcul personnalisable selon le client/le pays (paramétrage facile car modifications très fréquentes)
-//			à noter : les valeurs nutritionnelles des sirops ne sont pas calculées en faisant la somme des valeurs nutritionnelles des ingrédients mais un calcul réalisé sur la quantité de glucides 
-//			(glucides = matières sèches - acide)
-//			Les quantités des protéines, lipides, acides gras saturés, fibres, sodium sont indiquées à 0 ou < à une valeur demandée par le client => d'où un calcul de l'énergie variable selon la demande client
-//		
+//	
 
+		
+		 NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+				public NodeRef execute() throws Throwable {
+					logger.debug("/*-- Create finished product --*/");
+					FinishedProductData finishedProduct = new FinishedProductData();
+					finishedProduct.setName("Produit fini 1");
+					finishedProduct.setLegalName("Legal Produit fini 1");
+					finishedProduct.setUnit(ProductUnit.kg);
+					finishedProduct.setQty(4d);
+					finishedProduct.setDensity(1d);
+					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+					
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+					
+					Map<QName,Serializable> props = new HashMap<>();
+					props.put(PLMModel.PROP_RECONSTITUTION_RATE,5d);
+					nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+					
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 10d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef)); 
+
+					nodeService.addAspect(rawMaterial7NodeRef,PLMModel.ASPECT_DILUENT,null);
+					
+					finishedProduct.getCompoListView().setCompoList(compoList);
+					return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				}
+			}, false, true);
+		
+		 
+			//Declare
+			List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+			labelingRuleList.add(new LabelingRuleListDataItem("Pref1", "useVolume = true", LabelingRuleType.Prefs));
+			labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0}\"", LabelingRuleType.Prefs));
+			labelingRuleList.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"", LabelingRuleType.Prefs));
+			labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
+			labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2})\"", LabelingRuleType.Prefs));
+			labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
+			
+			labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+			labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
+			labelingRuleList.add(new LabelingRuleListDataItem("Juice", null, LabelingRuleType.Detail,Arrays.asList(ing1,ing2),null));
+
+			checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french, Juice 90,9% (ing2 french 45,5%, ing1 french 45,5%)", Locale.FRENCH);
+			
 	}
 	
 	

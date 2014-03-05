@@ -94,6 +94,7 @@ public class LabelingFormulaContext {
 		this.lblCompositeContext = compositeLabeling;
 	}
 
+
 	public LabelingFormulaContext(NodeService mlNodeService, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		super();
 		this.mlNodeService = mlNodeService;
@@ -123,7 +124,36 @@ public class LabelingFormulaContext {
 
 	private Map<NodeRef, String> textFormaters = new HashMap<>();
 
-	private String defaultFormat = "{0}";
+	private String ingDefaultFormat = "{0}";
+	private String groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}";
+	private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
+	private String ingTypeDefaultFormat = "{0}: {2}";
+	private String subIngsDefaultFormat = "{0} ({2})";
+	private boolean useVolume = false;
+	
+	public void setUseVolume(boolean useVolume) {
+		this.useVolume = useVolume;
+	}
+
+	public void setIngDefaultFormat(String ingDefaultFormat) {
+		this.ingDefaultFormat = ingDefaultFormat;
+	}
+
+	public void setGroupDefaultFormat(String groupDefaultFormat) {
+		this.groupDefaultFormat = groupDefaultFormat;
+	}
+
+	public void setDetailsDefaultFormat(String detailsDefaultFormat) {
+		this.detailsDefaultFormat = detailsDefaultFormat;
+	}
+
+	public void setIngTypeDefaultFormat(String ingTypeDefaultFormat) {
+		this.ingTypeDefaultFormat = ingTypeDefaultFormat;
+	}
+
+	public void setSubIngsDefaultFormat(String subIngsDefaultFormat) {
+		this.subIngsDefaultFormat = subIngsDefaultFormat;
+	}
 
 	// Exemple <b>{1}</b> : {2}
 	public boolean formatText(List<NodeRef> components, String textFormat) {
@@ -132,7 +162,7 @@ public class LabelingFormulaContext {
 				textFormaters.put(component, textFormat);
 			}
 		} else {
-			defaultFormat = textFormat;
+			ingDefaultFormat = textFormat;
 		}
 		return true;
 	}
@@ -146,15 +176,15 @@ public class LabelingFormulaContext {
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return new MessageFormat("<b>{0} ({1,number,0.#%}):</b> {2}");
+				return new MessageFormat(groupDefaultFormat);
 			}
-			return new MessageFormat("{0} {1,number,0.#%} ({2})");
+			return new MessageFormat(detailsDefaultFormat);
 		} else if (lblComponent instanceof IngTypeItem) {
-			return new MessageFormat("{0}: {1}");
+			return new MessageFormat(ingTypeDefaultFormat);
 		} else if (lblComponent instanceof IngItem && ((IngItem) lblComponent).getSubIngs().size() > 0) {
-			return new MessageFormat("{0} ({2})");
+			return new MessageFormat(subIngsDefaultFormat);
 		}
-		return new MessageFormat(defaultFormat);
+		return new MessageFormat(ingDefaultFormat);
 	}
 
 	/*
@@ -206,11 +236,12 @@ public class LabelingFormulaContext {
 		String name;
 		MLText label;
 		NodeRef replacement;
+		NodeRef ruleNodeRef;
 		Double qty = 100d;
 		LabelingRuleType labelingRuleType;
 		List<NodeRef> components;
 
-		public AggregateRule(String name) {
+		public AggregateRule(NodeRef ruleNodeRef, String name) {
 			super();
 			this.name = name;
 		}
@@ -262,7 +293,7 @@ public class LabelingFormulaContext {
 		}
 
 		public NodeRef getKey() {
-			return replacement != null ? replacement : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + name.hashCode());
+			return replacement != null ? replacement : ruleNodeRef!= null ? ruleNodeRef : new NodeRef(RepoConsts.SPACES_STORE, "aggr-" + name.hashCode());
 		}
 
 		public boolean matchAll(Collection<AbstractLabelingComponent> values) {
@@ -310,13 +341,13 @@ public class LabelingFormulaContext {
 		return declarationFilters;
 	}
 
-	public boolean addRule(String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labeLabelingRuleType) {
+	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labeLabelingRuleType) {
 
 		if (LabelingRuleType.Type.equals(labeLabelingRuleType)
 				|| ((components != null && components.size() > 1) || (replacement != null && !replacement.isEmpty()))
 				&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType) || LabelingRuleType.DoNotDetails
 						.equals(labeLabelingRuleType))) {
-			aggregate(name, components, replacement, label, formula, labeLabelingRuleType);
+			aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType);
 		} else {
 			if (components != null && !components.isEmpty()) {
 				for (NodeRef component : components) {
@@ -331,13 +362,13 @@ public class LabelingFormulaContext {
 		return true;
 	}
 
-	private void aggregate(String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labelingRuleType) {
+	private void aggregate(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, LabelingRuleType labelingRuleType) {
 		String[] qtys = formula != null && !formula.isEmpty() ? formula.split(",") : null;
 
 		// components peut être ING, SF ou MP
 		int i = 0;
 		for (NodeRef component : components) {
-			AggregateRule aggregateRule = new AggregateRule(name);
+			AggregateRule aggregateRule = new AggregateRule(ruleNodeRef,name);
 
 			if (replacement != null && !replacement.isEmpty()) {
 				aggregateRule.setReplacement(replacement.get(0));
@@ -481,7 +512,7 @@ public class LabelingFormulaContext {
 			}
 
 			if (kv.getKey() != null && getIngName(kv.getKey()) != null) {
-				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()), renderLabelingComponent(compositeLabeling, kv.getValue()) }));
+				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()),null, renderLabelingComponent(compositeLabeling, kv.getValue()) }));
 			} else {
 				ret.append(renderLabelingComponent(compositeLabeling, kv.getValue()));
 			}
@@ -532,10 +563,10 @@ public class LabelingFormulaContext {
 					subIngBuff.append(getIngName(subIngItem));
 				}
 
-				ret.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString(), ingItem.getQtyVolumePerc() }));
+				ret.append(getIngTextFormat(component).format(new Object[] { ingName, useVolume? ingItem.getVolumeQtyPerc() :  qtyPerc, subIngBuff.toString() }));
 
 			} else if (component instanceof CompositeLabeling) {
-				ret.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component) }));
+				ret.append(getIngTextFormat(component).format(new Object[] { ingName, useVolume? component.getVolumeQtyPerc() :  qtyPerc, renderCompositeIng((CompositeLabeling) component)  }));
 
 			} else {
 				logger.error("Unsupported ing type. Name: " + component.getName());
@@ -545,6 +576,7 @@ public class LabelingFormulaContext {
 
 		return ret;
 	}
+
 
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
 
