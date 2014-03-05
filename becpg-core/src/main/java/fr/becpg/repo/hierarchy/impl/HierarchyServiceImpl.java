@@ -73,26 +73,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Override
-	public NodeRef getRootHierarchy(QName type, String value) {
-		return getHierarchyByPath(HierarchyHelper.getHierarchyPath(type, namespaceService), null, value);
-	}
-
-	@Override
-	public NodeRef getHierarchy(QName type, NodeRef parentNodeRef, String value) {
-		return getHierarchyByPath(HierarchyHelper.getHierarchyPath(type, namespaceService), parentNodeRef, value);
-	}
-
-	@Override
-	public List<NodeRef> getRootHierarchies(QName type, String value) {
-		return getHierarchiesByPath(HierarchyHelper.getHierarchyPath(type, namespaceService), null, value);
-	}
-
-	@Override
-	public List<NodeRef> getHierarchies(QName type, NodeRef parentNodeRef, String value) {
-		return getHierarchiesByPath(HierarchyHelper.getHierarchyPath(type, namespaceService), parentNodeRef, value);
-	}
-
-	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value) {
 
 		NodeRef hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_CODE, value, false), value);
@@ -163,7 +143,8 @@ public class HierarchyServiceImpl implements HierarchyService {
 		
 		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery()
 				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS)
-				.inPath(path);
+				.inPath(path)
+				.inDB();
 		
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());

@@ -205,6 +205,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 							.parent(targetParentNodeRef)
 							.ofType(nodeService.getType(sourceParentLevelNodeRef))
 							.andPropEquals(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : null)
+							.inDB()
 							.singleValue();
 				
 				if(copiedParentNodeRef!=null){
