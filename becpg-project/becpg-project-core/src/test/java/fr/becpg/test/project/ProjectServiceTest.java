@@ -206,7 +206,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 					}
 				}, false, true);
 
-		Assert.assertNotNull(projectService.getProjectsContainer(null));
+		Assert.assertNull(projectService.getProjectsContainer(null));
 		Assert.assertTrue(projectService.getTaskLegendList().size() > 0);
 		Assert.assertTrue(projectService.getTaskLegendList().contains(legendNodeRef));
 	}
