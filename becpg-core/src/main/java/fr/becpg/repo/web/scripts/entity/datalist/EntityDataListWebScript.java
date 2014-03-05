@@ -380,7 +380,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				JSONObject permissions = new JSONObject();
 				JSONObject userAccess = new JSONObject();
 
-				logger.info("###dataListFilter.getParentNodeRef(): " + dataListFilter.getParentNodeRef());
 				userAccess
 						.put("create",
 								((dataListFilter.getSiteId() != "" || dataListFilter.getParentNodeRef() != null) && extractor.hasWriteAccess() && hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
