@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,13 +132,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
-
-	@Override
-	public boolean shouldInit(NodeRef companyHomeNodeRef) {
-		NodeRef systemNodeRef = visitFolder(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-		return nodeService.getChildByName(systemNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(ProjectRepoConsts.PATH_PROJECT_LISTS)) == null;
-	}
-	
 	private void visitReports(NodeRef systemNodeRef) {
 
 		// reports folder

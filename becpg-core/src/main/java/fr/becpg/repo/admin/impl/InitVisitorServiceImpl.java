@@ -47,19 +47,4 @@ public class InitVisitorServiceImpl implements InitVisitorService {
 		}
 		
 	}
-
-
-	@Override
-	public boolean shouldInit(NodeRef companyHomeNodeRef) {
-		for(InitVisitor initVisitor : initVisitors) {
-			if(logger.isDebugEnabled()) {
-				logger.debug("Test should init for visitor : "+initVisitor.getClass().getName());
-			}
-			
-			if(initVisitor.shouldInit(companyHomeNodeRef)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }
