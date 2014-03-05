@@ -70,8 +70,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	private static Log logger = LogFactory.getLog(NCWorkflowTest.class);
 
 	private NodeRef rawMaterial1NodeRef;
-
-	private NodeRef rawMaterial2NodeRef;
 	
 	private String workflowInstanceId = null;
 
@@ -94,11 +92,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				rawMaterial1.setName("Raw material 1");
 
 				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
-
-				RawMaterialData rawMaterial2 = new RawMaterialData();
-				rawMaterial2.setName("Raw material 2");
-
-				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
 				
 				// clean default storage folder
 				NodeRef folderNodeRef = nonConformityService.getStorageFolder(null);
@@ -177,7 +170,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		 * Update analysisTask task
 		 */
 		assertNotNull(ncNodeRef);
-		checkStorageFolder(ncNodeRef);
 		
 		final WorkflowTask task2 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
 			public WorkflowTask execute() throws Throwable {
@@ -296,8 +288,6 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 		
 		assertNotNull(ncNodeRef);
 
-		checkStorageFolder(ncNodeRef);
-
 		/*
 		 * Update workTask (analysis)
 		 */
@@ -390,40 +380,5 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				return null;
 			}
 		}, true, true);		
-	}
-
-	private void checkStorageFolder(final NodeRef ncNodeRef) {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				/*
-				 * We should have: Folder Product Folder NonConformities Folder
-				 * NonConformity NC1 Node NC1
-				 */
-				NodeRef nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-				NodeRef productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-								
-				assertEquals("Check NC moved in product", rawMaterial1NodeRef, productFolderNodeRef);
-
-				// remove assoc
-				nodeService.removeAssociation(ncNodeRef, rawMaterial1NodeRef, QualityModel.ASSOC_PRODUCT);
-
-				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-				assertEquals(
-						"/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/content/1.0}Quality/{http://www.alfresco.org/model/content/1.0}NonConformities",
-						nodeService.getPath(nonConformitiesFolderNodeRef).toString());
-
-				// create assoc rawMaterial 2
-				nodeService.createAssociation(ncNodeRef, rawMaterial2NodeRef, QualityModel.ASSOC_PRODUCT);
-
-				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-				productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-				assertEquals("Check NC moved in product", rawMaterial2NodeRef, productFolderNodeRef);
-				
-				return null;
-			}
-		}, false, true);
-		
 	}
 }

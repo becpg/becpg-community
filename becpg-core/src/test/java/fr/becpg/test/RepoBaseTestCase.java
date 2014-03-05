@@ -190,13 +190,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}
 		}, false, true);
 
-		boolean shouldInit = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-			public Boolean execute() throws Throwable {
-
-				return initRepoVisitorService.shouldInit(repositoryHelper.getCompanyHome());
-
-			}
-		}, false, true);
+		boolean shouldInit = shouldInit();
 
 		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
@@ -211,7 +205,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}, false, true);
 		}
 
-		
 		logger.debug("setUp shouldInit :" + shouldInit);
 
 		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -225,10 +218,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	}
 
-	protected  void doInitRepo(boolean shouldInit) {
-		
+	protected boolean shouldInit(){
+		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
 	}
 	
+	protected  void doInitRepo(boolean shouldInit) {		
+	}	
 	
 	@After
 	public void tearDown() throws Exception {
@@ -243,8 +238,4 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}
 		}, false, true);
 	}
-
-
-
-
 }

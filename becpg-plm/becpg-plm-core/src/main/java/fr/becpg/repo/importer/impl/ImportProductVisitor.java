@@ -104,7 +104,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 
 		if (attributeMapping instanceof HierarchyMapping) {
 			NodeRef hierarchyNodeRef = null;
-			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + HierarchyHelper.getHierarchyPathName(importContext.getType());
+			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + ":cm" + HierarchyHelper.getHierarchyPathName(importContext.getType());
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null && !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
 				if (parentHierachyNodeRef != null) {
