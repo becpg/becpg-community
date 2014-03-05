@@ -239,7 +239,13 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		logger.info("###FixSortableList. parentNodeRef: " + listContainer + "");
 
-		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().parent(listContainer).isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
+		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery()
+						.parent(listContainer)
+						.ofType(dataType)
+						.isNotNull(BeCPGModel.PROP_SORT)
+						.addSort(BeCPGModel.PROP_SORT, true)
+						.inDB()
+						.list();
 		int newSort = RepoConsts.SORT_DEFAULT_STEP;
 		
 		for (NodeRef listItem : listItems) {
@@ -290,6 +296,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 				NodeRef tmpNodeRef = BeCPGQueryBuilder.createQuery()
 						.parent(listContainer)
+						.ofType(dataType)
 						.andBetween(BeCPGModel.PROP_SORT, String.valueOf(startSort + 1), "MAX")
 						.andBetween(BeCPGModel.PROP_DEPTH_LEVEL, "1", Integer.toString(level))
 						.isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true).inDB().singleValue();
@@ -344,6 +351,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 				.parent(listContainer)
+				.ofType(dataType)
 				.andBetween(BeCPGModel.PROP_SORT, startSort, endSort)
 				.addSort(BeCPGModel.PROP_SORT, !moveUp);
 
@@ -361,6 +369,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		return BeCPGQueryBuilder.createQuery()
 				.parent(listContainer)
+				.ofType(dataType)
 				.andPropEquals(BeCPGModel.PROP_SORT, String.valueOf(sort))
 				.andNotID(nodeRef).inDB().singleValue();
 
