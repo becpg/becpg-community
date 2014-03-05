@@ -277,6 +277,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setYieldVolume(Double yieldVolume) {
 		this.yieldVolume = yieldVolume;
 	}	
+	
 
 	public Double getRecipeQtyUsed() {
 		return recipeQtyUsed;

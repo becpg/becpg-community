@@ -123,7 +123,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 		}
 
-		Double totalQtyUsed = 0d;
+		Double totalQtyUsed = 0d, totalVolumeUsed =0d;
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
@@ -141,6 +141,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double qty = FormulationHelper.getQtyInKg(compoItem);
 					if (qty != null) {
 						totalQtyUsed += qty * FormulationHelper.getYield(compoItem) / 100;
+					}
+					
+					Double vol = (Double)compoItem.getVolume();
+					if(vol!=null){
+						totalVolumeUsed +=vol/100;
 					}
 				}
 
@@ -165,7 +170,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
 
 				// qtyVolumePerc
-				ingListDataItem.setVolumeQtyPerc(totalQtyVolMap.get(ingListDataItem.getIng()));
+				if(totalQtyVolMap.get(ingListDataItem.getIng())!=null){
+					ingListDataItem.setVolumeQtyPerc(totalQtyVolMap.get(ingListDataItem.getIng()) / totalVolumeUsed);
+				} 
 
 				// add detailable aspect
 				if (!ingListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
@@ -215,7 +222,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		// calculate ingList of formulated product
 		List<IngListDataItem> retainedComponentIngList = new ArrayList<>();
 		calculateIngListOfPart(CompositeHelper.getHierarchicalCompoList(componentIngList), 1d, retainedComponentIngList);
-		calculateILOfPart(formulatedProduct, compoListDataItem, retainedComponentIngList, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap);
+		calculateILOfPart(compoListDataItem, retainedComponentIngList, formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap);
 	}
 
 	// Keep ingList that don't have children
@@ -246,7 +253,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyVolMap
 	 * @throws FormulateException
 	 */
-	private void calculateILOfPart(ProductData formulatedProduct,CompoListDataItem compoListDataItem, List<IngListDataItem> componentIngList, List<IngListDataItem> ingList,
+	private void calculateILOfPart(CompoListDataItem compoListDataItem, List<IngListDataItem> componentIngList, List<IngListDataItem> ingList,
 			List<IngListDataItem> retainNodes, Map<NodeRef, Double> totalQtyIngMap, Map<NodeRef, Double> totalQtyVolMap) throws FormulateException {
 
 		// OMIT is not taken in account
@@ -285,40 +292,36 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 				Double valueToAdd = qty * qtyIng;
 				
-				Double volumePerc = totalQtyVolMap.get(ingNodeRef);
-				if (volumePerc == null) {
-					volumePerc = 0d;
+				Double volumeQty = totalQtyVolMap.get(ingNodeRef);
+				if (volumeQty == null) {
+					volumeQty = 0d;
 				}
 
-				if (nodeService.hasAspect(compoListDataItem.getProduct(), PLMModel.ASPECT_RECONSTITUTABLE)) {
-					Double reconstitionRate = (Double) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_RECONSTITUTION_RATE);
-					if (reconstitionRate != null) {
+				Double volumeReconstitution = FormulationHelper.getVolumeReconstitution(compoListDataItem,nodeService);
+			
+				if (volumeReconstitution !=null ){
 
+						Double diluentVolume =  (volumeReconstitution - compoListDataItem.getVolume())*100;
+						
 						// Raw material 
-						totalQtyVolMap.put(ingNodeRef, volumePerc + compoListDataItem.getVolume() * reconstitionRate);
+						totalQtyVolMap.put(ingNodeRef, volumeQty + volumeReconstitution);
 
 						Double qtyDiluent = totalQtyVolMap.get(tmpDiluentNodeRef);
 						if (qtyDiluent == null) {
 							qtyDiluent = 0d;
 						}
 						
-						qtyDiluent = qtyDiluent - (
-								(compoListDataItem.getVolume() * reconstitionRate) - compoListDataItem.getVolume())*FormulationHelper.getQtyInKg(compoListDataItem);
+						qtyDiluent -=  diluentVolume;
+						valueToAdd += diluentVolume;
 						
 						// Decrease diluent
 						totalQtyVolMap.put(tmpDiluentNodeRef, qtyDiluent);
-						
-						valueToAdd = valueToAdd + ((compoListDataItem.getVolume() * reconstitionRate) - compoListDataItem.getVolume())*FormulationHelper.getQtyInKg(compoListDataItem);
-					}
+
 				} else {
 					// Semi finished
-					if (ingListDataItem.getVolumeQtyPerc() != null) {
-	
-						Double netVolume = FormulationHelper.getNetVolume(formulatedProduct.getNodeRef(), nodeService);
-						Double calculatedVolume = formulatedProduct.getYieldVolume()/(100*netVolume);
+					if (ingListDataItem.getVolumeQtyPerc() != null && compoListDataItem.getVolume()!=null) {
 						
-						
-						totalQtyVolMap.put(ingNodeRef, volumePerc + ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume()/ calculatedVolume );
+						totalQtyVolMap.put(ingNodeRef, volumeQty + ingListDataItem.getVolumeQtyPerc()*compoListDataItem.getVolume()/100 );
 					}
 				}
 
