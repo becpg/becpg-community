@@ -188,6 +188,7 @@
 					<value>DoNotDeclare</value>
 					<value>DoNotDetails</value>
 					<value>Locale</value>
+					<value>Prefs</value>
 				</list>
 			</parameter>
 		</constraint>

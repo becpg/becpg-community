@@ -54,7 +54,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 	
-	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project";
+	public static final String MAIL_TEMPLATE = "/app:dictionary/app:email_templates/cm:project";
 	
 
 	@Autowired
