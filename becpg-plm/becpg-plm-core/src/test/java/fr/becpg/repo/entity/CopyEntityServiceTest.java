@@ -52,17 +52,17 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 				assertTrue(startEffectivity.before(new Date()));
 				
 				// First copy
-				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy", "Test Copy");
+				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy");
 				
 				// Second copy
-				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy", "Test Copy (1)");
+				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy (1)");
 				
 				return null;
 			}
 		}, false, true);
 	}
 	
-	private void copyProduct(final NodeRef testFolderNodeRef, final NodeRef sourceNodeRef, final String givenName, String finalName){
+	private void copyProduct(final NodeRef testFolderNodeRef, final NodeRef sourceNodeRef, final String givenName){
 		
 		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {

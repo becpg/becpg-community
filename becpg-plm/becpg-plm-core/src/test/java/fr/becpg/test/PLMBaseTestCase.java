@@ -75,6 +75,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	protected static final String HIERARCHY2_PIZZA = "Pizza";
 	protected static final String HIERARCHY2_QUICHE = "Quiche";
 	protected static final String VALUE_COST_CURRENCY = "€";
+	protected static final String HIERARCHY_RAWMATERIAL_PATH = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL);
+	protected static final String HIERARCHY_FINISHEDPRODUCT_PATH = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL);
 
 	protected NodeRef HIERARCHY1_SEA_FOOD_REF;
 	protected NodeRef HIERARCHY2_FISH_REF;
@@ -427,15 +429,15 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 		/*-- create hierarchy --*/
 		// RawMaterial - Sea food
-		HIERARCHY1_SEA_FOOD_REF = hierarchyService.getRootHierarchy(PLMModel.TYPE_RAWMATERIAL, HIERARCHY1_SEA_FOOD);
+		HIERARCHY1_SEA_FOOD_REF = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, HIERARCHY1_SEA_FOOD);
 		if(HIERARCHY1_SEA_FOOD_REF == null){
 			HIERARCHY1_SEA_FOOD_REF	= hierarchyService.createRootHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
 		}
-		HIERARCHY2_FISH_REF = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+		HIERARCHY2_FISH_REF = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
 		if(HIERARCHY2_FISH_REF == null){	
 			HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
 		}
-		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchy(PLMModel.TYPE_RAWMATERIAL, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
+		HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
 		if(HIERARCHY2_CRUSTACEAN_REF == null){	
 			HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(rawMaterialHierarchyNodeRef, HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
 		}
@@ -443,15 +445,15 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 		// FinishedProduct - Frozen
 		
-		HIERARCHY1_FROZEN_REF = hierarchyService.getRootHierarchy(PLMModel.TYPE_FINISHEDPRODUCT, HIERARCHY1_FROZEN);
+		HIERARCHY1_FROZEN_REF = hierarchyService.getHierarchyByPath(HIERARCHY_FINISHEDPRODUCT_PATH, null, HIERARCHY1_FROZEN);
 		if(HIERARCHY1_FROZEN_REF == null){
 			HIERARCHY1_FROZEN_REF	= hierarchyService.createRootHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN);
 		}
-		HIERARCHY2_PIZZA_REF = hierarchyService.getHierarchy(PLMModel.TYPE_FINISHEDPRODUCT, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
+		HIERARCHY2_PIZZA_REF = hierarchyService.getHierarchyByPath(HIERARCHY_FINISHEDPRODUCT_PATH, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
 		if(HIERARCHY2_PIZZA_REF == null){	
 			HIERARCHY2_PIZZA_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_PIZZA);
 		}
-		HIERARCHY2_QUICHE_REF = hierarchyService.getHierarchy(PLMModel.TYPE_FINISHEDPRODUCT, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
+		HIERARCHY2_QUICHE_REF = hierarchyService.getHierarchyByPath(HIERARCHY_FINISHEDPRODUCT_PATH, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
 		if(HIERARCHY2_QUICHE_REF == null){	
 			HIERARCHY2_QUICHE_REF = hierarchyService.createHierarchy(finishedProductHierarchyNodeRef, HIERARCHY1_FROZEN_REF, HIERARCHY2_QUICHE);
 		}

@@ -34,6 +34,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -53,9 +55,12 @@ import fr.becpg.test.data.EntityTestData;
 
 public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
+	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
+	
 	protected static final String HIERARCHY1_SEA_FOOD = "Sea food";
 	protected static final String HIERARCHY2_FISH = "Fish";
 	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
+	protected static final String HIERARCHY_PROJECT_PATH = "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:project_Hierarchy";
 
 	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
 	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
@@ -106,10 +111,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		}
 
 	}
-
+	
 	@Override
 	protected void doInitRepo(boolean shouldInit) {
-		
 		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
@@ -136,10 +140,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				}
 			}, false, true);
 		} else {
-			PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.getRootHierarchy(ProjectModel.TYPE_PROJECT, HIERARCHY1_SEA_FOOD);
-			PROJECT_HIERARCHY2_FISH_REF = hierarchyService.getHierarchy(ProjectModel.TYPE_PROJECT, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
-			PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchy(ProjectModel.TYPE_PROJECT, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
-			
+			PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD);
+			PROJECT_HIERARCHY2_FISH_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
+			PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);			
 		}
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {

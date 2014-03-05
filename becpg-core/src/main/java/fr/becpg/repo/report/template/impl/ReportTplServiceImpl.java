@@ -349,7 +349,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
 				.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
 				.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
-				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null)
+				.inDB();
 		
 	}
 

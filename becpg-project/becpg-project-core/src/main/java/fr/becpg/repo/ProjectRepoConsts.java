@@ -11,5 +11,6 @@ public class ProjectRepoConsts {
 	public static final String PATH_REQUEST_ORIGINS = "RequestOrigins";
 	public static final String PATH_SCORE_CRITERIA = "ScoreCriteria";
 	public static final String PATH_SPONSORS = "Sponsors";
+	public static final String PATH_EMAILS_PROJECT = "project";
 	
 }

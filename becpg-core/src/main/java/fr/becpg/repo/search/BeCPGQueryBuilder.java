@@ -45,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -69,6 +70,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private static BeCPGQueryBuilder INSTANCE = null;
 
 	@Autowired
+	@Qualifier("SearchService")
 	private SearchService searchService;
 	@Autowired
 	private NamespaceService namespaceService;
@@ -439,7 +441,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (type != null) {
 			runnedQuery.append(mandatory(getCondType(type)));
-		} else if (!types.isEmpty()) {
+		}
+		
+		if (!types.isEmpty()) {
 			if (types.size() == 1) {
 				runnedQuery.append(mandatory(getCondType(types.iterator().next())));
 			} else {
@@ -449,7 +453,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				}
 				runnedQuery.append(endGroup());
 			}
-		} else if (!excludedTypes.isEmpty()) {
+		}
+		
+		if (!excludedTypes.isEmpty()) {
 			for (QName tmpQName : types) {
 				runnedQuery.append(prohibided(getCondType(tmpQName)));
 			}
