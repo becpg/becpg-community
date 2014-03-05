@@ -30,8 +30,12 @@ import java.util.TreeMap;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.repo.search.impl.querymodel.QueryModelException;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
@@ -40,7 +44,10 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.FileFilterMode;
+import org.alfresco.util.FileFilterMode.Client;
 import org.alfresco.util.ISO9075;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -74,6 +81,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private SearchService searchService;
 	@Autowired
 	private NamespaceService namespaceService;
+	@Autowired
+	private FileFolderService fileFolderService;
 
 	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
@@ -321,10 +330,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		StopWatch watch = new StopWatch();
 		watch.start();
 
-		
 		try {
-			ret =  searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
-		}finally {
+			ret = searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
+		} finally {
 			watch.stop();
 			if (watch.getTotalTimeSeconds() > 1) {
 				logger.warn("Slow query [" + xPath + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
@@ -333,13 +341,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (logger.isDebugEnabled()) {
 				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
 
-				logger.debug("["
-						+ Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
-						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] "
-						+ xPath + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size() );
+				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
+						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + xPath + " executed in  "
+						+ watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
 			}
-			
-			
+
 		}
 
 		return ret;
@@ -389,10 +395,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (logger.isDebugEnabled()) {
 				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
 
-				logger.debug("["
-						+ Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
-						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] "
-						+ runnedQuery + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + refs.size() );
+				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
+						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
+						+ watch.getTotalTimeSeconds() + " seconds - size results " + refs.size());
 			}
 		}
 
@@ -442,7 +447,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (type != null) {
 			runnedQuery.append(mandatory(getCondType(type)));
 		}
-		
+
 		if (!types.isEmpty()) {
 			if (types.size() == 1) {
 				runnedQuery.append(mandatory(getCondType(types.iterator().next())));
@@ -454,7 +459,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				runnedQuery.append(endGroup());
 			}
 		}
-		
+
 		if (!excludedTypes.isEmpty()) {
 			for (QName tmpQName : types) {
 				runnedQuery.append(prohibided(getCondType(tmpQName)));
@@ -562,7 +567,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
 			logger.trace("Transactionnal Search");
-			//Will ensure coherency between solr and lucene
+			// Will ensure coherency between solr and lucene
 			sp.excludeDataInTheCurrentTransaction(false);
 		}
 
@@ -605,6 +610,26 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 		return nodes;
+	}
+
+	public PagingResults<FileInfo> childFileFolders(PagingRequest pageRequest) {
+		PagingResults<FileInfo> pageOfNodeInfos = null;
+
+		FileFilterMode.setClient(Client.script);
+
+		List<Pair<QName, Boolean>> tmp = new LinkedList<Pair<QName, Boolean>>();
+
+		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
+			tmp.add(new Pair<QName, Boolean>(QName.createQName(entry.getKey().replace("@", ""), namespaceService), entry.getValue()));
+		}
+
+		try {
+			pageOfNodeInfos = fileFolderService.list(parentNodeRef, true, false, null, excludedTypes, tmp, pageRequest);
+
+		} finally {
+			FileFilterMode.clearClient();
+		}
+		return pageOfNodeInfos;
 	}
 
 	@Override

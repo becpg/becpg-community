@@ -19,16 +19,22 @@ package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
@@ -51,6 +57,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	protected DataListSortRegistry dataListSortRegistry;
 
 	protected EntityDictionaryService entityDictionaryService;
+
+	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -104,7 +112,37 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		List<NodeRef> results = new ArrayList<NodeRef>();
 
-		if (dataListFilter.isSimpleItem()) {
+		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(BeCPGModel.TYPE_ENTITYLIST_ITEM, dataListFilter.getDataType())) {
+
+			BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("DataType to filter :" + dataListFilter.getDataType());
+			}
+
+			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			for (QName qname : qnames) {
+				if (!qname.equals(dataListFilter.getDataType())) {
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Add to ignore :" + qname);
+					}
+					queryBuilder.excludeType(qname);
+
+				}
+
+			}
+
+			int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
+			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
+
+			PagingRequest pageRequest = new PagingRequest(skipOffset, pagination.getPageSize(), pagination.getQueryExecutionId());
+			pageRequest.setRequestTotalCountMax(requestTotalCountMax);
+
+			results = pagination.paginate(queryBuilder.childFileFolders(pageRequest));
+
+		} else if (dataListFilter.isSimpleItem()) {
 			results.add(dataListFilter.getNodeRef());
 		} else {
 
