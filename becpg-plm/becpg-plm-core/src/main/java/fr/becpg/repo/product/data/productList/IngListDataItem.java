@@ -41,7 +41,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private Double qtyPerc = 0d;
 	
-	private Double volumeQtyPerc = 0d;
+	private Double volumeQtyPerc;
 	
 	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
 	

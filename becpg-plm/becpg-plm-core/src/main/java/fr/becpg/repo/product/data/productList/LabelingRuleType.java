@@ -44,6 +44,8 @@ public enum LabelingRuleType {
 	
 	Group,
 	
-	DoNotDeclare;
+	DoNotDeclare, 
+	
+	Prefs;
 
 }

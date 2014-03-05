@@ -430,4 +430,15 @@ public class FormulationHelper {
 		}				
 	}
 
+	public static Double getVolumeReconstitution(CompoListDataItem compoListDataItem, NodeService nodeService) {
+		if (nodeService.hasAspect(compoListDataItem.getProduct(), PLMModel.ASPECT_RECONSTITUTABLE)) {
+			Double reconstitionRate = (Double) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_RECONSTITUTION_RATE);
+			if (reconstitionRate != null) {
+				return compoListDataItem.getVolume() * reconstitionRate;
+			}
+		}
+		return null;
+	}
+
+
 }

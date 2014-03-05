@@ -382,7 +382,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					}
 					
 					entityVersions.add(entityVersion);
-				}
+				} 
 			}
 		}
 
