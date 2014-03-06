@@ -238,8 +238,8 @@
 
                                                 if (encodeURIComponent(scope.options.report.nodeRef) != scope.widgets.entityReportPicker.value) {
                                                    // Reload page with cache on
-                                                   document.location.reload(false);
-                                                  // window.location.href = window.location.href + '';
+                                                   //document.location.reload(false);
+                                                   window.location.href = window.location.href.split("#")[0];
                                                 }
                                                 Dom.addClass("properties-tab", "hidden");
                                                 Dom.removeClass("preview-tab", "hidden");
