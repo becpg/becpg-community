@@ -1,4 +1,5 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+<import resource="classpath:/alfresco/templates/fr/becpg/import/becpg-util.js">
 
 function getPluginConditions(xmlConfig)
 {
@@ -64,35 +65,12 @@ function main()
    AlfrescoUtil.param("proxy", "alfresco");
    
    var nodeDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
-   if (nodeDetails)
-   {
-	   
-	   if(nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){
-	      
-	   	model.reports = nodeDetails.item.node.associations["rep:reports"];
-	   	model.entityNodeRef =  model.nodeRef;
-	   	first = true;
-	   	for(var j in model.reports){
-      		if(first &&  model.reports[j].nodeRef){
-      			// Set First as default
-      			model.nodeRef = model.reports[j].nodeRef;
-      			first = false;
-      		}
-				if(model.reports[j].isSelected || model.reports[j].isDefault){
-					// Override with default
-					
-				   model.nodeRef = model.reports[j].nodeRef;
-					
-					if(model.reports[j].isSelected){
-						// If selected here we are
-						break;
-					}
-				} 
-      	}
-	   	
-	   	
+   if (nodeDetails && nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){  
+	   var defaultReport =   BeCPGUtil.getDefaultReport(nodeDetails.item.node.associations["rep:reports"]);   
+	   if(defaultReport!=null){
+		   model.entityNodeRef = model.nodeRef;
+		   model.nodeRef = defaultReport.nodeRef;
 	   }
-   
    }
 
    // Populate model with data from repo

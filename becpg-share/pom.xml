@@ -76,6 +76,8 @@
 					<excludes>
 						<exclude>**/entity-details.js</exclude>
 						<exclude>**/alfresco-util.js</exclude>
+						<exclude>**/*-min.js</exclude>
+						<!-- <exclude>**/becpg-util.js</exclude> -->
 						<exclude>**/*.get.js</exclude>
 						<exclude>**/*.lib.js</exclude>
 					</excludes>
