@@ -111,8 +111,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
 		List<NodeRef> results = new ArrayList<NodeRef>();
-
-		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(BeCPGModel.TYPE_ENTITYLIST_ITEM, dataListFilter.getDataType())) {
+		
+		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
 			BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
 

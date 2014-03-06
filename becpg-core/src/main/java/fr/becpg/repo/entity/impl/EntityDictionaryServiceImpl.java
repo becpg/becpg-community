@@ -94,11 +94,11 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	}
 
 	@Override
-	public boolean isSubClass(final QName fieldQname, final QName typeEntitylistItem) {
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), fieldQname.toString() + "_" + typeEntitylistItem.toString() + ".isSubClass",
+	public boolean isSubClass(final QName className, final QName ofClassName) {
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), className.toString() + "_" + ofClassName.toString() + ".isSubClass",
 				new BeCPGCacheDataProviderCallBack<Boolean>() {
 					public Boolean getData() {
-						return dictionaryService.isSubClass(fieldQname, typeEntitylistItem);
+						return dictionaryService.isSubClass(className, ofClassName);
 					}
 				});
 	}
