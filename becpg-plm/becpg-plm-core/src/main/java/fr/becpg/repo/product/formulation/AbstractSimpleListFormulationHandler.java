@@ -190,7 +190,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						}
 									
 						//is it a mandatory charact ?
-						if(slDataItem == null || slDataItem.getValue() == null){					
+						if(slDataItem == null || (slDataItem.getValue() == null && slDataItem.getMaxi() == null && slDataItem.getMini() == null)){					
 							addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
 						}
 						
