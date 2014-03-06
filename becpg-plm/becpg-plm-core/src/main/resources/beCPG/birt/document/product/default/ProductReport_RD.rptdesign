@@ -1,21 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright (C) 2010-2014 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
--->
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
     <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
@@ -40,7 +23,7 @@
     <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1073,28 +1056,10 @@
                     <text-property name="heading">compoListLossPerc</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">dynamicCharactColumn1</property>
-                    <property name="analysis">dimension</property>
+                    <property name="columnName">qtyRD</property>
+                    <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
-                    <text-property name="heading">dynamicCharactColumn1</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">dynamicCharactColumn2</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">dynamicCharactColumn2</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">dynamicCharactColumn3</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">dynamicCharactColumn3</text-property>
-                </structure>
-                <structure>
-                    <property name="columnName">dynamicCharactColumn4</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
-                    <text-property name="heading">dynamicCharactColumn4</text-property>
+                    <text-property name="heading">qtyRD</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">instruction</property>
@@ -1163,26 +1128,11 @@
                     </structure>
                     <structure>
                         <property name="position">12</property>
-                        <property name="name">dynamicCharactColumn1</property>
-                        <property name="dataType">string</property>
+                        <property name="name">qtyRD</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">13</property>
-                        <property name="name">dynamicCharactColumn2</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">14</property>
-                        <property name="name">dynamicCharactColumn3</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">15</property>
-                        <property name="name">dynamicCharactColumn4</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">16</property>
                         <property name="name">instruction</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -1269,41 +1219,20 @@
                 </structure>
                 <structure>
                     <property name="position">12</property>
-                    <property name="name">dynamicCharactColumn1</property>
-                    <property name="nativeName">dynamicCharactColumn1</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="name">qtyRD</property>
+                    <property name="nativeName">qtyRD</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">13</property>
-                    <property name="name">dynamicCharactColumn2</property>
-                    <property name="nativeName">dynamicCharactColumn2</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">14</property>
-                    <property name="name">dynamicCharactColumn3</property>
-                    <property name="nativeName">dynamicCharactColumn3</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">15</property>
-                    <property name="name">dynamicCharactColumn4</property>
-                    <property name="nativeName">dynamicCharactColumn4</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
-                </structure>
-                <structure>
-                    <property name="position">16</property>
                     <property name="name">instruction</property>
                     <property name="nativeName">instruction</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;STRING;/@compoListLossPerc},{dynamicCharactColumn1;STRING;/@dynamicCharactColumn1},{dynamicCharactColumn2;STRING;/@dynamicCharactColumn2},{dynamicCharactColumn3;STRING;/@dynamicCharactColumn3},{dynamicCharactColumn4;STRING;/@dynamicCharactColumn4},{instruction;STRING;/instruction}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;STRING;/@compoListLossPerc},{qtyRD;DOUBLE;/@dynamicCharactColumn5},{instruction;STRING;/instruction}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2180,7 +2109,7 @@
                             <structure>
                                 <property name="name">productQty</property>
                                 <text-property name="displayName">productQty</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g"  ? " - " + dataSetRow["netWeight"] + "kg" : "")</expression>
+                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g"  ? " - " + BirtMath.round(dataSetRow["netWeight"], 2) + " kg" : "")</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2288,17 +2217,17 @@ false
                 <structure>
                     <property name="name">compoListQty</property>
                     <text-property name="displayName">compoListQty</text-property>
-                    <expression name="expression" type="javascript">if(dataSetRow["compoListUnit"] == "Perc"){
-BirtMath.multiply(dataSetRow["compoListQty"], 1000)
+                    <expression name="expression" type="javascript">if(dataSetRow["compoListQty"] > 1000){
+BirtMath.round(dataSetRow["compoListQty"] / 1000,2) + " t";
 }
-else if(dataSetRow["compoListUnit"] == "g"){
-dataSetRow["compoListQtySubFormula"]
+else if(dataSetRow["compoListQty"] >= 1){
+BirtMath.round(dataSetRow["compoListQty"], 2) + " kg";
 }
-else if(dataSetRow["compoListUnit"] == "kg"){
-BirtMath.multiply(dataSetRow["compoListQtySubFormula"], 1000)
+else if(dataSetRow["compoListQty"] >= 0.001){
+BirtMath.round(dataSetRow["compoListQty"] * 1000, 2) + " g";
 }
 else{
-dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
+BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
 }</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
@@ -2318,7 +2247,7 @@ dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
                 <structure>
                     <property name="name">compoListQtySubFormula</property>
                     <text-property name="displayName">compoListQtySubFormula</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["compoListQtySubFormula"] + " " + (dataSetRow["compoListUnit"]  == "Perc" ? "%" : dataSetRow["compoListUnit"])</expression>
+                    <expression name="expression" type="javascript">BirtMath.round(dataSetRow["compoListQtySubFormula"], 2) + " " + (dataSetRow["compoListUnit"]  == "Perc" ? "%" : dataSetRow["compoListUnit"])</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -2347,28 +2276,10 @@ dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">dynamicCharactColumn1</property>
-                    <text-property name="displayName">dynamicCharactColumn1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn1"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">dynamicCharactColumn2</property>
-                    <text-property name="displayName">dynamicCharactColumn2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn2"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">dynamicCharactColumn3</property>
-                    <text-property name="displayName">dynamicCharactColumn3</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn3"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">dynamicCharactColumn4</property>
-                    <text-property name="displayName">dynamicCharactColumn4</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["dynamicCharactColumn4"]</expression>
-                    <property name="dataType">string</property>
+                    <property name="name">qtyRD</property>
+                    <text-property name="displayName">qtyRD</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["qtyRD"]</expression>
+                    <property name="dataType">float</property>
                 </structure>
             </list-property>
             <column id="2910">
@@ -2380,6 +2291,10 @@ dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2969">
+                <property name="width">0.6259541984732825in</property>
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3464">
                 <property name="width">0.6259541984732825in</property>
                 <property name="style">becpg-col-border</property>
             </column>
@@ -2410,23 +2325,27 @@ dataSetRow["compoListQtySubFormula"] + " " + dataSetRow["compoListUnit"]
                     </cell>
                     <cell id="2966">
                         <label id="2917">
-                            <text-property name="text">Qté de 
-MP/UVC (g/UVC)</text-property>
+                            <text-property name="text">Qté MeO</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3462">
+                        <label id="3465">
+                            <text-property name="text">Qté</text-property>
                         </label>
                     </cell>
                     <cell id="3285">
+                        <label id="3333">
+                            <text-property name="text">Qté Labo (g)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3288">
                         <label id="3291">
                             <text-property name="text">Rdt %</text-property>
                         </label>
                     </cell>
-                    <cell id="3288">
+                    <cell id="3321">
                         <label id="3293">
                             <text-property name="text">Freinte %</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3321">
-                        <label id="3333">
-                            <text-property name="text">Qté Labo (g)</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2447,7 +2366,17 @@ MP/UVC (g/UVC)</text-property>
                         </text>
                     </cell>
                     <cell id="2967">
-                        <data id="2900">
+                        <data id="3469">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">compoListQtySubFormula</property>
+                        </data>
+                    </cell>
+                    <cell id="3463">
+                        <data id="3468">
                             <property name="style">becpg-data</property>
                             <structure name="numberFormat">
                                 <property name="category">Fixed</property>
@@ -2458,31 +2387,33 @@ MP/UVC (g/UVC)</text-property>
                         </data>
                     </cell>
                     <cell id="3286">
+                        <data id="3467">
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
+                            <property name="resultSetColumn">qtyRD</property>
+                        </data>
+                    </cell>
+                    <cell id="3289">
                         <data id="3292">
                             <property name="style">becpg-data</property>
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListYieldPerc</property>
                         </data>
                     </cell>
-                    <cell id="3289">
+                    <cell id="3322">
                         <data id="3294">
                             <property name="style">becpg-data</property>
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListLossPerc</property>
                         </data>
                     </cell>
-                    <cell id="3322">
-                        <data id="3334">
-                            <property name="style">becpg-data</property>
-                            <property name="textAlign">center</property>
-                            <property name="resultSetColumn">dynamicCharactColumn1</property>
-                        </data>
-                    </cell>
                 </row>
             </detail>
         </table>
         <grid id="3091">
-            <property name="pageBreakBefore">always</property>
+            <property name="pageBreakBefore">auto</property>
             <column id="3092"/>
             <row id="3095">
                 <cell id="3096">
@@ -2874,6 +2805,14 @@ true
             </row>
         </grid>
         <label id="3174"/>
+        <data id="2955">
+            <structure name="numberFormat">
+                <property name="category">Fixed</property>
+                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+            </structure>
+            <property name="textAlign">center</property>
+            <property name="resultSetColumn">compoListQtySubFormula</property>
+        </data>
     </body>
     <list-property name="images">
         <structure>

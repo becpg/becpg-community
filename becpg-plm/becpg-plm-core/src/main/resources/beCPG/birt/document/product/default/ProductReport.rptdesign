@@ -797,6 +797,17 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">depthLevel</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">nutListMaxi</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">nutListMaxi</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">nutListMini</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">nutListMini</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -838,11 +849,21 @@
                     </structure>
                     <structure>
                         <property name="position">8</property>
+                        <property name="name">nutListMaxi</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">nutListMini</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">9</property>
+                        <property name="position">11</property>
                         <property name="name">GDA</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -899,8 +920,22 @@
                     <property name="dataType">integer</property>
                     <property name="nativeDataType">4</property>
                 </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">nutListMaxi</property>
+                    <property name="nativeName">nutListMaxi</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">nutListMini</property>
+                    <property name="nativeName">nutListMini</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListNut;STRING;/@nutListNut},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{nutListGDAPerc;DOUBLE;/@nutListGDAPerc},{depthLevel;INT;/@depthLevel}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListNut;STRING;/@nutListNut},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{nutListGDAPerc;DOUBLE;/@nutListGDAPerc},{depthLevel;INT;/@depthLevel},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6938,8 +6973,16 @@ else{
                             <structure>
                                 <property name="name">nutListValue</property>
                                 <text-property name="displayName">nutListValue</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["nutListValue"]</expression>
-                                <property name="dataType">float</property>
+                                <expression name="expression" type="javascript">if(dataSetRow["nutListValue"] != null){
+BirtMath.round(dataSetRow["nutListValue"], 2)
+}
+else if(dataSetRow["nutListMaxi"] != null){
+"&lt; " + BirtMath.round(dataSetRow["nutListMaxi"], 2)
+}
+else if(dataSetRow["nutListMini"] != null){
+"> " + BirtMath.round(dataSetRow["nutListMini"], 2) 
+}</expression>
+                                <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
                             <structure>
