@@ -1,4 +1,5 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+<import resource="classpath:/alfresco/templates/fr/becpg/import/becpg-util.js">
 
 function main()
 {
@@ -32,26 +33,11 @@ function main()
       var count = nodeDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
       model.defaultReport = null;
+    
       if(model.pathMode != "true" && nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){
       
       	model.reports = nodeDetails.item.node.associations["rep:reports"];
-      	
-      	
-      	for(var j in model.reports){
-      		var report = model.reports[j];
-      		if(model.defaultReport==null){
-      			//Set First as default
-      			model.defaultReport = report;
-      		}
-				if(report.isSelected || report.isDefault){
-					//Override with default
-					model.defaultReport = report;
-					if(report.isSelected){
-						//If selected here we are
-						break;
-					}
-				} 
-      	}
+      	model.defaultReport = BeCPGUtil.getDefaultReport(model.reports);
       	
       }
       
