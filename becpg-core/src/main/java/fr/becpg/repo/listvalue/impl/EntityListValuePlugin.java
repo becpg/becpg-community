@@ -612,8 +612,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		
 		List<NodeRef> ret =	BeCPGQueryBuilder.createQuery().ofType(datalistType)
 				   .andPropQuery(propertyQName,prepareQuery(query))
-				   .inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService))
-				   .addSort(propertyQName,true)
+				   .inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*")
+				   //.addSort(propertyQName,true) unsupported by solr we need Tokenised "false" or "both"
 				   .maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));

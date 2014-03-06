@@ -73,7 +73,7 @@ public class TaskValuePlugin extends EntityListValuePlugin {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery()
 				.ofType(datalistType)
 				.andPropQuery(propertyQName, prepareQuery(query))
-				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService));
+				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*");
 		
 		if(itemId != null){
 			beCPGQueryBuilder.andNotID(itemId);
