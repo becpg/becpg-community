@@ -82,6 +82,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Autowired
 	private NamespaceService namespaceService;
 	@Autowired
+	@Qualifier("FileFolderService")
 	private FileFolderService fileFolderService;
 
 	@Value("${beCPG.defaultSearchTemplate}")
@@ -122,6 +123,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.searchService = INSTANCE.searchService;
 			builder.namespaceService = INSTANCE.namespaceService;
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
+			builder.fileFolderService = INSTANCE.fileFolderService;
 		}
 		return builder;
 	}
@@ -613,6 +615,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public PagingResults<FileInfo> childFileFolders(PagingRequest pageRequest) {
+		
+		StopWatch watch = new StopWatch();
+		watch.start();
+
+		
 		PagingResults<FileInfo> pageOfNodeInfos = null;
 
 		FileFilterMode.setClient(Client.script);
@@ -628,6 +635,21 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		} finally {
 			FileFilterMode.clearClient();
+			watch.stop();
+			
+			if(pageOfNodeInfos!=null){
+				if (watch.getTotalTimeSeconds() > 1) {
+					logger.warn("Slow childFileFolders [" + parentNodeRef + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + pageOfNodeInfos.getTotalResultCount());
+				}
+	
+				if (logger.isDebugEnabled()) {
+	
+					logger.debug("[" + Thread.currentThread().getStackTrace()[3].getClassName() + " "
+							+ Thread.currentThread().getStackTrace()[3].getLineNumber() + "] childFileFolders executed in  "
+							+ watch.getTotalTimeSeconds() + " seconds - size results " +  pageOfNodeInfos.getTotalResultCount());
+				}
+			}
+			
 		}
 		return pageOfNodeInfos;
 	}
