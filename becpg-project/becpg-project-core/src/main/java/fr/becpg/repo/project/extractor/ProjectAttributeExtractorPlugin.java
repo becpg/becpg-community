@@ -47,12 +47,15 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 	 
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Arrays.asList(ProjectModel.TYPE_TASK_LIST);
+		return Arrays.asList(ProjectModel.TYPE_TASK_LIST, ProjectModel.TYPE_DELIVERABLE_LIST);
 	}
 	
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
+		if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(type)){
+			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_DL_DESCRIPTION);
+		}
 		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 	}
 
@@ -60,7 +63,7 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		//TODO task state
-		return ProjectModel.TYPE_TASK_LIST.toPrefixString(namespaceService).split(":")[1];
+		return type.toPrefixString(namespaceService).split(":")[1];
 	}
 
 	

@@ -18,6 +18,9 @@
 package fr.becpg.repo.project;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.json.JSONObject;
+
+import fr.becpg.repo.project.data.projectList.ActivityType;
 
 public interface ProjectActivityService {
 
@@ -27,6 +30,8 @@ public interface ProjectActivityService {
 	
 	void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef,String beforeState,String afterState);
 	
-	void postProjectCommentCreatedActivity(NodeRef projectNodeRef,String comment);
+	void postCommentActivity(NodeRef commentNodeRef);
+
+	JSONObject postActivityLookUp(ActivityType activityType, String value);
 
 }

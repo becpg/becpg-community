@@ -206,6 +206,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
 
+   
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlState", "pjt:dlState" ],
       renderer : function(oRecord, data, label, scope) {
@@ -213,6 +214,49 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
+   
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	      propertyName : [ "pjt:alData" ],
+	      renderer : function(oRecord, data, label, scope) {
+	    	  var activityType = oRecord.getData("itemData")["prop_pjt_alType"].value;
+	    	  var user = oRecord.getData("itemData")["prop_pjt_alUserId"];
+	    	  var dateCreated = oRecord.getData("itemData")["prop_cm_created"];
+	    	  var html = "";
+              if(data.title){
+            
+            	  var title = "";
+            	  if(activityType == "State"){
+            		  title = " Changed state of " +data.title+ " from  "+data.beforeState+" to "+data.afterState;
+            	  } else if(activityType == "Comment"){
+            		  if(data.isUpdate){
+            			  title = "Comment updated on "+data.title;
+            		  } else {
+            			  title = "Comment created on "+data.title;
+            		  }
+            	  }
+            	  
+            	  html += '<div class="project-activity-details">';
+    	          html += '   <div class="icon">' + Alfresco.Share.userAvatar(user.value) + '</div>';
+    	          html += '   <div class="details">';
+    	          html += '      <span class="info">';
+    	          html += Alfresco.util.userProfileLink(user.username, user.displayValue, 'class="theme-color-1"') + ' ';
+    	          html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) + '<br/>';
+    	          html += '      </span>';
+    	          html += '      <div class="activity-title">' + title + '</div>';
+    	          if(data.content){
+    	         	html += '      <div class="activity-content">' + (data.content) + '</div>';
+    	          }
+    	          html += '   </div>';
+    	          html += '</div>';
+            	  
+              }
+	    	  return html;
+
+	      }
+
+	   });
+   
 
    YAHOO.Bubbling
          .fire(

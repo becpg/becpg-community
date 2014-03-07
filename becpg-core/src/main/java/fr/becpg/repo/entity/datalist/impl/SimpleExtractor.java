@@ -108,7 +108,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		return ret;
 	}
 
-	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
+	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
 		List<NodeRef> results = new ArrayList<NodeRef>();
 		

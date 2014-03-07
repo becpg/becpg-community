@@ -77,4 +77,12 @@ public interface ProjectModel {
 	
 	public static final QName ASPECT_PROJECT_ASPECT = QName.createQName(PROJECT_URI, "projectAspect");
 	public static final QName ASSOC_PROJECT = QName.createQName(PROJECT_URI, "project");
+
+	public static final QName TYPE_ACTIVITY_LIST  = QName.createQName(PROJECT_URI, "activityList");
+
+	public static final QName PROP_ACTIVITYLIST_USERID = QName.createQName(PROJECT_URI, "alUserId");
+
+	public static final QName PROP_ACTIVITYLIST_TYPE = QName.createQName(PROJECT_URI, "alType");
+	
+	public static final QName PROP_ACTIVITYLIST_DATA = QName.createQName(PROJECT_URI, "alData");
 }
