@@ -143,13 +143,18 @@
 
 
 
+	<bean id="activityListExtractor" class="fr.becpg.repo.project.extractor.ActivityListExtractor" parent="simpleExtractor">
+		<property name="projectActivityService" ref="projectActivityService"/>
+	</bean>
+
+
 	<!-- Webscripts -->
 	<bean id="webscript.fr.becpg.project.projectModuleInfo.get" class="fr.becpg.repo.project.web.scripts.ProjectModuleInfoWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
 		<property name="projectService" ref="projectService" />
 	</bean>
 	
-	<!--                 -->
+   <!--                 -->
    <!-- Scheduled tasks -->
    <!--                 -->
 
@@ -191,5 +196,10 @@
         </property>
     </bean>
     
+    <!-- action -->
+    <bean id="project-activity" class="fr.becpg.repo.project.action.ProjectActivityActionExecuter" parent="action-executer">
+      <property name="nodeService" ref="nodeService" />  
+      <property name="projectActivityService" ref="projectActivityService" />     
+    </bean>
 
 </beans>
