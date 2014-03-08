@@ -242,7 +242,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 	}
 
-	private Map<String, String> extractPerson(String person) {
+	protected Map<String, String> extractPerson(String person) {
 		Map<String, String>  ret =  new HashMap<String, String>(2);
 		ret.put("value", person);
 		ret.put("displayValue", attributeExtractorService.getPersonDisplayName(person));

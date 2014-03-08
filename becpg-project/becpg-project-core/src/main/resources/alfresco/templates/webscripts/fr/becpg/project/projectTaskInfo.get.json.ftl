@@ -1,30 +1,28 @@
 <#macro renderDeliverables deliverables>
-<#if deliverables??>
 	<#list deliverables as deliverable>
-	<#if deliverable?? && deliverable.hasPermission("Read")>
-		{
-			"name": "${deliverable.properties["pjt:dlDescription"]!""}",
-			"nodeRef": "${deliverable.nodeRef}",
-			"state": "${deliverable.properties["pjt:dlState"]!""}",
-   		"completionPercent": "${deliverable.properties["pjt:completionPercent"]!""}",
-   		"commentCount":"${deliverable.properties["fm:commentCount"]!""}",
-   		"contents": [
-   			<#if deliverable.assocs["pjt:dlContent"]?exists>
-	   			<#list deliverable.assocs["pjt:dlContent"] as content>
-	   				{
-						"name": "${content.properties.name!""}",
-						"nodeRef": "${content.nodeRef}",
-						"type": "${content.typeShort}",
-						"siteId": "${content.getSiteShortName()}"
-						}
-	   				<#if content_has_next>,</#if>
-	   			</#list>
-   			</#if>
-   		] 
-		}<#if deliverable_has_next>,</#if>	
-	</#if>	
+		<#if deliverable?? && deliverable.hasPermission("Read")>
+			{
+				"name": "${deliverable.properties["pjt:dlDescription"]!""}",
+				"nodeRef": "${deliverable.nodeRef}",
+				"state": "${deliverable.properties["pjt:dlState"]!""}",
+		   		"completionPercent": "${deliverable.properties["pjt:completionPercent"]!""}",
+		   		"commentCount":"${deliverable.properties["fm:commentCount"]!""}",
+		   		"contents": [
+	   			<#if deliverable.assocs["pjt:dlContent"]?exists>
+		   			<#list deliverable.assocs["pjt:dlContent"] as content>
+		   				{
+							"name": "${content.properties.name!""}",
+							"nodeRef": "${content.nodeRef}",
+							"type": "${content.typeShort}",
+							"siteId": "${content.getSiteShortName()}"
+							}
+		   				<#if content_has_next>,</#if>
+		   			</#list>
+	   			</#if>
+	   		] 
+			}<#if deliverable_has_next>,</#if>	
+		</#if>	
 	</#list>
-</#if>
 </#macro>
 
 <#if task?? && task.hasPermission("Read")>
@@ -45,11 +43,15 @@
 	   "nodeRef": "${task.nodeRef}",
 		"deliverables":
 		[
+		<#if deliverables??>
 			<@renderDeliverables deliverables/>
+		</#if>
 		],
 		"prevDeliverables":
 		[
+		<#if prevDeliverables??>
 			<@renderDeliverables prevDeliverables/>
+		</#if>
 		]
 	}
 }
