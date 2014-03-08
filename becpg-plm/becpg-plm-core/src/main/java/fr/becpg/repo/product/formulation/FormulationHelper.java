@@ -367,17 +367,20 @@ public class FormulationHelper {
 				
 				if(FormulationHelper.isCompoUnitP(unit)){
 					qty = compoList.getQtySubFormula();
+					if(!FormulationHelper.isProductUnitP(productUnit)){
+						productQty = 1d;
+					}
 				}
-//				else if(FormulationHelper.isCompoUnitLiter(unit)){						
-//					int compoFactor = unit.equals(CompoListUnit.L) ? 1000 : 1;
-//					int productFactor = productUnit.equals(ProductUnit.L) ? 1000 : 1;						
-//					qty = compoList.getQtySubFormula() * compoFactor / productFactor;					
-//				}
-//				else if(FormulationHelper.isCompoUnitKg(unit)){
-//					if(unit.equals(CompoListUnit.g)){
-//						qty = qty * 1000;
-//					}
-//				}			
+				else if(FormulationHelper.isCompoUnitLiter(unit)){						
+					int compoFactor = unit.equals(CompoListUnit.L) ? 1000 : 1;
+					int productFactor = productUnit.equals(ProductUnit.L) ? 1000 : 1;						
+					qty = compoList.getQtySubFormula() * compoFactor / productFactor;					
+				}
+				else if(FormulationHelper.isCompoUnitKg(unit)){
+					if(unit.equals(CompoListUnit.g)){
+						qty = qty * 1000;
+					}
+				}			
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);					
 				return tare * qty / productQty;
 			}
