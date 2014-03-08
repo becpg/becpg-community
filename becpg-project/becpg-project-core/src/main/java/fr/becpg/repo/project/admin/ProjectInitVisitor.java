@@ -18,13 +18,22 @@
 package fr.becpg.repo.project.admin;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
+import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
+import org.alfresco.service.cmr.action.Action;
+import org.alfresco.service.cmr.action.ActionCondition;
+import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.Rule;
+import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +47,7 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.project.action.ProjectActivityActionExecuter;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -51,25 +61,24 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PROJECTS_REPORT_RPTFILE_PATH = "beCPG/birt/project/ProjectsReport.rptdesign";
 
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
-	
-	public static final String EMAIL_TEMPLATES = "/app:company_home/app:dictionary/app:email_templates";
-	
+
+	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
 
 	@Autowired
 	private EntitySystemService entitySystemService;
 
 	@Autowired
 	private EntityTplService entityTplService;
-	
-	@Autowired 
-	private ReportTplService reportTplService;
-	
+
 	@Autowired
-	private ContentHelper contentHelper;	
+	private ReportTplService reportTplService;
+
+	@Autowired
+	private ContentHelper contentHelper;
 
 	@Override
 	public void visitContainer(NodeRef companyHome) {
-		
+
 		logger.info("Run ProjectInitVisitor ...");
 
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
@@ -81,14 +90,12 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		visitEntityTpls(systemNodeRef);
 
 		visitReports(systemNodeRef);
-		
-		// MailTemplates		
-		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery()
-				.selectNodeByPath(companyHome, EMAIL_TEMPLATES), 
-				ProjectRepoConsts.PATH_EMAILS_PROJECT);
-		contentHelper.addFilesResources(emailsProject, "classpath:beCPG/mails/project/*.ftl");		
-	}
 
+		// MailTemplates
+		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES),
+				ProjectRepoConsts.PATH_EMAILS_PROJECT);
+		contentHelper.addFilesResources(emailsProject, "classpath:beCPG/mails/project/*.ftl");
+	}
 
 	/**
 	 * Create the entity templates
@@ -105,10 +112,33 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		// visit supplier
 		Set<QName> dataLists = new LinkedHashSet<QName>();
+		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
+
+		
+		
+		if(ruleService.getRules(entityTplNodeRef).isEmpty()){
+		
+			Map<String, Serializable> params = new HashMap<String, Serializable>();
+			CompositeAction compositeAction = actionService.createCompositeAction();
+			Action myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
+			compositeAction.addAction(myAction);
+			
+			// Create Rule
+			Rule rule = new Rule();
+			rule.setTitle("Project activity rule");
+			rule.setDescription("Register project activity");
+			rule.applyToChildren(true);
+			rule.setExecuteAsynchronously(false);
+			rule.setRuleDisabled(false);
+			rule.setRuleType(RuleType.INBOUND);
+			rule.setAction(compositeAction);
+			ruleService.saveRule(entityTplNodeRef, rule);
+		}
+
 	}
 
 	/**
@@ -136,7 +166,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		// reports folder
 		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
-		
+
 		/*
 		 * Export Search reports
 		 */
@@ -144,20 +174,15 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		// export search products
 		try {
-			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef,
-					PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
-			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
-					TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS),
-					EXPORT_PROJECTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.PDF,
-					ProjectModel.TYPE_PROJECT, false, true, false);
+			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef, TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS),
+					EXPORT_PROJECTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
 
-			reportTplService
-					.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
+			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
 		}
 
-		
 	}
-	
+
 }

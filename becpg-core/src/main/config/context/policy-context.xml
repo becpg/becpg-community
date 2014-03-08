@@ -44,6 +44,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="ruleService" ref="ruleService"/>
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
