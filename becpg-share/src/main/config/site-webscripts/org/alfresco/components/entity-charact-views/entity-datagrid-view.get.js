@@ -3,15 +3,12 @@
 
 function main()
 {
-	
    if(page.url.args.list!=null){
 	model.listName = page.url.args.list;
    }
 	
    parseActions(model.listName);
-   
-  
-   
+
    //Widget instantiation metadata...
    var entityDataGrid = {
     id : "entityDataGrid", 

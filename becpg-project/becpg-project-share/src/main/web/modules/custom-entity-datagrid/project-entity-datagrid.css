@@ -1,0 +1,173 @@
+
+.datagrid span.project {
+	background:
+		url("../../components/images/filetypes/generic-project-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.deliverable {
+	background: url("../../components/images/filetypes/generic-file-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.task {
+	background: url("../../components/images/filetypes/generic-task-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.task-milestone {
+	background:
+		url("../../components/images/filetypes/generic-task-milestone-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.task-planned {
+	background:
+		url("../../components/documentlibrary/indicators/project-planned-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.task-inprogress {
+	background:
+		url("../../components/documentlibrary/indicators/project-inprogress-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.task-cancelled {
+	background:
+		url("../../components/documentlibrary/indicators/project-cancelled-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.task-onhold {
+	background:
+		url("../../components/documentlibrary/indicators/project-onhold-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid span.task-completed {
+	background:
+		url("../../components/documentlibrary/indicators/project-completed-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
+.datagrid.activityList .grid table {
+	border: none;
+}
+
+.datagrid.activityList .yui-dt thead {
+	display: none;
+}
+
+.datagrid.activityList .grid.yui-dt .yui-dt-data  td,.datagrid.activityList .yui-dt-data td	{
+	border: none !important;
+	cursor : default;
+}
+
+.datagrid.activityList .yui-dt-data  tr,.datagrid.activityList .yui-dt-data tr.yui-dt-highlighted 	{
+	background-color: white;
+	border: none;
+	cursor : default;
+}
+
+.datagrid  .project-activity-details {
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	margin: 0px 0px 10px;
+	padding: 12px;
+	border: 1px solid #CCCCCC;
+}
+
+.datagrid  .project-activity-details  .icon {
+	float: left;
+	width: 10%;
+	line-height: 3em;
+	min-height: 3em;
+	text-align: center;
+}
+
+.datagrid  .project-activity-details  .details {
+	float: right;
+	width: 90%;
+}
+
+.datagrid  .project-activity-details .user-info {
+	float: left;
+	width: 70%;
+	font-weight: bold;
+}
+
+.datagrid  .project-activity-details .date-info {
+	float: right;
+	width: 25%;
+	color: #777;
+	font-size: 11px;
+	padding-left: 8px;
+}
+
+.datagrid  .project-activity-details .details .activity-title {
+	clear: both;
+}
+
+.datagrid  .project-activity-details .details .activity-content {
+	clear: both;
+	list-style-type: disc;
+}
+
+.datagrid  .project-activity-details .details .activity-content ul li {
+	list-style-type: disc;
+}
+
+.datagrid  .project-activity-details .details .activity-content ol li {
+	list-style-type: decimal;
+}
+
+.datagrid  .project-activity-details .details .activity-content {
+	background: url("../../components/images/welcome-background.png")
+		repeat-x scroll 0 0 transparent;
+	border: 1px solid #FFEA5B;
+	padding: 5px;
+	margin: 10px;
+	border-radius: 8px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	position: relative;
+	width: 80%;
+}
+
+/* arrows - :before and :after */
+.datagrid  .project-activity-details .details .activity-content:before {
+	position: absolute;
+	display: inline-block;
+	border-top: 7px solid transparent;
+	border-right: 7px solid #FFEA5B;
+	border-bottom: 7px solid transparent;
+	left: -9px;
+	top: 10px;
+	content: '';
+}
+
+.datagrid  .project-activity-details .details .activity-content:after {
+	position: absolute;
+	display: inline-block;
+	border-top: 6px solid transparent;
+	border-right: 6px solid #FFEA5B;
+	border-bottom: 6px solid transparent;
+	left: -7px;
+	top: 11px;
+	content: '';
+}
+
+.datagrid div.scoreList-screening {
+	height: 150px;
+	overflow: auto;
+}
