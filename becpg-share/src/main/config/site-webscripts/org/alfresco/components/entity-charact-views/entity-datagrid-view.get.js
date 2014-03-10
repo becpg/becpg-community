@@ -3,8 +3,12 @@
 
 function main()
 {
-   parseActions();
-   
+   if(page.url.args.list!=null){
+	model.listName = page.url.args.list;
+   }
+	
+   parseActions(model.listName);
+
    //Widget instantiation metadata...
    var entityDataGrid = {
     id : "entityDataGrid", 
@@ -14,7 +18,7 @@ function main()
        usePagination: args.pagination!=null ? args.pagination!="false" : false,
        useFilter: args.filter!=null ? args.filter!="false" : false,
        entityNodeRef: page.url.args.nodeRef!=null ?page.url.args.nodeRef : "",
-       list: page.url.args.list!=null ?page.url.args.list : "",
+       list:  model.listName!=null ? model.listName : "",
        sortable : true,
        sortUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/sort/node",
        dataUrl : page.url.context+"/proxy/alfresco/" +  (args.dataUrl!=null ? args.dataUrl :"becpg/entity/datalists/data/node"),

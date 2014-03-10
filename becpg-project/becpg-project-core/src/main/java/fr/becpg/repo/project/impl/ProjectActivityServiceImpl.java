@@ -20,7 +20,6 @@ package fr.becpg.repo.project.impl;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.repo.forum.CommentService;
-import org.alfresco.rest.api.model.Comment;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -29,11 +28,11 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
@@ -41,6 +40,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.project.ProjectActivityService;
+import fr.becpg.repo.project.data.projectList.ActivityEvent;
 import fr.becpg.repo.project.data.projectList.ActivityListDataItem;
 import fr.becpg.repo.project.data.projectList.ActivityType;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -48,6 +48,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 @Service("projectActivityService")
 public class ProjectActivityServiceImpl implements ProjectActivityService {
 
+	
 	private static String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
 
 	public static String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
@@ -55,8 +56,11 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 	public static String DELIVERABLE_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".deliverable-state";
 	public static String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
 
-	private static String PROP_COMMENT_NODEREF= "commentNodeRef";
-	
+	private static String PROP_COMMENT_NODEREF = "commentNodeRef";
+	private static String PROP_CONTENT_NODEREF = "contentNodeRef";
+	private static final String PROP_ACTIVITY_EVENT = "activityEvent";
+	private static final String PROP_TITLE = "title";
+
 	private static Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
 
 	@Autowired
@@ -79,7 +83,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	@Autowired
 	CommentService commentService;
-	
+
 	@Autowired
 	ContentService contentService;
 
@@ -115,7 +119,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					data.put("entityTitle", nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
 				}
 				data.put(PostLookup.JSON_NODEREF, itemNodeRef);
-				data.put("title", title);
+				data.put(PROP_TITLE, title);
 				data.put("beforeState", beforeState);
 				data.put("afterState", afterState);
 
@@ -124,10 +128,10 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 				// Project activity
 				data = new JSONObject();
-				data.put("title", title);
+				data.put(PROP_TITLE, title);
 				data.put("beforeState", beforeState);
 				data.put("afterState", afterState);
-				
+
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 
 				activityListDataItem.setActivityData(data.toString());
@@ -163,7 +167,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 	}
 
 	@Override
-	public void postCommentActivity(NodeRef commentNodeRef) {
+	public void postCommentActivity(NodeRef commentNodeRef, ActivityEvent activityEvent) {
 
 		if (commentNodeRef != null) {
 			try {
@@ -171,28 +175,22 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 				JSONObject data = new JSONObject();
 				data.put(PROP_COMMENT_NODEREF, commentNodeRef);
-				
-				if(nodeService.hasAspect(commentNodeRef, ContentModel.ASPECT_AUDITABLE)
-						&& nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED)!=null
-						&& !nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED)
-						.equals(nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED)) ){
-					data.put("isUpdate",true);
-				}
-				
+				data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
+
 				NodeRef itemNodeRef = commentService.getDiscussableAncestor(commentNodeRef);
 				NodeRef projectNodeRef = itemNodeRef;
 				QName itemType = nodeService.getType(itemNodeRef);
 				if (ProjectModel.TYPE_PROJECT.equals(itemType)) {
-					data.put("title", (String) nodeService.getProperty(itemNodeRef, ContentModel.PROP_NAME));
+					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ContentModel.PROP_NAME));
 
 				} else if (ProjectModel.TYPE_TASK_LIST.equals(itemType)) {
 					projectNodeRef = getProjectNodeRef(itemNodeRef);
-					data.put("title", (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_TASK_NAME));
+					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_TASK_NAME));
 					activityListDataItem.setTask(itemNodeRef);
 
 				} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(itemType)) {
 					projectNodeRef = getProjectNodeRef(itemNodeRef);
-					data.put("title", (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
+					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
 					activityListDataItem.setDeliverable(itemNodeRef);
 					activityListDataItem.setTask(getTaskNodeRef(itemNodeRef));
 				}
@@ -213,47 +211,91 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	}
 
+	@Override
+	public void postContentActivity(NodeRef contentNodeRef, ActivityEvent activityEvent) {
+
+		if (contentNodeRef != null && nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
+			try {
+				// Project activity
+				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+				JSONObject data = new JSONObject();
+				data.put(PROP_CONTENT_NODEREF, contentNodeRef);
+				data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
+				
+				NodeRef projectNodeRef = getProjectNodeRefFromContent(contentNodeRef);
+				
+				data.put(PROP_TITLE, (String) nodeService.getProperty(contentNodeRef, ContentModel.PROP_NAME));
+
+				activityListDataItem.setActivityType(ActivityType.Content);
+				activityListDataItem.setActivityData(data.toString());
+				activityListDataItem.setParentNodeRef(getActivityList(projectNodeRef));
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Post Activity :" + activityListDataItem.toString());
+				}
+
+				alfrescoRepository.save(activityListDataItem);
+
+			} catch (JSONException e) {
+				logger.error(e, e);
+			}
+		}
+
+		
+	}
+
+	private NodeRef getProjectNodeRefFromContent(NodeRef contentNodeRef) {
+		NodeRef projectNodeRef = nodeService.getPrimaryParent(contentNodeRef).getParentRef();
+		while(!ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))){
+			projectNodeRef = nodeService.getPrimaryParent(projectNodeRef).getParentRef();
+		}
+		
+		return projectNodeRef;
+	}
+
 	private NodeRef getActivityList(NodeRef projectNodeRef) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
 		if (listContainerNodeRef == null) {
 			listContainerNodeRef = entityListDAO.createListContainer(projectNodeRef);
 		}
 
-				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef,ProjectModel.TYPE_ACTIVITY_LIST);
-				if (listNodeRef == null) {
-					listNodeRef = entityListDAO.createList(listContainerNodeRef,ProjectModel.TYPE_ACTIVITY_LIST);
-				}
-				
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_ACTIVITY_LIST);
+		if (listNodeRef == null) {
+			listNodeRef = entityListDAO.createList(listContainerNodeRef, ProjectModel.TYPE_ACTIVITY_LIST);
+		}
+
 		return listNodeRef;
-		
+
 	}
-	
+
 	@Override
-	public JSONObject postActivityLookUp(ActivityType activityType, String value){
-			if(value!=null ) {
-				try {
-					JSONTokener tokener = new JSONTokener(value);
-					JSONObject jsonObject = new JSONObject(tokener);
-					if(activityType.equals(ActivityType.Comment)){
-						NodeRef commentNodeRef = new NodeRef((String) jsonObject.get(PROP_COMMENT_NODEREF));
-						if(nodeService.exists(commentNodeRef)){
+	public JSONObject postActivityLookUp(ActivityType activityType, String value) {
+		if (value != null) {
+			try {
+				JSONTokener tokener = new JSONTokener(value);
+				JSONObject jsonObject = new JSONObject(tokener);
+				if (activityType.equals(ActivityType.Comment)) {
+					NodeRef commentNodeRef = new NodeRef((String) jsonObject.get(PROP_COMMENT_NODEREF));
+					ActivityEvent activityEvent = ActivityEvent.valueOf((String) jsonObject.get(PROP_ACTIVITY_EVENT));
+					if (nodeService.exists(commentNodeRef)) {
 						ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
-					        if(reader != null)
-					        {
-						        String content = reader.getContentString();
-						        jsonObject.put("content", content);
-					        }
+						if (reader != null) {
+							String content = reader.getContentString();
+							jsonObject.put("content", content);
 						}
+					} else if(!ActivityEvent.Delete.equals(activityEvent))  {
 						
+						jsonObject.put("content", I18NUtil.getMessage("project.activity.comment.deleted"));
 					}
-					
-					
-					return jsonObject;
-				} catch (Exception e) {
-					logger.warn("Cannot parse "+value,e);
+
 				}
+
+				return jsonObject;
+			} catch (Exception e) {
+				logger.warn("Cannot parse " + value, e);
 			}
-			return null;	
+		}
+		return null;
 	}
 
 }

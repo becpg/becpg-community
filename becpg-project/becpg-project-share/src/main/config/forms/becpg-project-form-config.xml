@@ -966,34 +966,51 @@
 					<show id="cm:created" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:alData"  read-only="true"/>
+					<field id="pjt:alData"   read-only="true"/>
 					<field id="pjt:alType" label="hidden" read-only="true" />
-					<field id="pjt:alUserId"  label="hidden" read-only="true"/>
-					<field id="pjt:alTaskId"  label="hidden" read-only="true"/>
-					<field id="pjt:alDeliverableId" label="hidden" read-only="true" />
+					<field id="pjt:alUserId"   label="hidden" read-only="true"/>
+					<field id="pjt:alTaskId"   label="hidden" read-only="true"/>
+					<field id="pjt:alDeliverableId"  label="hidden"  read-only="true" />
 					<field id="cm:created"  label="hidden" read-only="true"/>
 				</appearance>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="pjt:alType" />
-					<show id="pjt:alData" />
 					<show id="pjt:alUserId" />
 					<show id="pjt:alTaskId" />
 					<show id="pjt:alDeliverableId" />
 					<show id="cm:created" />
 				</field-visibility>
 				<appearance>
+					<field id="pjt:alType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+								<control-param name="isSearch">true</control-param>
+								<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="cm:create">
+						<control
+							template="/org/alfresco/components/form/controls/date.ftl">
+						</control>
+					</field>
+					<field id="pjt:alUserId">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=cm:person
+							</control-param>
+						</control>
+					</field>
 					<field id="pjt:alTaskId">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
 							</control-param>
 						</control>
 					</field>
 					<field id="pjt:alDeliverableId">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:deliverableList
 							</control-param>
 						</control>

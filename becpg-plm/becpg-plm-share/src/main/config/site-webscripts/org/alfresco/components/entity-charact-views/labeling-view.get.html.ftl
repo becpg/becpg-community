@@ -1,14 +1,21 @@
 <@markup id="css" >
 	<#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
 	
+	<@link href="${url.context}/res/modules/custom-entity-datagrid/product-entity-datagrid.css" group="entity-datagrid" />
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-charact-views/labeling-view.css" group="formulation-view" />
 </@>
 
 <@markup id="js">
    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
+   
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datagrid"></@script>
    <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
    <@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="formulation-view"/>
 </@>
+
+<@markup id="resources">
+   <!-- Additional entity resources -->
+</@markup>
 
 <@markup id="widgets">
    	<@inlineScript group="labeling-view">

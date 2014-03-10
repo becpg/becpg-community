@@ -119,8 +119,8 @@ function specialize(item, activity, summary)
             item.suppressSite = true;
          }
          item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-details?nodeRef="+summary.nodeRef;
-         item.custom0 = msg.get("state." + summary.beforeState);
-         item.custom1 = msg.get("state." + summary.afterState);
+         item.custom0 = msg.get("data.projectstate." + summary.beforeState.toLowerCase());
+         item.custom1 = msg.get("data.projectstate." + summary.afterState.toLowerCase());
          break;
       case "fr.becpg.project.task-state":
          if(activity.siteNetwork== null || activity.siteNetwork.length==0){
@@ -128,8 +128,8 @@ function specialize(item, activity, summary)
          }
          item.title = summary.title + " [" + summary.entityTitle + "]";
          item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-data-lists?list=taskList&nodeRef="+summary.entityNodeRef;
-         item.custom0 = msg.get("state." + summary.beforeState);
-         item.custom1 = msg.get("state." + summary.afterState);
+         item.custom0 = msg.get("data.taskstate." + summary.beforeState.toLowerCase());
+         item.custom1 = msg.get("data.taskstate." + summary.afterState.toLowerCase());
          break;
       case "fr.becpg.project.deliverable-state":
          if(activity.siteNetwork== null || activity.siteNetwork.length==0){
@@ -137,8 +137,8 @@ function specialize(item, activity, summary)
          }
          item.title = summary.title + "[" + summary.entityTitle + "]";
          item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-data-lists?list=deliverableList&nodeRef="+summary.entityNodeRef;
-         item.custom0 = msg.get("state." + summary.beforeState);
-         item.custom1 = msg.get("state." + summary.afterState);
+         item.custom0 = msg.get("data.deliverablestate." + summary.beforeState.toLowerCase());
+         item.custom1 = msg.get("data.deliverablestate." + summary.afterState.toLowerCase());
          break;
          
    }
