@@ -224,23 +224,32 @@ if (beCPG.module.EntityDataGridRenderers) {
 	    	  var dateCreated = oRecord.getData("itemData")["prop_cm_created"];
 	    	  var html = "";
               if(data.title){
-            
             	  var title = "";
+            	  var className = oRecord.getData("itemData")["prop_pjt_alDeliverableId"].value!=null ? "deliverable" : 
+            		  oRecord.getData("itemData")["prop_pjt_alTaskId"].value!=null ? "task" : "project" 
+            	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>"
             	  if(activityType == "State"){
-            		  title = " Changed state of " +data.title+ " from  "+data.beforeState+" to "+data.afterState;
+            		  title = scope.msg("project.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()))
             	  } else if(activityType == "Comment"){
-            		  if(data.isUpdate){
-            			  title = "Comment updated on "+data.title;
+            		 title  = scope.msg("project.activity.comment."+data.activityEvent.toLowerCase(), title);
+            	  } else if(activityType == "Content"){
+            		  if(data.activityEvent == "Delete"){
+            			  title = '<span class="doc-file"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+ 	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</span>';
             		  } else {
-            			  title = "Comment created on "+data.title;
+	            		 title = '<span class="doc-file"><a  href="' +  beCPG.util.entityDetailsURL(oRecord.getData("siteId"),data.contentNodeRef, "document") + 
+	            		 '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
             		  }
+            		 title  = scope.msg("project.activity.content."+data.activityEvent.toLowerCase(), title);
             	  }
-            	  
             	  html += '<div class="project-activity-details">';
-    	          html += '   <div class="icon">' + Alfresco.Share.userAvatar(user.value) + '</div>';
+    	          html += '   <div class="icon">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
     	          html += '   <div class="details">';
-    	          html += '      <span class="info">';
-    	          html += Alfresco.util.userProfileLink(user.username, user.displayValue, 'class="theme-color-1"') + ' ';
+    	          html += '      <span class="user-info">';
+    	          html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
+    	          html += '      </span>';
+    	          html += '      <span class="date-info">';
     	          html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) + '<br/>';
     	          html += '      </span>';
     	          html += '      <div class="activity-title">' + title + '</div>';
@@ -248,6 +257,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     	         	html += '      <div class="activity-content">' + (data.content) + '</div>';
     	          }
     	          html += '   </div>';
+    	          html += '   <div class="clear"></div>';
     	          html += '</div>';
             	  
               }

@@ -31,7 +31,7 @@
 </#macro>
 
 <#macro entityDataGrid showToolBar=false showDataListTitle=true>
-<div id="${el}-body" class="datagrid">
+<div id="${el}-body" class="datagrid<#if listName??> ${listName}</#if>">
    <#if showDataListTitle>
    <div class="datagrid-meta">
       <h2 id="${el}-title"></h2>

@@ -22,11 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.repo.webservice.accesscontrol.GetPermissionsResult;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
@@ -59,6 +59,13 @@ public class ActivityListExtractor extends SimpleExtractor {
 		dataListFilter.setSortMap(sortMap);
 
 		return super.getListNodeRef(dataListFilter, pagination);
+	}
+	
+	
+	@Override
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination,
+			boolean hasWriteAccess) {
+		return super.extract(dataListFilter, metadataFields, pagination, false);
 	}
 
 	@Override
