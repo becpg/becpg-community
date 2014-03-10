@@ -21,16 +21,21 @@ package fr.becpg.repo.project.action;
 
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
+import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.project.ProjectActivityService;
+import fr.becpg.repo.project.data.projectList.ActivityEvent;
 
 /**
  * @author matthieu
@@ -39,6 +44,8 @@ import fr.becpg.repo.project.ProjectActivityService;
 public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 
 	public static final String NAME = "project-activity";
+	
+	public static final String PARAM_ACTIVITY_EVENT = "activityEvent";
 
 	private Log logger = LogFactory.getLog(ProjectActivityActionExecuter.class);
 
@@ -64,17 +71,25 @@ public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 	@Override
 	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef) {
 		if (nodeService.exists(actionedUponNodeRef)) {
-			if(ForumModel.TYPE_POST.equals(nodeService.getType(actionedUponNodeRef))){
-				logger.debug("Action upon comment, post activity");
-				projectActivityService.postCommentActivity(actionedUponNodeRef);
+			QName type = nodeService.getType(actionedUponNodeRef);
+			String activityEvent = (String) ruleAction.getParameterValue(PARAM_ACTIVITY_EVENT);
+			if(activityEvent!=null){
+				if(ForumModel.TYPE_POST.equals(type)){
+					logger.debug("Action upon comment, post activity");
+					projectActivityService.postCommentActivity(actionedUponNodeRef, ActivityEvent.valueOf(activityEvent));
+				} else if(ContentModel.TYPE_CONTENT.equals(type)){
+					logger.debug("Action upon content, post activity");
+					projectActivityService.postContentActivity(actionedUponNodeRef, ActivityEvent.valueOf(activityEvent));
+				}
 			}
+			
 		}
 	}
 
 	
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
-		//paramList.add(new ParameterDefinitionImpl(PARAM_VERSION_TYPE, DataTypeDefinition.TEXT, true, getParamDisplayLabel(PARAM_VERSION_TYPE)));
+		paramList.add(new ParameterDefinitionImpl(PARAM_ACTIVITY_EVENT, DataTypeDefinition.TEXT, true, getParamDisplayLabel(PARAM_ACTIVITY_EVENT)));
 		
 	}
 
