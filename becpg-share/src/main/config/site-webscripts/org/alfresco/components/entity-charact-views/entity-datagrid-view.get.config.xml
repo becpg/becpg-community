@@ -1,6 +1,6 @@
 <datagrid-view>
    <actionSetToolbar>
-  		<action type="action-link" id="onActionShowDetails"  permission="details" label="actions.show-details" />
+  	  <action type="action-link" id="onActionShowDetails"  permission="details" label="actions.show-details" />
       <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
       <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
       <action type="action-link" id="onActionUp" permission="sort" label="menu.selected-items.up" />

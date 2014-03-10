@@ -1,0 +1,38 @@
+
+.datagrid .red {
+	color: red;
+}
+
+.datagrid-bar .onActionShowDetails,.datagrid .onActionShowDetails a {
+	background-image: url("../../components/images/show-details-16.png");
+}
+
+.datagrid-bar .onActionShowComments,.datagrid .onActionShowComments a {
+	background-image: url("../../components/images/comment-16.png");
+}
+
+.datagrid-bar .onActionManageAspects,.datagrid .onActionManageAspects a
+	{
+	background-image: url("../../components/images/aspect-16.png");
+}
+
+.datagrid-bar .onActionShowWused,.datagrid .onActionShowWused a {
+	background-image: url("../../components/images/create-rule-16.png");
+}
+
+.datagrid span.document-version {
+	margin-left: .8em;
+	position: relative;
+	top: -2px;
+	visibility: hidden;
+	padding: 1px;
+}
+
+.datagrid .yui-dt-highlighted span.document-version {
+	visibility: visible;
+}
+
+.datagrid div.scoreList-screening {
+	height: 150px;
+	overflow: auto;
+}

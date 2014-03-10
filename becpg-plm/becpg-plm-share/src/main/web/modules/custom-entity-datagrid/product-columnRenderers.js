@@ -59,19 +59,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 
                });
 
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "text_bcpg:lkvValue",
-      renderer : function(oRecord, data, label, scope) {
-         if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
-            var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
-            return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">' + Alfresco.util
-                  .encodeHTML(data.displayValue) + '</span>';
-         }
-         return Alfresco.util.encodeHTML(data.displayValue);
-
-      }
-
-   });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary",
@@ -197,77 +184,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
 
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "pjt:tlTaskName" ],
-      renderer : function(oRecord, data, label, scope) {
-         var className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task";
-         return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-      }
-
-   });
-
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : [ "pjt:tlState", "pjt:dlState" ],
-      renderer : function(oRecord, data, label, scope) {
-         return '<span class="' + "task-" + data.value.toLowerCase() + '" title="' + data.displayValue + '" />';
-      }
-
-   });
-   
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : [ "pjt:alData" ],
-	      renderer : function(oRecord, data, label, scope) {
-	    	  var activityType = oRecord.getData("itemData")["prop_pjt_alType"].value;
-	    	  var user = oRecord.getData("itemData")["prop_pjt_alUserId"];
-	    	  var dateCreated = oRecord.getData("itemData")["prop_cm_created"];
-	    	  var html = "";
-              if(data.title){
-            	  var title = "";
-            	  var className = oRecord.getData("itemData")["prop_pjt_alDeliverableId"].value!=null ? "deliverable" : 
-            		  oRecord.getData("itemData")["prop_pjt_alTaskId"].value!=null ? "task" : "project" 
-            	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>"
-            	  if(activityType == "State"){
-            		  title = scope.msg("project.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()))
-            	  } else if(activityType == "Comment"){
-            		 title  = scope.msg("project.activity.comment."+data.activityEvent.toLowerCase(), title);
-            	  } else if(activityType == "Content"){
-            		  if(data.activityEvent == "Delete"){
-            			  title = '<span class="doc-file"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
- 	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</span>';
-            		  } else {
-	            		 title = '<span class="doc-file"><a  href="' +  beCPG.util.entityDetailsURL(oRecord.getData("siteId"),data.contentNodeRef, "document") + 
-	            		 '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
-	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
-            		  }
-            		 title  = scope.msg("project.activity.content."+data.activityEvent.toLowerCase(), title);
-            	  }
-            	  html += '<div class="project-activity-details">';
-    	          html += '   <div class="icon">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
-    	          html += '   <div class="details">';
-    	          html += '      <span class="user-info">';
-    	          html += Alfresco.util.userProfileLink(user.value, user.displayValue, 'class="theme-color-1"') + ' ';
-    	          html += '      </span>';
-    	          html += '      <span class="date-info">';
-    	          html += Alfresco.util.relativeTime(Alfresco.util.fromISO8601(dateCreated.value)) + '<br/>';
-    	          html += '      </span>';
-    	          html += '      <div class="activity-title">' + title + '</div>';
-    	          if(data.content){
-    	         	html += '      <div class="activity-content">' + (data.content) + '</div>';
-    	          }
-    	          html += '   </div>';
-    	          html += '   <div class="clear"></div>';
-    	          html += '</div>';
-            	  
-              }
-	    	  return html;
-
-	      }
-
-	   });
-   
-
    YAHOO.Bubbling
          .fire(
                "registerDataGridRenderer",
@@ -369,13 +285,6 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
    });
 
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "pjt:slScreening",
-      renderer : function(oRecord, data, label, scope) {
-
-         return '<div class="scoreList-screening">' + data.displayValue + '</div>';
-      }
-   });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:variantIds",
@@ -443,32 +352,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
    
-   
-   YAHOO.Bubbling
-         .fire(
-               "registerDataGridRenderer",
-               {
-                  propertyName : "fm:commentCount",
-                  renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-
-                     if (data.value != null && data.value != "" && data.value != "0") {
-
-                        if (oColumn.hidden) {
-                           scope.widgets.dataTable.showColumn(oColumn);
-                           Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-                        }
-                        Dom.setStyle(elCell, "width", "32px");
-                        Dom.setStyle(elCell.parentNode, "width", "32px");
-                        return '<div class="onActionShowComments"><a class="' + scope.id + '-action-link action-link" title="' + scope
-                              .msg("actions.comment") + '" href="" rel="edit"><span>' + data.displayValue + '</span></a></div>';
-
-                     }
-
-                     return "";
-
-                  }
-
-               });
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3",

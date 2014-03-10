@@ -6,13 +6,17 @@
 </@>
 
 <@markup id="js">
-  <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
+    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
 	
 	<@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
 	<@script src="${url.context}/res/yui/swf/swf.js" group="entity-datagrid"></@script>
 	<@script src="${url.context}/res/yui/charts/charts.js" group="entity-datagrid"></@script>
 	<@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datagrid"></@script>
 </@>
+
+<@markup id="resources">
+   <!-- Additional entity resources -->
+</@markup>
 
 
 <@markup id="widgets">

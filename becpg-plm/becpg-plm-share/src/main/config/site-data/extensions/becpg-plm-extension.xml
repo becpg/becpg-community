@@ -17,6 +17,10 @@
 					<targetPackageRoot>org.alfresco.components.search</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-search</sourcePackageRoot>
 				</customization>
+				 <customization>
+					<targetPackageRoot>org.alfresco.components.entity-charact-views</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-views-plm</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 	</modules>
