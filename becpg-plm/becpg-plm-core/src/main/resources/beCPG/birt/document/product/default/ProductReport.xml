@@ -1,6 +1,1486 @@
-<entity><eanCode prefix="bcpg"><![CDATA[]]></eanCode><plants><plant><locationAddress3 prefix="bcpg"><![CDATA[92120 MONTROUGE]]></locationAddress3><plantCertifications prefix="bcpg"><![CDATA[IFS, BRC, ISO 22000]]></plantCertifications><sort prefix="bcpg"><![CDATA[111]]></sort><plantTel prefix="bcpg"><![CDATA[01 57 21 23 47]]></plantTel><locationCity prefix="bcpg"><![CDATA[]]></locationCity><plantApprovalNumbers prefix="bcpg"><![CDATA[FR 10.375.003 CE]]></plantApprovalNumbers><locationAddress1 prefix="bcpg"><![CDATA[16, rue Gabriel Péri]]></locationAddress1><modifier prefix="cm"><![CDATA[System]]></modifier><name prefix="cm"><![CDATA[beCPG Montrouge]]></name><locale prefix="sys"><![CDATA[fr_FR]]></locale><locationAddress2 prefix="bcpg"><![CDATA[]]></locationAddress2><modified prefix="cm"><![CDATA[2013-11-16T09:00:53.242Z]]></modified><title prefix="cm"><![CDATA[]]></title><created prefix="cm"><![CDATA[2011-11-24T11:20:54.371Z]]></created><editInline prefix="app"><![CDATA[true]]></editInline><locationCountry prefix="bcpg"><![CDATA[FRANCE]]></locationCountry><locationZip prefix="bcpg"><![CDATA[92120]]></locationZip><description prefix="cm"><![CDATA[]]></description><creator prefix="cm"><![CDATA[admin]]></creator></plant></plants><productState prefix="bcpg"><![CDATA[A valider]]></productState><packagingDescription prefix="bcpg"><![CDATA[1 bac imprimé + 1 couvercle imprimé]]></packagingDescription><startEffectivity prefix="bcpg"><![CDATA[2014-02-13T23:00:00.000Z]]></startEffectivity><preparationTips prefix="bcpg"><![CDATA[Sortir 5min du congélateur avant de le consommer.]]></preparationTips><productSpecifications prefix="bcpg"><![CDATA[Spécification glace - client 1]]></productSpecifications><productComments prefix="bcpg"><![CDATA[Bac bien fermé, choupette pas écrasée, pas de glace sur le bord]]></productComments><title prefix="cm"><![CDATA[900mL ADELIE VANILLE PECAN CARAMEL]]></title><reportTpls prefix="rep"><![CDATA[FT Origines MP.rptdesign]]></reportTpls><useByDate prefix="bcpg"><![CDATA[]]></useByDate><storageConditions><created prefix="cm"><![CDATA[2013-07-25T13:56:21.575Z]]></created><sort prefix="bcpg"><![CDATA[134]]></sort><modifier prefix="cm"><![CDATA[System]]></modifier><name prefix="cm"><![CDATA[Pâtisserie surgelée]]></name><locale prefix="sys"><![CDATA[fr]]></locale><description prefix="cm"><![CDATA[* 3 jours dans le compartiment à glace du réfrigérateur à -6°C
+<entity>
+	<eanCode prefix="bcpg"><![CDATA[]]>
+	</eanCode>
+	<plants>
+		<plant>
+			<locationAddress3 prefix="bcpg"><![CDATA[92120 MONTROUGE]]></locationAddress3>
+			<plantCertifications prefix="bcpg"><![CDATA[IFS, BRC, ISO 22000]]></plantCertifications>
+			<sort prefix="bcpg"><![CDATA[111]]></sort>
+			<plantTel prefix="bcpg"><![CDATA[01 57 21 23 47]]></plantTel>
+			<locationCity prefix="bcpg"><![CDATA[]]>
+			</locationCity>
+			<plantApprovalNumbers prefix="bcpg"><![CDATA[FR 10.375.003 CE]]></plantApprovalNumbers>
+			<locationAddress1 prefix="bcpg"><![CDATA[16, rue Gabriel Péri]]></locationAddress1>
+			<modifier prefix="cm"><![CDATA[System]]></modifier>
+			<name prefix="cm"><![CDATA[beCPG Montrouge]]></name>
+			<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+			<locationAddress2 prefix="bcpg"><![CDATA[]]>
+			</locationAddress2>
+			<modified prefix="cm"><![CDATA[2013-11-16T09:00:53.242Z]]></modified>
+			<title prefix="cm"><![CDATA[]]>
+			</title>
+			<created prefix="cm"><![CDATA[2011-11-24T11:20:54.371Z]]></created>
+			<editInline prefix="app"><![CDATA[true]]></editInline>
+			<locationCountry prefix="bcpg"><![CDATA[FRANCE]]></locationCountry>
+			<locationZip prefix="bcpg"><![CDATA[92120]]></locationZip>
+			<description prefix="cm"><![CDATA[]]>
+			</description>
+			<creator prefix="cm"><![CDATA[admin]]></creator>
+		</plant>
+	</plants>
+	<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+	<packagingDescription prefix="bcpg"><![CDATA[1 bac imprimé + 1 couvercle imprimé]]></packagingDescription>
+	<startEffectivity prefix="bcpg"><![CDATA[2014-02-13T23:00:00.000Z]]></startEffectivity>
+	<preparationTips prefix="bcpg"><![CDATA[Sortir 5min du congélateur avant de le consommer.]]></preparationTips>
+	<productSpecifications prefix="bcpg"><![CDATA[Spécification glace - client 1]]></productSpecifications>
+	<productComments prefix="bcpg"><![CDATA[Bac bien fermé, choupette pas écrasée, pas de glace sur le bord]]></productComments>
+	<title prefix="cm"><![CDATA[900mL ADELIE VANILLE PECAN CARAMEL]]></title>
+	<reportTpls prefix="rep"><![CDATA[FT Origines MP.rptdesign]]></reportTpls>
+	<useByDate prefix="bcpg"><![CDATA[]]>
+	</useByDate>
+	<storageConditions>
+		<created prefix="cm"><![CDATA[2013-07-25T13:56:21.575Z]]></created>
+		<sort prefix="bcpg"><![CDATA[134]]></sort>
+		<modifier prefix="cm"><![CDATA[System]]></modifier>
+		<name prefix="cm"><![CDATA[Pâtisserie surgelée]]></name>
+		<locale prefix="sys"><![CDATA[fr]]></locale>
+		<description prefix="cm"><![CDATA[* 3 jours dans le compartiment à glace du réfrigérateur à -6°C
 *** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée sur le côté de la boite.
 
-Après décongélation, à conserver au réfrigérateur et à consommer dans la journée.]]></description><modified prefix="cm"><![CDATA[2013-11-16T09:01:01.295Z]]></modified><creator prefix="cm"><![CDATA[admin]]></creator></storageConditions><creator prefix="cm"><![CDATA[admin]]></creator><netWeight prefix="bcpg"><![CDATA[0.519]]></netWeight><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><name prefix="cm"><![CDATA[900mL Adélie vanille pécan caramel E1]]></name><productHierarchy2 prefix="bcpg"><![CDATA[Glaces familiales]]></productHierarchy2><locale prefix="sys"><![CDATA[fr]]></locale><legalName prefix="bcpg"><![CDATA[Glace vanille avec sauce au caramel et noix de pécans caramélisées]]></legalName><autoVersion prefix="cm"><![CDATA[true]]></autoVersion><erpCode prefix="bcpg"><![CDATA[]]></erpCode><productDensity prefix="bcpg"><![CDATA[0.5786752136752136]]></productDensity><created prefix="cm"><![CDATA[2014-02-07T16:38:08.476Z]]></created><productUnit prefix="bcpg"><![CDATA[mL]]></productUnit><servingSize prefix="bcpg"><![CDATA[100.0]]></servingSize><productQty prefix="bcpg"><![CDATA[900.0]]></productQty><description prefix="cm"><![CDATA[Fleur de vanille, noix de pécan, caramel]]></description><entityTplRef prefix="bcpg"><![CDATA[Modèle Produit fini Glace]]></entityTplRef><reportEntityGenerated prefix="rep"><![CDATA[2014-02-14T08:22:36.495Z]]></reportEntityGenerated><autoVersionOnUpdateProps prefix="cm"><![CDATA[false]]></autoVersionOnUpdateProps><code prefix="bcpg"><![CDATA[PF1551]]></code><precautionOfUse><created prefix="cm"><![CDATA[2013-07-25T13:57:17.715Z]]></created><sort prefix="bcpg"><![CDATA[117]]></sort><modifier prefix="cm"><![CDATA[System]]></modifier><name prefix="cm"><![CDATA[Produit surgelé]]></name><locale prefix="sys"><![CDATA[fr]]></locale><description prefix="cm"><![CDATA[NE JAMAIS RECONGELER UN PRODUIT DÉCONGELÉ.]]></description><modified prefix="cm"><![CDATA[2013-11-16T09:00:55.924Z]]></modified><creator prefix="cm"><![CDATA[admin]]></creator></precautionOfUse><projectedQty prefix="bcpg"><![CDATA[]]></projectedQty><periodAfterOpening prefix="bcpg"><![CDATA[]]></periodAfterOpening><bestBeforeDate prefix="bcpg"><![CDATA[]]></bestBeforeDate><numberOfServings prefix="bcpg"><![CDATA[8 à 10]]></numberOfServings><productHierarchy1 prefix="bcpg"><![CDATA[Glaces]]></productHierarchy1><taggable prefix="cm"><![CDATA[]]></taggable><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><unitTotalCost prefix="bcpg"><![CDATA[0.8967565129134152]]></unitTotalCost><modified prefix="cm"><![CDATA[2014-02-14T08:07:06.002Z]]></modified><clients prefix="bcpg"><![CDATA[Intermarché]]></clients><formulatedDate prefix="bcpg"><![CDATA[2014-02-14T08:21:53.411Z]]></formulatedDate><initialVersion prefix="cm"><![CDATA[true]]></initialVersion><versionLabel prefix="cm"><![CDATA[1.3]]></versionLabel><priceCurrency prefix="bcpg"><![CDATA[€]]></priceCurrency><tare prefix="pack"><![CDATA[15.0]]></tare><categories prefix="cm"><![CDATA[]]></categories><reports prefix="rep"><![CDATA[900mL Adélie vanille pécan caramel E1 - Fiche Technique Client.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique Production.pdf, 900mL Adélie vanille pécan caramel E1 - FT Origines MP.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique R&D.pdf]]></reports><tareUnit prefix="pack"><![CDATA[g]]></tareUnit><aspects><![CDATA[referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, compareWithAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, clientsAspect, reportTplsAspect, productAspect, eanAspect, consumerAspect, localized, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect, formulatedEntityAspect, versionable]]></aspects><itemType><![CDATA[finishedProduct]]></itemType><images><image id="Img0" name="img_schema.png"/><image id="Img1" name="produit.png"/><image id="Img2" name="img_defaut1.jpg" title="Pb décor"/><image id="Img3" name="img_defaut2.jpg" title="Décor de travers"/><image id="Img4" name="img_fab2.jpg" title="Mettre le macaron au centre"/><image id="Img5" name="img_fab2.jpeg" title="Etaler la sauce caramel"/><image id="Img6" name="img_palet1.jpg" title="Couches"/><image id="Img7" name="img_palet2.jpg" title="Palette"/></images><dataLists><controlDefLists/><nutLists energiekj="476.1632660411247" energiekcal="113.92036993682646" lipides="6.931577303047195" agsaturés="0.7945643640839837" agmonoinsaturés="3.2775978262417937" agpolyinsaturés="2.533568901833272" glucides="12.961924560613216" sucres="11.457183265555619" amidon="1.4927" protéines="0.8114429663693793" fibresalimentaires="0.39466666666666667" sodium="23.278086259754737" alcooléthanol="0.0"><nutList isManualListItem="" sort="100" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation" nutListValue="476.1632660411247" nutListValuePerServing="476.16326604112476" nutListUnit="kJ/100mL" locale="fr_FR" nutListNut="Energie kJ" legalName="Energie, N x facteur Jones, avec fibres"/><nutList nutListGDAPerc="5.696018496841323" isManualListItem="" sort="101" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation" nutListValue="113.92036993682646" nutListValuePerServing="113.92036993682646" nutListUnit="kcal/100mL" locale="fr_FR" nutListNut="Energie kcal" legalName="Energie, N x facteur Jones, avec fibres"/><nutList nutListGDAPerc="9.90225329006742" isManualListItem="" sort="102" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation" nutListValue="6.931577303047195" nutListValuePerServing="6.931577303047195" nutListUnit="g/100mL" locale="fr_FR" nutListNut="Lipides" legalName="Lipides"/><nutList nutListGDAPerc="3.972821820419918" isManualListItem="false" parentLevel="Lipides" sort="103" nutListGroup="Groupe 2" depthLevel="2" nutListMethod="Formulation" nutListValue="0.7945643640839837" nutListValuePerServing="0.7945643640839836" nutListUnit="g/100mL" locale="fr_FR" nutListNut="AG saturés" legalName="AG saturés"/><nutList isManualListItem="false" parentLevel="Lipides" sort="104" nutListGroup="Autre" depthLevel="2" nutListMethod="Formulation" nutListValue="3.2775978262417937" nutListValuePerServing="3.2775978262417937" nutListUnit="g/100mL" locale="fr_FR" nutListNut="AG monoinsaturés" legalName="AG monoinsaturés"/><nutList isManualListItem="false" parentLevel="Lipides" sort="105" nutListGroup="Autre" depthLevel="2" nutListMethod="Formulation" nutListValue="2.533568901833272" nutListValuePerServing="2.533568901833272" nutListUnit="g/100mL" locale="fr_FR" nutListNut="AG polyinsaturés" legalName="AG polyinsaturés"/><nutList nutListGDAPerc="4.800712800227116" isManualListItem="false" parentLevel="" sort="106" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation" nutListValue="12.961924560613216" nutListValuePerServing="12.961924560613216" nutListUnit="g/100mL" locale="fr_FR" nutListNut="Glucides" legalName="Glucides"/><nutList nutListGDAPerc="12.730203628395131" isManualListItem="false" parentLevel="Glucides" sort="107" nutListGroup="Groupe 2" depthLevel="2" nutListMethod="Formulation" nutListValue="11.457183265555619" nutListValuePerServing="11.457183265555619" nutListUnit="g/100mL" locale="fr_FR" nutListNut="Sucres" legalName="Sucres"/><nutList isManualListItem="false" parentLevel="Glucides" sort="108" nutListGroup="Autre" depthLevel="2" nutListMethod="Formulation" nutListValue="1.4927" nutListValuePerServing="1.4927" nutListUnit="g/100mL" locale="fr_FR" nutListNut="Amidon" legalName="Amidon"/><nutList nutListGDAPerc="1.6228859327387584" isManualListItem="" sort="109" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation" nutListValue="0.8114429663693793" nutListValuePerServing="0.8114429663693792" nutListUnit="g/100mL" locale="fr_FR" nutListNut="Protéines" legalName="Protéines"/><nutList nutListGDAPerc="1.5786666666666667" isManualListItem="" sort="110" nutListGroup="Groupe 2" depthLevel="1" nutListMethod="Formulation" nutListValue="0.39466666666666667" nutListValuePerServing="0.39466666666666667" nutListUnit="g/100mL" locale="fr_FR" nutListNut="Fibres alimentaires" legalName="Fibres alimentaires"/><nutList nutListGDAPerc="0.969920260823114" isManualListItem="" sort="111" nutListGroup="Groupe 2" depthLevel="1" nutListMethod="Formulation" nutListValue="23.278086259754737" nutListValuePerServing="23.278086259754737" nutListUnit="mg/100mL" locale="fr_FR" nutListNut="Sodium" legalName="Sodium"/><nutList isManualListItem="false" sort="112" nutListGroup="Autre" depthLevel="1" nutListMethod="Formulation" nutListValue="0.0" nutListValuePerServing="0.0" nutListUnit="g/100mL" locale="fr" nutListNut="Alcool (éthanol)" legalName="Alcool (éthanol)"/></nutLists><costLists><costList isManualListItem="false" costListCost="Coût MP" sort="100" costListUnit="€/L" costListValue="0.5897603229902143" locale="fr" legalName=""/><costList isManualListItem="false" costListCost="Coût Emb" sort="101" costListUnit="€/L" costListValue="0.40663580246913583" locale="fr" legalName=""/><costList isManualListItem="false" costListCost="Coût Production" sort="102" costListUnit="€/L" locale="fr" legalName=""/></costLists><organoLists><organoList sort="100" organoListValue="Présence de choupettes / Présence de sauce caramel et de noix de pécan en décor" organoListOrgano="Aspect" locale="fr"/><organoList sort="101" organoListValue="" organoListOrgano="Couleur" locale="fr"/><organoList sort="102" organoListValue="Caractéristique de la vanille, du caramel et des noix de pécan, absence de notes parasites" organoListOrgano="Goût" locale="fr"/><organoList sort="103" organoListValue="Caractéristique de la vanille, du caramel et des noix de pécan" organoListOrgano="Odeur" locale="fr"/><organoList sort="104" organoListValue="Texture crémeuse de la glace, noix de pécans croquantes" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists><labelClaimList lclLabelClaim="Sans BPA" isManualListItem="" lclType="Santé" sort="100" lclIsClaimed="true" lclIsFormulated="false" locale="fr"/><labelClaimList lclLabelClaim="Sans huile de palme" isManualListItem="" lclType="Santé" sort="101" lclIsClaimed="true" lclIsFormulated="false" locale="fr"/><labelClaimList lclLabelClaim="Faible teneur en sucres" isManualListItem="" lclType="Nutritionnelle" sort="102" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Pauvre en sodium ou en sel" isManualListItem="" lclType="Nutritionnelle" sort="103" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Faible valeur énergétique" isManualListItem="false" lclType="Nutritionnelle" sort="104" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Sans apport énergétique" isManualListItem="false" lclType="Nutritionnelle" sort="105" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Faible teneur en matières grasses" isManualListItem="false" lclType="Nutritionnelle" sort="106" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Sans matières grasses" isManualListItem="false" lclType="Nutritionnelle" sort="107" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Faible teneur en sucres" isManualListItem="false" lclType="Nutritionnelle" sort="108" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Sans sucres" isManualListItem="false" lclType="Nutritionnelle" sort="109" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Pauvre en sodium ou en sel" isManualListItem="false" lclType="Nutritionnelle" sort="110" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Très pauvre en sodium ou en sel" isManualListItem="false" lclType="Nutritionnelle" sort="111" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Sans sodium ou sans sel" isManualListItem="false" lclType="Nutritionnelle" sort="112" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/><labelClaimList lclLabelClaim="Source de fibres" isManualListItem="false" lclType="Nutritionnelle" sort="113" lclIsClaimed="false" lclIsFormulated="true" locale="fr"/></labelClaimLists><allergenLists allergenListVoluntary="Fructose, Saccharose" allergenListInVoluntary=""><allergenList allergenListAllergen="Anhydride sulfureux et sulfites" isManualListItem="" sort="1" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Arachides et produits à base d'arachides" isManualListItem="" sort="2" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Crustacés et produits à base de crustacés" isManualListItem="" sort="3" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Céréales contenant du gluten et produits à base de ces céréales" isManualListItem="" sort="4" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Fruits à Coque- (noix noisettes)" isManualListItem="" sort="5" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Graines de sésame et produits à base de graines de sésame" isManualListItem="" sort="6" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Lait et produit à base de (dont lactose)" isManualListItem="" sort="7" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Lupin  et produits à base de lupin" isManualListItem="" sort="8" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Mollusque  et produits à base de mollusque" isManualListItem="" sort="9" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Oeuf et produit à base d'oeuf" isManualListItem="" sort="10" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Poisson et produit à base de poisson" isManualListItem="" sort="11" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Soja et produits à base de soja" isManualListItem="" sort="12" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Céleri et produits à base de céleri" isManualListItem="" sort="13" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Fructose" isManualListItem="" sort="14" allergenListVolSources="Sucre poudre" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="true" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Moutarde et produits à base de moutarde" isManualListItem="" sort="15" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="false" variantIds="" isDefaultVariant="true"/><allergenList allergenListAllergen="Saccharose" isManualListItem="" sort="16" allergenListVolSources="Sucre poudre" allergenListInVoluntary="false" locale="fr" allergenListVoluntary="true" variantIds="" isDefaultVariant="true"/></allergenLists><physicoChemLists/><ingLists><ingList ingListGeoOrigin="Allemagne, France" isManualListItem="" ingListQtyPerc="25.298719982259346" sort="1" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Betterave" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sucre" legalName="Sucre"/><ingList isManualListItem="" ingListQtyPerc="19.460553832507188" sort="2" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Lactose et protéines de lait" legalName="Lactose et protéines de lait"/><ingList isManualListItem="" ingListQtyPerc="19.460553832507188" sort="3" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="coprah" legalName="coprah"/><ingList isManualListItem="" ingListQtyPerc="9.730276916253594" sort="4" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sirop de glucose-fructose" legalName="Sirop de glucose-fructose"/><ingList ingListGeoOrigin="Côte d'Ivoire, Indonésie" isManualListItem="" ingListQtyPerc="3.481131378775571" sort="5" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Noix de pécan" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Noix de pécan" legalName="Noix de pécan"/><ingList isManualListItem="" ingListQtyPerc="1.5568443066005753" sort="6" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Gomme de Guar" legalName="Gomme de Guar"/><ingList ingListGeoOrigin="Indonésie, Madagascar" isManualListItem="" ingListQtyPerc="0.7784221533002876" sort="7" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Vanille" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Arômes naturels de vanille" legalName="arômes naturels de vanille"/><ingList isManualListItem="" ingListQtyPerc="0.19217296909600848" sort="8" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Eau" legalName="Eau"/><ingList isManualListItem="" ingListQtyPerc="0.09730276916253595" sort="9" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Arôme naturel - gousses de vanille infusées" legalName="arôme naturel : gousses de vanille infusées"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="10" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sel" legalName="Sel"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="11" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Lait entier concentré sucre" legalName="Lait entier concentré sucre"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="12" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Pectine" legalName="Pectine"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="13" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Amidon de mais" legalName="Amidon de mais"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="14" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="E471 - mono- et diglycerides d'acides gras alimentaires" legalName="E471"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="15" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Arômes naturels" legalName="arômes naturels"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="16" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="E150a - caramels" legalName="E150a - caramels"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="17" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sirop de glucose" legalName="Sirop de glucose"/><ingList ingListGeoOrigin="France" isManualListItem="" ingListQtyPerc="0.0" sort="18" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Lait de vache" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Beurre" legalName="beurre"/><ingList isManualListItem="" ingListQtyPerc="0.0" sort="19" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="E160a(i) - beta-carotène" legalName="E160a"/></ingLists><compoLists><compoList reportEntityGenerated="2014-02-13T18:42:10.565Z" packagingDescription="" productState="A valider" code="SF1181" startEffectivity="2014-02-07T17:24:15.129Z" preparationTips="" productComments="" title="" useByDate="" bestBeforeDate="" periodAfterOpening="" compareWithEntities="PJ352 Glace vanille E2, PJ352 Glace vanille E3" creator="admin" netWeight="1.38" productHierarchy1="Bases laitières" taggable="" netWeightUnit="kg" modifier="admin" productHierarchy2="Glaces" name="Glace vanille" locale="fr" unitTotalCost="0.45515" legalName="Glace vanille" modified="2014-02-13T18:24:22.015Z" erpCode="4555.S" productDensity="1.1" created="2014-02-07T17:24:15.072Z" formulatedDate="2014-02-13T18:40:40.861Z" productUnit="g" categories="" tare="0.0" reports="Glace vanille - Fiche Technique Production.pdf, Glace vanille - Fiche Technique R&amp;D.pdf" productQty="1380.0" tareUnit="g" description="Glace vanille de référence" entityTplRef="Mix Glace en kg" itemType="bcpg:semiFinishedProduct" aspects="consumerAspect, referenceable, tareAspect, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, compareWithAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, formulatedEntityAspect, reportTplsAspect, productAspect" compoListDeclType="Déclarer" dynamicCharactColumn1="0.13153429069119288" compoListQty="0.3988076923076923" compoListOverrunPerc="120.0" sort="101" compoListProduct="Glace vanille" depthLevel="1" compoListQtySubFormula="398.80769230769226" compoListVolume="0.7976153846153846" dynamicCharactColumn2="7.976153846153846" compoListUnit="g" variantIds="" isDefaultVariant="true"/><compoList eanCode="" packagingDescription="" productState="A valider" code="MP25534" startEffectivity="2014-02-07T17:42:42.647Z" preparationTips="" productComments="" title="" useByDate="" periodAfterOpening="" certificateDate="" bestBeforeDate="" creator="admin" netWeight="" productHierarchy1="Epicerie" taggable="" netWeightUnit="kg" modifier="utilisateur.rd" productHierarchy2="Sauces" name="Sauce caramel" locale="fr" legalName="sauce au caramel" modified="2014-02-12T17:57:15.829Z" erpCode="MGC077" productDensity="1.3" created="2014-02-07T17:42:42.609Z" productUnit="kg" categories="" productQty="" description="" entityTplRef="Matière première" itemType="bcpg:rawMaterial" aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect" compoListDeclType="Détailler" dynamicCharactColumn1="0.10725" compoListQty="0.065" sort="102" compoListProduct="Sauce caramel" depthLevel="1" compoListQtySubFormula="65.0" compoListVolume="0.05" dynamicCharactColumn2="1.3" compoListUnit="g" variantIds="" isDefaultVariant="true"/><compoList eanCode="" suppliers="Table USDA" packagingDescription="" productState="A valider" code="USDA12142" startEffectivity="2012-09-03T16:32:23.849Z" preparationTips="" productComments="" title="" useByDate="" periodAfterOpening="" certificateDate="" bestBeforeDate="" creator="admin" owner="" netWeight="" productHierarchy1="USDA" taggable="" netWeightUnit="kg" modifier="admin" productHierarchy2="Produits de noix et de graines" name="Pécans 2-10mm" locale="fr" legalName="noix de pécan caramélisées" modified="2014-02-11T11:17:46.125Z" erpCode="" productDensity="1.0" created="2014-02-08T10:54:15.691Z" productUnit="kg" categories="" productQty="" description="" entityTplRef="Matière première" itemType="bcpg:rawMaterial" aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect" compoListDeclType="Détailler" dynamicCharactColumn1="0.17500000000000002" compoListQty="0.025" sort="104" compoListProduct="Pécans 2-10mm" depthLevel="1" compoListQtySubFormula="25.0" compoListVolume="0.025" dynamicCharactColumn2="0.5" compoListUnit="g" variantIds="" isDefaultVariant="true"><instruction prefix="bcpg"><![CDATA[]]></instruction></compoList><compoList eanCode="" packagingDescription="" productState="A valider" code="MP25534" startEffectivity="2014-02-07T17:42:42.647Z" preparationTips="" productComments="" title="" useByDate="" periodAfterOpening="" certificateDate="" bestBeforeDate="" creator="admin" netWeight="" productHierarchy1="Epicerie" taggable="" netWeightUnit="kg" modifier="utilisateur.rd" productHierarchy2="Sauces" name="Sauce caramel" locale="fr" legalName="sauce au caramel" modified="2014-02-12T17:57:15.829Z" erpCode="MGC077" productDensity="1.3" created="2014-02-07T17:42:42.609Z" productUnit="kg" categories="" productQty="" description="" entityTplRef="Matière première" itemType="bcpg:rawMaterial" aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect" compoListDeclType="Détailler" dynamicCharactColumn1="0.033" compoListQty="0.02" sort="105" compoListProduct="Sauce caramel" depthLevel="1" compoListQtySubFormula="20.0" compoListVolume="0.015384615384615385" dynamicCharactColumn2="0.4" compoListUnit="g" variantIds="" isDefaultVariant="true"/><compoList eanCode="" suppliers="Table USDA" packagingDescription="" productState="A valider" code="USDA12142" startEffectivity="2012-09-03T16:32:23.849Z" preparationTips="" productComments="" title="" useByDate="" periodAfterOpening="" certificateDate="" bestBeforeDate="" creator="admin" owner="" netWeight="" productHierarchy1="USDA" taggable="" netWeightUnit="kg" modifier="admin" productHierarchy2="Produits de noix et de graines" name="Pécans 2-10mm" locale="fr" legalName="noix de pécan caramélisées" modified="2014-02-11T11:17:46.125Z" erpCode="" productDensity="1.0" created="2014-02-08T10:54:15.691Z" productUnit="kg" categories="" productQty="" description="" entityTplRef="Matière première" itemType="bcpg:rawMaterial" aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect" compoListDeclType="Détailler" dynamicCharactColumn1="0.084" compoListQty="0.012" sort="107" compoListProduct="Pécans 2-10mm" depthLevel="1" compoListQtySubFormula="12.0" compoListVolume="0.012" dynamicCharactColumn2="0.24" compoListUnit="g" variantIds="" isDefaultVariant="true"><instruction prefix="bcpg"><![CDATA[]]></instruction></compoList><dynamicCharactLists><dynamicCharactList dynamicCharactTitle="Qte totale MeO (g)" dynamicCharactValue="520.8076923076923"/><dynamicCharactList dynamicCharactTitle="Densité" dynamicCharactValue="0.5786752136752136"/><dynamicCharactList dynamicCharactTitle="Qté totale MeO (g)" dynamicCharactValue="520.8076923076923"/><dynamicCharactList dynamicCharactTitle="Profit (%)" dynamicCharactValue=""/><dynamicCharactList dynamicCharactTitle="Coût MP total (€/L)" dynamicCharactValue="0.5897603229902143"/><dynamicCharactList dynamicCharactTitle="Coût MP (€)" dynamicCharactValue=""/><dynamicCharactList dynamicCharactTitle="Nb Ech" dynamicCharactValue="20"/><dynamicCharactList dynamicCharactTitle="Qté labo (kg)" dynamicCharactValue=""/><dynamicCharactList dynamicCharactTitle="Calcul qté 1er composant" dynamicCharactValue="398.80769230769226"/><dynamicCharactList dynamicCharactTitle="Rdt volume" dynamicCharactValue="99.99999999999999"/></dynamicCharactLists></compoLists><rawMaterials><rawMaterial><eanCode prefix="bcpg"><![CDATA[]]></eanCode><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><packagingDescription prefix="bcpg"><![CDATA[]]></packagingDescription><productState prefix="bcpg"><![CDATA[A valider]]></productState><code prefix="bcpg"><![CDATA[MP25534]]></code><node-dbid prefix="sys"><![CDATA[693966]]></node-dbid><startEffectivity prefix="bcpg"><![CDATA[2014-02-07T17:42:42.647Z]]></startEffectivity><preparationTips prefix="bcpg"><![CDATA[]]></preparationTips><productComments prefix="bcpg"><![CDATA[]]></productComments><title prefix="cm"><![CDATA[]]></title><useByDate prefix="bcpg"><![CDATA[]]></useByDate><bestBeforeDate prefix="bcpg"><![CDATA[]]></bestBeforeDate><periodAfterOpening prefix="bcpg"><![CDATA[]]></periodAfterOpening><certificateDate prefix="bcpg"><![CDATA[]]></certificateDate><creator prefix="cm"><![CDATA[admin]]></creator><netWeight prefix="bcpg"><![CDATA[]]></netWeight><productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><taggable prefix="cm"><![CDATA[]]></taggable><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><productHierarchy2 prefix="bcpg"><![CDATA[Sauces]]></productHierarchy2><name prefix="cm"><![CDATA[Sauce caramel]]></name><locale prefix="sys"><![CDATA[fr]]></locale><legalName prefix="bcpg"><![CDATA[sauce au caramel]]></legalName><modified prefix="cm"><![CDATA[2014-02-12T17:57:15.829Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGC077]]></erpCode><productDensity prefix="bcpg"><![CDATA[1.3]]></productDensity><created prefix="cm"><![CDATA[2014-02-07T17:42:42.609Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><categories prefix="cm"><![CDATA[]]></categories><node-uuid prefix="sys"><![CDATA[0dc4f86e-7ebb-4e35-a683-3adc77468732]]></node-uuid><productQty prefix="bcpg"><![CDATA[]]></productQty><description prefix="cm"><![CDATA[]]></description><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><compoListQty prefix="bcpg"><![CDATA[36.06059192161599]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList sort="100" organoListOrgano="Aspect" locale="fr"/><organoList sort="101" organoListOrgano="Couleur" locale="fr"/><organoList sort="102" organoListOrgano="Goût" locale="fr"/><organoList sort="103" organoListOrgano="Odeur" locale="fr"/><organoList sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sirop de glucose-fructose" legalName="Sirop de glucose-fructose"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="101" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Lait entier concentré sucre" legalName="Lait entier concentré sucre"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="102" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Eau" legalName="Eau"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="103" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Matière grasse végétale" legalName="Matière grasse végétale"/><ingList isManualListItem="false" parentLevel="c9c3c6bd-fbb1-4886-8311-cfae4ab47207" ingListQtyPerc="" sort="104" ingListIsProcessingAid="false" depthLevel="2" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="coprah" legalName="coprah"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="105" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sucre" legalName="Sucre"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="106" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sel" legalName="Sel"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="107" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Pectine" legalName="Pectine"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="108" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Amidon de mais" legalName="Amidon de mais"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="109" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="E471 - mono- et diglycerides d'acides gras alimentaires" legalName="E471"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="110" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Arômes naturels" legalName="arômes naturels"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="111" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="E150a - caramels" legalName="E150a - caramels"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><reportEntityGenerated prefix="rep"><![CDATA[2013-07-09T08:25:07.598Z]]></reportEntityGenerated><owner prefix="cm"><![CDATA[]]></owner><eanCode prefix="bcpg"><![CDATA[]]></eanCode><productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[Validé]]></productState><code prefix="bcpg"><![CDATA[MP1142]]></code><modifier prefix="cm"><![CDATA[admin]]></modifier><node-dbid prefix="sys"><![CDATA[134627]]></node-dbid><productHierarchy2 prefix="bcpg"><![CDATA[Epicerie autres]]></productHierarchy2><name prefix="cm"><![CDATA[Sucre poudre]]></name><locale prefix="sys"><![CDATA[fr_FR]]></locale><startEffectivity prefix="bcpg"><![CDATA[2011-10-31T09:34:40.700Z]]></startEffectivity><legalName prefix="bcpg"><![CDATA[Sucre en poudre]]></legalName><modified prefix="cm"><![CDATA[2014-02-08T11:28:55.270Z]]></modified><erpCode prefix="bcpg"><![CDATA[]]></erpCode><created prefix="cm"><![CDATA[2011-10-31T09:34:40.671Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><node-uuid prefix="sys"><![CDATA[73afb5d4-d7cd-4d0e-841d-bde843201d28]]></node-uuid><description prefix="cm"><![CDATA[]]></description><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[15.938289754272642]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList sort="1" organoListValue="" organoListOrgano="Aspect" locale="fr_FR"/><organoList sort="2" organoListValue="" organoListOrgano="Couleur" locale="fr_FR"/><organoList sort="3" organoListValue="" organoListOrgano="Goût" locale="fr_FR"/><organoList sort="4" organoListValue="" organoListOrgano="Odeur" locale="fr_FR"/><organoList sort="5" organoListValue="" organoListOrgano="Texture" locale="fr_FR"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" ingListQtyPerc="100.0" sort="1" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr_FR" ingListIsGMO="false" ingListIng="Sucre" legalName="Sucre"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><eanCode prefix="bcpg"><![CDATA[]]></eanCode><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><suppliers prefix="bcpg"><![CDATA[Table USDA]]></suppliers><packagingDescription prefix="bcpg"><![CDATA[]]></packagingDescription><productState prefix="bcpg"><![CDATA[A valider]]></productState><code prefix="bcpg"><![CDATA[USDA12142]]></code><node-dbid prefix="sys"><![CDATA[694517]]></node-dbid><startEffectivity prefix="bcpg"><![CDATA[2012-09-03T16:32:23.849Z]]></startEffectivity><preparationTips prefix="bcpg"><![CDATA[]]></preparationTips><productComments prefix="bcpg"><![CDATA[]]></productComments><title prefix="cm"><![CDATA[]]></title><useByDate prefix="bcpg"><![CDATA[]]></useByDate><bestBeforeDate prefix="bcpg"><![CDATA[]]></bestBeforeDate><certificateDate prefix="bcpg"><![CDATA[]]></certificateDate><periodAfterOpening prefix="bcpg"><![CDATA[]]></periodAfterOpening><creator prefix="cm"><![CDATA[admin]]></creator><owner prefix="cm"><![CDATA[]]></owner><netWeight prefix="bcpg"><![CDATA[]]></netWeight><productHierarchy1 prefix="bcpg"><![CDATA[USDA]]></productHierarchy1><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><taggable prefix="cm"><![CDATA[]]></taggable><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><modifier prefix="cm"><![CDATA[admin]]></modifier><productHierarchy2 prefix="bcpg"><![CDATA[Produits de noix et de graines]]></productHierarchy2><name prefix="cm"><![CDATA[Pécans 2-10mm]]></name><locale prefix="sys"><![CDATA[fr]]></locale><legalName prefix="bcpg"><![CDATA[noix de pécan caramélisées]]></legalName><modified prefix="cm"><![CDATA[2014-02-11T11:17:46.125Z]]></modified><erpCode prefix="bcpg"><![CDATA[]]></erpCode><productDensity prefix="bcpg"><![CDATA[1.0]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T10:54:15.691Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><categories prefix="cm"><![CDATA[]]></categories><node-uuid prefix="sys"><![CDATA[c6d4da19-f4c6-4334-bfc5-150fa6238b7c]]></node-uuid><productQty prefix="bcpg"><![CDATA[]]></productQty><description prefix="cm"><![CDATA[]]></description><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><compoListQty prefix="bcpg"><![CDATA[15.696963542350492]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="Côte d'Ivoire, Indonésie" isManualListItem="false" parentLevel="" ingListQtyPerc="49.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Noix de pécan" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListGeoTransfo="Côte d'Ivoire, Indonésie" ingListIng="Noix de pécan" legalName="Noix de pécan"/><ingList ingListGeoOrigin="Allemagne, France" isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="101" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Betterave" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListGeoTransfo="Allemagne, France, Sainte-Lucie" ingListIng="Sucre" legalName="Sucre"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="102" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sirop de glucose" legalName="Sirop de glucose"/><ingList ingListGeoOrigin="France" isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="103" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Lait de vache" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListGeoTransfo="France" ingListIng="Beurre" legalName="beurre"/><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="104" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sel" legalName="Sel"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><netWeight prefix="bcpg"><![CDATA[]]></netWeight><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[A valider]]></productState><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><code prefix="bcpg"><![CDATA[MP12143]]></code><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><node-dbid prefix="sys"><![CDATA[694920]]></node-dbid><name prefix="cm"><![CDATA[Matière grasse végétale]]></name><locale prefix="sys"><![CDATA[fr]]></locale><startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:22:57.750Z]]></startEffectivity><modified prefix="cm"><![CDATA[2014-02-12T17:57:15.308Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGG058]]></erpCode><productDensity prefix="bcpg"><![CDATA[]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T11:22:57.587Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><productQty prefix="bcpg"><![CDATA[]]></productQty><node-uuid prefix="sys"><![CDATA[3637825f-42b0-408a-92e2-99972e8f65e4]]></node-uuid><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[12.260222887902035]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Matière grasse végétale" legalName="Matière grasse végétale"/><ingList isManualListItem="false" parentLevel="0f5a1e67-17dd-4269-8b12-b7e4b87ab83f" ingListQtyPerc="100.0" sort="101" ingListIsProcessingAid="false" depthLevel="2" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="coprah" legalName="coprah"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><netWeight prefix="bcpg"><![CDATA[]]></netWeight><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[A valider]]></productState><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><code prefix="bcpg"><![CDATA[MP12144]]></code><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><node-dbid prefix="sys"><![CDATA[695000]]></node-dbid><name prefix="cm"><![CDATA[Lactoeco]]></name><locale prefix="sys"><![CDATA[fr]]></locale><startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:25:12.814Z]]></startEffectivity><modified prefix="cm"><![CDATA[2014-02-12T17:57:14.932Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGL003]]></erpCode><productDensity prefix="bcpg"><![CDATA[]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T11:25:12.644Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><productQty prefix="bcpg"><![CDATA[]]></productQty><node-uuid prefix="sys"><![CDATA[c4d9fbb7-2f26-4639-9654-c4a9df9bfac4]]></node-uuid><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[12.260222887902035]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Lactose et protéines de lait" legalName="Lactose et protéines de lait"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><reportEntityGenerated prefix="rep"><![CDATA[2013-10-30T19:58:59.880Z]]></reportEntityGenerated><eanCode prefix="bcpg"><![CDATA[]]></eanCode><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><productState prefix="bcpg"><![CDATA[A valider]]></productState><code prefix="bcpg"><![CDATA[MP60]]></code><node-dbid prefix="sys"><![CDATA[605483]]></node-dbid><startEffectivity prefix="bcpg"><![CDATA[2013-10-30T19:58:31.581Z]]></startEffectivity><productComments prefix="bcpg"><![CDATA[]]></productComments><creator prefix="cm"><![CDATA[admin]]></creator><productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><modifier prefix="cm"><![CDATA[admin]]></modifier><name prefix="cm"><![CDATA[SIROP DE GLUCOSE]]></name><productHierarchy2 prefix="bcpg"><![CDATA[Additifs, ingrédients fonctionnels]]></productHierarchy2><locale prefix="sys"><![CDATA[fr_FR]]></locale><legalName prefix="bcpg"><![CDATA[]]></legalName><erpCode prefix="bcpg"><![CDATA[z2]]></erpCode><modified prefix="cm"><![CDATA[2014-02-08T11:28:06.050Z]]></modified><productDensity prefix="bcpg"><![CDATA[1.377]]></productDensity><created prefix="cm"><![CDATA[2013-10-30T19:58:14.903Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><reports prefix="rep"><![CDATA[SIROP DE GLUCOSE - Fiche Technique MP.pdf]]></reports><node-uuid prefix="sys"><![CDATA[15ff0aab-d5e2-4fa2-80f8-ce55c7461b44]]></node-uuid><description prefix="cm"><![CDATA[]]></description><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><compoListQty prefix="bcpg"><![CDATA[6.130111443951018]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList sort="100" organoListOrgano="Aspect" locale="fr"/><organoList sort="101" organoListOrgano="Couleur" locale="fr"/><organoList sort="102" organoListOrgano="Goût" locale="fr"/><organoList sort="103" organoListOrgano="Odeur" locale="fr"/><organoList sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Sirop de glucose-fructose" legalName="Sirop de glucose-fructose"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><netWeight prefix="bcpg"><![CDATA[]]></netWeight><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[A valider]]></productState><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><code prefix="bcpg"><![CDATA[MP12145]]></code><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><node-dbid prefix="sys"><![CDATA[695056]]></node-dbid><name prefix="cm"><![CDATA[Stab CG 105]]></name><locale prefix="sys"><![CDATA[fr]]></locale><startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:25:34.974Z]]></startEffectivity><modified prefix="cm"><![CDATA[2014-02-12T17:57:16.218Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGS105]]></erpCode><productDensity prefix="bcpg"><![CDATA[]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T11:25:34.794Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><productQty prefix="bcpg"><![CDATA[]]></productQty><node-uuid prefix="sys"><![CDATA[99cf89b9-8733-44bd-8a95-21292b441786]]></node-uuid><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[0.9808178310321628]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Gomme de Guar" legalName="Gomme de Guar"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><netWeight prefix="bcpg"><![CDATA[]]></netWeight><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[A valider]]></productState><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><code prefix="bcpg"><![CDATA[MP12148]]></code><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><node-dbid prefix="sys"><![CDATA[695224]]></node-dbid><name prefix="cm"><![CDATA[vanille arome nat 0008A]]></name><locale prefix="sys"><![CDATA[fr]]></locale><startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:23.778Z]]></startEffectivity><modified prefix="cm"><![CDATA[2014-02-12T17:57:16.458Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGV008A]]></erpCode><productDensity prefix="bcpg"><![CDATA[]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T11:26:23.582Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><productQty prefix="bcpg"><![CDATA[]]></productQty><node-uuid prefix="sys"><![CDATA[95eedaed-e757-4caf-b148-037477947caf]]></node-uuid><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[0.3065055721975509]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="Indonésie" isManualListItem="false" parentLevel="" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Vanille" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListGeoTransfo="Indonésie" ingListIng="Arômes naturels de vanille" legalName="arômes naturels de vanille"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><netWeight prefix="bcpg"><![CDATA[]]></netWeight><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[A valider]]></productState><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><code prefix="bcpg"><![CDATA[MP12149]]></code><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><node-dbid prefix="sys"><![CDATA[695280]]></node-dbid><name prefix="cm"><![CDATA[vanille arome nat 017]]></name><locale prefix="sys"><![CDATA[fr]]></locale><startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:33.281Z]]></startEffectivity><modified prefix="cm"><![CDATA[2014-02-12T17:57:16.872Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGV017]]></erpCode><productDensity prefix="bcpg"><![CDATA[]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T11:26:33.038Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><productQty prefix="bcpg"><![CDATA[]]></productQty><node-uuid prefix="sys"><![CDATA[ba5d8f47-23d5-4015-8d3b-a8a8b0a1a262]]></node-uuid><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[0.18390334331853053]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList ingListGeoOrigin="Madagascar" isManualListItem="false" parentLevel="" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Vanille" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListGeoTransfo="Madagascar" ingListIng="Arômes naturels de vanille" legalName="arômes naturels de vanille"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><reportEntityGenerated prefix="rep"><![CDATA[2013-07-09T08:25:10.131Z]]></reportEntityGenerated><eanCode prefix="bcpg"><![CDATA[]]></eanCode><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><productState prefix="bcpg"><![CDATA[Validé]]></productState><code prefix="bcpg"><![CDATA[MP1013]]></code><node-dbid prefix="sys"><![CDATA[12051]]></node-dbid><startEffectivity prefix="bcpg"><![CDATA[2012-09-08T08:49:15.360Z]]></startEffectivity><productComments prefix="bcpg"><![CDATA[]]></productComments><creator prefix="cm"><![CDATA[admin]]></creator><owner prefix="cm"><![CDATA[]]></owner><productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1><taggable prefix="cm"><![CDATA[]]></taggable><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><modifier prefix="cm"><![CDATA[System]]></modifier><name prefix="cm"><![CDATA[Eau réseau]]></name><productHierarchy2 prefix="bcpg"><![CDATA[Alcools, eau]]></productHierarchy2><locale prefix="sys"><![CDATA[fr_FR]]></locale><legalName prefix="bcpg"><![CDATA[eau]]></legalName><erpCode prefix="bcpg"><![CDATA[]]></erpCode><modified prefix="cm"><![CDATA[2013-12-30T11:37:12.176Z]]></modified><productDensity prefix="bcpg"><![CDATA[1.0]]></productDensity><created prefix="cm"><![CDATA[2011-03-16T12:58:58.855Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><categories prefix="cm"><![CDATA[]]></categories><node-uuid prefix="sys"><![CDATA[a80c93ae-754a-4d50-8c88-c4faa29a1a22]]></node-uuid><description prefix="cm"><![CDATA[]]></description><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><compoListQty prefix="bcpg"><![CDATA[0.12106970101803258]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList sort="1" organoListValue="" organoListOrgano="Aspect" locale="fr_FR"/><organoList sort="2" organoListValue="" organoListOrgano="Couleur" locale="fr_FR"/><organoList sort="3" organoListValue="" organoListOrgano="Goût" locale="fr_FR"/><organoList sort="4" organoListValue="" organoListOrgano="Odeur" locale="fr_FR"/><organoList sort="5" organoListValue="" organoListOrgano="Texture" locale="fr_FR"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" ingListQtyPerc="100.0" sort="1" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr_FR" ingListIsGMO="false" ingListIng="Eau" legalName="Eau"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><netWeight prefix="bcpg"><![CDATA[]]></netWeight><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[A valider]]></productState><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><code prefix="bcpg"><![CDATA[MP12146]]></code><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><node-dbid prefix="sys"><![CDATA[695112]]></node-dbid><name prefix="cm"><![CDATA[Vanille gousse épuisée]]></name><locale prefix="sys"><![CDATA[fr]]></locale><startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:01.506Z]]></startEffectivity><modified prefix="cm"><![CDATA[2014-02-12T17:57:17.292Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGV080]]></erpCode><productDensity prefix="bcpg"><![CDATA[]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T11:26:01.291Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><productQty prefix="bcpg"><![CDATA[]]></productQty><node-uuid prefix="sys"><![CDATA[7e1abcd8-fe08-4431-a93f-62cd4febe182]]></node-uuid><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[0.061301114439510175]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="Arôme naturel - gousses de vanille infusées" legalName="arôme naturel : gousses de vanille infusées"/></ingLists></dataLists><variants/></rawMaterial><rawMaterial><netWeight prefix="bcpg"><![CDATA[]]></netWeight><store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier><store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol><productState prefix="bcpg"><![CDATA[A valider]]></productState><netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit><code prefix="bcpg"><![CDATA[MP12147]]></code><modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier><node-dbid prefix="sys"><![CDATA[695168]]></node-dbid><name prefix="cm"><![CDATA[Colorant orange]]></name><locale prefix="sys"><![CDATA[fr]]></locale><startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:14.156Z]]></startEffectivity><modified prefix="cm"><![CDATA[2014-02-12T17:57:11.125Z]]></modified><erpCode prefix="bcpg"><![CDATA[MGC452]]></erpCode><productDensity prefix="bcpg"><![CDATA[]]></productDensity><created prefix="cm"><![CDATA[2014-02-08T11:26:13.862Z]]></created><productUnit prefix="bcpg"><![CDATA[kg]]></productUnit><productQty prefix="bcpg"><![CDATA[]]></productQty><node-uuid prefix="sys"><![CDATA[09876613-4dbd-4b9b-8e57-375c37f952df]]></node-uuid><entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef><creator prefix="cm"><![CDATA[admin]]></creator><compoListQty prefix="bcpg"><![CDATA[0.0]]></compoListQty><dataLists><priceLists/><nutLists/><costLists/><organoLists><organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c" sort="100" organoListOrgano="Aspect" locale="fr"/><organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb" sort="101" organoListOrgano="Couleur" locale="fr"/><organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6" sort="102" organoListOrgano="Goût" locale="fr"/><organoList original="fb051af5-ce9d-4544-a592-1be059e879e6" sort="103" organoListOrgano="Odeur" locale="fr"/><organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321" sort="104" organoListOrgano="Texture" locale="fr"/></organoLists><labelClaimLists/><microbioLists/><allergenLists/><physicoChemLists/><ingLists><ingList isManualListItem="false" parentLevel="" ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false" ingListIng="E160a(i) - beta-carotène" legalName="E160a"/></ingLists></dataLists><variants/></rawMaterial></rawMaterials><packagingLists><packagingList eanCode="" productHierarchy1="Bac" taggable="" productState="A valider" code="E1147" modifier="utilisateur.rd" productHierarchy2="Bac glace" name="Bac imprimé glace 0,9L" locale="fr" startEffectivity="2014-02-09T14:16:40.694Z" legalName="" productComments="" modified="2014-02-12T17:57:10.947Z" erpCode="" title="" created="2014-02-09T14:16:40.004Z" productUnit="kg" categories="" tare="" certificateDate="" tareUnit="g" description="" entityTplRef="Emballage" creator="admin" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect, certificateDateAspect" packagingListProduct="Bac imprimé glace 0,9L" packagingListPkgLevel="Primary" dynamicCharactColumn1="0,0004" sort="100" packagingListIsMaster="true" dynamicCharactColumn2="0,20" packagingListUnit="P" packagingListQty="1.0" variantIds="" isDefaultVariant="true"><instruction prefix="bcpg"><![CDATA[]]></instruction></packagingList><packagingList eanCode="" productHierarchy1="Couvercle" taggable="" productState="A valider" code="E1148" modifier="utilisateur.rd" productHierarchy2="Couvercle bac glace" name="Couvercle imprimé bac glace 0,9L" locale="fr" startEffectivity="2014-02-09T14:17:14.086Z" legalName="" productComments="" modified="2014-02-12T17:57:11.546Z" erpCode="" title="" created="2014-02-09T14:17:13.331Z" productUnit="kg" categories="" tare="15.0" certificateDate="" tareUnit="g" description="" entityTplRef="Emballage" creator="admin" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect, certificateDateAspect" packagingListProduct="Couvercle imprimé bac glace 0,9L" labelingTemplate="Marquage standard" packagingListPkgLevel="Primary" dynamicCharactColumn1="0,0003" labelingPosition="Dessus" sort="101" packagingListIsMaster="false" dynamicCharactColumn2="0,15" packagingListUnit="P" packagingListQty="1.0" variantIds="" isDefaultVariant="true"><instruction prefix="bcpg"><![CDATA[]]></instruction><labelingTemplate><created prefix="cm"><![CDATA[2013-07-25T13:50:23.885Z]]></created><sort prefix="bcpg"><![CDATA[105]]></sort><modifier prefix="cm"><![CDATA[System]]></modifier><name prefix="cm"><![CDATA[Marquage standard]]></name><locale prefix="sys"><![CDATA[fr]]></locale><description prefix="cm"><![CDATA[<p>[MM/AAAA] (DLUO mois ann&eacute;e)<br />L [AAJJJ]&nbsp; [hh:mm] (n&deg; lot) (heure)<br /><font color="#FF0000"><strong>ATTENTION&nbsp;! INVERSER LE SENS DE LECTURE DU MARQUAGE DE L&rsquo;ETUI (concordance avec l&rsquo;impression de l&rsquo;&eacute;tui)</strong></font></p>]]></description><modified prefix="cm"><![CDATA[2013-11-16T09:00:50.325Z]]></modified><creator prefix="cm"><![CDATA[admin]]></creator></labelingTemplate></packagingList><packagingList reportEntityGenerated="2013-10-11T09:45:52.854Z" palletBoxesPerLastLayer="" productState="A valider" code="KE1112" startEffectivity="2012-11-13T18:58:00.916Z" productComments="" title="" creator="admin" original="Carton SdV - Palette euro" owner="" palletLayers="6" productHierarchy1="Palettisation" taggable="" palletBoxesPerPallet="36" modifier="admin" palletBoxesPerLayer="6" productHierarchy2="Palettisation" name="Petite caisse - Palette euro" locale="fr" unitTotalCost="0.0" legalName="" modified="2014-01-27T16:28:33.408Z" erpCode="" palletHeight="1566" productDensity="1.0" created="2012-11-13T18:57:59.612Z" formulatedDate="2014-01-30T13:47:25.638Z" flagRecent="true" productUnit="P" categories="" tare="0.0" productQty="1.0" tareUnit="g" description="" itemType="bcpg:packagingKit" aspects="referenceable, tareAspect, titled, localized, palletAspect, transformationAspect, flaggable, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, copiedfrom, taggable, profitabilityAspect, generalclassifiable, formulatedEntityAspect, productAspect" packagingListProduct="Petite caisse - Palette euro" packagingListPkgLevel="Secondary" dynamicCharactColumn1="0,00" sort="102" packagingListIsMaster="false" dynamicCharactColumn2="0,016" packagingListUnit="PP" packagingListQty="40.0" variantIds="" isDefaultVariant="true"><instruction prefix="bcpg"><![CDATA[]]></instruction><dataLists><packagingLists><packagingList reportEntityGenerated="2014-01-27T15:34:44.462Z" eanCode="" suppliers="Fournisseur Lacroix" width="300.0" productState="A valider" code="E1115" startEffectivity="2012-11-13T19:08:31.416Z" productComments="" title="" length="500.0" certificateDate="" creator="admin" original="Carton 50x30x30" owner="" productHierarchy1="Colis" taggable="" modifier="admin" productHierarchy2="Caisse" name="Petite Caisse 50x30x30" locale="fr" legalName="Caisse " modified="2014-01-27T15:34:41.047Z" erpCode="" productDensity="1.0" created="2012-11-13T19:08:30.620Z" flagRecent="true" productUnit="P" categories="" tare="200.0" reports="Petite Caisse 50x30x30 - FT emballage.pdf" tareUnit="g" description="" height="300.0" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, flaggable, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, copiedfrom, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect" packagingListProduct="Petite Caisse 50x30x30" packagingListPkgLevel="Secondary" sort="100" packagingListIsMaster="true" packagingListUnit="P" packagingListQty="1.0" variantIds="" isDefaultVariant="true"/><packagingList reportEntityGenerated="2014-01-27T15:34:18.184Z" eanCode="" suppliers="Fournisseur Lacroix" width="800.0" productState="A valider" code="E1085" startEffectivity="2012-09-08T08:49:02.056Z" productComments="" title="" length="1200.0" certificateDate="" creator="admin" owner="" productHierarchy1="Palette" taggable="" modifier="admin" name="Palette euro" productHierarchy2="Recyclable" locale="fr_FR" legalName="palette euro" erpCode="" modified="2014-01-27T15:34:18.518Z" created="2011-08-29T14:55:32.681Z" productUnit="P" categories="" tare="27.0" reports="Palette euro - FT emballage.pdf" tareUnit="kg" description="" height="144.0" itemType="bcpg:packagingMaterial" aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect" original="66d06f91-a787-47e4-bdf2-15dadd5075e6" packagingListProduct="Palette euro" packagingListPkgLevel="Tertiary" sort="101" packagingListIsMaster="false" packagingListUnit="PP" packagingListQty="36.0" variantIds="" isDefaultVariant="true"/></packagingLists></dataLists></packagingList><dynamicCharactLists><dynamicCharactList dynamicCharactTitle="Coût Emb total (€/kg)" dynamicCharactValue="0.40663580246913583"/><dynamicCharactList dynamicCharactTitle="Coût Emb (€/kg)" dynamicCharactValue=""/><dynamicCharactList dynamicCharactTitle="Coût Emb (€/UVC)" dynamicCharactValue=""/></dynamicCharactLists><packagingLevelMeasures variantId="" isDefaultVariant="true" tarePkgLevel1="0.015" netWeightPkgLevel1="0.519" grossWeightPkgLevel1="0.534" tarePkgLevel2="0.8" netWeightPkgLevel2="20.76" grossWeightPkgLevel2="21.560000000000002" nbProductsPkgLevel2="40" tarePkgLevel3="29.55" netWeightPkgLevel3="747.36" grossWeightPkgLevel3="776.91" nbProductsPkgLevel3="1440"/></packagingLists><processLists><processList sort="100" plStep="Mode opératoire" locale="fr" variantIds="" isDefaultVariant="true"><instruction prefix="bcpg"><![CDATA[1° préparer le mix 
+Après décongélation, à conserver au réfrigérateur et à consommer dans la journée.]]></description>
+		<modified prefix="cm"><![CDATA[2013-11-16T09:01:01.295Z]]></modified>
+		<creator prefix="cm"><![CDATA[admin]]></creator>
+	</storageConditions>
+	<creator prefix="cm"><![CDATA[admin]]></creator>
+	<netWeight prefix="bcpg"><![CDATA[0.519]]></netWeight>
+	<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+	<name prefix="cm"><![CDATA[900mL Adélie vanille pécan caramel E1]]></name>
+	<productHierarchy2 prefix="bcpg"><![CDATA[Glaces familiales]]></productHierarchy2>
+	<locale prefix="sys"><![CDATA[fr]]></locale>
+	<legalName prefix="bcpg"><![CDATA[Glace vanille avec sauce au caramel et noix de pécans caramélisées]]></legalName>
+	<autoVersion prefix="cm"><![CDATA[true]]></autoVersion>
+	<erpCode prefix="bcpg"><![CDATA[]]>
+	</erpCode>
+	<productDensity prefix="bcpg"><![CDATA[0.5786752136752136]]></productDensity>
+	<created prefix="cm"><![CDATA[2014-02-07T16:38:08.476Z]]></created>
+	<productUnit prefix="bcpg"><![CDATA[mL]]></productUnit>
+	<servingSize prefix="bcpg"><![CDATA[100.0]]></servingSize>
+	<productQty prefix="bcpg"><![CDATA[900.0]]></productQty>
+	<description prefix="cm"><![CDATA[Fleur de vanille, noix de pécan, caramel]]></description>
+	<entityTplRef prefix="bcpg"><![CDATA[Modèle Produit fini Glace]]></entityTplRef>
+	<reportEntityGenerated prefix="rep"><![CDATA[2014-02-14T08:22:36.495Z]]></reportEntityGenerated>
+	<autoVersionOnUpdateProps prefix="cm"><![CDATA[false]]></autoVersionOnUpdateProps>
+	<code prefix="bcpg"><![CDATA[PF1551]]></code>
+	<precautionOfUse>
+		<created prefix="cm"><![CDATA[2013-07-25T13:57:17.715Z]]></created>
+		<sort prefix="bcpg"><![CDATA[117]]></sort>
+		<modifier prefix="cm"><![CDATA[System]]></modifier>
+		<name prefix="cm"><![CDATA[Produit surgelé]]></name>
+		<locale prefix="sys"><![CDATA[fr]]></locale>
+		<description prefix="cm"><![CDATA[NE JAMAIS RECONGELER UN PRODUIT DÉCONGELÉ.]]></description>
+		<modified prefix="cm"><![CDATA[2013-11-16T09:00:55.924Z]]></modified>
+		<creator prefix="cm"><![CDATA[admin]]></creator>
+	</precautionOfUse>
+	<projectedQty prefix="bcpg"><![CDATA[]]>
+	</projectedQty>
+	<periodAfterOpening prefix="bcpg"><![CDATA[]]>
+	</periodAfterOpening>
+	<bestBeforeDate prefix="bcpg"><![CDATA[]]>
+	</bestBeforeDate>
+	<numberOfServings prefix="bcpg"><![CDATA[8 à 10]]></numberOfServings>
+	<productHierarchy1 prefix="bcpg"><![CDATA[Glaces]]></productHierarchy1>
+	<taggable prefix="cm"><![CDATA[]]>
+	</taggable>
+	<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+	<unitTotalCost prefix="bcpg"><![CDATA[0.8967565129134152]]></unitTotalCost>
+	<modified prefix="cm"><![CDATA[2014-02-14T08:07:06.002Z]]></modified>
+	<clients prefix="bcpg"><![CDATA[Intermarché]]></clients>
+	<formulatedDate prefix="bcpg"><![CDATA[2014-02-14T08:21:53.411Z]]></formulatedDate>
+	<initialVersion prefix="cm"><![CDATA[true]]></initialVersion>
+	<versionLabel prefix="cm"><![CDATA[1.3]]></versionLabel>
+	<priceCurrency prefix="bcpg"><![CDATA[€]]></priceCurrency>
+	<tare prefix="pack"><![CDATA[15.0]]></tare>
+	<categories prefix="cm"><![CDATA[]]>
+	</categories>
+	<reports prefix="rep"><![CDATA[900mL Adélie vanille pécan caramel E1 - Fiche Technique Client.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique Production.pdf, 900mL Adélie vanille pécan caramel E1 - FT Origines MP.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique R&D.pdf]]></reports>
+	<tareUnit prefix="pack"><![CDATA[g]]></tareUnit>
+	<aspects><![CDATA[referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, compareWithAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, clientsAspect, reportTplsAspect, productAspect, eanAspect, consumerAspect, localized, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect, formulatedEntityAspect, versionable]]></aspects>
+	<itemType><![CDATA[finishedProduct]]></itemType>
+	<images>
+		<image id="Img0" name="img_schema.png" />
+		<image id="Img1" name="produit.png" />
+		<image id="Img2" name="img_defaut1.jpg" title="Pb décor" />
+		<image id="Img3" name="img_defaut2.jpg" title="Décor de travers" />
+		<image id="Img4" name="img_fab2.jpg" title="Mettre le macaron au centre" />
+		<image id="Img5" name="img_fab2.jpeg" title="Etaler la sauce caramel" />
+		<image id="Img6" name="img_palet1.jpg" title="Couches" />
+		<image id="Img7" name="img_palet2.jpg" title="Palette" />
+	</images>
+	<dataLists>
+		<controlDefLists />
+		<nutLists energiekj="476.1632660411247" energiekcal="113.92036993682646"
+			lipides="6.931577303047195" agsaturés="0.7945643640839837"
+			agmonoinsaturés="3.2775978262417937" agpolyinsaturés="2.533568901833272"
+			glucides="12.961924560613216" sucres="11.457183265555619" amidon="1.4927"
+			protéines="0.8114429663693793" fibresalimentaires="0.39466666666666667"
+			sodium="23.278086259754737" alcooléthanol="0.0">
+			<nutList isManualListItem="" sort="100" nutListGroup="Groupe 1"
+				depthLevel="1" nutListMethod="Formulation" nutListMaxi="500"  nutListMini="100"
+				nutListValuePerServing="476.16326604112476" nutListUnit="kJ/100mL"
+				locale="fr_FR" nutListNut="Energie kJ" legalName="Energie, N x facteur Jones, avec fibres" />
+			<nutList nutListGDAPerc="5.696018496841323" isManualListItem=""
+				sort="101" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation"
+				nutListValue="113.92036993682646" nutListValuePerServing="113.92036993682646"
+				nutListUnit="kcal/100mL" locale="fr_FR" nutListNut="Energie kcal"
+				legalName="Energie, N x facteur Jones, avec fibres" />
+			<nutList nutListGDAPerc="9.90225329006742" isManualListItem=""
+				sort="102" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation"
+				nutListValue="6.931577303047195" nutListValuePerServing="6.931577303047195"
+				nutListUnit="g/100mL" locale="fr_FR" nutListNut="Lipides" legalName="Lipides" />
+			<nutList nutListGDAPerc="3.972821820419918" isManualListItem="false"
+				parentLevel="Lipides" sort="103" nutListGroup="Groupe 2" depthLevel="2"
+				nutListMethod="Formulation" nutListValue="0.7945643640839837"
+				nutListValuePerServing="0.7945643640839836" nutListUnit="g/100mL"
+				locale="fr_FR" nutListNut="AG saturés" legalName="AG saturés" />
+			<nutList isManualListItem="false" parentLevel="Lipides" sort="104"
+				nutListGroup="Autre" depthLevel="2" nutListMethod="Formulation"
+				nutListValue="3.2775978262417937" nutListValuePerServing="3.2775978262417937"
+				nutListUnit="g/100mL" locale="fr_FR" nutListNut="AG monoinsaturés"
+				legalName="AG monoinsaturés" />
+			<nutList isManualListItem="false" parentLevel="Lipides" sort="105"
+				nutListGroup="Autre" depthLevel="2" nutListMethod="Formulation"
+				nutListValue="2.533568901833272" nutListValuePerServing="2.533568901833272"
+				nutListUnit="g/100mL" locale="fr_FR" nutListNut="AG polyinsaturés"
+				legalName="AG polyinsaturés" />
+			<nutList nutListGDAPerc="4.800712800227116" isManualListItem="false"
+				parentLevel="" sort="106" nutListGroup="Groupe 1" depthLevel="1"
+				nutListMethod="Formulation" nutListValue="12.961924560613216"
+				nutListValuePerServing="12.961924560613216" nutListUnit="g/100mL"
+				locale="fr_FR" nutListNut="Glucides" legalName="Glucides" />
+			<nutList nutListGDAPerc="12.730203628395131"
+				isManualListItem="false" parentLevel="Glucides" sort="107"
+				nutListGroup="Groupe 2" depthLevel="2" nutListMethod="Formulation"
+				nutListValue="11.457183265555619" nutListValuePerServing="11.457183265555619"
+				nutListUnit="g/100mL" locale="fr_FR" nutListNut="Sucres" legalName="Sucres" />
+			<nutList isManualListItem="false" parentLevel="Glucides"
+				sort="108" nutListGroup="Autre" depthLevel="2" nutListMethod="Formulation"
+				nutListValue="1.4927" nutListValuePerServing="1.4927" nutListUnit="g/100mL"
+				locale="fr_FR" nutListNut="Amidon" legalName="Amidon" />
+			<nutList nutListGDAPerc="1.6228859327387584"
+				isManualListItem="" sort="109" nutListGroup="Groupe 1" depthLevel="1"
+				nutListMethod="Formulation" nutListValue="0.8114429663693793"
+				nutListValuePerServing="0.8114429663693792" nutListUnit="g/100mL"
+				locale="fr_FR" nutListNut="Protéines" legalName="Protéines" />
+			<nutList nutListGDAPerc="1.5786666666666667"
+				isManualListItem="" sort="110" nutListGroup="Groupe 2" depthLevel="1"
+				nutListMethod="Formulation" nutListValue="0.39466666666666667"
+				nutListValuePerServing="0.39466666666666667" nutListUnit="g/100mL"
+				locale="fr_FR" nutListNut="Fibres alimentaires" legalName="Fibres alimentaires" />
+			<nutList nutListGDAPerc="0.969920260823114" isManualListItem=""
+				sort="111" nutListGroup="Groupe 2" depthLevel="1" nutListMethod="Formulation"
+				nutListValue="23.278086259754737" nutListValuePerServing="23.278086259754737"
+				nutListUnit="mg/100mL" locale="fr_FR" nutListNut="Sodium" legalName="Sodium" />
+			<nutList isManualListItem="false" sort="112" nutListGroup="Autre"
+				depthLevel="1" nutListMethod="Formulation" nutListValue="0.0"
+				nutListValuePerServing="0.0" nutListUnit="g/100mL" locale="fr"
+				nutListNut="Alcool (éthanol)" legalName="Alcool (éthanol)" />
+		</nutLists>
+		<costLists>
+			<costList isManualListItem="false" costListCost="Coût MP"
+				sort="100" costListUnit="€/L" costListValue="0.5897603229902143"
+				locale="fr" legalName="" />
+			<costList isManualListItem="false" costListCost="Coût Emb"
+				sort="101" costListUnit="€/L" costListValue="0.40663580246913583"
+				locale="fr" legalName="" />
+			<costList isManualListItem="false" costListCost="Coût Production"
+				sort="102" costListUnit="€/L" locale="fr" legalName="" />
+		</costLists>
+		<organoLists>
+			<organoList sort="100"
+				organoListValue="Présence de choupettes / Présence de sauce caramel et de noix de pécan en décor"
+				organoListOrgano="Aspect" locale="fr" />
+			<organoList sort="101" organoListValue=""
+				organoListOrgano="Couleur" locale="fr" />
+			<organoList sort="102"
+				organoListValue="Caractéristique de la vanille, du caramel et des noix de pécan, absence de notes parasites"
+				organoListOrgano="Goût" locale="fr" />
+			<organoList sort="103"
+				organoListValue="Caractéristique de la vanille, du caramel et des noix de pécan"
+				organoListOrgano="Odeur" locale="fr" />
+			<organoList sort="104"
+				organoListValue="Texture crémeuse de la glace, noix de pécans croquantes"
+				organoListOrgano="Texture" locale="fr" />
+		</organoLists>
+		<labelClaimLists>
+			<labelClaimList lclLabelClaim="Sans BPA"
+				isManualListItem="" lclType="Santé" sort="100" lclIsClaimed="true"
+				lclIsFormulated="false" locale="fr" />
+			<labelClaimList lclLabelClaim="Sans huile de palme"
+				isManualListItem="" lclType="Santé" sort="101" lclIsClaimed="true"
+				lclIsFormulated="false" locale="fr" />
+			<labelClaimList lclLabelClaim="Faible teneur en sucres"
+				isManualListItem="" lclType="Nutritionnelle" sort="102"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Pauvre en sodium ou en sel"
+				isManualListItem="" lclType="Nutritionnelle" sort="103"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Faible valeur énergétique"
+				isManualListItem="false" lclType="Nutritionnelle" sort="104"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Sans apport énergétique"
+				isManualListItem="false" lclType="Nutritionnelle" sort="105"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Faible teneur en matières grasses"
+				isManualListItem="false" lclType="Nutritionnelle" sort="106"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Sans matières grasses"
+				isManualListItem="false" lclType="Nutritionnelle" sort="107"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Faible teneur en sucres"
+				isManualListItem="false" lclType="Nutritionnelle" sort="108"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Sans sucres"
+				isManualListItem="false" lclType="Nutritionnelle" sort="109"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Pauvre en sodium ou en sel"
+				isManualListItem="false" lclType="Nutritionnelle" sort="110"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Très pauvre en sodium ou en sel"
+				isManualListItem="false" lclType="Nutritionnelle" sort="111"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Sans sodium ou sans sel"
+				isManualListItem="false" lclType="Nutritionnelle" sort="112"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+			<labelClaimList lclLabelClaim="Source de fibres"
+				isManualListItem="false" lclType="Nutritionnelle" sort="113"
+				lclIsClaimed="false" lclIsFormulated="true" locale="fr" />
+		</labelClaimLists>
+		<allergenLists allergenListVoluntary="Fructose, Saccharose"
+			allergenListInVoluntary="">
+			<allergenList allergenListAllergen="Anhydride sulfureux et sulfites"
+				isManualListItem="" sort="1" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Arachides et produits à base d'arachides"
+				isManualListItem="" sort="2" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Crustacés et produits à base de crustacés"
+				isManualListItem="" sort="3" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList
+				allergenListAllergen="Céréales contenant du gluten et produits à base de ces céréales"
+				isManualListItem="" sort="4" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Fruits à Coque- (noix noisettes)"
+				isManualListItem="" sort="5" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList
+				allergenListAllergen="Graines de sésame et produits à base de graines de sésame"
+				isManualListItem="" sort="6" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Lait et produit à base de (dont lactose)"
+				isManualListItem="" sort="7" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Lupin  et produits à base de lupin"
+				isManualListItem="" sort="8" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Mollusque  et produits à base de mollusque"
+				isManualListItem="" sort="9" allergenListInVoluntary="false" locale="fr"
+				allergenListVoluntary="false" variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Oeuf et produit à base d'oeuf"
+				isManualListItem="" sort="10" allergenListInVoluntary="false"
+				locale="fr" allergenListVoluntary="false" variantIds=""
+				isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Poisson et produit à base de poisson"
+				isManualListItem="" sort="11" allergenListInVoluntary="false"
+				locale="fr" allergenListVoluntary="false" variantIds=""
+				isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Soja et produits à base de soja"
+				isManualListItem="" sort="12" allergenListInVoluntary="false"
+				locale="fr" allergenListVoluntary="false" variantIds=""
+				isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Céleri et produits à base de céleri"
+				isManualListItem="" sort="13" allergenListInVoluntary="false"
+				locale="fr" allergenListVoluntary="false" variantIds=""
+				isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Fructose"
+				isManualListItem="" sort="14" allergenListVolSources="Sucre poudre"
+				allergenListInVoluntary="false" locale="fr" allergenListVoluntary="true"
+				variantIds="" isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Moutarde et produits à base de moutarde"
+				isManualListItem="" sort="15" allergenListInVoluntary="false"
+				locale="fr" allergenListVoluntary="false" variantIds=""
+				isDefaultVariant="true" />
+			<allergenList allergenListAllergen="Saccharose"
+				isManualListItem="" sort="16" allergenListVolSources="Sucre poudre"
+				allergenListInVoluntary="false" locale="fr" allergenListVoluntary="true"
+				variantIds="" isDefaultVariant="true" />
+		</allergenLists>
+		<physicoChemLists />
+		<ingLists>
+			<ingList ingListGeoOrigin="Allemagne, France"
+				isManualListItem="" ingListQtyPerc="25.298719982259346" sort="1"
+				ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Betterave"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Sucre" legalName="Sucre" />
+			<ingList isManualListItem="" ingListQtyPerc="19.460553832507188"
+				sort="2" ingListIsProcessingAid="false" depthLevel="1"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Lactose et protéines de lait" legalName="Lactose et protéines de lait" />
+			<ingList isManualListItem="" ingListQtyPerc="19.460553832507188"
+				sort="3" ingListIsProcessingAid="false" depthLevel="1"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="coprah" legalName="coprah" />
+			<ingList isManualListItem="" ingListQtyPerc="9.730276916253594"
+				sort="4" ingListIsProcessingAid="false" depthLevel="1"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Sirop de glucose-fructose" legalName="Sirop de glucose-fructose" />
+			<ingList ingListGeoOrigin="Côte d'Ivoire, Indonésie"
+				isManualListItem="" ingListQtyPerc="3.481131378775571" sort="5"
+				ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Noix de pécan"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Noix de pécan" legalName="Noix de pécan" />
+			<ingList isManualListItem="" ingListQtyPerc="1.5568443066005753"
+				sort="6" ingListIsProcessingAid="false" depthLevel="1"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Gomme de Guar" legalName="Gomme de Guar" />
+			<ingList ingListGeoOrigin="Indonésie, Madagascar"
+				isManualListItem="" ingListQtyPerc="0.7784221533002876" sort="7"
+				ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Vanille"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Arômes naturels de vanille" legalName="arômes naturels de vanille" />
+			<ingList isManualListItem="" ingListQtyPerc="0.19217296909600848"
+				sort="8" ingListIsProcessingAid="false" depthLevel="1"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Eau" legalName="Eau" />
+			<ingList isManualListItem="" ingListQtyPerc="0.09730276916253595"
+				sort="9" ingListIsProcessingAid="false" depthLevel="1"
+				ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+				ingListIng="Arôme naturel - gousses de vanille infusées" legalName="arôme naturel : gousses de vanille infusées" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="10"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="Sel" legalName="Sel" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="11"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="Lait entier concentré sucre"
+				legalName="Lait entier concentré sucre" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="12"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="Pectine" legalName="Pectine" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="13"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="Amidon de mais"
+				legalName="Amidon de mais" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="14"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false"
+				ingListIng="E471 - mono- et diglycerides d'acides gras alimentaires"
+				legalName="E471" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="15"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="Arômes naturels"
+				legalName="arômes naturels" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="16"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="E150a - caramels"
+				legalName="E150a - caramels" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="17"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="Sirop de glucose"
+				legalName="Sirop de glucose" />
+			<ingList ingListGeoOrigin="France" isManualListItem=""
+				ingListQtyPerc="0.0" sort="18" ingListIsProcessingAid="false"
+				depthLevel="1" ingListBioOrigin="Lait de vache" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="Beurre" legalName="beurre" />
+			<ingList isManualListItem="" ingListQtyPerc="0.0" sort="19"
+				ingListIsProcessingAid="false" depthLevel="1" ingListIsIonized="false"
+				locale="fr" ingListIsGMO="false" ingListIng="E160a(i) - beta-carotène"
+				legalName="E160a" />
+		</ingLists>
+		<compoLists>
+			<compoList reportEntityGenerated="2014-02-13T18:42:10.565Z"
+				packagingDescription="" productState="A valider" code="SF1181"
+				startEffectivity="2014-02-07T17:24:15.129Z" preparationTips=""
+				productComments="" title="" useByDate="" bestBeforeDate=""
+				periodAfterOpening="" compareWithEntities="PJ352 Glace vanille E2, PJ352 Glace vanille E3"
+				creator="admin" netWeight="1.38" productHierarchy1="Bases laitières"
+				taggable="" netWeightUnit="kg" modifier="admin" productHierarchy2="Glaces"
+				name="Glace vanille" locale="fr" unitTotalCost="0.45515" legalName="Glace vanille"
+				modified="2014-02-13T18:24:22.015Z" erpCode="4555.S" productDensity="1.1"
+				created="2014-02-07T17:24:15.072Z" formulatedDate="2014-02-13T18:40:40.861Z"
+				productUnit="g" categories="" tare="0.0"
+				reports="Glace vanille - Fiche Technique Production.pdf, Glace vanille - Fiche Technique R&amp;D.pdf"
+				productQty="1380.0" tareUnit="g" description="Glace vanille de référence"
+				entityTplRef="Mix Glace en kg" itemType="bcpg:semiFinishedProduct"
+				aspects="consumerAspect, referenceable, tareAspect, titled, localized, transformationAspect, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, compareWithAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, copiedfrom, taggable, productMicrobioCriteriaAspect, profitabilityAspect, generalclassifiable, formulatedEntityAspect, reportTplsAspect, productAspect"
+				compoListDeclType="Déclarer" dynamicCharactColumn1="0.13153429069119288"
+				compoListQty="0.3988076923076923" compoListOverrunPerc="120.0" sort="101"
+				compoListProduct="Glace vanille" depthLevel="1"
+				compoListQtySubFormula="398.80769230769226" compoListVolume="0.7976153846153846"
+				dynamicCharactColumn2="7.976153846153846" compoListUnit="g"
+				variantIds="" isDefaultVariant="true" />
+			<compoList eanCode="" packagingDescription="" productState="A valider"
+				code="MP25534" startEffectivity="2014-02-07T17:42:42.647Z"
+				preparationTips="" productComments="" title="" useByDate=""
+				periodAfterOpening="" certificateDate="" bestBeforeDate="" creator="admin"
+				netWeight="" productHierarchy1="Epicerie" taggable="" netWeightUnit="kg"
+				modifier="utilisateur.rd" productHierarchy2="Sauces" name="Sauce caramel"
+				locale="fr" legalName="sauce au caramel" modified="2014-02-12T17:57:15.829Z"
+				erpCode="MGC077" productDensity="1.3" created="2014-02-07T17:42:42.609Z"
+				productUnit="kg" categories="" productQty="" description=""
+				entityTplRef="Matière première" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect"
+				compoListDeclType="Détailler" dynamicCharactColumn1="0.10725"
+				compoListQty="0.065" sort="102" compoListProduct="Sauce caramel"
+				depthLevel="1" compoListQtySubFormula="65.0" compoListVolume="0.05"
+				dynamicCharactColumn2="1.3" compoListUnit="g" variantIds=""
+				isDefaultVariant="true" />
+			<compoList eanCode="" suppliers="Table USDA"
+				packagingDescription="" productState="A valider" code="USDA12142"
+				startEffectivity="2012-09-03T16:32:23.849Z" preparationTips=""
+				productComments="" title="" useByDate="" periodAfterOpening=""
+				certificateDate="" bestBeforeDate="" creator="admin" owner=""
+				netWeight="" productHierarchy1="USDA" taggable="" netWeightUnit="kg"
+				modifier="admin" productHierarchy2="Produits de noix et de graines"
+				name="Pécans 2-10mm" locale="fr" legalName="noix de pécan caramélisées"
+				modified="2014-02-11T11:17:46.125Z" erpCode="" productDensity="1.0"
+				created="2014-02-08T10:54:15.691Z" productUnit="kg" categories=""
+				productQty="" description="" entityTplRef="Matière première"
+				itemType="bcpg:rawMaterial"
+				aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect"
+				compoListDeclType="Détailler" dynamicCharactColumn1="0.17500000000000002"
+				compoListQty="0.025" sort="104" compoListProduct="Pécans 2-10mm"
+				depthLevel="1" compoListQtySubFormula="25.0" compoListVolume="0.025"
+				dynamicCharactColumn2="0.5" compoListUnit="g" variantIds=""
+				isDefaultVariant="true">
+				<instruction prefix="bcpg"><![CDATA[]]>
+				</instruction>
+			</compoList>
+			<compoList eanCode="" packagingDescription="" productState="A valider"
+				code="MP25534" startEffectivity="2014-02-07T17:42:42.647Z"
+				preparationTips="" productComments="" title="" useByDate=""
+				periodAfterOpening="" certificateDate="" bestBeforeDate="" creator="admin"
+				netWeight="" productHierarchy1="Epicerie" taggable="" netWeightUnit="kg"
+				modifier="utilisateur.rd" productHierarchy2="Sauces" name="Sauce caramel"
+				locale="fr" legalName="sauce au caramel" modified="2014-02-12T17:57:15.829Z"
+				erpCode="MGC077" productDensity="1.3" created="2014-02-07T17:42:42.609Z"
+				productUnit="kg" categories="" productQty="" description=""
+				entityTplRef="Matière première" itemType="bcpg:rawMaterial"
+				aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect"
+				compoListDeclType="Détailler" dynamicCharactColumn1="0.033"
+				compoListQty="0.02" sort="105" compoListProduct="Sauce caramel"
+				depthLevel="1" compoListQtySubFormula="20.0" compoListVolume="0.015384615384615385"
+				dynamicCharactColumn2="0.4" compoListUnit="g" variantIds=""
+				isDefaultVariant="true" />
+			<compoList eanCode="" suppliers="Table USDA"
+				packagingDescription="" productState="A valider" code="USDA12142"
+				startEffectivity="2012-09-03T16:32:23.849Z" preparationTips=""
+				productComments="" title="" useByDate="" periodAfterOpening=""
+				certificateDate="" bestBeforeDate="" creator="admin" owner=""
+				netWeight="" productHierarchy1="USDA" taggable="" netWeightUnit="kg"
+				modifier="admin" productHierarchy2="Produits de noix et de graines"
+				name="Pécans 2-10mm" locale="fr" legalName="noix de pécan caramélisées"
+				modified="2014-02-11T11:17:46.125Z" erpCode="" productDensity="1.0"
+				created="2014-02-08T10:54:15.691Z" productUnit="kg" categories=""
+				productQty="" description="" entityTplRef="Matière première"
+				itemType="bcpg:rawMaterial"
+				aspects="eanAspect, consumerAspect, referenceable, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, productAspect, certificateDateAspect"
+				compoListDeclType="Détailler" dynamicCharactColumn1="0.084"
+				compoListQty="0.012" sort="107" compoListProduct="Pécans 2-10mm"
+				depthLevel="1" compoListQtySubFormula="12.0" compoListVolume="0.012"
+				dynamicCharactColumn2="0.24" compoListUnit="g" variantIds=""
+				isDefaultVariant="true">
+				<instruction prefix="bcpg"><![CDATA[]]>
+				</instruction>
+			</compoList>
+			<dynamicCharactLists>
+				<dynamicCharactList dynamicCharactTitle="Qte totale MeO (g)"
+					dynamicCharactValue="520.8076923076923" />
+				<dynamicCharactList dynamicCharactTitle="Densité"
+					dynamicCharactValue="0.5786752136752136" />
+				<dynamicCharactList dynamicCharactTitle="Qté totale MeO (g)"
+					dynamicCharactValue="520.8076923076923" />
+				<dynamicCharactList dynamicCharactTitle="Profit (%)"
+					dynamicCharactValue="" />
+				<dynamicCharactList dynamicCharactTitle="Coût MP total (€/L)"
+					dynamicCharactValue="0.5897603229902143" />
+				<dynamicCharactList dynamicCharactTitle="Coût MP (€)"
+					dynamicCharactValue="" />
+				<dynamicCharactList dynamicCharactTitle="Nb Ech"
+					dynamicCharactValue="20" />
+				<dynamicCharactList dynamicCharactTitle="Qté labo (kg)"
+					dynamicCharactValue="" />
+				<dynamicCharactList dynamicCharactTitle="Calcul qté 1er composant"
+					dynamicCharactValue="398.80769230769226" />
+				<dynamicCharactList dynamicCharactTitle="Rdt volume"
+					dynamicCharactValue="99.99999999999999" />
+			</dynamicCharactLists>
+		</compoLists>
+		<rawMaterials>
+			<rawMaterial>
+				<eanCode prefix="bcpg"><![CDATA[]]>
+				</eanCode>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<packagingDescription prefix="bcpg"><![CDATA[]]>
+				</packagingDescription>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<code prefix="bcpg"><![CDATA[MP25534]]></code>
+				<node-dbid prefix="sys"><![CDATA[693966]]></node-dbid>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-07T17:42:42.647Z]]></startEffectivity>
+				<preparationTips prefix="bcpg"><![CDATA[]]>
+				</preparationTips>
+				<productComments prefix="bcpg"><![CDATA[]]>
+				</productComments>
+				<title prefix="cm"><![CDATA[]]>
+				</title>
+				<useByDate prefix="bcpg"><![CDATA[]]>
+				</useByDate>
+				<bestBeforeDate prefix="bcpg"><![CDATA[]]>
+				</bestBeforeDate>
+				<periodAfterOpening prefix="bcpg"><![CDATA[]]>
+				</periodAfterOpening>
+				<certificateDate prefix="bcpg"><![CDATA[]]>
+				</certificateDate>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<taggable prefix="cm"><![CDATA[]]>
+				</taggable>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<productHierarchy2 prefix="bcpg"><![CDATA[Sauces]]></productHierarchy2>
+				<name prefix="cm"><![CDATA[Sauce caramel]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<legalName prefix="bcpg"><![CDATA[sauce au caramel]]></legalName>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:15.829Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGC077]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[1.3]]></productDensity>
+				<created prefix="cm"><![CDATA[2014-02-07T17:42:42.609Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<categories prefix="cm"><![CDATA[]]>
+				</categories>
+				<node-uuid prefix="sys"><![CDATA[0dc4f86e-7ebb-4e35-a683-3adc77468732]]></node-uuid>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<description prefix="cm"><![CDATA[]]>
+				</description>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<compoListQty prefix="bcpg"><![CDATA[36.06059192161599]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList sort="100" organoListOrgano="Aspect"
+							locale="fr" />
+						<organoList sort="101" organoListOrgano="Couleur"
+							locale="fr" />
+						<organoList sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList sort="104" organoListOrgano="Texture"
+							locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="100" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Sirop de glucose-fructose" legalName="Sirop de glucose-fructose" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="101" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Lait entier concentré sucre" legalName="Lait entier concentré sucre" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="102" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Eau" legalName="Eau" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="103" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Matière grasse végétale" legalName="Matière grasse végétale" />
+						<ingList isManualListItem="false"
+							parentLevel="c9c3c6bd-fbb1-4886-8311-cfae4ab47207"
+							ingListQtyPerc="" sort="104" ingListIsProcessingAid="false"
+							depthLevel="2" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="coprah" legalName="coprah" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="105" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Sucre" legalName="Sucre" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="106" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Sel" legalName="Sel" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="107" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Pectine" legalName="Pectine" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="108" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Amidon de mais" legalName="Amidon de mais" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="109" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="E471 - mono- et diglycerides d'acides gras alimentaires"
+							legalName="E471" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="110" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Arômes naturels" legalName="arômes naturels" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="111" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="E150a - caramels" legalName="E150a - caramels" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<reportEntityGenerated prefix="rep"><![CDATA[2013-07-09T08:25:07.598Z]]></reportEntityGenerated>
+				<owner prefix="cm"><![CDATA[]]>
+				</owner>
+				<eanCode prefix="bcpg"><![CDATA[]]>
+				</eanCode>
+				<productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[Validé]]></productState>
+				<code prefix="bcpg"><![CDATA[MP1142]]></code>
+				<modifier prefix="cm"><![CDATA[admin]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[134627]]></node-dbid>
+				<productHierarchy2 prefix="bcpg"><![CDATA[Epicerie autres]]></productHierarchy2>
+				<name prefix="cm"><![CDATA[Sucre poudre]]></name>
+				<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2011-10-31T09:34:40.700Z]]></startEffectivity>
+				<legalName prefix="bcpg"><![CDATA[Sucre en poudre]]></legalName>
+				<modified prefix="cm"><![CDATA[2014-02-08T11:28:55.270Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[]]>
+				</erpCode>
+				<created prefix="cm"><![CDATA[2011-10-31T09:34:40.671Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<node-uuid prefix="sys"><![CDATA[73afb5d4-d7cd-4d0e-841d-bde843201d28]]></node-uuid>
+				<description prefix="cm"><![CDATA[]]>
+				</description>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[15.938289754272642]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList sort="1" organoListValue=""
+							organoListOrgano="Aspect" locale="fr_FR" />
+						<organoList sort="2" organoListValue=""
+							organoListOrgano="Couleur" locale="fr_FR" />
+						<organoList sort="3" organoListValue=""
+							organoListOrgano="Goût" locale="fr_FR" />
+						<organoList sort="4" organoListValue=""
+							organoListOrgano="Odeur" locale="fr_FR" />
+						<organoList sort="5" organoListValue=""
+							organoListOrgano="Texture" locale="fr_FR" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" ingListQtyPerc="100.0"
+							sort="1" ingListIsProcessingAid="false" depthLevel="1"
+							ingListIsIonized="false" locale="fr_FR" ingListIsGMO="false"
+							ingListIng="Sucre" legalName="Sucre" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<eanCode prefix="bcpg"><![CDATA[]]>
+				</eanCode>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<suppliers prefix="bcpg"><![CDATA[Table USDA]]></suppliers>
+				<packagingDescription prefix="bcpg"><![CDATA[]]>
+				</packagingDescription>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<code prefix="bcpg"><![CDATA[USDA12142]]></code>
+				<node-dbid prefix="sys"><![CDATA[694517]]></node-dbid>
+				<startEffectivity prefix="bcpg"><![CDATA[2012-09-03T16:32:23.849Z]]></startEffectivity>
+				<preparationTips prefix="bcpg"><![CDATA[]]>
+				</preparationTips>
+				<productComments prefix="bcpg"><![CDATA[]]>
+				</productComments>
+				<title prefix="cm"><![CDATA[]]>
+				</title>
+				<useByDate prefix="bcpg"><![CDATA[]]>
+				</useByDate>
+				<bestBeforeDate prefix="bcpg"><![CDATA[]]>
+				</bestBeforeDate>
+				<certificateDate prefix="bcpg"><![CDATA[]]>
+				</certificateDate>
+				<periodAfterOpening prefix="bcpg"><![CDATA[]]>
+				</periodAfterOpening>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<owner prefix="cm"><![CDATA[]]>
+				</owner>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<productHierarchy1 prefix="bcpg"><![CDATA[USDA]]></productHierarchy1>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<taggable prefix="cm"><![CDATA[]]>
+				</taggable>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<modifier prefix="cm"><![CDATA[admin]]></modifier>
+				<productHierarchy2 prefix="bcpg"><![CDATA[Produits de noix et de graines]]></productHierarchy2>
+				<name prefix="cm"><![CDATA[Pécans 2-10mm]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<legalName prefix="bcpg"><![CDATA[noix de pécan caramélisées]]></legalName>
+				<modified prefix="cm"><![CDATA[2014-02-11T11:17:46.125Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[]]>
+				</erpCode>
+				<productDensity prefix="bcpg"><![CDATA[1.0]]></productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T10:54:15.691Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<categories prefix="cm"><![CDATA[]]>
+				</categories>
+				<node-uuid prefix="sys"><![CDATA[c6d4da19-f4c6-4334-bfc5-150fa6238b7c]]></node-uuid>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<description prefix="cm"><![CDATA[]]>
+				</description>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<compoListQty prefix="bcpg"><![CDATA[15.696963542350492]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListGeoOrigin="Côte d'Ivoire, Indonésie"
+							isManualListItem="false" parentLevel="" ingListQtyPerc="49.0"
+							sort="100" ingListIsProcessingAid="false" depthLevel="1"
+							ingListBioOrigin="Noix de pécan" ingListIsIonized="false" locale="fr"
+							ingListIsGMO="false" ingListGeoTransfo="Côte d'Ivoire, Indonésie"
+							ingListIng="Noix de pécan" legalName="Noix de pécan" />
+						<ingList ingListGeoOrigin="Allemagne, France"
+							isManualListItem="false" parentLevel="" ingListQtyPerc="" sort="101"
+							ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Betterave"
+							ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListGeoTransfo="Allemagne, France, Sainte-Lucie" ingListIng="Sucre"
+							legalName="Sucre" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="102" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Sirop de glucose" legalName="Sirop de glucose" />
+						<ingList ingListGeoOrigin="France" isManualListItem="false"
+							parentLevel="" ingListQtyPerc="" sort="103"
+							ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Lait de vache"
+							ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListGeoTransfo="France" ingListIng="Beurre" legalName="beurre" />
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="" sort="104" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Sel" legalName="Sel" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<code prefix="bcpg"><![CDATA[MP12143]]></code>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[694920]]></node-dbid>
+				<name prefix="cm"><![CDATA[Matière grasse végétale]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:22:57.750Z]]></startEffectivity>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:15.308Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGG058]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[]]>
+				</productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T11:22:57.587Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<node-uuid prefix="sys"><![CDATA[3637825f-42b0-408a-92e2-99972e8f65e4]]></node-uuid>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[12.260222887902035]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Matière grasse végétale" legalName="Matière grasse végétale" />
+						<ingList isManualListItem="false"
+							parentLevel="0f5a1e67-17dd-4269-8b12-b7e4b87ab83f"
+							ingListQtyPerc="100.0" sort="101" ingListIsProcessingAid="false"
+							depthLevel="2" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="coprah" legalName="coprah" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<code prefix="bcpg"><![CDATA[MP12144]]></code>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[695000]]></node-dbid>
+				<name prefix="cm"><![CDATA[Lactoeco]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:25:12.814Z]]></startEffectivity>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:14.932Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGL003]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[]]>
+				</productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T11:25:12.644Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<node-uuid prefix="sys"><![CDATA[c4d9fbb7-2f26-4639-9654-c4a9df9bfac4]]></node-uuid>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[12.260222887902035]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Lactose et protéines de lait" legalName="Lactose et protéines de lait" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<reportEntityGenerated prefix="rep"><![CDATA[2013-10-30T19:58:59.880Z]]></reportEntityGenerated>
+				<eanCode prefix="bcpg"><![CDATA[]]>
+				</eanCode>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<code prefix="bcpg"><![CDATA[MP60]]></code>
+				<node-dbid prefix="sys"><![CDATA[605483]]></node-dbid>
+				<startEffectivity prefix="bcpg"><![CDATA[2013-10-30T19:58:31.581Z]]></startEffectivity>
+				<productComments prefix="bcpg"><![CDATA[]]>
+				</productComments>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<modifier prefix="cm"><![CDATA[admin]]></modifier>
+				<name prefix="cm"><![CDATA[SIROP DE GLUCOSE]]></name>
+				<productHierarchy2 prefix="bcpg"><![CDATA[Additifs, ingrédients fonctionnels]]></productHierarchy2>
+				<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+				<legalName prefix="bcpg"><![CDATA[]]>
+				</legalName>
+				<erpCode prefix="bcpg"><![CDATA[z2]]></erpCode>
+				<modified prefix="cm"><![CDATA[2014-02-08T11:28:06.050Z]]></modified>
+				<productDensity prefix="bcpg"><![CDATA[1.377]]></productDensity>
+				<created prefix="cm"><![CDATA[2013-10-30T19:58:14.903Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<reports prefix="rep"><![CDATA[SIROP DE GLUCOSE - Fiche Technique MP.pdf]]></reports>
+				<node-uuid prefix="sys"><![CDATA[15ff0aab-d5e2-4fa2-80f8-ce55c7461b44]]></node-uuid>
+				<description prefix="cm"><![CDATA[]]>
+				</description>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<compoListQty prefix="bcpg"><![CDATA[6.130111443951018]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList sort="100" organoListOrgano="Aspect"
+							locale="fr" />
+						<organoList sort="101" organoListOrgano="Couleur"
+							locale="fr" />
+						<organoList sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList sort="104" organoListOrgano="Texture"
+							locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" ingListQtyPerc="100.0"
+							sort="100" ingListIsProcessingAid="false" depthLevel="1"
+							ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Sirop de glucose-fructose" legalName="Sirop de glucose-fructose" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<code prefix="bcpg"><![CDATA[MP12145]]></code>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[695056]]></node-dbid>
+				<name prefix="cm"><![CDATA[Stab CG 105]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:25:34.974Z]]></startEffectivity>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:16.218Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGS105]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[]]>
+				</productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T11:25:34.794Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<node-uuid prefix="sys"><![CDATA[99cf89b9-8733-44bd-8a95-21292b441786]]></node-uuid>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[0.9808178310321628]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Gomme de Guar" legalName="Gomme de Guar" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<code prefix="bcpg"><![CDATA[MP12148]]></code>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[695224]]></node-dbid>
+				<name prefix="cm"><![CDATA[vanille arome nat 0008A]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:23.778Z]]></startEffectivity>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:16.458Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGV008A]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[]]>
+				</productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T11:26:23.582Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<node-uuid prefix="sys"><![CDATA[95eedaed-e757-4caf-b148-037477947caf]]></node-uuid>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[0.3065055721975509]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListGeoOrigin="Indonésie" isManualListItem="false"
+							parentLevel="" ingListQtyPerc="100.0" sort="100"
+							ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Vanille"
+							ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListGeoTransfo="Indonésie" ingListIng="Arômes naturels de vanille"
+							legalName="arômes naturels de vanille" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<code prefix="bcpg"><![CDATA[MP12149]]></code>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[695280]]></node-dbid>
+				<name prefix="cm"><![CDATA[vanille arome nat 017]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:33.281Z]]></startEffectivity>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:16.872Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGV017]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[]]>
+				</productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T11:26:33.038Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<node-uuid prefix="sys"><![CDATA[ba5d8f47-23d5-4015-8d3b-a8a8b0a1a262]]></node-uuid>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[0.18390334331853053]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList ingListGeoOrigin="Madagascar" isManualListItem="false"
+							parentLevel="" ingListQtyPerc="100.0" sort="100"
+							ingListIsProcessingAid="false" depthLevel="1" ingListBioOrigin="Vanille"
+							ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListGeoTransfo="Madagascar" ingListIng="Arômes naturels de vanille"
+							legalName="arômes naturels de vanille" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<reportEntityGenerated prefix="rep"><![CDATA[2013-07-09T08:25:10.131Z]]></reportEntityGenerated>
+				<eanCode prefix="bcpg"><![CDATA[]]>
+				</eanCode>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<productState prefix="bcpg"><![CDATA[Validé]]></productState>
+				<code prefix="bcpg"><![CDATA[MP1013]]></code>
+				<node-dbid prefix="sys"><![CDATA[12051]]></node-dbid>
+				<startEffectivity prefix="bcpg"><![CDATA[2012-09-08T08:49:15.360Z]]></startEffectivity>
+				<productComments prefix="bcpg"><![CDATA[]]>
+				</productComments>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<owner prefix="cm"><![CDATA[]]>
+				</owner>
+				<productHierarchy1 prefix="bcpg"><![CDATA[Epicerie]]></productHierarchy1>
+				<taggable prefix="cm"><![CDATA[]]>
+				</taggable>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<modifier prefix="cm"><![CDATA[System]]></modifier>
+				<name prefix="cm"><![CDATA[Eau réseau]]></name>
+				<productHierarchy2 prefix="bcpg"><![CDATA[Alcools, eau]]></productHierarchy2>
+				<locale prefix="sys"><![CDATA[fr_FR]]></locale>
+				<legalName prefix="bcpg"><![CDATA[eau]]></legalName>
+				<erpCode prefix="bcpg"><![CDATA[]]>
+				</erpCode>
+				<modified prefix="cm"><![CDATA[2013-12-30T11:37:12.176Z]]></modified>
+				<productDensity prefix="bcpg"><![CDATA[1.0]]></productDensity>
+				<created prefix="cm"><![CDATA[2011-03-16T12:58:58.855Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<categories prefix="cm"><![CDATA[]]>
+				</categories>
+				<node-uuid prefix="sys"><![CDATA[a80c93ae-754a-4d50-8c88-c4faa29a1a22]]></node-uuid>
+				<description prefix="cm"><![CDATA[]]>
+				</description>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<compoListQty prefix="bcpg"><![CDATA[0.12106970101803258]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList sort="1" organoListValue=""
+							organoListOrgano="Aspect" locale="fr_FR" />
+						<organoList sort="2" organoListValue=""
+							organoListOrgano="Couleur" locale="fr_FR" />
+						<organoList sort="3" organoListValue=""
+							organoListOrgano="Goût" locale="fr_FR" />
+						<organoList sort="4" organoListValue=""
+							organoListOrgano="Odeur" locale="fr_FR" />
+						<organoList sort="5" organoListValue=""
+							organoListOrgano="Texture" locale="fr_FR" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" ingListQtyPerc="100.0"
+							sort="1" ingListIsProcessingAid="false" depthLevel="1"
+							ingListIsIonized="false" locale="fr_FR" ingListIsGMO="false"
+							ingListIng="Eau" legalName="Eau" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<code prefix="bcpg"><![CDATA[MP12146]]></code>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[695112]]></node-dbid>
+				<name prefix="cm"><![CDATA[Vanille gousse épuisée]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:01.506Z]]></startEffectivity>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:17.292Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGV080]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[]]>
+				</productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T11:26:01.291Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<node-uuid prefix="sys"><![CDATA[7e1abcd8-fe08-4431-a93f-62cd4febe182]]></node-uuid>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[0.061301114439510175]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="Arôme naturel - gousses de vanille infusées"
+							legalName="arôme naturel : gousses de vanille infusées" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+			<rawMaterial>
+				<netWeight prefix="bcpg"><![CDATA[]]>
+				</netWeight>
+				<store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+				<store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+				<productState prefix="bcpg"><![CDATA[A valider]]></productState>
+				<netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+				<code prefix="bcpg"><![CDATA[MP12147]]></code>
+				<modifier prefix="cm"><![CDATA[utilisateur.rd]]></modifier>
+				<node-dbid prefix="sys"><![CDATA[695168]]></node-dbid>
+				<name prefix="cm"><![CDATA[Colorant orange]]></name>
+				<locale prefix="sys"><![CDATA[fr]]></locale>
+				<startEffectivity prefix="bcpg"><![CDATA[2014-02-08T11:26:14.156Z]]></startEffectivity>
+				<modified prefix="cm"><![CDATA[2014-02-12T17:57:11.125Z]]></modified>
+				<erpCode prefix="bcpg"><![CDATA[MGC452]]></erpCode>
+				<productDensity prefix="bcpg"><![CDATA[]]>
+				</productDensity>
+				<created prefix="cm"><![CDATA[2014-02-08T11:26:13.862Z]]></created>
+				<productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+				<productQty prefix="bcpg"><![CDATA[]]>
+				</productQty>
+				<node-uuid prefix="sys"><![CDATA[09876613-4dbd-4b9b-8e57-375c37f952df]]></node-uuid>
+				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+				<creator prefix="cm"><![CDATA[admin]]></creator>
+				<compoListQty prefix="bcpg"><![CDATA[0.0]]></compoListQty>
+				<dataLists>
+					<priceLists />
+					<nutLists />
+					<costLists />
+					<organoLists>
+						<organoList original="a10b5872-49f7-4bf6-adcb-39c6754a1c3c"
+							sort="100" organoListOrgano="Aspect" locale="fr" />
+						<organoList original="7a31536f-d845-4536-a0d2-92e2321b83fb"
+							sort="101" organoListOrgano="Couleur" locale="fr" />
+						<organoList original="5d7c2a67-ab03-4f90-83a5-83b8fd2a0db6"
+							sort="102" organoListOrgano="Goût" locale="fr" />
+						<organoList original="fb051af5-ce9d-4544-a592-1be059e879e6"
+							sort="103" organoListOrgano="Odeur" locale="fr" />
+						<organoList original="c3912807-b99c-4644-a1a9-8d6a7cb64321"
+							sort="104" organoListOrgano="Texture" locale="fr" />
+					</organoLists>
+					<labelClaimLists />
+					<microbioLists />
+					<allergenLists />
+					<physicoChemLists />
+					<ingLists>
+						<ingList isManualListItem="false" parentLevel=""
+							ingListQtyPerc="100.0" sort="100" ingListIsProcessingAid="false"
+							depthLevel="1" ingListIsIonized="false" locale="fr" ingListIsGMO="false"
+							ingListIng="E160a(i) - beta-carotène" legalName="E160a" />
+					</ingLists>
+				</dataLists>
+				<variants />
+			</rawMaterial>
+		</rawMaterials>
+		<packagingLists>
+			<packagingList eanCode="" productHierarchy1="Bac"
+				taggable="" productState="A valider" code="E1147" modifier="utilisateur.rd"
+				productHierarchy2="Bac glace" name="Bac imprimé glace 0,9L" locale="fr"
+				startEffectivity="2014-02-09T14:16:40.694Z" legalName=""
+				productComments="" modified="2014-02-12T17:57:10.947Z" erpCode=""
+				title="" created="2014-02-09T14:16:40.004Z" productUnit="kg"
+				categories="" tare="" certificateDate="" tareUnit="g" description=""
+				entityTplRef="Emballage" creator="admin" itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect, certificateDateAspect"
+				packagingListProduct="Bac imprimé glace 0,9L" packagingListPkgLevel="Primary"
+				dynamicCharactColumn1="0,0004" sort="100" packagingListIsMaster="true"
+				dynamicCharactColumn2="0,20" packagingListUnit="P" packagingListQty="1.0"
+				variantIds="" isDefaultVariant="true">
+				<instruction prefix="bcpg"><![CDATA[]]>
+				</instruction>
+			</packagingList>
+			<packagingList eanCode="" productHierarchy1="Couvercle"
+				taggable="" productState="A valider" code="E1148" modifier="utilisateur.rd"
+				productHierarchy2="Couvercle bac glace" name="Couvercle imprimé bac glace 0,9L"
+				locale="fr" startEffectivity="2014-02-09T14:17:14.086Z" legalName=""
+				productComments="" modified="2014-02-12T17:57:11.546Z" erpCode=""
+				title="" created="2014-02-09T14:17:13.331Z" productUnit="kg"
+				categories="" tare="15.0" certificateDate="" tareUnit="g"
+				description="" entityTplRef="Emballage" creator="admin"
+				itemType="bcpg:packagingMaterial"
+				aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, entityListsAspect, reportEntityAspect, taggable, generalclassifiable, productAspect, certificateDateAspect"
+				packagingListProduct="Couvercle imprimé bac glace 0,9L"
+				labelingTemplate="Marquage standard" packagingListPkgLevel="Primary"
+				dynamicCharactColumn1="0,0003" labelingPosition="Dessus" sort="101"
+				packagingListIsMaster="false" dynamicCharactColumn2="0,15"
+				packagingListUnit="P" packagingListQty="1.0" variantIds=""
+				isDefaultVariant="true">
+				<instruction prefix="bcpg"><![CDATA[]]>
+				</instruction>
+				<labelingTemplate>
+					<created prefix="cm"><![CDATA[2013-07-25T13:50:23.885Z]]></created>
+					<sort prefix="bcpg"><![CDATA[105]]></sort>
+					<modifier prefix="cm"><![CDATA[System]]></modifier>
+					<name prefix="cm"><![CDATA[Marquage standard]]></name>
+					<locale prefix="sys"><![CDATA[fr]]></locale>
+					<description prefix="cm"><![CDATA[<p>[MM/AAAA] (DLUO mois ann&eacute;e)<br />L [AAJJJ]&nbsp; [hh:mm] (n&deg; lot) (heure)<br /><font color="#FF0000"><strong>ATTENTION&nbsp;! INVERSER LE SENS DE LECTURE DU MARQUAGE DE L&rsquo;ETUI (concordance avec l&rsquo;impression de l&rsquo;&eacute;tui)</strong></font></p>]]></description>
+					<modified prefix="cm"><![CDATA[2013-11-16T09:00:50.325Z]]></modified>
+					<creator prefix="cm"><![CDATA[admin]]></creator>
+				</labelingTemplate>
+			</packagingList>
+			<packagingList reportEntityGenerated="2013-10-11T09:45:52.854Z"
+				palletBoxesPerLastLayer="" productState="A valider" code="KE1112"
+				startEffectivity="2012-11-13T18:58:00.916Z" productComments=""
+				title="" creator="admin" original="Carton SdV - Palette euro" owner=""
+				palletLayers="6" productHierarchy1="Palettisation" taggable=""
+				palletBoxesPerPallet="36" modifier="admin" palletBoxesPerLayer="6"
+				productHierarchy2="Palettisation" name="Petite caisse - Palette euro"
+				locale="fr" unitTotalCost="0.0" legalName="" modified="2014-01-27T16:28:33.408Z"
+				erpCode="" palletHeight="1566" productDensity="1.0"
+				created="2012-11-13T18:57:59.612Z" formulatedDate="2014-01-30T13:47:25.638Z"
+				flagRecent="true" productUnit="P" categories="" tare="0.0"
+				productQty="1.0" tareUnit="g" description="" itemType="bcpg:packagingKit"
+				aspects="referenceable, tareAspect, titled, localized, palletAspect, transformationAspect, flaggable, erpCodeAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, copiedfrom, taggable, profitabilityAspect, generalclassifiable, formulatedEntityAspect, productAspect"
+				packagingListProduct="Petite caisse - Palette euro"
+				packagingListPkgLevel="Secondary" dynamicCharactColumn1="0,00" sort="102"
+				packagingListIsMaster="false" dynamicCharactColumn2="0,016"
+				packagingListUnit="PP" packagingListQty="40.0" variantIds=""
+				isDefaultVariant="true">
+				<instruction prefix="bcpg"><![CDATA[]]>
+				</instruction>
+				<dataLists>
+					<packagingLists>
+						<packagingList reportEntityGenerated="2014-01-27T15:34:44.462Z"
+							eanCode="" suppliers="Fournisseur Lacroix" width="300.0"
+							productState="A valider" code="E1115" startEffectivity="2012-11-13T19:08:31.416Z"
+							productComments="" title="" length="500.0" certificateDate=""
+							creator="admin" original="Carton 50x30x30" owner=""
+							productHierarchy1="Colis" taggable="" modifier="admin"
+							productHierarchy2="Caisse" name="Petite Caisse 50x30x30" locale="fr"
+							legalName="Caisse " modified="2014-01-27T15:34:41.047Z" erpCode=""
+							productDensity="1.0" created="2012-11-13T19:08:30.620Z"
+							flagRecent="true" productUnit="P" categories="" tare="200.0"
+							reports="Petite Caisse 50x30x30 - FT emballage.pdf" tareUnit="g"
+							description="" height="300.0" itemType="bcpg:packagingMaterial"
+							aspects="eanAspect, referenceable, tareAspect, titled, localized, flaggable, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, copiedfrom, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect"
+							packagingListProduct="Petite Caisse 50x30x30"
+							packagingListPkgLevel="Secondary" sort="100"
+							packagingListIsMaster="true" packagingListUnit="P"
+							packagingListQty="1.0" variantIds="" isDefaultVariant="true" />
+						<packagingList reportEntityGenerated="2014-01-27T15:34:18.184Z"
+							eanCode="" suppliers="Fournisseur Lacroix" width="800.0"
+							productState="A valider" code="E1085" startEffectivity="2012-09-08T08:49:02.056Z"
+							productComments="" title="" length="1200.0" certificateDate=""
+							creator="admin" owner="" productHierarchy1="Palette" taggable=""
+							modifier="admin" name="Palette euro" productHierarchy2="Recyclable"
+							locale="fr_FR" legalName="palette euro" erpCode=""
+							modified="2014-01-27T15:34:18.518Z" created="2011-08-29T14:55:32.681Z"
+							productUnit="P" categories="" tare="27.0"
+							reports="Palette euro - FT emballage.pdf" tareUnit="kg"
+							description="" height="144.0" itemType="bcpg:packagingMaterial"
+							aspects="eanAspect, referenceable, tareAspect, titled, localized, erpCodeAspect, suppliersAspect, legalNameAspect, effectivityAspect, entityTplRefAspect, codeAspect, auditable, ownable, entityListsAspect, reportEntityAspect, taggable, sizeAspect, generalclassifiable, productAspect, certificateDateAspect"
+							original="66d06f91-a787-47e4-bdf2-15dadd5075e6"
+							packagingListProduct="Palette euro" packagingListPkgLevel="Tertiary"
+							sort="101" packagingListIsMaster="false" packagingListUnit="PP"
+							packagingListQty="36.0" variantIds="" isDefaultVariant="true" />
+					</packagingLists>
+				</dataLists>
+			</packagingList>
+			<dynamicCharactLists>
+				<dynamicCharactList dynamicCharactTitle="Coût Emb total (€/kg)"
+					dynamicCharactValue="0.40663580246913583" />
+				<dynamicCharactList dynamicCharactTitle="Coût Emb (€/kg)"
+					dynamicCharactValue="" />
+				<dynamicCharactList dynamicCharactTitle="Coût Emb (€/UVC)"
+					dynamicCharactValue="" />
+			</dynamicCharactLists>
+			<packagingLevelMeasures variantId=""
+				isDefaultVariant="true" tarePkgLevel1="0.015" netWeightPkgLevel1="0.519"
+				grossWeightPkgLevel1="0.534" tarePkgLevel2="0.8" netWeightPkgLevel2="20.76"
+				grossWeightPkgLevel2="21.560000000000002" nbProductsPkgLevel2="40"
+				tarePkgLevel3="29.55" netWeightPkgLevel3="747.36"
+				grossWeightPkgLevel3="776.91" nbProductsPkgLevel3="1440" />
+		</packagingLists>
+		<processLists>
+			<processList sort="100" plStep="Mode opératoire" locale="fr"
+				variantIds="" isDefaultVariant="true">
+				<instruction prefix="bcpg"><![CDATA[1° préparer le mix 
 2° tester différentes aromatisation
-]]></instruction></processList><dynamicCharactLists><dynamicCharactList dynamicCharactTitle="Coût Prod (€/kg)" dynamicCharactValue=""/></dynamicCharactLists></processLists><ingLabelingLists><ingLabelingList language="anglais"><illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient globale]]></illGrp><illValue prefix="bcpg"><![CDATA[Sugar, Vegetable fat 19,5% (coprah), Lactose and milk proteins, sauce au caramel 16,3% (Glucose-fructose,, Water, Vegetable fat (coprah), Sugar, Salt, Pectin, Cornstarch, Emulsifiant: E471 - mono-and diglycerides of edible fatty acids, Natural flavors, Colorant alimentaire: E150a - caramels), Glucose-fructose, noix de pécan caramélisées 7,1% (Pecans 49%, Sugar, Syrup, beurre, Salt), Stabilisant: Guar Gum, arômes naturels de vanille, Water, Natural flavor: vanilla infused, Colorant alimentaire: E160a (i) - beta-carotene]]></illValue><illManualValue prefix="bcpg"><![CDATA[]]></illManualValue></ingLabelingList><ingLabelingList language="français"><illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient globale]]></illGrp><illValue prefix="bcpg"><![CDATA[Sucre, Matière grasse végétale 19,5% (coprah), Lactose et protéines de lait, sauce au caramel 16,3% (Sirop de glucose-fructose, <b>lait</b> entier concentré sucré, Eau, Matière grasse végétale (coprah), Sucre, Sel, Pectine, Amidon de mais, Emulsifiant: E471, arômes naturels, Colorant alimentaire: E150a - caramels), Sirop de glucose-fructose, noix de pécan caramélisées 7,1% (Noix de pécan 49%, Sucre, Sirop de glucose, beurre, Sel), Stabilisant: Gomme de Guar, arômes naturels de vanille, Eau, arôme naturel : gousses de vanille infusées, Colorant alimentaire: E160a]]></illValue><illManualValue prefix="bcpg"><![CDATA[]]></illManualValue></ingLabelingList><ingLabelingList language="anglais"><illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient par couche]]></illGrp><illValue prefix="bcpg"><![CDATA[<b>Glace vanille (76,6%):</b> Sugar, Vegetable fat 25,4% (coprah), Lactose and milk proteins, Glucose-fructose, Stabilisant: Guar Gum, arômes naturels de vanille, Water, Natural flavor: vanilla infused, Colorant alimentaire: E160a (i) - beta-carotene<br/><b>Décor (23,4%):</b> sauce au caramel 69,7% (Glucose-fructose,, Water, Vegetable fat (coprah), Sugar, Salt, Pectin, Cornstarch, Emulsifiant: E471 - mono-and diglycerides of edible fatty acids, Natural flavors, Colorant alimentaire: E150a - caramels), noix de pécan caramélisées 30,3% (Pecans 49%, Sugar, Syrup, beurre, Salt)]]></illValue><illManualValue prefix="bcpg"><![CDATA[]]></illManualValue></ingLabelingList><ingLabelingList language="français"><illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient par couche]]></illGrp><illValue prefix="bcpg"><![CDATA[<b>Glace vanille (76,6%):</b> Sucre, Matière grasse végétale 25,4% (coprah), Lactose et protéines de lait, Sirop de glucose-fructose, Stabilisant: Gomme de Guar, arômes naturels de vanille, Eau, arôme naturel : gousses de vanille infusées, Colorant alimentaire: E160a<br/><b>Décor (23,4%):</b> sauce au caramel 69,7% (Sirop de glucose-fructose, <b>lait</b> entier concentré sucré, Eau, Matière grasse végétale (coprah), Sucre, Sel, Pectine, Amidon de mais, Emulsifiant: E471, arômes naturels, Colorant alimentaire: E150a - caramels), noix de pécan caramélisées 30,3% (Noix de pécan 49%, Sucre, Sirop de glucose, beurre, Sel)]]></illValue><illManualValue prefix="bcpg"><![CDATA[]]></illManualValue></ingLabelingList></ingLabelingLists></dataLists><variants/><versions><version versionLabel="1.3" versionDescription="Modif étiquetage" creator="utilisateur RD" created="ven. 14 févr. 2014"/><version versionLabel="1.2" versionDescription="Suppression Pécan 2-10mm Modif qté Pécan 2-6mm" creator="Administrator " created="mar. 11 févr. 2014"/><version versionLabel="1.1" versionDescription="Modif qté noix de pécan" creator="Administrator " created="mar. 11 févr. 2014"/><version versionLabel="1.0" creator="Administrator " created="mar. 11 févr. 2014"/></versions></entity>
+]]></instruction>
+			</processList>
+			<dynamicCharactLists>
+				<dynamicCharactList dynamicCharactTitle="Coût Prod (€/kg)"
+					dynamicCharactValue="" />
+			</dynamicCharactLists>
+		</processLists>
+		<ingLabelingLists>
+			<ingLabelingList language="anglais">
+				<illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient globale]]></illGrp>
+				<illValue prefix="bcpg"><![CDATA[Sugar, Vegetable fat 19,5% (coprah), Lactose and milk proteins, sauce au caramel 16,3% (Glucose-fructose,, Water, Vegetable fat (coprah), Sugar, Salt, Pectin, Cornstarch, Emulsifiant: E471 - mono-and diglycerides of edible fatty acids, Natural flavors, Colorant alimentaire: E150a - caramels), Glucose-fructose, noix de pécan caramélisées 7,1% (Pecans 49%, Sugar, Syrup, beurre, Salt), Stabilisant: Guar Gum, arômes naturels de vanille, Water, Natural flavor: vanilla infused, Colorant alimentaire: E160a (i) - beta-carotene]]></illValue>
+				<illManualValue prefix="bcpg"><![CDATA[]]>
+				</illManualValue>
+			</ingLabelingList>
+			<ingLabelingList language="français">
+				<illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient globale]]></illGrp>
+				<illValue prefix="bcpg"><![CDATA[Sucre, Matière grasse végétale 19,5% (coprah), Lactose et protéines de lait, sauce au caramel 16,3% (Sirop de glucose-fructose, <b>lait</b> entier concentré sucré, Eau, Matière grasse végétale (coprah), Sucre, Sel, Pectine, Amidon de mais, Emulsifiant: E471, arômes naturels, Colorant alimentaire: E150a - caramels), Sirop de glucose-fructose, noix de pécan caramélisées 7,1% (Noix de pécan 49%, Sucre, Sirop de glucose, beurre, Sel), Stabilisant: Gomme de Guar, arômes naturels de vanille, Eau, arôme naturel : gousses de vanille infusées, Colorant alimentaire: E160a]]></illValue>
+				<illManualValue prefix="bcpg"><![CDATA[]]>
+				</illManualValue>
+			</ingLabelingList>
+			<ingLabelingList language="anglais">
+				<illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient par couche]]></illGrp>
+				<illValue prefix="bcpg"><![CDATA[<b>Glace vanille (76,6%):</b> Sugar, Vegetable fat 25,4% (coprah), Lactose and milk proteins, Glucose-fructose, Stabilisant: Guar Gum, arômes naturels de vanille, Water, Natural flavor: vanilla infused, Colorant alimentaire: E160a (i) - beta-carotene<br/><b>Décor (23,4%):</b> sauce au caramel 69,7% (Glucose-fructose,, Water, Vegetable fat (coprah), Sugar, Salt, Pectin, Cornstarch, Emulsifiant: E471 - mono-and diglycerides of edible fatty acids, Natural flavors, Colorant alimentaire: E150a - caramels), noix de pécan caramélisées 30,3% (Pecans 49%, Sugar, Syrup, beurre, Salt)]]></illValue>
+				<illManualValue prefix="bcpg"><![CDATA[]]>
+				</illManualValue>
+			</ingLabelingList>
+			<ingLabelingList language="français">
+				<illGrp prefix="bcpg"><![CDATA[Liste d'ingrédient par couche]]></illGrp>
+				<illValue prefix="bcpg"><![CDATA[<b>Glace vanille (76,6%):</b> Sucre, Matière grasse végétale 25,4% (coprah), Lactose et protéines de lait, Sirop de glucose-fructose, Stabilisant: Gomme de Guar, arômes naturels de vanille, Eau, arôme naturel : gousses de vanille infusées, Colorant alimentaire: E160a<br/><b>Décor (23,4%):</b> sauce au caramel 69,7% (Sirop de glucose-fructose, <b>lait</b> entier concentré sucré, Eau, Matière grasse végétale (coprah), Sucre, Sel, Pectine, Amidon de mais, Emulsifiant: E471, arômes naturels, Colorant alimentaire: E150a - caramels), noix de pécan caramélisées 30,3% (Noix de pécan 49%, Sucre, Sirop de glucose, beurre, Sel)]]></illValue>
+				<illManualValue prefix="bcpg"><![CDATA[]]>
+				</illManualValue>
+			</ingLabelingList>
+		</ingLabelingLists>
+	</dataLists>
+	<variants />
+	<versions>
+		<version versionLabel="1.3" versionDescription="Modif étiquetage"
+			creator="utilisateur RD" created="ven. 14 févr. 2014" />
+		<version versionLabel="1.2"
+			versionDescription="Suppression Pécan 2-10mm Modif qté Pécan 2-6mm"
+			creator="Administrator " created="mar. 11 févr. 2014" />
+		<version versionLabel="1.1" versionDescription="Modif qté noix de pécan"
+			creator="Administrator " created="mar. 11 févr. 2014" />
+		<version versionLabel="1.0" creator="Administrator " created="mar. 11 févr. 2014" />
+	</versions>
+</entity>
