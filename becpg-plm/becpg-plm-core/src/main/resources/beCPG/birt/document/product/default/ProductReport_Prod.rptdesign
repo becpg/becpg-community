@@ -5526,7 +5526,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
         <table id="2890">
             <property name="style">becpg-table</property>
             <property name="pageBreakInside">avoid</property>
-            <property name="width">6.870229007633588in</property>
+            <property name="width">6.864583333333333in</property>
             <property name="dataSet">CompoList</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -5539,16 +5539,16 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                     <property name="name">compoListQty</property>
                     <text-property name="displayName">compoListQty</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["compoListQty"] > 1000){
-dataSetRow["compoListQty"] / 1000 + " t";
+BirtMath.round(dataSetRow["compoListQty"] / 1000,2) + " t";
 }
-else if(dataSetRow["compoListQty"] >= 0.1){
-dataSetRow["compoListQty"] + " kg";
+else if(dataSetRow["compoListQty"] >= 1){
+BirtMath.round(dataSetRow["compoListQty"], 2) + " kg";
 }
-else if(dataSetRow["compoListQty"] >= 0.0001){
-dataSetRow["compoListQty"] * 1000 + " g";
+else if(dataSetRow["compoListQty"] >= 0.001){
+BirtMath.round(dataSetRow["compoListQty"] * 1000, 2) + " g";
 }
 else{
-dataSetRow["compoListQty"] * 1000000+ " mg";
+BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
 }</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
@@ -5568,7 +5568,7 @@ dataSetRow["compoListQty"] * 1000000+ " mg";
                 <structure>
                     <property name="name">compoListQtySubFormula</property>
                     <text-property name="displayName">compoListQtySubFormula</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["compoListQtySubFormula"] + " " + (dataSetRow["compoListUnit"]  == "Perc" ? "%" : dataSetRow["compoListUnit"])</expression>
+                    <expression name="expression" type="javascript">BirtMath.round(dataSetRow["compoListQtySubFormula"], 2) + " " + (dataSetRow["compoListUnit"]  == "Perc" ? "%" : dataSetRow["compoListUnit"])</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -5590,15 +5590,15 @@ dataSetRow["compoListQty"] * 1000000+ " mg";
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2906">
-                <property name="width">4.221374045801527in</property>
+                <property name="width">4.125in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2979">
-                <property name="width">0.648854961832061in</property>
+                <property name="width">0.6979166666666666in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="2969">
-                <property name="width">0.4961832061068702in</property>
+                <property name="width">0.6979166666666666in</property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3001">
