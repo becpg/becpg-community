@@ -193,6 +193,8 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
 					activityListDataItem.setDeliverable(itemNodeRef);
 					activityListDataItem.setTask(getTaskNodeRef(itemNodeRef));
+				}else{
+					return;					
 				}
 				activityListDataItem.setActivityType(ActivityType.Comment);
 				activityListDataItem.setActivityData(data.toString());
@@ -214,7 +216,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 	@Override
 	public void postContentActivity(NodeRef contentNodeRef, ActivityEvent activityEvent) {
 
-		if (contentNodeRef != null && nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
+		if (contentNodeRef != null && !nodeService.hasAspect(contentNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			try {
 				// Project activity
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
