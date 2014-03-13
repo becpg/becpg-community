@@ -59,7 +59,6 @@
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
 			<itemType name="pjt:project" />
-			<itemType name="cm:content" />
 		</itemTypes>
 	</config>
 
@@ -67,9 +66,7 @@
 	<config evaluator="string-compare" condition="DocumentLibrary">
 		<aspects>
 			<visible>
-
 				<aspect name="pjt:projectAspect" />
-
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -157,7 +154,6 @@
 			<actionGroup id="entity-details">
 				<action index="181" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
 			</actionGroup>
-			
 		</actionGroups>
 	</config>
 	

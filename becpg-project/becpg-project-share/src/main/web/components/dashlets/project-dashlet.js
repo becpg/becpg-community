@@ -289,7 +289,7 @@
                      req += ' +@pjt\\:' + (isTask ? 'tl' : 'project') + 'State:"' + this.widgets.filter.value + '"';
 
                      if (this.searchTerm !== null && this.searchTerm.length > 0) {
-                        req += "  +@" + (isTask ? "pjt\\:tlTaskName" : "cm\\:name") + ":(" + this.searchTerm + ")";
+                        req += "AND  +@" + (isTask ? "pjt\\:tlTaskName" : "cm\\:name") + ":(" + this.searchTerm + ")";
                      }
 
                      req += ')';

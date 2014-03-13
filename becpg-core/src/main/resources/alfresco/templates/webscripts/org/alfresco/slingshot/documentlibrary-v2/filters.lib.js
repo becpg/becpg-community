@@ -9,7 +9,7 @@ var Filters =
       "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder")',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
       "images": '+@cm\\:content.mimetype:image/*',
-      "product": '+(TYPE:"bcpg:product")',
+      "product": args.type!=null ? '+(TYPE:"bcpg:'+args.type+'")': '+(TYPE:"bcpg:product")',
       "project": '+(TYPE:"pjt:project")'
    },
    
@@ -182,6 +182,8 @@ var Filters =
             break;
  			case "Valid":
          case "ToValidate":
+         case "Archived":
+         case "Refused":
          	filterQuery += this.constructPathQuery(parsedArgs);
          	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
             filterParams.query = filterQuery + filterQueryDefaults;

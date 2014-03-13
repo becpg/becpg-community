@@ -17,20 +17,20 @@ var Filters = {
 
 		// Common types and aspects to filter from the UI
 		searchQuery += " -TYPE:\"cm:systemfolder\""
-				+ " -@cm\\:lockType:READ_ONLY_LOCK"
-				+ " -ASPECT:\"bcpg:compositeVersion\"";
+				+ " AND -@cm\\:lockType:READ_ONLY_LOCK"
+				+ " AND -ASPECT:\"bcpg:compositeVersion\"";
 
 		var nodeRef = parsedArgs.nodeRef;
 		if (nodeRef != null && nodeRef.length > 0) {
 			var node = search.findNode(nodeRef);
 			if (node != null) {
-				searchQuery += " +PATH:\"" + node.qnamePath + "//*\"";
+				searchQuery += " AND +PATH:\"" + node.qnamePath + "//*\"";
 			}
 		}
 		
 		var params = parsedArgs.searchParams, formData = params.query, criteria = [], datatype = "";
 		
-		 // sort field - expecting field to in one of the following formats:
+		// sort field - expecting field to in one of the following formats:
 	    //  - short QName form such as: cm:name
 	    //  - pseudo cm:content field starting with "." such as: .size
 	    //  - any other directly supported search field such as: TYPE
@@ -91,7 +91,7 @@ var Filters = {
 
 		if (parsedArgs.itemType != null && parsedArgs.itemType.length > 0) {
 			datatype = parsedArgs.itemType;
-			searchQuery += " +TYPE:\"" + parsedArgs.itemType + "\"";
+			searchQuery += " AND +TYPE:\"" + parsedArgs.itemType + "\"";
 		}
 
 		var filterParams = {
