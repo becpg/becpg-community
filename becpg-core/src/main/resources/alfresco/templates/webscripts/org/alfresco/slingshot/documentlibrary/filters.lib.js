@@ -73,7 +73,9 @@ var Filters =
          }],
          language: "lucene",
          templates: null,
-         variablePath: true
+         variablePath: true,
+         ignoreTypes: Filters.IGNORED_TYPES,
+         ignoreAspects: Filters.IGNORED_ASPECTS
       };
 
       optional = optional || {};
@@ -171,8 +173,8 @@ var Filters =
 
          case "editingOthers":
             filterQuery = this.constructPathQuery(parsedArgs);
-            filterQuery += " +ASPECT:\"workingcopy\"";
-            filterQuery += " +((-@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
+            filterQuery += " +((+ASPECT:\"workingcopy\"";
+            filterQuery += " -@cm\\:workingCopyOwner:\"" + person.properties.userName + '")';
             filterQuery += " OR (-@cm\\:lockOwner:\"" + person.properties.userName + '"';
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
@@ -260,6 +262,12 @@ var Filters =
             }
             filterQuery = this.constructPathQuery(parsedArgs);
             filterParams.query = filterQuery + " +PATH:\"/cm:generalclassifiable" + Filters.iso9075EncodePath(filterData) + "/member\" " + filterQueryDefaults;
+            break;
+
+         case "aspect":
+            filterQuery = "+PATH:\"" + parsedArgs.rootNode.qnamePath + "//*\"";
+            filterQuery += "+ASPECT:\"" + args.filterData + "\"";
+            filterParams.query = filterQuery;
             break;
 
          default: // "path"
