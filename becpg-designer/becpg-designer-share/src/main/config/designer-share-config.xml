@@ -199,7 +199,14 @@
 		</types>
   </config>
   
-
+    <config evaluator="string-compare" condition="Analytics">
+	    <providers>
+			<provider index="2">
+				<provider-id>beCPG</provider-id>
+				<provider-url>http://www.becpg.fr/becpg-designer-community.png</provider-url>
+			</provider>
+		</providers>	
+	</config>
 
 	
 

@@ -41,8 +41,8 @@
    </bean>
 
    <!-- Provide becpg form config -->
-   <bean id="becpgDesignerFormsClientConfig" class="fr.becpg.repo.designer.config.DesignerConfigBootstrap" 
-         init-method="register">
+   <bean id="becpgDesignerClientConfig" class="fr.becpg.repo.designer.config.DesignerConfigBootstrap" 
+         init-method="register" depends-on="becpgClientConfig">
       <property name="configService" ref="web.config" />
       <property name="configs">
          <list>

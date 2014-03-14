@@ -1,10 +1,12 @@
 <alfresco-config>	
 
    <config evaluator="string-compare" condition="Analytics">
-		<provider>
-			<provider-id>beCPG</provider-id>
-			<provider-url>http://www.becpg.fr/becpg-community.png</provider-url>
-		</provider>
+   		<providers>
+			<provider index="0">
+				<provider-id>beCPG</provider-id>
+				<provider-url>http://www.becpg.fr/becpg-community.png</provider-url>
+			</provider>
+		</providers>
 	</config>
 
 	<config evaluator="string-compare" condition="Languages">

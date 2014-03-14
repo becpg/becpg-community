@@ -158,6 +158,13 @@
 		</forms>
 	</config>
 
-
+    <config evaluator="string-compare" condition="Analytics" >
+    	<providers>
+			<provider index="5">
+				<provider-id>beCPG</provider-id>
+				<provider-url>http://www.becpg.fr/becpg-plm-community.png</provider-url>
+			</provider>
+		</providers>
+	</config>
 
 </alfresco-config>
