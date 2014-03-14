@@ -181,6 +181,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	public BeCPGQueryBuilder inDB() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL;
+		ftsLanguage();
 		return this;
 	}
 
@@ -240,7 +241,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andFTSQuery(String ftsQuery) {
-		ftsQueries.add(ftsQuery);
+		if (!QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
+			ftsQueries.add(ftsQuery);
+		} else {
+			logger.error("FTS not supported for transactionnal query");
+		}
 		return this;
 	}
 
@@ -536,11 +541,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder ftsLanguage() {
-		if (!QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
-			this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
-		} else {
-			logger.info("FTS not supported for transactionnal query");
-		}
+		this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
 		return this;
 	}
 
@@ -615,11 +616,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public PagingResults<FileInfo> childFileFolders(PagingRequest pageRequest) {
-		
+
 		StopWatch watch = new StopWatch();
 		watch.start();
 
-		
 		PagingResults<FileInfo> pageOfNodeInfos = null;
 
 		FileFilterMode.setClient(Client.script);
@@ -636,20 +636,21 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		} finally {
 			FileFilterMode.clearClient();
 			watch.stop();
-			
-			if(pageOfNodeInfos!=null){
+
+			if (pageOfNodeInfos != null) {
 				if (watch.getTotalTimeSeconds() > 1) {
-					logger.warn("Slow childFileFolders [" + parentNodeRef + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + pageOfNodeInfos.getTotalResultCount());
+					logger.warn("Slow childFileFolders [" + parentNodeRef + "] executed in  " + watch.getTotalTimeSeconds()
+							+ " seconds - size results " + pageOfNodeInfos.getTotalResultCount());
 				}
-	
+
 				if (logger.isDebugEnabled()) {
-	
+
 					logger.debug("[" + Thread.currentThread().getStackTrace()[3].getClassName() + " "
 							+ Thread.currentThread().getStackTrace()[3].getLineNumber() + "] childFileFolders executed in  "
-							+ watch.getTotalTimeSeconds() + " seconds - size results " +  pageOfNodeInfos.getTotalResultCount());
+							+ watch.getTotalTimeSeconds() + " seconds - size results " + pageOfNodeInfos.getTotalResultCount());
 				}
 			}
-			
+
 		}
 		return pageOfNodeInfos;
 	}
