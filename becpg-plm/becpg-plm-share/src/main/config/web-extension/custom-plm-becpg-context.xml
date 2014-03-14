@@ -22,7 +22,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 <beans>	
    <!-- Provide becpg form config -->
-	<bean id="becpgPlmFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">
+	<bean id="becpgPlmClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register" depends-on="becpgProjectClientConfig">
 		<property name="configService" ref="web.config" />
 		<property name="configs">
 			<list>

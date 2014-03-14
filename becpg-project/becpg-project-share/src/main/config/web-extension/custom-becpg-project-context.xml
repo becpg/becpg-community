@@ -24,7 +24,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 
 
 	<!-- Provide becpg form config -->
-	<bean id="becpgProjectFormsClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">
+	<bean id="becpgProjectClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register" depends-on="becpgClientConfig">
 		<property name="configService" ref="web.config" />
 		<property name="configs">
 			<list>
