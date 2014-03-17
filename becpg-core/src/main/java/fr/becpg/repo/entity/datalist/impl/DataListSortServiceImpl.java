@@ -242,15 +242,16 @@ public class DataListSortServiceImpl implements DataListSortService {
 		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery()
 						.parent(listContainer)
 						.ofType(dataType)
-						.isNotNull(BeCPGModel.PROP_SORT)
 						.addSort(BeCPGModel.PROP_SORT, true)
 						.inDB()
 						.list();
 		int newSort = RepoConsts.SORT_DEFAULT_STEP;
 		
 		for (NodeRef listItem : listItems) {
-			setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
-			newSort = newSort + RepoConsts.SORT_DEFAULT_STEP;
+			if(nodeService.getProperty(listItem, BeCPGModel.PROP_SORT) != null){
+				setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
+				newSort = newSort + RepoConsts.SORT_DEFAULT_STEP;
+			}			
 		}		
 	}
 
@@ -299,7 +300,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 						.ofType(dataType)
 						.andBetween(BeCPGModel.PROP_SORT, String.valueOf(startSort + 1), "MAX")
 						.andBetween(BeCPGModel.PROP_DEPTH_LEVEL, "1", Integer.toString(level))
-						.isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true).inDB().singleValue();
+						.isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true).singleValue();
 
 				if (tmpNodeRef != null) {
 					Integer stopSort = (Integer) nodeService.getProperty(tmpNodeRef, BeCPGModel.PROP_SORT);
@@ -316,7 +317,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		NodeRef tmpNodeRef = getQueryByParentLevel(listContainer, destNodeRef, isDepthList)
 				.andNotID(nodeRef)
 				.andBetween(BeCPGModel.PROP_SORT, startSort != null ? Integer.toString(startSort + 1) : "1", stopSortCond)
-				.addSort(BeCPGModel.PROP_SORT, false).inDB().singleValue();
+				.addSort(BeCPGModel.PROP_SORT, false).singleValue();
 
 		if (tmpNodeRef != null) {
 			if (isDepthList) {
@@ -336,9 +337,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 */
 	private NodeRef getLastChildOfLevel(QName dataType, NodeRef listContainer, NodeRef parentLevel, NodeRef nodeRef) {
 		return getQueryByParentLevel(listContainer, parentLevel, true)
+				.addSort(BeCPGModel.PROP_SORT, true)
 				.andNotID(nodeRef)
-				.isNotNull(BeCPGModel.PROP_SORT)
-				.addSort(BeCPGModel.PROP_SORT, false).inDB().singleValue();
+				.inDB()
+				.singleValue();		
 	}
 
 	private NodeRef getNextSiblingNode(QName dataType, NodeRef listContainer, NodeRef nodeRef, boolean moveUp) {
@@ -359,7 +361,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 			queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, level.toString());
 		}
 
-		return queryBuilder.inDB().singleValue();
+		return queryBuilder.singleValue();
 	}
 
 	/*
@@ -370,9 +372,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 		return BeCPGQueryBuilder.createQuery()
 				.parent(listContainer)
 				.ofType(dataType)
+				.andNotID(nodeRef)
 				.andPropEquals(BeCPGModel.PROP_SORT, String.valueOf(sort))
-				.andNotID(nodeRef).inDB().singleValue();
-
+				.inDB()
+				.singleValue();
 	}
 
 	/*
@@ -380,7 +383,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 */
 	private List<NodeRef> getChildren(QName dataType, NodeRef listContainer, NodeRef parentLevel, boolean isDepthList) {
 		return getQueryByParentLevel(listContainer, parentLevel, isDepthList)
-				.ofType(dataType).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
+				.ofType(dataType).addSort(BeCPGModel.PROP_SORT, true)
+				.inDB()
+				.list();
 	}
 
 	/*
@@ -470,7 +475,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 					.addSort(BeCPGModel.PROP_SORT, true);
 		
 
-			List<NodeRef> children = queryBuilder.inDB().list();
+			List<NodeRef> children = queryBuilder.list();
 
 			Integer destSort = (Integer) nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT);
 			NodeRef lastDestChild = getLastChild(dataType, destNodeRef, listContainer, null, true);
@@ -482,7 +487,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 					.ofType(dataType)
 					.addSort(BeCPGModel.PROP_SORT, true);
 			
-			List<NodeRef> destChildren = queryBuilder.inDB().list();
+			List<NodeRef> destChildren = queryBuilder.list();
 
 			// udpate sort of nodeRef and children
 			int newSort = destSort;
