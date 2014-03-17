@@ -371,6 +371,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		List<NodeRef> refs = new LinkedList<NodeRef>();
 
 		String runnedQuery = buildQuery();
+		
+		//TODO : alfresco should manage notID in DB (workaround)
+		if(queryConsistancy.equals(QueryConsistency.TRANSACTIONAL) && !notIds.isEmpty()){
+			maxResults += notIds.size();
+		}		
 
 		try {
 
@@ -410,6 +415,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
 						+ watch.getTotalTimeSeconds() + " seconds - size results " + refs.size());
+			}
+		}
+		
+		//TODO : alfresco should manage notID in DB (workaround)
+		if(queryConsistancy.equals(QueryConsistency.TRANSACTIONAL) && !notIds.isEmpty()){
+			refs.removeAll(notIds);
+			maxResults -= notIds.size();
+			if(refs.size()>maxResults){
+				refs = refs.subList(0, maxResults);
 			}
 		}
 
@@ -509,9 +523,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!notIds.isEmpty()) {
-			for (NodeRef tmpNodeRef : notIds) {
-				runnedQuery.append(prohibided(getCondEqualID(tmpNodeRef)));
-			}
+			//TODO : alfresco should manage notID in DB (workaround)
+			if(!queryConsistancy.equals(QueryConsistency.TRANSACTIONAL)){				
+				for (NodeRef tmpNodeRef : notIds) {
+					runnedQuery.append(prohibided(getCondEqualID(tmpNodeRef)));
+				}
+			}			
 		}
 
 		if (!propQueriesMap.isEmpty()) {
@@ -529,7 +546,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!excludedPropQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+				runnedQuery.append(notEqualsQuery(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
 			}
 		}
 
