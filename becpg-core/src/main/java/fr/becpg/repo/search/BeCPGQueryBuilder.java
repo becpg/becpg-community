@@ -100,6 +100,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Set<QName> notNullProps = new HashSet<>();
 	private Set<QName> nullProps = new HashSet<>();
 	private Map<QName, String> propQueriesMap = new HashMap<QName, String>();
+	private Map<QName, String> propQueriesEqualMap = new HashMap<QName, String>();
 	private Set<String> ftsQueries = new HashSet<>();
 	private Set<QName> excludedAspects = new HashSet<>();
 	private Set<QName> excludedTypes = new HashSet<>();
@@ -253,12 +254,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (value == null) {
 			isNull(propQName);
 		} else {
-			propQueriesMap.put(propQName, "\"" + value + "\"");
+			propQueriesEqualMap.put(propQName, "\"" + value + "\"");
 		}
 		return this;
 	}
 
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
+		if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
+			logger.error("Prop contains not supported for transactionnal query");
+		}
+		
 		if (propQuery == null) {
 			isNull(propQName);
 		} else {
@@ -306,6 +311,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
 		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);
+		//Todo look for remove
 		excludeProp(ContentModel.PROP_LOCK_TYPE, "\"READ_ONLY_LOCK\"");
 		return this;
 	}
@@ -326,7 +332,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public NodeRef selectNodeByPath(NodeRef parentNodeRef, String xPath) {
-
 		this.maxResults = RepoConsts.MAX_RESULTS_SINGLE_VALUE;
 		List<NodeRef> ret = selectNodesByPath(parentNodeRef, xPath);
 		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
@@ -514,6 +519,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
 			}
 		}
+		
+		if (!propQueriesEqualMap.isEmpty()) {
+			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
+				runnedQuery.append(equalsQuery(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+			}
+		}
+		
 
 		if (!excludedPropQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
@@ -539,6 +551,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return ret;
 	}
+
+
 
 	public BeCPGQueryBuilder ftsLanguage() {
 		this.language = SearchService.LANGUAGE_FTS_ALFRESCO;

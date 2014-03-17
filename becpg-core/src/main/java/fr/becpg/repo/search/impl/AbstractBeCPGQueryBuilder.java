@@ -36,8 +36,8 @@ import fr.becpg.repo.RepoConsts;
  */
 public abstract class AbstractBeCPGQueryBuilder {
 
-	private final String QUERY_COND_PROP_EQUAL_VALUE = "@%s:\"%s\"";
-	private final String QUERY_COND_PROP_CONTAINS_VALUE = "@%s:%s";
+	private final String QUERY_COND_PROP_EQUAL_VALUE = "%s:\"%s\"";
+	private final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
 	private final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
 	private final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
 	private final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
@@ -56,7 +56,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 		if (value == null || value.isEmpty()) {
 			return getCondIsNullValue(property);
 		} else {
-			return String.format(QUERY_COND_PROP_EQUAL_VALUE, SearchService.LANGUAGE_LUCENE.equals(language) ? escapeQName(property) : property,
+			return String.format(QUERY_COND_PROP_EQUAL_VALUE, SearchService.LANGUAGE_LUCENE.equals(language) ? "@"+escapeQName(property) : property,
 					value);
 		}
 	}
@@ -69,7 +69,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	protected String getCondContainsValue(QName property, String value) {
 
 		return String
-				.format(QUERY_COND_PROP_CONTAINS_VALUE, SearchService.LANGUAGE_LUCENE.equals(language) ? escapeQName(property) : property, value);
+				.format(QUERY_COND_PROP_CONTAINS_VALUE, SearchService.LANGUAGE_LUCENE.equals(language) ? "@"+escapeQName(property) : property, value);
 	}
 
 	protected String getCondIsNullValue(QName property) {
@@ -102,6 +102,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 
 	protected String mandatory(String condType) {
 		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " +" : " AND +") + condType;
+	}
+	
+	protected String equalsQuery(String condType) {
+		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " +" : " AND =") + condType;
 	}
 
 	protected String prohibided(String condType) {

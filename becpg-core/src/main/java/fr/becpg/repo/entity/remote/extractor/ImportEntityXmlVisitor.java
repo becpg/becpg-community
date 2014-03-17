@@ -359,13 +359,15 @@ public class ImportEntityXmlVisitor {
 		
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		
-
+		boolean inBD = true;
+		
 		if (type != null) {
 			beCPGQueryBuilder.ofType(type);
 		}
 
 		if (path != null) {
 			beCPGQueryBuilder.inPath(path);
+			inBD = false;
 		}
 
 		if (code != null && code.length() > 0) {
@@ -374,9 +376,13 @@ public class ImportEntityXmlVisitor {
 			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type), name);
 		}
 		
+		if(inBD){
+			beCPGQueryBuilder.inDB();
+		}
+		
 		beCPGQueryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
 
-		List<NodeRef> ret = beCPGQueryBuilder.inDB().list();
+		List<NodeRef> ret = beCPGQueryBuilder.list();
 		if (!ret.isEmpty()) {
 			for (NodeRef node : ret) {
 				if (nodeService.exists(node) && name.equals(nodeService.getProperty(node, RemoteHelper.getPropName(type)))) {
