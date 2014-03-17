@@ -127,11 +127,12 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 			@Override
 			public NodeRef getData() {
-				NodeRef imageNodeRef = BeCPGQueryBuilder.createQuery()
-						.inPath(RepoConsts.FULL_PATH_THUMBNAIL)
-						.andPropEquals(ContentModel.PROP_NAME, imgName)
-						.inDB().singleValue();
 				
+				NodeRef imageNodeRef = BeCPGQueryBuilder.createQuery()
+						.selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE)
+								,"/app:company_home"+RepoConsts.FULL_PATH_THUMBNAIL+"/cm:"+imgName);
+				
+			
 				if (imageNodeRef==null) {
 					logger.debug("image not found. imgName: " + imgName);
 				}
