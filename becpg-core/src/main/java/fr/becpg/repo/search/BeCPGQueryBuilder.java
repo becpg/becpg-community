@@ -312,7 +312,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
 		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);
 		//Todo look for remove
-		//excludeProp(ContentModel.PROP_LOCK_TYPE, "\"READ_ONLY_LOCK\"");
+		excludeProp(ContentModel.PROP_LOCK_TYPE, "\"READ_ONLY_LOCK\"");
 		return this;
 	}
 
@@ -546,7 +546,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!excludedPropQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				runnedQuery.append(notEqualsQuery(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+				runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
 			}
 		}
 
