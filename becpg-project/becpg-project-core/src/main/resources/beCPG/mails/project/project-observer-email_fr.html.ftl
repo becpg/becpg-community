@@ -39,14 +39,13 @@
                                              <p>Bonjour,</p>
 
                                              <p>
-                                             	L'état de la tâche a été changé de <b>${args.beforeState}</b> à <b>${args.afterState}</b>.                                             	
+                                             	<#if args.activityType == 'State'>
+                                             		L'état de la tâche a été changé de <b>${args.beforeState}</b> à <b>${args.afterState}</b>.
+                                             	<#elseif args.activityType == 'Comment'>
+                                             		Un commentaire a été  <#if args.activityEvent = 'Create'>créé<#elseif args.activityEvent = 'Update'>mis à jour<#else>supprimé<#if> sur <#if (args.deliverableDescription)??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif (args.taskTitle)??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if> :                                              		                                             		 
+                                             		<i>${args.comment.content}</i>
+                                             	</#if>                                             	
                                              </p>
-                                             
-                                             <p><b>"${args.taskTitle}"</b></p>
-                                             
-                                             <#if (args.taskDescription)??>                                             
-                                             	<p>${args.taskDescription}</p>                                             
-                                             </#if>                                             
                                              
                                              <#if (args.project)??>
                                                 <table cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
@@ -67,8 +66,8 @@
                                                                      </tr>
                                                                      <tr>
                                                                         <td>
-                                                                           <a href="${shareUrl}/page/entity-details?nodeRef=${args.project.nodeRef}">
-                                                                           ${shareUrl}/page/entity-details?nodeRef=${args.project.nodeRef}</a>
+                                                                           <a href="${shareUrl}/page/entity-data-lists?list=activityList&nodeRef=${args.project.nodeRef}">
+                                                                           ${shareUrl}/page/entity-data-lists?list=activityList&nodeRef=${args.project.nodeRef}</a>
                                                                         </td>
                                                                      </tr>                                                                         
                                                                   </table>

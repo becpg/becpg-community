@@ -40,6 +40,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.project.ProjectActivityService;
+import fr.becpg.repo.project.ProjectNotificationService;
 import fr.becpg.repo.project.data.projectList.ActivityEvent;
 import fr.becpg.repo.project.data.projectList.ActivityListDataItem;
 import fr.becpg.repo.project.data.projectList.ActivityType;
@@ -86,6 +87,9 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	@Autowired
 	ContentService contentService;
+	
+	@Autowired
+	ProjectNotificationService projectNotificationService;
 
 	@Override
 	public void postTaskStateChangeActivity(NodeRef taskNodeRef, String beforeState, String afterState) {
@@ -143,6 +147,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				}
 				if (TASK_STATE_ACTIVITY.equals(activityType)) {
 					activityListDataItem.setTask(itemNodeRef);
+					projectNotificationService.notifyTaskStateChanged(projectNodeRef, itemNodeRef, beforeState, afterState);
 				}
 
 				if (logger.isDebugEnabled()) {
@@ -182,17 +187,21 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				QName itemType = nodeService.getType(itemNodeRef);
 				if (ProjectModel.TYPE_PROJECT.equals(itemType)) {
 					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ContentModel.PROP_NAME));
+					projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, null, null);
 
 				} else if (ProjectModel.TYPE_TASK_LIST.equals(itemType)) {
 					projectNodeRef = getProjectNodeRef(itemNodeRef);
 					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_TASK_NAME));
 					activityListDataItem.setTask(itemNodeRef);
+					projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, itemNodeRef, null);
 
 				} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(itemType)) {
 					projectNodeRef = getProjectNodeRef(itemNodeRef);
 					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
 					activityListDataItem.setDeliverable(itemNodeRef);
-					activityListDataItem.setTask(getTaskNodeRef(itemNodeRef));
+					NodeRef taskNodeRef = getTaskNodeRef(itemNodeRef);
+					activityListDataItem.setTask(taskNodeRef);
+					projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, taskNodeRef, itemNodeRef);
 				}else{
 					return;					
 				}
