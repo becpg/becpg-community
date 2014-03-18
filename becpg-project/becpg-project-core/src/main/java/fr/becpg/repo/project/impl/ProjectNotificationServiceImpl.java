@@ -26,6 +26,8 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectNotificationService;
+import fr.becpg.repo.project.data.projectList.ActivityEvent;
+import fr.becpg.repo.project.data.projectList.ActivityType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -40,10 +42,14 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	
     public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project/cm:project-observer-email.html.ftl";
 
+    public static final String ARG_ACTIVITY_TYPE = "activityType";
+    public static final String ARG_ACTIVITY_EVENT = "activityEvent";
     public static final String ARG_TASK_TITLE = "taskTitle";
     public static final String ARG_TASK_DESCRIPTION = "taskDescription";
+    public static final String ARG_DELIVERABLE_TITLE = "deliverableDescription";
     public static final String ARG_BEFORE_STATE = "beforeState";
     public static final String ARG_AFTER_STATE = "afterState";
+    public static final String ARG_COMMENT = "comment";
     public static final String ARG_PROJECT = "project";
     
     private static final String PREFIX_LOCALIZATION_TASK_NAME = "listconstraint.pjt_taskStates.";
@@ -67,7 +73,51 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
     private Repository repositoryHelper;
     
 	@Override
-	public void sendTaskStateChanged(NodeRef taskNodeRef, String beforeState, String afterState) {
+	public void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState) {
+		
+		String beforeStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + beforeState);
+		String afterStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + afterState);
+		String subject = "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + " - " + 
+				nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE) + "] " +
+				nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) + " (" + 
+				afterStateMsg + ")";
+		
+		Map<String, Serializable>templateArgs = new HashMap<String, Serializable>(7);        
+		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.State);
+        templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
+        templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION));
+        templateArgs.put(ARG_BEFORE_STATE, beforeStateMsg);
+        templateArgs.put(ARG_AFTER_STATE, afterStateMsg);
+        templateArgs.put(ARG_PROJECT, projectNodeRef);
+        
+        notify(projectNodeRef, taskNodeRef, subject, templateArgs);
+	}
+
+	@Override
+	public void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef,
+			NodeRef taskNodeRef, NodeRef deliverableNodeRef) {
+		
+		String subject = "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + " - " + 
+				nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE) + "] " +
+				nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME);
+		
+		Map<String, Serializable>templateArgs = new HashMap<String, Serializable>(7);        
+		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.Comment);
+		templateArgs.put(ARG_ACTIVITY_EVENT, activityEvent);
+		templateArgs.put(ARG_PROJECT, projectNodeRef);
+		if(taskNodeRef != null){
+			templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
+	        templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION));
+		}
+        if(deliverableNodeRef != null){
+        	templateArgs.put(ARG_DELIVERABLE_TITLE, nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
+        }        
+        templateArgs.put(ARG_COMMENT, commentNodeRef);
+        
+        notify(projectNodeRef, taskNodeRef, subject, templateArgs);
+	}
+	
+	private void notify(NodeRef projectNodeRef, NodeRef taskNodeRef, String subject, Map<String, Serializable>templateArgs) {
 		
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), MAIL_TEMPLATE);
 		
@@ -75,8 +125,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 			logger.warn("Template not found.");
 		}
 		else{
-			
-			NodeRef projectNodeRef = entityListDAO.getEntity(taskNodeRef);
+						
 			List<String> authorities = new ArrayList<>();
 			
 			// Set the notification recipients
@@ -100,26 +149,12 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		        	}		        
 		        	authorities.add(authorityName);
 		        }
-								
-				String beforeStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + beforeState);
-				String afterStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + afterState);
-				String subject = "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + " - " + 
-						nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE) + "] (" + 
-						afterStateMsg + ") " +  
-						nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME);
 				
 				Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 				mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);       
 				mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, (Serializable)authorities);
 				mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, fileFolderService.getLocalizedSibling(templateNodeRef));
-				
-		        // Build the template args
-		        Map<String, Serializable>templateArgs = new HashMap<String, Serializable>(7);        
-		        templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
-		        templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION));
-		        templateArgs.put(ARG_BEFORE_STATE, beforeStateMsg);
-		        templateArgs.put(ARG_AFTER_STATE, afterStateMsg);
-		        templateArgs.put(ARG_PROJECT, projectNodeRef);	        
+						             
 				Map<String, Serializable> templateModel = new HashMap<String, Serializable>();
 				templateModel.put("args",(Serializable)templateArgs);
 				mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL,(Serializable)templateModel);

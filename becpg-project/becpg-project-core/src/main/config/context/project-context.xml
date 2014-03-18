@@ -104,7 +104,6 @@
 		<property name="projectActivityService" ref="projectActivityService" />
 		<property name="nodeArchiveService" ref="nodeArchiveService" />
 		<property name="projectWorkflowService" ref="projectWorkflowService" />
-		<property name="projectNotificationService" ref="projectNotificationService" />
 	</bean>
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.project.dictionaryBootstrap">
 		<property name="entityListDAO" ref="entityListDAO" />
