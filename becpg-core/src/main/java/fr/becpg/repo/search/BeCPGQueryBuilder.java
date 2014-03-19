@@ -182,7 +182,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	public BeCPGQueryBuilder inDB() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL;
-		ftsLanguage();
+		//ftsLanguage();
 		return this;
 	}
 

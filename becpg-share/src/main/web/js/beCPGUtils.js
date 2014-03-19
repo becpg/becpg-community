@@ -134,6 +134,7 @@
 
    };
    
+   
    Alfresco.util.getFileIcon.types = {
          "{http://www.alfresco.org/model/content/1.0}cmobject" : "file",
          "cm:cmobject" : "file",
@@ -219,7 +220,9 @@
          "{http://www.bcpg.fr/model/becpg/1.0}productMicrobioCriteria" : "productMicrobioCriteria",
          "bcpg:productMicrobioCriteria" : "productMicrobioCriteria",
           "{http://www.bcpg.fr/model/project/1.0}project" : "project",
-           "pjt:project": "project"
+          "pjt:project": "project",
+          "rep:reportTpl": "rptdesign",
+          "{http://www.bcpg.fr/model/report/1.0}reportTpl": "rptdesign"
       };
    
 

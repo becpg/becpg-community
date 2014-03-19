@@ -230,7 +230,7 @@ public class MetaModelVisitor {
 						@SuppressWarnings("unchecked")
 						List<String> aspects = (List<String>) entry.getValue();
 						
-						setterMethod = retriveMethod( m2Model.getClass(),"addMandatoryAspect");
+						setterMethod = retrieveMethod( m2Model.getClass(),"addMandatoryAspect");
 						if (setterMethod != null) {
 							for(String aspect : aspects){
 								logger.debug("Invoke :"+setterMethod.getName());
@@ -257,7 +257,7 @@ public class MetaModelVisitor {
 				 if(assoc.getQName().equals(DesignerModel.ASSOC_M2_CONSTRAINTS)
 						 && (nodeService.getType(modelNodeRef).equals(DesignerModel.TYPE_M2_PROPERTY)
 							|| nodeService.getType(modelNodeRef).equals(DesignerModel.TYPE_M2_PROPERTY_OVERRIDE)) ){
-					 createAssocMethod = retriveMethod( m2Model.getClass(),"addConstraintRef");
+					createAssocMethod = retrieveMethod( m2Model.getClass(),"addConstraintRef");
 				 } else {
 					 createAssocMethod = retieveCreateMethod(childRef, assoc.getQName(), m2Model.getClass());
 				 }
@@ -298,7 +298,7 @@ public class MetaModelVisitor {
 		createName = "createChildAssociation";
 	}
 	
-	return retriveMethod( clazz,createName);
+	return retrieveMethod( clazz,createName);
 	}
 
 	private Method retieveSetter(QName prop, Class<?> clazz) {
@@ -315,7 +315,7 @@ public class MetaModelVisitor {
 			setterName = "set" + StringUtils.capitalize(prop.getLocalName());
 		}
 		
-	   return retriveMethod(clazz, setterName);
+	   return retrieveMethod(clazz, setterName);
 	}
 	
 	
@@ -340,11 +340,11 @@ public class MetaModelVisitor {
 			} else if(field.getName().equals("published")){
 				getterName = "getPublishedDate";
 			}
-			return retriveMethod(m2Class, getterName);
+			return retrieveMethod(m2Class, getterName);
 		
 	}
 	
-	private Method retriveMethod( Class<?> clazz, String... methodNames){
+	private Method retrieveMethod( Class<?> clazz, String... methodNames){
 		
 		 for(Method method : clazz.getMethods()){
 			 for(String methodName : methodNames){

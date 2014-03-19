@@ -206,12 +206,30 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		visitFolder(systemImportNodeRef, PlmRepoConsts.PATH_IMPORT_SAMPLES);
 				
 		//Designer		
-		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
-		designerInitService.addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-plm-core/model/qualityModel.xml");
+	//	addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
+	//	addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-plm-core/model/qualityModel.xml");
 				
 		//OLAP
 		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);		
 	}
+
+//	@Override
+//	public void addReadOnlyDesignerFiles(String pattern) {
+//
+//		try {
+//
+//			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+//
+//			for (Resource res : resolver.getResources(pattern)) {
+//				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+//				properties.put(DesignerModel.PROP_DSG_READ_ONLY_FILE, true);
+//				addFileResource(getModelsNodeRef(), res, properties);
+//			}
+//		} catch (Exception e) {
+//			logger.error(e, e);
+//		}
+//
+//	}
 
 	/**
 	 * Add resources to folder

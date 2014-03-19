@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alfresco-config area="mimetype-map">
+   <config evaluator="string-compare" condition="Mimetype Map">
+      <mimetype mimetype="application/vnd.birt-rptdesign" text="true" display="Birt Report Template">
+            <extension default="true">rptdesign</extension>
+       </mimetype>
+    </config>
+</alfresco-config>   
+  
